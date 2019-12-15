@@ -1,0 +1,14 @@
+{
+	"compilerOptions": {
+		"allowSyntheticDefaultImports": true,
+		"jsx": "react",
+		"module": "ESNext",
+		"moduleResolution": "node",
+		"noImplicitAny": true,
+		"noImplicitThis": true,
+		"sourceMap": true,
+		"target": "es2017",
+		"types": ["node", "lodash", "express", "electron", "electron-settings"]
+	},
+	"exclude": ["node_modules"]
+}

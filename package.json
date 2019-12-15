@@ -1,0 +1,37 @@
+{
+  "name": "playa",
+  "version": "0.3.0",
+  "description": "The OSX player that thinks in albums.",
+  "main": "index.js",
+  "repository": "https://github.com/moonwave99/playa",
+  "author": "Diego Caponera <diego.caponera@gmail.com>",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "start": "electron ./pack/main.bundle.js",
+    "development": "rimraf pack && webpack --watch --config ./webpack.dev.js --progress --colors",
+    "clean": "rimraf build && rimraf pack && rimraf dist"
+  },
+  "devDependencies": {
+    "electron": "^7.1.5",
+    "ts-loader": "^6.2.1"
+  },
+  "dependencies": {
+    "@types/electron-settings": "^3.1.1",
+    "@types/electron-util": "^0.11.1",
+    "@types/express": "^4.17.2",
+    "@types/lodash": "^4.14.149",
+    "@types/react": "^16.9.16",
+    "@types/react-dom": "^16.9.4",
+    "copy-webpack-plugin": "^5.1.1",
+    "electron-builder": "^21.2.0",
+    "html-webpack-plugin": "^3.2.0",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "rimraf": "^3.0.0",
+    "typescript": "^3.7.3",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
+    "webpack-permissions-plugin": "^1.0.6"
+  }
+}
