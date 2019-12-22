@@ -68,3 +68,6 @@ package
 
 # Mac specific
 .DS_Store
+
+# test artifacts
+__snapshots__
