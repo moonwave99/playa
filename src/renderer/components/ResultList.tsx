@@ -9,7 +9,7 @@ type ResultListProps = {
 
 export const ResultList: React.FC<ResultListProps> = ({ results, searched }) => {
   function renderEmptyComponent(searched: boolean): React.ReactElement {
-    return searched ? <li>No results.</li> : null;
+    return searched ? <li className="result-list-empty-component">No results.</li> : null;
   }
   return (
     <ul className="result-list">{
