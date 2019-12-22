@@ -84,14 +84,20 @@ main {
 			&-single {
 				background-color: $singleColor;
 			}
+			&-compilation {
+				background-color: $compilationColor;
+			}
 			&-remix {
 				background-color: $remixColor;
 			}
 			&-bootleg {
 				background-color: $bootlegColor;
 			}
-			&-compilation {
-				background-color: $compilationColor;
+			&-various {
+				background-color: $variousColor;
+			}
+			&-soundtrack {
+				background-color: $soundtrackColor;
 			}
 		}
 	}
