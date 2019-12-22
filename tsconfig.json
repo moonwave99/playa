@@ -8,7 +8,8 @@
 		"noImplicitThis": true,
 		"sourceMap": true,
 		"target": "es2017",
-		"types": ["node", "lodash", "express", "electron", "electron-settings"]
+		"types": ["node", "lodash", "express", "electron", "electron-settings", "pouchdb"]
 	},
+	"include": ["typings.d.ts"],
 	"exclude": ["node_modules"]
 }

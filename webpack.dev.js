@@ -19,6 +19,9 @@ let mainConfig = {
 	resolve: {
 		extensions: ['.js', '.json', '.ts'],
 	},
+	externals: {
+    pouchdb: "require('pouchdb')"
+  },
 	module: {
 		rules: [{
 				// All files with a '.ts' or '.tsx' extension will be handled by 'ts-loader'.

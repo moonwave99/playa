@@ -1,13 +1,16 @@
-import { app, BrowserWindow, ipcMain, screen, shell, ipcRenderer } from 'electron';
+import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
+import * as Store from 'electron-store';
 
-import { HEIGHT, WIDTH, MACOS } from '../constants'
+import Database from './database';
+import Finder from './Finder';
+
+import { HEIGHT, WIDTH, MACOS } from '../constants';
 
 let mainWindow: Electron.BrowserWindow;
-let mousePoller: NodeJS.Timeout;
 
-function createWindow() {
+function createWindow(): void {
   // Create the browser window
   mainWindow = new BrowserWindow({
     height: HEIGHT,
@@ -40,7 +43,22 @@ function createWindow() {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', () => {
+app.on('ready', async () => {
+  const db = new Database('../nas-list/playa-music');
+
+  ipcMain.handle('db-search', async (event, query) => {
+    const results = await db.find(query);
+    return results;
+  });
+
+  const store = new Store();
+  store.set('musicPath', '/Volumes/Public/Music');
+  const finder = new Finder(store.get('musicPath'));
+
+  ipcMain.on('reveal-in-finder', (event, album) => {
+    finder.reveal(album);
+  });
+
   createWindow();
 });
 
