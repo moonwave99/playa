@@ -59,7 +59,7 @@ const mainConfig = {
 };
 
 const rendererConfig = {
-	entry: './src/renderer/renderer.tsx',
+	entry: './src/renderer/index.tsx',
 	target: 'electron-renderer',
 	output: {
 		filename: 'renderer.bundle.js',
