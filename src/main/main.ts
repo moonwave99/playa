@@ -6,6 +6,8 @@ import * as url from 'url';
 import Database from './database';
 import Finder from './Finder';
 
+declare let APP_NAME: string;
+
 import { HEIGHT, WIDTH, MACOS, MUSIC_ROOT_FOLDER } from '../constants';
 
 let mainWindow: Electron.BrowserWindow;
