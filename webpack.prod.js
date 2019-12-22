@@ -1,3 +1,4 @@
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const PermissionsOutputPlugin = require('webpack-permissions-plugin');
@@ -49,8 +50,13 @@ let mainConfig = {
 				test: /\.node$/,
 				use: 'native-ext-loader'
 			}
-		],
-	}
+		]
+	},
+	plugins: [
+		new webpack.DefinePlugin({
+      APP_NAME: JSON.stringify(require("./package.json").name)
+    })
+	]
 };
 
 let rendererConfig = {

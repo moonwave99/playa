@@ -8,8 +8,11 @@ PouchDB.plugin(search);
 
 export default class Database {
   private db: any;  // eslint-disable-line
-  constructor(databasePath: string){
-    this.db = new PouchDB(databasePath);
+  constructor(databasePath: string, databaseName: string){
+    const LocalPouchDB = PouchDB.defaults({
+      prefix: databasePath
+    });
+    this.db = new LocalPouchDB(databaseName);
   }
   async find(query: string): Promise<Array<Album>> {
     const { rows } = await this.db.search({

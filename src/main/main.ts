@@ -1,12 +1,12 @@
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
+import { is } from 'electron-util';
 import * as path from 'path';
 import * as url from 'url';
-import * as Store from 'electron-store';
 
 import Database from './database';
 import Finder from './Finder';
 
-import { HEIGHT, WIDTH, MACOS } from '../constants';
+import { HEIGHT, WIDTH, MACOS, MUSIC_ROOT_FOLDER } from '../constants';
 
 let mainWindow: Electron.BrowserWindow;
 
@@ -44,16 +44,17 @@ function createWindow(): void {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
-  const db = new Database('../nas-list/playa-music');
+  let userDataPath = app.getPath('userData');
+  if (is.development) {
+    userDataPath = userDataPath.replace('Electron', APP_NAME);
+  }
+  const db = new Database(userDataPath + path.sep, 'playa-database');
+  const finder = new Finder(MUSIC_ROOT_FOLDER);
 
   ipcMain.handle('db-search', async (event, query) => {
     const results = await db.find(query);
     return results;
   });
-
-  const store = new Store();
-  store.set('musicPath', '/Volumes/Public/Music');
-  const finder = new Finder(store.get('musicPath'));
 
   ipcMain.on('reveal-in-finder', (event, album) => {
     finder.reveal(album);
