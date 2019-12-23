@@ -1,5 +1,6 @@
 import React, { ReactElement } from 'react';
 import { connect, useSelector } from 'react-redux';
+import { CSSTransition } from 'react-transition-group';
 import { SearchView } from '../components/SearchView/SearchView';
 import { Sidebar } from '../components/Sidebar/Sidebar';
 import { PlaylistView } from '../components/PlaylistView/PlaylistView';
@@ -27,9 +28,6 @@ const MainLayout = ({
 
   return (
     <main className={mainClasses.join(' ')}>
-      <section className="search-container">
-        <SearchView/>
-      </section>
       <section className="main-container">
         <aside className="sidebar-wrapper">
           <Sidebar
@@ -45,6 +43,15 @@ const MainLayout = ({
           }
         </div>
       </section>
+      <CSSTransition
+        in={showSearch}
+        timeout={300}
+        classNames="search-container"
+        unmountOnExit>
+          <section className="search-container">
+            <SearchView/>
+          </section>
+      </CSSTransition>
     </main>
   );
 }
