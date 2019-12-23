@@ -1,4 +1,5 @@
 import React, { useState, FC } from 'react';
+import { CSSTransition } from 'react-transition-group';
 import { ipcRenderer } from 'electron';
 import { Album } from '../../../interfaces';
 import { SearchBar } from '../SearchBar/SearchBar';
@@ -24,7 +25,13 @@ export const SearchView: FC<SearchViewProps> = () => {
         <SearchBar onFormSubmit={onFormSubmit} />
       </div>
       <div className="results-wrapper">
+      <CSSTransition
+        in={results.length > 0 || searched === true}
+        timeout={300}
+        classNames="result-list"
+        unmountOnExit>
         <ResultList results={results} searched={searched}/>
+      </CSSTransition>
       </div>
     </div>
 	);
