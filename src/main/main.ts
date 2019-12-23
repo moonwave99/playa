@@ -3,6 +3,7 @@ import { is } from 'electron-util';
 import * as path from 'path';
 import * as url from 'url';
 
+import initMenu from './menu';
 import Database from './database';
 import Finder from './Finder';
 
@@ -36,10 +37,11 @@ function createWindow(): void {
   );
 
   // Open external URLs in default OS browser
-  mainWindow.webContents.on('new-window', function (event: Electron.Event, url: string) {
+  mainWindow.webContents.on('new-window', (event: Electron.Event, url: string) => {
     event.preventDefault();
     shell.openExternal(url);
   });
+  initMenu(mainWindow);
 }
 
 // This method will be called when Electron has finished
@@ -61,7 +63,6 @@ app.on('ready', async () => {
   ipcMain.on('reveal-in-finder', (event, album) => {
     finder.reveal(album);
   });
-
   createWindow();
 });
 

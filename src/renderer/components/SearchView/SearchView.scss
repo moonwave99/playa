@@ -1,0 +1,9 @@
+@import "../../variables";
+
+.search-view {
+  .results-wrapper {
+    overflow: auto;
+    padding: 0 0 0 $gutterBig;
+    height: calc(100vh - 11.4rem);
+  }
+}

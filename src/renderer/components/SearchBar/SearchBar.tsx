@@ -1,4 +1,5 @@
 import React, { useRef, SyntheticEvent, FC } from 'react';
+import './SearchBar.scss';
 
 type SearchBarProps = {
 	onFormSubmit: Function;
@@ -13,10 +14,8 @@ export const SearchBar: FC<SearchBarProps> = ({ onFormSubmit }) => {
 
 	return (
 		<form className="search-bar" onSubmit={_onFormSubmit}>
-			<div className="row">
-				<input type="search" ref={inputRef} placeholder="Search for..." className="column column-75" />
-				<button type="submit" className="button-primary column column-25">Search...</button>
-			</div>
+			<input type="search" ref={inputRef} placeholder="Search for..." className="search-input"/>
+			<button type="submit" className="button-primary">Search...</button>
 		</form>
 	);
 }

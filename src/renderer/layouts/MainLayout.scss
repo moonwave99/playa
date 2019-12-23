@@ -1,7 +1,34 @@
-$sidebarWidth: 300px;
+@import "../variables";
 
 .main-layout {
   height: 100%;
+  .search-container,
+  .main-container {
+    height: 100%;
+  }
+
+  .search-container {
+    transform: translateX(105vw);
+    transition: transform .2s ease-in-out;
+    background-color: $backgroundColor;
+    z-index:100;
+    width: calc(100vw - #{$sidebarWidth});
+  }
+
+  .main-container {
+    position: fixed;
+    top: 0;
+  }
+
+  &.show-search {
+    .main-container {
+      z-index: -1;
+    }
+    .search-container {
+      transform: translateX($sidebarWidth);
+      z-index: 1000;
+    }
+  }
 
   .sidebar-wrapper {
     height: 100%;
@@ -9,7 +36,7 @@ $sidebarWidth: 300px;
     float: left;
   }
 
-  .main-wrapper {
+  .playlist-wrapper {
     height: 100%;
     width: calc(100vw - #{$sidebarWidth});
     float: left;

@@ -1,6 +1,7 @@
 import React from 'react';
 import { ResultListItem } from '../ResultListItem/ResultListItem';
 import { Album } from '../../../interfaces';
+import './ResultList.scss';
 
 type ResultListProps = {
   results: Array<Album>;
