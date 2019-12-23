@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { ipcRenderer } from 'electron';
-import { Album } from '../../interfaces';
-import { VARIOUS_ARTISTS_ID } from '../../constants';
+import { Album } from '../../../interfaces';
+import { VARIOUS_ARTISTS_ID } from '../../../constants';
 
 type ResultListItemProps = {
   result: Album;

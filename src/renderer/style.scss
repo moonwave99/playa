@@ -19,16 +19,13 @@ body {
 }
 
 body,
-html {
+html,
+.app {
 	font-family: 'Inter UI', sans-serif;
 	font-feature-settings: 'calt' 1, 'ss02' 1;
 	height: 100%;
 	width: 100%;
 	margin: 0;
-}
-
-main {
-	padding: 3rem;
 }
 
 .search-bar {
@@ -47,6 +44,7 @@ main {
 		border-radius: 0 .4rem .4rem 0;
 	}
 }
+
 .result-list {
 	list-style: none;
 	.result-list-item {

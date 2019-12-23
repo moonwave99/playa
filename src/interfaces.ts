@@ -8,8 +8,8 @@ export interface Album {
   path: string;
 }
 
-export interface Row {
-  doc: Album;
-  id: string;
-  score: number;
+export interface Playlist {
+  _id: string;
+  title: string;
+  albums: Array<Album>;
 }

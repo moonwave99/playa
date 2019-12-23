@@ -1,10 +1,16 @@
 import PouchDB from 'pouchdb';
 import PouchFind from 'pouchdb-find';
 import search from 'pouchdb-quick-search';
-import { Album, Row } from '../interfaces';
+import { Album } from '../interfaces';
 
 PouchDB.plugin(PouchFind);
 PouchDB.plugin(search);
+
+interface Row {
+  doc: Album;
+  id: string;
+  score: number;
+}
 
 export default class Database {
   private db: any;  // eslint-disable-line
