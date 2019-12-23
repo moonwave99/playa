@@ -31,6 +31,7 @@ const MainLayout = ({
 
   function onCreatePlaylistButtonClick(): void {
     createPlaylist();
+    hideSearch();
   }
 
   function onPlaylistClick(playlist: Playlist): void {
