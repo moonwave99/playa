@@ -5,17 +5,20 @@ import { SearchView } from '../components/SearchView/SearchView';
 import { Sidebar } from '../components/Sidebar/Sidebar';
 import { PlaylistView } from '../components/PlaylistView/PlaylistView';
 import { Playlist } from '../../interfaces';
+import { hideSearch } from '../store/modules/ui';
 import { createPlaylist, loadPlaylist } from '../store/modules/playlists';
 import './MainLayout.scss';
 
 interface MainLayoutProps {
   createPlaylist: Function;
   loadPlaylist: Function;
+  hideSearch: Function;
 }
 
 const MainLayout = ({
   createPlaylist,
-  loadPlaylist
+  loadPlaylist,
+  hideSearch
 }: MainLayoutProps): ReactElement => {
   const showSearch: boolean = useSelector(({ ui }) => ui.showSearch);
   const playlists: Array<Playlist> = useSelector(({ playlists }) => playlists.all);
@@ -26,15 +29,24 @@ const MainLayout = ({
     mainClasses.push('show-search');
   }
 
+  function onCreatePlaylistButtonClick(): void {
+    createPlaylist();
+  }
+
+  function onPlaylistClick(playlist: Playlist): void {
+    loadPlaylist(playlist);
+    hideSearch();
+  }
+
   return (
     <main className={mainClasses.join(' ')}>
       <section className="main-container">
         <aside className="sidebar-wrapper">
           <Sidebar
             playlists={playlists}
-            createPlaylist={createPlaylist}
             currentPlaylist={currentPlaylist}
-            loadPlaylist={loadPlaylist} />
+            onCreatePlaylistButtonClick={onCreatePlaylistButtonClick}
+            onPlaylistClick={onPlaylistClick} />
         </aside>
         <div className="playlist-wrapper">
           { currentPlaylist
@@ -58,5 +70,6 @@ const MainLayout = ({
 
 export default connect(null, {
   createPlaylist,
-  loadPlaylist
+  loadPlaylist,
+  hideSearch
 })(MainLayout);

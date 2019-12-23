@@ -3,26 +3,26 @@ import { Playlist } from '../../../interfaces';
 import './Sidebar.scss';
 
 type SidebarProps = {
-  createPlaylist: Function;
-  loadPlaylist: Function;
   playlists: Array<Playlist>;
   currentPlaylist: Playlist;
+  onCreatePlaylistButtonClick: Function;
+  onPlaylistClick: Function;
 };
 
 export const Sidebar: FC<SidebarProps> = ({
-  createPlaylist,
-  loadPlaylist,
   currentPlaylist,
-  playlists = []
+  playlists = [],
+  onCreatePlaylistButtonClick,
+  onPlaylistClick
 }) => {
   function onButtonClick(): void {
-    createPlaylist();
+    onCreatePlaylistButtonClick();
   }
 
   function renderListItem(playlist: Playlist): ReactElement {
     function onItemListClick(event: SyntheticEvent): void {
       event.preventDefault();
-      loadPlaylist(playlist);
+      onPlaylistClick(playlist);
     }
     const playlistClasses = ['playlist'];
     if (currentPlaylist._id === playlist._id) {
