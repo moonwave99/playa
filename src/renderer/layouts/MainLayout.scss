@@ -1,10 +1,17 @@
+$sidebarWidth: 300px;
+
 .main-layout {
   height: 100%;
+
   .sidebar-wrapper {
     height: 100%;
+    width: $sidebarWidth;
+    float: left;
   }
 
   .main-wrapper {
     height: 100%;
+    width: calc(100vw - #{$sidebarWidth});
+    float: left;
   }
 }

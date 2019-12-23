@@ -6,9 +6,15 @@ type SidebarProps = {
   createPlaylist: Function;
   loadPlaylist: Function;
   playlists: Array<Playlist>;
+  currentPlaylist: Playlist;
 };
 
-export const Sidebar: FC<SidebarProps> = ({ createPlaylist, loadPlaylist, playlists = [] }) => {
+export const Sidebar: FC<SidebarProps> = ({
+  createPlaylist,
+  loadPlaylist,
+  currentPlaylist,
+  playlists = []
+}) => {
   function onButtonClick(): void {
     createPlaylist();
   }
@@ -18,8 +24,12 @@ export const Sidebar: FC<SidebarProps> = ({ createPlaylist, loadPlaylist, playli
       event.preventDefault();
       loadPlaylist(playlist);
     }
+    const playlistClasses = ['playlist'];
+    if (currentPlaylist._id === playlist._id) {
+      playlistClasses.push('current');
+    }
     return (
-      <li key={playlist._id}>
+      <li key={playlist._id} className={playlistClasses.join(' ')}>
         <a href="#" onClick={onItemListClick}>{playlist.title}</a>
       </li>
     );
@@ -27,8 +37,10 @@ export const Sidebar: FC<SidebarProps> = ({ createPlaylist, loadPlaylist, playli
 
 	return (
 		<div className="sidebar">
-      <button type="button" className="button-primary" onClick={onButtonClick}>Create Playlist</button>
-      <ul>{
+      <div className="header">
+        <button type="button" className="button button-primary" onClick={onButtonClick}>Create Playlist</button>
+      </div>
+      <ul className="playlist-list">{
         playlists.map(renderListItem)
       }</ul>
     </div>

@@ -16,14 +16,15 @@ const MainLayout = ({ createPlaylist, loadPlaylist }: MainLayoutProps): ReactEle
   const currentPlaylist: Playlist = useSelector(({ playlists }) => playlists.current);
 
   return (
-    <div className="main-layout row">
-      <aside className="sidebar-wrapper column column-20">
+    <div className="main-layout">
+      <aside className="sidebar-wrapper">
         <Sidebar
           playlists={playlists}
           createPlaylist={createPlaylist}
+          currentPlaylist={currentPlaylist}
           loadPlaylist={loadPlaylist} />
       </aside>
-      <main className="main-wrapper column column-90">
+      <main className="main-wrapper">
         { currentPlaylist
           ? <PlaylistView playlist={currentPlaylist}/>
           : null

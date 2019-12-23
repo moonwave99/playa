@@ -2,6 +2,40 @@
 
 .sidebar {
   background-color: $backgroundLightColor;
-  padding: 3rem;
   min-height: 100%;
+  .header {
+    padding: $gutterBig;
+    .button {
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  }
+
+  .playlist-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    .playlist {
+      height: $gutterBig;
+      line-height: $gutterBig;
+      vertical-align: middle;
+      margin: 0;
+      &.current {
+        a {
+          color: $mainColor;
+          background-color: $clearColor;
+        }
+      }
+      a {
+        display: block;
+        padding: 0 $gutterBig 0 $gutterBig;
+        color: $clearColor;
+        &:hover {
+          color: $mainColor;
+          background-color: $highlightColor;
+        }
+      }
+    }
+  }
 }
