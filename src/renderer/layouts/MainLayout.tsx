@@ -1,24 +1,21 @@
 import React, { ReactElement } from 'react';
+import { Switch, Route } from 'react-router';
 import { connect, useSelector } from 'react-redux';
-import { CSSTransition } from 'react-transition-group';
 import { SearchView } from '../components/SearchView/SearchView';
 import { Sidebar } from '../components/Sidebar/Sidebar';
-import { PlaylistView } from '../components/PlaylistView/PlaylistView';
+import PlaylistView from '../components/PlaylistView/PlaylistView';
 import { Playlist } from '../../interfaces';
-import { hideSearch } from '../store/modules/ui';
-import { createPlaylist, loadPlaylist } from '../store/modules/playlists';
+import { createPlaylist } from '../store/modules/playlists';
 import './MainLayout.scss';
+
+import { SEARCH, PLAYLIST } from '../routes';
 
 interface MainLayoutProps {
   createPlaylist: Function;
-  loadPlaylist: Function;
-  hideSearch: Function;
 }
 
 const MainLayout = ({
-  createPlaylist,
-  loadPlaylist,
-  hideSearch
+  createPlaylist
 }: MainLayoutProps): ReactElement => {
   const showSearch: boolean = useSelector(({ ui }) => ui.showSearch);
   const playlists: Array<Playlist> = useSelector(({ playlists }) => playlists.all);
@@ -31,12 +28,6 @@ const MainLayout = ({
 
   function onCreatePlaylistButtonClick(): void {
     createPlaylist();
-    hideSearch();
-  }
-
-  function onPlaylistClick(playlist: Playlist): void {
-    loadPlaylist(playlist);
-    hideSearch();
   }
 
   return (
@@ -46,31 +37,19 @@ const MainLayout = ({
           <Sidebar
             playlists={playlists}
             currentPlaylist={currentPlaylist}
-            onCreatePlaylistButtonClick={onCreatePlaylistButtonClick}
-            onPlaylistClick={onPlaylistClick} />
+            onCreatePlaylistButtonClick={onCreatePlaylistButtonClick} />
         </aside>
         <div className="playlist-wrapper">
-          { currentPlaylist
-            ? <PlaylistView playlist={currentPlaylist}/>
-            : null
-          }
+          <Switch>
+            <Route path={SEARCH} component={SearchView} />
+            <Route path={`${PLAYLIST}`} component={PlaylistView} />
+          </Switch>
         </div>
       </section>
-      <CSSTransition
-        in={showSearch}
-        timeout={300}
-        classNames="search-container"
-        unmountOnExit>
-          <section className="search-container">
-            <SearchView/>
-          </section>
-      </CSSTransition>
     </main>
   );
 }
 
 export default connect(null, {
-  createPlaylist,
-  loadPlaylist,
-  hideSearch
+  createPlaylist
 })(MainLayout);

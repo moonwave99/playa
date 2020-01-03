@@ -13,7 +13,7 @@ export interface PlaylistState {
 
 interface LoadPlaylistAction {
   type: typeof LOAD_PLAYLIST;
-  playlist: Playlist;
+  id: Playlist['_id'];
 }
 
 interface CreatePlaylistAction {
@@ -29,11 +29,11 @@ const INITIAL_STATE: PlaylistState = {
   current: null
 }
 
-export const loadPlaylist = (playlist: Playlist): Function =>
+export const loadPlaylist = (id: Playlist['_id']): Function =>
   (dispatch: Function): void => {
     dispatch({
       type: LOAD_PLAYLIST,
-      playlist
+      id,
     });
   }
 
@@ -59,7 +59,7 @@ export default function reducer(
     case LOAD_PLAYLIST:
       return {
         ...state,
-        current: action.playlist
+        current: state.all.find(({ _id }) => _id === action.id) || state.current
       }
     case CREATE_PLAYLIST:
       return {

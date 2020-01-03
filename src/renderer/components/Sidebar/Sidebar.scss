@@ -28,11 +28,11 @@
           background-color: $clearColor;
         }
       }
-      a {
+      .playlist-item {
         display: block;
         padding: 0 $gutterBig 0 $gutterBig;
         color: $clearColor;
-        &:hover {
+        &-active, &:hover {
           color: $mainColor;
           background-color: $highlightColor;
         }
