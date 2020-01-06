@@ -1,33 +1,42 @@
-import React, { FC, ReactElement } from 'react';
+import React, { FC, ReactElement, SyntheticEvent } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, generatePath } from 'react-router-dom';
-import { Playlist } from '../../../interfaces';
+import { Playlist, loadPlaylist } from '../../store/modules/playlists';
 import './Sidebar.scss';
-import { PLAYLIST, SEARCH } from '../../routes';
+import { PLAYLIST_SHOW, SEARCH } from '../../routes';
 
 type SidebarProps = {
   playlists: Array<Playlist>;
-  currentPlaylist: Playlist;
   onCreatePlaylistButtonClick: Function;
 };
 
 export const Sidebar: FC<SidebarProps> = ({
-  currentPlaylist,
   playlists = [],
   onCreatePlaylistButtonClick
 }) => {
+  const dispatch = useDispatch();
+  const currentPlaylist: Playlist = useSelector(({ playlists }) => playlists.current) || {};
   function onButtonClick(): void {
     onCreatePlaylistButtonClick();
   }
-
   function renderListItem(playlist: Playlist): ReactElement {
     const playlistClasses = ['playlist'];
     if (currentPlaylist._id === playlist._id) {
       playlistClasses.push('current');
     }
+    function onPlaylistItemClick(event: SyntheticEvent): void {
+      if (currentPlaylist._id !== playlist._id) {
+        dispatch(loadPlaylist(playlist._id));
+      } else {
+        event.preventDefault();
+      }
+    }
     return (
       <li key={playlist._id} className={playlistClasses.join(' ')}>
         <Link
-          to={generatePath(PLAYLIST, { id: playlist._id })}
+          onClick={onPlaylistItemClick}
+          title={playlist._id}
+          to={generatePath(PLAYLIST_SHOW, { _id: playlist._id })}
           className="playlist-item">{playlist.title}</Link>
       </li>
     );

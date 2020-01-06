@@ -71,3 +71,7 @@ package
 
 # test artifacts
 __snapshots__
+
+# Pouchdb replicator
+.pouchdb
+log.txt

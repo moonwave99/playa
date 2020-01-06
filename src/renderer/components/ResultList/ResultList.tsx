@@ -1,5 +1,5 @@
 import React from 'react';
-import { ResultListItem } from '../ResultListItem/ResultListItem';
+import { ResultListItem } from './ResultListItem/ResultListItem';
 import { Album } from '../../../interfaces';
 import './ResultList.scss';
 

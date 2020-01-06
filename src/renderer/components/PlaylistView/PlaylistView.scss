@@ -1,3 +1,19 @@
+@import "../../mixins";
+
 .playlist-view {
-  padding: 3rem;
+  padding: 3.8rem;
+  min-height: 100vh;
+  .playlist-header{
+    .playlist-header-form {
+      .playlist-header-form-input {
+        @include input();
+        margin-bottom: 0;
+      }
+    }
+    .playlist-header-actions{
+      button {
+        margin-right: 1rem;
+      }
+    }
+  }
 }

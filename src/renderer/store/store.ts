@@ -1,5 +1,6 @@
 import { Reducer, combineReducers, createStore, applyMiddleware } from 'redux';
 import { RouterState, connectRouter, routerMiddleware } from 'connected-react-router';
+import { createLogger } from 'redux-logger';
 import thunk from 'redux-thunk';
 import { History, createHashHistory } from 'history';
 
@@ -23,8 +24,15 @@ function createRootReducer (history: History): Reducer {
   });
 }
 
+// Logging Middleware
+const logger = createLogger({
+  level: 'info',
+  collapsed: true
+});
+
 const middleware = [
   thunk,
+  logger,
   routerMiddleware(history)
 ];
 

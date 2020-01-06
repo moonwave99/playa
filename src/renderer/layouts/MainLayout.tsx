@@ -1,33 +1,38 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import { Switch, Route } from 'react-router';
-import { connect, useSelector } from 'react-redux';
+import { generatePath } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { SearchView } from '../components/SearchView/SearchView';
 import { Sidebar } from '../components/Sidebar/Sidebar';
-import PlaylistView from '../components/PlaylistView/PlaylistView';
-import { Playlist } from '../../interfaces';
-import { createPlaylist } from '../store/modules/playlists';
+import { PlaylistContainer } from '../components/PlaylistContainer/PlaylistContainer';
+import { history } from '../store/store';
+import { requestAllPlaylists } from '../store/modules/playlists';
 import './MainLayout.scss';
 
-import { SEARCH, PLAYLIST } from '../routes';
+import {
+  SEARCH,
+  PLAYLIST_SHOW
+} from '../routes';
 
-interface MainLayoutProps {
-  createPlaylist: Function;
-}
-
-const MainLayout = ({
-  createPlaylist
-}: MainLayoutProps): ReactElement => {
+const MainLayout = (): ReactElement => {
   const showSearch: boolean = useSelector(({ ui }) => ui.showSearch);
-  const playlists: Array<Playlist> = useSelector(({ playlists }) => playlists.all);
-  const currentPlaylist: Playlist = useSelector(({ playlists }) => playlists.current);
+  const playlists = useSelector(({ playlists }) =>
+    Object.keys(playlists.allById).map(id => playlists.allById[id])
+  );
   const mainClasses = ['main-layout'];
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(requestAllPlaylists());
+  }, []);
 
   if (showSearch) {
     mainClasses.push('show-search');
   }
 
   function onCreatePlaylistButtonClick(): void {
-    createPlaylist();
+    const now = new Date().toISOString();
+    history.replace(generatePath(PLAYLIST_SHOW, { _id: now }));
   }
 
   return (
@@ -36,13 +41,12 @@ const MainLayout = ({
         <aside className="sidebar-wrapper">
           <Sidebar
             playlists={playlists}
-            currentPlaylist={currentPlaylist}
             onCreatePlaylistButtonClick={onCreatePlaylistButtonClick} />
         </aside>
         <div className="playlist-wrapper">
           <Switch>
             <Route path={SEARCH} component={SearchView} />
-            <Route path={`${PLAYLIST}`} component={PlaylistView} />
+            <Route path={PLAYLIST_SHOW} component={PlaylistContainer} />
           </Switch>
         </div>
       </section>
@@ -50,6 +54,4 @@ const MainLayout = ({
   );
 }
 
-export default connect(null, {
-  createPlaylist
-})(MainLayout);
+export default MainLayout;

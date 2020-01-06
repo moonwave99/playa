@@ -2,7 +2,7 @@ import React, { useState, FC } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { ipcRenderer } from 'electron';
 import { Album } from '../../../interfaces';
-import { SearchBar } from '../SearchBar/SearchBar';
+import { SearchBar } from './SearchBar/SearchBar';
 import { ResultList } from '../ResultList/ResultList';
 import './SearchView.scss';
 
@@ -15,7 +15,7 @@ export const SearchView: FC<SearchViewProps> = () => {
   const [searched, setSearched] = useState(false);
 
   const onFormSubmit = async (value: string): Promise<void> => {
-    setResults(await ipcRenderer.invoke('db-search', value));
+    setResults(await ipcRenderer.invoke('album:search', value));
     setSearched(true);
   };
 

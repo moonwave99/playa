@@ -7,9 +7,3 @@ export interface Album {
   created: Date;
   path: string;
 }
-
-export interface Playlist {
-  _id: string;
-  title: string;
-  albums: Array<Album>;
-}
