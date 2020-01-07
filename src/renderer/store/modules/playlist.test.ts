@@ -1,6 +1,7 @@
 import reducer, {
   Playlist,
   PlaylistActionTypes,
+  PlaylistState,
   requestAllPlaylists,
   loadAllPlaylists,
   loadPlaylist,
@@ -107,5 +108,11 @@ describe('playlist reducer', () => {
       allById: {},
       current: null
     });
+  });
+
+  it('should handle PLAYLIST_REQUEST_ALL', () => {
+    expect(reducer({} as PlaylistState, {
+      type: PLAYLIST_REQUEST_ALL
+    })).toEqual({});
   });
 });

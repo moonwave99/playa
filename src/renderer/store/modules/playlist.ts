@@ -1,7 +1,5 @@
 import { ipcRenderer as ipc } from 'electron';
 
-export type PlaylistHashMap = { [key: string]: Playlist };
-
 export interface Playlist {
   _id: string;
   _rev?: string;
@@ -9,6 +7,13 @@ export interface Playlist {
   created: string;
   accessed: string;
   albums: string[];
+}
+
+export type PlaylistHashMap = { [key: string]: Playlist };
+
+export interface PlaylistState {
+  allById: PlaylistHashMap;
+  current?: Playlist;
 }
 
 export const PLAYLIST_REQUEST_ALL = 'playa/playlists/REQUEST_ALL';
@@ -19,14 +24,8 @@ export const PLAYLIST_UPDATE      = 'playa/playlists/UPDATE';
 export const PLAYLIST_DELETE      = 'playa/playlists/DELETE';
 export const PLAYLIST_REMOVE      = 'playa/playlists/REMOVE';
 
-export interface PlaylistState {
-  allById: PlaylistHashMap;
-  current?: Playlist;
-}
-
 interface RequestAllPlaylistAction {
   type: typeof PLAYLIST_REQUEST_ALL;
-  playlists: Playlist[];
 }
 
 interface LoadAllPlaylistAction {
@@ -149,24 +148,6 @@ export default function reducer(
   action: PlaylistActionTypes
 ): PlaylistState {
   switch (action.type) {
-    case PLAYLIST_DELETE:
-      ipc.send('playlist:delete', action.playlist);
-      return state;
-    case PLAYLIST_REMOVE:
-      return {
-        ...state,
-        allById: removeIds(state.allById, [action.playlist._id]),
-        current: state.current._id === action.playlist._id ? null : state.current
-      };
-    case PLAYLIST_SAVE:
-      ipc.send('playlist:save', action.playlist);
-      return state;
-    case PLAYLIST_UPDATE:
-      state.allById[action.playlist._id] = action.playlist;
-      return {
-        ...state,
-        current: action.playlist
-      };
     case PLAYLIST_REQUEST_ALL:
       ipc.send('playlist:request-all');
       return state;
@@ -179,7 +160,25 @@ export default function reducer(
       return {
         ...state,
         current: state.allById[action.id] || state.current
-      }
+      };
+    case PLAYLIST_SAVE:
+      ipc.send('playlist:save', action.playlist);
+      return state;
+    case PLAYLIST_UPDATE:
+      state.allById[action.playlist._id] = action.playlist;
+      return {
+        ...state,
+        current: action.playlist
+      };
+    case PLAYLIST_DELETE:
+      ipc.send('playlist:delete', action.playlist);
+      return state;
+    case PLAYLIST_REMOVE:
+      return {
+        ...state,
+        allById: removeIds(state.allById, [action.playlist._id]),
+        current: state.current._id === action.playlist._id ? null : state.current
+      };
     default:
       return state;
   }
