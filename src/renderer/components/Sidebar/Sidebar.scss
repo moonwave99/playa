@@ -4,7 +4,8 @@
   background-color: $backgroundLightColor;
   height: 100%;
   overflow: scroll;
-  .header {
+  .sidebar-header,
+  .sidebar-footer {
     padding: $gutterBig;
     .button {
       width: 100%;

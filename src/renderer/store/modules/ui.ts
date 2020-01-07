@@ -1,42 +1,36 @@
-export const SHOW_SEARCH = 'playa/ui/SHOW_SEARCH';
-export const HIDE_SEARCH = 'playa/ui/HIDE_SEARCH';
+import openContextMenu, { ContextMenuOptions } from '../../utils/contextMenu';
 
-export interface UIState {
-  showSearch: boolean;
+export type UIState = {
+  started?: boolean;
+};
+
+export const SHOW_CONTEXT_MENU = 'playa/ui/SHOW_CONTEXT_MENU';
+
+interface ShowContextMenuAction {
+  type: typeof SHOW_CONTEXT_MENU;
+  options: ContextMenuOptions;
 }
 
-interface ShowSearchAction {
-  type: typeof SHOW_SEARCH;
-}
+export type UIActionTypes = ShowContextMenuAction;
 
-interface HideSearchAction {
-  type: typeof HIDE_SEARCH;
-}
+const INITIAL_STATE = {
+  started: true
+};
 
-export type UIActionTypes = ShowSearchAction | HideSearchAction;
-
-const INITIAL_STATE: UIState = {
-	showSearch: false
-}
-
-export const showSearch = (): Function =>
+export const showContextMenu = (options: ContextMenuOptions): Function =>
   (dispatch: Function): void =>
-    dispatch({ type: SHOW_SEARCH });
-
-export const hideSearch = (): Function =>
-  (dispatch: Function): void =>
-    dispatch({ type: HIDE_SEARCH });
+    dispatch({
+      type: SHOW_CONTEXT_MENU,
+      options
+    });
 
 export default function reducer(
   state: UIState = INITIAL_STATE,
   action: UIActionTypes
 ): UIState {
 	switch (action.type) {
-    case SHOW_SEARCH:
-      state.showSearch = true;
-      return state;
-    case HIDE_SEARCH:
-      state.showSearch = false;
+    case SHOW_CONTEXT_MENU:
+      openContextMenu(action.options);
       return state;
 		default:
 			return state;

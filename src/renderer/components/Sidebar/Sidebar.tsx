@@ -44,17 +44,15 @@ export const Sidebar: FC<SidebarProps> = ({
 
 	return (
 		<div className="sidebar">
-      <div className="header">
-        <p>
-          <Link to={SEARCH} className="button button-primary">Search</Link>
-        </p>
+      <div className="sidebar-header">
+        <Link to={SEARCH} className="button button-primary">Search</Link>
+      </div>
+      <ul className="playlist-list">{ playlists.map(renderListItem) }</ul>
+      <div className="sidebar-footer">
         <button type="button" className="button button-primary" onClick={onButtonClick}>
           Create Playlist
         </button>
       </div>
-      <ul className="playlist-list">{
-        playlists.map(renderListItem)
-      }</ul>
     </div>
 	);
 }

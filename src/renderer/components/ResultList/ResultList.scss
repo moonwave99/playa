@@ -3,7 +3,7 @@
 .result-list {
 	list-style: none;
   overflow: auto;
-	
+
 	&-enter {
     opacity: 0;
   }
@@ -23,11 +23,12 @@
   }
 	.result-list-item {
 		align-items: center;
-		&:hover {
-			.title {
-				text-decoration: underline;
-				cursor: pointer;
-			}
+		padding-left: $gutterBig;
+		margin: 0;
+		height: 3.8rem;
+		line-height: 3.8rem;
+		&:hover{
+			background-color: $backgroundLightColor;
 		}
 		> span {
 			display: inline-block;
@@ -47,6 +48,8 @@
 			border-radius: .25rem;
 			text-align: center;
 			width: 8 * 1.6rem;
+			height: 2.4rem;
+			line-height: 2.4rem;
 			&-album {
 				background-color: $albumColor;
 			}

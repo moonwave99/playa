@@ -16,14 +16,9 @@ import {
 
 const MainLayout = (): ReactElement => {
   const dispatch = useDispatch();
-  const showSearch: boolean = useSelector(({ ui }) => ui.showSearch);
   const playlists = useSelector(({ playlists }) =>
     Object.keys(playlists.allById).map(id => playlists.allById[id])
   );
-  const mainClasses = ['main-layout'];
-  if (showSearch) {
-    mainClasses.push('show-search');
-  }
 
   useEffect(() => {
     dispatch(requestAllPlaylists());
@@ -35,7 +30,7 @@ const MainLayout = (): ReactElement => {
   }
 
   return (
-    <main className={mainClasses.join(' ')}>
+    <main className="main-layout">
       <section className="main-container">
         <aside className="sidebar-wrapper">
           <Sidebar

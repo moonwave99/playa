@@ -1,12 +1,15 @@
 import { shell } from 'electron';
-import { Album } from '../renderer/store/modules/album';
+
+interface HasPath {
+  path: string;
+}
 
 export default class Finder {
   private musicPath: string;
   constructor(musicPath: string){
     this.musicPath = musicPath;
   }
-  reveal(album: Album): void {
-    shell.showItemInFolder(album.path);
+  reveal(item: HasPath): void {
+    shell.showItemInFolder(item.path);
   }
 }
