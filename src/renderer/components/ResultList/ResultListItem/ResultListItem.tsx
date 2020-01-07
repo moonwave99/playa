@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { ipcRenderer } from 'electron';
-import { Album } from '../../../../interfaces';
+import { Album } from '../../../store/modules/album';
 import { VARIOUS_ARTISTS_ID } from '../../../../constants';
 
 type ResultListItemProps = {

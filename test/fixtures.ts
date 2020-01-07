@@ -1,4 +1,4 @@
-import { Album } from '../src/interfaces';
+import { Album } from '../src/renderer/store/modules/album';
 
 export const albums: Array<Album> = [
   {

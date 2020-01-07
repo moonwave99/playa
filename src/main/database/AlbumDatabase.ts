@@ -1,5 +1,5 @@
 import Database from './Database';
-import { Album } from '../../interfaces';
+import { Album } from '../../renderer/store/modules/album';
 
 interface Row {
   doc: Album;

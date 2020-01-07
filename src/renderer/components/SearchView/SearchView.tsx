@@ -1,7 +1,7 @@
 import React, { useState, FC } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { ipcRenderer } from 'electron';
-import { Album } from '../../../interfaces';
+import { Album } from '../../store/modules/album';
 import { SearchBar } from './SearchBar/SearchBar';
 import { ResultList } from '../ResultList/ResultList';
 import './SearchView.scss';

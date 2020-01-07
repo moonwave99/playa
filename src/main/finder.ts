@@ -1,5 +1,5 @@
 import { shell } from 'electron';
-import { Album } from '../interfaces';
+import { Album } from '../renderer/store/modules/album';
 
 export default class Finder {
   private musicPath: string;
