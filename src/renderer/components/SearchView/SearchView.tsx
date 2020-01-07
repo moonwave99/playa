@@ -1,11 +1,11 @@
 import React, { useState, FC } from 'react';
 import { CSSTransition } from 'react-transition-group';
-import { useDispatch } from 'react-redux';
-import { ipcRenderer } from 'electron';
+import { useDispatch, useSelector } from 'react-redux';
 import { Album } from '../../store/modules/album';
 import { SearchBar } from './SearchBar/SearchBar';
 import { ResultList } from '../ResultList/ResultList';
 import { showContextMenu } from '../../store/modules/ui';
+import { searchAlbumsRequest } from '../../store/modules/album';
 import { RESULT_LIST_ITEM } from '../../utils/contextMenu';
 import './SearchView.scss';
 
@@ -14,12 +14,12 @@ type SearchViewProps = {
 };
 
 export const SearchView: FC<SearchViewProps> = () => {
-  const [results, setResults] = useState<Array<Album>>([]);
+  const results: Album[] = useSelector(({ albums }) => albums.searchResults);
   const [searched, setSearched] = useState(false);
   const dispatch = useDispatch();
 
-  const onFormSubmit = async (value: string): Promise<void> => {
-    setResults(await ipcRenderer.invoke('album:search', value));
+  const onFormSubmit = async (query: string): Promise<void> => {
+    dispatch(searchAlbumsRequest(query));
     setSearched(true);
   };
 

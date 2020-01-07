@@ -67,11 +67,6 @@ export type PlaylistActionTypes =
   | DeletePlaylistAction
   | RemovePlaylistAction;
 
-const INITIAL_STATE: PlaylistState = {
-	allById: {},
-  current: null
-}
-
 export const requestAllPlaylists = (): Function =>
   (dispatch: Function): void => {
     dispatch({
@@ -141,6 +136,11 @@ function removeIds(playlistsById: PlaylistHashMap, ids: Playlist['_id'][]): Play
       memo[id] = playlistsById[id];
       return memo;
     }, {});
+}
+
+const INITIAL_STATE: PlaylistState = {
+	allById: {},
+  current: null
 }
 
 export default function reducer(

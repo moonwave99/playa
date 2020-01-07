@@ -6,6 +6,7 @@ import { History, createHashHistory } from 'history';
 
 import uiReducer, { UIState } from './modules/ui';
 import playlistReducer, { PlaylistState } from './modules/playlist';
+import albumReducer, { AlbumState } from './modules/album';
 
 const history = createHashHistory();
 const initialState = {};
@@ -13,6 +14,7 @@ const initialState = {};
 export interface ApplicationState {
   router: RouterState;
   playlists: PlaylistState;
+  albums: AlbumState;
   ui: UIState;
 }
 
@@ -20,6 +22,7 @@ function createRootReducer (history: History): Reducer {
   return combineReducers<ApplicationState>({
     router: connectRouter(history),
     playlists: playlistReducer,
+    albums: albumReducer,
     ui: uiReducer
   });
 }

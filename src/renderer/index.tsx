@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 import MainLayout from './layouts/MainLayout';
 import { store, history } from './store/store';
 import { Playlist, PLAYLIST_UPDATE, PLAYLIST_REMOVE, PLAYLIST_LOAD_ALL } from './store/modules/playlist';
+import { Album, ALBUM_SEARCH_RESULTS } from './store/modules/album';
 import { SEARCH } from './routes'
 import './style.scss';
 
@@ -35,6 +36,13 @@ ipcRenderer.on('playlist:load-all', (_event, playlists: Playlist[]) => {
   store.dispatch({
     type: PLAYLIST_LOAD_ALL,
     playlists
+  });
+});
+
+ipcRenderer.on('album:search:results', (_event, results: Album[]) => {
+  store.dispatch({
+    type: ALBUM_SEARCH_RESULTS,
+    results
   });
 });
 

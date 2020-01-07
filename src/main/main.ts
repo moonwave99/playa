@@ -48,9 +48,13 @@ function initDatabase(userDataPath: string): void {
     }
   });
 
-  ipcMain.handle('album:search', async (event, query) => {
-    const results = await db.album.find(query);
-    return results;
+  ipcMain.on('album:search:request', async (event, query) => {
+    try {
+      const results = await db.album.find(query);
+      event.reply('album:search:results', results);
+    } catch (error) {
+      event.reply('error', error);
+    }
   });
 }
 
