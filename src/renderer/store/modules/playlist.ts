@@ -21,7 +21,6 @@ export const PLAYLIST_REMOVE      = 'playa/playlists/REMOVE';
 
 export interface PlaylistState {
   allById: PlaylistHashMap;
-  recent: Array<Playlist>;
   current?: Playlist;
 }
 
@@ -71,7 +70,6 @@ export type PlaylistActionTypes =
 
 const INITIAL_STATE: PlaylistState = {
 	allById: {},
-  recent: [],
   current: null
 }
 

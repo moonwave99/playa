@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 import { PlaylistView } from '../PlaylistView/PlaylistView';
 import { ApplicationState } from '../../store/store';
-import { Playlist, savePlaylist, deletePlaylist } from '../../store/modules/playlists';
+import { Playlist, savePlaylist, deletePlaylist } from '../../store/modules/playlist';
 
 export const PlaylistContainer = (): ReactElement => {
   const dispatch = useDispatch();

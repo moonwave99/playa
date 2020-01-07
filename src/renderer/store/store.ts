@@ -5,7 +5,7 @@ import thunk from 'redux-thunk';
 import { History, createHashHistory } from 'history';
 
 import uiReducer, { UIState } from './modules/ui';
-import playlistReducer, { PlaylistState } from './modules/playlists';
+import playlistReducer, { PlaylistState } from './modules/playlist';
 
 const history = createHashHistory();
 const initialState = {};

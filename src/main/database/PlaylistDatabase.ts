@@ -1,5 +1,5 @@
 import Database from './Database';
-import { Playlist } from '../../renderer/store/modules/playlists';
+import { Playlist } from '../../renderer/store/modules/playlist';
 
 interface Row {
   doc: SerializedPlaylist;

@@ -1,5 +1,5 @@
 import React, { FC, ReactElement, useRef, SyntheticEvent } from 'react';
-import { Playlist } from '../../../store/modules/playlists';
+import { Playlist } from '../../../store/modules/playlist';
 
 type PlaylistViewTitleProps = {
 	playlist: Playlist;

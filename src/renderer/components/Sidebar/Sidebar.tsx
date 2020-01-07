@@ -1,7 +1,7 @@
 import React, { FC, ReactElement, SyntheticEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, generatePath } from 'react-router-dom';
-import { Playlist, loadPlaylist } from '../../store/modules/playlists';
+import { Playlist, loadPlaylist } from '../../store/modules/playlist';
 import './Sidebar.scss';
 import { PLAYLIST_SHOW, SEARCH } from '../../routes';
 
@@ -48,7 +48,9 @@ export const Sidebar: FC<SidebarProps> = ({
         <p>
           <Link to={SEARCH} className="button button-primary">Search</Link>
         </p>
-        <button type="button" className="button button-primary" onClick={onButtonClick}>Create Playlist</button>
+        <button type="button" className="button button-primary" onClick={onButtonClick}>
+          Create Playlist
+        </button>
       </div>
       <ul className="playlist-list">{
         playlists.map(renderListItem)

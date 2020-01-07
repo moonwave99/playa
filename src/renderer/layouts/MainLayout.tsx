@@ -6,7 +6,7 @@ import { SearchView } from '../components/SearchView/SearchView';
 import { Sidebar } from '../components/Sidebar/Sidebar';
 import { PlaylistContainer } from '../components/PlaylistContainer/PlaylistContainer';
 import { history } from '../store/store';
-import { requestAllPlaylists } from '../store/modules/playlists';
+import { requestAllPlaylists } from '../store/modules/playlist';
 import './MainLayout.scss';
 
 import {
@@ -15,20 +15,19 @@ import {
 } from '../routes';
 
 const MainLayout = (): ReactElement => {
+  const dispatch = useDispatch();
   const showSearch: boolean = useSelector(({ ui }) => ui.showSearch);
   const playlists = useSelector(({ playlists }) =>
     Object.keys(playlists.allById).map(id => playlists.allById[id])
   );
   const mainClasses = ['main-layout'];
-  const dispatch = useDispatch();
+  if (showSearch) {
+    mainClasses.push('show-search');
+  }
 
   useEffect(() => {
     dispatch(requestAllPlaylists());
   }, []);
-
-  if (showSearch) {
-    mainClasses.push('show-search');
-  }
 
   function onCreatePlaylistButtonClick(): void {
     const now = new Date().toISOString();

@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 import { PlaylistViewTitle } from './PlaylistViewTitle/PlaylistViewTitle';
-import { Playlist } from '../../store/modules/playlists';
+import { Playlist } from '../../store/modules/playlist';
 import './PlaylistView.scss';
 
 type PlaylistViewProps = {
