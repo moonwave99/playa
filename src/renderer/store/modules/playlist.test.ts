@@ -102,6 +102,23 @@ describe('playlist actions', () => {
   });
 });
 
+const playlists = [
+  {
+    _id: '1',
+    title: 'New Playlist',
+    created: 'now',
+    accessed: 'now',
+    albums: [] as string[]
+  },
+  {
+    _id: '2',
+    title: 'New Playlist',
+    created: 'now',
+    accessed: 'now',
+    albums: [] as string[]
+  },
+];
+
 describe('playlist reducer', () => {
   it('should return the initial state', () => {
     expect(reducer(undefined, {} as PlaylistActionTypes)).toEqual({
@@ -113,6 +130,80 @@ describe('playlist reducer', () => {
   it('should handle PLAYLIST_REQUEST_ALL', () => {
     expect(reducer({} as PlaylistState, {
       type: PLAYLIST_REQUEST_ALL
+    })).toEqual({});
+  });
+
+  it('should handle PLAYLIST_LOAD_ALL', () => {
+    expect(reducer({} as PlaylistState, {
+      type: PLAYLIST_LOAD_ALL,
+      playlists
+    })).toEqual({
+      allById: {
+        "1": playlists[0],
+        "2": playlists[1]
+      }
+    });
+  });
+
+  it('should handle PLAYLIST_LOAD', () => {
+    const initialState = {
+      allById: {
+        "1": playlists[0],
+        "2": playlists[1]
+      },
+      current: null as Playlist
+    };
+    expect(reducer(initialState, {
+      type: PLAYLIST_LOAD,
+      id: '1'
+    })).toEqual({
+      ...initialState,
+      current: playlists[0]
+    });
+
+    expect(reducer(initialState, {
+      type: PLAYLIST_LOAD,
+      id: '666'
+    })).toEqual(initialState);
+  });
+
+  it('should handle PLAYLIST_SAVE', () => {
+    expect(reducer({} as PlaylistState, {
+      type: PLAYLIST_SAVE,
+      playlist: playlists[0]
+    })).toEqual({});
+  });
+
+  it('should handle PLAYLIST_UPDATE', () => {
+    const initialState = {
+      allById: {
+        "1": playlists[0],
+        "2": playlists[1]
+      },
+      current: null as Playlist
+    };
+    const updatedPlaylist = { ...playlists[0], title: 'Updated Title' };
+    expect(reducer(initialState, {
+      type: PLAYLIST_UPDATE,
+      playlist: updatedPlaylist
+    })).toEqual({
+      allById: {
+        "1": updatedPlaylist,
+        "2": playlists[1]
+      },
+      current: updatedPlaylist
+    });
+
+    expect(reducer(initialState, {
+      type: PLAYLIST_UPDATE,
+      playlist: { _id: '666' } as Playlist
+    })).toEqual(initialState);
+  });
+
+  it('should handle PLAYLIST_DELETE', () => {
+    expect(reducer({} as PlaylistState, {
+      type: PLAYLIST_DELETE,
+      playlist: playlists[0]
     })).toEqual({});
   });
 });

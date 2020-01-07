@@ -165,10 +165,12 @@ export default function reducer(
       ipc.send('playlist:save', action.playlist);
       return state;
     case PLAYLIST_UPDATE:
-      state.allById[action.playlist._id] = action.playlist;
+      if (state.allById[action.playlist._id]) {
+        state.allById[action.playlist._id] = action.playlist;
+      }
       return {
         ...state,
-        current: action.playlist
+        current: state.allById[action.playlist._id] || state.current
       };
     case PLAYLIST_DELETE:
       ipc.send('playlist:delete', action.playlist);
