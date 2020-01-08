@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
-import { Album } from '../../../store/modules/album';
+import cx from 'classnames';
+import { Album, VARIOUS_ARTISTS_ID } from '../../../store/modules/album';
 import './AlbumView.scss';
 
 type AlbumViewProps = {
@@ -10,6 +11,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
   album
 }) => {
   const { _id, type, year, artist, title } = album;
+  const tagClasses = cx('album-type', `album-type-${type}`);
   return (
     <article className="album-view">
       <div className="album-cover">
@@ -17,7 +19,9 @@ export const AlbumView: FC<AlbumViewProps> = ({
       </div>
       <div className="album-content">
         <h2>{title}</h2>
-        <h3>{artist}{year ? `, ${year}` : null} - {type}</h3>
+        <h3>
+          {artist === VARIOUS_ARTISTS_ID ? 'V/A' : artist}{year ? `, ${year}` : null} · <span className={tagClasses}>{type}</span>
+        </h3>
       </div>
     </article>
   );

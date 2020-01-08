@@ -1,9 +1,8 @@
 import React, { FC } from 'react';
 import { useDrag } from 'react-dnd';
 import cx from 'classnames';
-import { Album } from '../../../store/modules/album';
+import { Album, VARIOUS_ARTISTS_ID } from '../../../store/modules/album';
 import { AlbumDragType } from '../../../store/modules/ui';
-import { VARIOUS_ARTISTS_ID } from '../../../../constants';
 
 type ResultListItemProps = {
   result: Album;

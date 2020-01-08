@@ -1,5 +1,7 @@
 import { ipcRenderer as ipc } from 'electron';
 
+export const VARIOUS_ARTISTS_ID = '_various-artists';
+
 export interface Album {
   _id: string;
   artist: string;

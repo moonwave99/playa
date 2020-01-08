@@ -20,6 +20,11 @@
     h3 {
       font-size: 1.6rem;
       letter-spacing: 0;
+      height: 2.4rem;
+      line-height: 2.4rem;
+    }
+    .album-type {
+      @include albumTypeColor();
     }
   }
 }

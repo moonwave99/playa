@@ -1,4 +1,5 @@
 @import "../../variables";
+@import "../../mixins";
 
 .result-list {
 	list-style: none;
@@ -46,6 +47,7 @@
 			padding-right: 2rem;
 		}
 		.tag {
+			@include albumTypeBackground();
 			color: $highlightColor;
 			font-size: 1.2rem;
 			border-radius: .25rem;
@@ -53,31 +55,6 @@
 			width: 8 * 1.6rem;
 			height: 2.4rem;
 			line-height: 2.4rem;
-			&-album {
-				background-color: $albumColor;
-			}
-			&-ep {
-				background-color: $epColor;
-			}
-			&-single {
-				background-color: $singleColor;
-			}
-			&-compilation {
-				background-color: $compilationColor;
-			}
-			&-remix {
-				background-color: $remixColor;
-			}
-			&-bootleg {
-				background-color: $bootlegColor;
-			}
-			&-various {
-				background-color: $variousColor;
-			}
-			&-soundtrack {
-				background-color: $soundtrackColor;
-			}
 		}
 	}
-
 }

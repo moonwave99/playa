@@ -6,4 +6,3 @@ export const HEIGHT = 800;
 export const WIDTH = 1200;
 
 export const MUSIC_ROOT_FOLDER = '/Volumes/Public/Music';
-export const VARIOUS_ARTISTS_ID = '_various-artists';

@@ -9,3 +9,57 @@
     background-color: lighten($backgroundColor, 5%);
   }
 }
+
+@mixin albumTypeBackground() {
+  &-album {
+    background-color: $albumColor;
+  }
+  &-ep {
+    background-color: $epColor;
+  }
+  &-single {
+    background-color: $singleColor;
+  }
+  &-compilation {
+    background-color: $compilationColor;
+  }
+  &-remix {
+    background-color: $remixColor;
+  }
+  &-bootleg {
+    background-color: $bootlegColor;
+  }
+  &-various {
+    background-color: $variousColor;
+  }
+  &-soundtrack {
+    background-color: $soundtrackColor;
+  }
+}
+
+@mixin albumTypeColor() {
+  &-album {
+    color: $albumColor;
+  }
+  &-ep {
+    color: $epColor;
+  }
+  &-single {
+    color: $singleColor;
+  }
+  &-compilation {
+    color: $compilationColor;
+  }
+  &-remix {
+    color: $remixColor;
+  }
+  &-bootleg {
+    color: $bootlegColor;
+  }
+  &-various {
+    color: $variousColor;
+  }
+  &-soundtrack {
+    color: $soundtrackColor;
+  }
+}
