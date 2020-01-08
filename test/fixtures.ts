@@ -8,7 +8,8 @@ export const albums: Array<Album> = [
     year: 1991,
     type: 'album',
     created: new Date('2020-01-01'),
-    path: '/path/to/album_1'
+    path: '/path/to/album_1',
+    tracks: []
   },
   {
     _id: '2',
@@ -17,6 +18,7 @@ export const albums: Array<Album> = [
     year: 1991,
     type: 'album',
     created: new Date('2020-02-02'),
-    path: '/path/to/album_2'
+    path: '/path/to/album_2',
+    tracks: []
   }
 ];

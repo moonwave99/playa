@@ -27,7 +27,7 @@ export const PlaylistViewTitle: FC<PlaylistViewTitleProps> = ({ playlist, onTitl
 
 	function renderTitle(): ReactElement {
 		return (
-			<h2 onClick={_onTitleClick}>{playlist.title}</h2>
+			<h1 onClick={_onTitleClick}>{playlist.title}</h1>
 		);
 	}
 

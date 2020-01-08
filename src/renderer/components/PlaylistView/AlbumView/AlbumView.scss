@@ -1,0 +1,25 @@
+@import "../../../variables";
+@import "../../../mixins";
+
+.album-view {
+  display: flex;
+  .album-cover {
+    width: $albumCoverWidth;
+    height: $albumCoverWidth;
+  }
+  .album-content {
+    padding-left: $gutterBig;
+    h2 {
+      margin: 0;
+      font-size: 1.6rem;
+      line-height: 3.8rem;
+      color: $highlightColor;
+      font-weight: bold;
+      letter-spacing: .01em;
+    }
+    h3 {
+      font-size: 1.6rem;
+      letter-spacing: 0;
+    }
+  }
+}

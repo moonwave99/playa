@@ -1,5 +1,6 @@
 import React, { ReactElement, FC, useState } from 'react';
 import { PlaylistViewTitle } from './PlaylistViewTitle/PlaylistViewTitle';
+import { AlbumView } from './AlbumView/AlbumView';
 import { Playlist } from '../../store/modules/playlist';
 import { Album } from '../../store/modules/album';
 import './PlaylistView.scss';
@@ -36,13 +37,10 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
     setTitleEditing(false);
   }
 
-  function renderAlbum({ _id, type, year, artist, title }: Album): ReactElement {
+  function renderAlbum(album: Album): ReactElement {
     return (
-      <li key={_id}>
-        <span>{type}</span>
-        <span className="year">{year ? year : '-'}</span>
-        <span className="artist">{artist}</span>
-        <span className="title">{title}</span>
+      <li key={album._id}>
+        <AlbumView album={album}/>
       </li>
     );
   }
@@ -66,7 +64,7 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
       </header>
       {
         albums.length > 0
-          ? <ul>{albums.map(renderAlbum)}</ul>
+          ? <ol className="album-list">{albums.map(renderAlbum)}</ol>
           : <p className="playlist-empty-placeholder">Playlist is empty.</p>
       }
     </div>

@@ -8,6 +8,14 @@ export interface Album {
   type: string;
   created: Date;
   path: string;
+  tracks: Track[];
+}
+
+export interface Track {
+  path: string;
+  artist: string;
+  title: string;
+  duration: number;
 }
 
 export interface AlbumState {
