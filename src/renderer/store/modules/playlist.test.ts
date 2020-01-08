@@ -2,14 +2,14 @@ import reducer, {
   Playlist,
   PlaylistActionTypes,
   PlaylistState,
-  requestAllPlaylists,
-  loadAllPlaylists,
+  getAllPlaylistsRequestAction,
+  getAllPlaylistsResponseAction,
   savePlaylist,
   updatePlaylist,
   deletePlaylist,
   removePlaylist,
-  PLAYLIST_REQUEST_ALL,
-  PLAYLIST_LOAD_ALL,
+  PLAYLIST_GET_ALL_REQUEST,
+  PLAYLIST_GET_ALL_RESPONSE,
   PLAYLIST_SAVE,
   PLAYLIST_UPDATE,
   PLAYLIST_DELETE,
@@ -17,23 +17,23 @@ import reducer, {
 } from './playlist';
 
 describe('playlist actions', () => {
-  describe('requestAllPlaylists', () => {
-    it('dispatches a requestAllPlaylists request', () => {
+  describe('getAllPlaylistsRequestAction', () => {
+    it('dispatches a getAllPlaylistsRequestAction request', () => {
       const dispatch = jest.fn();
-      requestAllPlaylists()(dispatch);
+      getAllPlaylistsRequestAction()(dispatch);
       expect(dispatch).toHaveBeenCalledWith({
-        type: PLAYLIST_REQUEST_ALL
+        type: PLAYLIST_GET_ALL_REQUEST
       });
     });
   });
 
-  describe('loadAllPlaylists', () => {
-    it('dispatches a loadAllPlaylists request', () => {
+  describe('getAllPlaylistsResponseAction', () => {
+    it('dispatches a getAllPlaylistsResponseAction request', () => {
       const dispatch = jest.fn();
       const playlists: Playlist[] = [];
-      loadAllPlaylists(playlists)(dispatch);
+      getAllPlaylistsResponseAction(playlists)(dispatch);
       expect(dispatch).toHaveBeenCalledWith({
-        type: PLAYLIST_LOAD_ALL,
+        type: PLAYLIST_GET_ALL_RESPONSE,
         playlists
       });
     });
@@ -112,15 +112,15 @@ describe('playlist reducer', () => {
     });
   });
 
-  it('should handle PLAYLIST_REQUEST_ALL', () => {
+  it('should handle PLAYLIST_GET_ALL_REQUEST', () => {
     expect(reducer({} as PlaylistState, {
-      type: PLAYLIST_REQUEST_ALL
+      type: PLAYLIST_GET_ALL_REQUEST
     })).toEqual({});
   });
 
-  it('should handle PLAYLIST_LOAD_ALL', () => {
+  it('should handle PLAYLIST_GET_ALL_RESPONSE', () => {
     expect(reducer({} as PlaylistState, {
-      type: PLAYLIST_LOAD_ALL,
+      type: PLAYLIST_GET_ALL_RESPONSE,
       playlists
     })).toEqual({
       allById: {

@@ -24,13 +24,16 @@ export const PlaylistList: FC<PlaylistListProps> = ({
   }
 
   return (
-    <ul className="playlist-list">
-      { playlists.map(
-        playlist => <PlaylistListItem
-          key={playlist._id}
-          isCurrent={playlist._id === params._id}
-          playlist={playlist}/>
-      ) }
-    </ul>
+    <div className="playlist-list">
+      <h2>Playlists</h2>
+      <ul>
+        { playlists.map(
+          playlist => <PlaylistListItem
+            key={playlist._id}
+            isCurrent={playlist._id === params._id}
+            playlist={playlist}/>
+        ) }
+      </ul>
+    </div>
   );
 }

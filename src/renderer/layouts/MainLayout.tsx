@@ -6,7 +6,7 @@ import { SearchView } from '../components/SearchView/SearchView';
 import { Sidebar } from '../components/Sidebar/Sidebar';
 import { PlaylistContainer } from '../components/PlaylistContainer/PlaylistContainer';
 import { history } from '../store/store';
-import { requestAllPlaylists } from '../store/modules/playlist';
+import { getAllPlaylistsRequestAction } from '../store/modules/playlist';
 import './MainLayout.scss';
 
 import {
@@ -21,7 +21,7 @@ const MainLayout = (): ReactElement => {
   );
 
   useEffect(() => {
-    dispatch(requestAllPlaylists());
+    dispatch(getAllPlaylistsRequestAction());
   }, []);
 
   function onCreatePlaylistButtonClick(): void {
@@ -37,12 +37,12 @@ const MainLayout = (): ReactElement => {
             playlists={playlists}
             onCreatePlaylistButtonClick={onCreatePlaylistButtonClick} />
         </aside>
-        <div className="playlist-wrapper">
+        <section className="playlist-wrapper">
           <Switch>
             <Route path={SEARCH} component={SearchView} />
             <Route path={PLAYLIST_SHOW} component={PlaylistContainer} />
           </Switch>
-        </div>
+        </section>
       </section>
     </main>
   );

@@ -5,9 +5,13 @@ import reducer, {
   AlbumActionTypes,
   AlbumState,
   searchAlbumsRequest,
-  searchAlbumsResults,
+  searchAlbumsResponse,
+  getAlbumListRequest,
+  getAlbumListResponse,
   ALBUM_SEARCH_REQUEST,
-  ALBUM_SEARCH_RESULTS
+  ALBUM_SEARCH_RESPONSE,
+  ALBUM_GET_LIST_REQUEST,
+  ALBUM_GET_LIST_RESPONSE
 } from './album';
 
 describe('album actions', () => {
@@ -22,13 +26,36 @@ describe('album actions', () => {
     });
   });
 
-  describe('searchAlbumsResults', () => {
-    it('dispatches a searchAlbumsResults request', () => {
+  describe('searchAlbumsResponse', () => {
+    it('dispatches a searchAlbumsResponse request', () => {
       const dispatch = jest.fn();
       const results: Album[] = [];
-      searchAlbumsResults(results)(dispatch);
+      searchAlbumsResponse(results)(dispatch);
       expect(dispatch).toHaveBeenCalledWith({
-        type: ALBUM_SEARCH_RESULTS,
+        type: ALBUM_SEARCH_RESPONSE,
+        results
+      });
+    });
+  });
+
+  describe('getAlbumListRequest', () => {
+    it('dispatches a getAlbumListRequest request', () => {
+      const dispatch = jest.fn();
+      getAlbumListRequest(['1', '2'])(dispatch);
+      expect(dispatch).toHaveBeenCalledWith({
+        type: ALBUM_GET_LIST_REQUEST,
+        ids: ['1', '2']
+      });
+    });
+  });
+
+  describe('getAlbumListResponse', () => {
+    it('dispatches a getAlbumListResponse request', () => {
+      const dispatch = jest.fn();
+      const results: Album[] = [];
+      getAlbumListResponse(results)(dispatch);
+      expect(dispatch).toHaveBeenCalledWith({
+        type: ALBUM_GET_LIST_RESPONSE,
         results
       });
     });
@@ -36,9 +63,13 @@ describe('album actions', () => {
 });
 
 describe('album reducer', () => {
+  const initialState = {
+    searchResults: [] as Album[],
+    currentList: [] as Album[]
+  }
   it('should return the initial state', () => {
     expect(reducer(undefined, {} as AlbumActionTypes))
-      .toEqual({ searchResults: [] as Album[] });
+      .toEqual(initialState);
   });
 
   it('should handle ALBUM_SEARCH_REQUEST', () => {
@@ -48,12 +79,13 @@ describe('album reducer', () => {
     })).toEqual({});
   });
 
-  it('should handle ALBUM_SEARCH_RESULTS', () => {
+  it('should handle ALBUM_SEARCH_RESPONSE', () => {
     const results = albums;
-    expect(reducer({ searchResults: [] } as AlbumState, {
-      type: ALBUM_SEARCH_RESULTS,
+    expect(reducer(initialState, {
+      type: ALBUM_SEARCH_RESPONSE,
       results
     })).toEqual({
+      ...initialState,
       searchResults: results
     });
   });

@@ -37,6 +37,10 @@ export const PlaylistListItem: FC<PlaylistListItemProps> = ({
     }),
   });
 
+  function onClick(): boolean {
+    return isCurrent;
+  }
+
   const classNames = cx('playlist', {
     'current': isCurrent,
     'drag-is-over': isOver,
@@ -46,6 +50,7 @@ export const PlaylistListItem: FC<PlaylistListItemProps> = ({
   return (
     <li ref={drop} className={classNames}>
       <Link
+        onClick={onClick}
         title={playlist._id}
         to={generatePath(PLAYLIST_SHOW, { _id: playlist._id })}
         className="playlist-item">{playlist.title}</Link>

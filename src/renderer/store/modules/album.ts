@@ -12,24 +12,39 @@ export interface Album {
 
 export interface AlbumState {
   searchResults: Album[];
+  currentList: Album[];
 }
 
-export const ALBUM_SEARCH_REQUEST = 'playa/album/SEARCH_REQUEST';
-export const ALBUM_SEARCH_RESULTS = 'playa/album/SEARCH_RESULTS';
+export const ALBUM_SEARCH_REQUEST    = 'playa/album/SEARCH_REQUEST';
+export const ALBUM_SEARCH_RESPONSE   = 'playa/album/SEARCH_RESPONSE';
+export const ALBUM_GET_LIST_REQUEST  = 'playa/album/LOAD_LIST_REQUEST';
+export const ALBUM_GET_LIST_RESPONSE = 'playa/album/LOAD_LIST_RESPONSE';
 
 interface SearchAlbumRequestAction {
   type: typeof ALBUM_SEARCH_REQUEST;
   query: string;
 }
 
-interface SearchAlbumResultsAction {
-  type: typeof ALBUM_SEARCH_RESULTS;
+interface SearchAlbumResponseAction {
+  type: typeof ALBUM_SEARCH_RESPONSE;
+  results: Album[];
+}
+
+interface GetAlbumListRequestAction {
+  type: typeof ALBUM_GET_LIST_REQUEST;
+  ids: string[];
+}
+
+interface GetAlbumListResponseAction {
+  type: typeof ALBUM_GET_LIST_RESPONSE;
   results: Album[];
 }
 
 export type AlbumActionTypes =
     SearchAlbumRequestAction
-  | SearchAlbumResultsAction;
+  | SearchAlbumResponseAction
+  | GetAlbumListRequestAction
+  | GetAlbumListResponseAction;
 
 export const searchAlbumsRequest = (query: string): Function =>
   (dispatch: Function): void => {
@@ -39,16 +54,33 @@ export const searchAlbumsRequest = (query: string): Function =>
     });
   }
 
-export const searchAlbumsResults = (results: Album[]): Function =>
+export const searchAlbumsResponse = (results: Album[]): Function =>
   (dispatch: Function): void => {
     dispatch({
-      type: ALBUM_SEARCH_RESULTS,
+      type: ALBUM_SEARCH_RESPONSE,
+      results
+    });
+  }
+
+export const getAlbumListRequest = (ids: string[]): Function =>
+  (dispatch: Function): void => {
+    dispatch({
+      type: ALBUM_GET_LIST_REQUEST,
+      ids
+    });
+  }
+
+export const getAlbumListResponse = (results: Album[]): Function =>
+  (dispatch: Function): void => {
+    dispatch({
+      type: ALBUM_GET_LIST_RESPONSE,
       results
     });
   }
 
 const INITIAL_STATE = {
-  searchResults: [] as Album[]
+  searchResults: [] as Album[],
+  currentList: [] as Album[]
 };
 
 export default function reducer(
@@ -57,12 +89,20 @@ export default function reducer(
 ): AlbumState {
   switch (action.type) {
     case ALBUM_SEARCH_REQUEST:
-      ipc.send('album:search:request', action.query)
+      ipc.send('album:search:request', action.query);
       return state;
-    case ALBUM_SEARCH_RESULTS:
+    case ALBUM_SEARCH_RESPONSE:
       return {
         ...state,
         searchResults: action.results
+      };
+    case ALBUM_GET_LIST_REQUEST:
+      ipc.send('album:get-list:request', action.ids);
+      return state;
+    case ALBUM_GET_LIST_RESPONSE:
+      return {
+        ...state,
+        currentList: action.results
       };
 		default:
 			return state;

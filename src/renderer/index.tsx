@@ -7,10 +7,20 @@ import { DndProvider } from 'react-dnd';
 import Backend from 'react-dnd-html5-backend';
 import MainLayout from './layouts/MainLayout';
 import { store, history } from './store/store';
-import { Playlist, PLAYLIST_UPDATE, PLAYLIST_REMOVE, PLAYLIST_LOAD_ALL } from './store/modules/playlist';
-import { Album, ALBUM_SEARCH_RESULTS } from './store/modules/album';
 import { SEARCH } from './routes'
 import './style.scss';
+
+import {
+  Playlist,
+  PLAYLIST_GET_ALL_RESPONSE,
+  PLAYLIST_UPDATE,
+  PLAYLIST_REMOVE
+} from './store/modules/playlist';
+import {
+  Album,
+  ALBUM_SEARCH_RESPONSE,
+  ALBUM_GET_LIST_RESPONSE
+} from './store/modules/album';
 
 ipc.on('error', (_event, error) => {
   console.log(error);
@@ -34,16 +44,23 @@ ipc.on('playlist:remove', (_event, playlist: Playlist) => {
   });
 });
 
-ipc.on('playlist:load-all', (_event, playlists: Playlist[]) => {
+ipc.on('playlist:get-all:response', (_event, playlists: Playlist[]) => {
   store.dispatch({
-    type: PLAYLIST_LOAD_ALL,
+    type: PLAYLIST_GET_ALL_RESPONSE,
     playlists
   });
 });
 
-ipc.on('album:search:results', (_event, results: Album[]) => {
+ipc.on('album:search:response', (_event, results: Album[]) => {
   store.dispatch({
-    type: ALBUM_SEARCH_RESULTS,
+    type: ALBUM_SEARCH_RESPONSE,
+    results
+  });
+});
+
+ipc.on('album:get-list:response', (_event, results: Album[]) => {
+  store.dispatch({
+    type: ALBUM_GET_LIST_RESPONSE,
     results
   });
 });

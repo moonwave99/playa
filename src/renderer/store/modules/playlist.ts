@@ -15,19 +15,19 @@ export interface PlaylistState {
   allById: PlaylistHashMap;
 }
 
-export const PLAYLIST_REQUEST_ALL = 'playa/playlists/REQUEST_ALL';
-export const PLAYLIST_LOAD_ALL    = 'playa/playlists/LOAD_ALL';
-export const PLAYLIST_SAVE        = 'playa/playlists/SAVE';
-export const PLAYLIST_UPDATE      = 'playa/playlists/UPDATE';
-export const PLAYLIST_DELETE      = 'playa/playlists/DELETE';
-export const PLAYLIST_REMOVE      = 'playa/playlists/REMOVE';
+export const PLAYLIST_GET_ALL_REQUEST  = 'playa/playlists/GET_ALL_REQUEST';
+export const PLAYLIST_GET_ALL_RESPONSE = 'playa/playlists/GET_ALL_RESPONSE';
+export const PLAYLIST_SAVE             = 'playa/playlists/SAVE';
+export const PLAYLIST_UPDATE           = 'playa/playlists/UPDATE';
+export const PLAYLIST_DELETE           = 'playa/playlists/DELETE';
+export const PLAYLIST_REMOVE           = 'playa/playlists/REMOVE';
 
-interface RequestAllPlaylistAction {
-  type: typeof PLAYLIST_REQUEST_ALL;
+interface GetAllPlaylistRequestAction {
+  type: typeof PLAYLIST_GET_ALL_REQUEST;
 }
 
-interface LoadAllPlaylistAction {
-  type: typeof PLAYLIST_LOAD_ALL;
+interface GetAllPlaylistResponseAction {
+  type: typeof PLAYLIST_GET_ALL_RESPONSE;
   playlists: Playlist[];
 }
 
@@ -52,24 +52,24 @@ interface RemovePlaylistAction {
 }
 
 export type PlaylistActionTypes =
-    RequestAllPlaylistAction
-  | LoadAllPlaylistAction
+    GetAllPlaylistRequestAction
+  | GetAllPlaylistResponseAction
   | SavePlaylistAction
   | UpdatePlaylistAction
   | DeletePlaylistAction
   | RemovePlaylistAction;
 
-export const requestAllPlaylists = (): Function =>
+export const getAllPlaylistsRequestAction = (): Function =>
   (dispatch: Function): void => {
     dispatch({
-      type: PLAYLIST_REQUEST_ALL
+      type: PLAYLIST_GET_ALL_REQUEST
     });
   }
 
-export const loadAllPlaylists = (playlists: Playlist[]): Function =>
+export const getAllPlaylistsResponseAction = (playlists: Playlist[]): Function =>
   (dispatch: Function): void => {
     dispatch({
-      type: PLAYLIST_LOAD_ALL,
+      type: PLAYLIST_GET_ALL_RESPONSE,
       playlists,
     });
   }
@@ -131,10 +131,10 @@ export default function reducer(
   action: PlaylistActionTypes
 ): PlaylistState {
   switch (action.type) {
-    case PLAYLIST_REQUEST_ALL:
-      ipc.send('playlist:request-all');
+    case PLAYLIST_GET_ALL_REQUEST:
+      ipc.send('playlist:get-all:request');
       return state;
-    case PLAYLIST_LOAD_ALL:
+    case PLAYLIST_GET_ALL_RESPONSE:
       return {
         ...state,
         allById: toObj(action.playlists)

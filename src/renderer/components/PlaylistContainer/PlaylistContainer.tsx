@@ -1,16 +1,15 @@
-import React, { ReactElement, useState, useEffect } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
-import { IpcRendererEvent, ipcRenderer as ipc } from 'electron';
 import { PlaylistView } from '../PlaylistView/PlaylistView';
 import { ApplicationState } from '../../store/store';
 import { Playlist, savePlaylist, deletePlaylist } from '../../store/modules/playlist';
-import { Album } from '../../store/modules/album';
+import { Album, getAlbumListRequest } from '../../store/modules/album';
 
 export const PlaylistContainer = (): ReactElement => {
   const dispatch = useDispatch();
   const { _id } = useParams();
-  const [albums, setAlbums] = useState([]);
+
   const playlist = useSelector((state: ApplicationState) => {
     const foundPlaylist = state.playlists.allById[_id];
     if (!foundPlaylist) {
@@ -27,16 +26,17 @@ export const PlaylistContainer = (): ReactElement => {
     return state.playlists.allById[_id];
   });
 
-  useEffect(() => {
-    ipc.send('album:get-list:request', playlist.albums);
-    const listener = (_event: IpcRendererEvent, results: Album[]): void => {
-      setAlbums(results);
-    };
-    ipc.on('album:get-list:response', listener);
-    return (): void => {
-      ipc.removeListener('album:get-list:response', listener);
-    }
+  const albums = useSelector((state: ApplicationState) => {
+    return playlist.albums.length > 0
+     ? state.albums.currentList as Album[]
+     : [];
   });
+
+  useEffect(() => {
+    if (playlist.albums.length > 0) {
+      dispatch(getAlbumListRequest(playlist.albums));
+    }
+  }, [playlist.albums]);
 
   function handleSavePlaylist(changedPlaylist: Playlist ): void {
     dispatch(savePlaylist(changedPlaylist));

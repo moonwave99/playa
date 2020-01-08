@@ -21,10 +21,10 @@ function initDatabase(userDataPath: string): void {
     playlist: new PlaylistDatabase(basePath, 'playlist', true)
   };
 
-  ipcMain.on('playlist:request-all', async (event) => {
+  ipcMain.on('playlist:get-all:request', async (event) => {
     try {
       const results = await db.playlist.findAll();
-      event.reply('playlist:load-all', results);
+      event.reply('playlist:get-all:response', results);
     } catch (error) {
       event.reply('error', error);
     }
@@ -51,7 +51,7 @@ function initDatabase(userDataPath: string): void {
   ipcMain.on('album:search:request', async (event, query) => {
     try {
       const results = await db.album.find(query);
-      event.reply('album:search:results', results);
+      event.reply('album:search:response', results);
     } catch (error) {
       event.reply('error', error);
     }
