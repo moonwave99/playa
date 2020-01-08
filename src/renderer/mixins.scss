@@ -1,9 +1,9 @@
 @import './variables';
 
-@mixin input {
+@mixin input() {
   color: $clearColor;
   transition: background-color .2s ease-in-out;
-  border-radius: .4rem 0 0 .4rem;
+  border-radius: .4rem;
   border-color: $mainColor;
   &:focus {
     background-color: lighten($backgroundColor, 5%);

@@ -1,18 +1,31 @@
+@import "../../variables";
 @import "../../mixins";
 
 .playlist-view {
   padding: 3.8rem;
   min-height: 100vh;
   .playlist-header{
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 3.8rem;
+    h2{
+      margin: 0;
+      line-height: 3.8rem;
+      font-size: 2.4rem;
+      color: $highlightColor;
+    }
     .playlist-header-form {
+      margin: 0;
+      flex: 1;
       .playlist-header-form-input {
         @include input();
         margin-bottom: 0;
       }
     }
     .playlist-header-actions{
+      margin-left: auto;
       button {
-        margin-right: 1rem;
+        margin: 0 1rem 0 0;
       }
     }
   }

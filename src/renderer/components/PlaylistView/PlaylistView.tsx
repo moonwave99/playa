@@ -64,7 +64,11 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
           </button>
         </div>
       </header>
-      <ul>{albums.map(renderAlbum)}</ul>
+      {
+        albums.length > 0
+          ? <ul>{albums.map(renderAlbum)}</ul>
+          : <p className="playlist-empty-placeholder">Playlist is empty.</p>
+      }
     </div>
 	);
 }

@@ -4,11 +4,12 @@
   h2 {
     height: $gutterBig;
     line-height: $gutterBig;
-    font-size: 1.6rem;
-    font-weight: bold;
     padding: 0 $gutterBig;
     margin: 0;
-    letter-spacing: 0;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: $highlightColor;
+    letter-spacing: .01em;
   }
   ul{
     list-style: none;

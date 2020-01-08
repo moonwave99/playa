@@ -10,6 +10,7 @@
 	}
 	.search-input {
 		@include input();
+		border-radius: .4rem 0 0 .4rem;
 		width: calc(100% - #{$searchButtonWidth});
 	}
 	button {
