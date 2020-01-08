@@ -4,14 +4,12 @@ import reducer, {
   PlaylistState,
   requestAllPlaylists,
   loadAllPlaylists,
-  loadPlaylist,
   savePlaylist,
   updatePlaylist,
   deletePlaylist,
   removePlaylist,
   PLAYLIST_REQUEST_ALL,
   PLAYLIST_LOAD_ALL,
-  PLAYLIST_LOAD,
   PLAYLIST_SAVE,
   PLAYLIST_UPDATE,
   PLAYLIST_DELETE,
@@ -37,18 +35,6 @@ describe('playlist actions', () => {
       expect(dispatch).toHaveBeenCalledWith({
         type: PLAYLIST_LOAD_ALL,
         playlists
-      });
-    });
-  });
-
-  describe('loadPlaylist', () => {
-    it('dispatches a loadPlaylist request', () => {
-      const dispatch = jest.fn();
-      const id: Playlist['_id'] = '123';
-      loadPlaylist(id)(dispatch);
-      expect(dispatch).toHaveBeenCalledWith({
-        type: PLAYLIST_LOAD,
-        id
       });
     });
   });
@@ -122,8 +108,7 @@ const playlists = [
 describe('playlist reducer', () => {
   it('should return the initial state', () => {
     expect(reducer(undefined, {} as PlaylistActionTypes)).toEqual({
-      allById: {},
-      current: null
+      allById: {}
     });
   });
 
@@ -145,33 +130,6 @@ describe('playlist reducer', () => {
     });
   });
 
-  describe('should handle PLAYLIST_LOAD', () => {
-    const initialState = {
-      allById: {
-        "1": playlists[0],
-        "2": playlists[1]
-      },
-      current: null as Playlist
-    };
-
-    it('should load playlist by given id if found', () => {
-      expect(reducer(initialState, {
-        type: PLAYLIST_LOAD,
-        id: '1'
-      })).toEqual({
-        ...initialState,
-        current: playlists[0]
-      });
-    });
-
-    it('should leave state unchanged if playlist is not found', () => {
-      expect(reducer(initialState, {
-        type: PLAYLIST_LOAD,
-        id: '666'
-      })).toEqual(initialState);
-    });
-  });
-
   it('should handle PLAYLIST_SAVE', () => {
     expect(reducer({} as PlaylistState, {
       type: PLAYLIST_SAVE,
@@ -184,8 +142,7 @@ describe('playlist reducer', () => {
       allById: {
         "1": playlists[0],
         "2": playlists[1]
-      },
-      current: null as Playlist
+      }
     };
 
     const updatedPlaylist = { ...playlists[0], title: 'Updated Title' };
@@ -196,8 +153,7 @@ describe('playlist reducer', () => {
       allById: {
         "1": updatedPlaylist,
         "2": playlists[1]
-      },
-      current: updatedPlaylist
+      }
     });
   });
 
@@ -213,8 +169,7 @@ describe('playlist reducer', () => {
       allById: {
         "1": playlists[0],
         "2": playlists[1]
-      },
-      current: null as Playlist
+      }
     };
 
     it('should remove playlist by given id if found', () => {
@@ -226,21 +181,6 @@ describe('playlist reducer', () => {
         allById: {
           "2": playlists[1]
         }
-      });
-    });
-
-    it('should set current playlist to null if deleted playlist was selected', () => {
-      expect(reducer({
-        ...initialState,
-        current: playlists[0]
-      }, {
-        type: PLAYLIST_REMOVE,
-        playlist: playlists[0]
-      })).toEqual({
-        allById: {
-          "2": playlists[1]
-        },
-        current: null
       });
     });
 

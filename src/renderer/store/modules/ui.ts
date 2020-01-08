@@ -1,5 +1,7 @@
 import openContextMenu, { ContextMenuOptions } from '../../utils/contextMenu';
 
+export const AlbumDragType = 'ALBUMS';
+
 export type UIState = {
   started?: boolean;
 };

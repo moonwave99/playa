@@ -8,6 +8,13 @@ interface Row {
 }
 
 export default class AlbumDatabase extends Database {
+  async getList(ids: Album['_id'][]): Promise<Array<Album>> {
+    const { rows } = await this.db.allDocs({
+      keys: ids,
+      include_docs: true, // eslint-disable-line
+    });
+    return rows.map((row: Row) => row.doc);
+  }
   async find(query: string): Promise<Array<Album>> {
     const { rows } = await this.db.search({
       query: query,

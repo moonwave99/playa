@@ -1,15 +1,22 @@
-import React, { FC, useState } from 'react';
+import React, { ReactElement, FC, useState } from 'react';
 import { PlaylistViewTitle } from './PlaylistViewTitle/PlaylistViewTitle';
 import { Playlist } from '../../store/modules/playlist';
+import { Album } from '../../store/modules/album';
 import './PlaylistView.scss';
 
 type PlaylistViewProps = {
+  albums: Album[];
   playlist: Playlist;
   savePlaylist: Function;
   deletePlaylist: Function;
 };
 
-export const PlaylistView: FC<PlaylistViewProps> = ({ playlist, savePlaylist, deletePlaylist }) => {
+export const PlaylistView: FC<PlaylistViewProps> = ({
+  albums,
+  playlist,
+  savePlaylist,
+  deletePlaylist
+}) => {
   const [isTitleEditing, setTitleEditing] = useState(false);
 
   function onDeleteButtonClick(): void {
@@ -29,6 +36,17 @@ export const PlaylistView: FC<PlaylistViewProps> = ({ playlist, savePlaylist, de
     setTitleEditing(false);
   }
 
+  function renderAlbum({ _id, type, year, artist, title }: Album): ReactElement {
+    return (
+      <li key={_id}>
+        <span>{type}</span>
+        <span className="year">{year ? year : '-'}</span>
+        <span className="artist">{artist}</span>
+        <span className="title">{title}</span>
+      </li>
+    );
+  }
+
 	return (
 		<div className="playlist-view" onClick={onViewClick}>
       <header className="playlist-header">
@@ -46,6 +64,7 @@ export const PlaylistView: FC<PlaylistViewProps> = ({ playlist, savePlaylist, de
           </button>
         </div>
       </header>
+      <ul>{albums.map(renderAlbum)}</ul>
     </div>
 	);
 }

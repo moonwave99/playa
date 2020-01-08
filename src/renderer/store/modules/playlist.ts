@@ -13,12 +13,10 @@ export type PlaylistHashMap = { [key: string]: Playlist };
 
 export interface PlaylistState {
   allById: PlaylistHashMap;
-  current?: Playlist;
 }
 
 export const PLAYLIST_REQUEST_ALL = 'playa/playlists/REQUEST_ALL';
 export const PLAYLIST_LOAD_ALL    = 'playa/playlists/LOAD_ALL';
-export const PLAYLIST_LOAD        = 'playa/playlists/LOAD';
 export const PLAYLIST_SAVE        = 'playa/playlists/SAVE';
 export const PLAYLIST_UPDATE      = 'playa/playlists/UPDATE';
 export const PLAYLIST_DELETE      = 'playa/playlists/DELETE';
@@ -31,11 +29,6 @@ interface RequestAllPlaylistAction {
 interface LoadAllPlaylistAction {
   type: typeof PLAYLIST_LOAD_ALL;
   playlists: Playlist[];
-}
-
-interface LoadPlaylistAction {
-  type: typeof PLAYLIST_LOAD;
-  id: Playlist['_id'];
 }
 
 interface SavePlaylistAction {
@@ -61,7 +54,6 @@ interface RemovePlaylistAction {
 export type PlaylistActionTypes =
     RequestAllPlaylistAction
   | LoadAllPlaylistAction
-  | LoadPlaylistAction
   | SavePlaylistAction
   | UpdatePlaylistAction
   | DeletePlaylistAction
@@ -79,14 +71,6 @@ export const loadAllPlaylists = (playlists: Playlist[]): Function =>
     dispatch({
       type: PLAYLIST_LOAD_ALL,
       playlists,
-    });
-  }
-
-export const loadPlaylist = (id: Playlist['_id']): Function =>
-  (dispatch: Function): void => {
-    dispatch({
-      type: PLAYLIST_LOAD,
-      id,
     });
   }
 
@@ -131,7 +115,7 @@ function toObj(playlists: Playlist[]): PlaylistHashMap {
 
 function removeIds(playlistsById: PlaylistHashMap, ids: Playlist['_id'][]): PlaylistHashMap {
   return Object.keys(playlistsById)
-    .filter((id) => ids.indexOf(id) === -1)
+    .filter((id) => !ids.includes(id))
     .reduce((memo: PlaylistHashMap, id) => {
       memo[id] = playlistsById[id];
       return memo;
@@ -139,8 +123,7 @@ function removeIds(playlistsById: PlaylistHashMap, ids: Playlist['_id'][]): Play
 }
 
 const INITIAL_STATE: PlaylistState = {
-	allById: {},
-  current: null
+	allById: {}
 }
 
 export default function reducer(
@@ -156,28 +139,19 @@ export default function reducer(
         ...state,
         allById: toObj(action.playlists)
       };
-    case PLAYLIST_LOAD:
-      return {
-        ...state,
-        current: state.allById[action.id] || state.current
-      };
     case PLAYLIST_SAVE:
       ipc.send('playlist:save', action.playlist);
       return state;
     case PLAYLIST_UPDATE:
       state.allById[action.playlist._id] = action.playlist;
-      return {
-        ...state,
-        current: state.allById[action.playlist._id] || state.current
-      };
+      return state;
     case PLAYLIST_DELETE:
       ipc.send('playlist:delete', action.playlist);
       return state;
     case PLAYLIST_REMOVE:
       return {
         ...state,
-        allById: removeIds(state.allById, [action.playlist._id]),
-        current: state.current && state.current._id === action.playlist._id ? null : state.current
+        allById: removeIds(state.allById, [action.playlist._id])
       };
     default:
       return state;

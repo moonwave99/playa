@@ -1,0 +1,33 @@
+@import "../../../variables";
+
+.playlist-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  .playlist {
+    height: $gutterBig;
+    line-height: $gutterBig;
+    vertical-align: middle;
+    margin: 0;
+    &.drag-is-over {
+      background-color: $highlightColor;
+    }
+    &.drag-can-drop {
+
+    }
+    &.current {
+      a {
+        font-weight: bold;
+      }
+    }
+    .playlist-item {
+      display: block;
+      padding: 0 $gutterBig 0 $gutterBig;
+      color: $clearColor;
+      &-active, &:hover {
+        color: $mainColor;
+        background-color: $clearColor;
+      }
+    }
+  }
+}

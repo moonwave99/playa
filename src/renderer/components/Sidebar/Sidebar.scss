@@ -13,31 +13,4 @@
       padding: 0;
     }
   }
-
-  .playlist-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    .playlist {
-      height: $gutterBig;
-      line-height: $gutterBig;
-      vertical-align: middle;
-      margin: 0;
-      &.current {
-        a {
-          color: $mainColor;
-          background-color: $clearColor;
-        }
-      }
-      .playlist-item {
-        display: block;
-        padding: 0 $gutterBig 0 $gutterBig;
-        color: $clearColor;
-        &-active, &:hover {
-          color: $mainColor;
-          background-color: $highlightColor;
-        }
-      }
-    }
-  }
 }

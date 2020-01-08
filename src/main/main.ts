@@ -56,6 +56,15 @@ function initDatabase(userDataPath: string): void {
       event.reply('error', error);
     }
   });
+
+  ipcMain.on('album:get-list:request', async (event, ids) => {
+    try {
+      const results = await db.album.getList(ids);
+      event.reply('album:get-list:response', results);
+    } catch (error) {
+      event.reply('error', error);
+    }
+  });
 }
 
 function createWindow(): void {
@@ -104,7 +113,7 @@ app.on('ready', async () => {
   initDatabase(userDataPath);
 
   const finder = new Finder(MUSIC_ROOT_FOLDER);
-  ipcMain.on('reveal-in-finder', (event, album) => {
+  ipcMain.on('reveal-in-finder', (_event, album) => {
     finder.reveal(album);
   });
   createWindow();
