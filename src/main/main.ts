@@ -4,8 +4,7 @@ import * as path from 'path';
 import * as url from 'url';
 
 import initMenu from './menu';
-import AlbumDatabase from './database/AlbumDatabase';
-import PlaylistDatabase from './database/PlaylistDatabase';
+import Database from './database/Database';
 import Finder from './Finder';
 
 declare let APP_NAME: string;
@@ -17,8 +16,8 @@ let mainWindow: Electron.BrowserWindow;
 function initDatabase(userDataPath: string): void {
   const basePath = userDataPath + path.sep + 'databases' + path.sep;
   const db = {
-    album: new AlbumDatabase(basePath, 'album', true),
-    playlist: new PlaylistDatabase(basePath, 'playlist', true)
+    album: new Database(basePath, 'album', true),
+    playlist: new Database(basePath, 'playlist', true)
   };
 
   ipcMain.on('playlist:get-all:request', async (event) => {
@@ -50,7 +49,7 @@ function initDatabase(userDataPath: string): void {
 
   ipcMain.on('album:search:request', async (event, query) => {
     try {
-      const results = await db.album.find(query);
+      const results = await db.album.find(query, ['artist', 'title']);
       event.reply('album:search:response', results);
     } catch (error) {
       event.reply('error', error);
