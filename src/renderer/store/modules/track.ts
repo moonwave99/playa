@@ -1,9 +1,11 @@
 import { ipcRenderer as ipc } from 'electron';
 
 export interface Track {
+  _id: string;
   path: string;
   artist: string;
   title: string;
+  number: number;
   duration: number;
 }
 
@@ -13,8 +15,8 @@ export interface TrackState {
   allByAlbumId: TrackHashMap;
 }
 
-export const TRACK_GET_LIST_REQUEST  = 'playa/track/LOAD_LIST_REQUEST';
-export const TRACK_GET_LIST_RESPONSE = 'playa/track/LOAD_LIST_RESPONSE';
+export const TRACK_GET_LIST_REQUEST  = 'playa/track/GET_LIST_REQUEST';
+export const TRACK_GET_LIST_RESPONSE = 'playa/track/GET_LIST_RESPONSE';
 
 
 interface GetTrackListRequestAction {

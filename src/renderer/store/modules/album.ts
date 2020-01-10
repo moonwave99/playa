@@ -18,10 +18,12 @@ export interface AlbumState {
   currentList: Album[];
 }
 
-export const ALBUM_SEARCH_REQUEST    = 'playa/album/SEARCH_REQUEST';
-export const ALBUM_SEARCH_RESPONSE   = 'playa/album/SEARCH_RESPONSE';
-export const ALBUM_GET_LIST_REQUEST  = 'playa/album/LOAD_LIST_REQUEST';
-export const ALBUM_GET_LIST_RESPONSE = 'playa/album/LOAD_LIST_RESPONSE';
+export const ALBUM_SEARCH_REQUEST       = 'playa/album/SEARCH_REQUEST';
+export const ALBUM_SEARCH_RESPONSE      = 'playa/album/SEARCH_RESPONSE';
+export const ALBUM_GET_LIST_REQUEST     = 'playa/album/GET_LIST_REQUEST';
+export const ALBUM_GET_LIST_RESPONSE    = 'playa/album/GET_LIST_RESPONSE';
+export const ALBUM_GET_CONTENT_REQUEST  = 'playa/album/GET_CONTENT_REQUEST';
+export const ALBUM_GET_CONTENT_RESPONSE = 'playa/album/GET_CONTENT_RESPONSE';
 
 interface SearchAlbumRequestAction {
   type: typeof ALBUM_SEARCH_REQUEST;
@@ -43,11 +45,23 @@ interface GetAlbumListResponseAction {
   results: Album[];
 }
 
+interface GetAlbumContentRequestAction {
+  type: typeof ALBUM_GET_CONTENT_REQUEST;
+  album: Album;
+}
+
+interface GetAlbumContentResponseAction {
+  type: typeof ALBUM_GET_CONTENT_RESPONSE;
+  album: Album;
+}
+
 export type AlbumActionTypes =
     SearchAlbumRequestAction
   | SearchAlbumResponseAction
   | GetAlbumListRequestAction
-  | GetAlbumListResponseAction;
+  | GetAlbumListResponseAction
+  | GetAlbumContentRequestAction
+  | GetAlbumContentResponseAction;
 
 export const searchAlbumsRequest = (query: string): Function =>
   (dispatch: Function): void => {
@@ -81,6 +95,22 @@ export const getAlbumListResponse = (results: Album[]): Function =>
     });
   }
 
+export const getAlbumContentRequest = (album: Album): Function =>
+  (dispatch: Function): void => {
+    dispatch({
+      type: ALBUM_GET_CONTENT_REQUEST,
+      album
+    });
+  }
+
+export const getAlbumContentResponse = (album: Album): Function =>
+  (dispatch: Function): void => {
+    dispatch({
+      type: ALBUM_GET_CONTENT_RESPONSE,
+      album
+    });
+  }
+
 const INITIAL_STATE = {
   searchResults: [] as Album[],
   currentList: [] as Album[]
@@ -107,6 +137,12 @@ export default function reducer(
         ...state,
         currentList: action.results
       };
+    case ALBUM_GET_CONTENT_REQUEST:
+      ipc.send('album:content:request', action.album);
+      return state;
+    case ALBUM_GET_CONTENT_RESPONSE:
+      state.currentList[state.currentList.findIndex(({ _id }) => _id === action.album._id )] = action.album;
+      return state;
 		default:
 			return state;
   }

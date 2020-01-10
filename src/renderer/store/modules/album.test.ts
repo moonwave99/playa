@@ -8,10 +8,14 @@ import reducer, {
   searchAlbumsResponse,
   getAlbumListRequest,
   getAlbumListResponse,
+  getAlbumContentRequest,
+  getAlbumContentResponse,
   ALBUM_SEARCH_REQUEST,
   ALBUM_SEARCH_RESPONSE,
   ALBUM_GET_LIST_REQUEST,
-  ALBUM_GET_LIST_RESPONSE
+  ALBUM_GET_LIST_RESPONSE,
+  ALBUM_GET_CONTENT_REQUEST,
+  ALBUM_GET_CONTENT_RESPONSE
 } from './album';
 
 describe('album actions', () => {
@@ -60,6 +64,30 @@ describe('album actions', () => {
       });
     });
   });
+
+  describe('getAlbumContentRequest', () => {
+    it('dispatches a getAlbumContentRequest request', () => {
+      const dispatch = jest.fn();
+      const album = albums[0];
+      getAlbumContentRequest(album)(dispatch);
+      expect(dispatch).toHaveBeenCalledWith({
+        type: ALBUM_GET_CONTENT_REQUEST,
+        album
+      });
+    });
+  });
+
+  describe('getAlbumContentResponse', () => {
+    it('dispatches a getAlbumContentResponse request', () => {
+      const dispatch = jest.fn();
+      const album = albums[0];
+      getAlbumContentResponse(album)(dispatch);
+      expect(dispatch).toHaveBeenCalledWith({
+        type: ALBUM_GET_CONTENT_RESPONSE,
+        album
+      });
+    });
+  });
 });
 
 describe('album reducer', () => {
@@ -105,6 +133,28 @@ describe('album reducer', () => {
     })).toEqual({
       ...initialState,
       currentList: results
+    });
+  });
+
+  it('should handle ALBUM_GET_CONTENT_REQUEST', () => {
+    const album = albums[0];
+    expect(reducer({} as AlbumState, {
+      type: ALBUM_GET_CONTENT_REQUEST,
+      album
+    })).toEqual({});
+  });
+
+  it('should handle ALBUM_GET_CONTENT_RESPONSE', () => {
+    const updatedAlbum = { ...albums[0], tracks: ['/path/123', '/path/456'] };
+    expect(reducer({
+      ...initialState,
+      currentList: albums
+    }, {
+      type: ALBUM_GET_CONTENT_RESPONSE,
+      album: updatedAlbum
+    })).toEqual({
+      ...initialState,
+      currentList: [updatedAlbum, albums[1]]
     });
   });
 });

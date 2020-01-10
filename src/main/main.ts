@@ -4,7 +4,8 @@ import * as path from 'path';
 import * as url from 'url';
 
 import initMenu from './menu';
-import Database from './database/Database';
+import loadAlbum from './loadAlbum';
+import Database from './database';
 import Finder from './Finder';
 
 declare let APP_NAME: string;
@@ -61,6 +62,16 @@ function initDatabase(userDataPath: string): void {
     try {
       const results = await db.album.getList(ids);
       event.reply('album:get-list:response', results);
+    } catch (error) {
+      event.reply('error', error);
+    }
+  });
+
+  ipcMain.on('album:content:request', async (event, album) => {
+    try {
+      const tracks = await loadAlbum(album.path);
+      const savedAlbum = await db.album.save({ ...album, tracks });
+      event.reply('album:content:response', savedAlbum);
     } catch (error) {
       event.reply('error', error);
     }

@@ -65,6 +65,13 @@ ipc.on('album:get-list:response', (_event, results: Album[]) => {
   });
 });
 
+ipc.on('album:content:response', (_event, album: Album) => {
+  store.dispatch({
+    type: ALBUM_GET_LIST_RESPONSE,
+    album
+  });
+});
+
 ReactDOM.render(
   <Provider store={store}>
     <ConnectedRouter history={history}>
