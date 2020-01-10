@@ -89,4 +89,22 @@ describe('album reducer', () => {
       searchResults: results
     });
   });
+
+  it('should handle ALBUM_GET_LIST_REQUEST', () => {
+    expect(reducer({} as AlbumState, {
+      type: ALBUM_GET_LIST_REQUEST,
+      ids: []
+    })).toEqual({});
+  });
+
+  it('should handle ALBUM_GET_LIST_RESPONSE', () => {
+    const results = albums;
+    expect(reducer(initialState, {
+      type: ALBUM_GET_LIST_RESPONSE,
+      results
+    })).toEqual({
+      ...initialState,
+      currentList: results
+    });
+  });
 });

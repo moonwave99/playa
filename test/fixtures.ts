@@ -1,4 +1,5 @@
 import { Album } from '../src/renderer/store/modules/album';
+import { Track } from '../src/renderer/store/modules/track';
 
 export const albums: Array<Album> = [
   {
@@ -21,4 +22,8 @@ export const albums: Array<Album> = [
     path: '/path/to/album_2',
     tracks: []
   }
+];
+
+export const tracks: Array<Track> = [
+  
 ];

@@ -17,7 +17,8 @@ function initDatabase(userDataPath: string): void {
   const basePath = userDataPath + path.sep + 'databases' + path.sep;
   const db = {
     album: new Database(basePath, 'album', true),
-    playlist: new Database(basePath, 'playlist', true)
+    playlist: new Database(basePath, 'playlist', true),
+    track: new Database(basePath, 'track', true)
   };
 
   ipcMain.on('playlist:get-all:request', async (event) => {
