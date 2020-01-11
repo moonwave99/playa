@@ -1,6 +1,14 @@
 import { ipcRenderer as ipc } from 'electron';
 import { EntityHashMap, toObj, removeIds } from '../../utils/store';
 
+import { IPC_MESSAGES } from '../../../constants';
+
+const {
+  IPC_PLAYLIST_GET_ALL_REQUEST,
+  IPC_PLAYLIST_SAVE_REQUEST,
+  IPC_PLAYLIST_DELETE_REQUEST
+} = IPC_MESSAGES;
+
 function ensureAlbums(playlists: Playlist[]): Playlist[] {
   return playlists.map((playlist) => playlist.albums ? playlist : { ...playlist, albums: []});
 }
@@ -119,7 +127,7 @@ export default function reducer(
 ): PlaylistState {
   switch (action.type) {
     case PLAYLIST_GET_ALL_REQUEST:
-      ipc.send('playlist:get-all:request');
+      ipc.send(IPC_PLAYLIST_GET_ALL_REQUEST);
       return state;
     case PLAYLIST_GET_ALL_RESPONSE:
       return {
@@ -127,13 +135,13 @@ export default function reducer(
         allById: toObj(ensureAlbums(action.playlists))
       };
     case PLAYLIST_SAVE_REQUEST:
-      ipc.send('playlist:save:request', action.playlist);
+      ipc.send(IPC_PLAYLIST_SAVE_REQUEST, action.playlist);
       return state;
     case PLAYLIST_SAVE_RESPONSE:
       state.allById[action.playlist._id] = action.playlist;
       return state;
     case PLAYLIST_DELETE_REQUEST:
-      ipc.send('playlist:delete', action.playlist);
+      ipc.send(IPC_PLAYLIST_DELETE_REQUEST, action.playlist);
       return state;
     case PLAYLIST_DELETE_RESPONSE:
       return {

@@ -1,6 +1,9 @@
 import { ipcRenderer as ipc } from 'electron';
 import openContextMenu, { ContextMenuOptions } from '../../utils/contextMenu';
 
+import { IPC_MESSAGES } from '../../../constants';
+const { IPC_UI_START_ALBUM_DRAG } = IPC_MESSAGES;
+
 export const AlbumDragType = 'ALBUMS';
 
 export type UIState = {
@@ -51,7 +54,7 @@ export default function reducer(
       openContextMenu(action.options);
       return state;
     case START_ALBUM_DRAG:
-      ipc.send('ui:start-album-drag', action.path);
+      ipc.send(IPC_UI_START_ALBUM_DRAG, action.path);
       return state;
 		default:
 			return state;

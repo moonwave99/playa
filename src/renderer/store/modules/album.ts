@@ -1,6 +1,14 @@
 import { ipcRenderer as ipc } from 'electron';
 import { EntityHashMap, toObj } from '../../utils/store';
 
+import { IPC_MESSAGES } from '../../../constants';
+
+const {
+  IPC_ALBUM_SEARCH_REQUEST,
+  IPC_ALBUM_GET_LIST_REQUEST,
+  IPC_ALBUM_CONTENT_REQUEST
+} = IPC_MESSAGES;
+
 function ensureTracks(albums: Album[]): Album[] {
   return albums.map((album) => album.tracks ? album : { ...album, tracks: []});
 }
@@ -127,7 +135,7 @@ export default function reducer(
 ): AlbumState {
   switch (action.type) {
     case ALBUM_SEARCH_REQUEST:
-      ipc.send('album:search:request', action.query);
+      ipc.send(IPC_ALBUM_SEARCH_REQUEST, action.query);
       return state;
     case ALBUM_SEARCH_RESPONSE:
       return {
@@ -135,7 +143,7 @@ export default function reducer(
         searchResults: action.results
       };
     case ALBUM_GET_LIST_REQUEST:
-      ipc.send('album:get-list:request', action.ids);
+      ipc.send(IPC_ALBUM_GET_LIST_REQUEST, action.ids);
       return state;
     case ALBUM_GET_LIST_RESPONSE:
       return {
@@ -143,7 +151,7 @@ export default function reducer(
         allById: {...state.allById, ...toObj(ensureTracks(action.results)) }
       };
     case ALBUM_GET_CONTENT_REQUEST:
-      ipc.send('album:content:request', action.album);
+      ipc.send(IPC_ALBUM_CONTENT_REQUEST, action.album);
       return state;
     case ALBUM_GET_CONTENT_RESPONSE:
       state.allById[action.album._id] = action.album;

@@ -11,7 +11,25 @@ import Finder from './Finder';
 
 declare let APP_NAME: string;
 
-import { HEIGHT, WIDTH, MACOS, MUSIC_ROOT_FOLDER } from '../constants';
+import { HEIGHT, WIDTH, MACOS, MUSIC_ROOT_FOLDER, IPC_MESSAGES } from '../constants';
+
+const {
+  IPC_PLAYLIST_GET_ALL_REQUEST,
+  IPC_PLAYLIST_GET_ALL_RESPONSE,
+  IPC_PLAYLIST_SAVE_REQUEST,
+  IPC_PLAYLIST_SAVE_RESPONSE,
+  IPC_PLAYLIST_DELETE_REQUEST,
+  IPC_PLAYLIST_DELETE_RESPONSE,
+  IPC_ALBUM_SEARCH_REQUEST,
+  IPC_ALBUM_SEARCH_RESPONSE,
+  IPC_ALBUM_GET_LIST_REQUEST,
+  IPC_ALBUM_GET_LIST_RESPONSE,
+  IPC_ALBUM_CONTENT_REQUEST,
+  IPC_ALBUM_CONTENT_RESPONSE,
+  IPC_TRACK_GET_LIST_REQUEST,
+  IPC_TRACK_GET_LIST_RESPONSE,
+  IPC_UI_START_ALBUM_DRAG
+} = IPC_MESSAGES;
 
 let mainWindow: Electron.BrowserWindow;
 
@@ -23,71 +41,71 @@ function initDatabase(userDataPath: string): void {
     track: new Database(basePath, 'track', true)
   };
 
-  ipcMain.on('playlist:get-all:request', async (event) => {
+  ipcMain.on(IPC_PLAYLIST_GET_ALL_REQUEST, async (event) => {
     try {
       const results = await db.playlist.findAll();
-      event.reply('playlist:get-all:response', results);
+      event.reply(IPC_PLAYLIST_GET_ALL_RESPONSE, results);
     } catch (error) {
       event.reply('error', error);
     }
   });
 
-  ipcMain.on('playlist:save:request', async (event, playlist) => {
+  ipcMain.on(IPC_PLAYLIST_SAVE_REQUEST, async (event, playlist) => {
     try {
       const savedPlaylist = await db.playlist.save(playlist);
-      event.reply('playlist:save:response', savedPlaylist);
+      event.reply(IPC_PLAYLIST_SAVE_RESPONSE, savedPlaylist);
     } catch (error) {
       event.reply('error', error);
     }
   });
 
-  ipcMain.on('playlist:delete:request', async (event, playlist) => {
+  ipcMain.on(IPC_PLAYLIST_DELETE_REQUEST, async (event, playlist) => {
     try {
       const deletedPlaylist = await db.playlist.delete(playlist);
-      event.reply('playlist:delete:response', deletedPlaylist);
+      event.reply(IPC_PLAYLIST_DELETE_RESPONSE, deletedPlaylist);
     } catch (error) {
       event.reply('error', error);
     }
   });
 
-  ipcMain.on('album:search:request', async (event, query) => {
+  ipcMain.on(IPC_ALBUM_SEARCH_REQUEST, async (event, query) => {
     try {
       const results = await db.album.find(query, ['artist', 'title']);
-      event.reply('album:search:response', results);
+      event.reply(IPC_ALBUM_SEARCH_RESPONSE, results);
     } catch (error) {
       event.reply('error', error);
     }
   });
 
-  ipcMain.on('album:get-list:request', async (event, ids) => {
+  ipcMain.on(IPC_ALBUM_GET_LIST_REQUEST, async (event, ids) => {
     try {
       const results = await db.album.getList(ids);
-      event.reply('album:get-list:response', results);
+      event.reply(IPC_ALBUM_GET_LIST_RESPONSE, results);
     } catch (error) {
       event.reply('error', error);
     }
   });
 
-  ipcMain.on('album:content:request', async (event, album) => {
+  ipcMain.on(IPC_ALBUM_CONTENT_REQUEST, async (event, album) => {
     try {
       const tracks = await loadAlbum(album.path);
       const savedAlbum = await db.album.save({ ...album, tracks });
-      event.reply('album:content:response', savedAlbum);
+      event.reply(IPC_ALBUM_CONTENT_RESPONSE, savedAlbum);
     } catch (error) {
       event.reply('error', error);
     }
   });
 
-  ipcMain.on('track:get-list:request', async (event, ids) => {
+  ipcMain.on(IPC_TRACK_GET_LIST_REQUEST, async (event, ids) => {
     try {
       const results = await loadTracklist(ids, db.track);
-      event.reply('track:get-list:response', results);
+      event.reply(IPC_TRACK_GET_LIST_RESPONSE, results);
     } catch (error) {
       event.reply('error', error);
     }
   });
 
-  ipcMain.on('ui:start-album-drag', (event, path) => {
+  ipcMain.on(IPC_UI_START_ALBUM_DRAG, (event, path) => {
     const icon = nativeImage.createFromPath(process.cwd() + '/src/renderer/static/plus.png');
     event.sender.startDrag({
       file: path,

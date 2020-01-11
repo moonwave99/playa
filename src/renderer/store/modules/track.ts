@@ -1,6 +1,13 @@
 import { ipcRenderer as ipc } from 'electron';
 import { EntityHashMap, toObj } from '../../utils/store';
 
+import { IPC_MESSAGES } from '../../../constants';
+
+const {
+  IPC_TRACK_GET_LIST_REQUEST
+} = IPC_MESSAGES;
+
+
 export interface Track {
   _id: string;
   path: string;
@@ -59,7 +66,7 @@ export default function reducer(
 ): TrackState {
   switch (action.type) {
     case TRACK_GET_LIST_REQUEST:
-      ipc.send('track:get-list:request', action.ids);
+      ipc.send(IPC_TRACK_GET_LIST_REQUEST, action.ids);
       return state;
     case TRACK_GET_LIST_RESPONSE:
       return {

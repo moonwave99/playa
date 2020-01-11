@@ -1,4 +1,6 @@
 import { app, Menu } from 'electron';
+import { IPC_MESSAGES } from '../constants';
+const { IPC_UI_SEARCH_SHOW } = IPC_MESSAGES;
 
 export default function initMenu(window: Electron.BrowserWindow): void {
   const template: Electron.MenuItemConstructorOptions[] = [
@@ -28,7 +30,7 @@ export default function initMenu(window: Electron.BrowserWindow): void {
         {
           label: 'Search',
           accelerator: 'cmd+f',
-          click: (): void => window.webContents.send('search:show')
+          click: (): void => window.webContents.send(IPC_UI_SEARCH_SHOW)
         }
       ]
     },

@@ -1,6 +1,9 @@
 import { remote, ipcRenderer as ipc } from 'electron';
 const { Menu, MenuItem } = remote;
 
+import { IPC_MESSAGES } from '../../constants';
+const { IPC_SYS_REVEAL_IN_FINDER } = IPC_MESSAGES;
+
 export const RESULT_LIST_ITEM = 'RESULT_LIST_ITEM';
 
 export const ContextMenuTypes = RESULT_LIST_ITEM;
@@ -21,7 +24,7 @@ export default function openContextMenu(options: ContextMenuOptions): void {
       menu.append(new MenuItem({
         label: 'Show in Finder',
         click(): void {
-          ipc.send('reveal-in-finder', options.context);
+          ipc.send(IPC_SYS_REVEAL_IN_FINDER, options.context);
         },
       }));
       break;
