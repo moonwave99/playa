@@ -13,14 +13,25 @@ import './style.scss';
 import {
   Playlist,
   PLAYLIST_GET_ALL_RESPONSE,
-  PLAYLIST_UPDATE,
-  PLAYLIST_REMOVE
+  PLAYLIST_SAVE_RESPONSE,
+  PLAYLIST_DELETE_RESPONSE
 } from './store/modules/playlist';
+
 import {
   Album,
   ALBUM_SEARCH_RESPONSE,
-  ALBUM_GET_LIST_RESPONSE
+  ALBUM_GET_LIST_RESPONSE,
+  ALBUM_GET_CONTENT_RESPONSE
 } from './store/modules/album';
+
+import {
+  TRACK_GET_LIST_REQUEST
+} from './store/modules/track';
+
+import {
+  Track,
+  TRACK_GET_LIST_RESPONSE
+} from './store/modules/track';
 
 ipc.on('error', (_event, error) => {
   console.log(error);
@@ -30,16 +41,16 @@ ipc.on('search:show', () => {
   history.replace(SEARCH);
 });
 
-ipc.on('playlist:update', (_event, playlist: Playlist) => {
+ipc.on('playlist:save:response', (_event, playlist: Playlist) => {
   store.dispatch({
-    type: PLAYLIST_UPDATE,
+    type: PLAYLIST_SAVE_RESPONSE,
     playlist
   });
 });
 
-ipc.on('playlist:remove', (_event, playlist: Playlist) => {
+ipc.on('playlist:delete:response', (_event, playlist: Playlist) => {
   store.dispatch({
-    type: PLAYLIST_REMOVE,
+    type: PLAYLIST_DELETE_RESPONSE,
     playlist
   });
 });
@@ -67,8 +78,19 @@ ipc.on('album:get-list:response', (_event, results: Album[]) => {
 
 ipc.on('album:content:response', (_event, album: Album) => {
   store.dispatch({
-    type: ALBUM_GET_LIST_RESPONSE,
+    type: ALBUM_GET_CONTENT_RESPONSE,
     album
+  });
+  store.dispatch({
+    type: TRACK_GET_LIST_REQUEST,
+    ids: album.tracks
+  });
+});
+
+ipc.on('track:get-list:response', (_event, results: Track[]) => {
+  store.dispatch({
+    type: TRACK_GET_LIST_RESPONSE,
+    results
   });
 });
 

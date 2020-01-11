@@ -2,5 +2,24 @@
 @import "../../../../mixins";
 
 .tracklist-view {
-
+  ol {
+    margin: 0;
+    list-style: none;
+    font-family: 'Fira Mono', monospace;
+    > li {
+      margin: 1rem 0;
+      line-height: 2.5rem;
+      display: flex;
+      &:first-child {
+        margin-top: 0;
+      }
+      &.not-ready {
+        background-color: $backgroundLightColor;
+        height: 2.5rem;
+      }
+      .duration {
+        margin-left: auto;
+      }
+    }
+  }
 }

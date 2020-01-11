@@ -1,18 +1,18 @@
 import { ipcRenderer as ipc } from 'electron';
+import { EntityHashMap, toObj } from '../../utils/store';
 
 export interface Track {
   _id: string;
   path: string;
+  found: boolean;
   artist: string;
   title: string;
   number: number;
   duration: number;
 }
 
-export type TrackHashMap = { [key: string]: Track[] };
-
 export interface TrackState {
-  allByAlbumId: TrackHashMap;
+  allById: EntityHashMap<Track>;
 }
 
 export const TRACK_GET_LIST_REQUEST  = 'playa/track/GET_LIST_REQUEST';
@@ -22,39 +22,35 @@ export const TRACK_GET_LIST_RESPONSE = 'playa/track/GET_LIST_RESPONSE';
 interface GetTrackListRequestAction {
   type: typeof TRACK_GET_LIST_REQUEST;
   ids: string[];
-  albumId: string;
 }
 
 interface GetTrackListResponseAction {
   type: typeof TRACK_GET_LIST_RESPONSE;
   results: Track[];
-  albumId: string;
 }
 
 export type TrackActionTypes =
     GetTrackListRequestAction
   | GetTrackListResponseAction;
 
-export const getTrackListRequest = (ids: string[], albumId: string): Function =>
+export const getTrackListRequest = (ids: string[]): Function =>
   (dispatch: Function): void => {
     dispatch({
       type: TRACK_GET_LIST_REQUEST,
-      ids,
-      albumId
+      ids
     });
   }
 
-export const getTrackListResponse = (results: Track[], albumId: string): Function =>
+export const getTrackListResponse = (results: Track[]): Function =>
   (dispatch: Function): void => {
     dispatch({
       type: TRACK_GET_LIST_RESPONSE,
-      results,
-      albumId
+      results
     });
   }
 
 const INITIAL_STATE = {
-  allByAlbumId: {}
+  allById: {}
 };
 
 export default function reducer(
@@ -63,11 +59,13 @@ export default function reducer(
 ): TrackState {
   switch (action.type) {
     case TRACK_GET_LIST_REQUEST:
-      ipc.send('track:get-list:request', action.ids, action.albumId);
+      ipc.send('track:get-list:request', action.ids);
       return state;
     case TRACK_GET_LIST_RESPONSE:
-      state.allByAlbumId[action.albumId] = action.results;
-      return state;
+      return {
+        ...state,
+        allById: {...state.allById, ...toObj(action.results) }
+      };
     default:
       return state;
   }

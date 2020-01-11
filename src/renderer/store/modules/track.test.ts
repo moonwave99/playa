@@ -1,3 +1,4 @@
+import { toObj } from '../../utils/store';
 import { tracks } from '../../../../test/fixtures';
 
 import reducer, {
@@ -12,26 +13,24 @@ import reducer, {
 
 describe('album actions', () => {
   describe('getTrackListRequest', () => {
-    it('dispatches a getTrackListRequest request', () => {
+    it('should dispatch getTrackListRequest request', () => {
       const dispatch = jest.fn();
-      getTrackListRequest(['1', '2'], '1')(dispatch);
+      getTrackListRequest(['1', '2'])(dispatch);
       expect(dispatch).toHaveBeenCalledWith({
         type: TRACK_GET_LIST_REQUEST,
-        ids: ['1', '2'],
-        albumId: '1'
+        ids: ['1', '2']
       });
     });
   });
 
   describe('getTrackListResponse', () => {
-    it('dispatches a getTrackListResponse request', () => {
+    it('should dispatch getTrackListResponse request', () => {
       const dispatch = jest.fn();
       const results: Track[] = [];
-      getTrackListResponse(results, '1')(dispatch);
+      getTrackListResponse(results)(dispatch);
       expect(dispatch).toHaveBeenCalledWith({
         type: TRACK_GET_LIST_RESPONSE,
-        results,
-        albumId: '1'
+        results
       });
     });
   });
@@ -39,7 +38,7 @@ describe('album actions', () => {
 
 describe('track reducer', () => {
   const initialState = {
-    allByAlbumId: {}
+    allById: {}
   }
   it('should return the initial state', () => {
     expect(reducer(undefined, {} as TrackActionTypes))
@@ -49,8 +48,7 @@ describe('track reducer', () => {
   it('should handle TRACK_GET_LIST_REQUEST', () => {
     expect(reducer({} as TrackState, {
       type: TRACK_GET_LIST_REQUEST,
-      ids: [],
-      albumId: '1'
+      ids: []
     })).toEqual({});
   });
 
@@ -59,12 +57,9 @@ describe('track reducer', () => {
     expect(reducer(initialState, {
       type: TRACK_GET_LIST_RESPONSE,
       results,
-      albumId: '1'
     })).toEqual({
       ...initialState,
-      allByAlbumId: {
-        '1': results
-      }
+      allById: { ...initialState.allById, ...toObj(tracks)}
     });
   });
 });

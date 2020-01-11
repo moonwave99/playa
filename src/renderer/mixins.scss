@@ -35,6 +35,9 @@
   &-soundtrack {
     background-color: $soundtrackColor;
   }
+  &-tribute {
+    background-color: $tributeColor;
+  }
 }
 
 @mixin albumTypeColor() {
@@ -61,5 +64,8 @@
   }
   &-soundtrack {
     color: $soundtrackColor;
+  }
+  &-tribute {
+    color: $tributeColor;
   }
 }

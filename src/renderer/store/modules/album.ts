@@ -1,4 +1,9 @@
 import { ipcRenderer as ipc } from 'electron';
+import { EntityHashMap, toObj } from '../../utils/store';
+
+function ensureTracks(albums: Album[]): Album[] {
+  return albums.map((album) => album.tracks ? album : { ...album, tracks: []});
+}
 
 export const VARIOUS_ARTISTS_ID = '_various-artists';
 
@@ -15,7 +20,7 @@ export interface Album {
 
 export interface AlbumState {
   searchResults: Album[];
-  currentList: Album[];
+  allById: EntityHashMap<Album>;
 }
 
 export const ALBUM_SEARCH_REQUEST       = 'playa/album/SEARCH_REQUEST';
@@ -113,7 +118,7 @@ export const getAlbumContentResponse = (album: Album): Function =>
 
 const INITIAL_STATE = {
   searchResults: [] as Album[],
-  currentList: [] as Album[]
+  allById: {}
 };
 
 export default function reducer(
@@ -135,13 +140,13 @@ export default function reducer(
     case ALBUM_GET_LIST_RESPONSE:
       return {
         ...state,
-        currentList: action.results
+        allById: {...state.allById, ...toObj(ensureTracks(action.results)) }
       };
     case ALBUM_GET_CONTENT_REQUEST:
       ipc.send('album:content:request', action.album);
       return state;
     case ALBUM_GET_CONTENT_RESPONSE:
-      state.currentList[state.currentList.findIndex(({ _id }) => _id === action.album._id )] = action.album;
+      state.allById[action.album._id] = action.album;
       return state;
 		default:
 			return state;

@@ -1,3 +1,4 @@
+import { ipcRenderer as ipc } from 'electron';
 import openContextMenu, { ContextMenuOptions } from '../../utils/contextMenu';
 
 export const AlbumDragType = 'ALBUMS';
@@ -7,19 +8,34 @@ export type UIState = {
 };
 
 export const SHOW_CONTEXT_MENU = 'playa/ui/SHOW_CONTEXT_MENU';
+export const START_ALBUM_DRAG = 'playa/ui/START_ALBUM_DRAG';
 
 interface ShowContextMenuAction {
   type: typeof SHOW_CONTEXT_MENU;
   options: ContextMenuOptions;
 }
 
-export type UIActionTypes = ShowContextMenuAction;
+interface StartAlbumDragAction {
+  type: typeof START_ALBUM_DRAG;
+  path: string;
+}
+
+export type UIActionTypes =
+    ShowContextMenuAction
+  | StartAlbumDragAction;
 
 export const showContextMenu = (options: ContextMenuOptions): Function =>
   (dispatch: Function): void =>
     dispatch({
       type: SHOW_CONTEXT_MENU,
       options
+    });
+
+export const startAlbumDrag = (path: string): Function =>
+  (dispatch: Function): void =>
+    dispatch({
+      type: START_ALBUM_DRAG,
+      path
     });
 
 const INITIAL_STATE = {
@@ -33,6 +49,9 @@ export default function reducer(
 	switch (action.type) {
     case SHOW_CONTEXT_MENU:
       openContextMenu(action.options);
+      return state;
+    case START_ALBUM_DRAG:
+      ipc.send('ui:start-album-drag', action.path);
       return state;
 		default:
 			return state;

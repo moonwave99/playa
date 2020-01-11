@@ -1,4 +1,9 @@
 import { ipcRenderer as ipc } from 'electron';
+import { EntityHashMap, toObj, removeIds } from '../../utils/store';
+
+function ensureAlbums(playlists: Playlist[]): Playlist[] {
+  return playlists.map((playlist) => playlist.albums ? playlist : { ...playlist, albums: []});
+}
 
 export interface Playlist {
   _id: string;
@@ -9,18 +14,16 @@ export interface Playlist {
   albums: string[];
 }
 
-export type PlaylistHashMap = { [key: string]: Playlist };
-
 export interface PlaylistState {
-  allById: PlaylistHashMap;
+  allById: EntityHashMap<Playlist>;
 }
 
 export const PLAYLIST_GET_ALL_REQUEST  = 'playa/playlists/GET_ALL_REQUEST';
 export const PLAYLIST_GET_ALL_RESPONSE = 'playa/playlists/GET_ALL_RESPONSE';
-export const PLAYLIST_SAVE             = 'playa/playlists/SAVE';
-export const PLAYLIST_UPDATE           = 'playa/playlists/UPDATE';
-export const PLAYLIST_DELETE           = 'playa/playlists/DELETE';
-export const PLAYLIST_REMOVE           = 'playa/playlists/REMOVE';
+export const PLAYLIST_SAVE_REQUEST     = 'playa/playlists/SAVE_REQUEST';
+export const PLAYLIST_SAVE_RESPONSE    = 'playa/playlists/SAVE_RESPONSE';
+export const PLAYLIST_DELETE_REQUEST   = 'playa/playlists/DELETE_REQUEST';
+export const PLAYLIST_DELETE_RESPONSE  = 'playa/playlists/DELETE_RESPONSE';
 
 interface GetAllPlaylistRequestAction {
   type: typeof PLAYLIST_GET_ALL_REQUEST;
@@ -31,42 +34,42 @@ interface GetAllPlaylistResponseAction {
   playlists: Playlist[];
 }
 
-interface SavePlaylistAction {
-  type: typeof PLAYLIST_SAVE;
+interface SavePlaylistRequestAction {
+  type: typeof PLAYLIST_SAVE_REQUEST;
   playlist: Playlist;
 }
 
-interface UpdatePlaylistAction {
-  type: typeof PLAYLIST_UPDATE;
+interface SavePlaylistResponseAction {
+  type: typeof PLAYLIST_SAVE_RESPONSE;
   playlist: Playlist;
 }
 
-interface DeletePlaylistAction {
-  type: typeof PLAYLIST_DELETE;
+interface DeletePlaylistRequestAction {
+  type: typeof PLAYLIST_DELETE_REQUEST;
   playlist: Playlist;
 }
 
-interface RemovePlaylistAction {
-  type: typeof PLAYLIST_REMOVE;
+interface DeletePlaylistResponseAction {
+  type: typeof PLAYLIST_DELETE_RESPONSE;
   playlist: Playlist;
 }
 
 export type PlaylistActionTypes =
     GetAllPlaylistRequestAction
   | GetAllPlaylistResponseAction
-  | SavePlaylistAction
-  | UpdatePlaylistAction
-  | DeletePlaylistAction
-  | RemovePlaylistAction;
+  | SavePlaylistRequestAction
+  | SavePlaylistResponseAction
+  | DeletePlaylistRequestAction
+  | DeletePlaylistResponseAction;
 
-export const getAllPlaylistsRequestAction = (): Function =>
+export const getAllPlaylistsRequest = (): Function =>
   (dispatch: Function): void => {
     dispatch({
       type: PLAYLIST_GET_ALL_REQUEST
     });
   }
 
-export const getAllPlaylistsResponseAction = (playlists: Playlist[]): Function =>
+export const getAllPlaylistsResponse = (playlists: Playlist[]): Function =>
   (dispatch: Function): void => {
     dispatch({
       type: PLAYLIST_GET_ALL_RESPONSE,
@@ -74,53 +77,37 @@ export const getAllPlaylistsResponseAction = (playlists: Playlist[]): Function =
     });
   }
 
-export const savePlaylist = (playlist: Playlist): Function =>
+export const savePlaylistRequest = (playlist: Playlist): Function =>
   (dispatch: Function): void => {
     dispatch({
-      type: PLAYLIST_SAVE,
+      type: PLAYLIST_SAVE_REQUEST,
       playlist
     });
   }
 
-export const updatePlaylist = (playlist: Playlist): Function =>
+export const savePlaylistResponse = (playlist: Playlist): Function =>
   (dispatch: Function): void => {
     dispatch({
-      type: PLAYLIST_UPDATE,
+      type: PLAYLIST_SAVE_RESPONSE,
       playlist
     });
   }
 
-export const deletePlaylist = (playlist: Playlist): Function =>
+export const deletePlaylistRequest = (playlist: Playlist): Function =>
   (dispatch: Function): void => {
     dispatch({
-      type: PLAYLIST_DELETE,
+      type: PLAYLIST_DELETE_REQUEST,
       playlist
     });
   }
 
-export const removePlaylist = (playlist: Playlist): Function =>
+export const deletePlaylistResponse = (playlist: Playlist): Function =>
   (dispatch: Function): void => {
     dispatch({
-      type: PLAYLIST_REMOVE,
+      type: PLAYLIST_DELETE_RESPONSE,
       playlist
     });
   }
-
-function toObj(playlists: Playlist[]): PlaylistHashMap {
-  return playlists.reduce((memo: PlaylistHashMap, p: Playlist) => {
-    memo[p._id] = p;
-    return memo;
-  }, {});
-}
-
-function removeIds(playlistsById: PlaylistHashMap, ids: Playlist['_id'][]): PlaylistHashMap {
-  return Object.keys(playlistsById)
-    .filter((id) => !ids.includes(id))
-    .reduce((memo: PlaylistHashMap, id) => {
-      memo[id] = playlistsById[id];
-      return memo;
-    }, {});
-}
 
 const INITIAL_STATE: PlaylistState = {
 	allById: {}
@@ -137,18 +124,18 @@ export default function reducer(
     case PLAYLIST_GET_ALL_RESPONSE:
       return {
         ...state,
-        allById: toObj(action.playlists)
+        allById: toObj(ensureAlbums(action.playlists))
       };
-    case PLAYLIST_SAVE:
-      ipc.send('playlist:save', action.playlist);
+    case PLAYLIST_SAVE_REQUEST:
+      ipc.send('playlist:save:request', action.playlist);
       return state;
-    case PLAYLIST_UPDATE:
+    case PLAYLIST_SAVE_RESPONSE:
       state.allById[action.playlist._id] = action.playlist;
       return state;
-    case PLAYLIST_DELETE:
+    case PLAYLIST_DELETE_REQUEST:
       ipc.send('playlist:delete', action.playlist);
       return state;
-    case PLAYLIST_REMOVE:
+    case PLAYLIST_DELETE_RESPONSE:
       return {
         ...state,
         allById: removeIds(state.allById, [action.playlist._id])

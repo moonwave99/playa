@@ -2,36 +2,36 @@ import reducer, {
   Playlist,
   PlaylistActionTypes,
   PlaylistState,
-  getAllPlaylistsRequestAction,
-  getAllPlaylistsResponseAction,
-  savePlaylist,
-  updatePlaylist,
-  deletePlaylist,
-  removePlaylist,
+  getAllPlaylistsRequest,
+  getAllPlaylistsResponse,
+  savePlaylistRequest,
+  savePlaylistResponse,
+  deletePlaylistRequest,
+  deletePlaylistResponse,
   PLAYLIST_GET_ALL_REQUEST,
   PLAYLIST_GET_ALL_RESPONSE,
-  PLAYLIST_SAVE,
-  PLAYLIST_UPDATE,
-  PLAYLIST_DELETE,
-  PLAYLIST_REMOVE
+  PLAYLIST_SAVE_REQUEST,
+  PLAYLIST_SAVE_RESPONSE,
+  PLAYLIST_DELETE_REQUEST,
+  PLAYLIST_DELETE_RESPONSE
 } from './playlist';
 
 describe('playlist actions', () => {
-  describe('getAllPlaylistsRequestAction', () => {
-    it('dispatches a getAllPlaylistsRequestAction request', () => {
+  describe('getAllPlaylistsRequest', () => {
+    it('should dispatch a getAllPlaylistsRequest request', () => {
       const dispatch = jest.fn();
-      getAllPlaylistsRequestAction()(dispatch);
+      getAllPlaylistsRequest()(dispatch);
       expect(dispatch).toHaveBeenCalledWith({
         type: PLAYLIST_GET_ALL_REQUEST
       });
     });
   });
 
-  describe('getAllPlaylistsResponseAction', () => {
-    it('dispatches a getAllPlaylistsResponseAction request', () => {
+  describe('getAllPlaylistsResponse', () => {
+    it('should dispatch a getAllPlaylistsResponse request', () => {
       const dispatch = jest.fn();
       const playlists: Playlist[] = [];
-      getAllPlaylistsResponseAction(playlists)(dispatch);
+      getAllPlaylistsResponse(playlists)(dispatch);
       expect(dispatch).toHaveBeenCalledWith({
         type: PLAYLIST_GET_ALL_RESPONSE,
         playlists
@@ -39,49 +39,49 @@ describe('playlist actions', () => {
     });
   });
 
-  describe('savePlaylist', () => {
-    it('dispatches a savePlaylist request', () => {
+  describe('savePlaylistRequest', () => {
+    it('should dispatch a savePlaylistRequest request', () => {
       const dispatch = jest.fn();
       const playlist = {} as Playlist;
-      savePlaylist(playlist)(dispatch);
+      savePlaylistRequest(playlist)(dispatch);
       expect(dispatch).toHaveBeenCalledWith({
-        type: PLAYLIST_SAVE,
+        type: PLAYLIST_SAVE_REQUEST,
         playlist
       });
     });
   });
 
-  describe('updatePlaylist', () => {
-    it('dispatches a updatePlaylist request', () => {
+  describe('savePlaylistResponse', () => {
+    it('should dispatch a savePlaylistResponse request', () => {
       const dispatch = jest.fn();
       const playlist = {} as Playlist;
-      updatePlaylist(playlist)(dispatch);
+      savePlaylistResponse(playlist)(dispatch);
       expect(dispatch).toHaveBeenCalledWith({
-        type: PLAYLIST_UPDATE,
+        type: PLAYLIST_SAVE_RESPONSE,
         playlist
       });
     });
   });
 
-  describe('deletePlaylist', () => {
-    it('dispatches a deletePlaylist request', () => {
+  describe('deletePlaylistRequest', () => {
+    it('should dispatch a deletePlaylistRequest request', () => {
       const dispatch = jest.fn();
       const playlist = {} as Playlist;
-      deletePlaylist(playlist)(dispatch);
+      deletePlaylistRequest(playlist)(dispatch);
       expect(dispatch).toHaveBeenCalledWith({
-        type: PLAYLIST_DELETE,
+        type: PLAYLIST_DELETE_REQUEST,
         playlist
       });
     });
   });
 
   describe('removePlaylist', () => {
-    it('dispatches a removePlaylist request', () => {
+    it('should dispatch a deletePlaylistResponse request', () => {
       const dispatch = jest.fn();
       const playlist = {} as Playlist;
-      removePlaylist(playlist)(dispatch);
+      deletePlaylistResponse(playlist)(dispatch);
       expect(dispatch).toHaveBeenCalledWith({
-        type: PLAYLIST_REMOVE,
+        type: PLAYLIST_DELETE_RESPONSE,
         playlist
       });
     });
@@ -130,14 +130,14 @@ describe('playlist reducer', () => {
     });
   });
 
-  it('should handle PLAYLIST_SAVE', () => {
+  it('should handle PLAYLIST_SAVE_REQUEST', () => {
     expect(reducer({} as PlaylistState, {
-      type: PLAYLIST_SAVE,
+      type: PLAYLIST_SAVE_REQUEST,
       playlist: playlists[0]
     })).toEqual({});
   });
 
-  it('should handle PLAYLIST_UPDATE', () => {
+  it('should handle PLAYLIST_SAVE_RESPONSE', () => {
     const initialState = {
       allById: {
         "1": playlists[0],
@@ -147,7 +147,7 @@ describe('playlist reducer', () => {
 
     const updatedPlaylist = { ...playlists[0], title: 'Updated Title' };
     expect(reducer(initialState, {
-      type: PLAYLIST_UPDATE,
+      type: PLAYLIST_SAVE_RESPONSE,
       playlist: updatedPlaylist
     })).toEqual({
       allById: {
@@ -157,14 +157,14 @@ describe('playlist reducer', () => {
     });
   });
 
-  it('should handle PLAYLIST_DELETE', () => {
+  it('should handle PLAYLIST_DELETE_REQUEST', () => {
     expect(reducer({} as PlaylistState, {
-      type: PLAYLIST_DELETE,
+      type: PLAYLIST_DELETE_REQUEST,
       playlist: playlists[0]
     })).toEqual({});
   });
 
-  describe('should handle PLAYLIST_REMOVE', () => {
+  describe('should handle PLAYLIST_DELETE_RESPONSE', () => {
     const initialState = {
       allById: {
         "1": playlists[0],
@@ -174,7 +174,7 @@ describe('playlist reducer', () => {
 
     it('should remove playlist by given id if found', () => {
       expect(reducer(initialState, {
-        type: PLAYLIST_REMOVE,
+        type: PLAYLIST_DELETE_RESPONSE,
         playlist: playlists[0]
       })).toEqual({
         ...initialState,
@@ -186,7 +186,7 @@ describe('playlist reducer', () => {
 
     it('should leave state unchanged if playlist is not found', () => {
       expect(reducer(initialState, {
-        type: PLAYLIST_REMOVE,
+        type: PLAYLIST_DELETE_RESPONSE,
         playlist: { _id: '666' } as Playlist
       })).toEqual(initialState);
     });

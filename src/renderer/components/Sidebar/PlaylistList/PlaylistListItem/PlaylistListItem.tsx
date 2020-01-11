@@ -4,7 +4,7 @@ import { Link, generatePath } from 'react-router-dom';
 import { useDrop } from 'react-dnd';
 import { uniq } from 'lodash';
 import cx from 'classnames';
-import { Playlist, savePlaylist } from '../../../../store/modules/playlist';
+import { Playlist, savePlaylistRequest } from '../../../../store/modules/playlist';
 import { AlbumDragType } from '../../../../store/modules/ui';
 import { PLAYLIST_SHOW } from '../../../../routes';
 
@@ -26,7 +26,7 @@ export const PlaylistListItem: FC<PlaylistListItemProps> = ({
   const [{ isOver, canDrop }, drop] = useDrop({
     accept: [AlbumDragType],
     drop: (item: DropItem) => {
-      dispatch(savePlaylist({
+      dispatch(savePlaylistRequest({
         ...playlist,
         albums: uniq([...playlist.albums, item._id])
       }));

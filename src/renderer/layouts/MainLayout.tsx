@@ -6,7 +6,7 @@ import { SearchView } from '../components/SearchView/SearchView';
 import { Sidebar } from '../components/Sidebar/Sidebar';
 import { PlaylistContainer } from '../components/PlaylistContainer/PlaylistContainer';
 import { history } from '../store/store';
-import { getAllPlaylistsRequestAction } from '../store/modules/playlist';
+import { getAllPlaylistsRequest } from '../store/modules/playlist';
 import './MainLayout.scss';
 
 import {
@@ -21,7 +21,7 @@ const MainLayout = (): ReactElement => {
   );
 
   useEffect(() => {
-    dispatch(getAllPlaylistsRequestAction());
+    dispatch(getAllPlaylistsRequest());
   }, []);
 
   function onCreatePlaylistButtonClick(): void {

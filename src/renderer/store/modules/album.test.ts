@@ -1,3 +1,4 @@
+import { toObj } from '../../utils/store';
 import { albums } from '../../../../test/fixtures';
 
 import reducer, {
@@ -20,7 +21,7 @@ import reducer, {
 
 describe('album actions', () => {
   describe('searchAlbumsRequest', () => {
-    it('dispatches a searchAlbumsRequest request', () => {
+    it('should dispatch searchAlbumsRequest request', () => {
       const dispatch = jest.fn();
       searchAlbumsRequest('#!q')(dispatch);
       expect(dispatch).toHaveBeenCalledWith({
@@ -31,7 +32,7 @@ describe('album actions', () => {
   });
 
   describe('searchAlbumsResponse', () => {
-    it('dispatches a searchAlbumsResponse request', () => {
+    it('should dispatch searchAlbumsResponse request', () => {
       const dispatch = jest.fn();
       const results: Album[] = [];
       searchAlbumsResponse(results)(dispatch);
@@ -43,7 +44,7 @@ describe('album actions', () => {
   });
 
   describe('getAlbumListRequest', () => {
-    it('dispatches a getAlbumListRequest request', () => {
+    it('should dispatch getAlbumListRequest request', () => {
       const dispatch = jest.fn();
       getAlbumListRequest(['1', '2'])(dispatch);
       expect(dispatch).toHaveBeenCalledWith({
@@ -54,7 +55,7 @@ describe('album actions', () => {
   });
 
   describe('getAlbumListResponse', () => {
-    it('dispatches a getAlbumListResponse request', () => {
+    it('should dispatch getAlbumListResponse request', () => {
       const dispatch = jest.fn();
       const results: Album[] = [];
       getAlbumListResponse(results)(dispatch);
@@ -66,7 +67,7 @@ describe('album actions', () => {
   });
 
   describe('getAlbumContentRequest', () => {
-    it('dispatches a getAlbumContentRequest request', () => {
+    it('should dispatch getAlbumContentRequest request', () => {
       const dispatch = jest.fn();
       const album = albums[0];
       getAlbumContentRequest(album)(dispatch);
@@ -78,7 +79,7 @@ describe('album actions', () => {
   });
 
   describe('getAlbumContentResponse', () => {
-    it('dispatches a getAlbumContentResponse request', () => {
+    it('should dispatch getAlbumContentResponse request', () => {
       const dispatch = jest.fn();
       const album = albums[0];
       getAlbumContentResponse(album)(dispatch);
@@ -93,7 +94,7 @@ describe('album actions', () => {
 describe('album reducer', () => {
   const initialState = {
     searchResults: [] as Album[],
-    currentList: [] as Album[]
+    allById: {}
   }
   it('should return the initial state', () => {
     expect(reducer(undefined, {} as AlbumActionTypes))
@@ -132,7 +133,7 @@ describe('album reducer', () => {
       results
     })).toEqual({
       ...initialState,
-      currentList: results
+      allById: { ...initialState.allById, ...toObj(albums)}
     });
   });
 
@@ -145,16 +146,20 @@ describe('album reducer', () => {
   });
 
   it('should handle ALBUM_GET_CONTENT_RESPONSE', () => {
-    const updatedAlbum = { ...albums[0], tracks: ['/path/123', '/path/456'] };
+    const allById = toObj(albums);
+    const updatedAlbum = { ...allById['1'], tracks: ['/path/123', '/path/456'] };
     expect(reducer({
       ...initialState,
-      currentList: albums
+      allById
     }, {
       type: ALBUM_GET_CONTENT_RESPONSE,
       album: updatedAlbum
     })).toEqual({
       ...initialState,
-      currentList: [updatedAlbum, albums[1]]
+      allById: {
+        '1': updatedAlbum,
+        ...allById
+      }
     });
   });
 });

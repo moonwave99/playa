@@ -11,10 +11,11 @@ interface Entity {
   _deleted?: boolean;
 }
 
-interface Row {
-  doc: Entity;
+interface Row<T> {
+  doc: T;
   id: string;
   score: number;
+  error?: boolean;
 }
 
 export default class Database {
@@ -33,21 +34,21 @@ export default class Database {
     }
   }
 
-  async find(query: string, fields: string[]): Promise<Array<Entity>> {
+  async find<T>(query: string, fields: string[]): Promise<Array<T>> {
     const { rows } = await this.db.search({
       query: query,
       fields,
       include_docs: true, // eslint-disable-line
       highlighting: true
     });
-    return rows.map((row: Row) => row.doc);
+    return rows.map((row: Row<T>) => row.doc);
   }
 
-  async findAll(): Promise<Array<Entity>> {
+  async findAll<T>(): Promise<Array<T>> {
     const { rows } = await this.db.allDocs({
       include_docs: true, // eslint-disable-line
     });
-    return rows.map((row: Row) => row.doc);
+    return rows.map((row: Row<T>) => row.doc);
   }
 
   async get<T>(_id: string): Promise<T> {
@@ -64,17 +65,19 @@ export default class Database {
     return doc;
   }
 
-  async getList(ids: Entity['_id'][]): Promise<Array<Entity>> {
+  async getList<T>(ids: Entity['_id'][]): Promise<Array<T>> {
     const { rows } = await this.db.allDocs({
       keys: ids,
       include_docs: true, // eslint-disable-line
     });
-    return rows.map((row: Row) => row.doc);
+    return rows
+      .filter((row: Row<T>) => !row.error)
+      .map((row: Row<T>) => row.doc);
   }
 
-  async save<T extends Entity>(entity: T): Promise<Entity> {
+  async save<T extends Entity>(entity: T): Promise<T> {
     const { _id, _rev, ...other } = entity;
-    const doc: Entity = await this.get(_id);
+    const doc: T = await this.get(_id);
     let payload;
     if (doc._rev) {
       payload = { ...other, _id, _rev: doc._rev };
@@ -87,9 +90,9 @@ export default class Database {
     }
     throw new Error(`Problems persisting entity: ${_id} - ${_rev}`);
   }
-  
+
   async delete<T extends Entity>(entity: T): Promise<Entity> {
-    const doc: Entity = await this.get(entity._id);
+    const doc: T = await this.get(entity._id);
     doc._deleted = true;
     const response = await this.db.put(doc);
     if (response.ok === true) {

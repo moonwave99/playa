@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 import { PlaylistView } from '../PlaylistView/PlaylistView';
 import { ApplicationState } from '../../store/store';
-import { Playlist, savePlaylist, deletePlaylist } from '../../store/modules/playlist';
-import { Album, getAlbumListRequest } from '../../store/modules/album';
+import { Playlist, savePlaylistRequest, deletePlaylistRequest } from '../../store/modules/playlist';
+import { getAlbumListRequest } from '../../store/modules/album';
 
 export const PlaylistContainer = (): ReactElement => {
   const dispatch = useDispatch();
@@ -27,23 +27,19 @@ export const PlaylistContainer = (): ReactElement => {
   });
 
   const albums = useSelector((state: ApplicationState) => {
-    return playlist.albums.length > 0
-     ? state.albums.currentList as Album[]
-     : [];
+    return playlist.albums.map((id) => state.albums.allById[id]).filter(x => !!x);
   });
 
   useEffect(() => {
-    if (playlist.albums.length > 0) {
-      dispatch(getAlbumListRequest(playlist.albums));
-    }
-  }, [playlist.albums]);
+    dispatch(getAlbumListRequest(playlist.albums));
+  }, [playlist.albums.length]);
 
   function handleSavePlaylist(changedPlaylist: Playlist ): void {
-    dispatch(savePlaylist(changedPlaylist));
+    dispatch(savePlaylistRequest(changedPlaylist));
   }
 
   function handleDeletePlaylist(): void {
-    dispatch(deletePlaylist(playlist));
+    dispatch(deletePlaylistRequest(playlist));
   }
 
 	return (

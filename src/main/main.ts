@@ -1,10 +1,11 @@
-import { app, BrowserWindow, ipcMain, shell } from 'electron';
+import { app, BrowserWindow, ipcMain, shell, nativeImage } from 'electron';
 import { is } from 'electron-util';
 import * as path from 'path';
 import * as url from 'url';
 
 import initMenu from './menu';
 import loadAlbum from './loadAlbum';
+import loadTracklist from './loadTracklist';
 import Database from './database';
 import Finder from './Finder';
 
@@ -31,19 +32,19 @@ function initDatabase(userDataPath: string): void {
     }
   });
 
-  ipcMain.on('playlist:save', async (event, playlist) => {
+  ipcMain.on('playlist:save:request', async (event, playlist) => {
     try {
       const savedPlaylist = await db.playlist.save(playlist);
-      event.reply('playlist:update', savedPlaylist);
+      event.reply('playlist:save:response', savedPlaylist);
     } catch (error) {
       event.reply('error', error);
     }
   });
 
-  ipcMain.on('playlist:delete', async (event, playlist) => {
+  ipcMain.on('playlist:delete:request', async (event, playlist) => {
     try {
       const deletedPlaylist = await db.playlist.delete(playlist);
-      event.reply('playlist:remove', deletedPlaylist);
+      event.reply('playlist:delete:response', deletedPlaylist);
     } catch (error) {
       event.reply('error', error);
     }
@@ -76,6 +77,24 @@ function initDatabase(userDataPath: string): void {
       event.reply('error', error);
     }
   });
+
+  ipcMain.on('track:get-list:request', async (event, ids) => {
+    try {
+      const results = await loadTracklist(ids, db.track);
+      event.reply('track:get-list:response', results);
+    } catch (error) {
+      event.reply('error', error);
+    }
+  });
+
+  ipcMain.on('ui:start-album-drag', (event, path) => {
+    const icon = nativeImage.createFromPath(process.cwd() + '/src/renderer/static/plus.png');
+    event.sender.startDrag({
+      file: path,
+      icon
+    });
+  });
+
 }
 
 function createWindow(): void {

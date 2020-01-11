@@ -9,7 +9,7 @@ import { RESULT_LIST_ITEM } from '../../utils/contextMenu';
 
 describe('ui actions', () => {
   describe('showContextMenu', () => {
-    it('dispatches a showContextMenu request', () => {
+    it('should dispatch a showContextMenu request', () => {
       const dispatch = jest.fn();
       const context = { path: '/path/to/123' };
       showContextMenu({

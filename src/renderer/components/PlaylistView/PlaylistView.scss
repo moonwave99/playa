@@ -32,7 +32,7 @@
   }
   .album-list {
     list-style: none;
-    li {
+    > li {
       margin-bottom: $gutterBig;
     }
   }

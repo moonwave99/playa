@@ -3,16 +3,22 @@
 
 .album-view {
   display: flex;
+  margin-bottom: $gutterBig * 3;
   .album-cover {
     width: $albumCoverWidth;
     height: $albumCoverWidth;
+    margin-bottom: $gutterBig * 0.5;
+  }
+  .album-actions {
+    text-align: center;
   }
   .album-content {
     padding-left: $gutterBig;
+    flex: 1;
     h2 {
       margin: 0;
-      font-size: 1.6rem;
-      line-height: 3.8rem;
+      font-size: 3.2rem;
+      line-height: 5rem;
       color: $highlightColor;
       font-weight: bold;
       letter-spacing: .01em;
