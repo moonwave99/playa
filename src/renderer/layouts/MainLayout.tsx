@@ -26,7 +26,7 @@ const MainLayout = (): ReactElement => {
     Object.keys(playlists.allById)
       .map(id => playlists.allById[id])
       .sort((a: Playlist, b: Playlist) =>
-        new Date(b.created).getTime() - new Date(a.created).getTime()
+        new Date(b.accessed).getTime() - new Date(a.accessed).getTime()
       ).slice(0, RECENT_PLAYLIST_COUNT)
   );
 

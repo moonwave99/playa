@@ -1,7 +1,8 @@
 import React, { FC, ReactElement } from 'react';
 import cx from 'classnames';
 import { Track } from '../../../../store/modules/track';
-import { formatTrackNumber, formatDuration } from '../../../../utils/tracklist';
+import { formatTrackNumber } from '../../../../utils/tracklist';
+import { formatDuration } from '../../../../utils/datetime';
 import { COLORS } from '../../../../../constants';
 import './TracklistView.scss';
 

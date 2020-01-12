@@ -6,6 +6,7 @@ import { ApplicationState } from '../../store/store';
 import { Playlist, savePlaylistRequest, deletePlaylistRequest } from '../../store/modules/playlist';
 import { updateTitle } from '../../store/modules/ui';
 import { getAlbumListRequest } from '../../store/modules/album';
+import { confirmDialog } from '../../utils/dialogs';
 
 export const PlaylistContainer = (): ReactElement => {
   const dispatch = useDispatch();
@@ -44,7 +45,14 @@ export const PlaylistContainer = (): ReactElement => {
   }
 
   function handleDeletePlaylist(): void {
-    dispatch(deletePlaylistRequest(playlist));
+    confirmDialog({
+      title: 'Playlist Delete',
+      message: `You are about to delete playlist '${playlist.title}', are you sure?`
+    }).then((confirmed) => {
+      if (confirmed) {
+        dispatch(deletePlaylistRequest(playlist));
+      }
+    });
   }
 
 	return (

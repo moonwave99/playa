@@ -3,12 +3,18 @@
 
 .all-playlists-view {
   padding: $gutterBig;
-  .all-playlists-list {
+  .all-playlists-table {
     list-style: none;
-    .all-playlists-list-item {
-  		margin: 0;
-  		height: 3.8rem;
-  		line-height: 3.8rem;
+    tr {
+      td, th {
+        border-color: $backgroundLightColor;
+      }
+      td {
+        padding-top: 0;
+        padding-bottom: 0;
+        height: 3.8rem;
+    		line-height: 3.8rem;
+      }
     }
   }
 }

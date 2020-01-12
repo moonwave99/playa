@@ -8,7 +8,10 @@
     width: $albumCoverWidth;
     .album-actions {
       text-align: center;
-    }    
+      button {
+        margin-bottom: 1.6rem;
+      }
+    }
   }
   .album-content {
     padding-left: $gutterBig;

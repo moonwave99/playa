@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, shell } from 'electron';
+import { app, BrowserWindow, ipcMain as ipc, shell, dialog } from 'electron';
 import { is } from 'electron-util';
 import * as path from 'path';
 import * as url from 'url';
@@ -31,7 +31,8 @@ const {
   IPC_TRACK_GET_LIST_RESPONSE,
   IPC_COVER_GET_REQUEST,
   IPC_COVER_GET_RESPONSE,
-  IPC_SYS_REVEAL_IN_FINDER
+  IPC_SYS_REVEAL_IN_FINDER,
+  IPC_DIALOG_SHOW_MESSAGE
 } = IPC_MESSAGES;
 
 let mainWindow: Electron.BrowserWindow;
@@ -44,7 +45,7 @@ function initDatabase(userDataPath: string): void {
     track: new Database(databasePath, 'track', true)
   };
 
-  ipcMain.on(IPC_PLAYLIST_GET_ALL_REQUEST, async (event) => {
+  ipc.on(IPC_PLAYLIST_GET_ALL_REQUEST, async (event) => {
     try {
       const results = await db.playlist.findAll();
       event.reply(IPC_PLAYLIST_GET_ALL_RESPONSE, results);
@@ -53,16 +54,19 @@ function initDatabase(userDataPath: string): void {
     }
   });
 
-  ipcMain.on(IPC_PLAYLIST_SAVE_REQUEST, async (event, playlist) => {
+  ipc.on(IPC_PLAYLIST_SAVE_REQUEST, async (event, playlist) => {
     try {
-      const savedPlaylist = await db.playlist.save(playlist);
+      const savedPlaylist = await db.playlist.save({
+        ...playlist,
+        accessed: new Date().toISOString()
+      });
       event.reply(IPC_PLAYLIST_SAVE_RESPONSE, savedPlaylist);
     } catch (error) {
       event.reply('error', error);
     }
   });
 
-  ipcMain.on(IPC_PLAYLIST_DELETE_REQUEST, async (event, playlist) => {
+  ipc.on(IPC_PLAYLIST_DELETE_REQUEST, async (event, playlist) => {
     try {
       const deletedPlaylist = await db.playlist.delete(playlist);
       event.reply(IPC_PLAYLIST_DELETE_RESPONSE, deletedPlaylist);
@@ -71,7 +75,7 @@ function initDatabase(userDataPath: string): void {
     }
   });
 
-  ipcMain.on(IPC_ALBUM_SEARCH_REQUEST, async (event, query) => {
+  ipc.on(IPC_ALBUM_SEARCH_REQUEST, async (event, query) => {
     try {
       const results = await db.album.find(query, ['artist', 'title']);
       event.reply(IPC_ALBUM_SEARCH_RESPONSE, results);
@@ -80,7 +84,7 @@ function initDatabase(userDataPath: string): void {
     }
   });
 
-  ipcMain.on(IPC_ALBUM_GET_LIST_REQUEST, async (event, ids) => {
+  ipc.on(IPC_ALBUM_GET_LIST_REQUEST, async (event, ids) => {
     try {
       const results = await db.album.getList(ids);
       event.reply(IPC_ALBUM_GET_LIST_RESPONSE, results);
@@ -89,7 +93,7 @@ function initDatabase(userDataPath: string): void {
     }
   });
 
-  ipcMain.on(IPC_ALBUM_CONTENT_REQUEST, async (event, album) => {
+  ipc.on(IPC_ALBUM_CONTENT_REQUEST, async (event, album) => {
     try {
       const tracks = await loadAlbum(album.path);
       const savedAlbum = await db.album.save({ ...album, tracks });
@@ -99,7 +103,7 @@ function initDatabase(userDataPath: string): void {
     }
   });
 
-  ipcMain.on(IPC_TRACK_GET_LIST_REQUEST, async (event, ids) => {
+  ipc.on(IPC_TRACK_GET_LIST_REQUEST, async (event, ids) => {
     try {
       const results = await loadTracklist(ids, db.track);
       event.reply(IPC_TRACK_GET_LIST_RESPONSE, results);
@@ -119,7 +123,7 @@ function initDiscogsClient(userDataPath: string): void {
     { consumerKey: DISCOGS_KEY, consumerSecret: DISCOGS_SECRET }
   );
 
-  ipcMain.on(IPC_COVER_GET_REQUEST, async (event, album) => {
+  ipc.on(IPC_COVER_GET_REQUEST, async (event, album) => {
     try {
       const { artist, title, _id } = album;
       const imagePath = await discogsClient.getAlbumCover(artist, title, _id);
@@ -132,7 +136,7 @@ function initDiscogsClient(userDataPath: string): void {
 
 function initFinder(): void {
   const finder = new Finder(MUSIC_ROOT_FOLDER);
-  ipcMain.on(IPC_SYS_REVEAL_IN_FINDER, (_event, album) => {
+  ipc.on(IPC_SYS_REVEAL_IN_FINDER, (_event, album) => {
     finder.reveal(album);
   });
 }
@@ -183,6 +187,11 @@ app.on('ready', async () => {
   initDatabase(userDataPath);
   initDiscogsClient(userDataPath);
   initFinder();
+
+  ipc.handle(IPC_DIALOG_SHOW_MESSAGE, async (_event, options) => {
+    return dialog.showMessageBox(options);
+  });
+
   createWindow();
 });
 

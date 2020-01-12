@@ -29,6 +29,7 @@ export const IPC_MESSAGES = {
   IPC_TRACK_GET_LIST_RESPONSE : 'track:get-list:response',
   IPC_COVER_GET_REQUEST: 'cover:get:request',
   IPC_COVER_GET_RESPONSE: 'cover:get:response',
+  IPC_DIALOG_SHOW_MESSAGE: 'dialog:show-message'
 };
 
 export const COLORS = {
