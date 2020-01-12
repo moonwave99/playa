@@ -3,21 +3,31 @@ import { Switch, Route } from 'react-router';
 import { generatePath } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { SearchView } from '../components/SearchView/SearchView';
-import { Sidebar } from '../components/Sidebar/Sidebar';
+import { SidebarView } from '../components/SidebarView/SidebarView';
+import { AllPlaylistContainer } from '../components/AllPlaylistContainer/AllPlaylistContainer';
 import { PlaylistContainer } from '../components/PlaylistContainer/PlaylistContainer';
 import { history } from '../store/store';
-import { getAllPlaylistsRequest } from '../store/modules/playlist';
+import { Playlist, getAllPlaylistsRequest } from '../store/modules/playlist';
 import './MainLayout.scss';
 
 import {
   SEARCH,
+  PLAYLIST_ALL,
   PLAYLIST_SHOW
 } from '../routes';
+
+import {
+  RECENT_PLAYLIST_COUNT
+} from '../../constants';
 
 const MainLayout = (): ReactElement => {
   const dispatch = useDispatch();
   const playlists = useSelector(({ playlists }) =>
-    Object.keys(playlists.allById).map(id => playlists.allById[id])
+    Object.keys(playlists.allById)
+      .map(id => playlists.allById[id])
+      .sort((a: Playlist, b: Playlist) =>
+        new Date(b.created).getTime() - new Date(a.created).getTime()
+      ).slice(0, RECENT_PLAYLIST_COUNT)
   );
 
   useEffect(() => {
@@ -33,13 +43,14 @@ const MainLayout = (): ReactElement => {
     <main className="main-layout">
       <section className="main-container">
         <aside className="sidebar-wrapper">
-          <Sidebar
+          <SidebarView
             playlists={playlists}
             onCreatePlaylistButtonClick={onCreatePlaylistButtonClick} />
         </aside>
         <section className="playlist-wrapper">
           <Switch>
             <Route path={SEARCH} component={SearchView} />
+            <Route path={PLAYLIST_ALL} exact component={AllPlaylistContainer} />
             <Route path={PLAYLIST_SHOW} component={PlaylistContainer} />
           </Switch>
         </section>

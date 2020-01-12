@@ -2,15 +2,15 @@ import React, { FC } from 'react';
 import { Link } from 'react-router-dom';
 import { SidebarPlaylistList } from './SidebarPlaylistList/SidebarPlaylistList';
 import { Playlist } from '../../store/modules/playlist';
-import './Sidebar.scss';
+import './SidebarView.scss';
 import { SEARCH, PLAYLIST_ALL } from '../../routes';
 
-type SidebarProps = {
+type SidebarViewProps = {
 	playlists: Playlist[];
 	onCreatePlaylistButtonClick: Function;
 };
 
-export const Sidebar: FC<SidebarProps> = ({
+export const SidebarView: FC<SidebarViewProps> = ({
 	playlists = [],
 	onCreatePlaylistButtonClick
 }) => {

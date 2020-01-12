@@ -1,0 +1,14 @@
+@import "../../variables";
+@import "../../mixins";
+
+.all-playlists-view {
+  padding: $gutterBig;
+  .all-playlists-list {
+    list-style: none;
+    .all-playlists-list-item {
+  		margin: 0;
+  		height: 3.8rem;
+  		line-height: 3.8rem;
+    }
+  }
+}
