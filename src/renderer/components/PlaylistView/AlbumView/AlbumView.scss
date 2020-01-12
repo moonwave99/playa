@@ -4,8 +4,11 @@
 .album-view {
   display: flex;
   margin-bottom: $gutterBig * 3;
-  .album-actions {
-    text-align: center;
+  .album-aside {
+    width: $albumCoverWidth;
+    .album-actions {
+      text-align: center;
+    }    
   }
   .album-content {
     padding-left: $gutterBig;

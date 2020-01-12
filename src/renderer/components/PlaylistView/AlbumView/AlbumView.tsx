@@ -64,6 +64,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
           {artist === VARIOUS_ARTISTS_ID ? 'V/A' : artist}{year ? `, ${year}` : null} - <span className={tagClasses}>{type}</span>
         </h3>
         <TracklistView
+          isAlbumFromVariousArtists={artist === VARIOUS_ARTISTS_ID}
           rawTracks={album.tracks}
           tracklist={tracklist}/>
       </section>

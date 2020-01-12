@@ -8,12 +8,14 @@ import './TracklistView.scss';
 type TracklistViewProps = {
   tracklist: Track[];
   rawTracks: string[];
+  isAlbumFromVariousArtists: boolean;
 }
 
 // #TODO reload onClick if some tracks are not found
 export const TracklistView: FC<TracklistViewProps> = ({
   tracklist = [],
-  rawTracks = []
+  rawTracks = [],
+  isAlbumFromVariousArtists
 }) => {
 
   const maxNameLength = Math.max(...rawTracks.map(x => x.length));
@@ -35,14 +37,22 @@ export const TracklistView: FC<TracklistViewProps> = ({
     );
   }
 
+  function renderArtist(artist: string): ReactElement {
+    return isAlbumFromVariousArtists
+      ? <span className="artist">{artist}</span>
+      : null;
+  }
+
   function renderTrack(track: Track): ReactElement {
-    const { _id, found, title, duration, number, path } = track;
+    const { _id, found, title, artist, duration, number, path } = track;
     if (!found) {
       return renderSkeletonTrack(_id, path.length / maxNameLength * 100);
     }
     return (
       <li key={_id} >
-        {formatTrackNumber(number)}. {title}
+        <span className="track-number">{formatTrackNumber(number)}</span>
+        {renderArtist(artist)}
+        <span className="title">{title}</span>
         <span className="duration">{formatDuration(duration)}</span>
       </li>
     );

@@ -6,6 +6,7 @@
     margin: 0;
     list-style: none;
     font-family: 'Fira Mono', monospace;
+    max-width: $tracklistMaxWidth;
     > li {
       margin: 1rem 0;
       line-height: 2.5rem;
@@ -18,6 +19,16 @@
       &.not-ready {
         color: transparent;
         height: 2.5rem;
+      }
+      .track-number {
+        &:after {
+          content: '.'
+        }
+        margin-right: 1rem;
+      }
+      .artist {
+        color: $highlightColor;
+        margin-right: 1rem;
       }
       .duration {
         margin-left: auto;
