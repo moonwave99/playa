@@ -37,8 +37,7 @@ async function loadMetadata(paths: string[]): Promise<MetadataResult[]> {
 // #TODO:
 // 1. persist tracks in db cache;
 // 2. handle errors;
-// 3. purge wrong saved data;
-// 4. test the thing.
+// 3. test the thing.
 export default async function loadTracklist(ids: string[], db: Database): Promise<Track[]> {
   const results = await db.getList<Track>(ids);
   if (results.length > 0) {

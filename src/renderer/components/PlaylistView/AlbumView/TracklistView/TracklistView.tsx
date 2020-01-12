@@ -2,6 +2,7 @@ import React, { FC, ReactElement } from 'react';
 import cx from 'classnames';
 import { Track } from '../../../../store/modules/track';
 import { formatTrackNumber, formatDuration } from '../../../../utils/tracklist';
+import { COLORS } from '../../../../../constants';
 import './TracklistView.scss';
 
 type TracklistViewProps = {
@@ -18,7 +19,10 @@ export const TracklistView: FC<TracklistViewProps> = ({
   const maxNameLength = Math.max(...rawTracks.map(x => x.length));
 
   function renderSkeletonTrack(_id: string, width: number): ReactElement {
-    return <li key={_id} className="not-ready" style={{ width: `${width}%` }}></li>
+    const style = {
+      background: `linear-gradient(to right, ${COLORS.SKELETON_COLOR} ${width}%, transparent ${100 - width}% 100%)`
+    };
+    return <li key={_id} className="not-ready" style={style}></li>
   }
 
   function renderSkeletonTracklist(): ReactElement {

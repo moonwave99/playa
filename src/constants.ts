@@ -27,3 +27,7 @@ export const IPC_MESSAGES = {
   IPC_TRACK_GET_LIST_REQUEST : 'track:get-list:request',
   IPC_TRACK_GET_LIST_RESPONSE : 'track:get-list:response'
 };
+
+export const COLORS = {
+  SKELETON_COLOR: '#282828'
+};

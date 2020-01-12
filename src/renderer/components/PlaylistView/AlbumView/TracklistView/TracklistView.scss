@@ -10,11 +10,13 @@
       margin: 1rem 0;
       line-height: 2.5rem;
       display: flex;
+      transition: background-color .5s ease-in, .5s ease-in;
+      width: 100%;
       &:first-child {
         margin-top: 0;
       }
       &.not-ready {
-        background-color: $backgroundLightColor;
+        color: transparent;
         height: 2.5rem;
       }
       .duration {
