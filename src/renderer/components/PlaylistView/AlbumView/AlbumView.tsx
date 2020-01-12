@@ -39,7 +39,6 @@ export const AlbumView: FC<AlbumViewProps> = ({
     return <button onClick={onNotFoundButtonClick} className="button button-outline">Reload</button>
   }
 
-  const rawTracks = album.tracks.map(x => x.split(`${album.path}/`).pop());
   const tagClasses = cx('album-type', `album-type-${type}`);
 
   return (
@@ -58,7 +57,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
           {artist === VARIOUS_ARTISTS_ID ? 'V/A' : artist}{year ? `, ${year}` : null} - <span className={tagClasses}>{type}</span>
         </h3>
         <TracklistView
-          rawTracks={rawTracks}
+          rawTracks={album.tracks}
           tracklist={tracklist}/>
       </section>
     </article>
