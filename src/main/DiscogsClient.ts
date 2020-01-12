@@ -9,8 +9,6 @@ type Credentials = {
   consumerSecret: string;
 }
 
-
-
 export default class DiscogsClient {
   coversPath: string;
   credentials: Credentials;
@@ -28,7 +26,7 @@ export default class DiscogsClient {
     if (this.cache[_id]) {
       return this.cache[_id];
     }
-    
+
     const imagePath = Path.join(this.coversPath, `${_id}.jpg`);
     if (fs.existsSync(imagePath)) {
       this.cache[_id] = imagePath;
