@@ -1,0 +1,16 @@
+@import "../../../../variables";
+@import "../../../../mixins";
+
+.album-cover {
+  width: $albumCoverWidth;
+  height: $albumCoverWidth;
+  margin-bottom: $gutterBig * 0.5;
+  > img {
+    opacity: 0;
+    transition: opacity .5s ease-in-out;
+    background-color: $backgroundLightColor;
+  }
+  &.loaded > img{
+    opacity: 1;
+  }
+}

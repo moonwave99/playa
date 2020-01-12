@@ -8,6 +8,7 @@ import uiReducer, { UIState } from './modules/ui';
 import playlistReducer, { PlaylistState } from './modules/playlist';
 import albumReducer, { AlbumState } from './modules/album';
 import trackReducer, { TrackState } from './modules/track';
+import coverReducer, { CoverState } from './modules/cover';
 
 const history = createHashHistory();
 const initialState = {};
@@ -17,6 +18,7 @@ export interface ApplicationState {
   playlists: PlaylistState;
   albums: AlbumState;
   tracks: TrackState;
+  covers: CoverState;
   ui: UIState;
 }
 
@@ -26,6 +28,7 @@ function createRootReducer (history: History): Reducer {
     playlists: playlistReducer,
     albums: albumReducer,
     tracks: trackReducer,
+    covers: coverReducer,
     ui: uiReducer
   });
 }

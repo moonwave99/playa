@@ -1,10 +1,12 @@
 import React, { FC, ReactElement, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import cx from 'classnames';
+import { CoverView } from './CoverView/CoverView';
 import { TracklistView } from './TracklistView/TracklistView';
 import { ApplicationState } from '../../../store/store';
 import { Album, VARIOUS_ARTISTS_ID, getAlbumContentRequest } from '../../../store/modules/album';
 import { getTrackListRequest } from '../../../store/modules/track';
+import { getCoverRequest } from '../../../store/modules/cover';
 import './AlbumView.scss';
 
 type AlbumViewProps = {
@@ -20,6 +22,10 @@ export const AlbumView: FC<AlbumViewProps> = ({
     return tracks.map((id) => state.tracks.allById[id]).filter(x => !!x) || [];
   });
 
+  const cover = useSelector((state: ApplicationState) => {
+    return state.covers.allById[_id];
+  });
+
   const notFoundTracks = tracklist.filter(({ found }) => found === false).length > 0;
 
   const dispatch = useDispatch();
@@ -31,6 +37,10 @@ export const AlbumView: FC<AlbumViewProps> = ({
     }
   }, [tracks.length]);
 
+  useEffect(() => {
+    dispatch(getCoverRequest(album));
+  }, []);
+
   function onNotFoundButtonClick(): void {
     dispatch(getAlbumContentRequest(album));
   }
@@ -40,13 +50,10 @@ export const AlbumView: FC<AlbumViewProps> = ({
   }
 
   const tagClasses = cx('album-type', `album-type-${type}`);
-
   return (
     <article className="album-view">
       <aside className="album-aside">
-        <div className="album-cover">
-          <img src={`https://picsum.photos/seed/${_id}/200`}/>
-        </div>
+        <CoverView src={cover} title={`[${_id}] ${artist} - ${title}`}/>
         <div className="album-actions">
         { notFoundTracks && renderNotFoundTracksButton() }
         </div>

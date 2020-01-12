@@ -70,6 +70,7 @@
 	"dependencies": {
 		"classnames": "^2.2.6",
 		"connected-react-router": "^6.6.1",
+		"disconnect": "^1.2.1",
 		"electron-store": "^5.1.0",
 		"globby": "^11.0.0",
 		"history": "^4.10.1",

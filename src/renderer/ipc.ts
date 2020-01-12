@@ -12,7 +12,8 @@ const {
   IPC_ALBUM_SEARCH_RESPONSE,
   IPC_ALBUM_GET_LIST_RESPONSE,
   IPC_ALBUM_CONTENT_RESPONSE,
-  IPC_TRACK_GET_LIST_RESPONSE
+  IPC_TRACK_GET_LIST_RESPONSE,
+  IPC_COVER_GET_RESPONSE,
 } = IPC_MESSAGES;
 
 import {
@@ -30,13 +31,14 @@ import {
 } from './store/modules/album';
 
 import {
+  Track,
+  TRACK_GET_LIST_RESPONSE,
   TRACK_GET_LIST_REQUEST
 } from './store/modules/track';
 
 import {
-  Track,
-  TRACK_GET_LIST_RESPONSE
-} from './store/modules/track';
+  COVER_GET_RESPONSE
+} from './store/modules/cover';
 
 export function initIpc(): void {
   ipc.on('error', (_event, error) => {
@@ -97,6 +99,14 @@ export function initIpc(): void {
     store.dispatch({
       type: TRACK_GET_LIST_RESPONSE,
       results
+    });
+  });
+
+  ipc.on(IPC_COVER_GET_RESPONSE, (_event, path: string, album: Album) => {
+    store.dispatch({
+      type: COVER_GET_RESPONSE,
+      path,
+      album
     });
   });
 }

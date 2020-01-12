@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, shell, nativeImage } from 'electron';
+import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import { is } from 'electron-util';
 import * as path from 'path';
 import * as url from 'url';
@@ -8,10 +8,11 @@ import loadAlbum from './loadAlbum';
 import loadTracklist from './loadTracklist';
 import Database from './database';
 import Finder from './Finder';
-
-declare let APP_NAME: string;
+import DiscogsClient from './DiscogsClient';
 
 import { HEIGHT, WIDTH, MACOS, MUSIC_ROOT_FOLDER, IPC_MESSAGES } from '../constants';
+import { name as APP_NAME, version as APP_VERSION } from '../../package.json';
+import { DISCOGS_KEY, DISCOGS_SECRET } from '../../settings/discogs.json';
 
 const {
   IPC_PLAYLIST_GET_ALL_REQUEST,
@@ -28,17 +29,19 @@ const {
   IPC_ALBUM_CONTENT_RESPONSE,
   IPC_TRACK_GET_LIST_REQUEST,
   IPC_TRACK_GET_LIST_RESPONSE,
-  IPC_UI_START_ALBUM_DRAG
+  IPC_COVER_GET_REQUEST,
+  IPC_COVER_GET_RESPONSE,
+  IPC_SYS_REVEAL_IN_FINDER
 } = IPC_MESSAGES;
 
 let mainWindow: Electron.BrowserWindow;
 
 function initDatabase(userDataPath: string): void {
-  const basePath = userDataPath + path.sep + 'databases' + path.sep;
+  const databasePath = userDataPath + path.sep + 'databases' + path.sep;
   const db = {
-    album: new Database(basePath, 'album', true),
-    playlist: new Database(basePath, 'playlist', true),
-    track: new Database(basePath, 'track', true)
+    album: new Database(databasePath, 'album', true),
+    playlist: new Database(databasePath, 'playlist', true),
+    track: new Database(databasePath, 'track', true)
   };
 
   ipcMain.on(IPC_PLAYLIST_GET_ALL_REQUEST, async (event) => {
@@ -105,14 +108,33 @@ function initDatabase(userDataPath: string): void {
     }
   });
 
-  ipcMain.on(IPC_UI_START_ALBUM_DRAG, (event, path) => {
-    const icon = nativeImage.createFromPath(process.cwd() + '/src/renderer/static/plus.png');
-    event.sender.startDrag({
-      file: path,
-      icon
-    });
-  });
 
+}
+
+function initDiscogsClient(userDataPath: string): void {
+  const coversPath = userDataPath + path.sep + 'new_covers' + path.sep;
+  const discogsClient = new DiscogsClient(
+    coversPath,
+    `${APP_NAME}/${APP_VERSION}`,
+    { consumerKey: DISCOGS_KEY, consumerSecret: DISCOGS_SECRET }
+  );
+
+  ipcMain.on(IPC_COVER_GET_REQUEST, async (event, album) => {
+    try {
+      const { artist, title, _id } = album;
+      const imagePath = await discogsClient.getAlbumCover(artist, title, _id);
+      event.reply(IPC_COVER_GET_RESPONSE, imagePath, album);
+    } catch (error) {
+      event.reply('error', error);
+    }
+  });
+}
+
+function initFinder(): void {
+  const finder = new Finder(MUSIC_ROOT_FOLDER);
+  ipcMain.on(IPC_SYS_REVEAL_IN_FINDER, (_event, album) => {
+    finder.reveal(album);
+  });
 }
 
 function createWindow(): void {
@@ -159,11 +181,8 @@ app.on('ready', async () => {
     userDataPath = userDataPath.replace('Electron', APP_NAME);
   }
   initDatabase(userDataPath);
-
-  const finder = new Finder(MUSIC_ROOT_FOLDER);
-  ipcMain.on('reveal-in-finder', (_event, album) => {
-    finder.reveal(album);
-  });
+  initDiscogsClient(userDataPath);
+  initFinder();
   createWindow();
 });
 

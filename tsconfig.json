@@ -4,6 +4,7 @@
 		"jsx": "react",
 		"module": "ESNext",
 		"moduleResolution": "node",
+		"resolveJsonModule": true,
 		"noImplicitAny": true,
 		"noImplicitThis": true,
 		"sourceMap": true,

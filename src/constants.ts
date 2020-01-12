@@ -25,7 +25,9 @@ export const IPC_MESSAGES = {
   IPC_ALBUM_CONTENT_REQUEST : 'album:content:request',
   IPC_ALBUM_CONTENT_RESPONSE : 'album:content:response',
   IPC_TRACK_GET_LIST_REQUEST : 'track:get-list:request',
-  IPC_TRACK_GET_LIST_RESPONSE : 'track:get-list:response'
+  IPC_TRACK_GET_LIST_RESPONSE : 'track:get-list:response',
+  IPC_COVER_GET_REQUEST: 'cover:get:request',
+  IPC_COVER_GET_RESPONSE: 'cover:get:response',
 };
 
 export const COLORS = {
