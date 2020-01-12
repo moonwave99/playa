@@ -1,10 +1,10 @@
-import React, { useState, FC } from 'react';
+import React, { useState, useEffect, FC } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { useDispatch, useSelector } from 'react-redux';
 import { Album } from '../../store/modules/album';
 import { SearchBar } from './SearchBar/SearchBar';
 import { ResultList } from '../ResultList/ResultList';
-import { showContextMenu } from '../../store/modules/ui';
+import { updateTitle, showContextMenu } from '../../store/modules/ui';
 import { searchAlbumsRequest } from '../../store/modules/album';
 import { RESULT_LIST_ITEM } from '../../utils/contextMenu';
 import './SearchView.scss';
@@ -17,6 +17,10 @@ export const SearchView: FC<SearchViewProps> = () => {
   const results: Album[] = useSelector(({ albums }) => albums.searchResults);
   const [searched, setSearched] = useState(false);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(updateTitle('Search'));
+  }, []);
 
   const onFormSubmit = async (query: string): Promise<void> => {
     dispatch(searchAlbumsRequest(query));

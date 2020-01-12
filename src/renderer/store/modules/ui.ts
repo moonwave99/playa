@@ -10,8 +10,14 @@ export type UIState = {
   started?: boolean;
 };
 
+export const UPDATE_TITLE = 'playa/ui/UPDATE_TITLE';
 export const SHOW_CONTEXT_MENU = 'playa/ui/SHOW_CONTEXT_MENU';
 export const START_ALBUM_DRAG = 'playa/ui/START_ALBUM_DRAG';
+
+interface UpdateTitleAction {
+  type: typeof UPDATE_TITLE;
+  title: string;
+}
 
 interface ShowContextMenuAction {
   type: typeof SHOW_CONTEXT_MENU;
@@ -24,8 +30,16 @@ interface StartAlbumDragAction {
 }
 
 export type UIActionTypes =
-    ShowContextMenuAction
+    UpdateTitleAction
+  | ShowContextMenuAction
   | StartAlbumDragAction;
+
+export const updateTitle = (title: string): Function =>
+  (dispatch: Function): void =>
+    dispatch({
+      type: UPDATE_TITLE,
+      title
+    });
 
 export const showContextMenu = (options: ContextMenuOptions): Function =>
   (dispatch: Function): void =>
@@ -50,6 +64,9 @@ export default function reducer(
   action: UIActionTypes
 ): UIState {
 	switch (action.type) {
+    case UPDATE_TITLE:
+      document.title = action.title;
+      return state;
     case SHOW_CONTEXT_MENU:
       openContextMenu(action.options);
       return state;

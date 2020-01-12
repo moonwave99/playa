@@ -4,6 +4,7 @@ import { useParams } from 'react-router';
 import { PlaylistView } from '../PlaylistView/PlaylistView';
 import { ApplicationState } from '../../store/store';
 import { Playlist, savePlaylistRequest, deletePlaylistRequest } from '../../store/modules/playlist';
+import { updateTitle } from '../../store/modules/ui';
 import { getAlbumListRequest } from '../../store/modules/album';
 
 export const PlaylistContainer = (): ReactElement => {
@@ -29,6 +30,10 @@ export const PlaylistContainer = (): ReactElement => {
   const albums = useSelector((state: ApplicationState) => {
     return playlist.albums.map((id) => state.albums.allById[id]).filter(x => !!x);
   });
+
+  useEffect(() => {
+    dispatch(updateTitle(playlist.title));
+  }, [playlist.title]);
 
   useEffect(() => {
     dispatch(getAlbumListRequest(playlist.albums));
