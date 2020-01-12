@@ -1,12 +1,18 @@
 import React, { ReactElement, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router';
+import { Switch, Route, useParams } from 'react-router';
 import { PlaylistView } from '../PlaylistView/PlaylistView';
+import { EditPlaylistView } from '../EditPlaylistView/EditPlaylistView';
 import { ApplicationState } from '../../store/store';
 import { Playlist, savePlaylistRequest, deletePlaylistRequest } from '../../store/modules/playlist';
 import { updateTitle } from '../../store/modules/ui';
 import { getAlbumListRequest } from '../../store/modules/album';
 import { confirmDialog } from '../../utils/dialogs';
+
+import {
+  PLAYLIST_SHOW,
+  PLAYLIST_EDIT
+} from '../../routes';
 
 export const PlaylistContainer = (): ReactElement => {
   const dispatch = useDispatch();
@@ -56,10 +62,19 @@ export const PlaylistContainer = (): ReactElement => {
   }
 
 	return (
-     <PlaylistView
-        albums={albums}
-        playlist={playlist}
-        savePlaylist={handleSavePlaylist}
-        deletePlaylist={handleDeletePlaylist}/>
+    <Switch>
+      <Route path={PLAYLIST_SHOW} exact>
+        <PlaylistView
+           albums={albums}
+           playlist={playlist}
+           savePlaylist={handleSavePlaylist}
+           deletePlaylist={handleDeletePlaylist}/>
+        </Route>
+      <Route path={PLAYLIST_EDIT}>
+        <EditPlaylistView
+          albums={albums}
+          playlist={playlist}/>
+      </Route>
+    </Switch>
 	);
 };

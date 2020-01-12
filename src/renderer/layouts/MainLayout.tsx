@@ -13,7 +13,8 @@ import './MainLayout.scss';
 import {
   SEARCH,
   PLAYLIST_ALL,
-  PLAYLIST_SHOW
+  PLAYLIST_SHOW,
+  PLAYLIST_EDIT
 } from '../routes';
 
 import {
@@ -52,6 +53,7 @@ const MainLayout = (): ReactElement => {
             <Route path={SEARCH} component={SearchView} />
             <Route path={PLAYLIST_ALL} exact component={AllPlaylistContainer} />
             <Route path={PLAYLIST_SHOW} component={PlaylistContainer} />
+            <Route path={PLAYLIST_EDIT} component={PlaylistContainer} />
           </Switch>
         </section>
       </section>

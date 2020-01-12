@@ -2,8 +2,7 @@ import React, { ReactElement, SyntheticEvent, FC } from 'react';
 import { Link, generatePath } from 'react-router-dom';
 import { Playlist } from '../../store/modules/playlist';
 import { formatDate } from '../../utils/datetime';
-import { confirmDialog } from '../../utils/dialogs';
-import { PLAYLIST_SHOW } from '../../routes';
+import { PLAYLIST_SHOW, PLAYLIST_EDIT } from '../../routes';
 import './AllPlaylistsView.scss';
 
 type AllPlaylistsViewProps = {
@@ -17,17 +16,12 @@ export const AllPlaylistsView: FC<AllPlaylistsViewProps> = ({
 }) => {
   function renderTableRow(playlist: Playlist): ReactElement {
     const { _id, title, created, accessed } = playlist;
+
     function onDeleteButtonClick(event: SyntheticEvent): void {
       event.preventDefault();
-      confirmDialog({
-        title: 'Playlist Delete',
-        message: `You are about to delete playlist '${title}', are you sure?`
-      }).then((confirmed) => {
-        if (confirmed) {
-          onPlaylistDelete(playlist);
-        }
-      });
+      onPlaylistDelete(playlist);
     }
+
     return (
       <tr key={_id}>
         <td>
@@ -39,6 +33,12 @@ export const AllPlaylistsView: FC<AllPlaylistsViewProps> = ({
         </td>
         <td>{formatDate(created)}</td>
         <td>{formatDate(accessed)}</td>
+        <td>
+        <Link
+          to={generatePath(PLAYLIST_EDIT, { _id })}>
+          Edit
+        </Link>
+        </td>
         <td><a href="#" onClick={onDeleteButtonClick}>Delete</a></td>
       </tr>
     );
@@ -53,6 +53,7 @@ export const AllPlaylistsView: FC<AllPlaylistsViewProps> = ({
             <th>Title</th>
             <th>Created on</th>
             <th>Last accessed</th>
+            <th></th>
             <th></th>
           </tr>
         </thead>
