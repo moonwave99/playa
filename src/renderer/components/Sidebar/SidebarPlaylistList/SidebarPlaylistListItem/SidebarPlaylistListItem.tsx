@@ -8,7 +8,7 @@ import { Playlist, savePlaylistRequest } from '../../../../store/modules/playlis
 import { AlbumDragType } from '../../../../store/modules/ui';
 import { PLAYLIST_SHOW } from '../../../../routes';
 
-type PlaylistListItemProps = {
+type SidebarPlaylistListItemProps = {
   playlist: Playlist;
   isCurrent: boolean;
 }
@@ -18,7 +18,7 @@ type DropItem = {
   _id: string;
 }
 
-export const PlaylistListItem: FC<PlaylistListItemProps> = ({
+export const SidebarPlaylistListItem: FC<SidebarPlaylistListItemProps> = ({
   playlist,
   isCurrent
 }) => {
@@ -53,7 +53,7 @@ export const PlaylistListItem: FC<PlaylistListItemProps> = ({
         onClick={onClick}
         title={playlist._id}
         to={generatePath(PLAYLIST_SHOW, { _id: playlist._id })}
-        className="playlist-item">{playlist.title}</Link>
+        className="sidebar-playlist-item">{playlist.title}</Link>
     </li>
   );
 }

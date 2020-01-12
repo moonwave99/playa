@@ -1,11 +1,11 @@
 import React, { FC } from 'react';
 import { useRouteMatch } from 'react-router';
-import { PlaylistListItem } from './PlaylistListItem/PlaylistListItem';
+import { SidebarPlaylistListItem } from './SidebarPlaylistListItem/SidebarPlaylistListItem';
 import { Playlist } from '../../../store/modules/playlist';
 import { PLAYLIST_SHOW } from '../../../routes';
-import './PlaylistList.scss';
+import './SidebarPlaylistList.scss';
 
-type PlaylistListProps = {
+type SidebarPlaylistListProps = {
   playlists: Playlist[];
 }
 
@@ -13,7 +13,7 @@ type MatchParams = {
   _id?: string;
 }
 
-export const PlaylistList: FC<PlaylistListProps> = ({
+export const SidebarPlaylistList: FC<SidebarPlaylistListProps> = ({
   playlists = []
 }) => {
   const match = useRouteMatch(PLAYLIST_SHOW);
@@ -24,11 +24,11 @@ export const PlaylistList: FC<PlaylistListProps> = ({
   }
 
   return (
-    <div className="playlist-list">
+    <div className="sidebar-playlist-list">
       <h2>Playlists</h2>
       <ul>
         { playlists.map(
-          playlist => <PlaylistListItem
+          playlist => <SidebarPlaylistListItem
             key={playlist._id}
             isCurrent={playlist._id === params._id}
             playlist={playlist}/>

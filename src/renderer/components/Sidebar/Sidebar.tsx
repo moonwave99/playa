@@ -1,9 +1,9 @@
 import React, { FC } from 'react';
 import { Link } from 'react-router-dom';
-import { PlaylistList } from './PlaylistList/PlaylistList';
+import { SidebarPlaylistList } from './SidebarPlaylistList/SidebarPlaylistList';
 import { Playlist } from '../../store/modules/playlist';
 import './Sidebar.scss';
-import { SEARCH } from '../../routes';
+import { SEARCH, PLAYLIST_ALL } from '../../routes';
 
 type SidebarProps = {
 	playlists: Playlist[];
@@ -14,7 +14,7 @@ export const Sidebar: FC<SidebarProps> = ({
 	playlists = [],
 	onCreatePlaylistButtonClick
 }) => {
-	function onButtonClick(): void {
+	function _onCreatePlaylistButtonClick(): void {
 		onCreatePlaylistButtonClick();
 	}
 
@@ -23,11 +23,12 @@ export const Sidebar: FC<SidebarProps> = ({
 			<header className="sidebar-header">
 				<Link to={SEARCH} className="button button-primary">Search</Link>
 			</header>
-			<PlaylistList playlists={playlists} />
+			<SidebarPlaylistList playlists={playlists} />
 			<footer className="sidebar-footer">
-				<button type="button" className="button button-primary" onClick={onButtonClick}>
+				<button type="button" className="button button-primary" onClick={_onCreatePlaylistButtonClick}>
 					Create Playlist
         </button>
+				<Link to={PLAYLIST_ALL} className="button button-outline">All Playlists</Link>
 			</footer>
 		</section>
 	);

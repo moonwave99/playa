@@ -1,6 +1,6 @@
 @import "../../../variables";
 
-.playlist-list {
+.sidebar-playlist-list {
   h2 {
     height: $gutterBig;
     line-height: $gutterBig;
@@ -31,7 +31,7 @@
           font-weight: bold;
         }
       }
-      .playlist-item {
+      .sidebar-playlist-item {
         display: block;
         padding: 0 $gutterBig;
         color: $clearColor;

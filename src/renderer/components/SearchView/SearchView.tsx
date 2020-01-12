@@ -3,7 +3,7 @@ import { CSSTransition } from 'react-transition-group';
 import { useDispatch, useSelector } from 'react-redux';
 import { Album } from '../../store/modules/album';
 import { SearchBar } from './SearchBar/SearchBar';
-import { ResultList } from '../ResultList/ResultList';
+import { SearchResultList } from './SearchResultList/SearchResultList';
 import { updateTitle, showContextMenu } from '../../store/modules/ui';
 import { searchAlbumsRequest } from '../../store/modules/album';
 import { RESULT_LIST_ITEM } from '../../utils/contextMenu';
@@ -45,7 +45,7 @@ export const SearchView: FC<SearchViewProps> = () => {
         timeout={300}
         classNames="result-list"
         unmountOnExit>
-        <ResultList
+        <SearchResultList
           results={results}
           searched={searched}
           onContextMenu={onContextMenu}/>

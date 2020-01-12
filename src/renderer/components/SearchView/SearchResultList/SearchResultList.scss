@@ -1,7 +1,7 @@
-@import "../../variables";
-@import "../../mixins";
+@import "../../../variables";
+@import "../../../mixins";
 
-.result-list {
+.search-result-list {
 	list-style: none;
   overflow: auto;
 
@@ -22,10 +22,10 @@
     opacity: 0;
     transition: opacity 300ms, transform 300ms;
   }
-	.result-list-empty-component {
+	.search-result-list-empty-component {
 		padding-left: $gutterBig;
 	}
-	.result-list-item {
+	.search-result-list-item {
 		align-items: center;
 		padding-left: $gutterBig;
 		margin: 0;
