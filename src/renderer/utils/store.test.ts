@@ -46,7 +46,7 @@ describe('ensureAll', () => {
       b: 123,
       c: ['a', 'b', 'c']
     };
-    function getTestDefault(obj: Record<string, any>): TestEntity {
+    function getTestDefault(obj: object): TestEntity {
       return {...defaultValues, ...obj};
     }
     const objs = [{

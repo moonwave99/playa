@@ -22,6 +22,6 @@ export function removeIds<T extends Entity>(hashMap: EntityHashMap<T>, ids: Enti
     }, {});
 }
 
-export function ensureAll<T> (entities: Record<string, any>[], getDefault: Function ): T[] {
-  return entities.map((entity: Record<string, any>) => ({ ...getDefault(), ...entity}));
+export function ensureAll<T> (entities: object[], getDefault: Function ): T[] {
+  return entities.map((entity: object) => ({ ...getDefault(), ...entity}));
 }
