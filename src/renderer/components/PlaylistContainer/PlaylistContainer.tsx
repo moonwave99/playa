@@ -1,18 +1,12 @@
 import React, { ReactElement, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Switch, Route, useParams } from 'react-router';
+import { useParams } from 'react-router';
 import { PlaylistView } from '../PlaylistView/PlaylistView';
-import { EditPlaylistView } from '../EditPlaylistView/EditPlaylistView';
 import { ApplicationState } from '../../store/store';
-import { Playlist, savePlaylistRequest, deletePlaylistRequest } from '../../store/modules/playlist';
+import { savePlaylistRequest } from '../../store/modules/playlist';
 import { updateTitle } from '../../store/modules/ui';
 import { getAlbumListRequest } from '../../store/modules/album';
 import { confirmDialog } from '../../utils/dialogs';
-
-import {
-  PLAYLIST_SHOW,
-  PLAYLIST_EDIT
-} from '../../routes';
 
 export const PlaylistContainer = (): ReactElement => {
   const dispatch = useDispatch();
@@ -46,35 +40,25 @@ export const PlaylistContainer = (): ReactElement => {
     dispatch(getAlbumListRequest(playlist.albums));
   }, [playlist.albums.length]);
 
-  function handleSavePlaylist(changedPlaylist: Playlist ): void {
-    dispatch(savePlaylistRequest(changedPlaylist));
-  }
-
-  function handleDeletePlaylist(): void {
-    confirmDialog({
-      title: 'Playlist Delete',
-      message: `You are about to delete playlist '${playlist.title}', are you sure?`
-    }).then((confirmed) => {
-      if (confirmed) {
-        dispatch(deletePlaylistRequest(playlist));
-      }
-    });
+  function onTitleChange(title: string ): void {
+    if (title === playlist.title) {
+      return;
+    }
+    if (title === '') {
+      confirmDialog({
+        title: 'Playlist Rename',
+        message: 'Playlist title cannot be empty.',
+        buttons: ['OK']
+      });
+      return;
+    }
+    dispatch(savePlaylistRequest({ ...playlist, title }));
   }
 
 	return (
-    <Switch>
-      <Route path={PLAYLIST_SHOW} exact>
-        <PlaylistView
-           albums={albums}
-           playlist={playlist}
-           savePlaylist={handleSavePlaylist}
-           deletePlaylist={handleDeletePlaylist}/>
-        </Route>
-      <Route path={PLAYLIST_EDIT}>
-        <EditPlaylistView
-          albums={albums}
-          playlist={playlist}/>
-      </Route>
-    </Switch>
+    <PlaylistView
+       albums={albums}
+       playlist={playlist}
+       onTitleChange={onTitleChange}/>
 	);
 };

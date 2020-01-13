@@ -21,10 +21,9 @@ export const AllPlaylistContainer = (): ReactElement => {
       message: `You are about to delete playlist '${playlist.title}', are you sure?`
     }).then((confirmed) => {
       if (confirmed) {
-        onPlaylistDelete(playlist);
+        dispatch(deletePlaylistRequest(playlist));
       }
     });
-    dispatch(deletePlaylistRequest(playlist));
   }
 
   return (

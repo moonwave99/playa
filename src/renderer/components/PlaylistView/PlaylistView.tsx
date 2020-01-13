@@ -1,46 +1,21 @@
-import React, { ReactElement, FC, useState } from 'react';
-import { Link, generatePath } from 'react-router-dom';
+import React, { ReactElement, FC } from 'react';
 import { PlaylistViewTitle } from './PlaylistViewTitle/PlaylistViewTitle';
 import { AlbumView } from './AlbumView/AlbumView';
 import { Playlist } from '../../store/modules/playlist';
 import { Album } from '../../store/modules/album';
 import './PlaylistView.scss';
 
-import {
-  PLAYLIST_EDIT
-} from '../../routes';
-
 type PlaylistViewProps = {
   albums: Album[];
   playlist: Playlist;
-  savePlaylist: Function;
-  deletePlaylist: Function;
+  onTitleChange: Function;
 };
 
 export const PlaylistView: FC<PlaylistViewProps> = ({
   albums,
   playlist,
-  savePlaylist,
-  deletePlaylist
+  onTitleChange
 }) => {
-  const [isTitleEditing, setTitleEditing] = useState(false);
-
-  function onDeleteButtonClick(): void {
-    deletePlaylist();
-  }
-
-  function onViewClick(): void {
-    setTitleEditing(false);
-  }
-
-  function onTitleClick(): void {
-    setTitleEditing(true);
-  }
-
-  function onFormSubmit(title: Playlist['title']): void {
-    savePlaylist({ ...playlist, title });
-    setTitleEditing(false);
-  }
 
   function renderAlbum(album: Album): ReactElement {
     return (
@@ -51,22 +26,11 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
   }
 
 	return (
-		<div className="playlist-view" onClick={onViewClick}>
+		<div className="playlist-view">
       <header className="playlist-header">
         <PlaylistViewTitle
           playlist={playlist}
-          isTitleEditing={isTitleEditing}
-          onTitleClick={onTitleClick}
-          onFormSubmit={onFormSubmit}/>
-        <div className="playlist-header-actions">
-          <Link
-            to={generatePath(PLAYLIST_EDIT, { _id: playlist._id})}
-            className="button button-primary">Edit</Link>
-          <button type="button"
-            className="button button-outline"
-            onClick={onDeleteButtonClick}
-            disabled={!playlist._rev}>Delete</button>
-        </div>
+          onTitleChange={onTitleChange}/>
       </header>
       {
         albums.length > 0

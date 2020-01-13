@@ -2,7 +2,7 @@ import React, { ReactElement, SyntheticEvent, FC } from 'react';
 import { Link, generatePath } from 'react-router-dom';
 import { Playlist } from '../../store/modules/playlist';
 import { formatDate } from '../../utils/datetime';
-import { PLAYLIST_SHOW, PLAYLIST_EDIT } from '../../routes';
+import { PLAYLIST_SHOW } from '../../routes';
 import './AllPlaylistsView.scss';
 
 type AllPlaylistsViewProps = {
@@ -33,12 +33,6 @@ export const AllPlaylistsView: FC<AllPlaylistsViewProps> = ({
         </td>
         <td>{formatDate(created)}</td>
         <td>{formatDate(accessed)}</td>
-        <td>
-        <Link
-          to={generatePath(PLAYLIST_EDIT, { _id })}>
-          Edit
-        </Link>
-        </td>
         <td><a href="#" onClick={onDeleteButtonClick}>Delete</a></td>
       </tr>
     );
@@ -53,7 +47,6 @@ export const AllPlaylistsView: FC<AllPlaylistsViewProps> = ({
             <th>Title</th>
             <th>Created on</th>
             <th>Last accessed</th>
-            <th></th>
             <th></th>
           </tr>
         </thead>

@@ -14,20 +14,7 @@
       line-height: 3.8rem;
       font-size: 2.4rem;
       color: $highlightColor;
-    }
-    .playlist-header-form {
-      margin: 0;
-      flex: 1;
-      .playlist-header-form-input {
-        @include input();
-        margin-bottom: 0;
-      }
-    }
-    .playlist-header-actions {
-      margin-left: auto;
-      .button {
-        margin: 0 1rem 0 0;
-      }
+      width: 100%;
     }
   }
   .album-list {

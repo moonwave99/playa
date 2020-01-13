@@ -1,52 +1,52 @@
-import React, { FC, ReactElement, useRef, SyntheticEvent } from 'react';
+import React, { FC, useState, useRef, KeyboardEvent } from 'react';
+import ContentEditable from 'react-contenteditable';
 import { Playlist } from '../../../store/modules/playlist';
 
 type PlaylistViewTitleProps = {
 	playlist: Playlist;
-  onTitleClick: Function;
-  onFormSubmit: Function;
-  isTitleEditing: boolean;
+  onTitleChange: Function;
 };
 
-export const PlaylistViewTitle: FC<PlaylistViewTitleProps> = ({ playlist, onTitleClick, onFormSubmit, isTitleEditing }) => {
-	const inputRef = useRef<HTMLInputElement>(null);
+export const PlaylistViewTitle: FC<PlaylistViewTitleProps> = ({ playlist, onTitleChange }) => {
+	const { title } = playlist;
+	const [isTitleEditing, setTitleEditing] = useState(false);
+	const titleRef = useRef<HTMLInputElement>(null);
 
-	function _onTitleClick(event: SyntheticEvent): void {
-    event.stopPropagation();
-    onTitleClick();
+	function onTitleBlur(): void {
+		setTitleEditing(false);
+		onTitleChange(titleRef.current.innerText);
 	}
 
-  function _onFormClick(event: SyntheticEvent): void {
-    event.stopPropagation();
-  }
-
-	function _onFormSubmit(event: SyntheticEvent): void {
-		event.preventDefault();
-    onFormSubmit(inputRef.current.value);
+	function onTitleFocus(): void {
+		setTitleEditing(true);
 	}
 
-	function renderTitle(): ReactElement {
-		return (
-			<h1 onClick={_onTitleClick}>{playlist.title}</h1>
-		);
-	}
+	function onChange(): void { return; }
 
-	function renderForm(): ReactElement {
-		return (
-			<form onSubmit={_onFormSubmit} className="playlist-header-form" onClick={_onFormClick}>
-				<input
-          name="title"
-          type="text"
-          defaultValue={playlist.title}
-          ref={inputRef}
-          required
-          autoFocus
-          className="playlist-header-form-input"/>
-			</form>
-		);
+	function onKeyDown(event: KeyboardEvent): void {
+		const { key } = event;
+		switch (key) {
+			case 'Enter':
+				event.preventDefault();
+				titleRef.current.blur();
+				break;
+			case 'Escape':
+				event.preventDefault();
+				titleRef.current.innerText = title;
+				titleRef.current.blur();
+				break;
+		}
 	}
 
 	return (
-		isTitleEditing ? renderForm() : renderTitle()
+		<ContentEditable
+			innerRef={titleRef}
+			html={title}
+			onFocus={onTitleFocus}
+      onBlur={onTitleBlur}
+			onKeyDown={onKeyDown}
+			onChange={onChange}
+			className={isTitleEditing ? 'editing' : null}
+      tagName='h1'/>
 	);
 }
