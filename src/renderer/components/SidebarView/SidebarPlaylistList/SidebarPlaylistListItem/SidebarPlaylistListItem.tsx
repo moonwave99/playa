@@ -5,7 +5,7 @@ import { useDrop } from 'react-dnd';
 import { uniq } from 'lodash';
 import cx from 'classnames';
 import { Playlist, savePlaylistRequest } from '../../../../store/modules/playlist';
-import { AlbumDragType } from '../../../../store/modules/ui';
+import { UIAlbumDragType } from '../../../../store/modules/ui';
 import { PLAYLIST_SHOW } from '../../../../routes';
 
 type SidebarPlaylistListItemProps = {
@@ -24,7 +24,7 @@ export const SidebarPlaylistListItem: FC<SidebarPlaylistListItemProps> = ({
 }) => {
   const dispatch = useDispatch();
   const [{ isOver, canDrop }, drop] = useDrop({
-    accept: [AlbumDragType],
+    accept: [UIAlbumDragType],
     drop: (item: DropItem) => {
       dispatch(savePlaylistRequest({
         ...playlist,
