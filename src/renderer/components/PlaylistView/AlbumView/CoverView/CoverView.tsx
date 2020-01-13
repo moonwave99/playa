@@ -1,14 +1,15 @@
 import React, { FC, useState } from 'react';
 import cx from 'classnames';
-import './CoverView.scss';
 
 type CoverViewProps = {
+  className?: string;
   src: string;
   title: string;
 }
 
 // #TODO reload onClick if some tracks are not found
 export const CoverView: FC<CoverViewProps> = ({
+  className,
   src,
   title
 }) => {
@@ -16,7 +17,7 @@ export const CoverView: FC<CoverViewProps> = ({
   function onImageLoad(): void {
     setLoaded(true);
   }
-  const classNames = cx('album-cover', { loaded })
+  const classNames = cx(className, { loaded })
   return (
     <figure className={classNames}>
       <img

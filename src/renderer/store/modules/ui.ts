@@ -6,6 +6,11 @@ const { IPC_UI_START_ALBUM_DRAG } = IPC_MESSAGES;
 
 export const UIAlbumDragType = 'ALBUMS';
 
+export enum UIAlbumView {
+  Compact,
+  Extended
+}
+
 export type UIState = {
   started?: boolean;
 };

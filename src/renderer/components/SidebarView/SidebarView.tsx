@@ -19,7 +19,7 @@ export const SidebarView: FC<SidebarViewProps> = ({
 	}
 
 	return (
-		<section className="sidebar">
+		<aside className="sidebar">
 			<header className="sidebar-header">
 				<Link to={SEARCH} className="button button-primary">Search</Link>
 			</header>
@@ -30,6 +30,6 @@ export const SidebarView: FC<SidebarViewProps> = ({
         </button>
 				<Link to={PLAYLIST_ALL} className="button button-outline">All Playlists</Link>
 			</footer>
-		</section>
+		</aside>
 	);
 }

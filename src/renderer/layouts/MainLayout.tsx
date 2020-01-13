@@ -42,18 +42,18 @@ const MainLayout = (): ReactElement => {
   return (
     <main className="main-layout">
       <section className="main-container">
-        <aside className="sidebar-wrapper">
+        <div className="sidebar-wrapper">
           <SidebarView
             playlists={playlists}
             onCreatePlaylistButtonClick={onCreatePlaylistButtonClick} />
-        </aside>
-        <section className="playlist-wrapper">
+        </div>
+        <div className="playlist-wrapper">
           <Switch>
             <Route path={SEARCH} component={SearchView} />
             <Route path={PLAYLIST_ALL} exact component={AllPlaylistContainer} />
             <Route path={PLAYLIST_SHOW} component={PlaylistContainer} />
           </Switch>
-        </section>
+        </div>
       </section>
     </main>
   );

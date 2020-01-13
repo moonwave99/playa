@@ -53,7 +53,10 @@ export const AlbumView: FC<AlbumViewProps> = ({
   return (
     <article className="album-view">
       <aside className="album-aside">
-        <CoverView src={cover} title={`[${_id}] ${artist} - ${title}`}/>
+        <CoverView
+          className="album-cover"
+          src={cover}
+          title={`[${_id}] ${artist} - ${title}`}/>
         <div className="album-actions">
         { notFoundTracks && renderNotFoundTracksButton() }
         </div>

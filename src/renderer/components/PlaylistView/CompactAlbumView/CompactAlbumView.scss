@@ -1,0 +1,23 @@
+@import "../../../variables";
+@import "../../../mixins";
+
+.compact-album-view {
+  display: flex;
+	align-items: center;
+	margin: 0;
+  .album-cover {
+    @include albumCover($albumCoverCompactWidth);
+  }
+  .album-content {
+    margin: 0 0 0 1.6rem;
+    display: flex;
+    flex-direction: column;
+    .title {
+      font-weight: bold;
+      color: $highlightColor;
+    }
+    .album-type {
+      @include albumTypeColor();
+    }
+  }
+}

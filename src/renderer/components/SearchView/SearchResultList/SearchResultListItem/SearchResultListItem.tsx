@@ -11,8 +11,7 @@ type SearchResultListItemProps = {
 
 export const SearchResultListItem: FC<SearchResultListItemProps> = ({ result, onContextMenu }) => {
   const { _id, type, artist, year, title } = result;
-  const tagClasses = cx('tag', `tag-${type}`);
-
+  
   const [{ opacity }, drag] = useDrag({
     item: {
       type: UIAlbumDragType,
@@ -27,6 +26,7 @@ export const SearchResultListItem: FC<SearchResultListItemProps> = ({ result, on
     onContextMenu(result);
   }
 
+  const tagClasses = cx('tag', `tag-${type}`);
   return (
     <li ref={drag} className="search-result-list-item" onContextMenu={onClick} style={{ opacity }}>
       <span className={tagClasses}>{type}</span>

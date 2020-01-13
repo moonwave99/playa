@@ -16,11 +16,14 @@
       color: $highlightColor;
       width: 100%;
     }
+    .playlist-album-view-switch {
+      position: fixed;
+      top: $gutterBig;
+      right: $gutterBig;
+    }
   }
   .album-list {
     list-style: none;
-    > li {
-      margin-bottom: $gutterBig;
-    }
+    margin-bottom: 0;
   }
 }

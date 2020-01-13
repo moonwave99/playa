@@ -6,6 +6,10 @@
   margin-bottom: $gutterBig * 3;
   .album-aside {
     width: $albumCoverWidth;
+    .album-cover {
+      @include albumCover($albumCoverWidth);
+      margin: 0 0 $gutterBig * 0.5 0;
+    }
     .album-actions {
       text-align: center;
       button {

@@ -69,3 +69,20 @@
     color: $tributeColor;
   }
 }
+
+@mixin albumCover($width) {
+  margin: 0;
+  background: radial-gradient(transparent 0%, transparent 20%, $backgroundLightColor 0%, $backgroundLightColor 70%, transparent 70%, transparent 100%);
+  width: $width;
+  height: $width;
+  > img {
+    width: $width;
+    height: $width;
+    opacity: 0;
+    transition: opacity .5s ease-in-out;
+    background-color: $backgroundLightColor;
+  }
+  &.loaded > img{
+    opacity: 1;
+  }
+}
