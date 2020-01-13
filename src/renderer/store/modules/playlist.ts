@@ -1,5 +1,5 @@
 import { ipcRenderer as ipc } from 'electron';
-import { EntityHashMap, toObj, removeIds } from '../../utils/store';
+import { EntityHashMap, toObj, removeIds, ensureAll } from '../../utils/store';
 
 import { IPC_MESSAGES } from '../../../constants';
 
@@ -8,10 +8,6 @@ const {
   IPC_PLAYLIST_SAVE_REQUEST,
   IPC_PLAYLIST_DELETE_REQUEST
 } = IPC_MESSAGES;
-
-function ensureAlbums(playlists: Playlist[]): Playlist[] {
-  return playlists.map((playlist) => playlist.albums ? playlist : { ...playlist, albums: []});
-}
 
 export interface Playlist {
   _id: string;
@@ -24,6 +20,18 @@ export interface Playlist {
 
 export interface PlaylistState {
   allById: EntityHashMap<Playlist>;
+}
+
+export function getDefaultPlaylist(): Playlist {
+  const now = new Date().toISOString();
+  return {
+    _id: now,
+    _rev: null,
+    title: 'New Playlist',
+    created: now,
+    accessed: now,
+    albums: []
+  };
 }
 
 export const PLAYLIST_GET_ALL_REQUEST  = 'playa/playlists/GET_ALL_REQUEST';
@@ -132,7 +140,7 @@ export default function reducer(
     case PLAYLIST_GET_ALL_RESPONSE:
       return {
         ...state,
-        allById: toObj(ensureAlbums(action.playlists))
+        allById: toObj(ensureAll<Playlist>(action.playlists, getDefaultPlaylist))
       };
     case PLAYLIST_SAVE_REQUEST:
       ipc.send(IPC_PLAYLIST_SAVE_REQUEST, action.playlist);

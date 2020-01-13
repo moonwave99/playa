@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 import { PlaylistView } from '../PlaylistView/PlaylistView';
 import { ApplicationState } from '../../store/store';
-import { savePlaylistRequest } from '../../store/modules/playlist';
+import { savePlaylistRequest, getDefaultPlaylist } from '../../store/modules/playlist';
 import { updateTitle } from '../../store/modules/ui';
 import { getAlbumListRequest } from '../../store/modules/album';
 import { confirmDialog } from '../../utils/dialogs';
@@ -13,19 +13,7 @@ export const PlaylistContainer = (): ReactElement => {
   const { _id } = useParams();
 
   const playlist = useSelector((state: ApplicationState) => {
-    const foundPlaylist = state.playlists.allById[_id];
-    if (!foundPlaylist) {
-      const now = new Date().toISOString();
-      return {
-        _id,
-        _rev: null,
-        title: 'New Playlist',
-        created: now,
-        accessed: now,
-        albums: []
-      }
-    }
-    return state.playlists.allById[_id];
+    return state.playlists.allById[_id] || getDefaultPlaylist();
   });
 
   const albums = useSelector((state: ApplicationState) => {

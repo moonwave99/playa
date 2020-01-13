@@ -1,5 +1,5 @@
 import { ipcRenderer as ipc } from 'electron';
-import { EntityHashMap, toObj } from '../../utils/store';
+import { EntityHashMap, toObj, ensureAll } from '../../utils/store';
 
 import { IPC_MESSAGES } from '../../../constants';
 
@@ -9,10 +9,6 @@ const {
   IPC_ALBUM_CONTENT_REQUEST
 } = IPC_MESSAGES;
 
-function ensureTracks(albums: Album[]): Album[] {
-  return albums.map((album) => album.tracks ? album : { ...album, tracks: []});
-}
-
 export const VARIOUS_ARTISTS_ID = '_various-artists';
 
 export interface Album {
@@ -21,9 +17,22 @@ export interface Album {
   title: string;
   year?: number;
   type: string;
-  created: Date;
+  created: string;
   path: string;
   tracks: string[];
+}
+
+export function getDefaultAlbum(): Album {
+  const now = new Date().toISOString();
+  return {
+    _id: null,
+    artist: '',
+    title: '',
+    type: 'album',
+    created: now,
+    path: '',
+    tracks: []
+  };
 }
 
 export interface AlbumState {
@@ -148,7 +157,7 @@ export default function reducer(
     case ALBUM_GET_LIST_RESPONSE:
       return {
         ...state,
-        allById: {...state.allById, ...toObj(ensureTracks(action.results)) }
+        allById: {...state.allById, ...toObj(ensureAll<Album>(action.results, getDefaultAlbum)) }
       };
     case ALBUM_GET_CONTENT_REQUEST:
       ipc.send(IPC_ALBUM_CONTENT_REQUEST, action.album);

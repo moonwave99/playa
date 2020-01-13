@@ -1,3 +1,5 @@
+import { playlists } from '../../../../test/fixtures';
+
 import reducer, {
   Playlist,
   PlaylistActionTypes,
@@ -87,23 +89,6 @@ describe('playlist actions', () => {
     });
   });
 });
-
-const playlists = [
-  {
-    _id: '1',
-    title: 'New Playlist',
-    created: 'now',
-    accessed: 'now',
-    albums: [] as string[]
-  },
-  {
-    _id: '2',
-    title: 'New Playlist',
-    created: 'now',
-    accessed: 'now',
-    albums: [] as string[]
-  },
-];
 
 describe('playlist reducer', () => {
   it('should return the initial state', () => {

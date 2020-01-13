@@ -1,5 +1,5 @@
 import { ipcRenderer as ipc } from 'electron';
-import { EntityHashMap, toObj } from '../../utils/store';
+import { EntityHashMap, toObj, ensureAll } from '../../utils/store';
 
 import { IPC_MESSAGES } from '../../../constants';
 
@@ -16,6 +16,18 @@ export interface Track {
   title: string;
   number: number;
   duration: number;
+}
+
+export function getDefaultTrack(): Track {
+  return {
+    _id: null,
+    path: '',
+    found: false,
+    artist: '',
+    title: '',
+    number: 0,
+    duration: 0
+  };
 }
 
 export interface TrackState {
@@ -71,7 +83,7 @@ export default function reducer(
     case TRACK_GET_LIST_RESPONSE:
       return {
         ...state,
-        allById: {...state.allById, ...toObj(action.results) }
+        allById: {...state.allById, ...toObj(ensureAll<Track>(action.results, getDefaultTrack)) }
       };
     default:
       return state;
