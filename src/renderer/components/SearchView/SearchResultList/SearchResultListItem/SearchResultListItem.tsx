@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { useDrag } from 'react-dnd';
 import cx from 'classnames';
 import { Album, VARIOUS_ARTISTS_ID } from '../../../../store/modules/album';
-import { UIAlbumDragType } from '../../../../store/modules/ui';
+import { UIDragTypes } from '../../../../store/modules/ui';
 
 type SearchResultListItemProps = {
   result: Album;
@@ -11,10 +11,10 @@ type SearchResultListItemProps = {
 
 export const SearchResultListItem: FC<SearchResultListItemProps> = ({ result, onContextMenu }) => {
   const { _id, type, artist, year, title } = result;
-  
+
   const [{ opacity }, drag] = useDrag({
     item: {
-      type: UIAlbumDragType,
+      type: UIDragTypes.SEARCH_RESULTS,
       _id
     },
     collect: monitor => ({

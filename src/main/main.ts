@@ -1,6 +1,6 @@
 import { app, BrowserWindow, ipcMain as ipc, shell, dialog } from 'electron';
 import { is } from 'electron-util';
-import * as path from 'path';
+import * as Path from 'path';
 import * as url from 'url';
 
 import initMenu from './menu';
@@ -38,7 +38,7 @@ const {
 let mainWindow: Electron.BrowserWindow;
 
 function initDatabase(userDataPath: string): void {
-  const databasePath = userDataPath + path.sep + 'databases' + path.sep;
+  const databasePath = userDataPath + Path.sep + 'databases' + Path.sep;
   const db = {
     album: new Database(databasePath, 'album', true),
     playlist: new Database(databasePath, 'playlist', true),
@@ -116,11 +116,12 @@ function initDatabase(userDataPath: string): void {
 }
 
 function initDiscogsClient(userDataPath: string): void {
-  const coversPath = userDataPath + path.sep + 'new_covers' + path.sep;
+  const coversPath = Path.join(userDataPath, 'new_covers');
   const discogsClient = new DiscogsClient(
     coversPath,
     `${APP_NAME}/${APP_VERSION}`,
-    { consumerKey: DISCOGS_KEY, consumerSecret: DISCOGS_SECRET }
+    { consumerKey: DISCOGS_KEY, consumerSecret: DISCOGS_SECRET },
+    process.env.DISABLE_DISCOGS_REQUESTS === 'true'
   );
 
   ipc.on(IPC_COVER_GET_REQUEST, async (event, album) => {
@@ -158,7 +159,7 @@ function createWindow(): void {
   // And load the index.html of the app
   mainWindow.loadURL(
     url.format({
-      pathname: path.join(__dirname, './index.html'),
+      pathname: Path.join(__dirname, './index.html'),
       protocol: 'file:',
       slashes: true,
     })

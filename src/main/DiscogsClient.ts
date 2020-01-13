@@ -15,11 +15,13 @@ export default class DiscogsClient {
   discogs: typeof Client;
   db: Function;
   cache: EntityHashMap<string>;
-  constructor(coversPath: string, userAgent: string, credentials: Credentials) {
+  disabled: boolean;
+  constructor(coversPath: string, userAgent: string, credentials: Credentials, disabled: boolean) {
     this.coversPath = coversPath;
     this.credentials = credentials;
     this.discogs = new Client(userAgent, credentials);
     this.cache = {};
+    this.disabled = disabled;
   }
 
   async getAlbumCover(artist: string, title: string, _id: string): Promise<string> {
@@ -31,6 +33,10 @@ export default class DiscogsClient {
     if (fs.existsSync(imagePath)) {
       this.cache[_id] = imagePath;
       return this.cache[_id];
+    }
+
+    if (this.disabled) {
+      return '';
     }
 
     const imageData = await this._getAlbumCoverFromDiscogs(artist, title, _id);

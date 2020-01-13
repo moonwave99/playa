@@ -4,7 +4,10 @@ import openContextMenu, { ContextMenuOptions } from '../../utils/contextMenu';
 import { IPC_MESSAGES } from '../../../constants';
 const { IPC_UI_START_ALBUM_DRAG } = IPC_MESSAGES;
 
-export const UIAlbumDragType = 'ALBUMS';
+export const UIDragTypes = {
+  SEARCH_RESULTS: 'SEARCH_RESULTS',
+  COMPACT_ALBUMS: 'COMPACT_ALBUMS'
+};
 
 export enum UIAlbumView {
   Compact,
