@@ -5,10 +5,9 @@ import { ConnectedRouter } from 'connected-react-router';
 import { Provider } from 'react-redux';
 import { DndProvider } from 'react-dnd';
 import Backend from 'react-dnd-html5-backend';
-import MainLayout from './layouts/MainLayout';
+import App from './components/App/App';
 import { store, history } from './store/store';
-import { initIpc } from './ipc';
-import './style.scss';
+import { initIpc } from './lib/initIpc';
 
 import { IPC_MESSAGES } from '../constants';
 const { IPC_UI_STATE_LOAD } = IPC_MESSAGES;
@@ -20,7 +19,7 @@ const { IPC_UI_STATE_LOAD } = IPC_MESSAGES;
     <Provider store={store}>
       <ConnectedRouter history={history}>
         <DndProvider backend={Backend}>
-          <MainLayout
+          <App
             lastOpenedPlaylistId={lastOpenedPlaylistId}/>
         </DndProvider>
       </ConnectedRouter>

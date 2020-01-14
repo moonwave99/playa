@@ -1,0 +1,75 @@
+@import "../../styles/variables";
+
+@import url('../../static/inter-ui/inter-ui.css');
+@import url('../../static/fira-mono/fira-mono.css');
+@import '~milligram/dist/milligram.css';
+
+body {
+	user-select: none;
+	background-color: $backgroundColor;
+	color: $clearColor;
+}
+
+*,
+*::after,
+*::before {
+	-webkit-user-select: none;
+	-webkit-app-region: no-drag;
+	cursor: default;
+}
+
+body,
+html {
+	font-family: 'Inter UI', sans-serif;
+	font-feature-settings: 'calt' 1, 'ss02' 1;
+	height: 100vh;
+	width: 100vw;
+	margin: 0;
+}
+
+.app {
+  height: 100vh;
+  .search-container,
+  .main-container {
+    height: calc(100vh - #{$playerHeight});
+		display: flex;
+  }
+
+	.sidebar-wrapper {
+    width: $sidebarWidth;
+		display: flex;
+		height: 100%;
+  }
+
+  .main-wrapper {
+		display: flex;
+		flex-grow: 2;
+  }
+
+  .search-container {
+    background-color: $backgroundColor;
+    z-index:1000;
+    width: calc(100vw - #{$sidebarWidth});
+    margin-left: $sidebarWidth;
+    position: fixed;
+    top: 0;
+  }
+
+  .search-container-enter {
+    opacity: 0;
+  }
+
+  .search-container-enter-active {
+    opacity: 1;
+    transition: opacity 300ms;
+  }
+
+  .search-container-exit {
+    opacity: 1;
+  }
+
+  .search-container-exit-active {
+    opacity: 0;
+    transition: opacity 300ms, transform 300ms;
+  }
+}

@@ -2,24 +2,24 @@ import React, { ReactElement, useEffect } from 'react';
 import { Switch, Route } from 'react-router';
 import { generatePath } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { PlayerView } from '../components/PlayerView/PlayerView';
-import { SearchView } from '../components/SearchView/SearchView';
-import { SidebarView } from '../components/SidebarView/SidebarView';
-import { AllPlaylistContainer } from '../components/AllPlaylistContainer/AllPlaylistContainer';
-import { PlaylistContainer } from '../components/PlaylistContainer/PlaylistContainer';
-import { history } from '../store/store';
-import { Playlist, getAllPlaylistsRequest } from '../store/modules/playlist';
-import './MainLayout.scss';
+import { PlayerView } from '../PlayerView/PlayerView';
+import { SearchView } from '../SearchView/SearchView';
+import { SidebarView } from '../SidebarView/SidebarView';
+import { AllPlaylistContainer } from '../AllPlaylistContainer/AllPlaylistContainer';
+import { PlaylistContainer } from '../PlaylistContainer/PlaylistContainer';
+import { history } from '../../store/store';
+import { Playlist, getAllPlaylistsRequest } from '../../store/modules/playlist';
+import './App.scss';
 
 import {
   SEARCH,
   PLAYLIST_ALL,
   PLAYLIST_SHOW
-} from '../routes';
+} from '../../routes';
 
 import {
   RECENT_PLAYLIST_COUNT
-} from '../../constants';
+} from '../../../constants';
 
 type MainLayoutProps = {
   lastOpenedPlaylistId: Playlist['_id'];
@@ -53,7 +53,7 @@ const MainLayout = ({
   }
 
   return (
-    <main className="main-layout">
+    <main className="app">
       <section className="main-container">
         <div className="sidebar-wrapper">
           <SidebarView
@@ -66,8 +66,10 @@ const MainLayout = ({
             <Route path={PLAYLIST_ALL} exact component={AllPlaylistContainer} />
             <Route path={PLAYLIST_SHOW} component={PlaylistContainer} />
           </Switch>
-          <PlayerView/>
         </div>
+      </section>
+      <section className="player-wrapper">
+        <PlayerView/>
       </section>
     </main>
   );

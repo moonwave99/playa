@@ -1,6 +1,6 @@
 import * as os from 'os'
 
-export const MACOS = (os.platform() === "darwin");
+export const IS_MACOS = (os.platform() === "darwin");
 
 export const HEIGHT = 800;
 export const WIDTH = 1200;
@@ -9,6 +9,10 @@ export const MIN_WIDTH = WIDTH / 2;
 export const RECENT_PLAYLIST_COUNT = 10;
 
 export const MUSIC_FILE_EXTENSIONS = ['mp3', 'm4a', 'flac', 'ogg'];
+
+export const COLORS = {
+  SKELETON_COLOR: '#282828'
+};
 
 export const IPC_MESSAGES = {
   IPC_UI_STATE_LOAD: 'ui:state:load',
@@ -33,8 +37,4 @@ export const IPC_MESSAGES = {
   IPC_COVER_GET_REQUEST: 'cover:get:request',
   IPC_COVER_GET_RESPONSE: 'cover:get:response',
   IPC_DIALOG_SHOW_MESSAGE: 'dialog:show-message'
-};
-
-export const COLORS = {
-  SKELETON_COLOR: '#282828'
 };

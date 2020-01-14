@@ -112,7 +112,7 @@ const rendererConfig = {
 	plugins: [
 		new HtmlWebpackPlugin({
 			filename: 'index.html',
-			template: path.resolve(__dirname, './src/renderer/index.html'),
+			template: path.resolve(__dirname, './src/renderer/static/index.html'),
 		}),
 	],
 };

@@ -1,7 +1,7 @@
 import { ipcRenderer as ipc } from 'electron';
-import { store, history } from './store/store';
+import { store, history } from '../store/store';
 
-import { IPC_MESSAGES } from '../constants';
+import { IPC_MESSAGES } from '../../constants';
 
 const {
   IPC_UI_NAVIGATE_TO,
@@ -20,24 +20,24 @@ import {
   PLAYLIST_GET_ALL_RESPONSE,
   PLAYLIST_SAVE_RESPONSE,
   PLAYLIST_DELETE_RESPONSE
-} from './store/modules/playlist';
+} from '../store/modules/playlist';
 
 import {
   Album,
   ALBUM_SEARCH_RESPONSE,
   ALBUM_GET_LIST_RESPONSE,
   ALBUM_GET_CONTENT_RESPONSE
-} from './store/modules/album';
+} from '../store/modules/album';
 
 import {
   Track,
   TRACK_GET_LIST_RESPONSE,
   TRACK_GET_LIST_REQUEST
-} from './store/modules/track';
+} from '../store/modules/track';
 
 import {
   COVER_GET_RESPONSE
-} from './store/modules/cover';
+} from '../store/modules/cover';
 
 export function initIpc(): void {
   ipc.on('error', (_event, error) => {

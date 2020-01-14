@@ -1,9 +1,11 @@
-@import "../../variables";
+@import "../../styles/variables";
 
 .search-view {
+  height: 100%;
+  width: 100%;
   .results-wrapper {
     overflow: auto;
     padding: 0;
-    height: calc(100vh - #{$searchBarHeight} - #{$playerHeight});
+    height: calc(100% - #{$searchBarHeight});
   }
 }

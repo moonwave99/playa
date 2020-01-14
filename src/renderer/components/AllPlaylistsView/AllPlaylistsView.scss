@@ -1,9 +1,10 @@
-@import "../../variables";
-@import "../../mixins";
+@import "../../styles/variables";
+@import "../../styles/mixins";
 
 .all-playlists-view {
   padding: $mainUnit;
-  height: calc(100vh - #{$playerHeight});
+  height: 100%;
+  width: 100%;
   overflow: auto;
   .all-playlists-table {
     list-style: none;

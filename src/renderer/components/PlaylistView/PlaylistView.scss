@@ -1,10 +1,11 @@
-@import "../../variables";
-@import "../../mixins";
+@import "../../styles/variables";
+@import "../../styles/mixins";
 
 .playlist-view {
   padding: $mainUnit;
   overflow: auto;
-  height: calc(100vh - #{$playerHeight});
+  height: 100%;
+  width: 100%;
   .playlist-header {
     display: flex;
     flex-direction: row;

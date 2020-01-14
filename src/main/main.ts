@@ -18,7 +18,7 @@ import {
   WIDTH,
   MIN_WIDTH,
   MIN_HEIGHT,
-  MACOS
+  IS_MACOS
 } from '../constants';
 
 let mainWindow: Electron.BrowserWindow;
@@ -40,7 +40,7 @@ function createWindow(): void {
 
   mainWindow.loadURL(
     url.format({
-      pathname: Path.join(__dirname, './index.html'),
+      pathname: Path.join(__dirname, './static/index.html'),
       protocol: 'file:',
       slashes: true,
     })
@@ -83,7 +83,7 @@ app.on('ready', async () => {
 });
 
 app.on('activate', () => {
-  if (MACOS && mainWindow === null) {
+  if (IS_MACOS && mainWindow === null) {
     createWindow();
   }
 });
