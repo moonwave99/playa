@@ -25,6 +25,7 @@ type CompactAlbumViewProps = {
   isCurrent: boolean;
   onDragEnd: Function;
   onAlbumMove: Function;
+  onContextMenu: Function;
 }
 
 export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
@@ -33,7 +34,8 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
   index,
   isCurrent = false,
   onDragEnd,
-  onAlbumMove
+  onAlbumMove,
+  onContextMenu
 }) => {
   const { _id, type, year, artist, title } = album;
 
@@ -114,7 +116,9 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
       <CoverView
         className="album-cover"
         src={cover}
-        title={`[${_id}] ${artist} - ${title}`}/>
+        album={album}
+        onContextMenu={onContextMenu}
+        />
       <p className="album-content">
         <span className="title">{title}</span>
         <span className="info">

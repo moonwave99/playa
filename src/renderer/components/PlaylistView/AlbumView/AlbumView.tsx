@@ -17,13 +17,15 @@ type AlbumViewProps = {
   album: Album;
   isCurrent: boolean;
   currentTrackId: Track['_id'];
+  onContextMenu: Function;
 }
 
 export const AlbumView: FC<AlbumViewProps> = ({
   playlistId,
   album,
   isCurrent = false,
-  currentTrackId
+  currentTrackId,
+  onContextMenu
 }) => {
   const { _id, type, year, artist, title, tracks } = album;
   const { tracklist, notFoundTracks, cover } = useSelector((state: ApplicationState) => {
@@ -74,7 +76,8 @@ export const AlbumView: FC<AlbumViewProps> = ({
           <CoverView
             className="album-cover"
             src={cover}
-            title={`[${_id}] ${artist} - ${title}`}/>
+            album={album}
+            onContextMenu={onContextMenu}/>
         </div>
         <div className="album-actions">
         { notFoundTracks && renderNotFoundTracksButton() }

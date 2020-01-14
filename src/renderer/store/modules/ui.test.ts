@@ -9,7 +9,7 @@ import reducer, {
   SHOW_CONTEXT_MENU,
 } from './ui';
 
-import { RESULT_LIST_ITEM } from '../../utils/contextMenuUtils';
+import { ContextMenuTypes } from '../../utils/contextMenuUtils';
 
 describe('ui actions', () => {
   describe('updateState', () => {
@@ -41,13 +41,13 @@ describe('ui actions', () => {
       const dispatch = jest.fn();
       const context = { path: '/path/to/123' };
       showContextMenu({
-        type: RESULT_LIST_ITEM,
+        type: ContextMenuTypes.RESULT_LIST_ITEM,
         context
       })(dispatch);
       expect(dispatch).toHaveBeenCalledWith({
         type: SHOW_CONTEXT_MENU,
         options: {
-          type: RESULT_LIST_ITEM,
+          type: ContextMenuTypes.RESULT_LIST_ITEM,
           context
         }
       });
@@ -78,7 +78,7 @@ describe('ui reducer', () => {
     expect(reducer({} as UIState, {
       type: SHOW_CONTEXT_MENU,
       options: {
-        type: RESULT_LIST_ITEM,
+        type: ContextMenuTypes.RESULT_LIST_ITEM,
         context: { path: '/path/to/123' }
       }
     })).toEqual({});

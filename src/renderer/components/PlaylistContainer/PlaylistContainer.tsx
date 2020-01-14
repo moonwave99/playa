@@ -4,10 +4,11 @@ import { useParams } from 'react-router';
 import { PlaylistView } from '../PlaylistView/PlaylistView';
 import { ApplicationState } from '../../store/store';
 import { savePlaylistRequest, getDefaultPlaylist } from '../../store/modules/playlist';
-import { updateState, updateTitle } from '../../store/modules/ui';
-import { getAlbumListRequest } from '../../store/modules/album';
+import { updateState, updateTitle, showContextMenu } from '../../store/modules/ui';
+import { Album, getAlbumListRequest } from '../../store/modules/album';
 import { toObj } from '../../utils/storeUtils';
 import { confirmDialog } from '../../utils/dialogUtils';
+import { ContextMenuTypes } from '../../utils/contextMenuUtils';
 
 export const PlaylistContainer = (): ReactElement => {
   const dispatch = useDispatch();
@@ -60,6 +61,13 @@ export const PlaylistContainer = (): ReactElement => {
     dispatch(savePlaylistRequest({ ...playlist, title }));
   }
 
+  function onAlbumContextMenu(album: Album): void {
+    dispatch(showContextMenu({
+      type: ContextMenuTypes.ALBUM_COVER,
+      context: album
+    }));
+  }
+
 	return (
     <PlaylistView
        albums={albums}
@@ -68,6 +76,7 @@ export const PlaylistContainer = (): ReactElement => {
        currentAlbumId={currentAlbumId}
        currentTrackId={currentTrackId}
        onAlbumOrderChange={onAlbumOrderChange}
-       onTitleChange={onTitleChange}/>
+       onTitleChange={onTitleChange}
+       onAlbumContextMenu={onAlbumContextMenu}/>
 	);
 };

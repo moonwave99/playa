@@ -6,7 +6,7 @@ import { SearchBar } from './SearchBar/SearchBar';
 import { SearchResultList } from './SearchResultList/SearchResultList';
 import { updateTitle, showContextMenu } from '../../store/modules/ui';
 import { searchAlbumsRequest } from '../../store/modules/album';
-import { RESULT_LIST_ITEM } from '../../utils/contextMenuUtils';
+import { ContextMenuTypes } from '../../utils/contextMenuUtils';
 import './SearchView.scss';
 
 type SearchViewProps = {
@@ -29,7 +29,7 @@ export const SearchView: FC<SearchViewProps> = () => {
 
   function onContextMenu(album: Album): void {
     dispatch(showContextMenu({
-      type: RESULT_LIST_ITEM,
+      type: ContextMenuTypes.RESULT_LIST_ITEM,
       context: album
     }));
   }

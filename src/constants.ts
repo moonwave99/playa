@@ -8,7 +8,6 @@ export const MIN_HEIGHT = HEIGHT / 2;
 export const MIN_WIDTH = WIDTH / 2;
 export const RECENT_PLAYLIST_COUNT = 10;
 
-export const MUSIC_ROOT_FOLDER = '/Volumes/Public/Music';
 export const MUSIC_FILE_EXTENSIONS = ['mp3', 'm4a', 'flac', 'ogg'];
 
 export const IPC_MESSAGES = {

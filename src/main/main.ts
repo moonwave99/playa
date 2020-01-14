@@ -18,8 +18,7 @@ import {
   WIDTH,
   MIN_WIDTH,
   MIN_HEIGHT,
-  MACOS,
-  MUSIC_ROOT_FOLDER
+  MACOS
 } from '../constants';
 
 let mainWindow: Electron.BrowserWindow;
@@ -71,7 +70,7 @@ app.on('ready', async () => {
   initDialog();
   initAppState(userDataPath);
   initDatabase(userDataPath);
-  initFinder(MUSIC_ROOT_FOLDER);
+  initFinder();
   initDiscogsClient({
     userDataPath,
     appName: APP_NAME,

@@ -18,6 +18,7 @@ type PlaylistViewProps = {
   currentTrackId: Track['_id'];
   onTitleChange: Function;
   onAlbumOrderChange: Function;
+  onAlbumContextMenu: Function;
 };
 
 export const PlaylistView: FC<PlaylistViewProps> = ({
@@ -27,7 +28,8 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
   currentAlbumId,
   currentTrackId,
   onAlbumOrderChange,
-  onTitleChange
+  onTitleChange,
+  onAlbumContextMenu
 }) => {
   const [albumView, setAlbumView] = useState(UIAlbumView.Extended);
   const [albumOrder, setAlbumOrder] = useState([]);
@@ -71,7 +73,8 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
               isCurrent={album._id === currentAlbumId}
               currentTrackId={currentTrackId}
               playlistId={playlist._id}
-              album={album}/>
+              album={album}
+              onContextMenu={onAlbumContextMenu}/>
           </li>
         );
       case UIAlbumView.Compact:
@@ -83,7 +86,8 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
               index={index}
               isCurrent={album._id === currentAlbumId}
               onDragEnd={onDragEnd}
-              onAlbumMove={onAlbumMove}/>
+              onAlbumMove={onAlbumMove}
+              onContextMenu={onAlbumContextMenu}/>
           </li>
         );
     }
