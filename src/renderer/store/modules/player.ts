@@ -3,9 +3,9 @@ import { Album } from './album';
 import { Track } from './track';
 
 export interface PlayerState {
-  playlistId: Playlist['_id'] | null;
-  albumId: Album['_id'] | null;
-  trackId: Track['_id'] | null;
+  currentPlaylistId: Playlist['_id'] | null;
+  currentAlbumId: Album['_id'] | null;
+  currentTrackId: Track['_id'] | null;
   isPlaying: boolean;
   isPaused: boolean;
 }
@@ -96,9 +96,9 @@ export const prevTrack = (): Function =>
 
 
 const INITIAL_STATE: PlayerState = {
-  playlistId: null,
-  albumId: null,
-  trackId: null,
+  currentPlaylistId: null,
+  currentAlbumId: null,
+  currentTrackId: null,
   isPlaying: false,
   isPaused: false
 };
@@ -113,9 +113,9 @@ export default function reducer(
         ...state,
         isPlaying: true,
         isPaused: false,
-        playlistId: action.playlistId,
-        albumId: action.albumId,
-        trackId: action.trackId
+        currentPlaylistId: action.playlistId,
+        currentAlbumId: action.albumId,
+        currentTrackId: action.trackId
       };
     case PLAYER_STOP:
       return {

@@ -63,9 +63,9 @@ describe('player actions', () => {
 
 describe('player reducer', () => {
   const initialState = {
-    playlistId: null,
-    albumId: null,
-    trackId: null,
+    currentPlaylistId: null,
+    currentAlbumId: null,
+    currentTrackId: null,
     isPlaying: false,
     isPaused: false
   } as PlayerState;
@@ -83,7 +83,13 @@ describe('player reducer', () => {
     expect(reducer(initialState, {
       type: PLAYER_PLAY,
       ...playbackIds
-    })).toEqual({...initialState, isPlaying: true, ...playbackIds});
+    })).toEqual({
+      ...initialState,
+      isPlaying: true,
+      currentPlaylistId: '1',
+      currentAlbumId: '2',
+      currentTrackId: '3'
+    });
   });
 
   it('should handle PLAYER_STOP', () => {
