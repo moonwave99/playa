@@ -1,11 +1,10 @@
 import { ipcRenderer as ipc } from 'electron';
 import { store, history } from './store/store';
-import { SEARCH } from './routes';
 
 import { IPC_MESSAGES } from '../constants';
 
 const {
-  IPC_UI_SEARCH_SHOW,
+  IPC_UI_NAVIGATE_TO,
   IPC_PLAYLIST_GET_ALL_RESPONSE,
   IPC_PLAYLIST_SAVE_RESPONSE,
   IPC_PLAYLIST_DELETE_RESPONSE,
@@ -45,8 +44,8 @@ export function initIpc(): void {
     console.log(error);
   });
 
-  ipc.on(IPC_UI_SEARCH_SHOW, () => {
-    history.replace(SEARCH);
+  ipc.on(IPC_UI_NAVIGATE_TO, (_event, path: string) => {
+    history.replace(path);
   });
 
   ipc.on(IPC_PLAYLIST_GET_ALL_RESPONSE, (_event, playlists: Playlist[]) => {
