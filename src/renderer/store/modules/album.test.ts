@@ -1,4 +1,4 @@
-import { toObj } from '../../utils/store';
+import { toObj } from '../../utils/storeUtils';
 import { albums } from '../../../../test/fixtures';
 
 import reducer, {

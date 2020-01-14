@@ -1,7 +1,7 @@
 import { Client } from 'disconnect';
 import * as fs from 'fs';
 import * as Path from 'path';
-import { EntityHashMap } from '../renderer/utils/store';
+import { EntityHashMap } from '../renderer/utils/storeUtils';
 import { AlbumNotFoundError, FileSystemError } from '../errrors';
 
 type Credentials = {

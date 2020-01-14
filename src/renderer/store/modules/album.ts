@@ -1,5 +1,5 @@
 import { ipcRenderer as ipc } from 'electron';
-import { EntityHashMap, toObj, ensureAll } from '../../utils/store';
+import { EntityHashMap, toObj, ensureAll } from '../../utils/storeUtils';
 
 import { IPC_MESSAGES } from '../../../constants';
 

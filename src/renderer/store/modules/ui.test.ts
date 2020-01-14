@@ -9,7 +9,7 @@ import reducer, {
   SHOW_CONTEXT_MENU,
 } from './ui';
 
-import { RESULT_LIST_ITEM } from '../../utils/contextMenu';
+import { RESULT_LIST_ITEM } from '../../utils/contextMenuUtils';
 
 describe('ui actions', () => {
   describe('updateState', () => {

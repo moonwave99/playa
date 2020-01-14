@@ -1,7 +1,7 @@
 import React, { ReactElement, SyntheticEvent, FC } from 'react';
 import { Link, generatePath } from 'react-router-dom';
 import { Playlist } from '../../store/modules/playlist';
-import { formatDate } from '../../utils/datetime';
+import { formatDate } from '../../utils/datetimeUtils';
 import { PLAYLIST_SHOW } from '../../routes';
 import './AllPlaylistsView.scss';
 

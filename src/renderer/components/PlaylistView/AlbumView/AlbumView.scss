@@ -9,6 +9,9 @@
     .album-cover {
       @include albumCover($albumCoverWidth);
       margin: 0 0 $mainUnit * 0.5 0;
+      &:hover {
+        @include playOverlay('../../../static/icons/album/play.svg', 33%);
+      }
     }
     .album-actions {
       text-align: center;

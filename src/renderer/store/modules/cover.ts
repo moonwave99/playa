@@ -1,5 +1,5 @@
 import { ipcRenderer as ipc } from 'electron';
-import { EntityHashMap } from '../../utils/store';
+import { EntityHashMap } from '../../utils/storeUtils';
 import { Album } from './album';
 import { IPC_MESSAGES } from '../../../constants';
 

@@ -6,8 +6,10 @@
 	align-items: center;
 	padding: 1rem 0;
   position: relative;
+  transition: background-color .3s ease-in-out;
   &:before {
     content: '⋮';
+    cursor: move;
     position: absolute;
     top: 1rem;
     left: -2rem;
@@ -16,19 +18,23 @@
     vertical-align: middle;
     font-size: 4rem;
     color: $backgroundLightColor;
+    transition: color .3s ease-in-out;
   }
-  &:hover:before {
-    color: $highlightColor;
+  &:hover {
+    background-color: $backgroundLightColor;
+    &:before {
+      color: $highlightColor;
+    }
+    .album-cover {
+      @include albumCover($albumCoverCompactWidth, $backgroundColor);
+      @include playOverlay('../../../static/icons/album/play.svg');
+    }
   }
   &.drag-is-dragging {
     opacity: 0;
   }
   .album-cover {
     @include albumCover($albumCoverCompactWidth);
-    cursor: move;
-    > img {
-      cursor: move;
-    }
   }
   .album-content {
     margin: 0 0 0 1.6rem;

@@ -5,6 +5,7 @@ import thunk from 'redux-thunk';
 import { History, createHashHistory } from 'history';
 
 import uiReducer, { UIState } from './modules/ui';
+import playerReducer, { PlayerState } from './modules/player';
 import playlistReducer, { PlaylistState } from './modules/playlist';
 import albumReducer, { AlbumState } from './modules/album';
 import trackReducer, { TrackState } from './modules/track';
@@ -15,21 +16,23 @@ const initialState = {};
 
 export interface ApplicationState {
   router: RouterState;
+  ui: UIState;
+  player: PlayerState;
   playlists: PlaylistState;
   albums: AlbumState;
   tracks: TrackState;
   covers: CoverState;
-  ui: UIState;
 }
 
 function createRootReducer (history: History): Reducer {
   return combineReducers<ApplicationState>({
     router: connectRouter(history),
+    ui: uiReducer,
+    player: playerReducer,
     playlists: playlistReducer,
     albums: albumReducer,
     tracks: trackReducer,
-    covers: coverReducer,
-    ui: uiReducer
+    covers: coverReducer
   });
 }
 

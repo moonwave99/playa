@@ -1,0 +1,8 @@
+@import "../../variables";
+
+.player {
+  width: 100%;
+  height: $playerHeight;
+  background-color: $backgroundLightColor;
+  border-top: 1px solid $backgroundDarkColor;
+}

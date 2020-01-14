@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AllPlaylistsView } from '../AllPlaylistsView/AllPlaylistsView';
 import { Playlist, deletePlaylistRequest } from '../../store/modules/playlist';
 import { updateTitle } from '../../store/modules/ui';
-import { confirmDialog } from '../../utils/dialogs';
+import { confirmDialog } from '../../utils/dialogUtils';
 
 export const AllPlaylistContainer = (): ReactElement => {
   const dispatch = useDispatch();

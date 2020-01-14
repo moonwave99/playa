@@ -1,10 +1,12 @@
-import React, { FC, useEffect, useRef } from 'react';
+import React, { FC, SyntheticEvent, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import cx from 'classnames';
 import { useDrag, useDrop, DropTargetMonitor } from 'react-dnd';
 import { XYCoord } from 'dnd-core';
 import { CoverView } from '../AlbumView/CoverView/CoverView';
 import { ApplicationState } from '../../../store/store';
+import { play } from '../../../store/modules/player';
+import { Playlist } from '../../../store/modules/playlist';
 import { Album, VARIOUS_ARTISTS_ID } from '../../../store/modules/album';
 import { UIDragTypes } from '../../../store/modules/ui';
 import { getCoverRequest } from '../../../store/modules/cover';
@@ -17,6 +19,7 @@ interface DragItem {
 }
 
 type CompactAlbumViewProps = {
+  playlistId?: Playlist['_id'];
   album: Album;
   index: number;
   onDragEnd: Function;
@@ -24,6 +27,7 @@ type CompactAlbumViewProps = {
 }
 
 export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
+  playlistId,
   album,
   index,
   onDragEnd,
@@ -87,6 +91,15 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
   });
   drag(drop(ref));
 
+  function onDoubleClick(event: SyntheticEvent): void {
+    event.preventDefault();
+    dispatch(play({
+      playlistId,
+      albumId: album._id,
+      trackId: album.tracks[0]
+    }));
+  }
+
   const classNames = cx('compact-album-view', {
     'drag-is-over': isOver,
     'drag-can-drop': canDrop,
@@ -94,7 +107,7 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
   });
   const tagClasses = cx('album-type', `album-type-${type}`);
   return (
-    <article className={classNames} ref={ref}>
+    <article className={classNames} ref={ref} onDoubleClick={onDoubleClick}>
       <CoverView
         className="album-cover"
         src={cover}

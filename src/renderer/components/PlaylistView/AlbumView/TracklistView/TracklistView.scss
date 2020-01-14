@@ -8,10 +8,11 @@
     font-family: 'Fira Mono', monospace;
     max-width: $tracklistMaxWidth;
     > li {
-      margin: 1rem 0;
+      margin: 0;
+      padding: .5rem 0;
       line-height: 2.5rem;
       display: flex;
-      transition: background-color .5s ease-in, .5s ease-in;
+      transition: background-color .3s ease-in, .3s ease-in;
       width: 100%;
       &:first-child {
         margin-top: 0;
@@ -19,6 +20,21 @@
       &.not-ready {
         color: transparent;
         height: 2.5rem;
+        padding: 0;
+        margin: 1rem 0;
+        &:first-child {
+          padding-top: .5rem;
+        }
+      }
+      &:hover {
+        background-color: $backgroundLightColor;
+      }
+      &.ready:hover {
+        color: $highlightColor;
+        .track-number {
+          @include playOverlay('../../../../static/icons/track/play.svg', 75%, transparent, '.');
+          color: transparent;
+        }
       }
       .track-number {
         &:after {

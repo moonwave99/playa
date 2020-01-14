@@ -1,32 +1,34 @@
-import React, { FC, ReactElement, useEffect } from 'react';
+import React, { FC, ReactElement, SyntheticEvent, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import cx from 'classnames';
 import { CoverView } from './CoverView/CoverView';
 import { TracklistView } from './TracklistView/TracklistView';
 import { ApplicationState } from '../../../store/store';
+import { play } from '../../../store/modules/player';
+import { Playlist } from '../../../store/modules/playlist';
 import { Album, VARIOUS_ARTISTS_ID, getAlbumContentRequest } from '../../../store/modules/album';
 import { getTrackListRequest } from '../../../store/modules/track';
 import { getCoverRequest } from '../../../store/modules/cover';
 import './AlbumView.scss';
 
 type AlbumViewProps = {
+  playlistId?: Playlist['_id'];
   album: Album;
 }
 
 export const AlbumView: FC<AlbumViewProps> = ({
+  playlistId,
   album
 }) => {
   const { _id, type, year, artist, title, tracks } = album;
-
-  const tracklist = useSelector((state: ApplicationState) => {
-    return tracks.map((id) => state.tracks.allById[id]).filter(x => !!x) || [];
+  const { tracklist, notFoundTracks, cover } = useSelector((state: ApplicationState) => {
+    const tracklist = tracks.map((id) => state.tracks.allById[id]).filter(x => !!x) || [];
+    return {
+      tracklist,
+      notFoundTracks: tracklist.filter(({ found }) => found === false).length > 0,
+      cover: state.covers.allById[_id]
+    };
   });
-
-  const cover = useSelector((state: ApplicationState) => {
-    return state.covers.allById[_id];
-  });
-
-  const notFoundTracks = tracklist.filter(({ found }) => found === false).length > 0;
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -45,6 +47,15 @@ export const AlbumView: FC<AlbumViewProps> = ({
     dispatch(getAlbumContentRequest(album));
   }
 
+  function onAlbumCoverDoubleClick(event: SyntheticEvent): void {
+    event.preventDefault();
+    dispatch(play({
+      playlistId,
+      albumId: _id,
+      trackId: tracks[0]
+    }));
+  }
+
   function renderNotFoundTracksButton(): ReactElement {
     return <button onClick={onNotFoundButtonClick} className="button button-outline">Reload</button>
   }
@@ -53,10 +64,12 @@ export const AlbumView: FC<AlbumViewProps> = ({
   return (
     <article className="album-view">
       <aside className="album-aside">
-        <CoverView
-          className="album-cover"
-          src={cover}
-          title={`[${_id}] ${artist} - ${title}`}/>
+        <div onDoubleClick={onAlbumCoverDoubleClick}>
+          <CoverView
+            className="album-cover"
+            src={cover}
+            title={`[${_id}] ${artist} - ${title}`}/>
+        </div>
         <div className="album-actions">
         { notFoundTracks && renderNotFoundTracksButton() }
         </div>
@@ -67,6 +80,8 @@ export const AlbumView: FC<AlbumViewProps> = ({
           {artist === VARIOUS_ARTISTS_ID ? 'V/A' : artist}{year ? `, ${year}` : null} - <span className={tagClasses}>{type}</span>
         </h3>
         <TracklistView
+          playlistId={playlistId}
+          albumId={album._id}
           isAlbumFromVariousArtists={artist === VARIOUS_ARTISTS_ID}
           rawTracks={album.tracks}
           tracklist={tracklist}/>

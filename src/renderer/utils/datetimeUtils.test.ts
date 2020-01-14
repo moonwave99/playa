@@ -1,4 +1,4 @@
-import { formatDuration } from './datetime';
+import { formatDuration } from './datetimeUtils';
 
 describe('formatDuration', () => {
   it('should return 00:0s when seconds are <10', () => {

@@ -6,7 +6,7 @@ import { SearchBar } from './SearchBar/SearchBar';
 import { SearchResultList } from './SearchResultList/SearchResultList';
 import { updateTitle, showContextMenu } from '../../store/modules/ui';
 import { searchAlbumsRequest } from '../../store/modules/album';
-import { RESULT_LIST_ITEM } from '../../utils/contextMenu';
+import { RESULT_LIST_ITEM } from '../../utils/contextMenuUtils';
 import './SearchView.scss';
 
 type SearchViewProps = {

@@ -5,7 +5,7 @@ import { CompactAlbumView } from './CompactAlbumView/CompactAlbumView';
 import { Playlist } from '../../store/modules/playlist';
 import { Album } from '../../store/modules/album';
 import { UIAlbumView } from '../../store/modules/ui';
-import { EntityHashMap, immutableMove } from '../../utils/store';
+import { EntityHashMap, immutableMove } from '../../utils/storeUtils';
 import './PlaylistView.scss';
 
 type PlaylistViewProps = {
@@ -59,13 +59,14 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
       case UIAlbumView.Extended:
         return (
           <li key={album._id}>
-            <AlbumView album={album}/>
+            <AlbumView playlistId={playlist._id} album={album}/>
           </li>
         );
       case UIAlbumView.Compact:
         return (
           <li key={album._id}>
             <CompactAlbumView
+              playlistId={playlist._id}
               album={album}
               index={index}
               onDragEnd={onDragEnd}

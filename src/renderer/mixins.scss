@@ -70,22 +70,40 @@
   }
 }
 
-@mixin albumCover($width) {
+@mixin albumCover($width, $bgColor: $backgroundLightColor) {
   margin: 0;
-  background: radial-gradient(transparent 0%, transparent 20%, $backgroundLightColor 0%, $backgroundLightColor 70%, transparent 70%, transparent 100%);
+  background: radial-gradient(transparent 0%, transparent 20%, $bgColor 0%, $bgColor 70%, transparent 70%, transparent 100%);
   width: $width;
   height: $width;
+  transition: background-color .3s ease-in-out;
   > img {
     width: $width;
     height: $width;
     opacity: 0;
     transition: opacity .5s ease-in-out;
-    background-color: $backgroundLightColor;
+    background-color: $bgColor;
     &.empty {
       display: none;
     }
   }
   &.loaded > img{
     opacity: 1;
+  }
+}
+
+@mixin playOverlay($iconUrl, $bgSize: 50%, $bgColor: rgba(white, .1), $content: '') {
+  position: relative;
+  &:after {
+    content: $content;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-image: url($iconUrl);
+    background-position: center;
+    background-size: $bgSize;
+    background-repeat: no-repeat;
+    background-color: $bgColor;
   }
 }

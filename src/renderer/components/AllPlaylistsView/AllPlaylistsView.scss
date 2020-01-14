@@ -3,6 +3,8 @@
 
 .all-playlists-view {
   padding: $mainUnit;
+  height: calc(100vh - #{$playerHeight});
+  overflow: auto;
   .all-playlists-table {
     list-style: none;
     tr {

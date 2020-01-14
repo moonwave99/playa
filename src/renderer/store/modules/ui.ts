@@ -1,5 +1,5 @@
 import { ipcRenderer as ipc } from 'electron';
-import openContextMenu, { ContextMenuOptions } from '../../utils/contextMenu';
+import openContextMenu, { ContextMenuOptions } from '../../utils/contextMenuUtils';
 
 import { IPC_MESSAGES } from '../../../constants';
 const {

@@ -1,12 +1,18 @@
-import React, { FC, ReactElement } from 'react';
+import React, { FC, ReactElement, SyntheticEvent } from 'react';
+import { useDispatch } from 'react-redux';
 import cx from 'classnames';
+import { Playlist } from '../../../../store/modules/Playlist';
+import { Album } from '../../../../store/modules/Album';
 import { Track } from '../../../../store/modules/track';
-import { formatTrackNumber } from '../../../../utils/tracklist';
-import { formatDuration } from '../../../../utils/datetime';
+import { play } from '../../../../store/modules/player';
+import { formatTrackNumber } from '../../../../utils/tracklistUtils';
+import { formatDuration } from '../../../../utils/datetimeUtils';
 import { COLORS } from '../../../../../constants';
 import './TracklistView.scss';
 
 type TracklistViewProps = {
+  playlistId?: Playlist['_id'];
+  albumId: Album['_id'];
   tracklist: Track[];
   rawTracks: string[];
   isAlbumFromVariousArtists: boolean;
@@ -14,11 +20,13 @@ type TracklistViewProps = {
 
 // #TODO reload onClick if some tracks are not found
 export const TracklistView: FC<TracklistViewProps> = ({
+  playlistId,
+  albumId,
   tracklist = [],
   rawTracks = [],
   isAlbumFromVariousArtists
 }) => {
-
+  const dispatch = useDispatch();
   const maxNameLength = Math.max(...rawTracks.map(x => x.length));
 
   function renderSkeletonTrack(_id: string, width: number): ReactElement {
@@ -49,8 +57,18 @@ export const TracklistView: FC<TracklistViewProps> = ({
     if (!found) {
       return renderSkeletonTrack(_id, path.length / maxNameLength * 100);
     }
+
+    function onTrackDoubleClick(event: SyntheticEvent): void {
+      event.preventDefault();
+      dispatch(play({
+        playlistId,
+        albumId,
+        trackId: _id
+      }));
+    }
+
     return (
-      <li key={_id} >
+      <li key={_id} className="ready" onDoubleClick={onTrackDoubleClick}>
         <span className="track-number">{formatTrackNumber(number)}</span>
         {renderArtist(artist)}
         <span className="title">{title}</span>

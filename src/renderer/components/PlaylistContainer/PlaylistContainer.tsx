@@ -6,8 +6,8 @@ import { ApplicationState } from '../../store/store';
 import { savePlaylistRequest, getDefaultPlaylist } from '../../store/modules/playlist';
 import { updateState, updateTitle } from '../../store/modules/ui';
 import { getAlbumListRequest } from '../../store/modules/album';
-import { toObj } from '../../utils/store';
-import { confirmDialog } from '../../utils/dialogs';
+import { toObj } from '../../utils/storeUtils';
+import { confirmDialog } from '../../utils/dialogUtils';
 
 export const PlaylistContainer = (): ReactElement => {
   const dispatch = useDispatch();

@@ -2,6 +2,7 @@ import React, { ReactElement, useEffect } from 'react';
 import { Switch, Route } from 'react-router';
 import { generatePath } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { PlayerView } from '../components/PlayerView/PlayerView';
 import { SearchView } from '../components/SearchView/SearchView';
 import { SidebarView } from '../components/SidebarView/SidebarView';
 import { AllPlaylistContainer } from '../components/AllPlaylistContainer/AllPlaylistContainer';
@@ -65,6 +66,7 @@ const MainLayout = ({
             <Route path={PLAYLIST_ALL} exact component={AllPlaylistContainer} />
             <Route path={PLAYLIST_SHOW} component={PlaylistContainer} />
           </Switch>
+          <PlayerView/>
         </div>
       </section>
     </main>

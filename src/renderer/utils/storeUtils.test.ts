@@ -2,7 +2,7 @@ import {
   toObj,
   removeIds,
   ensureAll
-} from './store';
+} from './storeUtils';
 
 const entitiesArray = [
   { _id: '1', value: 'a' },

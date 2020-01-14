@@ -1,4 +1,4 @@
-import { formatTrackNumber } from './tracklist';
+import { formatTrackNumber } from './tracklistUtils';
 
 describe('formatTrackNumber', () => {
   it('should pad numbers <10 with 0', () => {
