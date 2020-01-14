@@ -27,7 +27,7 @@ export const PlaylistContainer = (): ReactElement => {
   }, [playlist.title]);
 
   useEffect(() => {
-    dispatch(updateState({ currentPlaylistId: _id }));
+    dispatch(updateState({ lastOpenedPlaylistId: _id }));
   }, [playlist._id]);
 
   useEffect(() => {

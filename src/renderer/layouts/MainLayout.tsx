@@ -22,11 +22,11 @@ import {
 } from '../../constants';
 
 type MainLayoutProps = {
-  currentPlaylistId: Playlist['_id'];
+  lastOpenedPlaylistId: Playlist['_id'];
 }
 
 const MainLayout = ({
-  currentPlaylistId
+  lastOpenedPlaylistId
 }: MainLayoutProps): ReactElement => {
   const dispatch = useDispatch();
   const playlists = useSelector(({ playlists }) =>
@@ -42,10 +42,10 @@ const MainLayout = ({
   }, []);
 
   useEffect(() => {
-    if (currentPlaylistId) {
-      history.replace(generatePath(PLAYLIST_SHOW, { _id: currentPlaylistId }));
+    if (lastOpenedPlaylistId) {
+      history.replace(generatePath(PLAYLIST_SHOW, { _id: lastOpenedPlaylistId }));
     }
-  }, [currentPlaylistId]);
+  }, [lastOpenedPlaylistId]);
 
   function onCreatePlaylistButtonClick(): void {
     const now = new Date().toISOString();

@@ -2,7 +2,7 @@ import * as fs from 'fs-extra';
 import { FileSystemError } from '../errrors';
 
 interface AppStateValues {
-  currentPlaylistId: string;
+  lastOpenedPlaylistId: string;
 }
 
 export default class AppState {
@@ -27,7 +27,7 @@ export default class AppState {
       this.appState = fs.readJSONSync(this.path);
     } catch (error) {
       this.appState = {
-        currentPlaylistId: null
+        lastOpenedPlaylistId: null
       };
     }
     return this;
