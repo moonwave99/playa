@@ -4,12 +4,16 @@ export const MACOS = (os.platform() === "darwin");
 
 export const HEIGHT = 800;
 export const WIDTH = 1200;
+export const MIN_HEIGHT = HEIGHT / 2;
+export const MIN_WIDTH = WIDTH / 2;
 export const RECENT_PLAYLIST_COUNT = 10;
 
 export const MUSIC_ROOT_FOLDER = '/Volumes/Public/Music';
 export const MUSIC_FILE_EXTENSIONS = ['mp3', 'm4a', 'flac', 'ogg'];
 
 export const IPC_MESSAGES = {
+  IPC_UI_STATE_LOAD: 'ui:state:load',
+  IPC_UI_STATE_UPDATE: 'ui:state:update',
   IPC_UI_SEARCH_SHOW: 'ui:search:show',
   IPC_UI_START_ALBUM_DRAG: 'ui:start-album-drag',
   IPC_SYS_REVEAL_IN_FINDER: 'sys:reveal-in-finder',

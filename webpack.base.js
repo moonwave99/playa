@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const PermissionsOutputPlugin = require('webpack-permissions-plugin');
 const path = require('path');
-const outputFolder = '/pack';
+const outputFolder = '/_pack';
 
 const mainConfig = {
 	entry: './src/main/main.ts',

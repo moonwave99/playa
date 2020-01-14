@@ -42,7 +42,7 @@ typings/
 # Output folder & files
 dist
 build
-pack
+_pack
 package
 
 # Optional npm cache directory

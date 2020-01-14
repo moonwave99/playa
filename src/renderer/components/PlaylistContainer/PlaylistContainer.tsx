@@ -4,7 +4,7 @@ import { useParams } from 'react-router';
 import { PlaylistView } from '../PlaylistView/PlaylistView';
 import { ApplicationState } from '../../store/store';
 import { savePlaylistRequest, getDefaultPlaylist } from '../../store/modules/playlist';
-import { updateTitle } from '../../store/modules/ui';
+import { updateState, updateTitle } from '../../store/modules/ui';
 import { getAlbumListRequest } from '../../store/modules/album';
 import { toObj } from '../../utils/store';
 import { confirmDialog } from '../../utils/dialogs';
@@ -24,6 +24,12 @@ export const PlaylistContainer = (): ReactElement => {
   useEffect(() => {
     dispatch(updateTitle(playlist.title));
   }, [playlist.title]);
+
+  useEffect(() => {
+    dispatch(updateState({
+      currentPlaylistId: _id
+    }));
+  }, [_id]);
 
   useEffect(() => {
     dispatch(getAlbumListRequest(playlist.albums));

@@ -1,5 +1,5 @@
 import { app, Menu } from 'electron';
-import { IPC_MESSAGES } from '../constants';
+import { IPC_MESSAGES } from '../../constants';
 const { IPC_UI_SEARCH_SHOW } = IPC_MESSAGES;
 
 export default function initMenu(window: Electron.BrowserWindow): void {

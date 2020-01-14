@@ -2,7 +2,10 @@ import { ipcRenderer as ipc } from 'electron';
 import openContextMenu, { ContextMenuOptions } from '../../utils/contextMenu';
 
 import { IPC_MESSAGES } from '../../../constants';
-const { IPC_UI_START_ALBUM_DRAG } = IPC_MESSAGES;
+const {
+  IPC_UI_START_ALBUM_DRAG,
+  IPC_UI_STATE_UPDATE
+} = IPC_MESSAGES;
 
 export const UIDragTypes = {
   SEARCH_RESULTS: 'SEARCH_RESULTS',
@@ -18,12 +21,18 @@ export type UIState = {
   started?: boolean;
 };
 
-export const UPDATE_TITLE = 'playa/ui/UPDATE_TITLE';
+export const STATE_UPDATE = 'playa/ui/STATE_UPDATE';
+export const TITLE_UPDATE = 'playa/ui/TITLE_UPDATE';
 export const SHOW_CONTEXT_MENU = 'playa/ui/SHOW_CONTEXT_MENU';
 export const START_ALBUM_DRAG = 'playa/ui/START_ALBUM_DRAG';
 
+interface UpdateStateAction {
+  type: typeof STATE_UPDATE;
+  params: object;
+}
+
 interface UpdateTitleAction {
-  type: typeof UPDATE_TITLE;
+  type: typeof TITLE_UPDATE;
   title: string;
 }
 
@@ -38,14 +47,22 @@ interface StartAlbumDragAction {
 }
 
 export type UIActionTypes =
-    UpdateTitleAction
+    UpdateStateAction
+  | UpdateTitleAction
   | ShowContextMenuAction
   | StartAlbumDragAction;
+
+export const updateState = (params: object): Function =>
+  (dispatch: Function): void =>
+    dispatch({
+      type: STATE_UPDATE,
+      params
+    });
 
 export const updateTitle = (title: string): Function =>
   (dispatch: Function): void =>
     dispatch({
-      type: UPDATE_TITLE,
+      type: TITLE_UPDATE,
       title
     });
 
@@ -72,7 +89,10 @@ export default function reducer(
   action: UIActionTypes
 ): UIState {
 	switch (action.type) {
-    case UPDATE_TITLE:
+    case STATE_UPDATE:
+      ipc.send(IPC_UI_STATE_UPDATE, action.params);
+      return state;
+    case TITLE_UPDATE:
       document.title = action.title;
       return state;
     case SHOW_CONTEXT_MENU:

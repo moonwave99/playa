@@ -20,7 +20,13 @@ import {
   RECENT_PLAYLIST_COUNT
 } from '../../constants';
 
-const MainLayout = (): ReactElement => {
+type MainLayoutProps = {
+  currentPlaylistId: Playlist['_id'];
+}
+
+const MainLayout = ({
+  currentPlaylistId
+}: MainLayoutProps): ReactElement => {
   const dispatch = useDispatch();
   const playlists = useSelector(({ playlists }) =>
     Object.keys(playlists.allById)
@@ -32,6 +38,9 @@ const MainLayout = (): ReactElement => {
 
   useEffect(() => {
     dispatch(getAllPlaylistsRequest());
+    if (currentPlaylistId) {
+      history.replace(generatePath(PLAYLIST_SHOW, { _id: currentPlaylistId }));
+    }
   }, []);
 
   function onCreatePlaylistButtonClick(): void {
@@ -47,7 +56,7 @@ const MainLayout = (): ReactElement => {
             playlists={playlists}
             onCreatePlaylistButtonClick={onCreatePlaylistButtonClick} />
         </div>
-        <div className="playlist-wrapper">
+        <div className="main-wrapper">
           <Switch>
             <Route path={SEARCH} component={SearchView} />
             <Route path={PLAYLIST_ALL} exact component={AllPlaylistContainer} />

@@ -29,7 +29,7 @@
   .search-container-exit {
     opacity: 1;
   }
-  
+
   .search-container-exit-active {
     opacity: 0;
     transition: opacity 300ms, transform 300ms;
@@ -41,7 +41,7 @@
     float: left;
   }
 
-  .playlist-wrapper {
+  .main-wrapper {
     height: 100%;
     width: calc(100vw - #{$sidebarWidth});
     float: left;
