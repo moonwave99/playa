@@ -2,7 +2,7 @@
 @import "../../mixins";
 
 .all-playlists-view {
-  padding: $gutterBig;
+  padding: $mainUnit;
   .all-playlists-table {
     list-style: none;
     tr {
@@ -12,8 +12,8 @@
       td {
         padding-top: 0;
         padding-bottom: 0;
-        height: 3.8rem;
-    		line-height: 3.8rem;
+        height: $mainUnit;
+    		line-height: $mainUnit;
       }
     }
   }

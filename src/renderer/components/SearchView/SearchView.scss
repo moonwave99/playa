@@ -4,6 +4,6 @@
   .results-wrapper {
     overflow: auto;
     padding: 0;
-    height: calc(100vh - 11.4rem);
+    height: calc(100vh - #{$searchBarHeight} - #{$playerHeight});
   }
 }

@@ -2,9 +2,9 @@
 
 .sidebar-playlist-list {
   h2 {
-    height: $gutterBig;
-    line-height: $gutterBig;
-    padding: 0 $gutterBig;
+    height: $mainUnit;
+    line-height: $mainUnit;
+    padding: 0 $mainUnit;
     margin: 0;
     font-size: 1.6rem;
     font-weight: 700;
@@ -16,8 +16,8 @@
     padding: 0;
     margin: 0;
     .playlist {
-      height: $gutterBig;
-      line-height: $gutterBig;
+      height: $mainUnit;
+      line-height: $mainUnit;
       vertical-align: middle;
       margin: 0;
       &.drag-is-over {
@@ -33,7 +33,7 @@
       }
       .sidebar-playlist-item {
         display: block;
-        padding: 0 $gutterBig;
+        padding: 0 $mainUnit;
         color: $clearColor;
         &-active, &:hover {
           color: $mainColor;

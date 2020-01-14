@@ -23,14 +23,14 @@
     transition: opacity 300ms, transform 300ms;
   }
 	.search-result-list-empty-component {
-		padding-left: $gutterBig;
+		padding-left: $mainUnit;
 	}
 	.search-result-list-item {
 		align-items: center;
-		padding-left: $gutterBig;
+		padding-left: $mainUnit;
 		margin: 0;
-		height: 3.8rem;
-		line-height: 3.8rem;
+		height: $mainUnit;
+		line-height: $mainUnit;
 		&:hover{
 			background-color: $backgroundLightColor;
 		}
