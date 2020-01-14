@@ -25,7 +25,7 @@ export const SidebarPlaylistList: FC<SidebarPlaylistListProps> = ({
 
   return (
     <div className="sidebar-playlist-list">
-      <h2>Playlists</h2>
+      <h2>Recent Playlists</h2>
       <ul>
         { playlists.map(
           playlist => <SidebarPlaylistListItem
