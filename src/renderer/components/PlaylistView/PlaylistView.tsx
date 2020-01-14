@@ -22,7 +22,8 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
   onTitleChange
 }) => {
   const [albumView, setAlbumView] = useState(UIAlbumView.Extended);
-  const [albumOrder, setAlbumOrder] = useState(playlist.albums);
+  const [albumOrder, setAlbumOrder] = useState([]);
+  const hasAlbums = Object.keys(albums).length > 0 && playlist.albums.length > 0;
 
   useEffect(() => {
     if (playlist.albums.length > 0) {
@@ -50,6 +51,10 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
   }
 
   function renderAlbum(album: Album, index: number): ReactElement {
+    // #TODO investigate render issue
+    if (!album) {
+      return null;
+    }
     switch (albumView) {
       case UIAlbumView.Extended:
         return (
@@ -69,8 +74,6 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
         );
     }
   }
-
-  const hasAlbums = Object.keys(albums).length > 0;
 
 	return (
 		<section className="playlist-view">

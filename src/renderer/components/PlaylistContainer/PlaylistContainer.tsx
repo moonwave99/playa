@@ -13,12 +13,13 @@ export const PlaylistContainer = (): ReactElement => {
   const dispatch = useDispatch();
   const { _id } = useParams();
 
-  const playlist = useSelector((state: ApplicationState) => {
-    return state.playlists.allById[_id] || getDefaultPlaylist();
-  });
-
-  const albums = useSelector((state: ApplicationState) => {
-    return playlist.albums.map((id) => state.albums.allById[id]).filter(x => !!x);
+  const { playlist, albums } = useSelector((state: ApplicationState) => {
+    const playlist = state.playlists.allById[_id] || getDefaultPlaylist();
+    const albums = playlist.albums.map((id) => state.albums.allById[id]).filter(x => !!x);
+    return {
+      playlist,
+      albums: toObj(albums)
+    }
   });
 
   useEffect(() => {
@@ -26,14 +27,12 @@ export const PlaylistContainer = (): ReactElement => {
   }, [playlist.title]);
 
   useEffect(() => {
-    dispatch(updateState({
-      currentPlaylistId: _id
-    }));
-  }, [_id]);
+    dispatch(updateState({ currentPlaylistId: _id }));
+  }, [playlist._id]);
 
   useEffect(() => {
     dispatch(getAlbumListRequest(playlist.albums));
-  }, [playlist.albums.length]);
+  }, [playlist.albums]);
 
   function onAlbumOrderChange(newOrder: string[]): void {
     dispatch(savePlaylistRequest({ ...playlist, albums: newOrder }));
@@ -56,7 +55,7 @@ export const PlaylistContainer = (): ReactElement => {
 
 	return (
     <PlaylistView
-       albums={toObj(albums)}
+       albums={albums}
        playlist={playlist}
        onAlbumOrderChange={onAlbumOrderChange}
        onTitleChange={onTitleChange}/>

@@ -38,10 +38,13 @@ const MainLayout = ({
 
   useEffect(() => {
     dispatch(getAllPlaylistsRequest());
+  }, []);
+
+  useEffect(() => {
     if (currentPlaylistId) {
       history.replace(generatePath(PLAYLIST_SHOW, { _id: currentPlaylistId }));
     }
-  }, []);
+  }, [currentPlaylistId]);
 
   function onCreatePlaylistButtonClick(): void {
     const now = new Date().toISOString();
