@@ -13,12 +13,19 @@ export const PlaylistContainer = (): ReactElement => {
   const dispatch = useDispatch();
   const { _id } = useParams();
 
-  const { playlist, albums } = useSelector((state: ApplicationState) => {
+  const {
+    playlist,
+    albums,
+    currentPlaylistId,
+    currentAlbumId,
+    currentTrackId
+  } = useSelector((state: ApplicationState) => {
     const playlist = state.playlists.allById[_id] || getDefaultPlaylist();
     const albums = playlist.albums.map((id) => state.albums.allById[id]).filter(x => !!x);
     return {
       playlist,
-      albums: toObj(albums)
+      albums: toObj(albums),
+      ...state.player
     }
   });
 
@@ -57,6 +64,9 @@ export const PlaylistContainer = (): ReactElement => {
     <PlaylistView
        albums={albums}
        playlist={playlist}
+       isCurrent={currentPlaylistId === playlist._id}
+       currentAlbumId={currentAlbumId}
+       currentTrackId={currentTrackId}
        onAlbumOrderChange={onAlbumOrderChange}
        onTitleChange={onTitleChange}/>
 	);

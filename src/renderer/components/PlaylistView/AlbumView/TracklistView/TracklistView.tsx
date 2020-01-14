@@ -13,6 +13,7 @@ import './TracklistView.scss';
 type TracklistViewProps = {
   playlistId?: Playlist['_id'];
   albumId: Album['_id'];
+  currentTrackId: Track['_id'];
   tracklist: Track[];
   rawTracks: string[];
   isAlbumFromVariousArtists: boolean;
@@ -22,6 +23,7 @@ type TracklistViewProps = {
 export const TracklistView: FC<TracklistViewProps> = ({
   playlistId,
   albumId,
+  currentTrackId,
   tracklist = [],
   rawTracks = [],
   isAlbumFromVariousArtists
@@ -67,8 +69,12 @@ export const TracklistView: FC<TracklistViewProps> = ({
       }));
     }
 
+    const trackClassNames = cx('ready', {
+      'is-current': _id === currentTrackId
+    });
+
     return (
-      <li key={_id} className="ready" onDoubleClick={onTrackDoubleClick}>
+      <li key={_id} className={trackClassNames} onDoubleClick={onTrackDoubleClick}>
         <span className="track-number">{formatTrackNumber(number)}</span>
         {renderArtist(artist)}
         <span className="title">{title}</span>

@@ -1,9 +1,11 @@
 import React, { ReactElement, FC, useState, useEffect, useCallback } from 'react';
+import cx from 'classnames';
 import { PlaylistViewTitle } from './PlaylistViewTitle/PlaylistViewTitle';
 import { AlbumView } from './AlbumView/AlbumView';
 import { CompactAlbumView } from './CompactAlbumView/CompactAlbumView';
 import { Playlist } from '../../store/modules/playlist';
 import { Album } from '../../store/modules/album';
+import { Track } from '../../store/modules/track';
 import { UIAlbumView } from '../../store/modules/ui';
 import { EntityHashMap, immutableMove } from '../../utils/storeUtils';
 import './PlaylistView.scss';
@@ -11,6 +13,9 @@ import './PlaylistView.scss';
 type PlaylistViewProps = {
   albums: EntityHashMap<Album>;
   playlist: Playlist;
+  isCurrent: boolean;
+  currentAlbumId: Album['_id'];
+  currentTrackId: Track['_id'];
   onTitleChange: Function;
   onAlbumOrderChange: Function;
 };
@@ -18,6 +23,9 @@ type PlaylistViewProps = {
 export const PlaylistView: FC<PlaylistViewProps> = ({
   albums,
   playlist,
+  isCurrent = false,
+  currentAlbumId,
+  currentTrackId,
   onAlbumOrderChange,
   onTitleChange
 }) => {
@@ -59,7 +67,11 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
       case UIAlbumView.Extended:
         return (
           <li key={album._id}>
-            <AlbumView playlistId={playlist._id} album={album}/>
+            <AlbumView
+              isCurrent={album._id === currentAlbumId}
+              currentTrackId={currentTrackId}
+              playlistId={playlist._id}
+              album={album}/>
           </li>
         );
       case UIAlbumView.Compact:
@@ -69,6 +81,7 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
               playlistId={playlist._id}
               album={album}
               index={index}
+              isCurrent={album._id === currentAlbumId}
               onDragEnd={onDragEnd}
               onAlbumMove={onAlbumMove}/>
           </li>
@@ -76,8 +89,9 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
     }
   }
 
+  const playlistClasses = cx('playlist-view', { 'is-current': isCurrent });
 	return (
-		<section className="playlist-view">
+		<section className={playlistClasses}>
       <header className="playlist-header">
         {renderAlbumViewSwitch()}
         <PlaylistViewTitle

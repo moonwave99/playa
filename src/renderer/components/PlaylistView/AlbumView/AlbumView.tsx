@@ -7,6 +7,7 @@ import { ApplicationState } from '../../../store/store';
 import { play } from '../../../store/modules/player';
 import { Playlist } from '../../../store/modules/playlist';
 import { Album, VARIOUS_ARTISTS_ID, getAlbumContentRequest } from '../../../store/modules/album';
+import { Track } from '../../../store/modules/track';
 import { getTrackListRequest } from '../../../store/modules/track';
 import { getCoverRequest } from '../../../store/modules/cover';
 import './AlbumView.scss';
@@ -14,11 +15,15 @@ import './AlbumView.scss';
 type AlbumViewProps = {
   playlistId?: Playlist['_id'];
   album: Album;
+  isCurrent: boolean;
+  currentTrackId: Track['_id'];
 }
 
 export const AlbumView: FC<AlbumViewProps> = ({
   playlistId,
-  album
+  album,
+  isCurrent = false,
+  currentTrackId
 }) => {
   const { _id, type, year, artist, title, tracks } = album;
   const { tracklist, notFoundTracks, cover } = useSelector((state: ApplicationState) => {
@@ -60,9 +65,10 @@ export const AlbumView: FC<AlbumViewProps> = ({
     return <button onClick={onNotFoundButtonClick} className="button button-outline">Reload</button>
   }
 
+  const albumClasses = cx('album-view', { 'is-current': isCurrent });
   const tagClasses = cx('album-type', `album-type-${type}`);
   return (
-    <article className="album-view">
+    <article className={albumClasses}>
       <aside className="album-aside">
         <div onDoubleClick={onAlbumCoverDoubleClick}>
           <CoverView
@@ -82,6 +88,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
         <TracklistView
           playlistId={playlistId}
           albumId={album._id}
+          currentTrackId={currentTrackId}
           isAlbumFromVariousArtists={artist === VARIOUS_ARTISTS_ID}
           rawTracks={album.tracks}
           tracklist={tracklist}/>

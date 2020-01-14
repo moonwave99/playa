@@ -22,6 +22,7 @@ type CompactAlbumViewProps = {
   playlistId?: Playlist['_id'];
   album: Album;
   index: number;
+  isCurrent: boolean;
   onDragEnd: Function;
   onAlbumMove: Function;
 }
@@ -30,6 +31,7 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
   playlistId,
   album,
   index,
+  isCurrent = false,
   onDragEnd,
   onAlbumMove
 }) => {
@@ -101,6 +103,7 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
   }
 
   const classNames = cx('compact-album-view', {
+    'is-current': isCurrent,
     'drag-is-over': isOver,
     'drag-can-drop': canDrop,
     'drag-is-dragging': isDragging
