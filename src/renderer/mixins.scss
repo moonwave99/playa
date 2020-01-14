@@ -81,6 +81,9 @@
     opacity: 0;
     transition: opacity .5s ease-in-out;
     background-color: $backgroundLightColor;
+    &.empty {
+      display: none;
+    }
   }
   &.loaded > img{
     opacity: 1;

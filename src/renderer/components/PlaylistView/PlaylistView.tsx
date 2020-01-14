@@ -1,24 +1,43 @@
-import React, { ReactElement, FC, useState } from 'react';
+import React, { ReactElement, FC, useState, useEffect, useCallback } from 'react';
 import { PlaylistViewTitle } from './PlaylistViewTitle/PlaylistViewTitle';
 import { AlbumView } from './AlbumView/AlbumView';
 import { CompactAlbumView } from './CompactAlbumView/CompactAlbumView';
 import { Playlist } from '../../store/modules/playlist';
 import { Album } from '../../store/modules/album';
 import { UIAlbumView } from '../../store/modules/ui';
+import { EntityHashMap, immutableMove } from '../../utils/store';
 import './PlaylistView.scss';
 
 type PlaylistViewProps = {
-  albums: Album[];
+  albums: EntityHashMap<Album>;
   playlist: Playlist;
   onTitleChange: Function;
+  onAlbumOrderChange: Function;
 };
 
 export const PlaylistView: FC<PlaylistViewProps> = ({
   albums,
   playlist,
+  onAlbumOrderChange,
   onTitleChange
 }) => {
   const [albumView, setAlbumView] = useState(UIAlbumView.Extended);
+  const [albumOrder, setAlbumOrder] = useState(playlist.albums);
+
+  useEffect(() => {
+    if (playlist.albums.length > 0) {
+      setAlbumOrder(playlist.albums);
+    }
+  }, [playlist.albums]);
+
+  const onAlbumMove = useCallback((dragIndex: number, hoverIndex: number): void => {
+    const newOrder = immutableMove<Album['_id']>(albumOrder, dragIndex, hoverIndex);
+    setAlbumOrder(newOrder);
+  }, [albumOrder]);
+
+  function onDragEnd(): void {
+    onAlbumOrderChange(albumOrder);
+  }
 
   function onAlbumViewSwitchClick(): void {
     setAlbumView(albumView === UIAlbumView.Compact ? UIAlbumView.Extended : UIAlbumView.Compact);
@@ -30,7 +49,7 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
       onClick={onAlbumViewSwitchClick}>Switch View</button>
   }
 
-  function renderAlbum(album: Album): ReactElement {
+  function renderAlbum(album: Album, index: number): ReactElement {
     switch (albumView) {
       case UIAlbumView.Extended:
         return (
@@ -41,11 +60,17 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
       case UIAlbumView.Compact:
         return (
           <li key={album._id}>
-            <CompactAlbumView album={album}/>
+            <CompactAlbumView
+              album={album}
+              index={index}
+              onDragEnd={onDragEnd}
+              onAlbumMove={onAlbumMove}/>
           </li>
         );
     }
   }
+
+  const hasAlbums = Object.keys(albums).length > 0;
 
 	return (
 		<section className="playlist-view">
@@ -56,8 +81,8 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
           onTitleChange={onTitleChange}/>
       </header>
       {
-        albums.length > 0
-          ? <ol className="album-list">{albums.map(renderAlbum)}</ol>
+        hasAlbums
+          ? <ol className="album-list">{albumOrder.map((_id, index) => renderAlbum(albums[_id], index))}</ol>
           : <p className="playlist-empty-placeholder">Playlist is empty.</p>
       }
     </section>

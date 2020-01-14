@@ -25,3 +25,24 @@ export function removeIds<T extends Entity>(hashMap: EntityHashMap<T>, ids: Enti
 export function ensureAll<T> (entities: object[], getDefault: Function ): T[] {
   return entities.map((entity: object) => ({ ...getDefault(), ...entity}));
 }
+
+export function immutableMove<T>(array: T[], from: number, to: number): T[] {
+  return array.reduce((prev: T[], current: T, idx: number, self: T[]) => {
+    if (from === to) {
+      prev.push(current);
+    }
+    if (idx === from) {
+      return prev;
+    }
+    if (from < to) {
+      prev.push(current);
+    }
+    if (idx === to) {
+      prev.push(self[from]);
+    }
+    if (from > to) {
+      prev.push(current);
+    }
+    return prev;
+  }, [] as  T[]);
+}

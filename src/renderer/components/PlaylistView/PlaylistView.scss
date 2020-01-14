@@ -25,5 +25,8 @@
   .album-list {
     list-style: none;
     margin-bottom: 0;
+    > li {
+      margin: 0;
+    }
   }
 }

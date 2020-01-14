@@ -17,13 +17,14 @@ export const CoverView: FC<CoverViewProps> = ({
   function onImageLoad(): void {
     setLoaded(true);
   }
-  const classNames = cx(className, { loaded })
+  const figureClassNames = cx(className, { loaded });
+  const imageClassNames = cx({ empty: !src });
   return (
-    <figure className={classNames}>
+    <figure className={figureClassNames} title={title}>
       <img
+        className={imageClassNames}
         onLoad={onImageLoad}
-        src={src}
-        title={title}/>
+        src={src}/>
     </figure>
   );
 }

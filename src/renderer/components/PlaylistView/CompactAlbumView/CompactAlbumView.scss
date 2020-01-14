@@ -4,9 +4,31 @@
 .compact-album-view {
   display: flex;
 	align-items: center;
-	margin: 0;
+	padding: 1rem 0;
+  position: relative;
+  &:before {
+    content: '⋮';
+    position: absolute;
+    top: 1rem;
+    left: -2rem;
+    line-height: $albumCoverCompactWidth;
+    height: $albumCoverCompactWidth;
+    vertical-align: middle;
+    font-size: 4rem;
+    color: $backgroundLightColor;
+  }
+  &:hover:before {
+    color: $highlightColor;
+  }
+  &.drag-is-dragging {
+    opacity: 0;
+  }
   .album-cover {
     @include albumCover($albumCoverCompactWidth);
+    cursor: move;
+    > img {
+      cursor: move;
+    }
   }
   .album-content {
     margin: 0 0 0 1.6rem;

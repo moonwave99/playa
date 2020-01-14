@@ -6,6 +6,7 @@ import { ApplicationState } from '../../store/store';
 import { savePlaylistRequest, getDefaultPlaylist } from '../../store/modules/playlist';
 import { updateTitle } from '../../store/modules/ui';
 import { getAlbumListRequest } from '../../store/modules/album';
+import { toObj } from '../../utils/store';
 import { confirmDialog } from '../../utils/dialogs';
 
 export const PlaylistContainer = (): ReactElement => {
@@ -28,6 +29,10 @@ export const PlaylistContainer = (): ReactElement => {
     dispatch(getAlbumListRequest(playlist.albums));
   }, [playlist.albums.length]);
 
+  function onAlbumOrderChange(newOrder: string[]): void {
+    dispatch(savePlaylistRequest({ ...playlist, albums: newOrder }));
+  }
+
   function onTitleChange(title: string ): void {
     if (title === playlist.title) {
       return;
@@ -45,8 +50,9 @@ export const PlaylistContainer = (): ReactElement => {
 
 	return (
     <PlaylistView
-       albums={albums}
+       albums={toObj(albums)}
        playlist={playlist}
+       onAlbumOrderChange={onAlbumOrderChange}
        onTitleChange={onTitleChange}/>
 	);
 };
