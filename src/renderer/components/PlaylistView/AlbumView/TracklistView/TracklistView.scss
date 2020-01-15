@@ -29,7 +29,6 @@
       }
       &.is-current,
       &.ready:hover {
-        color: $highlightColor;
         .track-number {
           @include playOverlay('../../../../static/icons/track/play.svg', 75%, transparent, '.');
           color: transparent;
@@ -39,6 +38,7 @@
         color: $mainColor;
       }
       .track-number {
+        width: 1.5rem;
         &:after {
           content: '.'
         }

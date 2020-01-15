@@ -22,16 +22,32 @@
       }
       h1 {
         flex: 1;
+        margin-right: 2rem;
+        transition: background-color .3s ease-in;
         &:focus{
-          outline: none;
           border-bottom: 1px solid $mainColor;
           margin-bottom: -1px;
+          background-color: $backgroundLightColor;
         }
       }
       .header-like {
-        color: $clearColor;
+        color: $lightColor;
         margin-right: .5rem;
-      }      
+      }
+      .playlist-view-actions{
+        display: flex;
+        .playlist-view-action-button {
+          margin: 0 0 0 .5rem;
+          padding: 0;
+          background: transparent;
+          border: none;
+          font-size: 2rem;
+          color: $lightColor;
+          &.is-current {
+            color: $mainColor;
+          }
+        }
+      }
     }
   }
   .album-list {

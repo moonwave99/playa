@@ -24,24 +24,25 @@
       margin: 0;
       &.drag-is-over {
         background-color: $highlightColor;
-        a {
+        .sidebar-playlist-item {
           color: $darkColor;
         }
       }
       &.is-current {
-        a {
+        .sidebar-playlist-item {
           font-weight: bold;
         }
       }
       &.is-playing {
-        a {
+        .sidebar-playlist-item {
           color: $mainColor;
         }
       }
       .sidebar-playlist-item {
         display: block;
         padding: 0 $mainUnit;
-        color: $clearColor;
+        color: $lightColor;
+        transition: color .3s ease-in-out;
         &:hover {
           text-decoration: underline;
         }

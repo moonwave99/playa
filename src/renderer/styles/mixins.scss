@@ -1,7 +1,7 @@
 @import './variables';
 
 @mixin input() {
-  color: $clearColor;
+  color: $lightColor;
   transition: background-color .2s ease-in-out;
   border-radius: .4rem;
   border-color: $mainColor;

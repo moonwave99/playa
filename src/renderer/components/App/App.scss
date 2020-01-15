@@ -7,7 +7,7 @@
 body {
 	user-select: none;
 	background-color: $backgroundColor;
-	color: $clearColor;
+	color: $lightColor;
 	overflow: hidden;
 }
 
@@ -24,6 +24,10 @@ html {
 }
 *, *:before, *:after {
   box-sizing: inherit;
+}
+
+*:focus {
+	outline: none;
 }
 
 body,
@@ -118,9 +122,6 @@ a {
 		background-color: $hoverColor;
 		border-color: $hoverColor;
 	}
-	&:focus {
-		outline: none;
-	}
 	&-outline {
 		background-color: transparent;
 		color: $mainColor;
@@ -142,7 +143,6 @@ input[type=text],
 input[type=search] {
 	height: $mainUnit;
   line-height: $mainUnit;
-	outline: none;
 	-webkit-appearance: none;
      -moz-appearance: none;
           appearance: none;
