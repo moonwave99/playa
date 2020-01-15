@@ -1,4 +1,4 @@
-import React, { FC, useState, useRef, KeyboardEvent } from 'react';
+import React, { FC, useState, useEffect, useRef, KeyboardEvent } from 'react';
 import ContentEditable from 'react-contenteditable';
 import { Playlist } from '../../../store/modules/playlist';
 
@@ -20,6 +20,12 @@ export const PlaylistViewTitle: FC<PlaylistViewTitleProps> = ({ playlist, onTitl
 	function onTitleFocus(): void {
 		setTitleEditing(true);
 	}
+
+	useEffect(() => {
+		if (!playlist._rev) {
+			titleRef.current.focus();
+		}
+	}, [playlist._rev]);
 
 	function onChange(): void { return; }
 
