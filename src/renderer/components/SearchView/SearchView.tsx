@@ -15,17 +15,17 @@ type SearchViewProps = {
 
 export const SearchView: FC<SearchViewProps> = () => {
   const results: Album[] = useSelector(({ albums }) => albums.searchResults);
-  const [searched, setSearched] = useState(false);
+  const [query, setQuery] = useState('');
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const title = results.length > 0 ? `search: ${results.length} results` : 'search';
+    const title = results.length > 0 ? `search: ${results.length} results for ${query}` : 'search';
     dispatch(updateTitle(title));
   }, [results]);
 
   const onFormSubmit = async (query: string): Promise<void> => {
     dispatch(searchAlbumsRequest(query));
-    setSearched(true);
+    setQuery(query);
   };
 
   function onContextMenu(album: Album): void {
@@ -34,6 +34,8 @@ export const SearchView: FC<SearchViewProps> = () => {
       context: album
     }));
   }
+
+  const searched = query !== '';
 
 	return (
     <div className="search-view">

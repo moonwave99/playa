@@ -7,13 +7,13 @@
 	display: flex;
 	.search-input,
 	button {
-		display: flex;
 		margin: 0;
 	}
 	.search-input {
 		@include input();
 		border-radius: .4rem 0 0 .4rem;
-		flex-grow: 2;
+		display: flex;
+		flex-grow: 1;
 	}
 	button {
 		background-color: $mainColor;
