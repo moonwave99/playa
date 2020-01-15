@@ -7,13 +7,17 @@
   background-color: $backgroundLightColor;
   border-top: 1px solid $backgroundDarkColor;
   display: flex;
+  .player-sidebar-wrapper {
+    width: $sidebarWidth;
+    display: flex;
+    justify-content: space-between;
+  }
   .player-controls {
-    width: $playerControlsWidth;
     height: 100%;
     display: flex;
+    flex: 1;
     align-items: center;
     justify-content: space-evenly;
-    padding: 0 10rem;
     .control {
       background-color: transparent;
       background-repeat: no-repeat;
@@ -22,17 +26,21 @@
       margin: 0;
       height: 100%;
       padding: 0 $mainUnit;
+      &:focus {
+        outline: none;
+      }
       &-prev,
       &-next {
         background-image: url('../../static/icons/player/prev-next.svg');
         background-size: 33%;
+        background-position-x: right;
       }
       &-playback {
         background-image: url('../../static/icons/player/play.svg');
-        background-size: 50px 50px;
+        background-size: $playbackControlSize $playbackControlSize;
         &.is-playing {
           background-image: url('../../static/icons/player/pause.svg');
-          background-size: 50px 50px;
+          background-size: $playbackControlSize $playbackControlSize;
         }
       }
       &-next {
@@ -46,7 +54,7 @@
     display: flex;
     align-items: center;
     .player-album-cover {
-      @include albumCover($playerHeight * 0.8, $backgroundDarkColor);
+      @include albumCover($playerHeight, $backgroundDarkColor, 60%);
     }
   }
 

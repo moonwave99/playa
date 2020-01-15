@@ -70,9 +70,9 @@
   }
 }
 
-@mixin albumCover($width, $bgColor: $backgroundLightColor) {
+@mixin albumCover($width, $bgColor: $backgroundLightColor, $bgSize: 70%) {
   margin: 0;
-  background: radial-gradient(transparent 0%, transparent 20%, $bgColor 0%, $bgColor 70%, transparent 70%, transparent 100%);
+  background-image: radial-gradient(transparent 0%, transparent 20%, $bgColor 0%, $bgColor $bgSize, transparent $bgSize, transparent 100%);
   width: $width;
   height: $width;
   transition: background-color .3s ease-in-out;

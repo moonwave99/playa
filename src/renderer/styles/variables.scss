@@ -19,8 +19,8 @@ $tributeColor: #A45E11;
 $baseFontSize: 14px;
 $mainUnit: 3rem;
 
-$sidebarWidth: 300px;
-$searchButtonWidth: 150px;
+$sidebarWidth: 27rem;
+$searchButtonWidth: 10rem;
 
 $albumCoverWidth: 4 * $mainUnit;
 $albumCoverCompactWidth: 1.2 * $mainUnit;
@@ -28,6 +28,6 @@ $tracklistMaxWidth: 60rem;
 
 $searchBarHeight: 3 * $mainUnit;
 $playerHeight: 2 * $mainUnit;
-$playerControlsWidth: $sidebarWidth;
 $playerTrackTitleFontSize: 1.2rem;
 $playerTrackInfoFontSize: .9rem;
+$playbackControlSize: 3rem;

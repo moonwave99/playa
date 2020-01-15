@@ -59,17 +59,19 @@ export const PlayerView = (): ReactElement => {
 
 	return (
     <section className="player">
-			<section className="player-controls">
-				<button className="control control-prev" onClick={onPrevButtonClick}/>
-				<button className={playbackButtonClasses} onClick={onPlaybackButtonClick}/>
-				<button className="control control-next" onClick={onNextButtonClick}/>
-			</section>
-			<section className="player-album-cover-wrapper">
-				<CoverView
-					className="player-album-cover"
-					src={cover}
-					album={currentAlbum}/>
-			</section>
+			<div className="player-sidebar-wrapper">
+				<section className="player-controls">
+					<button className="control control-prev" onClick={onPrevButtonClick}/>
+					<button className={playbackButtonClasses} onClick={onPlaybackButtonClick}/>
+					<button className="control control-next" onClick={onNextButtonClick}/>
+				</section>
+				<section className="player-album-cover-wrapper">
+					<CoverView
+						className="player-album-cover"
+						src={cover}
+						album={currentAlbum}/>
+				</section>
+			</div>
 			<section className="player-playback-bar">
 				{ currentTrack && currentAlbum && renderTrackInfo() }
 			</section>
