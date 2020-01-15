@@ -7,9 +7,12 @@ import { DndProvider } from 'react-dnd';
 import Backend from 'react-dnd-html5-backend';
 import App from './components/App/App';
 import { store, history } from './store/store';
+import initFontAwesome from './lib/initFontAwesome';
 
 import { IPC_MESSAGES } from '../constants';
 const { IPC_UI_STATE_LOAD } = IPC_MESSAGES;
+
+initFontAwesome();
 
 (async (): Promise<void> => {
   const { lastOpenedPlaylistId } = await ipc.invoke(IPC_UI_STATE_LOAD);

@@ -70,6 +70,9 @@
 	},
 	"dependencies": {
 		"@csstools/normalize.css": "^10.1.0",
+		"@fortawesome/fontawesome-svg-core": "^1.2.26",
+		"@fortawesome/free-solid-svg-icons": "^5.12.0",
+		"@fortawesome/react-fontawesome": "^0.1.8",
 		"classnames": "^2.2.6",
 		"connected-react-router": "^6.6.1",
 		"disconnect": "^1.2.1",

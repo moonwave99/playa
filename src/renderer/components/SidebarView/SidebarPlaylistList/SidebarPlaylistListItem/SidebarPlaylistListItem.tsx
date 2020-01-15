@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link, generatePath } from 'react-router-dom';
 import { useDrop } from 'react-dnd';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { uniq } from 'lodash';
 import cx from 'classnames';
 import { Playlist, savePlaylistRequest } from '../../../../store/modules/playlist';
@@ -44,7 +45,6 @@ export const SidebarPlaylistListItem: FC<SidebarPlaylistListItemProps> = ({
   }
 
   const classNames = cx('playlist', {
-    'is-current': isCurrent,
     'is-playing': isPlaying,
     'drag-is-over': isOver,
     'drag-can-drop': canDrop
@@ -56,7 +56,10 @@ export const SidebarPlaylistListItem: FC<SidebarPlaylistListItemProps> = ({
         onClick={onClick}
         title={playlist._id}
         to={generatePath(PLAYLIST_SHOW, { _id: playlist._id })}
-        className="sidebar-playlist-item">{playlist.title}</Link>
+        className="sidebar-playlist-item">
+          <FontAwesomeIcon icon="file-audio" className="playlist-icon"/>
+          {playlist.title}
+      </Link>
     </li>
   );
 }

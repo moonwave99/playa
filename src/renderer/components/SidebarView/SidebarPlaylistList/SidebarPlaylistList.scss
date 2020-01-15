@@ -24,22 +24,29 @@
       margin: 0;
       &.drag-is-over {
         background-color: $highlightColor;
-      }
-      &.drag-can-drop {
-
+        a {
+          color: $darkColor;
+        }
       }
       &.is-current {
         a {
           font-weight: bold;
         }
       }
+      &.is-playing {
+        a {
+          color: $mainColor;
+        }
+      }
       .sidebar-playlist-item {
         display: block;
         padding: 0 $mainUnit;
         color: $clearColor;
-        &-active, &:hover {
-          color: $mainColor;
-          background-color: $clearColor;
+        &:hover {
+          text-decoration: underline;
+        }
+        .playlist-icon{
+          margin-right: 1rem;
         }
       }
     }

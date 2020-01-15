@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { SidebarPlaylistList } from './SidebarPlaylistList/SidebarPlaylistList';
 import { Playlist } from '../../store/modules/playlist';
 import './SidebarView.scss';
@@ -26,9 +27,13 @@ export const SidebarView: FC<SidebarViewProps> = ({
 			<SidebarPlaylistList playlists={recentPlaylists} currentPlaylistId={currentPlaylistId}/>
 			<footer className="sidebar-footer">
 				<button type="button" className="button button-primary" onClick={_onCreatePlaylistButtonClick}>
-					Create Playlist
+					<FontAwesomeIcon icon="plus" className="button-icon"/>
+					<span className="button-text">Create Playlist</span>
         </button>
-				<Link to={PLAYLIST_ALL} className="button button-outline">All Playlists</Link>
+				<Link to={PLAYLIST_ALL} className="button button-outline">
+					<FontAwesomeIcon icon="list" className="button-icon"/>
+					<span className="button-text">All Playlists</span>
+				</Link>
 			</footer>
 		</aside>
 	);
