@@ -56,7 +56,7 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
 
   function renderAlbumViewSwitch(): ReactElement {
     return <button
-      className="playlist-album-view-switch"
+      className="button playlist-album-view-switch"
       onClick={onAlbumViewSwitchClick}>Switch View</button>
   }
 

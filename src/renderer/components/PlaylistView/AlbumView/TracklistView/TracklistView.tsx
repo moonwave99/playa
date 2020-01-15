@@ -33,7 +33,7 @@ export const TracklistView: FC<TracklistViewProps> = ({
 
   function renderSkeletonTrack(_id: string, width: number): ReactElement {
     const style = {
-      background: `linear-gradient(to right, ${COLORS.SKELETON_COLOR} ${width}%, transparent ${100 - width}% 100%)`
+      backgroundImage: `linear-gradient(to right, ${COLORS.SKELETON_COLOR} ${width}%, transparent ${100 - width}% 100%)`
     };
     return <li key={_id} className="not-ready" style={style}></li>
   }

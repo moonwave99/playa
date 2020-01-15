@@ -4,6 +4,7 @@ $backgroundDarkColor: #0F0F0F;
 $clearColor: #aaa;
 $highlightColor: #F5F5F5;
 $mainColor: #9b4dca;
+$hoverColor: #606c76;
 
 $albumColor: #F25774;
 $epColor: #0A6ABF;
@@ -15,17 +16,18 @@ $variousColor: #7F57FF;
 $soundtrackColor: #4371E8;
 $tributeColor: #A45E11;
 
-$mainUnit: 3.8rem;
+$baseFontSize: 14px;
+$mainUnit: 3rem;
 
 $sidebarWidth: 300px;
 $searchButtonWidth: 150px;
 
-$albumCoverWidth: 19rem;
-$albumCoverCompactWidth: 5rem;
+$albumCoverWidth: 4 * $mainUnit;
+$albumCoverCompactWidth: 1.2 * $mainUnit;
 $tracklistMaxWidth: 60rem;
 
 $searchBarHeight: 3 * $mainUnit;
 $playerHeight: 2 * $mainUnit;
 $playerControlsWidth: $sidebarWidth;
-$playerTrackTitleFontSize: $mainUnit * 0.5;
-$playerTrackInfoFontSize: $mainUnit * 0.4;
+$playerTrackTitleFontSize: 1.2rem;
+$playerTrackInfoFontSize: .9rem;

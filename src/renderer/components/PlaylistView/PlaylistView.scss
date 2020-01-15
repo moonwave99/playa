@@ -13,9 +13,11 @@
     h1 {
       margin: 0;
       line-height: $mainUnit;
-      font-size: 2.4rem;
+      font-size: 2rem;
       color: $highlightColor;
       width: 100%;
+      font-weight: normal;
+      letter-spacing: -.1rem;
     }
     .playlist-album-view-switch {
       position: fixed;
@@ -25,7 +27,8 @@
   }
   .album-list {
     list-style: none;
-    margin-bottom: 0;
+    padding: 0;
+    margin: 0;
     > li {
       margin: 0;
     }

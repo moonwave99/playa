@@ -1,8 +1,8 @@
 @import "../../styles/variables";
-
+@import '~@csstools/normalize.css';
+@import url('https://fonts.googleapis.com/css?family=Nunito&display=swap');
 @import url('../../static/inter-ui/inter-ui.css');
 @import url('../../static/fira-mono/fira-mono.css');
-@import '~milligram/dist/milligram.css';
 
 body {
 	user-select: none;
@@ -18,6 +18,13 @@ body {
 	cursor: default;
 }
 
+html {
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
 body,
 html {
 	font-family: 'Inter UI', sans-serif;
@@ -25,6 +32,16 @@ html {
 	height: 100vh;
 	width: 100vw;
 	margin: 0;
+	font-size: $baseFontSize;
+}
+
+h1, h2, h3 {
+	font-family: 'Nunito', sans-serif;
+}
+
+a {
+	text-decoration: none;
+	color: $mainColor;
 }
 
 .app {
@@ -43,7 +60,8 @@ html {
 
   .main-wrapper {
 		display: flex;
-		flex-grow: 2;
+		flex: 1;
+		overflow: scroll;
   }
 
   .search-container {
@@ -72,4 +90,56 @@ html {
     opacity: 0;
     transition: opacity 300ms, transform 300ms;
   }
+}
+
+.button {
+	background-color: $mainColor;
+  border: 0.1rem solid $mainColor;
+  border-radius: .4rem;
+  color: $highlightColor;
+	padding: 0;
+  cursor: pointer;
+  display: inline-block;
+  font-size: .75rem;
+	letter-spacing: .1rem;
+  font-weight: 700;
+  height: $mainUnit;
+  line-height: $mainUnit;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+	&:hover {
+		background-color: $hoverColor;
+		border-color: $hoverColor;
+	}
+	&:focus {
+		outline: none;
+	}
+	&-outline {
+		background-color: transparent;
+		color: $mainColor;
+		&:hover {
+			color: $hoverColor;
+			border-color: $hoverColor;
+			background-color: transparent;
+		}
+	}
+}
+
+input[type=text],
+input[type=search] {
+	height: $mainUnit;
+  line-height: $mainUnit;
+	outline: none;
+	-webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  background-color: transparent;
+  border: 0.1rem solid #d1d1d1;
+  border-radius: .4rem;
+  box-shadow: none;
+  box-sizing: inherit;
+  padding: 0 1.0rem;
+  width: 100%;
 }

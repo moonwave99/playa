@@ -84,10 +84,12 @@ export const AlbumView: FC<AlbumViewProps> = ({
         </div>
       </aside>
       <section className="album-content">
-        <h2>{title}</h2>
-        <h3>
-          {artist === VARIOUS_ARTISTS_ID ? 'V/A' : artist}{year ? `, ${year}` : null} - <span className={tagClasses}>{type}</span>
-        </h3>
+        <header>
+          <h2>{title}</h2>
+          <h3>
+            {artist === VARIOUS_ARTISTS_ID ? 'V/A' : artist}{year ? `, ${year}` : null} - <span className={tagClasses}>{type}</span>
+          </h3>
+        </header>
         <TracklistView
           playlistId={playlistId}
           albumId={album._id}

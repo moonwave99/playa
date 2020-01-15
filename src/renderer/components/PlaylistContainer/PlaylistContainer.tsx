@@ -35,12 +35,16 @@ export const PlaylistContainer = (): ReactElement => {
   }, [playlist.title]);
 
   useEffect(() => {
-    dispatch(updateState({ lastOpenedPlaylistId: _id }));
-  }, [playlist._id]);
+    if (playlist._rev) {
+      dispatch(updateState({ lastOpenedPlaylistId: _id }));
+    }
+  }, [playlist._id, playlist._rev]);
 
   useEffect(() => {
-    dispatch(getAlbumListRequest(playlist.albums));
-  }, [playlist.albums]);
+    if (playlist._rev && playlist.albums.length > 0) {
+      dispatch(getAlbumListRequest(playlist.albums));
+    }
+  }, [playlist.albums, playlist._rev]);
 
   function onAlbumOrderChange(newOrder: string[]): void {
     dispatch(savePlaylistRequest({ ...playlist, albums: newOrder }));

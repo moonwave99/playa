@@ -20,6 +20,8 @@
       background-position: center;
       border: none;
       margin: 0;
+      height: 100%;
+      padding: 0 $mainUnit;
       &-prev,
       &-next {
         background-image: url('../../static/icons/player/prev-next.svg');
@@ -27,8 +29,10 @@
       }
       &-playback {
         background-image: url('../../static/icons/player/play.svg');
+        background-size: 50px 50px;
         &.is-playing {
           background-image: url('../../static/icons/player/pause.svg');
+          background-size: 50px 50px;
         }
       }
       &-next {

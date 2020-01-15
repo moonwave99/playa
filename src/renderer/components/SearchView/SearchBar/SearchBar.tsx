@@ -14,7 +14,7 @@ export const SearchBar: FC<SearchBarProps> = ({ onFormSubmit }) => {
 	return (
 		<form className="search-bar" onSubmit={_onFormSubmit}>
 			<input autoFocus type="search" ref={inputRef} placeholder="Search for..." className="search-input"/>
-			<button type="submit" className="button-primary">Search...</button>
+			<button type="submit" className="button button-primary">Search...</button>
 		</form>
 	);
 }

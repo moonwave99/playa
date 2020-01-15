@@ -4,20 +4,21 @@
 .search-bar {
 	margin: 0;
 	padding: $mainUnit;
+	display: flex;
 	.search-input,
 	button {
+		display: flex;
 		margin: 0;
 	}
 	.search-input {
 		@include input();
 		border-radius: .4rem 0 0 .4rem;
-		width: calc(100% - #{$searchButtonWidth});
+		flex-grow: 2;
 	}
 	button {
 		background-color: $mainColor;
 		transition: background-color .2s ease-in-out;
 		border-radius: 0 .4rem .4rem 0;
-		float: right;
 		width: $searchButtonWidth;
 	}
 }

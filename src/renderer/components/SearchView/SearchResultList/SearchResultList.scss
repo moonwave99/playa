@@ -2,6 +2,8 @@
 @import "../../../styles/mixins";
 
 .search-result-list {
+	margin: 0;
+	padding: 0;
 	list-style: none;
   overflow: auto;
 
@@ -49,12 +51,12 @@
 		.tag {
 			@include albumTypeBackground();
 			color: $highlightColor;
-			font-size: 1.2rem;
+			font-size: .75rem;
 			border-radius: .25rem;
 			text-align: center;
 			width: 8 * 1.6rem;
-			height: 2.4rem;
-			line-height: 2.4rem;
+			height: 2rem;
+			line-height: 2rem;
 		}
 	}
 }

@@ -4,13 +4,13 @@
 .tracklist-view {
   ol {
     margin: 0;
+    padding: 0;
     list-style: none;
     font-family: 'Fira Mono', monospace;
     max-width: $tracklistMaxWidth;
     > li {
-      margin: 0;
-      padding: .5rem 0;
-      line-height: 2.5rem;
+      margin: 1rem 0;
+      line-height: 1.5rem;
       display: flex;
       transition: background-color .3s ease-in, .3s ease-in;
       width: 100%;
@@ -19,15 +19,13 @@
       }
       &.not-ready {
         color: transparent;
-        height: 2.5rem;
-        padding: 0;
+        height: 1.5rem;
         margin: 1rem 0;
-        &:first-child {
-          padding-top: .5rem;
-        }
       }
       &:hover {
-        background-color: $backgroundLightColor;
+        .title {
+          text-decoration: underline;
+        }
       }
       &.is-current,
       &.ready:hover {
@@ -39,7 +37,7 @@
       }
       &.is-current {
         color: $mainColor;
-      }      
+      }
       .track-number {
         &:after {
           content: '.'

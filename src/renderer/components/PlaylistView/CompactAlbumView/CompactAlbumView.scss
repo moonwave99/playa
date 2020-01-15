@@ -4,19 +4,19 @@
 .compact-album-view {
   display: flex;
 	align-items: center;
-	padding: 1rem 0;
+	padding: .5rem 0;
   position: relative;
   transition: background-color .3s ease-in-out;
   &:before {
     content: '⋮';
     cursor: move;
     position: absolute;
-    top: 1rem;
+    top: .5rem;
     left: -2rem;
     line-height: $albumCoverCompactWidth;
     height: $albumCoverCompactWidth;
     vertical-align: middle;
-    font-size: 4rem;
+    font-size: 3rem;
     color: $backgroundLightColor;
     transition: color .3s ease-in-out;
   }

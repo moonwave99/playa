@@ -150,6 +150,11 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
+"@csstools/normalize.css@^10.1.0":
+  version "10.1.0"
+  resolved "https://registry.yarnpkg.com/@csstools/normalize.css/-/normalize.css-10.1.0.tgz#f0950bba18819512d42f7197e56c518aa491cf18"
+  integrity sha512-ij4wRiunFfaJxjB0BdrYHIH8FxBJpOwNPhhAcunlmPdXudL1WQV1qoP9un6JsEBAgQH+7UXyyjh0g7jTxXK6tg==
+
 "@develar/schema-utils@~2.1.0":
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/@develar/schema-utils/-/schema-utils-2.1.0.tgz#eceb1695bfbed6f6bb84666d5d3abe5e1fd54e17"
@@ -5786,13 +5791,6 @@ miller-rabin@^4.0.0:
     bn.js "^4.0.0"
     brorand "^1.0.1"
 
-milligram@^1.3.0:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/milligram/-/milligram-1.3.0.tgz#a5d980ef8eaf79337c96a8d7c7e176764931042c"
-  integrity sha1-pdmA746veTN8lqjXx+F2dkkxBCw=
-  dependencies:
-    normalize.css "~5.0.0"
-
 mime-db@1.42.0:
   version "1.42.0"
   resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.42.0.tgz#3e252907b4c7adb906597b4b65636272cf9e7bac"
@@ -6160,11 +6158,6 @@ normalize-url@^4.1.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/normalize-url/-/normalize-url-4.5.0.tgz#453354087e6ca96957bd8f5baf753f5982142129"
   integrity sha512-2s47yzUxdexf1OhyRi4Em83iQk0aPvwTddtFz4hnSSw9dCEsLEGf6SwIO8ss/19S9iBb5sJaOuTvTGDeZI00BQ==
-
-normalize.css@~5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/normalize.css/-/normalize.css-5.0.0.tgz#7cec875ce8178a5333c4de80b68ea9c18b9d7c37"
-  integrity sha1-fOyHXOgXilMzxN6Ato6pwYudfDc=
 
 npm-conf@^1.1.3:
   version "1.1.3"
