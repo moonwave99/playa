@@ -19,8 +19,9 @@ export const SearchView: FC<SearchViewProps> = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(updateTitle('Search'));
-  }, []);
+    const title = results.length > 0 ? `search: ${results.length} results` : 'search';
+    dispatch(updateTitle(title));
+  }, [results]);
 
   const onFormSubmit = async (query: string): Promise<void> => {
     dispatch(searchAlbumsRequest(query));

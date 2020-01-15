@@ -12,7 +12,7 @@ export const AllPlaylistContainer = (): ReactElement => {
   );
 
   useEffect(() => {
-    dispatch(updateTitle('Playlists'));
+    dispatch(updateTitle('playlists: all'));
   }, []);
 
   function onPlaylistDelete(playlist: Playlist): void {

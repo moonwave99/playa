@@ -35,8 +35,12 @@ html {
 	font-size: $baseFontSize;
 }
 
-h1, h2, h3 {
+h1, h2, h3, .header-like {
 	font-family: 'Nunito', sans-serif;
+}
+
+.highlight {
+	color: $highlightColor;
 }
 
 a {

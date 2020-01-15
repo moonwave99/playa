@@ -119,7 +119,7 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
         album={album}
         onContextMenu={onContextMenu}
         />
-      <p className="album-content">
+      <p className="album-content header-like">
         <span className="title">{title}</span>
         <span className="info">
           {artist === VARIOUS_ARTISTS_ID ? 'V/A' : artist}{year ? `, ${year}` : null} - <span className={tagClasses}>{type}</span>

@@ -31,7 +31,7 @@ export const PlaylistContainer = (): ReactElement => {
   });
 
   useEffect(() => {
-    dispatch(updateTitle(playlist.title));
+    dispatch(updateTitle(`playlist: ${playlist.title}`));
   }, [playlist.title]);
 
   useEffect(() => {

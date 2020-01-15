@@ -39,14 +39,17 @@ export const PlaylistViewTitle: FC<PlaylistViewTitleProps> = ({ playlist, onTitl
 	}
 
 	return (
-		<ContentEditable
-			innerRef={titleRef}
-			html={title}
-			onFocus={onTitleFocus}
-      onBlur={onTitleBlur}
-			onKeyDown={onKeyDown}
-			onChange={onChange}
-			className={isTitleEditing ? 'editing' : null}
-      tagName='h1'/>
+		<>
+			<span className="header-like">playlist://</span>
+			<ContentEditable
+				innerRef={titleRef}
+				html={title}
+				onFocus={onTitleFocus}
+				onBlur={onTitleBlur}
+				onKeyDown={onKeyDown}
+				onChange={onChange}
+				className={isTitleEditing ? 'editing' : null}
+				tagName='h1'/>
+			</>
 	);
 }

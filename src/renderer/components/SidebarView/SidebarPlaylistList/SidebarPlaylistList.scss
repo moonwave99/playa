@@ -6,10 +6,12 @@
     line-height: $mainUnit;
     padding: 0 $mainUnit;
     margin: 0;
+    font-family: 'Inter UI', sans-serif;
     font-size: 1rem;
     font-weight: 700;
     color: $highlightColor;
     letter-spacing: .01em;
+    text-transform: uppercase;
   }
   ul{
     list-style: none;

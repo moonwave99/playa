@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { SidebarPlaylistList } from './SidebarPlaylistList/SidebarPlaylistList';
 import { Playlist } from '../../store/modules/playlist';
 import './SidebarView.scss';
-import { SEARCH, PLAYLIST_ALL } from '../../routes';
+import { PLAYLIST_ALL } from '../../routes';
 
 type SidebarViewProps = {
 	playlists: Playlist[];
@@ -20,9 +20,6 @@ export const SidebarView: FC<SidebarViewProps> = ({
 
 	return (
 		<aside className="sidebar">
-			<header className="sidebar-header">
-				<Link to={SEARCH} className="button button-primary">Search</Link>
-			</header>
 			<SidebarPlaylistList playlists={playlists} />
 			<footer className="sidebar-footer">
 				<button type="button" className="button button-primary" onClick={_onCreatePlaylistButtonClick}>

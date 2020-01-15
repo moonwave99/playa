@@ -43,6 +43,8 @@
     .title {
       font-weight: bold;
       color: $highlightColor;
+      font-size: 1.2rem;
+      line-height: 2rem;
     }
     .album-type {
       @include albumTypeColor();

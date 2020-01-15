@@ -40,7 +40,7 @@ export const AllPlaylistsView: FC<AllPlaylistsViewProps> = ({
 
   return (
 		<div className="all-playlists-view">
-      <h1>Playlists</h1>
+      <h1>playlist://<span className="highlight">all</span></h1>
       <table className="all-playlists-table">
         <thead>
           <tr>
