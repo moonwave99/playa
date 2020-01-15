@@ -1,15 +1,18 @@
-import React, { ReactElement, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { FC, ReactElement, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { AllPlaylistsView } from '../AllPlaylistsView/AllPlaylistsView';
 import { Playlist, deletePlaylistRequest } from '../../store/modules/playlist';
 import { updateTitle } from '../../store/modules/ui';
 import { confirmDialog } from '../../utils/dialogUtils';
 
-export const AllPlaylistContainer = (): ReactElement => {
+type AllPlaylistContainerProps = {
+  playlists: Playlist[];
+}
+
+export const AllPlaylistContainer: FC<AllPlaylistContainerProps> = ({
+  playlists = []
+}): ReactElement => {
   const dispatch = useDispatch();
-  const playlists = useSelector(({ playlists }) =>
-    Object.keys(playlists.allById).map(id => playlists.allById[id])
-  );
 
   useEffect(() => {
     dispatch(updateTitle('playlists: all'));

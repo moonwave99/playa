@@ -30,13 +30,17 @@ const MainLayout = ({
 }: MainLayoutProps): ReactElement => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const playlists = useSelector(({ playlists }) =>
-    Object.keys(playlists.allById)
-      .map(id => playlists.allById[id])
+  const { playlists, recentPlaylists } = useSelector(({ playlists }) => {
+    const playlistArray = Object.keys(playlists.allById).map(id => playlists.allById[id]);
+    const recentPlaylists = playlistArray
       .sort((a: Playlist, b: Playlist) =>
         new Date(b.accessed).getTime() - new Date(a.accessed).getTime()
-      ).slice(0, RECENT_PLAYLIST_COUNT)
-  );
+      ).slice(0, RECENT_PLAYLIST_COUNT);
+    return {
+      playlists: playlistArray,
+      recentPlaylists
+    }
+  });
 
   useEffect(() => {
     initIpc(history, dispatch);
@@ -45,7 +49,7 @@ const MainLayout = ({
 
   useEffect(() => {
     if (lastOpenedPlaylistId) {
-      // history.replace(generatePath(PLAYLIST_SHOW, { _id: lastOpenedPlaylistId }));
+      history.replace(generatePath(PLAYLIST_SHOW, { _id: lastOpenedPlaylistId }));
     }
   }, [lastOpenedPlaylistId]);
 
@@ -59,14 +63,20 @@ const MainLayout = ({
       <div className="main-container">
         <div className="sidebar-wrapper">
           <SidebarView
-            playlists={playlists}
+            recentPlaylists={recentPlaylists}
             onCreatePlaylistButtonClick={onCreatePlaylistButtonClick} />
         </div>
         <div className="main-wrapper">
           <Switch>
-            <Route path={SEARCH} component={SearchView} />
-            <Route path={PLAYLIST_ALL} exact component={AllPlaylistContainer} />
-            <Route path={PLAYLIST_SHOW} component={PlaylistContainer} />
+            <Route path={SEARCH}>
+              <SearchView/>
+            </Route>
+            <Route path={PLAYLIST_ALL} exact>
+              <AllPlaylistContainer playlists={playlists}/>
+            </Route>
+            <Route path={PLAYLIST_SHOW}>
+              { playlists.length > 0 && <PlaylistContainer/>}
+            </Route>
           </Switch>
         </div>
       </div>
