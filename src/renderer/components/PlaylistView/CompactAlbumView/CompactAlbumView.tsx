@@ -5,7 +5,7 @@ import { useDrag, useDrop, DropTargetMonitor } from 'react-dnd';
 import { XYCoord } from 'dnd-core';
 import { CoverView } from '../AlbumView/CoverView/CoverView';
 import { ApplicationState } from '../../../store/store';
-import { play } from '../../../store/modules/player';
+import { playTrack } from '../../../store/modules/player';
 import { Playlist } from '../../../store/modules/playlist';
 import { Album, VARIOUS_ARTISTS_ID } from '../../../store/modules/album';
 import { UIDragTypes } from '../../../store/modules/ui';
@@ -97,7 +97,7 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
 
   function onDoubleClick(event: SyntheticEvent): void {
     event.preventDefault();
-    dispatch(play({
+    dispatch(playTrack({
       playlistId,
       albumId: album._id,
       trackId: album.tracks[0]

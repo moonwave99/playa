@@ -1,8 +1,68 @@
 @import "../../styles/variables";
+@import "../../styles/mixins";
 
 .player {
   width: 100%;
   height: $playerHeight;
   background-color: $backgroundLightColor;
   border-top: 1px solid $backgroundDarkColor;
+  display: flex;
+  .player-controls {
+    width: $playerControlsWidth;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 0 10rem;
+    .control {
+      background-color: transparent;
+      background-repeat: no-repeat;
+      background-position: center;
+      border: none;
+      margin: 0;
+      &-prev,
+      &-next {
+        background-image: url('../../static/icons/player/prev-next.svg');
+        background-size: 33%;
+      }
+      &-playback {
+        background-image: url('../../static/icons/player/play.svg');
+        &.is-playing {
+          background-image: url('../../static/icons/player/pause.svg');
+        }
+      }
+      &-next {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  .player-album-cover-wrapper {
+    width: $playerHeight;
+    display: flex;
+    align-items: center;
+    .player-album-cover {
+      @include albumCover($playerHeight * 0.8, $backgroundDarkColor);
+    }
+  }
+
+  .player-playback-bar {
+    display: flex;
+    flex-grow: 1;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-direction: column;
+    .current-track-title,
+    .current-track-info {
+      display: flex;
+      margin: 0;
+    }
+    .current-track-title {
+      font-size: $playerTrackTitleFontSize
+    }
+    .current-track-info {
+      font-size: $playerTrackInfoFontSize;
+      color: $highlightColor;
+    }
+  }
 }

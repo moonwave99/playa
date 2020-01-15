@@ -4,7 +4,7 @@ import cx from 'classnames';
 import { CoverView } from './CoverView/CoverView';
 import { TracklistView } from './TracklistView/TracklistView';
 import { ApplicationState } from '../../../store/store';
-import { play } from '../../../store/modules/player';
+import { playTrack } from '../../../store/modules/player';
 import { Playlist } from '../../../store/modules/playlist';
 import { Album, VARIOUS_ARTISTS_ID, getAlbumContentRequest } from '../../../store/modules/album';
 import { Track } from '../../../store/modules/track';
@@ -56,7 +56,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
 
   function onAlbumCoverDoubleClick(event: SyntheticEvent): void {
     event.preventDefault();
-    dispatch(play({
+    dispatch(playTrack({
       playlistId,
       albumId: _id,
       trackId: tracks[0]

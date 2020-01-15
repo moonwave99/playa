@@ -29,6 +29,7 @@
       &:hover {
         background-color: $backgroundLightColor;
       }
+      &.is-current,
       &.ready:hover {
         color: $highlightColor;
         .track-number {
@@ -36,6 +37,9 @@
           color: transparent;
         }
       }
+      &.is-current {
+        color: $mainColor;
+      }      
       .track-number {
         &:after {
           content: '.'

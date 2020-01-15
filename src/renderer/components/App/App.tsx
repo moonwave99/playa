@@ -56,7 +56,7 @@ const MainLayout = ({
 
   return (
     <main className="app">
-      <section className="main-container">
+      <div className="main-container">
         <div className="sidebar-wrapper">
           <SidebarView
             playlists={playlists}
@@ -69,10 +69,10 @@ const MainLayout = ({
             <Route path={PLAYLIST_SHOW} component={PlaylistContainer} />
           </Switch>
         </div>
-      </section>
-      <section className="player-wrapper">
+      </div>
+      <div className="player-wrapper">
         <PlayerView/>
-      </section>
+      </div>
     </main>
   );
 }

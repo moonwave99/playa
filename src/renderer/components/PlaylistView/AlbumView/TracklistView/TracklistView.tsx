@@ -4,7 +4,7 @@ import cx from 'classnames';
 import { Playlist } from '../../../../store/modules/Playlist';
 import { Album } from '../../../../store/modules/Album';
 import { Track } from '../../../../store/modules/track';
-import { play } from '../../../../store/modules/player';
+import { playTrack } from '../../../../store/modules/player';
 import { formatTrackNumber } from '../../../../utils/tracklistUtils';
 import { formatDuration } from '../../../../utils/datetimeUtils';
 import { COLORS } from '../../../../../constants';
@@ -62,7 +62,7 @@ export const TracklistView: FC<TracklistViewProps> = ({
 
     function onTrackDoubleClick(event: SyntheticEvent): void {
       event.preventDefault();
-      dispatch(play({
+      dispatch(playTrack({
         playlistId,
         albumId,
         trackId: _id

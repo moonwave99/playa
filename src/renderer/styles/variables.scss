@@ -24,5 +24,8 @@ $albumCoverWidth: 19rem;
 $albumCoverCompactWidth: 5rem;
 $tracklistMaxWidth: 60rem;
 
-$searchBarHeight: 11.4rem;
-$playerHeight: 11.4rem;
+$searchBarHeight: 3 * $mainUnit;
+$playerHeight: 2 * $mainUnit;
+$playerControlsWidth: $sidebarWidth;
+$playerTrackTitleFontSize: $mainUnit * 0.5;
+$playerTrackInfoFontSize: $mainUnit * 0.4;

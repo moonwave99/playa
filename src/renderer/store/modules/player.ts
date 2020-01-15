@@ -10,14 +10,15 @@ export interface PlayerState {
   isPaused: boolean;
 }
 
-export const PLAYER_PLAY       = 'playa/player/PLAY';
-export const PLAYER_STOP       = 'playa/player/STOP';
-export const PLAYER_PAUSE      = 'playa/player/PAUSE';
-export const PLAYER_NEXT_TRACK = 'playa/player/NEXT_TRACK';
-export const PLAYER_PREV_TRACK = 'playa/player/PREV_TRACK';
+export const PLAYER_PLAY_TRACK      = 'playa/player/PLAY_TRACK';
+export const PLAYER_STOP            = 'playa/player/STOP';
+export const PLAYER_PAUSE           = 'playa/player/PAUSE';
+export const PLAYER_TOGGLE_PLAYBACK = 'playa/player/PLAYER_TOGGLE_PLAYBACK';
+export const PLAYER_NEXT_TRACK      = 'playa/player/NEXT_TRACK';
+export const PLAYER_PREV_TRACK      = 'playa/player/PREV_TRACK';
 
-interface PlayAction {
-  type: typeof PLAYER_PLAY;
+interface PlayTrackAction {
+  type: typeof PLAYER_PLAY_TRACK;
   playlistId?: Playlist['_id'];
   albumId: Album['_id'];
   trackId?: Track['_id'];
@@ -31,6 +32,10 @@ interface PauseAction {
   type: typeof PLAYER_PAUSE;
 }
 
+interface TogglePlaybackAction {
+  type: typeof PLAYER_TOGGLE_PLAYBACK;
+}
+
 interface NextTrackAction {
   type: typeof PLAYER_NEXT_TRACK;
 }
@@ -40,9 +45,10 @@ interface PrevTrackAction {
 }
 
 export type PlayerActionTypes =
-    PlayAction
+    PlayTrackAction
   | StopAction
   | PauseAction
+  | TogglePlaybackAction
   | NextTrackAction
   | PrevTrackAction;
 
@@ -52,14 +58,14 @@ type PlayActionParams = {
   trackId?: Track['_id'];
 }
 
-export const play = ({
+export const playTrack = ({
   playlistId,
   albumId,
   trackId
 }: PlayActionParams): Function =>
   (dispatch: Function): void => {
     dispatch({
-      type: PLAYER_PLAY,
+      type: PLAYER_PLAY_TRACK,
       playlistId,
       albumId,
       trackId
@@ -77,6 +83,13 @@ export const pause = (): Function =>
   (dispatch: Function): void => {
     dispatch({
       type: PLAYER_PAUSE
+    });
+  }
+
+export const togglePlayback = (): Function =>
+  (dispatch: Function): void => {
+    dispatch({
+      type: PLAYER_TOGGLE_PLAYBACK
     });
   }
 
@@ -108,7 +121,7 @@ export default function reducer(
   action: PlayerActionTypes
 ): PlayerState {
   switch (action.type) {
-    case PLAYER_PLAY:
+    case PLAYER_PLAY_TRACK:
       return {
         ...state,
         isPlaying: true,
@@ -128,6 +141,12 @@ export default function reducer(
         ...state,
         isPlaying: false,
         isPaused: !(state.isPlaying === false)
+      };
+    case PLAYER_TOGGLE_PLAYBACK:
+      return {
+        ...state,
+        isPlaying: !state.isPlaying,
+        isPaused: state.isPlaying
       };
     case PLAYER_NEXT_TRACK:
       return state;

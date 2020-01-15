@@ -1,14 +1,16 @@
 import reducer, {
   PlayerActionTypes,
   PlayerState,
-  play,
+  playTrack,
   stop,
   pause,
+  togglePlayback,
   nextTrack,
   prevTrack,
-  PLAYER_PLAY,
+  PLAYER_PLAY_TRACK,
   PLAYER_STOP,
   PLAYER_PAUSE,
+  PLAYER_TOGGLE_PLAYBACK,
   PLAYER_NEXT_TRACK,
   PLAYER_PREV_TRACK
 } from './player';
@@ -21,9 +23,9 @@ describe('player actions', () => {
       albumId: '2',
       trackId: '3'
     };
-    play(playbackIds)(dispatch);
+    playTrack(playbackIds)(dispatch);
     expect(dispatch).toHaveBeenCalledWith({
-      type: PLAYER_PLAY,
+      type: PLAYER_PLAY_TRACK,
       ...playbackIds
     });
   });
@@ -41,6 +43,14 @@ describe('player actions', () => {
     pause()(dispatch);
     expect(dispatch).toHaveBeenCalledWith({
       type: PLAYER_PAUSE
+    });
+  });
+
+  it('should dispatch togglePlayback request', () => {
+    const dispatch = jest.fn();
+    togglePlayback()(dispatch);
+    expect(dispatch).toHaveBeenCalledWith({
+      type: PLAYER_TOGGLE_PLAYBACK
     });
   });
 
@@ -81,7 +91,7 @@ describe('player reducer', () => {
       trackId: '3'
     };
     expect(reducer(initialState, {
-      type: PLAYER_PLAY,
+      type: PLAYER_PLAY_TRACK,
       ...playbackIds
     })).toEqual({
       ...initialState,
@@ -106,6 +116,16 @@ describe('player reducer', () => {
     expect(reducer({...initialState, isPlaying: false}, {
       type: PLAYER_PAUSE
     })).toEqual({...initialState, isPlaying: false, isPaused: false});
+  });
+
+  it('should handle PLAYER_TOGGLE_PLAYBACK', () => {
+    expect(reducer({...initialState, isPlaying: true}, {
+      type: PLAYER_TOGGLE_PLAYBACK
+    })).toEqual({...initialState, isPlaying: false, isPaused: true});
+
+    expect(reducer({...initialState, isPlaying: false}, {
+      type: PLAYER_TOGGLE_PLAYBACK
+    })).toEqual({...initialState, isPlaying: true, isPaused: false});
   });
 
   it('should handle PLAYER_NEXT_TRACK', () => {
