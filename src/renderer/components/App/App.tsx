@@ -1,5 +1,5 @@
 import React, { ReactElement, useEffect } from 'react';
-import { Switch, Route } from 'react-router';
+import { Switch, Route, useHistory } from 'react-router';
 import { generatePath } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { PlayerView } from '../PlayerView/PlayerView';
@@ -7,7 +7,7 @@ import { SearchView } from '../SearchView/SearchView';
 import { SidebarView } from '../SidebarView/SidebarView';
 import { AllPlaylistContainer } from '../AllPlaylistContainer/AllPlaylistContainer';
 import { PlaylistContainer } from '../PlaylistContainer/PlaylistContainer';
-import { history } from '../../store/store';
+import { initIpc } from '../../lib/initIpc';
 import { Playlist, getAllPlaylistsRequest } from '../../store/modules/playlist';
 import './App.scss';
 
@@ -28,6 +28,7 @@ type MainLayoutProps = {
 const MainLayout = ({
   lastOpenedPlaylistId
 }: MainLayoutProps): ReactElement => {
+  const history = useHistory();
   const dispatch = useDispatch();
   const playlists = useSelector(({ playlists }) =>
     Object.keys(playlists.allById)
@@ -38,12 +39,13 @@ const MainLayout = ({
   );
 
   useEffect(() => {
+    initIpc(history, dispatch);
     dispatch(getAllPlaylistsRequest());
   }, []);
 
   useEffect(() => {
     if (lastOpenedPlaylistId) {
-      history.replace(generatePath(PLAYLIST_SHOW, { _id: lastOpenedPlaylistId }));
+      // history.replace(generatePath(PLAYLIST_SHOW, { _id: lastOpenedPlaylistId }));
     }
   }, [lastOpenedPlaylistId]);
 

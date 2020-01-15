@@ -40,7 +40,7 @@ function createWindow(): void {
 
   mainWindow.loadURL(
     url.format({
-      pathname: Path.join(__dirname, './static/index.html'),
+      pathname: Path.join(__dirname, './index.html'),
       protocol: 'file:',
       slashes: true,
     })

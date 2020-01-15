@@ -1,5 +1,5 @@
+import { History } from "history";
 import { ipcRenderer as ipc } from 'electron';
-import { store, history } from '../store/store';
 
 import { IPC_MESSAGES } from '../../constants';
 
@@ -17,29 +17,29 @@ const {
 
 import {
   Playlist,
-  PLAYLIST_GET_ALL_RESPONSE,
-  PLAYLIST_SAVE_RESPONSE,
-  PLAYLIST_DELETE_RESPONSE
+  getAllPlaylistsResponse,
+  savePlaylistResponse,
+  deletePlaylistResponse
 } from '../store/modules/playlist';
 
 import {
   Album,
-  ALBUM_SEARCH_RESPONSE,
-  ALBUM_GET_LIST_RESPONSE,
-  ALBUM_GET_CONTENT_RESPONSE
+  searchAlbumsResponse,
+  getAlbumListResponse,
+  getAlbumContentResponse
 } from '../store/modules/album';
 
 import {
   Track,
-  TRACK_GET_LIST_RESPONSE,
-  TRACK_GET_LIST_REQUEST
+  getTrackListRequest,
+  getTrackListResponse
 } from '../store/modules/track';
 
 import {
-  COVER_GET_RESPONSE
+  getCoverResponse
 } from '../store/modules/cover';
 
-export function initIpc(): void {
+export function initIpc(history: History, dispatch: Function): void {
   ipc.on('error', (_event, error) => {
     console.log(error);
   });
@@ -49,63 +49,35 @@ export function initIpc(): void {
   });
 
   ipc.on(IPC_PLAYLIST_GET_ALL_RESPONSE, (_event, playlists: Playlist[]) => {
-    store.dispatch({
-      type: PLAYLIST_GET_ALL_RESPONSE,
-      playlists
-    });
+    dispatch(getAllPlaylistsResponse(playlists));
   });
 
   ipc.on(IPC_PLAYLIST_SAVE_RESPONSE, (_event, playlist: Playlist) => {
-    store.dispatch({
-      type: PLAYLIST_SAVE_RESPONSE,
-      playlist
-    });
+    dispatch(savePlaylistResponse(playlist));
   });
 
   ipc.on(IPC_PLAYLIST_DELETE_RESPONSE, (_event, playlist: Playlist) => {
-    store.dispatch({
-      type: PLAYLIST_DELETE_RESPONSE,
-      playlist
-    });
+    dispatch(deletePlaylistResponse(playlist));
   });
 
   ipc.on(IPC_ALBUM_SEARCH_RESPONSE, (_event, results: Album[]) => {
-    store.dispatch({
-      type: ALBUM_SEARCH_RESPONSE,
-      results
-    });
+    dispatch(searchAlbumsResponse(results));
   });
 
   ipc.on(IPC_ALBUM_GET_LIST_RESPONSE, (_event, results: Album[]) => {
-    store.dispatch({
-      type: ALBUM_GET_LIST_RESPONSE,
-      results
-    });
+    dispatch(getAlbumListResponse(results));
   });
 
   ipc.on(IPC_ALBUM_CONTENT_RESPONSE, (_event, album: Album) => {
-    store.dispatch({
-      type: ALBUM_GET_CONTENT_RESPONSE,
-      album
-    });
-    store.dispatch({
-      type: TRACK_GET_LIST_REQUEST,
-      ids: album.tracks
-    });
+    dispatch(getAlbumContentResponse(album));
+    dispatch(getTrackListRequest(album.tracks));
   });
 
   ipc.on(IPC_TRACK_GET_LIST_RESPONSE, (_event, results: Track[]) => {
-    store.dispatch({
-      type: TRACK_GET_LIST_RESPONSE,
-      results
-    });
+    dispatch(getTrackListResponse(results));
   });
 
   ipc.on(IPC_COVER_GET_RESPONSE, (_event, path: string, album: Album) => {
-    store.dispatch({
-      type: COVER_GET_RESPONSE,
-      path,
-      album
-    });
+    dispatch(getCoverResponse(path, album));
   });
 }
