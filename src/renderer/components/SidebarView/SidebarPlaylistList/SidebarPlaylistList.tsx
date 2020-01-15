@@ -7,6 +7,7 @@ import './SidebarPlaylistList.scss';
 
 type SidebarPlaylistListProps = {
   playlists: Playlist[];
+  currentPlaylistId: Playlist['_id'];
 }
 
 type MatchParams = {
@@ -14,7 +15,8 @@ type MatchParams = {
 }
 
 export const SidebarPlaylistList: FC<SidebarPlaylistListProps> = ({
-  playlists = []
+  playlists = [],
+  currentPlaylistId
 }) => {
   const match = useRouteMatch(PLAYLIST_SHOW);
   let params: MatchParams = {};
@@ -31,6 +33,7 @@ export const SidebarPlaylistList: FC<SidebarPlaylistListProps> = ({
           playlist => <SidebarPlaylistListItem
             key={playlist._id}
             isCurrent={playlist._id === params._id}
+            isPlaying={playlist._id === currentPlaylistId}
             playlist={playlist}/>
         ) }
       </ul>

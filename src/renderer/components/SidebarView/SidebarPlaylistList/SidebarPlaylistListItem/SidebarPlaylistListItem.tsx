@@ -11,6 +11,7 @@ import { PLAYLIST_SHOW } from '../../../../routes';
 type SidebarPlaylistListItemProps = {
   playlist: Playlist;
   isCurrent: boolean;
+  isPlaying: boolean;
 }
 
 type DropItem = {
@@ -20,7 +21,8 @@ type DropItem = {
 
 export const SidebarPlaylistListItem: FC<SidebarPlaylistListItemProps> = ({
   playlist,
-  isCurrent
+  isCurrent,
+  isPlaying
 }) => {
   const dispatch = useDispatch();
   const [{ isOver, canDrop }, drop] = useDrop({
@@ -42,7 +44,8 @@ export const SidebarPlaylistListItem: FC<SidebarPlaylistListItemProps> = ({
   }
 
   const classNames = cx('playlist', {
-    'current': isCurrent,
+    'is-current': isCurrent,
+    'is-playing': isPlaying,
     'drag-is-over': isOver,
     'drag-can-drop': canDrop
   });

@@ -30,7 +30,11 @@ const MainLayout = ({
 }: MainLayoutProps): ReactElement => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const { playlists, recentPlaylists } = useSelector(({ playlists }) => {
+  const {
+    playlists,
+    recentPlaylists,
+    currentPlaylistId
+  } = useSelector(({ playlists, player }) => {
     const playlistArray = Object.keys(playlists.allById).map(id => playlists.allById[id]);
     const recentPlaylists = playlistArray
       .sort((a: Playlist, b: Playlist) =>
@@ -38,7 +42,8 @@ const MainLayout = ({
       ).slice(0, RECENT_PLAYLIST_COUNT);
     return {
       playlists: playlistArray,
-      recentPlaylists
+      recentPlaylists,
+      currentPlaylistId: player.currentPlaylistId
     }
   });
 
@@ -63,6 +68,7 @@ const MainLayout = ({
       <div className="main-container">
         <div className="sidebar-wrapper">
           <SidebarView
+            currentPlaylistId={currentPlaylistId}
             recentPlaylists={recentPlaylists}
             onCreatePlaylistButtonClick={onCreatePlaylistButtonClick} />
         </div>
