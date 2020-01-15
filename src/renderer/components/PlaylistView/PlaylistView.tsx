@@ -15,17 +15,6 @@ import { formatDate } from '../../utils/datetimeUtils';
 import { IPC_MESSAGES } from '../../../constants';
 const { IPC_UI_TOGGLE_ALBUM_VIEW } = IPC_MESSAGES;
 
-const ACTION_BUTTONS = [
-  {
-    icon: 'list-alt',
-    view: UIAlbumView.Extended
-  },
-  {
-    icon: 'th-list',
-    view: UIAlbumView.Compact
-  }  
-];
-
 import './PlaylistView.scss';
 
 type PlaylistViewProps = {
@@ -76,10 +65,6 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
     onAlbumOrderChange(albumOrder);
   }
 
-  function onActionViewButtonClick(): void {
-    setAlbumView(albumView === UIAlbumView.Compact ? UIAlbumView.Extended : UIAlbumView.Compact);
-  }
-
   function renderAlbum(album: Album, index: number): ReactElement {
     // #TODO investigate render issue
     if (!album) {
@@ -116,15 +101,16 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
   function renderActionButtons(): ReactElement {
     return (
       <span className="playlist-view-actions">
-        { ACTION_BUTTONS.map(({ icon, view }) => {
-          const isCurrent = albumView === view;
-          const buttonClasses = cx('playlist-view-action-button', { 'is-current': isCurrent })
-          return (
-            <button className={buttonClasses} onClick={onActionViewButtonClick} key={view}>
-              <FontAwesomeIcon icon={icon as any} className="playlist-icon" fixedWidth/>
-            </button>
-          );
-        }) }
+        <button
+          className={cx('playlist-view-action-button', { 'is-current': albumView === UIAlbumView.Extended })}
+          onClick={(): void => setAlbumView(UIAlbumView.Extended)}>
+          <FontAwesomeIcon icon="list-alt" className="playlist-icon" fixedWidth/>
+        </button>
+        <button
+          className={cx('playlist-view-action-button', { 'is-current': albumView === UIAlbumView.Compact })}
+          onClick={(): void => setAlbumView(UIAlbumView.Compact)}>
+          <FontAwesomeIcon icon="th-list" className="playlist-icon" fixedWidth/>
+        </button>
       </span>
     );
   }
