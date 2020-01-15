@@ -9,6 +9,7 @@ import { Album } from '../../store/modules/album';
 import { Track } from '../../store/modules/track';
 import { UIAlbumView } from '../../store/modules/ui';
 import { EntityHashMap, immutableMove } from '../../utils/storeUtils';
+import { formatDate } from '../../utils/datetimeUtils';
 
 import { IPC_MESSAGES } from '../../../constants';
 const { IPC_UI_TOGGLE_ALBUM_VIEW } = IPC_MESSAGES;
@@ -96,13 +97,20 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
     }
   }
 
+  const date = formatDate({
+    date: playlist.created,
+    options: { year: 'numeric', month: 'long', day: 'numeric' }
+  });
   const playlistClasses = cx('playlist-view', { 'is-current': isCurrent });
 	return (
 		<section className={playlistClasses}>
       <header className="playlist-header">
+        <div className="playlist-header-row">
         <PlaylistViewTitle
           playlist={playlist}
           onTitleChange={onTitleChange}/>
+        </div>
+        <p className="playlist-info header-like">Created on {date}</p>
       </header>
       {
         hasAlbums

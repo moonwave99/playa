@@ -7,29 +7,31 @@
   height: 100%;
   width: 100%;
   .playlist-header {
-    display: flex;
-    flex-direction: row;
     margin-bottom: $mainUnit;
-    .header-like,
-    h1 {
-      margin: 0;
-      line-height: $mainUnit;
-      font-size: 2rem;
-      color: $highlightColor;
-      font-weight: normal;
-      letter-spacing: -.1rem;
-    }
-    h1 {
-      flex: 1;
-      &:focus{
-        outline: none;
-        border-bottom: 1px solid $mainColor;
-        margin-bottom: -1px;
+    .playlist-header-row {
+      display: flex;
+      flex-direction: row;
+      .header-like,
+      h1 {
+        margin: 0;
+        line-height: $mainUnit;
+        font-size: 2rem;
+        color: $highlightColor;
+        font-weight: normal;
+        letter-spacing: -.1rem;
       }
-    }
-    .header-like {
-      color: $clearColor;
-      margin-right: .5rem;
+      h1 {
+        flex: 1;
+        &:focus{
+          outline: none;
+          border-bottom: 1px solid $mainColor;
+          margin-bottom: -1px;
+        }
+      }
+      .header-like {
+        color: $clearColor;
+        margin-right: .5rem;
+      }      
     }
   }
   .album-list {

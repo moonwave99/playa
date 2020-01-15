@@ -6,6 +6,16 @@ export function formatDuration(seconds: number): string {
     .map(format).join(':');
 }
 
-export function formatDate(date: string): string {
-  return new Date(date).toLocaleDateString();
+type formatDateOptions = {
+  date: string;
+  locale?: string;
+  options?: object;
+}
+
+export function formatDate({
+  date,
+  locale = 'en-US',
+  options
+}: formatDateOptions): string {
+  return new Date(date).toLocaleDateString(locale, options);
 }

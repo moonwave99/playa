@@ -31,8 +31,8 @@ export const AllPlaylistsView: FC<AllPlaylistsViewProps> = ({
             {title}
           </Link>
         </td>
-        <td>{formatDate(created)}</td>
-        <td>{formatDate(accessed)}</td>
+        <td>{formatDate({ date: created })}</td>
+        <td>{formatDate({ date: accessed })}</td>
         <td><a href="#" onClick={onDeleteButtonClick}>Delete</a></td>
       </tr>
     );
