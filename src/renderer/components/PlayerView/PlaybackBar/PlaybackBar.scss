@@ -1,0 +1,55 @@
+@import "../../../styles/variables";
+@import "../../../styles/mixins";
+
+.player-playback-bar {
+  display: flex;
+  flex: 1;
+  position: relative;
+  &:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: $playerProgressBottomHeight;
+    background-color: $darkColor;
+    z-index: 10;
+  }
+  .duration {
+    display: flex;
+    align-self: center;
+    padding: 0 $mainUnit;
+  }
+  .info-wrapper {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-direction: column;
+    .current-track-title,
+    .current-track-info {
+      display: flex;
+      margin: 0;
+    }
+    .current-track-title {
+      font-size: $playerTrackTitleFontSize
+    }
+    .current-track-info {
+      font-size: $playerTrackInfoFontSize;
+      color: $highlightColor;
+    }
+  }
+  .progress-area {
+
+  }
+  .progress-cursor {
+    height: $playerHeight;
+    width: 1px;
+    background-color: $mainColor;
+    position: absolute;
+    left: -1px;
+    top: 0;
+    transition: opacity .2s ease-in-out;
+    opacity: 1;
+  }
+}

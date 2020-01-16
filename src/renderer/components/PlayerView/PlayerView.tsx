@@ -1,6 +1,7 @@
 import React, { ReactElement } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import cx from 'classnames';
+import { PlaybackBar } from './PlaybackBar/PlaybackBar';
 import { CoverView } from '../PlaylistView/AlbumView/CoverView/CoverView';
 import { ApplicationState } from '../../store/store';
 import { togglePlayback, prevTrack, nextTrack } from '../../store/modules/player';
@@ -42,15 +43,6 @@ export const PlayerView = (): ReactElement => {
 		dispatch(nextTrack());
 	}
 
-	function renderTrackInfo(): ReactElement {
-		return (
-			<>
-				<p className="current-track-title">{currentTrack.title}</p>
-				<p className="current-track-info">{currentTrack.artist} - {currentAlbum.title}</p>
-			</>
-		);
-	}
-
 	const playbackButtonClasses = cx(
 		'control',
 		'control-playback',
@@ -72,9 +64,9 @@ export const PlayerView = (): ReactElement => {
 						album={currentAlbum}/>
 				</section>
 			</div>
-			<section className="player-playback-bar">
-				{ currentTrack && currentAlbum && renderTrackInfo() }
-			</section>
+			{ currentTrack && currentAlbum &&
+				<PlaybackBar currentTrack={currentTrack} currentAlbum={currentAlbum}/>
+			}
 		</section>
 	);
 }

@@ -54,24 +54,4 @@
       @include albumCover($playerHeight, $backgroundDarkColor, 60%);
     }
   }
-
-  .player-playback-bar {
-    display: flex;
-    flex-grow: 1;
-    align-items: center;
-    justify-content: space-evenly;
-    flex-direction: column;
-    .current-track-title,
-    .current-track-info {
-      display: flex;
-      margin: 0;
-    }
-    .current-track-title {
-      font-size: $playerTrackTitleFontSize
-    }
-    .current-track-info {
-      font-size: $playerTrackInfoFontSize;
-      color: $highlightColor;
-    }
-  }
 }
