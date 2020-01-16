@@ -64,7 +64,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
   }
 
   function renderNotFoundTracksButton(): ReactElement {
-    return <button onClick={onNotFoundButtonClick} className="button button-outline">Reload</button>
+    return <button onClick={onNotFoundButtonClick} className="button button-outline">Reload tracks</button>
   }
 
   const albumClasses = cx('album-view', { 'is-current': isCurrent });
