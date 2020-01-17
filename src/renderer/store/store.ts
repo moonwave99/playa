@@ -1,11 +1,12 @@
-import { Reducer, combineReducers, createStore, applyMiddleware } from 'redux';
+import { Store, Reducer, combineReducers, createStore, applyMiddleware } from 'redux';
 import { RouterState, connectRouter, routerMiddleware } from 'connected-react-router';
 import { createLogger } from 'redux-logger';
 import thunk from 'redux-thunk';
 import { History, createHashHistory } from 'history';
 
+import Player from '../player';
 import uiReducer, { UIState } from './modules/ui';
-import playerReducer, { PlayerState } from './modules/player';
+import initPlayerReducer, { PlayerState } from './modules/player';
 import playlistReducer, { PlaylistState } from './modules/playlist';
 import albumReducer, { AlbumState } from './modules/album';
 import trackReducer, { TrackState } from './modules/track';
@@ -24,11 +25,11 @@ export interface ApplicationState {
   covers: CoverState;
 }
 
-function createRootReducer (history: History): Reducer {
+function createRootReducer (history: History, player: Player): Reducer {
   return combineReducers<ApplicationState>({
     router: connectRouter(history),
     ui: uiReducer,
-    player: playerReducer,
+    player: initPlayerReducer(player),
     playlists: playlistReducer,
     albums: albumReducer,
     tracks: trackReducer,
@@ -48,10 +49,12 @@ const middleware = [
   routerMiddleware(history)
 ];
 
-const store = createStore(
-  createRootReducer(history),
-  initialState,
-  applyMiddleware(...middleware)
-);
+function initStore(player: Player): Store {
+  return createStore(
+    createRootReducer(history, player),
+    initialState,
+    applyMiddleware(...middleware)
+  );
+}
 
-export { store, history };
+export { initStore, history };

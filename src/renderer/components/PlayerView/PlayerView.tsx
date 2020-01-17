@@ -1,46 +1,100 @@
-import React, { ReactElement } from 'react';
+import React, { FC, ReactElement, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import cx from 'classnames';
 import { PlaybackBar } from './PlaybackBar/PlaybackBar';
 import { CoverView } from '../PlaylistView/AlbumView/CoverView/CoverView';
 import { ApplicationState } from '../../store/store';
-import { togglePlayback, prevTrack, nextTrack } from '../../store/modules/player';
+import { togglePlayback, playTrack, seekTo } from '../../store/modules/player';
+import { getPrevTrack, getNextTrack } from '../../utils/tracklistUtils';
+import Player, { PlaybackInfo, PLAYER_EVENTS } from '../../player';
 import './PlayerView.scss';
 
-// #TODO:
-// 2. peek at old proj
-// 3. consider UI switch to icon circles on top right + sidebar from right
-export const PlayerView = (): ReactElement => {
+type PlayerViewProps = {
+	player: Player;
+}
+
+export const PlayerView: FC<PlayerViewProps> = ({
+	player
+}): ReactElement => {
 	const dispatch = useDispatch();
+	const [currentTime, setCurrentTime] = useState(0);
 	const {
+		currentPlaylist,
     currentAlbum,
     currentTrack,
+		currentPlaylistAlbums,
 		isPlaying,
 		cover
-  } = useSelector((state: ApplicationState) => {
+  } = useSelector(({ player, playlists, albums, tracks, covers }: ApplicationState) => {
 		const {
+			currentPlaylistId,
 			currentAlbumId,
 			currentTrackId,
 			isPlaying
-		} = state.player;
+		} = player;
+		const currentPlaylist = playlists.allById[currentPlaylistId];
+		const currentPlaylistAlbums = currentPlaylist
+			? currentPlaylist.albums.map(x => albums.allById[x])
+			: [];
 		return {
+			currentPlaylist,
+			currentAlbum: albums.allById[currentAlbumId],
+			currentTrack: tracks.allById[currentTrackId],
+			currentPlaylistAlbums,
 			isPlaying,
-			currentAlbum: state.albums.allById[currentAlbumId],
-			currentTrack: state.tracks.allById[currentTrackId],
-			cover: state.covers.allById[currentAlbumId]
+			cover: covers.allById[currentAlbumId]
 		};
   });
+
+	useEffect(() => {
+		function handlePlayerTick({ currentTime }: PlaybackInfo): void {
+			setCurrentTime(currentTime);
+		}
+		function handlePlayerEnded(): void {
+			if (!currentAlbum) {
+				return;
+			}
+			dispatch(playTrack({
+				playlistId: currentPlaylist._id,
+				...getNextTrack(currentTrack._id, currentPlaylistAlbums)
+			}));
+		}
+		player.on(PLAYER_EVENTS.TICK, handlePlayerTick);
+		player.on(PLAYER_EVENTS.TRACK_ENDED, handlePlayerEnded);
+		return (): void => {
+			player.removeListener(PLAYER_EVENTS.TICK, handlePlayerTick);
+			player.removeListener(PLAYER_EVENTS.TRACK_ENDED, handlePlayerEnded);
+		}
+	}, [currentPlaylistAlbums, currentAlbum, currentTrack]);
 
 	function onPlaybackButtonClick(): void {
 		dispatch(togglePlayback());
 	}
 
 	function onPrevButtonClick(): void {
-		dispatch(prevTrack());
+		if (!currentAlbum) {
+			return;
+		}
+		dispatch(playTrack({
+			playlistId: currentPlaylist._id,
+			...getPrevTrack(currentTrack._id, currentPlaylistAlbums)
+		}));
 	}
 
 	function onNextButtonClick(): void {
-		dispatch(nextTrack());
+		if (!currentAlbum) {
+			return;
+		}
+		dispatch(playTrack({
+			playlistId: currentPlaylist._id,
+			...getNextTrack(currentTrack._id, currentPlaylistAlbums)
+		}));
+	}
+
+	function onProgressBarClick(position: number): void {
+		dispatch(seekTo(position));
+		const { currentTime } = player.getPlaybackInfo();
+		setCurrentTime(currentTime);
 	}
 
 	const playbackButtonClasses = cx(
@@ -65,7 +119,11 @@ export const PlayerView = (): ReactElement => {
 				</section>
 			</div>
 			{ currentTrack && currentAlbum &&
-				<PlaybackBar currentTrack={currentTrack} currentAlbum={currentAlbum}/>
+				<PlaybackBar
+					currentTrack={currentTrack}
+					currentAlbum={currentAlbum}
+					currentTime={currentTime}
+					onProgressBarClick={onProgressBarClick}/>
 			}
 		</section>
 	);

@@ -1,7 +1,8 @@
-import React, { ReactElement, useEffect } from 'react';
+import React, { FC, ReactElement, useEffect } from 'react';
 import { Switch, Route, useHistory } from 'react-router';
 import { generatePath } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import Player from '../../player';
 import { PlayerView } from '../PlayerView/PlayerView';
 import { SearchView } from '../SearchView/SearchView';
 import { SidebarView } from '../SidebarView/SidebarView';
@@ -22,13 +23,15 @@ import {
   RECENT_PLAYLIST_COUNT
 } from '../../../constants';
 
-type MainLayoutProps = {
+type AppProps = {
+  player: Player;
   lastOpenedPlaylistId: Playlist['_id'];
 }
 
-const MainLayout = ({
+export const App: FC<AppProps> = ({
+  player,
   lastOpenedPlaylistId
-}: MainLayoutProps): ReactElement => {
+}): ReactElement => {
   const history = useHistory();
   const dispatch = useDispatch();
   const {
@@ -88,10 +91,8 @@ const MainLayout = ({
         </div>
       </div>
       <div className="player-wrapper">
-        <PlayerView/>
+        <PlayerView player={player}/>
       </div>
     </main>
   );
 }
-
-export default MainLayout;
