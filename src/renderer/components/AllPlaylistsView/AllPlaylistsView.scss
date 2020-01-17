@@ -11,16 +11,33 @@
     line-height: $mainUnit;
   }
   .all-playlists-table {
-    list-style: none;
+    width: 100%;
     tr {
       td, th {
         border-color: $backgroundLightColor;
       }
+      th {
+        text-align: left;
+        line-height: $mainUnit;
+        color: $highlightColor;
+        padding: 0 1rem;
+      }
       td {
-        padding-top: 0;
-        padding-bottom: 0;
+        padding: 0;
+        margin: 0;
         height: $mainUnit;
     		line-height: $mainUnit;
+      }
+    }
+    tbody {
+      tr {
+        &:hover td {
+          background-color: $backgroundLightColor;
+        }
+        td {
+          padding: 0 1rem;
+          transition: background-color .1s ease-in-out;
+        }
       }
     }
   }
