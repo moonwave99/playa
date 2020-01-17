@@ -51,6 +51,10 @@
         font-weight: normal;
       }
     }
+    .album-artist {
+      text-decoration: underline;
+      color: $lightColor;
+    }
     .album-type {
       @include albumTypeColor();
     }

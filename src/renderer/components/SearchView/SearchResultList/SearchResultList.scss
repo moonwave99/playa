@@ -2,7 +2,7 @@
 @import "../../../styles/mixins";
 
 .search-result-list {
-	margin: 0;
+	margin: 0 0 $mainUnit 0;
 	padding: 0;
 	list-style: none;
   overflow: auto;

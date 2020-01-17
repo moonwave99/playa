@@ -1,5 +1,6 @@
 import React, { FC, ReactElement, SyntheticEvent, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link, generatePath } from 'react-router-dom';
 import cx from 'classnames';
 import { CoverView } from './CoverView/CoverView';
 import { TracklistView } from './TracklistView/TracklistView';
@@ -10,6 +11,7 @@ import { Album, VARIOUS_ARTISTS_ID, getAlbumContentRequest } from '../../../stor
 import { Track } from '../../../store/modules/track';
 import { getTrackListRequest } from '../../../store/modules/track';
 import { getCoverRequest } from '../../../store/modules/cover';
+import { SEARCH } from '../../../routes';
 import './AlbumView.scss';
 
 type AlbumViewProps = {
@@ -63,6 +65,14 @@ export const AlbumView: FC<AlbumViewProps> = ({
     }));
   }
 
+  function renderArtist(): ReactElement {
+    return <Link
+      to={`${generatePath(SEARCH)}?query=${artist}`}
+      className="album-artist">
+        {artist === VARIOUS_ARTISTS_ID ? 'V/A' : artist}
+      </Link>;
+  }
+
   function renderNotFoundTracksButton(): ReactElement {
     return <button onClick={onNotFoundButtonClick} className="button button-outline">Reload tracks</button>
   }
@@ -87,7 +97,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
         <header>
           <h2>{title}</h2>
           <h3>
-            {artist === VARIOUS_ARTISTS_ID ? 'V/A' : artist}{year ? `, ${year}` : null} - <span className={tagClasses}>{type}</span>
+            {renderArtist()}{year ? `, ${year}` : null} - <span className={tagClasses}>{type}</span>
           </h3>
         </header>
         <TracklistView

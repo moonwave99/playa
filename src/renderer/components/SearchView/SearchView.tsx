@@ -1,6 +1,7 @@
 import React, { useState, useEffect, FC } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router';
 import { Album } from '../../store/modules/album';
 import { SearchBar } from './SearchBar/SearchBar';
 import { SearchResultList } from './SearchResultList/SearchResultList';
@@ -15,13 +16,21 @@ type SearchViewProps = {
 
 export const SearchView: FC<SearchViewProps> = () => {
   const results: Album[] = useSelector(({ albums }) => albums.searchResults);
-  const [query, setQuery] = useState('');
+  const history = useHistory();
+  const q = new URLSearchParams(history.location.search);
+  const [query, setQuery] = useState(q.get('query'));
   const dispatch = useDispatch();
 
   useEffect(() => {
     const title = results.length > 0 ? `search: ${results.length} results for ${query}` : 'search';
     dispatch(updateTitle(title));
   }, [results]);
+
+  useEffect(() => {
+    if (query) {
+      dispatch(searchAlbumsRequest(query));  
+    }
+  }, []);
 
   const onFormSubmit = async (query: string): Promise<void> => {
     dispatch(searchAlbumsRequest(query));
