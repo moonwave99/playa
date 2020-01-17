@@ -12,7 +12,7 @@
     right: 0;
     bottom: 0;
     height: $playerProgressBottomHeight;
-    background-color: $darkColor;
+    background-color: $mainColor;
     z-index: 10;
   }
   .duration {
@@ -49,6 +49,7 @@
     background-color: $playerProgressAreaBackgroundColor;
     transition: transform 1s linear;
     z-index: 1000;
+    border-bottom: $playerProgressBottomHeight +1 solid $darkColor;
     &.no-transition {
       transition: none;
     }
