@@ -11,6 +11,7 @@ import { PlaylistContainer } from '../PlaylistContainer/PlaylistContainer';
 
 import initIpc from '../../lib/initIpc';
 import { Playlist, getAllPlaylistsRequest } from '../../store/modules/playlist';
+import { togglePlayback } from '../../store/modules/player';
 import './App.scss';
 
 import {
@@ -54,6 +55,16 @@ export const App: FC<AppProps> = ({
   useEffect(() => {
     initIpc(history, dispatch);
     dispatch(getAllPlaylistsRequest());
+    document.addEventListener('keydown', (event: KeyboardEvent) => {
+      switch (event.code) {
+        case 'Space':
+          if (event.target.dataset.keyCatch !== 'Space') {
+            dispatch(togglePlayback());
+            event.preventDefault();
+          }
+          break;
+      }
+    }, true);
   }, []);
 
   useEffect(() => {

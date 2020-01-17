@@ -48,6 +48,7 @@ export const PlaylistViewTitle: FC<PlaylistViewTitleProps> = ({ playlist, onTitl
 		<>
 			<span className="header-like">playlist://</span>
 			<ContentEditable
+				data-key-catch="Space"
 				innerRef={titleRef}
 				html={title}
 				onFocus={onTitleFocus}

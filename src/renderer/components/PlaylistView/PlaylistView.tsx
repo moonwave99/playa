@@ -100,7 +100,7 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
 
   function renderActionButtons(): ReactElement {
     return (
-      <span className="playlist-view-actions">
+      <div className="playlist-view-actions">
         <button
           className={cx('playlist-view-action-button', { 'is-current': albumView === UIAlbumView.Extended })}
           onClick={(): void => setAlbumView(UIAlbumView.Extended)}>
@@ -111,7 +111,7 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
           onClick={(): void => setAlbumView(UIAlbumView.Compact)}>
           <FontAwesomeIcon icon="th-list" className="playlist-icon" fixedWidth/>
         </button>
-      </span>
+      </div>
     );
   }
 
@@ -128,8 +128,8 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
           <PlaylistViewTitle
             playlist={playlist}
             onTitleChange={onTitleChange}/>
-            { renderActionButtons() }
         </div>
+        { renderActionButtons() }
         <p className="playlist-info header-like">Created on {date}</p>
       </header>
       {

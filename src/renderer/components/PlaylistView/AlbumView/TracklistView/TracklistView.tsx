@@ -1,5 +1,6 @@
 import React, { FC, ReactElement, SyntheticEvent } from 'react';
 import { useDispatch } from 'react-redux';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import cx from 'classnames';
 import { Playlist } from '../../../../store/modules/Playlist';
 import { Album } from '../../../../store/modules/Album';
@@ -69,13 +70,20 @@ export const TracklistView: FC<TracklistViewProps> = ({
       }));
     }
 
+    const isCurrent = _id === currentTrackId;
     const trackClassNames = cx('ready', {
-      'is-current': _id === currentTrackId
+      'is-current': isCurrent
     });
 
     return (
       <li key={_id} className={trackClassNames} onDoubleClick={onTrackDoubleClick}>
         <span className="track-number">{formatTrackNumber(number)}</span>
+        <span className="playback-info">
+          <FontAwesomeIcon
+            icon={ isCurrent ? 'volume-up' : 'play'}
+            className="track-icon"
+            fixedWidth/>
+        </span>
         {renderArtist(artist)}
         <span className="title">{title}</span>
         <span className="duration">{formatDuration(duration)}</span>

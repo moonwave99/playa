@@ -22,7 +22,7 @@
       }
       h1 {
         flex: 1;
-        margin-right: 2rem;
+        margin-right: 3 * $mainUnit;
         transition: background-color .3s ease-in;
         &:focus{
           border-bottom: 1px solid $mainColor;
@@ -34,18 +34,25 @@
         color: $lightColor;
         margin-right: .5rem;
       }
-      .playlist-view-actions{
-        display: flex;
-        .playlist-view-action-button {
-          margin: 0 0 0 .5rem;
-          padding: 0;
-          background: transparent;
-          border: none;
-          font-size: 2rem;
-          color: $lightColor;
-          &.is-current {
-            color: $mainColor;
-          }
+    }
+    .playlist-view-actions{
+      position: fixed;
+      top: $mainUnit * 1.1;
+      right: $mainUnit;
+      .playlist-view-action-button {
+        margin: 0 0 0 .5rem;
+        padding: 0;
+        background: transparent;
+        border: none;
+        font-size: 2rem;
+        color: $lightColor;
+        transition: color .3s ease-in-out;
+        &.is-current,
+        &.is-current:hover {
+          color: $mainColor;
+        }
+        &:hover {
+          color: $highlightColor;
         }
       }
     }

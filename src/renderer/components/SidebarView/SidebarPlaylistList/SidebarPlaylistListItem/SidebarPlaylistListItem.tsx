@@ -57,7 +57,10 @@ export const SidebarPlaylistListItem: FC<SidebarPlaylistListItemProps> = ({
         title={playlist._id}
         to={generatePath(PLAYLIST_SHOW, { _id: playlist._id })}
         className="sidebar-playlist-item">
-          <FontAwesomeIcon icon="file-audio" className="playlist-icon"/>
+          <FontAwesomeIcon
+            icon={ isPlaying ? 'volume-up' : 'file-audio'}
+            className="playlist-icon"
+            fixedWidth/>
           {playlist.title}
       </Link>
     </li>

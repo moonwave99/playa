@@ -4,6 +4,16 @@
 .album-view {
   display: flex;
   margin-bottom: $mainUnit * 3;
+  position: relative;
+  &:after {
+    content: '';
+    position: absolute;
+    width: 30%;
+    left: 35%;
+    bottom: $mainUnit * -1.5;
+    height: 1px;
+    background-color: $backgroundLightColor;
+  }
   .album-aside {
     width: $albumCoverWidth;
     .album-cover {

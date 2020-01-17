@@ -4,15 +4,16 @@
 .compact-album-view {
   display: flex;
 	align-items: center;
-	padding: .5rem 0;
+	padding: .5rem 0 .5rem 2rem;
   position: relative;
-  transition: background-color .3s ease-in-out;
+  border: 2px solid transparent;
+  transition: background-color .3s ease-in-out, border-color .3s ease-in-out;
   &:before {
     content: '⋮';
     cursor: move;
     position: absolute;
     top: .5rem;
-    left: -2rem;
+    left: 0rem;
     line-height: $albumCoverCompactWidth;
     height: $albumCoverCompactWidth;
     vertical-align: middle;
@@ -32,6 +33,10 @@
   }
   &.drag-is-dragging {
     opacity: 0;
+  }
+  &.is-current {
+    border: 2px solid $mainColor;
+    border-radius: .5rem;
   }
   .album-cover {
     @include albumCover($albumCoverCompactWidth);

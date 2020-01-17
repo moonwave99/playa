@@ -29,20 +29,28 @@
       }
       &.is-current,
       &.ready:hover {
+        .playback-info {
+          display: inline-block;
+        }
         .track-number {
-          @include playOverlay('../../../../static/icons/track/play.svg', 75%, transparent, '.');
-          color: transparent;
+          display: none;
         }
       }
       &.is-current {
         color: $mainColor;
       }
+      .playback-info,
       .track-number {
         width: 1.5rem;
+        margin-right: 1rem;
+      }
+      .playback-info {
+        display: none;
+      }
+      .track-number {
         &:after {
           content: '.'
         }
-        margin-right: 1rem;
       }
       .artist {
         color: $highlightColor;
