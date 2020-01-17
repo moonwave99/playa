@@ -1,3 +1,4 @@
+import { ipcRenderer as ipc } from 'electron';
 import React, { FC, ReactElement, useEffect } from 'react';
 import { Switch, Route, useHistory } from 'react-router';
 import { generatePath } from 'react-router-dom';
@@ -21,8 +22,13 @@ import {
 } from '../../routes';
 
 import {
+  IPC_MESSAGES,
   RECENT_PLAYLIST_COUNT
 } from '../../../constants';
+
+const {
+  IPC_UI_SHOW_CURRENT_PLAYLIST
+} = IPC_MESSAGES;
 
 type AppProps = {
   player: Player;
@@ -54,7 +60,7 @@ export const App: FC<AppProps> = ({
 
   useEffect(() => {
     initIpc(history, dispatch);
-    dispatch(getAllPlaylistsRequest());
+
     document.addEventListener('keydown', (event: KeyboardEvent) => {
       switch (event.code) {
         case 'Space':
@@ -64,8 +70,20 @@ export const App: FC<AppProps> = ({
           }
           break;
       }
-    }, true);
+    });
+    dispatch(getAllPlaylistsRequest());
   }, []);
+
+  useEffect(() => {
+    function onShowCurrentPlaylist(): void {
+      console.log(currentPlaylistId)
+      if (currentPlaylistId) {
+        history.push(generatePath(PLAYLIST_SHOW, { _id: currentPlaylistId }));
+      }
+    }
+    ipc.on(IPC_UI_SHOW_CURRENT_PLAYLIST, onShowCurrentPlaylist);
+    return (): void => { ipc.removeListener(IPC_UI_SHOW_CURRENT_PLAYLIST, onShowCurrentPlaylist) };
+  }, [currentPlaylistId]);
 
   useEffect(() => {
     if (lastOpenedPlaylistId) {

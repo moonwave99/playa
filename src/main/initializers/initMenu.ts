@@ -1,6 +1,7 @@
 import { app, Menu } from 'electron';
 import { IPC_MESSAGES } from '../../constants';
 const {
+  IPC_UI_SHOW_CURRENT_PLAYLIST,
   IPC_UI_NAVIGATE_TO,
   IPC_UI_TOGGLE_ALBUM_VIEW
 } = IPC_MESSAGES;
@@ -52,6 +53,11 @@ export default function initMenu(window: Electron.BrowserWindow): void {
           label: 'Show All',
           accelerator: 'cmd+p',
           click: (): void => window.webContents.send(IPC_UI_NAVIGATE_TO, PLAYLIST_ALL)
+        },
+        {
+          label: 'Show Current',
+          accelerator: 'cmd+0',
+          click: (): void => window.webContents.send(IPC_UI_SHOW_CURRENT_PLAYLIST)
         },
         {
           label: 'Show Extended View',
