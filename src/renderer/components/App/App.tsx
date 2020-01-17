@@ -60,7 +60,7 @@ export const App: FC<AppProps> = ({
 
   useEffect(() => {
     initIpc(history, dispatch);
-
+    // catch space keypress on non [data-key-catch] elements and toggle playback
     document.addEventListener('keydown', (event: KeyboardEvent) => {
       const target = event.target as HTMLElement;
       switch (event.code) {
@@ -75,6 +75,7 @@ export const App: FC<AppProps> = ({
     dispatch(getAllPlaylistsRequest());
   }, []);
 
+  // goto current playlist from keyboar shortcut
   useEffect(() => {
     function onShowCurrentPlaylist(): void {
       if (currentPlaylistId) {
@@ -85,6 +86,7 @@ export const App: FC<AppProps> = ({
     return (): void => { ipc.removeListener(IPC_UI_SHOW_CURRENT_PLAYLIST, onShowCurrentPlaylist) };
   }, [currentPlaylistId]);
 
+  // reopen last opened playlist on app restart
   useEffect(() => {
     if (lastOpenedPlaylistId) {
       history.replace(generatePath(PLAYLIST_SHOW, { _id: lastOpenedPlaylistId }));

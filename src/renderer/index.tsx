@@ -15,10 +15,6 @@ const { IPC_UI_STATE_LOAD } = IPC_MESSAGES;
 
 initFontAwesome();
 
-// 1. listen to player events
-// 2. call player API from events && user interaction
-// 3. call player API if state changes
-// 4. use a singleton and fu - https://stackoverflow.com/questions/30174078/how-to-define-singleton-in-typescript
 const player = new Player({
   audioElement: document.getElementById('player') as HTMLAudioElement
 });
