@@ -14,8 +14,8 @@ import { name as APP_NAME, version as APP_VERSION } from '../../package.json';
 import { DISCOGS_KEY, DISCOGS_SECRET } from '../../settings/discogs.json';
 
 import {
-  HEIGHT,
-  WIDTH,
+  DEFAULT_WIDTH,
+  DEFAULT_HEIGHT,
   MIN_WIDTH,
   MIN_HEIGHT,
   IS_MACOS
@@ -23,12 +23,17 @@ import {
 
 let mainWindow: Electron.BrowserWindow;
 
-function createWindow(): void {
+function createWindow({
+  size = [DEFAULT_WIDTH, DEFAULT_HEIGHT],
+  position = [0,0]
+}): void {
   mainWindow = new BrowserWindow({
-    height: HEIGHT,
-    width: WIDTH,
-    minHeight: MIN_HEIGHT,
+    width: size[0],
+    height: size[1],
+    x: position[0],
+    y: position[1],
     minWidth: MIN_WIDTH,
+    minHeight: MIN_HEIGHT,
     maximizable: false,
     focusable: true,
     webPreferences: {
@@ -60,32 +65,49 @@ function createWindow(): void {
   }
 }
 
+let userDataPath = app.getPath('userData');
+let disableRequests = false;
+if (is.development) {
+  userDataPath = userDataPath.replace('Electron', APP_NAME);
+  disableRequests = process.env.DISABLE_DISCOGS_REQUESTS === 'true';
+}
+initDialog();
+initDatabase(userDataPath);
+initFinder();
+initDiscogsClient({
+  userDataPath,
+  appName: APP_NAME,
+  appVersion: APP_VERSION,
+  discogsKey: DISCOGS_KEY,
+  discogsSecret: DISCOGS_SECRET,
+  disableRequests
+});
+
+const appState = initAppState(userDataPath);
+const { lastWindowSize, lastWindowPosition } = appState.getState();
+
 app.on('ready', async () => {
-  let userDataPath = app.getPath('userData');
-  let disableRequests = false;
-  if (is.development) {
-    userDataPath = userDataPath.replace('Electron', APP_NAME);
-    disableRequests = process.env.DISABLE_DISCOGS_REQUESTS === 'true';
-  }
-  initDialog();
-  initAppState(userDataPath);
-  initDatabase(userDataPath);
-  initFinder();
-  initDiscogsClient({
-    userDataPath,
-    appName: APP_NAME,
-    appVersion: APP_VERSION,
-    discogsKey: DISCOGS_KEY,
-    discogsSecret: DISCOGS_SECRET,
-    disableRequests
+  createWindow({
+    size: lastWindowSize,
+    position: lastWindowPosition
   });
-  createWindow();
 });
 
 app.on('activate', () => {
   if (IS_MACOS && mainWindow === null) {
-    createWindow();
+    createWindow({
+      size: lastWindowSize,
+      position: lastWindowPosition
+    });
   }
+});
+
+app.on('will-quit', () => {
+  appState.setState({
+    lastWindowSize: mainWindow.getSize(),
+    lastWindowPosition: mainWindow.getPosition()
+  });
+  appState.save();
 });
 
 app.on('window-all-closed', () => {
