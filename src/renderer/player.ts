@@ -55,6 +55,9 @@ export default class Player extends EventEmitter {
     }
   }
   togglePlayback(): void {
+    if (!this.audioElement.src) {
+      return;
+    }
     if (this.playing) {
       this.audioElement.pause();
       this.playing = false;
