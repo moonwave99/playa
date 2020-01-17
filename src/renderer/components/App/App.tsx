@@ -7,7 +7,8 @@ import { SearchView } from '../SearchView/SearchView';
 import { SidebarView } from '../SidebarView/SidebarView';
 import { AllPlaylistContainer } from '../AllPlaylistContainer/AllPlaylistContainer';
 import { PlaylistContainer } from '../PlaylistContainer/PlaylistContainer';
-import { initIpc } from '../../lib/initIpc';
+
+import initIpc from '../../lib/initIpc';
 import { Playlist, getAllPlaylistsRequest } from '../../store/modules/playlist';
 import './App.scss';
 
@@ -81,7 +82,7 @@ const MainLayout = ({
               <AllPlaylistContainer playlists={playlists}/>
             </Route>
             <Route path={PLAYLIST_SHOW}>
-              { playlists.length > 0 && <PlaylistContainer/>}
+              { playlists.length > 0 && <PlaylistContainer/> }
             </Route>
           </Switch>
         </div>

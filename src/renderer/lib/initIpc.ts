@@ -39,7 +39,7 @@ import {
   getCoverResponse
 } from '../store/modules/cover';
 
-export function initIpc(history: History, dispatch: Function): void {
+export default function initIpc(history: History, dispatch: Function): void {
   ipc.on('error', (_event, error) => {
     console.log(error);
   });
