@@ -62,9 +62,10 @@ export const App: FC<AppProps> = ({
     initIpc(history, dispatch);
 
     document.addEventListener('keydown', (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement;
       switch (event.code) {
         case 'Space':
-          if (event.target.dataset.keyCatch !== 'Space') {
+          if (target.dataset.keyCatch !== 'Space') {
             dispatch(togglePlayback());
             event.preventDefault();
           }
@@ -76,7 +77,6 @@ export const App: FC<AppProps> = ({
 
   useEffect(() => {
     function onShowCurrentPlaylist(): void {
-      console.log(currentPlaylistId)
       if (currentPlaylistId) {
         history.push(generatePath(PLAYLIST_SHOW, { _id: currentPlaylistId }));
       }
