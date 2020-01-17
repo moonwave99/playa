@@ -18,6 +18,7 @@ export const PlayerView: FC<PlayerViewProps> = ({
 }): ReactElement => {
 	const dispatch = useDispatch();
 	const [currentTime, setCurrentTime] = useState(0);
+	const [duration, setDuration] = useState(0);
 	const {
 		currentPlaylist,
     currentAlbum,
@@ -47,8 +48,13 @@ export const PlayerView: FC<PlayerViewProps> = ({
   });
 
 	useEffect(() => {
-		function handlePlayerTick({ currentTime }: PlaybackInfo): void {
+		const { currentTime, duration } = player.getPlaybackInfo();
+		setCurrentTime(currentTime);
+		setDuration(duration);
+				
+		function handlePlayerTick({ currentTime, duration }: PlaybackInfo): void {
 			setCurrentTime(currentTime);
+			setDuration(duration);
 		}
 		function handlePlayerEnded(): void {
 			if (!currentAlbum) {
@@ -123,6 +129,7 @@ export const PlayerView: FC<PlayerViewProps> = ({
 					currentTrack={currentTrack}
 					currentAlbum={currentAlbum}
 					currentTime={currentTime}
+					duration={duration}
 					onProgressBarClick={onProgressBarClick}/>
 			}
 		</section>

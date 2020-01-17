@@ -1,4 +1,4 @@
-import React, { ReactElement, MouseEvent, useRef } from 'react';
+import React, { ReactElement, MouseEvent, useRef, useEffect } from 'react';
 import { Album } from '../../../store/modules/album';
 import { Track } from '../../../store/modules/track';
 import { formatDuration } from '../../../utils/datetimeUtils';
@@ -8,29 +8,40 @@ type PlaybackBarProps = {
   currentAlbum: Album;
   currentTrack: Track;
   currentTime: number;
+  duration: number;
   onProgressBarClick: Function;
 }
 
 const PROGRESS_AREA_CLICK_DEFER_TIME = 100;
+const PROGRESS_AREA_TRACK_END_DEFER_TIME = 50;
 
 export const PlaybackBar = ({
   currentAlbum,
   currentTrack,
   currentTime,
+  duration,
   onProgressBarClick
 }: PlaybackBarProps): ReactElement => {
-
   const progressAreaRef = useRef(null);
   const progressCursorRef = useRef(null);
+
+  function disableTransition(time: number): void {
+    progressAreaRef.current.classList.toggle('no-transition', true);
+    setTimeout(
+      () => progressAreaRef.current.classList.toggle('no-transition', false)
+      , time
+    );
+  }
+
+  useEffect(
+    () => disableTransition(PROGRESS_AREA_TRACK_END_DEFER_TIME)
+    , [currentTrack]
+  );
 
   function onClick(event: MouseEvent): void {
     const bounds = event.currentTarget.getBoundingClientRect();
     const position = (event.clientX - bounds.left) / bounds.width;
-    progressAreaRef.current.classList.toggle('clicked', true);
-    setTimeout(
-      () => progressAreaRef.current.classList.toggle('clicked', false)
-      , PROGRESS_AREA_CLICK_DEFER_TIME
-    );
+    disableTransition(PROGRESS_AREA_CLICK_DEFER_TIME);
     onProgressBarClick(position);
   }
 
@@ -48,7 +59,7 @@ export const PlaybackBar = ({
     progressCursorRef.current.style.opacity = 0;
   }
 
-  const percent = (currentTime / currentTrack.duration) * 100;
+  const percent = (currentTime / duration) * 100;
   const progressAreaStyle = {
     transform: `translateX(${percent}%)`,
   };
@@ -65,7 +76,7 @@ export const PlaybackBar = ({
         <p className="current-track-title">{currentTrack.title}</p>
         <p className="current-track-info">{currentTrack.artist} - {currentAlbum.title}</p>
       </div>
-      <span className="duration duration-left">-{formatDuration(currentTrack.duration - currentTime)}</span>
+      <span className="duration duration-left">-{formatDuration(duration - currentTime)}</span>
       <div className="progress-area" ref={progressAreaRef} style={progressAreaStyle}/>
       <div className="progress-cursor" ref={progressCursorRef}/>
     </section>

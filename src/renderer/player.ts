@@ -70,6 +70,10 @@ export default class Player extends EventEmitter {
     this.audioElement.currentTime = this.audioElement.duration * position;
   }
   getPlaybackInfo(): PlaybackInfo {
+    // const currentTime = Math.min(
+    //   Math.ceil(this.audioElement.currentTime),
+    //   this.audioElement.duration
+    // );
     return {
       currentTime: this.audioElement.currentTime,
       duration: this.audioElement.duration,
@@ -90,6 +94,8 @@ export default class Player extends EventEmitter {
     this.emit(PLAYER_EVENTS.PAUSE);
   }
   private _onEnded(): void {
+    this._clearTimer();
+    this.playing = false;
     this.emit(PLAYER_EVENTS.TRACK_ENDED, this.audioElement.src);
   }
   private _startTimer(): void {
