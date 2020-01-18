@@ -53,10 +53,10 @@ export type TrackActionTypes =
   | GetTrackListResponseAction;
 
 export const getTrackListRequest = (ids: string[]): Function =>
-  (dispatch: Function): void => {
+  async (dispatch: Function): Promise<void> => {
     dispatch({
-      type: TRACK_GET_LIST_REQUEST,
-      ids
+      type: TRACK_GET_LIST_RESPONSE,
+      results: await ipc.invoke(IPC_TRACK_GET_LIST_REQUEST, ids)
     });
   }
 
@@ -77,14 +77,15 @@ export default function reducer(
   action: TrackActionTypes
 ): TrackState {
   switch (action.type) {
-    case TRACK_GET_LIST_REQUEST:
-      ipc.send(IPC_TRACK_GET_LIST_REQUEST, action.ids);
-      return state;
     case TRACK_GET_LIST_RESPONSE:
       return {
         ...state,
-        allById: {...state.allById, ...toObj(ensureAll<Track>(action.results, getDefaultTrack)) }
+        allById: {
+          ...state.allById,
+          ...toObj(ensureAll<Track>(action.results, getDefaultTrack))
+        }
       };
+    case TRACK_GET_LIST_REQUEST:
     default:
       return state;
   }

@@ -1,5 +1,5 @@
 import { ipcRenderer as ipc } from 'electron';
-import { EntityHashMap, toObj, ensureAll } from '../../utils/storeUtils';
+import { EntityHashMap, toObj, ensureAll, updateId } from '../../utils/storeUtils';
 
 import { IPC_MESSAGES } from '../../../constants';
 
@@ -70,26 +70,18 @@ export type AlbumActionTypes =
   | GetAlbumContentResponseAction;
 
 export const getAlbumListRequest = (ids: string[]): Function =>
-  (dispatch: Function): void => {
-    dispatch({
-      type: ALBUM_GET_LIST_REQUEST,
-      ids
-    });
-  }
-
-export const getAlbumListResponse = (results: Album[]): Function =>
-  (dispatch: Function): void => {
+  async (dispatch: Function): Promise<void> => {
     dispatch({
       type: ALBUM_GET_LIST_RESPONSE,
-      results
+      results: await ipc.invoke(IPC_ALBUM_GET_LIST_REQUEST, ids)
     });
   }
 
 export const getAlbumContentRequest = (album: Album): Function =>
-  (dispatch: Function): void => {
+  async (dispatch: Function): Promise<void> => {
     dispatch({
-      type: ALBUM_GET_CONTENT_REQUEST,
-      album
+      type: ALBUM_GET_CONTENT_RESPONSE,
+      album: await ipc.invoke(IPC_ALBUM_CONTENT_REQUEST, album)
     });
   }
 
@@ -110,21 +102,22 @@ export default function reducer(
   action: AlbumActionTypes
 ): AlbumState {
   switch (action.type) {
-    case ALBUM_GET_LIST_REQUEST:
-      ipc.send(IPC_ALBUM_GET_LIST_REQUEST, action.ids);
-      return state;
     case ALBUM_GET_LIST_RESPONSE:
       return {
         ...state,
-        allById: {...state.allById, ...toObj(ensureAll<Album>(action.results, getDefaultAlbum)) }
+        allById: {
+          ...state.allById,
+          ...toObj(ensureAll<Album>(action.results, getDefaultAlbum))
+        }
+      };
+    case ALBUM_GET_CONTENT_RESPONSE:
+      return {
+        ...state,
+        allById: updateId(state.allById, action.album._id, action.album)
       };
     case ALBUM_GET_CONTENT_REQUEST:
-      ipc.send(IPC_ALBUM_CONTENT_REQUEST, action.album);
-      return state;
-    case ALBUM_GET_CONTENT_RESPONSE:
-      state.allById[action.album._id] = action.album;
-      return state;
-		default:
+    case ALBUM_GET_LIST_REQUEST:
+    default:
 			return state;
   }
 }

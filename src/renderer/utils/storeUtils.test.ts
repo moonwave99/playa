@@ -1,5 +1,6 @@
 import {
   toObj,
+  updateId,
   removeIds,
   ensureAll
 } from './storeUtils';
@@ -19,6 +20,13 @@ const entitiesObject = {
 describe('toObj', () => {
   it('should convert an array to an EntityHashMap', () => {
     expect(toObj(entitiesArray)).toEqual(entitiesObject);
+  });
+});
+
+describe('updateId', () => {
+  it('should return an EntityHashMap where id = newValue', () => {
+    const newValue = { _id: 'a', value: '1' };
+    expect(updateId(entitiesObject, '2', newValue)).toEqual({...entitiesObject, ...{ '2': newValue }});
   });
 });
 

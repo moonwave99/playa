@@ -39,7 +39,7 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
   onAlbumDoubleClick
 }) => {
   const [albumView, setAlbumView] = useState(UIAlbumView.Extended);
-  const [albumOrder, setAlbumOrder] = useState([]);
+  const [albumOrder, setAlbumOrder] = useState(playlist.albums || []);
   const hasAlbums = Object.keys(albums).length > 0 && playlist.albums.length > 0;
 
   useEffect(() => {

@@ -13,7 +13,21 @@ export function toObj<T extends Entity>(array: T[]): EntityHashMap<T> {
   }, {});
 }
 
-export function removeIds<T extends Entity>(hashMap: EntityHashMap<T>, ids: Entity['_id'][]): EntityHashMap<T> {
+export function updateId<T extends Entity>(
+  hashMap: EntityHashMap<T>,
+  id: T['_id'],
+  value: T
+): EntityHashMap<T> {
+  return {
+    ...hashMap,
+    [id]: value
+  };
+}
+
+export function removeIds<T extends Entity>(
+  hashMap: EntityHashMap<T>,
+  ids: Entity['_id'][]
+): EntityHashMap<T> {
   return Object.keys(hashMap)
     .filter((id) => !ids.includes(id))
     .reduce((memo: EntityHashMap<T>, id) => {
@@ -22,11 +36,18 @@ export function removeIds<T extends Entity>(hashMap: EntityHashMap<T>, ids: Enti
     }, {});
 }
 
-export function ensureAll<T> (entities: object[], getDefault: Function ): T[] {
+export function ensureAll<T> (
+  entities: object[],
+  getDefault: Function
+): T[] {
   return entities.map((entity: object) => ({ ...getDefault(), ...entity}));
 }
 
-export function immutableMove<T>(array: T[], from: number, to: number): T[] {
+export function immutableMove<T>(
+  array: T[],
+  from: number,
+  to: number
+): T[] {
   return array.reduce((prev: T[], current: T, idx: number, self: T[]) => {
     if (from === to) {
       prev.push(current);

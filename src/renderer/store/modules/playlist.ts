@@ -1,5 +1,6 @@
 import { ipcRenderer as ipc } from 'electron';
-import { EntityHashMap, toObj, removeIds, ensureAll } from '../../utils/storeUtils';
+// import { ALBUM_GET_LIST_RESPONSE } from './album';
+import { EntityHashMap, toObj, removeIds, ensureAll, updateId } from '../../utils/storeUtils';
 
 import { IPC_MESSAGES } from '../../../constants';
 
@@ -79,49 +80,29 @@ export type PlaylistActionTypes =
   | DeletePlaylistResponseAction;
 
 export const getAllPlaylistsRequest = (): Function =>
-  (dispatch: Function): void => {
-    dispatch({
-      type: PLAYLIST_GET_ALL_REQUEST
-    });
-  }
-
-export const getAllPlaylistsResponse = (playlists: Playlist[]): Function =>
-  (dispatch: Function): void => {
+  async (dispatch: Function): Promise<void> => {
+    const playlists = await ipc.invoke(IPC_PLAYLIST_GET_ALL_REQUEST);
     dispatch({
       type: PLAYLIST_GET_ALL_RESPONSE,
-      playlists,
+      playlists
     });
   }
 
 export const savePlaylistRequest = (playlist: Playlist): Function =>
-  (dispatch: Function): void => {
-    dispatch({
-      type: PLAYLIST_SAVE_REQUEST,
-      playlist
-    });
-  }
-
-export const savePlaylistResponse = (playlist: Playlist): Function =>
-  (dispatch: Function): void => {
+  async (dispatch: Function): Promise<void> => {
+    const savedPlaylist = await ipc.invoke(IPC_PLAYLIST_SAVE_REQUEST, playlist);
     dispatch({
       type: PLAYLIST_SAVE_RESPONSE,
-      playlist
+      playlist: savedPlaylist
     });
   }
 
 export const deletePlaylistRequest = (playlist: Playlist): Function =>
-  (dispatch: Function): void => {
-    dispatch({
-      type: PLAYLIST_DELETE_REQUEST,
-      playlist
-    });
-  }
-
-export const deletePlaylistResponse = (playlist: Playlist): Function =>
-  (dispatch: Function): void => {
+  async (dispatch: Function): Promise<void> => {
+    const deletedPlaylist = await ipc.invoke(IPC_PLAYLIST_DELETE_REQUEST, playlist);
     dispatch({
       type: PLAYLIST_DELETE_RESPONSE,
-      playlist
+      playlist: deletedPlaylist
     });
   }
 
@@ -134,28 +115,24 @@ export default function reducer(
   action: PlaylistActionTypes
 ): PlaylistState {
   switch (action.type) {
-    case PLAYLIST_GET_ALL_REQUEST:
-      ipc.send(IPC_PLAYLIST_GET_ALL_REQUEST);
-      return state;
     case PLAYLIST_GET_ALL_RESPONSE:
       return {
         ...state,
         allById: toObj(ensureAll<Playlist>(action.playlists, getDefaultPlaylist))
       };
-    case PLAYLIST_SAVE_REQUEST:
-      ipc.send(IPC_PLAYLIST_SAVE_REQUEST, action.playlist);
-      return state;
     case PLAYLIST_SAVE_RESPONSE:
-      state.allById[action.playlist._id] = action.playlist;
-      return state;
-    case PLAYLIST_DELETE_REQUEST:
-      ipc.send(IPC_PLAYLIST_DELETE_REQUEST, action.playlist);
-      return state;
+      return {
+        ...state,
+        allById: updateId(state.allById, action.playlist._id, action.playlist)
+      };
     case PLAYLIST_DELETE_RESPONSE:
       return {
         ...state,
         allById: removeIds(state.allById, [action.playlist._id])
       };
+    case PLAYLIST_GET_ALL_REQUEST:
+    case PLAYLIST_SAVE_REQUEST:
+    case PLAYLIST_DELETE_REQUEST:
     default:
       return state;
   }

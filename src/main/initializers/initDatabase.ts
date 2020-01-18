@@ -8,19 +8,12 @@ import { IPC_MESSAGES } from '../../constants';
 
 const {
   IPC_PLAYLIST_GET_ALL_REQUEST,
-  IPC_PLAYLIST_GET_ALL_RESPONSE,
   IPC_PLAYLIST_SAVE_REQUEST,
-  IPC_PLAYLIST_SAVE_RESPONSE,
   IPC_PLAYLIST_DELETE_REQUEST,
-  IPC_PLAYLIST_DELETE_RESPONSE,
   IPC_SEARCH_REQUEST,
-  IPC_SEARCH_RESPONSE,
   IPC_ALBUM_GET_LIST_REQUEST,
-  IPC_ALBUM_GET_LIST_RESPONSE,
   IPC_ALBUM_CONTENT_REQUEST,
-  IPC_ALBUM_CONTENT_RESPONSE,
   IPC_TRACK_GET_LIST_REQUEST,
-  IPC_TRACK_GET_LIST_RESPONSE,
   IPC_ALBUM_GET_SINGLE_INFO
 } = IPC_MESSAGES;
 
@@ -32,73 +25,38 @@ export default function initDatabase(userDataPath: string): void {
     track: new Database(databasePath, 'track', true)
   };
 
-  ipc.on(IPC_PLAYLIST_GET_ALL_REQUEST, async (event) => {
-    try {
-      const results = await db.playlist.findAll();
-      event.reply(IPC_PLAYLIST_GET_ALL_RESPONSE, results);
-    } catch (error) {
-      event.reply('error', error);
-    }
-  });
+  ipc.handle(IPC_PLAYLIST_GET_ALL_REQUEST,
+    async () => await db.playlist.findAll()
+  );
 
-  ipc.on(IPC_PLAYLIST_SAVE_REQUEST, async (event, playlist) => {
-    try {
-      const savedPlaylist = await db.playlist.save({
+  ipc.handle(IPC_PLAYLIST_SAVE_REQUEST,
+    async (_event, playlist) =>
+      await db.playlist.save({
         ...playlist,
         accessed: new Date().toISOString()
-      });
-      event.reply(IPC_PLAYLIST_SAVE_RESPONSE, savedPlaylist);
-    } catch (error) {
-      event.reply('error', error);
-    }
+      })
+  );
+
+  ipc.handle(IPC_PLAYLIST_DELETE_REQUEST,
+    async (_event, playlist) => await db.playlist.delete(playlist)
+  );
+
+  ipc.handle(IPC_SEARCH_REQUEST, async (_event, query) => {
+    return await db.album.find(query, ['artist', 'title']);
   });
 
-  ipc.on(IPC_PLAYLIST_DELETE_REQUEST, async (event, playlist) => {
-    try {
-      const deletedPlaylist = await db.playlist.delete(playlist);
-      event.reply(IPC_PLAYLIST_DELETE_RESPONSE, deletedPlaylist);
-    } catch (error) {
-      event.reply('error', error);
-    }
+  ipc.handle(IPC_ALBUM_GET_LIST_REQUEST,
+    async (_event, ids) => await db.album.getList(ids)
+  );
+
+  ipc.handle(IPC_ALBUM_CONTENT_REQUEST, async (_event, album) => {
+    const tracks = await loadAlbum(album.path);
+    return await db.album.save({ ...album, tracks });
   });
 
-  // #TODO configure query structure
-  ipc.on(IPC_SEARCH_REQUEST, async (event, query) => {
-    try {
-      const results = await db.album.find(query, ['artist', 'title']);
-      event.reply(IPC_SEARCH_RESPONSE, results, query);
-    } catch (error) {
-      event.reply('error', error);
-    }
-  });
-
-  ipc.on(IPC_ALBUM_GET_LIST_REQUEST, async (event, ids) => {
-    try {
-      const results = await db.album.getList(ids);
-      event.reply(IPC_ALBUM_GET_LIST_RESPONSE, results);
-    } catch (error) {
-      event.reply('error', error);
-    }
-  });
-
-  ipc.on(IPC_ALBUM_CONTENT_REQUEST, async (event, album) => {
-    try {
-      const tracks = await loadAlbum(album.path);
-      const savedAlbum = await db.album.save({ ...album, tracks });
-      event.reply(IPC_ALBUM_CONTENT_RESPONSE, savedAlbum);
-    } catch (error) {
-      event.reply('error', error);
-    }
-  });
-
-  ipc.on(IPC_TRACK_GET_LIST_REQUEST, async (event, ids) => {
-    try {
-      const results = await loadTracklist(ids, db.track);
-      event.reply(IPC_TRACK_GET_LIST_RESPONSE, results);
-    } catch (error) {
-      event.reply('error', error);
-    }
-  });
+  ipc.handle(IPC_TRACK_GET_LIST_REQUEST,
+    async (_event, ids) =>  await loadTracklist(ids, db.track)
+  );
 
   ipc.handle(IPC_ALBUM_GET_SINGLE_INFO, async (_event, ids) => {
     const albums: Album[] = await db.album.getList(ids);
@@ -114,5 +72,5 @@ export default function initDatabase(userDataPath: string): void {
       },
       tracks: foundTracks
     };
-  });  
+  });
 }

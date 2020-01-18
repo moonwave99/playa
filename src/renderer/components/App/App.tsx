@@ -55,7 +55,7 @@ export const App: FC<AppProps> = ({
   });
 
   useEffect(() => {
-    initIpc(history, dispatch);
+    initIpc(history);
     // catch space keypress on non [data-key-catch] elements and toggle playback
     document.addEventListener('keydown', (event: KeyboardEvent) => {
       const target = event.target as HTMLElement;

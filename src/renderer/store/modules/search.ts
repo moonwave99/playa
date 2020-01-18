@@ -35,15 +35,8 @@ export type SearchActionTypes =
   | SearchResponseAction;
 
 export const searchRequest = (query: string): Function =>
-  (dispatch: Function): void => {
-    dispatch({
-      type: SEARCH_REQUEST,
-      query
-    });
-  }
-
-export const searchResponse = (results: Album[], query: string): Function =>
-  (dispatch: Function): void => {
+  async (dispatch: Function): Promise<void> => {
+    const results = await ipc.invoke(IPC_SEARCH_REQUEST, query);
     dispatch({
       type: SEARCH_RESPONSE,
       results,
@@ -63,7 +56,6 @@ export default function reducer(
 ): SearchState {
   switch (action.type) {
     case SEARCH_REQUEST:
-      ipc.send(IPC_SEARCH_REQUEST, action.query);
       return {
         query: action.query,
         results: [],

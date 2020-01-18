@@ -31,18 +31,10 @@ export type CoverActionTypes =
   | GetCoverResponseAction;
 
 export const getCoverRequest = (album: Album): Function =>
-  (dispatch: Function): void => {
-    dispatch({
-      type: COVER_GET_REQUEST,
-      album
-    });
-  }
-
-export const getCoverResponse = (path: string, album: Album): Function =>
-  (dispatch: Function): void => {
+  async (dispatch: Function): Promise<void> => {
     dispatch({
       type: COVER_GET_RESPONSE,
-      path,
+      path: await ipc.invoke(IPC_COVER_GET_REQUEST, album),
       album
     });
   }
@@ -56,12 +48,15 @@ export default function reducer(
   action: CoverActionTypes
 ): CoverState {
   switch (action.type) {
-    case COVER_GET_REQUEST:
-      ipc.send(IPC_COVER_GET_REQUEST, action.album);
-      return state;
     case COVER_GET_RESPONSE:
-      state.allById[action.album._id] = action.path;
-      return state;
+      return {
+        ...state,
+        allById: {
+          ...state.allById,
+          ...{[action.album._id]: action.path}
+        }
+      }
+    case COVER_GET_REQUEST:
     default:
       return state;
   }

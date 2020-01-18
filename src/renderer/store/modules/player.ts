@@ -1,8 +1,8 @@
 import { ipcRenderer as ipc } from 'electron';
 import Player from '../../player';
 import { Playlist } from './playlist';
-import { Album, ALBUM_GET_CONTENT_RESPONSE } from './album';
-import { Track, TRACK_GET_LIST_RESPONSE } from './track';
+import { Album, getAlbumContentResponse } from './album';
+import { Track, getTrackListResponse } from './track';
 import { ApplicationState } from '../store';
 
 import { IPC_MESSAGES } from '../../../constants';
@@ -96,14 +96,8 @@ export const playTrack = ({
         tracks: foundTracks
       } = await ipc.invoke(IPC_ALBUM_GET_SINGLE_INFO, [albumId]);
       album = foundAlbum;
-      dispatch({
-        type: ALBUM_GET_CONTENT_RESPONSE,
-        album: foundAlbum
-      });
-      dispatch({
-        type: TRACK_GET_LIST_RESPONSE,
-        results: foundTracks
-      });
+      dispatch(getAlbumContentResponse(foundAlbum));
+      dispatch(getTrackListResponse(foundTracks));
     }
 
     const queue = playlistId

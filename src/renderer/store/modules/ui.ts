@@ -3,7 +3,6 @@ import openContextMenu, { ContextMenuOptions } from '../../utils/contextMenuUtil
 
 import { IPC_MESSAGES } from '../../../constants';
 const {
-  IPC_UI_START_ALBUM_DRAG,
   IPC_UI_STATE_UPDATE
 } = IPC_MESSAGES;
 
@@ -53,32 +52,31 @@ export type UIActionTypes =
   | StartAlbumDragAction;
 
 export const updateState = (params: object): Function =>
-  (dispatch: Function): void =>
+  (dispatch: Function): void => {
+    ipc.send(IPC_UI_STATE_UPDATE, params);
     dispatch({
       type: STATE_UPDATE,
       params
     });
+  }
 
 export const updateTitle = (title: string): Function =>
-  (dispatch: Function): void =>
+  (dispatch: Function): void => {
+    document.title = title;
     dispatch({
       type: TITLE_UPDATE,
       title
     });
+  }
 
 export const showContextMenu = (options: ContextMenuOptions): Function =>
-  (dispatch: Function): void =>
+  (dispatch: Function): void => {
+    openContextMenu(options);
     dispatch({
       type: SHOW_CONTEXT_MENU,
       options
     });
-
-export const startAlbumDrag = (path: string): Function =>
-  (dispatch: Function): void =>
-    dispatch({
-      type: START_ALBUM_DRAG,
-      path
-    });
+  }
 
 const INITIAL_STATE = {
   started: true
@@ -90,17 +88,8 @@ export default function reducer(
 ): UIState {
 	switch (action.type) {
     case STATE_UPDATE:
-      ipc.send(IPC_UI_STATE_UPDATE, action.params);
-      return state;
     case TITLE_UPDATE:
-      document.title = action.title;
-      return state;
     case SHOW_CONTEXT_MENU:
-      openContextMenu(action.options);
-      return state;
-    case START_ALBUM_DRAG:
-      ipc.send(IPC_UI_START_ALBUM_DRAG, action.path);
-      return state;
 		default:
 			return state;
 	}
