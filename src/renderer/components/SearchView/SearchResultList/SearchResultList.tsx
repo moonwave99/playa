@@ -29,7 +29,7 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
   }
 
   return (
-    isSearching ? null :
+    isSearching || query === '' ? null :
       <ul className="search-result-list">{
         results.length > 0
           ? results.map(
