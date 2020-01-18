@@ -118,6 +118,7 @@ a {
   text-decoration: none;
   text-transform: uppercase;
   white-space: nowrap;
+	transition: background-color .3s ease-in-out;
 	&:hover {
 		background-color: $hoverColor;
 		border-color: $hoverColor;
@@ -125,6 +126,7 @@ a {
 	&-outline {
 		background-color: transparent;
 		color: $mainColor;
+		transition: border-color .3s ease-in-out, color .3s ease-in-out;
 		&:hover {
 			color: $hoverColor;
 			border-color: $hoverColor;
