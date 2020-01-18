@@ -43,6 +43,7 @@ export interface PlayerState {
 export const PLAYER_PLAY_TRACK      = 'playa/player/PLAY_TRACK';
 export const PLAYER_TOGGLE_PLAYBACK = 'playa/player/PLAYER_TOGGLE_PLAYBACK';
 export const PLAYER_SEEK_TO         = 'playa/player/PLAYER_SEEK_TO';
+export const PLAYER_UPDATE_QUEUE    = 'playa/player/UPDATE_QUEUE';
 
 interface PlayTrackAction {
   type: typeof PLAYER_PLAY_TRACK;
@@ -61,10 +62,16 @@ interface SeekToAction {
   position: number;
 }
 
+interface UpdateQueueAction {
+  type: typeof PLAYER_UPDATE_QUEUE;
+  queue: Album[];
+}
+
 export type PlayerActionTypes =
    PlayTrackAction
   | TogglePlaybackAction
-  | SeekToAction;
+  | SeekToAction
+  | UpdateQueueAction;
 
 type PlayActionParams = {
   playlistId?: Playlist['_id'];
@@ -102,7 +109,7 @@ export const playTrack = ({
     const queue = playlistId
       ? playlist.albums.map(x => albums.allById[x])
       : [album];
-      
+
     dispatch({
       type: PLAYER_PLAY_TRACK,
       albumId,
@@ -124,6 +131,14 @@ export const seekTo = (position: number): Function =>
     dispatch({
       type: PLAYER_SEEK_TO,
       position
+    });
+  }
+
+export const updateQueue = (queue: Album[] = []): Function =>
+  (dispatch: Function): void => {
+    dispatch({
+      type: PLAYER_UPDATE_QUEUE,
+      queue
     });
   }
 
@@ -160,6 +175,11 @@ export default function initReducer(player: Player) {
       case PLAYER_SEEK_TO:
         player.seekTo(action.position);
         return state;
+      case PLAYER_UPDATE_QUEUE:
+        return {
+          ...state,
+          queue: action.queue
+        };
       default:
         return state;
     }

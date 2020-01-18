@@ -4,6 +4,7 @@ import { useParams } from 'react-router';
 import { PlaylistView } from '../PlaylistView/PlaylistView';
 import { ApplicationState } from '../../store/store';
 import { savePlaylistRequest, getDefaultPlaylist } from '../../store/modules/playlist';
+import { updateQueue } from '../../store/modules/player';
 import { updateState, updateTitle, showContextMenu } from '../../store/modules/ui';
 import { Album, getAlbumListRequest } from '../../store/modules/album';
 import { toObj } from '../../utils/storeUtils';
@@ -48,6 +49,7 @@ export const PlaylistContainer = (): ReactElement => {
 
   function onAlbumOrderChange(newOrder: string[]): void {
     dispatch(savePlaylistRequest({ ...playlist, albums: newOrder }));
+    dispatch(updateQueue(newOrder.map(x => albums[x])));
   }
 
   function onTitleChange(title: string ): void {
