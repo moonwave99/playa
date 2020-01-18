@@ -3,8 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import cx from 'classnames';
 import { PlaybackBar } from './PlaybackBar/PlaybackBar';
 import { CoverView } from '../PlaylistView/AlbumView/CoverView/CoverView';
-import { ApplicationState } from '../../store/store';
-import { togglePlayback, playTrack, seekTo } from '../../store/modules/player';
+import { playerSelector, togglePlayback, playTrack, seekTo } from '../../store/modules/player';
 import { getPrevTrack, getNextTrack } from '../../utils/tracklistUtils';
 import Player, { PlaybackInfo, PLAYER_EVENTS } from '../../player';
 import './PlayerView.scss';
@@ -25,25 +24,7 @@ export const PlayerView: FC<PlayerViewProps> = ({
     currentTrack,
 		currentPlaylistAlbums,
 		cover
-  } = useSelector(({ player, playlists, albums, tracks, covers }: ApplicationState) => {
-		const {
-			currentPlaylistId,
-			currentAlbumId,
-			currentTrackId
-		} = player;
-		const currentPlaylist = playlists.allById[currentPlaylistId];
-		const currentPlaylistAlbums = currentPlaylist
-			? currentPlaylist.albums.map(x => albums.allById[x])
-			: [];
-		return {
-			currentPlaylist,
-			currentAlbum: albums.allById[currentAlbumId],
-			currentTrack: tracks.allById[currentTrackId],
-			currentPlaylistAlbums,
-			isPlaying,
-			cover: covers.allById[currentAlbumId]
-		};
-  });
+  } = useSelector(playerSelector);
 
 	useEffect(() => {
 		function handlePlayerUpdate({ currentTime, duration, isPlaying }: PlaybackInfo): void {

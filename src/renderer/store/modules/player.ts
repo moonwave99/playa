@@ -2,6 +2,26 @@ import Player from '../../player';
 import { Playlist } from './playlist';
 import { Album } from './album';
 import { Track } from './track';
+import { ApplicationState } from '../store';
+
+export function playerSelector({ player, playlists, albums, tracks, covers }: ApplicationState) {
+  const {
+    currentPlaylistId,
+    currentAlbumId,
+    currentTrackId
+  } = player;
+  const currentPlaylist = playlists.allById[currentPlaylistId];
+  const currentPlaylistAlbums = currentPlaylist
+    ? currentPlaylist.albums.map(x => albums.allById[x])
+    : [];
+  return {
+    currentPlaylist,
+    currentAlbum: albums.allById[currentAlbumId],
+    currentTrack: tracks.allById[currentTrackId],
+    currentPlaylistAlbums,
+    cover: covers.allById[currentAlbumId]
+  };
+};
 
 export interface PlayerState {
   currentPlaylistId: Playlist['_id'] | null;
@@ -54,7 +74,7 @@ export const playTrack = ({
       trackId
     });
   }
-  
+
 export const togglePlayback = (): Function =>
   (dispatch: Function): void => {
     dispatch({
