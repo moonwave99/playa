@@ -1,5 +1,4 @@
 import { ipcRenderer as ipc } from 'electron';
-// import { ALBUM_GET_LIST_RESPONSE } from './album';
 import { EntityHashMap, toObj, removeIds, ensureAll, updateId } from '../../utils/storeUtils';
 
 import { IPC_MESSAGES } from '../../../constants';
