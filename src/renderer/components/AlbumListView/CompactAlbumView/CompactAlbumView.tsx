@@ -102,7 +102,12 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
     onDoubleClick(album);
   }
 
+  function _onContextMenu(): void {
+    onContextMenu && onContextMenu(album);
+  }
+
   const classNames = cx('compact-album-view', {
+    'sortable': sortable,
     'is-current': isCurrent,
     'drag-is-over': isOver,
     'drag-can-drop': canDrop,
@@ -110,13 +115,11 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
   });
   const tagClasses = cx('album-type', `album-type-${type}`);
   return (
-    <article className={classNames} ref={ref} onDoubleClick={_onDoubleClick}>
+    <article className={classNames} ref={ref} onDoubleClick={_onDoubleClick} onContextMenu={_onContextMenu}>
       <CoverView
         className="album-cover"
         src={cover}
-        album={album}
-        onContextMenu={onContextMenu}
-        />
+        album={album}/>
       <p className="album-content header-like">
         <span className="title">{title}</span>
         <span className="info">
