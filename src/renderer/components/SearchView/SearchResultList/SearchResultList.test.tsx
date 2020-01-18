@@ -6,7 +6,7 @@ import { albums } from '../../../../../test/fixtures';
 
 test.skip('renders n items when n results', () => {
   const wrapper = render(
-    <SearchResultList results={albums} query="#!q" onContextMenu={jest.fn()}/>
+    <SearchResultList results={albums} query="#!q" isSearching={false} onContextMenu={jest.fn()}/>
   );
   expect(wrapper.find('li').length).toBe(albums.length);
 });
@@ -14,7 +14,7 @@ test.skip('renders n items when n results', () => {
 
 test('renders empty component when 0 results', () => {
   const wrapper = render(
-    <SearchResultList results={[]} query="#!q" onContextMenu={jest.fn()}/>
+    <SearchResultList results={[]} query="#!q" isSearching={false} onContextMenu={jest.fn()}/>
   );
   expect(wrapper.find('.search-result-list-empty-component').length).toBe(1);
 });
