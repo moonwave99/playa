@@ -4,7 +4,15 @@ import { Album } from './album';
 import { Track } from './track';
 import { ApplicationState } from '../store';
 
-export function playerSelector({ player, playlists, albums, tracks, covers }: ApplicationState) {
+type PlayerSelectorInfo = {
+  currentPlaylist: Playlist;
+  currentPlaylistAlbums: Album[];
+  currentAlbum: Album;
+  currentTrack: Track;
+  cover: string;
+}
+
+export function playerSelector({ player, playlists, albums, tracks, covers }: ApplicationState): PlayerSelectorInfo {
   const {
     currentPlaylistId,
     currentAlbumId,
@@ -16,12 +24,12 @@ export function playerSelector({ player, playlists, albums, tracks, covers }: Ap
     : [];
   return {
     currentPlaylist,
+    currentPlaylistAlbums,
     currentAlbum: albums.allById[currentAlbumId],
     currentTrack: tracks.allById[currentTrackId],
-    currentPlaylistAlbums,
     cover: covers.allById[currentAlbumId]
   };
-};
+}
 
 export interface PlayerState {
   currentPlaylistId: Playlist['_id'] | null;
