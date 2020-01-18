@@ -5,7 +5,6 @@ import cx from 'classnames';
 import { CoverView } from './CoverView/CoverView';
 import { TracklistView } from './TracklistView/TracklistView';
 import { ApplicationState } from '../../../store/store';
-import { Playlist } from '../../../store/modules/playlist';
 import { Album, VARIOUS_ARTISTS_ID, getAlbumContentRequest } from '../../../store/modules/album';
 import { Track } from '../../../store/modules/track';
 import { getTrackListRequest } from '../../../store/modules/track';
@@ -14,7 +13,6 @@ import { SEARCH } from '../../../routes';
 import './AlbumView.scss';
 
 type AlbumViewProps = {
-  playlistId?: Playlist['_id'];
   album: Album;
   isCurrent: boolean;
   currentTrackId: Track['_id'];

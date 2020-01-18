@@ -39,7 +39,7 @@ describe('ui actions', () => {
   describe('showContextMenu', () => {
     it('should dispatch a showContextMenu request', () => {
       const dispatch = jest.fn();
-      const context = { path: '/path/to/123' };
+      const context = { path: '/path/to/123', artist: 'Slowdive', title: 'Just for a Day' };
       showContextMenu({
         type: ContextMenuTypes.RESULT_LIST_ITEM,
         context
@@ -79,7 +79,7 @@ describe('ui reducer', () => {
       type: SHOW_CONTEXT_MENU,
       options: {
         type: ContextMenuTypes.RESULT_LIST_ITEM,
-        context: { path: '/path/to/123' }
+        context: { path: '/path/to/123', artist: 'Slowdive', title: 'Just for a Day' }
       }
     })).toEqual({});
   });

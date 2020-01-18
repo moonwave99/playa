@@ -6,7 +6,7 @@ import * as url from 'url';
 import initMenu from './initializers/initMenu';
 import initDatabase from './initializers/initDatabase';
 import initDiscogsClient from './initializers/initDiscogsClient';
-import initFinder from './initializers/initFinder';
+import initURLHandler from './initializers/initURLHandler';
 import initAppState from './initializers/initAppState';
 import initDialog from './initializers/initDialog';
 
@@ -73,7 +73,7 @@ if (is.development) {
 }
 initDialog();
 initDatabase(userDataPath);
-initFinder();
+initURLHandler();
 initDiscogsClient({
   userDataPath,
   appName: APP_NAME,

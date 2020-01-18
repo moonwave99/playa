@@ -11,6 +11,11 @@ export const RECENT_PLAYLIST_COUNT = 10;
 
 export const MUSIC_FILE_EXTENSIONS = ['mp3', 'm4a', 'flac', 'ogg'];
 
+export enum SEARCH_URLS {
+  DISCOGS = 'http://www.discogs.com/search?type=release&q=',
+  RYM = 'https://rateyourmusic.com/search?searchtype=l&searchterm='
+}
+
 export const COLORS = {
   SKELETON_COLOR: '#282828'
 };
@@ -22,6 +27,7 @@ export const IPC_MESSAGES = {
   IPC_UI_START_ALBUM_DRAG: 'ui:start-album-drag',
   IPC_UI_TOGGLE_ALBUM_VIEW: 'ui:toggle-album-view',
   IPC_SYS_REVEAL_IN_FINDER: 'sys:reveal-in-finder',
+  IPC_SYS_OPEN_URL: 'sys:open-url',
   IPC_PLAYLIST_GET_ALL_REQUEST : 'playlist:get-all:request',
   IPC_PLAYLIST_GET_ALL_RESPONSE : 'playlist:get-all:response',
   IPC_PLAYLIST_SAVE_REQUEST : 'playlist:save:request',
