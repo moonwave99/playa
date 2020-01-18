@@ -17,21 +17,19 @@ export const PlayerView: FC<PlayerViewProps> = ({
 	player
 }): ReactElement => {
 	const dispatch = useDispatch();
-	const [currentTime, setCurrentTime] = useState(0);
-	const [duration, setDuration] = useState(0);
+	const [playbackInfo, setPlaybackInfo] = useState([0, 0]);
+	const [isPlaying, setPlaying] = useState(false);
 	const {
 		currentPlaylist,
     currentAlbum,
     currentTrack,
 		currentPlaylistAlbums,
-		isPlaying,
 		cover
   } = useSelector(({ player, playlists, albums, tracks, covers }: ApplicationState) => {
 		const {
 			currentPlaylistId,
 			currentAlbumId,
-			currentTrackId,
-			isPlaying
+			currentTrackId
 		} = player;
 		const currentPlaylist = playlists.allById[currentPlaylistId];
 		const currentPlaylistAlbums = currentPlaylist
@@ -48,27 +46,33 @@ export const PlayerView: FC<PlayerViewProps> = ({
   });
 
 	useEffect(() => {
-		const { currentTime, duration } = player.getPlaybackInfo();
-		setCurrentTime(currentTime);
-		setDuration(duration);
-				
-		function handlePlayerTick({ currentTime, duration }: PlaybackInfo): void {
-			setCurrentTime(currentTime);
-			setDuration(duration);
+		function handlePlayerUpdate({ currentTime, duration, isPlaying }: PlaybackInfo): void {
+			setPlaybackInfo([currentTime, duration]);
+			setPlaying(isPlaying);
 		}
+		player.on(PLAYER_EVENTS.PLAY, handlePlayerUpdate);
+		player.on(PLAYER_EVENTS.PAUSE, handlePlayerUpdate);
+		player.on(PLAYER_EVENTS.TICK, handlePlayerUpdate);
+		return (): void => {
+			player.removeListener(PLAYER_EVENTS.PLAY, handlePlayerUpdate);
+			player.removeListener(PLAYER_EVENTS.PAUSE, handlePlayerUpdate);
+			player.removeListener(PLAYER_EVENTS.TICK, handlePlayerUpdate);
+		}
+	}, [playbackInfo, isPlaying]);
+
+	useEffect(() => {
 		function handlePlayerEnded(): void {
-			if (!currentAlbum) {
-				return;
+			const { albumId, trackId } = getNextTrack(currentTrack._id, currentPlaylistAlbums);
+			if (albumId && trackId ) {
+				dispatch(playTrack({
+					playlistId: currentPlaylist._id,
+					albumId,
+					trackId
+				}));
 			}
-			dispatch(playTrack({
-				playlistId: currentPlaylist._id,
-				...getNextTrack(currentTrack._id, currentPlaylistAlbums)
-			}));
 		}
-		player.on(PLAYER_EVENTS.TICK, handlePlayerTick);
 		player.on(PLAYER_EVENTS.TRACK_ENDED, handlePlayerEnded);
 		return (): void => {
-			player.removeListener(PLAYER_EVENTS.TICK, handlePlayerTick);
 			player.removeListener(PLAYER_EVENTS.TRACK_ENDED, handlePlayerEnded);
 		}
 	}, [currentPlaylistAlbums, currentAlbum, currentTrack]);
@@ -81,26 +85,34 @@ export const PlayerView: FC<PlayerViewProps> = ({
 		if (!currentAlbum) {
 			return;
 		}
-		dispatch(playTrack({
-			playlistId: currentPlaylist._id,
-			...getPrevTrack(currentTrack._id, currentPlaylistAlbums)
-		}));
+		const { albumId, trackId } = getPrevTrack(currentTrack._id, currentPlaylistAlbums);
+		if (albumId && trackId ) {
+			dispatch(playTrack({
+				playlistId: currentPlaylist._id,
+				albumId,
+				trackId
+			}));
+		}
 	}
 
 	function onNextButtonClick(): void {
 		if (!currentAlbum) {
 			return;
 		}
-		dispatch(playTrack({
-			playlistId: currentPlaylist._id,
-			...getNextTrack(currentTrack._id, currentPlaylistAlbums)
-		}));
+		const { albumId, trackId } = getNextTrack(currentTrack._id, currentPlaylistAlbums);
+		if (albumId && trackId ) {
+			dispatch(playTrack({
+				playlistId: currentPlaylist._id,
+				albumId,
+				trackId
+			}));
+		}
 	}
 
 	function onProgressBarClick(position: number): void {
 		dispatch(seekTo(position));
-		const { currentTime } = player.getPlaybackInfo();
-		setCurrentTime(currentTime);
+		const { currentTime, duration } = player.getPlaybackInfo();
+		setPlaybackInfo([currentTime, duration]);
 	}
 
 	const playbackButtonClasses = cx(
@@ -128,8 +140,8 @@ export const PlayerView: FC<PlayerViewProps> = ({
 				<PlaybackBar
 					currentTrack={currentTrack}
 					currentAlbum={currentAlbum}
-					currentTime={currentTime}
-					duration={duration}
+					currentTime={playbackInfo[0]}
+					duration={playbackInfo[1]}
 					onProgressBarClick={onProgressBarClick}/>
 			}
 		</section>

@@ -9,6 +9,7 @@ export type PlaybackInfo = {
   currentTime: number;
   duration: number;
   currentTrack: string;
+  isPlaying: boolean;
 }
 
 export const PLAYER_EVENTS = {
@@ -45,13 +46,11 @@ export default class Player extends EventEmitter {
   play(): void {
     if (!this.playing) {
       this.audioElement.play();
-      this.playing = true;
     }
   }
   pause(): void {
     if (this.playing) {
       this.audioElement.pause();
-      this.playing = false;
     }
   }
   togglePlayback(): void {
@@ -70,14 +69,11 @@ export default class Player extends EventEmitter {
     this.audioElement.currentTime = this.audioElement.duration * position;
   }
   getPlaybackInfo(): PlaybackInfo {
-    // const currentTime = Math.min(
-    //   Math.ceil(this.audioElement.currentTime),
-    //   this.audioElement.duration
-    // );
     return {
       currentTime: this.audioElement.currentTime,
       duration: this.audioElement.duration,
-      currentTrack: this.audioElement.currentSrc
+      currentTrack: this.audioElement.currentSrc,
+      isPlaying: this.playing
     };
   }
   isPlaying(): boolean {
@@ -86,12 +82,12 @@ export default class Player extends EventEmitter {
   private _onPlaying(): void {
     this._startTimer();
     this.playing = true;
-    this.emit(PLAYER_EVENTS.PLAY);
+    this.emit(PLAYER_EVENTS.PLAY, this.getPlaybackInfo());
   }
   private _onPause(): void {
     this._clearTimer();
     this.playing = false;
-    this.emit(PLAYER_EVENTS.PAUSE);
+    this.emit(PLAYER_EVENTS.PAUSE, this.getPlaybackInfo());
   }
   private _onEnded(): void {
     this._clearTimer();
@@ -111,6 +107,5 @@ export default class Player extends EventEmitter {
       clearInterval(this.timer);
     }
     this.timer = null;
-    this.playing = false;
   }
 }
