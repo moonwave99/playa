@@ -24,24 +24,21 @@
       background-position: center;
       border: none;
       margin: 0;
+      padding: 0;
       height: 100%;
-      padding: 0 $mainUnit;
+      color: $lightColor;
+      transition: color .2s ease-in-out;
+      &:hover {
+        color: $highlightColor;
+      }
       &-prev,
       &-next {
-        background-image: url('../../static/icons/player/prev-next.svg');
-        background-size: 33%;
-        background-position-x: right;
+        font-size: 2.5rem;
+        flex: 2;
       }
       &-playback {
-        background-image: url('../../static/icons/player/play.svg');
-        background-size: $playbackControlSize $playbackControlSize;
-        &.is-playing {
-          background-image: url('../../static/icons/player/pause.svg');
-          background-size: $playbackControlSize $playbackControlSize;
-        }
-      }
-      &-next {
-        transform: rotate(180deg);
+        font-size: 3rem;
+        flex: 0.5;
       }
     }
   }

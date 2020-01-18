@@ -1,5 +1,6 @@
 import React, { FC, ReactElement, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import cx from 'classnames';
 import { PlaybackBar } from './PlaybackBar/PlaybackBar';
 import { CoverView } from '../PlaylistView/AlbumView/CoverView/CoverView';
@@ -106,9 +107,15 @@ export const PlayerView: FC<PlayerViewProps> = ({
     <section className="player">
 			<div className="player-sidebar-wrapper">
 				<section className="player-controls">
-					<button className="control control-prev" onClick={onPrevButtonClick}/>
-					<button className={playbackButtonClasses} onClick={onPlaybackButtonClick}/>
-					<button className="control control-next" onClick={onNextButtonClick}/>
+					<button className="control control-prev" onClick={onPrevButtonClick}>
+						<FontAwesomeIcon icon="step-backward" fixedWidth/>
+					</button>
+					<button className={playbackButtonClasses} onClick={onPlaybackButtonClick}>
+						<FontAwesomeIcon icon={isPlaying ? 'pause' : 'play'} fixedWidth/>
+					</button>
+					<button className="control control-next" onClick={onNextButtonClick}>
+						<FontAwesomeIcon icon="step-forward" fixedWidth/>
+					</button>
 				</section>
 				<section className="player-album-cover-wrapper">
 					<CoverView
