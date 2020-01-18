@@ -7,6 +7,8 @@ import { savePlaylistRequest, getDefaultPlaylist } from '../../store/modules/pla
 import { updateQueue } from '../../store/modules/player';
 import { updateState, updateTitle, showContextMenu } from '../../store/modules/ui';
 import { Album, getAlbumListRequest } from '../../store/modules/album';
+import { Track } from '../../store/modules/track';
+import { playTrack } from '../../store/modules/player';
 import { toObj } from '../../utils/storeUtils';
 import { confirmDialog } from '../../utils/dialogUtils';
 import { ContextMenuTypes } from '../../utils/contextMenuUtils';
@@ -74,6 +76,14 @@ export const PlaylistContainer = (): ReactElement => {
     }));
   }
 
+  function onAlbumDoubleClick(album: Album, track: Track): void {
+    dispatch(playTrack({
+      playlistId: playlist._id,
+      albumId: album._id,
+      trackId: track ? track._id : null
+    }));
+  }
+
 	return (
     <PlaylistView
        albums={albums}
@@ -83,6 +93,7 @@ export const PlaylistContainer = (): ReactElement => {
        currentTrackId={currentTrackId}
        onAlbumOrderChange={onAlbumOrderChange}
        onTitleChange={onTitleChange}
-       onAlbumContextMenu={onAlbumContextMenu}/>
+       onAlbumContextMenu={onAlbumContextMenu}
+       onAlbumDoubleClick={onAlbumDoubleClick}/>
 	);
 };

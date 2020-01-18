@@ -1,21 +1,19 @@
 import { ipcRenderer as ipc, Event } from 'electron';
-import React, { ReactElement, FC, useState, useEffect, useCallback } from 'react';
+import React, { ReactElement, FC, useState, useEffect } from 'react';
 import cx from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { PlaylistViewTitle } from './PlaylistViewTitle/PlaylistViewTitle';
-import { AlbumView } from './AlbumView/AlbumView';
-import { CompactAlbumView } from './CompactAlbumView/CompactAlbumView';
+import { AlbumListView } from '../AlbumListView/AlbumListView';
 import { Playlist } from '../../store/modules/playlist';
 import { Album } from '../../store/modules/album';
 import { Track } from '../../store/modules/track';
 import { UIAlbumView } from '../../store/modules/ui';
-import { EntityHashMap, immutableMove } from '../../utils/storeUtils';
+import { EntityHashMap } from '../../utils/storeUtils';
 import { formatDate } from '../../utils/datetimeUtils';
+import './PlaylistView.scss';
 
 import { IPC_MESSAGES } from '../../../constants';
 const { IPC_UI_TOGGLE_ALBUM_VIEW } = IPC_MESSAGES;
-
-import './PlaylistView.scss';
 
 type PlaylistViewProps = {
   albums: EntityHashMap<Album>;
@@ -26,6 +24,7 @@ type PlaylistViewProps = {
   onTitleChange: Function;
   onAlbumOrderChange: Function;
   onAlbumContextMenu: Function;
+  onAlbumDoubleClick: Function;
 };
 
 export const PlaylistView: FC<PlaylistViewProps> = ({
@@ -36,7 +35,8 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
   currentTrackId,
   onAlbumOrderChange,
   onTitleChange,
-  onAlbumContextMenu
+  onAlbumContextMenu,
+  onAlbumDoubleClick
 }) => {
   const [albumView, setAlbumView] = useState(UIAlbumView.Extended);
   const [albumOrder, setAlbumOrder] = useState([]);
@@ -56,47 +56,6 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
     return (): typeof ipc => ipc.removeListener(IPC_UI_TOGGLE_ALBUM_VIEW, handler);
   }, []);
 
-  const onAlbumMove = useCallback((dragIndex: number, hoverIndex: number): void => {
-    const newOrder = immutableMove<Album['_id']>(albumOrder, dragIndex, hoverIndex);
-    setAlbumOrder(newOrder);
-  }, [albumOrder]);
-
-  function onDragEnd(): void {
-    onAlbumOrderChange(albumOrder);
-  }
-
-  function renderAlbum(album: Album, index: number): ReactElement {
-    // #TODO investigate render issue
-    if (!album) {
-      return null;
-    }
-    switch (albumView) {
-      case UIAlbumView.Extended:
-        return (
-          <li key={album._id}>
-            <AlbumView
-              isCurrent={album._id === currentAlbumId}
-              currentTrackId={currentTrackId}
-              playlistId={playlist._id}
-              album={album}
-              onContextMenu={onAlbumContextMenu}/>
-          </li>
-        );
-      case UIAlbumView.Compact:
-        return (
-          <li key={album._id}>
-            <CompactAlbumView
-              playlistId={playlist._id}
-              album={album}
-              index={index}
-              isCurrent={album._id === currentAlbumId}
-              onDragEnd={onDragEnd}
-              onAlbumMove={onAlbumMove}
-              onContextMenu={onAlbumContextMenu}/>
-          </li>
-        );
-    }
-  }
 
   function renderActionButtons(): ReactElement {
     return (
@@ -132,10 +91,17 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
         { renderActionButtons() }
         <p className="playlist-info header-like">Created on {date}</p>
       </header>
-      {
-        hasAlbums
-          ? <ol className="album-list">{albumOrder.map((_id, index) => renderAlbum(albums[_id], index))}</ol>
-          : <p className="playlist-empty-placeholder">Playlist is empty.</p>
+      { hasAlbums
+        ? <AlbumListView
+            sortable={true}
+            albums={albums}
+            originalOrder={albumOrder}
+            currentAlbumId={currentAlbumId}
+            currentTrackId={currentTrackId}
+            onAlbumOrderChange={onAlbumOrderChange}
+            onAlbumContextMenu={onAlbumContextMenu}
+            onAlbumDoubleClick={onAlbumDoubleClick}/>
+        : <p className="playlist-empty-placeholder">Playlist is empty.</p>
       }
     </section>
 	);

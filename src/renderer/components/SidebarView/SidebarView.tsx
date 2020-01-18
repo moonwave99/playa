@@ -4,7 +4,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { SidebarPlaylistList } from './SidebarPlaylistList/SidebarPlaylistList';
 import { Playlist } from '../../store/modules/playlist';
 import './SidebarView.scss';
-import { PLAYLIST_ALL } from '../../routes';
+import {
+	QUEUE,
+	PLAYLIST_ALL
+} from '../../routes';
 
 type SidebarViewProps = {
 	recentPlaylists: Playlist[];
@@ -33,6 +36,10 @@ export const SidebarView: FC<SidebarViewProps> = ({
 				<Link to={PLAYLIST_ALL} className="button button-outline">
 					<FontAwesomeIcon icon="list" className="button-icon"/>
 					<span className="button-text">All Playlists</span>
+				</Link>
+				<Link to={QUEUE} className="button button-outline">
+					<FontAwesomeIcon icon="music" className="button-icon"/>
+					<span className="button-text">Playback Queue</span>
 				</Link>
 			</footer>
 		</aside>

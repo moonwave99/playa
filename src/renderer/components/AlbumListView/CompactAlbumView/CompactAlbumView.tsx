@@ -5,8 +5,6 @@ import { useDrag, useDrop, DropTargetMonitor } from 'react-dnd';
 import { XYCoord } from 'dnd-core';
 import { CoverView } from '../AlbumView/CoverView/CoverView';
 import { ApplicationState } from '../../../store/store';
-import { playTrack } from '../../../store/modules/player';
-import { Playlist } from '../../../store/modules/playlist';
 import { Album, VARIOUS_ARTISTS_ID } from '../../../store/modules/album';
 import { UIDragTypes } from '../../../store/modules/ui';
 import { getCoverRequest } from '../../../store/modules/cover';
@@ -19,23 +17,25 @@ interface DragItem {
 }
 
 type CompactAlbumViewProps = {
-  playlistId?: Playlist['_id'];
   album: Album;
   index: number;
   isCurrent: boolean;
-  onDragEnd: Function;
+  onDragEnd?: Function;
   onAlbumMove: Function;
   onContextMenu: Function;
+  onDoubleClick: Function;
+  sortable: boolean;
 }
 
 export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
-  playlistId,
   album,
   index,
   isCurrent = false,
   onDragEnd,
   onAlbumMove,
-  onContextMenu
+  onContextMenu,
+  onDoubleClick,
+  sortable = false
 }) => {
   const { _id, type, year, artist, title } = album;
 
@@ -93,15 +93,13 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
       }
     }
   });
-  drag(drop(ref));
+  if (sortable) {
+    drag(drop(ref));
+  }
 
-  function onDoubleClick(event: SyntheticEvent): void {
+  function _onDoubleClick(event: SyntheticEvent): void {
     event.preventDefault();
-    dispatch(playTrack({
-      playlistId,
-      albumId: album._id,
-      trackId: album.tracks[0]
-    }));
+    onDoubleClick(album);
   }
 
   const classNames = cx('compact-album-view', {
@@ -112,7 +110,7 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
   });
   const tagClasses = cx('album-type', `album-type-${type}`);
   return (
-    <article className={classNames} ref={ref} onDoubleClick={onDoubleClick}>
+    <article className={classNames} ref={ref} onDoubleClick={_onDoubleClick}>
       <CoverView
         className="album-cover"
         src={cover}

@@ -1,12 +1,14 @@
 import React, { FC, ReactElement, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useHistory } from 'react-router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import cx from 'classnames';
 import { PlaybackBar } from './PlaybackBar/PlaybackBar';
-import { CoverView } from '../PlaylistView/AlbumView/CoverView/CoverView';
+import { CoverView } from '../AlbumListView/AlbumView/CoverView/CoverView';
 import { playerSelector, togglePlayback, playTrack, seekTo } from '../../store/modules/player';
 import { getPrevTrack, getNextTrack } from '../../utils/tracklistUtils';
 import Player, { PlaybackInfo, PLAYER_EVENTS } from '../../player';
+import { QUEUE } from '../../routes';
 import './PlayerView.scss';
 
 type PlayerViewProps = {
@@ -16,6 +18,7 @@ type PlayerViewProps = {
 export const PlayerView: FC<PlayerViewProps> = ({
 	player
 }): ReactElement => {
+	const history = useHistory();
 	const dispatch = useDispatch();
 	const [playbackInfo, setPlaybackInfo] = useState([0, 0]);
 	const [isPlaying, setPlaying] = useState(false);
@@ -97,6 +100,10 @@ export const PlayerView: FC<PlayerViewProps> = ({
 		setPlaybackInfo([currentTime, duration]);
 	}
 
+	function onCoverClick(): void{
+		history.replace(QUEUE);
+	}
+
 	const playbackButtonClasses = cx(
 		'control',
 		'control-playback',
@@ -121,7 +128,8 @@ export const PlayerView: FC<PlayerViewProps> = ({
 					<CoverView
 						className="player-album-cover"
 						src={cover}
-						album={currentAlbum}/>
+						album={currentAlbum}
+						onClick={onCoverClick}/>
 				</section>
 			</div>
 			{ currentTrack && currentAlbum &&

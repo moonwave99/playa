@@ -5,7 +5,6 @@ import cx from 'classnames';
 import { CoverView } from './CoverView/CoverView';
 import { TracklistView } from './TracklistView/TracklistView';
 import { ApplicationState } from '../../../store/store';
-import { playTrack } from '../../../store/modules/player';
 import { Playlist } from '../../../store/modules/playlist';
 import { Album, VARIOUS_ARTISTS_ID, getAlbumContentRequest } from '../../../store/modules/album';
 import { Track } from '../../../store/modules/track';
@@ -20,14 +19,15 @@ type AlbumViewProps = {
   isCurrent: boolean;
   currentTrackId: Track['_id'];
   onContextMenu: Function;
+  onDoubleClick: Function;
 }
 
 export const AlbumView: FC<AlbumViewProps> = ({
-  playlistId,
   album,
   isCurrent = false,
   currentTrackId,
-  onContextMenu
+  onContextMenu,
+  onDoubleClick
 }) => {
   const { _id, type, year, artist, title, tracks } = album;
   const { tracklist, notFoundTracks, cover } = useSelector((state: ApplicationState) => {
@@ -56,13 +56,13 @@ export const AlbumView: FC<AlbumViewProps> = ({
     dispatch(getAlbumContentRequest(album));
   }
 
-  function onAlbumCoverDoubleClick(event: SyntheticEvent): void {
+  function onCoverDoubleClick(event: SyntheticEvent): void {
     event.preventDefault();
-    dispatch(playTrack({
-      playlistId,
-      albumId: _id,
-      trackId: tracks[0]
-    }));
+    onDoubleClick(album);
+  }
+
+  function onTrackDoubleClick(track: Track): void {
+    onDoubleClick(album, track);
   }
 
   function renderArtist(): ReactElement {
@@ -82,7 +82,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
   return (
     <article className={albumClasses}>
       <aside className="album-aside">
-        <div onDoubleClick={onAlbumCoverDoubleClick}>
+        <div onDoubleClick={onCoverDoubleClick}>
           <CoverView
             className="album-cover"
             src={cover}
@@ -101,12 +101,11 @@ export const AlbumView: FC<AlbumViewProps> = ({
           </h3>
         </header>
         <TracklistView
-          playlistId={playlistId}
-          albumId={album._id}
           currentTrackId={currentTrackId}
           isAlbumFromVariousArtists={artist === VARIOUS_ARTISTS_ID}
           rawTracks={album.tracks}
-          tracklist={tracklist}/>
+          tracklist={tracklist}
+          onTrackDoubleClick={onTrackDoubleClick}/>
       </section>
     </article>
   );

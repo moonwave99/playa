@@ -6,14 +6,15 @@ type CoverViewProps = {
   className?: string;
   src: string;
   album: Album;
+  onClick?: Function;
   onContextMenu?: Function;
 }
 
-// #TODO reload onClick if some tracks are not found
 export const CoverView: FC<CoverViewProps> = ({
   className,
   src,
   album,
+  onClick,
   onContextMenu
 }) => {
   const [loaded, setLoaded] = useState(false);
@@ -30,6 +31,10 @@ export const CoverView: FC<CoverViewProps> = ({
     setLoaded(true);
   }
 
+  function onFigureClick(): void {
+    onClick && onClick(album);
+  }
+
   function onFigureContextMenu(): void {
     onContextMenu && onContextMenu(album);
   }
@@ -37,7 +42,11 @@ export const CoverView: FC<CoverViewProps> = ({
   const imageClassNames = cx({ empty: !src });
 
   return (
-    <figure className={figureClassNames} title={formatCoverTitle()} onContextMenu={onFigureContextMenu}>
+    <figure
+      className={figureClassNames}
+      title={formatCoverTitle()}
+      onClick={onFigureClick}
+      onContextMenu={onFigureContextMenu}>
       <img
         className={imageClassNames}
         onLoad={onImageLoad}

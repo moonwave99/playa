@@ -1,10 +1,10 @@
-import { ipcRenderer as ipc } from 'electron';
 import React, { FC, ReactElement, useEffect } from 'react';
 import { Switch, Route, useHistory } from 'react-router';
 import { generatePath } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Player from '../../player';
 import { PlayerView } from '../PlayerView/PlayerView';
+import { QueueView } from '../QueueView/QueueView';
 import { SearchView } from '../SearchView/SearchView';
 import { SidebarView } from '../SidebarView/SidebarView';
 import { AllPlaylistContainer } from '../AllPlaylistContainer/AllPlaylistContainer';
@@ -16,19 +16,15 @@ import { togglePlayback } from '../../store/modules/player';
 import './App.scss';
 
 import {
+  QUEUE,
   SEARCH,
   PLAYLIST_ALL,
   PLAYLIST_SHOW
 } from '../../routes';
 
 import {
-  IPC_MESSAGES,
   RECENT_PLAYLIST_COUNT
 } from '../../../constants';
-
-const {
-  IPC_UI_SHOW_CURRENT_PLAYLIST
-} = IPC_MESSAGES;
 
 type AppProps = {
   player: Player;
@@ -75,17 +71,6 @@ export const App: FC<AppProps> = ({
     dispatch(getAllPlaylistsRequest());
   }, []);
 
-  // goto current playlist from keyboar shortcut
-  useEffect(() => {
-    function onShowCurrentPlaylist(): void {
-      if (currentPlaylistId) {
-        history.push(generatePath(PLAYLIST_SHOW, { _id: currentPlaylistId }));
-      }
-    }
-    ipc.on(IPC_UI_SHOW_CURRENT_PLAYLIST, onShowCurrentPlaylist);
-    return (): void => { ipc.removeListener(IPC_UI_SHOW_CURRENT_PLAYLIST, onShowCurrentPlaylist) };
-  }, [currentPlaylistId]);
-
   // reopen last opened playlist on app restart
   useEffect(() => {
     if (lastOpenedPlaylistId) {
@@ -109,6 +94,9 @@ export const App: FC<AppProps> = ({
         </div>
         <div className="main-wrapper">
           <Switch>
+            <Route path={QUEUE}>
+              <QueueView/>
+            </Route>
             <Route path={SEARCH}>
               <SearchView/>
             </Route>

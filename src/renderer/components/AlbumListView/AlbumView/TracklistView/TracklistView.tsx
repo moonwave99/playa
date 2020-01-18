@@ -1,35 +1,28 @@
 import React, { FC, ReactElement, SyntheticEvent } from 'react';
-import { useDispatch } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import cx from 'classnames';
-import { Playlist } from '../../../../store/modules/Playlist';
-import { Album } from '../../../../store/modules/Album';
 import { Track } from '../../../../store/modules/track';
-import { playTrack } from '../../../../store/modules/player';
 import { formatTrackNumber } from '../../../../utils/tracklistUtils';
 import { formatDuration } from '../../../../utils/datetimeUtils';
 import { COLORS } from '../../../../../constants';
 import './TracklistView.scss';
 
 type TracklistViewProps = {
-  playlistId?: Playlist['_id'];
-  albumId: Album['_id'];
   currentTrackId: Track['_id'];
   tracklist: Track[];
   rawTracks: string[];
   isAlbumFromVariousArtists: boolean;
+  onTrackDoubleClick: Function;
 }
 
 // #TODO reload onClick if some tracks are not found
 export const TracklistView: FC<TracklistViewProps> = ({
-  playlistId,
-  albumId,
   currentTrackId,
   tracklist = [],
   rawTracks = [],
-  isAlbumFromVariousArtists
+  isAlbumFromVariousArtists,
+  onTrackDoubleClick
 }) => {
-  const dispatch = useDispatch();
   const maxNameLength = Math.max(...rawTracks.map(x => x.length));
 
   function renderSkeletonTrack(_id: string, width: number): ReactElement {
@@ -61,13 +54,9 @@ export const TracklistView: FC<TracklistViewProps> = ({
       return renderSkeletonTrack(_id, path.length / maxNameLength * 100);
     }
 
-    function onTrackDoubleClick(event: SyntheticEvent): void {
+    function onDoubleClick(event: SyntheticEvent): void {
       event.preventDefault();
-      dispatch(playTrack({
-        playlistId,
-        albumId,
-        trackId: _id
-      }));
+      onTrackDoubleClick(track);
     }
 
     const isCurrent = _id === currentTrackId;
@@ -76,7 +65,7 @@ export const TracklistView: FC<TracklistViewProps> = ({
     });
 
     return (
-      <li key={_id} className={trackClassNames} onDoubleClick={onTrackDoubleClick}>
+      <li key={_id} className={trackClassNames} onDoubleClick={onDoubleClick}>
         <span className="track-number">{formatTrackNumber(number)}</span>
         <span className="playback-info">
           <FontAwesomeIcon

@@ -8,6 +8,7 @@ import {
   faStepForward,
   faFileAudio,
   faVolumeUp,
+  faMusic,
   faThList,
   faListAlt
 } from '@fortawesome/free-solid-svg-icons';
@@ -19,9 +20,10 @@ export default function initFontAwesome(): void {
     faPlay,
     faPause,
     faStepBackward,
-    faStepForward,    
+    faStepForward,
     faFileAudio,
     faVolumeUp,
+    faMusic,
     faThList,
     faListAlt
   );

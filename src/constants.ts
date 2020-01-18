@@ -16,7 +16,6 @@ export const COLORS = {
 };
 
 export const IPC_MESSAGES = {
-  IPC_UI_SHOW_CURRENT_PLAYLIST: 'ui:show:current-playlist',
   IPC_UI_STATE_LOAD: 'ui:state:load',
   IPC_UI_STATE_UPDATE: 'ui:state:update',
   IPC_UI_NAVIGATE_TO: 'ui:navigate-to',
