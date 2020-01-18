@@ -23,7 +23,7 @@ export const PlayerView: FC<PlayerViewProps> = ({
 		currentPlaylist,
     currentAlbum,
     currentTrack,
-		currentPlaylistAlbums,
+		queue,
 		cover
   } = useSelector(playerSelector);
 
@@ -44,10 +44,10 @@ export const PlayerView: FC<PlayerViewProps> = ({
 
 	useEffect(() => {
 		function handlePlayerEnded(): void {
-			const { albumId, trackId } = getNextTrack(currentTrack._id, currentPlaylistAlbums);
+			const { albumId, trackId } = getNextTrack(currentTrack._id, queue);
 			if (albumId && trackId ) {
 				dispatch(playTrack({
-					playlistId: currentPlaylist._id,
+					playlistId: currentPlaylist ? currentPlaylist._id : null,
 					albumId,
 					trackId
 				}));
@@ -57,7 +57,7 @@ export const PlayerView: FC<PlayerViewProps> = ({
 		return (): void => {
 			player.removeListener(PLAYER_EVENTS.TRACK_ENDED, handlePlayerEnded);
 		}
-	}, [currentPlaylistAlbums, currentAlbum, currentTrack]);
+	}, [queue, currentAlbum, currentTrack]);
 
 	function onPlaybackButtonClick(): void {
 		dispatch(togglePlayback());
@@ -67,10 +67,10 @@ export const PlayerView: FC<PlayerViewProps> = ({
 		if (!currentAlbum) {
 			return;
 		}
-		const { albumId, trackId } = getPrevTrack(currentTrack._id, currentPlaylistAlbums);
+		const { albumId, trackId } = getPrevTrack(currentTrack._id, queue);
 		if (albumId && trackId ) {
 			dispatch(playTrack({
-				playlistId: currentPlaylist._id,
+				playlistId: currentPlaylist ? currentPlaylist._id : null,
 				albumId,
 				trackId
 			}));
@@ -81,10 +81,10 @@ export const PlayerView: FC<PlayerViewProps> = ({
 		if (!currentAlbum) {
 			return;
 		}
-		const { albumId, trackId } = getNextTrack(currentTrack._id, currentPlaylistAlbums);
+		const { albumId, trackId } = getNextTrack(currentTrack._id, queue);
 		if (albumId && trackId ) {
 			dispatch(playTrack({
-				playlistId: currentPlaylist._id,
+				playlistId: currentPlaylist ? currentPlaylist._id : null,
 				albumId,
 				trackId
 			}));

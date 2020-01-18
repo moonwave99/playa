@@ -3,6 +3,7 @@ import * as Path from 'path';
 import Database from '../database';
 import loadAlbum from '../loadAlbum';
 import loadTracklist from '../loadTracklist';
+import { Album } from '../../renderer/store/modules/album';
 import { IPC_MESSAGES } from '../../constants';
 
 const {
@@ -20,6 +21,7 @@ const {
   IPC_ALBUM_CONTENT_RESPONSE,
   IPC_TRACK_GET_LIST_REQUEST,
   IPC_TRACK_GET_LIST_RESPONSE,
+  IPC_ALBUM_GET_SINGLE_INFO
 } = IPC_MESSAGES;
 
 export default function initDatabase(userDataPath: string): void {
@@ -97,4 +99,20 @@ export default function initDatabase(userDataPath: string): void {
       event.reply('error', error);
     }
   });
+
+  ipc.handle(IPC_ALBUM_GET_SINGLE_INFO, async (_event, ids) => {
+    const albums: Album[] = await db.album.getList(ids);
+    let tracks = albums[0].tracks || [];
+    if (tracks.length === 0) {
+      tracks = await loadAlbum(albums[0].path);
+    }
+    const foundTracks = await loadTracklist(tracks, db.track);
+    return {
+      album: {
+        ...albums[0],
+        tracks
+      },
+      tracks: foundTracks
+    };
+  });  
 }

@@ -7,11 +7,15 @@ import { UIDragTypes } from '../../../../store/modules/ui';
 type SearchResultListItemProps = {
   result: Album;
   onContextMenu: Function;
+  onDoubleClick: Function;
 };
 
-export const SearchResultListItem: FC<SearchResultListItemProps> = ({ result, onContextMenu }) => {
+export const SearchResultListItem: FC<SearchResultListItemProps> = ({
+  result,
+  onContextMenu,
+  onDoubleClick
+ }) => {
   const { _id, type, artist, year, title } = result;
-
   const [{ opacity }, drag] = useDrag({
     item: {
       type: UIDragTypes.SEARCH_RESULTS,
@@ -22,13 +26,22 @@ export const SearchResultListItem: FC<SearchResultListItemProps> = ({ result, on
     })
   });
 
-  function onClick(): void {
+  function _onConTextMenu(): void {
     onContextMenu(result);
+  }
+
+  function _onDoubleClick(): void {
+    onDoubleClick(result);
   }
 
   const tagClasses = cx('tag', `tag-${type}`);
   return (
-    <li ref={drag} className="search-result-list-item" onContextMenu={onClick} style={{ opacity }}>
+    <li
+      ref={drag}
+      className="search-result-list-item"
+      style={{ opacity }}
+      onContextMenu={_onConTextMenu}
+      onDoubleClick={_onDoubleClick}>
       <span className={tagClasses}>{type}</span>
       <span className="year">{year ? year : '-'}</span>
       <span className="artist">{artist === VARIOUS_ARTISTS_ID ? 'V/A' : artist}</span>

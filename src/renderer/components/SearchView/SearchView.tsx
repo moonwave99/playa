@@ -8,6 +8,7 @@ import { ApplicationState } from '../../store/store';
 import { updateTitle, showContextMenu } from '../../store/modules/ui';
 import { Album } from '../../store/modules/album';
 import { searchRequest } from '../../store/modules/search';
+import { playTrack } from '../../store/modules/player';
 import { ContextMenuTypes } from '../../utils/contextMenuUtils';
 import './SearchView.scss';
 
@@ -43,11 +44,15 @@ export const SearchView: FC<SearchViewProps> = () => {
     dispatch(searchRequest(query));
   };
 
-  function onContextMenu(album: Album): void {
+  function onResultContextMenu(album: Album): void {
     dispatch(showContextMenu({
       type: ContextMenuTypes.RESULT_LIST_ITEM,
       context: album
     }));
+  }
+
+  function onResultDoubleClick(album: Album): void {
+    dispatch(playTrack({ albumId: album._id }));
   }
 
 	return (
@@ -65,7 +70,8 @@ export const SearchView: FC<SearchViewProps> = () => {
             results={results}
             query={query}
             isSearching={isSearching}
-            onContextMenu={onContextMenu}/>
+            onResultContextMenu={onResultContextMenu}
+            onResultDoubleClick={onResultDoubleClick}/>
         </CSSTransition>
       </div>
     </div>

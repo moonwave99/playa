@@ -36,8 +36,9 @@ export const IPC_MESSAGES = {
   IPC_TRACK_GET_LIST_REQUEST : 'track:get-list:request',
   IPC_TRACK_GET_LIST_RESPONSE : 'track:get-list:response',
   IPC_SEARCH_REQUEST : 'search:request',
-  IPC_SEARCH_RESPONSE : 'search:response',  
+  IPC_SEARCH_RESPONSE : 'search:response',
   IPC_COVER_GET_REQUEST: 'cover:get:request',
   IPC_COVER_GET_RESPONSE: 'cover:get:response',
-  IPC_DIALOG_SHOW_MESSAGE: 'dialog:show-message'
+  IPC_DIALOG_SHOW_MESSAGE: 'dialog:show-message',
+  IPC_ALBUM_GET_SINGLE_INFO: 'album:get-single:info'
 };

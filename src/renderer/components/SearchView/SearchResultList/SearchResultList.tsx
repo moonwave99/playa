@@ -7,19 +7,17 @@ type SearchResultListProps = {
   results: Array<Album>;
   query: string;
   isSearching: boolean;
-  onContextMenu: Function;
+  onResultContextMenu: Function;
+  onResultDoubleClick: Function;
 };
 
 export const SearchResultList: React.FC<SearchResultListProps> = ({
   results,
   query,
   isSearching,
-  onContextMenu
+  onResultContextMenu,
+  onResultDoubleClick
 }) => {
-  function _onContextMenu(album: Album): void {
-    onContextMenu(album);
-  }
-
   function renderEmptyComponent(query: string): ReactElement {
     return (
       <li className="search-result-list-empty-component">
@@ -37,7 +35,8 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
               <SearchResultListItem
                 result={result}
                 key={result._id}
-                onContextMenu={_onContextMenu}/>
+                onContextMenu={onResultContextMenu}
+                onDoubleClick={onResultDoubleClick}/>
           )
           : renderEmptyComponent(query)
       }</ul>
