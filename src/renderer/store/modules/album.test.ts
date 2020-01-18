@@ -5,14 +5,10 @@ import reducer, {
   Album,
   AlbumActionTypes,
   AlbumState,
-  searchAlbumsRequest,
-  searchAlbumsResponse,
   getAlbumListRequest,
   getAlbumListResponse,
   getAlbumContentRequest,
   getAlbumContentResponse,
-  ALBUM_SEARCH_REQUEST,
-  ALBUM_SEARCH_RESPONSE,
   ALBUM_GET_LIST_REQUEST,
   ALBUM_GET_LIST_RESPONSE,
   ALBUM_GET_CONTENT_REQUEST,
@@ -20,29 +16,6 @@ import reducer, {
 } from './album';
 
 describe('album actions', () => {
-  describe('searchAlbumsRequest', () => {
-    it('should dispatch searchAlbumsRequest request', () => {
-      const dispatch = jest.fn();
-      searchAlbumsRequest('#!q')(dispatch);
-      expect(dispatch).toHaveBeenCalledWith({
-        type: ALBUM_SEARCH_REQUEST,
-        query: '#!q'
-      });
-    });
-  });
-
-  describe('searchAlbumsResponse', () => {
-    it('should dispatch searchAlbumsResponse request', () => {
-      const dispatch = jest.fn();
-      const results: Album[] = [];
-      searchAlbumsResponse(results)(dispatch);
-      expect(dispatch).toHaveBeenCalledWith({
-        type: ALBUM_SEARCH_RESPONSE,
-        results
-      });
-    });
-  });
-
   describe('getAlbumListRequest', () => {
     it('should dispatch getAlbumListRequest request', () => {
       const dispatch = jest.fn();
@@ -93,30 +66,11 @@ describe('album actions', () => {
 
 describe('album reducer', () => {
   const initialState = {
-    searchResults: [] as Album[],
     allById: {}
   }
   it('should return the initial state', () => {
     expect(reducer(undefined, {} as AlbumActionTypes))
       .toEqual(initialState);
-  });
-
-  it('should handle ALBUM_SEARCH_REQUEST', () => {
-    expect(reducer({} as AlbumState, {
-      type: ALBUM_SEARCH_REQUEST,
-      query: '#!q'
-    })).toEqual({});
-  });
-
-  it('should handle ALBUM_SEARCH_RESPONSE', () => {
-    const results = albums;
-    expect(reducer(initialState, {
-      type: ALBUM_SEARCH_RESPONSE,
-      results
-    })).toEqual({
-      ...initialState,
-      searchResults: results
-    });
   });
 
   it('should handle ALBUM_GET_LIST_REQUEST', () => {

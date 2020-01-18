@@ -8,7 +8,7 @@ const {
   IPC_PLAYLIST_GET_ALL_RESPONSE,
   IPC_PLAYLIST_SAVE_RESPONSE,
   IPC_PLAYLIST_DELETE_RESPONSE,
-  IPC_ALBUM_SEARCH_RESPONSE,
+  IPC_SEARCH_RESPONSE,
   IPC_ALBUM_GET_LIST_RESPONSE,
   IPC_ALBUM_CONTENT_RESPONSE,
   IPC_TRACK_GET_LIST_RESPONSE,
@@ -24,7 +24,6 @@ import {
 
 import {
   Album,
-  searchAlbumsResponse,
   getAlbumListResponse,
   getAlbumContentResponse
 } from '../store/modules/album';
@@ -34,6 +33,10 @@ import {
   getTrackListRequest,
   getTrackListResponse
 } from '../store/modules/track';
+
+import {
+  searchResponse
+} from '../store/modules/search';
 
 import {
   getCoverResponse
@@ -60,8 +63,8 @@ export default function initIpc(history: History, dispatch: Function): void {
     dispatch(deletePlaylistResponse(playlist));
   });
 
-  ipc.on(IPC_ALBUM_SEARCH_RESPONSE, (_event, results: Album[]) => {
-    dispatch(searchAlbumsResponse(results));
+  ipc.on(IPC_SEARCH_RESPONSE, (_event, results: Album[], query: string) => {
+    dispatch(searchResponse(results, query));
   });
 
   ipc.on(IPC_ALBUM_GET_LIST_RESPONSE, (_event, results: Album[]) => {

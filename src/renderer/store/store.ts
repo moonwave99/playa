@@ -9,6 +9,7 @@ import uiReducer, { UIState } from './modules/ui';
 import initPlayerReducer, { PlayerState } from './modules/player';
 import playlistReducer, { PlaylistState } from './modules/playlist';
 import albumReducer, { AlbumState } from './modules/album';
+import searchReducer, { SearchState } from './modules/search';
 import trackReducer, { TrackState } from './modules/track';
 import coverReducer, { CoverState } from './modules/cover';
 
@@ -21,6 +22,7 @@ export interface ApplicationState {
   player: PlayerState;
   playlists: PlaylistState;
   albums: AlbumState;
+  search: SearchState;
   tracks: TrackState;
   covers: CoverState;
 }
@@ -32,6 +34,7 @@ function createRootReducer (history: History, player: Player): Reducer {
     player: initPlayerReducer(player),
     playlists: playlistReducer,
     albums: albumReducer,
+    search: searchReducer,
     tracks: trackReducer,
     covers: coverReducer
   });

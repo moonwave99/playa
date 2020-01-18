@@ -4,7 +4,6 @@ import { EntityHashMap, toObj, ensureAll } from '../../utils/storeUtils';
 import { IPC_MESSAGES } from '../../../constants';
 
 const {
-  IPC_ALBUM_SEARCH_REQUEST,
   IPC_ALBUM_GET_LIST_REQUEST,
   IPC_ALBUM_CONTENT_REQUEST
 } = IPC_MESSAGES;
@@ -36,26 +35,13 @@ export function getDefaultAlbum(): Album {
 }
 
 export interface AlbumState {
-  searchResults: Album[];
   allById: EntityHashMap<Album>;
 }
 
-export const ALBUM_SEARCH_REQUEST       = 'playa/album/SEARCH_REQUEST';
-export const ALBUM_SEARCH_RESPONSE      = 'playa/album/SEARCH_RESPONSE';
 export const ALBUM_GET_LIST_REQUEST     = 'playa/album/GET_LIST_REQUEST';
 export const ALBUM_GET_LIST_RESPONSE    = 'playa/album/GET_LIST_RESPONSE';
 export const ALBUM_GET_CONTENT_REQUEST  = 'playa/album/GET_CONTENT_REQUEST';
 export const ALBUM_GET_CONTENT_RESPONSE = 'playa/album/GET_CONTENT_RESPONSE';
-
-interface SearchAlbumRequestAction {
-  type: typeof ALBUM_SEARCH_REQUEST;
-  query: string;
-}
-
-interface SearchAlbumResponseAction {
-  type: typeof ALBUM_SEARCH_RESPONSE;
-  results: Album[];
-}
 
 interface GetAlbumListRequestAction {
   type: typeof ALBUM_GET_LIST_REQUEST;
@@ -78,28 +64,10 @@ interface GetAlbumContentResponseAction {
 }
 
 export type AlbumActionTypes =
-    SearchAlbumRequestAction
-  | SearchAlbumResponseAction
-  | GetAlbumListRequestAction
+    GetAlbumListRequestAction
   | GetAlbumListResponseAction
   | GetAlbumContentRequestAction
   | GetAlbumContentResponseAction;
-
-export const searchAlbumsRequest = (query: string): Function =>
-  (dispatch: Function): void => {
-    dispatch({
-      type: ALBUM_SEARCH_REQUEST,
-      query
-    });
-  }
-
-export const searchAlbumsResponse = (results: Album[]): Function =>
-  (dispatch: Function): void => {
-    dispatch({
-      type: ALBUM_SEARCH_RESPONSE,
-      results
-    });
-  }
 
 export const getAlbumListRequest = (ids: string[]): Function =>
   (dispatch: Function): void => {
@@ -134,7 +102,6 @@ export const getAlbumContentResponse = (album: Album): Function =>
   }
 
 const INITIAL_STATE = {
-  searchResults: [] as Album[],
   allById: {}
 };
 
@@ -143,14 +110,6 @@ export default function reducer(
   action: AlbumActionTypes
 ): AlbumState {
   switch (action.type) {
-    case ALBUM_SEARCH_REQUEST:
-      ipc.send(IPC_ALBUM_SEARCH_REQUEST, action.query);
-      return state;
-    case ALBUM_SEARCH_RESPONSE:
-      return {
-        ...state,
-        searchResults: action.results
-      };
     case ALBUM_GET_LIST_REQUEST:
       ipc.send(IPC_ALBUM_GET_LIST_REQUEST, action.ids);
       return state;

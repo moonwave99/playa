@@ -12,8 +12,8 @@ const {
   IPC_PLAYLIST_SAVE_RESPONSE,
   IPC_PLAYLIST_DELETE_REQUEST,
   IPC_PLAYLIST_DELETE_RESPONSE,
-  IPC_ALBUM_SEARCH_REQUEST,
-  IPC_ALBUM_SEARCH_RESPONSE,
+  IPC_SEARCH_REQUEST,
+  IPC_SEARCH_RESPONSE,
   IPC_ALBUM_GET_LIST_REQUEST,
   IPC_ALBUM_GET_LIST_RESPONSE,
   IPC_ALBUM_CONTENT_REQUEST,
@@ -60,10 +60,11 @@ export default function initDatabase(userDataPath: string): void {
     }
   });
 
-  ipc.on(IPC_ALBUM_SEARCH_REQUEST, async (event, query) => {
+  // #TODO configure query structure
+  ipc.on(IPC_SEARCH_REQUEST, async (event, query) => {
     try {
       const results = await db.album.find(query, ['artist', 'title']);
-      event.reply(IPC_ALBUM_SEARCH_RESPONSE, results);
+      event.reply(IPC_SEARCH_RESPONSE, results, query);
     } catch (error) {
       event.reply('error', error);
     }
