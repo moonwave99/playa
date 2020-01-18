@@ -39,14 +39,7 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
   onAlbumDoubleClick
 }) => {
   const [albumView, setAlbumView] = useState(UIAlbumView.Extended);
-  const [albumOrder, setAlbumOrder] = useState(playlist.albums || []);
   const hasAlbums = Object.keys(albums).length > 0 && playlist.albums.length > 0;
-
-  useEffect(() => {
-    if (playlist.albums.length > 0) {
-      setAlbumOrder(playlist.albums);
-    }
-  }, [playlist.albums]);
 
   useEffect(() => {
     const handler = (_event: Event, _albumView: UIAlbumView): void => {
@@ -95,7 +88,7 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
         ? <AlbumListView
             sortable={true}
             albums={albums}
-            originalOrder={albumOrder}
+            originalOrder={playlist.albums}
             currentAlbumId={currentAlbumId}
             currentTrackId={currentTrackId}
             onAlbumOrderChange={onAlbumOrderChange}

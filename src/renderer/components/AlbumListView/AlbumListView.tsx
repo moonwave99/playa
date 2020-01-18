@@ -37,6 +37,10 @@ export const AlbumListView: FC<AlbumListViewProps> = ({
   const [albumOrder, setAlbumOrder] = useState(originalOrder);
 
   useEffect(() => {
+    setAlbumOrder(originalOrder);
+  }, [originalOrder]);
+
+  useEffect(() => {
     const handler = (_event: Event, _albumView: UIAlbumView): void => {
       setAlbumView(_albumView);
     };
