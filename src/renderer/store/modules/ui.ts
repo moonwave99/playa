@@ -23,7 +23,6 @@ export type UIState = {
 export const STATE_UPDATE = 'playa/ui/STATE_UPDATE';
 export const TITLE_UPDATE = 'playa/ui/TITLE_UPDATE';
 export const SHOW_CONTEXT_MENU = 'playa/ui/SHOW_CONTEXT_MENU';
-export const START_ALBUM_DRAG = 'playa/ui/START_ALBUM_DRAG';
 
 interface UpdateStateAction {
   type: typeof STATE_UPDATE;
@@ -40,16 +39,10 @@ interface ShowContextMenuAction {
   options: ContextMenuOptions;
 }
 
-interface StartAlbumDragAction {
-  type: typeof START_ALBUM_DRAG;
-  path: string;
-}
-
 export type UIActionTypes =
     UpdateStateAction
   | UpdateTitleAction
-  | ShowContextMenuAction
-  | StartAlbumDragAction;
+  | ShowContextMenuAction;
 
 export const updateState = (params: object): Function =>
   (dispatch: Function): void => {

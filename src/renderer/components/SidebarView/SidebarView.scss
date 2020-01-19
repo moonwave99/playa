@@ -5,14 +5,20 @@
   height: 100%;
   width: 100%;
   overflow: scroll;
-  padding-top: $mainUnit;
+  display: flex;
+  flex-direction: column;
   .sidebar-header,
   .sidebar-footer {
-    padding: $mainUnit;
-    .button {
-      width: 100%;
-      margin: 0 0 1.6rem 0;
-      padding: 0;
+    .button-wrapper {
+      padding: $mainUnit;
+      .button {
+        width: 100%;
+        margin: 0 0 1.6rem 0;
+        padding: 0;
+      }
     }
+  }
+  .sidebar-header {
+    flex: 1;
   }
 }

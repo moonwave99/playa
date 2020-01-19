@@ -1,4 +1,5 @@
 import { app, Menu } from 'electron';
+import { generatePath } from 'react-router-dom';
 import { IPC_MESSAGES } from '../../constants';
 const {
   IPC_UI_NAVIGATE_TO,
@@ -9,6 +10,7 @@ import {
   QUEUE,
   SEARCH,
   PLAYLIST_ALL,
+  PLAYLIST_SHOW,
 } from '../../renderer/routes';
 
 const compactView = 0 //UIAlbumView.Compact;
@@ -49,6 +51,14 @@ export default function initMenu(window: Electron.BrowserWindow): void {
     {
       label: 'Playlist',
       submenu: [
+        {
+          label: 'New',
+          accelerator: 'cmd+n',
+          click: (): void => window.webContents.send(
+            IPC_UI_NAVIGATE_TO,
+            generatePath(PLAYLIST_SHOW, { _id: new Date().toISOString() })
+          )
+        },
         {
           label: 'Show All',
           accelerator: 'cmd+p',

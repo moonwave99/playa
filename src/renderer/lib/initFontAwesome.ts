@@ -10,7 +10,8 @@ import {
   faVolumeUp,
   faMusic,
   faThList,
-  faListAlt
+  faListAlt,
+  faSearch
 } from '@fortawesome/free-solid-svg-icons';
 
 export default function initFontAwesome(): void {
@@ -25,6 +26,7 @@ export default function initFontAwesome(): void {
     faVolumeUp,
     faMusic,
     faThList,
-    faListAlt
+    faListAlt,
+    faSearch
   );
 }
