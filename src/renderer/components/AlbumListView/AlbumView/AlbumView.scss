@@ -14,14 +14,16 @@
     height: 1px;
     background-color: $albumSeparatorColor;
   }
+  &:not(.is-current) {
+    .album-cover {
+      @include playOverlay('../../../static/icons/album/play.svg', 33%);
+    }
+  }
   .album-aside {
     width: $albumCoverWidth;
     .album-cover {
       @include albumCover($albumCoverWidth);
       margin: 0 0 $mainUnit * 0.5 0;
-      &:hover {
-        @include playOverlay('../../../static/icons/album/play.svg', 33%);
-      }
     }
     .album-actions {
       text-align: center;
@@ -30,6 +32,14 @@
       }
     }
   }
+  &.is-current {
+    .album-content {
+      header h2 {
+        color: $mainColor;
+      }
+    }
+  }
+
   .album-content {
     padding-left: $mainUnit;
     flex: 1;
@@ -42,6 +52,7 @@
         color: $highlightColor;
         font-weight: bold;
         letter-spacing: .01em;
+        transition: color .3s ease-in-out;
       }
       h3 {
         margin: 0;
@@ -54,6 +65,9 @@
     .album-artist {
       text-decoration: underline;
       color: $lightColor;
+      &:hover {
+        color: $highlightColor;
+      }
     }
     .album-type {
       @include albumTypeColor();

@@ -21,7 +21,7 @@
     color: $backgroundLightColor;
     transition: color .3s ease-in-out;
   }
-  &:hover {
+  &:not(.is-current):hover {
     background-color: $backgroundLightColor;
     &:before {
       color: $highlightColor;
