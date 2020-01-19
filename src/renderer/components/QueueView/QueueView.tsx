@@ -25,7 +25,7 @@ export const QueueView: FC<QueueViewProps> = () => {
 
   useEffect(() => {
     dispatch(updateTitle(`playback queue: ${queue.length} albums`));
-  }, []);
+  }, [queue]);
 
   function onAlbumContextMenu(album: Album): void {
     dispatch(showContextMenu({
