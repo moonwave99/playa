@@ -3,9 +3,12 @@
 
 .search-result-list-empty-component {
 	margin: 0;
-	padding: 0 $mainUnit $mainUnit $mainUnit;
+	padding: 2 * $mainUnit 0;
 	height: $mainUnit;
 	line-height: $mainUnit;
+	font-size: $mainUnit;
+	opacity: .5;
+	text-align: center;
 }
 
 .search-result-list {
