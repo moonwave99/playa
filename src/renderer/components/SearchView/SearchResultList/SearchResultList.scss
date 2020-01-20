@@ -1,10 +1,15 @@
 @import "../../../styles/variables";
 @import "../../../styles/mixins";
 
+.search-result-list-empty-component {
+	margin: 0;
+	padding: 0 $mainUnit $mainUnit $mainUnit;
+	height: $mainUnit;
+	line-height: $mainUnit;
+}
+
 .search-result-list {
-	margin: 0 0 $mainUnit 0;
-	padding: 0;
-	list-style: none;
+	padding: 0 $mainUnit $mainUnit $mainUnit;
   overflow: auto;
 
 	&-enter {
@@ -24,8 +29,15 @@
     opacity: 0;
     transition: opacity 300ms, transform 300ms;
   }
-	.search-result-list-empty-component {
-		padding-left: $mainUnit;
+	.search-result-list-header {
+		height: $mainUnit;
+		line-height: $mainUnit;
+		tr {
+			th {
+				text-align: left;
+				padding: 0 2rem;
+			}
+		}
 	}
 	.search-result-list-item {
 		align-items: center;
@@ -36,20 +48,20 @@
 		&:hover{
 			background-color: $backgroundLightColor;
 		}
-		> span {
-			display: inline-block;
-		}
-		.year {
-			width: 8 * 1.6rem;
-			text-align: center;
-		}
-		.artist {
-			min-width: 12 * 1.6rem;
-			color: $highlightColor;
-			padding-right: 2rem;
+		.cell {
+			&-year,
+			&-artist,
+			&-title, {
+				padding: 0 2rem;
+			}
+			&-artist {
+				min-width: 12 * 1.6rem;
+				color: $highlightColor;
+			}
 		}
 		.tag {
 			@include albumTypeBackground();
+			display: block;
 			color: $highlightColor;
 			font-size: .75rem;
 			border-radius: .25rem;

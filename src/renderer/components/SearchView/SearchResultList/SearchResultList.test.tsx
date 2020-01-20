@@ -13,7 +13,7 @@ test.skip('renders n items when n results', () => {
       onResultContextMenu={jest.fn()}
       onResultDoubleClick={jest.fn()}/>
   );
-  expect(wrapper.find('li').length).toBe(albums.length);
+  expect(wrapper.find('tr').length).toBe(albums.length);
 });
 
 
@@ -26,5 +26,5 @@ test('renders empty component when 0 results', () => {
       onResultContextMenu={jest.fn()}
       onResultDoubleClick={jest.fn()}/>
   );
-  expect(wrapper.find('.search-result-list-empty-component').length).toBe(1);
+  expect(wrapper.hasClass('search-result-list-empty-component')).toBe(true);
 });
