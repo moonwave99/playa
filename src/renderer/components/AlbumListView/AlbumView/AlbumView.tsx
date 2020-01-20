@@ -1,4 +1,4 @@
-import React, { FC, ReactElement, SyntheticEvent, useEffect } from 'react';
+import React, { FC, ReactElement, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, generatePath } from 'react-router-dom';
 import cx from 'classnames';
@@ -54,8 +54,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
     dispatch(getAlbumContentRequest(album));
   }
 
-  function onCoverDoubleClick(event: SyntheticEvent): void {
-    event.preventDefault();
+  function onCoverDoubleClick(album: Album): void {
     onDoubleClick(album);
   }
 
@@ -80,13 +79,12 @@ export const AlbumView: FC<AlbumViewProps> = ({
   return (
     <article className={albumClasses}>
       <aside className="album-aside">
-        <div onDoubleClick={onCoverDoubleClick}>
-          <CoverView
-            className="album-cover"
-            src={cover}
-            album={album}
-            onContextMenu={onContextMenu}/>
-        </div>
+        <CoverView
+          className="album-cover"
+          src={cover}
+          album={album}
+          onDoubleClick={onCoverDoubleClick}
+          onContextMenu={onContextMenu}/>
         <div className="album-actions">
         { notFoundTracks && renderNotFoundTracksButton() }
         </div>
