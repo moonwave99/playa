@@ -50,10 +50,6 @@ export default function openContextMenu(options: ContextMenuOptions, dispatch?: 
           click(): void { ipc.send(IPC_SYS_OPEN_URL, SEARCH_URLS.RYM, query) }
         },
         {
-          label: `Search '${fullTitle}' on rateyourmusic`,
-          click(): void { ipc.send(IPC_SYS_OPEN_URL, SEARCH_URLS.RYM, query) }
-        },
-        {
           label: `Search '${fullTitle}' on Discogs`,
           click(): void { ipc.send(IPC_SYS_OPEN_URL, SEARCH_URLS.DISCOGS, query) }
         }
