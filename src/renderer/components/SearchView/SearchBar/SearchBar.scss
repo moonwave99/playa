@@ -3,7 +3,7 @@
 
 .search-bar {
 	margin: 0;
-	padding: $mainUnit;
+	padding: $mainUnit $mainUnit $mainUnit / 2 $mainUnit;
 	display: flex;
 	.search-input,
 	button {

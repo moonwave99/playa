@@ -11,42 +11,35 @@
 .search-result-list {
 	padding: 0 $mainUnit $mainUnit $mainUnit;
   overflow: auto;
-
-	&-enter {
-    opacity: 0;
-  }
-
-  &-enter-active {
-    opacity: 1;
-    transition: opacity 300ms;
-  }
-
-  &-exit {
-    opacity: 1;
-  }
-
-  &-exit-active {
-    opacity: 0;
-    transition: opacity 300ms, transform 300ms;
-  }
+	width: 100%;
+	border-spacing: 0;
+	border-collapse: collapse;
+	@include fadeInOut();
 	.search-result-list-header {
-		height: $mainUnit;
 		line-height: $mainUnit;
+		color: $highlightColor;
 		tr {
 			th {
 				text-align: left;
 				padding: 0 2rem;
+				&.header-year,
+				&.header-type {
+					text-align: center;
+				}
+				&.header-type {
+					padding: 0 $mainUnit 0 0;
+				}
 			}
 		}
 	}
 	.search-result-list-item {
-		align-items: center;
-		padding-left: $mainUnit;
 		margin: 0;
-		height: $mainUnit;
 		line-height: $mainUnit;
 		&:hover{
 			background-color: $backgroundLightColor;
+			.cell.cell-cover figure {
+				@include albumCover($searchResultsCoverWidth, $backgroundColor);
+			}
 		}
 		.cell {
 			&-year,
@@ -55,8 +48,22 @@
 				padding: 0 2rem;
 			}
 			&-artist {
-				min-width: 12 * 1.6rem;
 				color: $highlightColor;
+			}
+			&-cover {
+				width: $searchResultsCoverWidth;
+				padding: .25rem 0 .25rem $mainUnit;
+				figure {
+					@include albumCover($searchResultsCoverWidth);
+					@include playOverlay('../../../static/icons/album/play.svg');
+				}
+			}
+			&-year,
+			&-type {
+				text-align: center;
+			}
+			&-type{
+				padding-right: $mainUnit;
 			}
 		}
 		.tag {
@@ -66,9 +73,9 @@
 			font-size: .75rem;
 			border-radius: .25rem;
 			text-align: center;
-			width: 8 * 1.6rem;
 			height: 2rem;
 			line-height: 2rem;
+			padding: 0 1rem;
 		}
 	}
 }

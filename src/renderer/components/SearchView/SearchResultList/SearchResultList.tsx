@@ -20,22 +20,27 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
   onResultDoubleClick
 }) => {
 
-  const columns = useMemo(() => [{
-     Header: 'Type',
-     accessor: 'type'
-   },
-   {
-     Header: 'Year',
-     accessor: 'year'
-   },
-   {
-     Header: 'Artist',
-     accessor: 'artist'
-   },
-   {
-     Header: 'Title',
-     accessor: 'title'
-   },
+  const columns = useMemo(() => [
+    {
+      Header: '',
+      id: 'cover'
+    },
+    {
+      Header: 'Artist',
+      accessor: 'artist'
+    },
+    {
+      Header: 'Title',
+      accessor: 'title'
+    },
+    {
+      Header: 'Year',
+      accessor: 'year'
+    },    
+    {
+      Header: 'Type',
+      accessor: 'type'
+    }
  ],[]);
 
   const {
@@ -67,7 +72,7 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
         <thead className="search-result-list-header">
           <tr>
           {headers.map(column => (
-            <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+            <th {...column.getHeaderProps()} className={`header-${column.id}`}>{column.render('Header')}</th>
           ))}
           </tr>
         </thead>
