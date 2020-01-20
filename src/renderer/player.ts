@@ -16,7 +16,8 @@ export const PLAYER_EVENTS = {
   PLAY: 'player:play',
   PAUSE: 'player:pause',
   TICK: 'player:tick',
-  TRACK_ENDED: 'player:track-ended'
+  TRACK_ENDED: 'player:track-ended',
+  ERROR: 'player:error'
 };
 
 const DEFAULT_RESOLUTION = 1000;
@@ -36,6 +37,7 @@ export default class Player extends EventEmitter {
     this.audioElement.onplaying = this._onPlaying.bind(this);
     this.audioElement.onpause = this._onPause.bind(this);
     this.audioElement.onended = this._onEnded.bind(this);
+    this.audioElement.onerror = this._onError.bind(this);
   }
   loadTrack(path: string): void {
     if (path) {
@@ -79,6 +81,10 @@ export default class Player extends EventEmitter {
   isPlaying(): boolean {
     return this.playing;
   }
+  onLoad(handler: (event: Event) => void): () => void {
+    this.audioElement.addEventListener('loadedmetadata', handler);
+    return (): void => this.audioElement.removeEventListener('loadedmetadata', handler);
+  }
   private _onPlaying(): void {
     this._startTimer();
     this.playing = true;
@@ -93,6 +99,9 @@ export default class Player extends EventEmitter {
     this._clearTimer();
     this.playing = false;
     this.emit(PLAYER_EVENTS.TRACK_ENDED, this.audioElement.src);
+  }
+  private _onError(error: Error): void {
+    this.emit(PLAYER_EVENTS.ERROR, error, this.getPlaybackInfo());
   }
   private _startTimer(): void {
     if (this.timer) {

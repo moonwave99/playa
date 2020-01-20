@@ -8,7 +8,7 @@ import reducer, {
   COVER_GET_RESPONSE
 } from './cover';
 
-describe('album actions', () => {
+describe('cover actions', () => {
   describe('getCoverRequest', () => {
     it.skip('should dispatch getCoverRequest request', () => {
       const dispatch = jest.fn();

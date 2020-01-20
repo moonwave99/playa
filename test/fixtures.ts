@@ -46,6 +46,12 @@ export const albums: Album[] = [
   }
 ];
 
-export const tracks: Track[] = [
-
-];
+export const tracks: Track[] = [{
+  _id: '1',
+  path: '/path/to/track_1',
+  found: true,
+  artist: 'Slowdive',
+  title: 'Spanish Air',
+  number: 1,
+  duration: 123
+}];

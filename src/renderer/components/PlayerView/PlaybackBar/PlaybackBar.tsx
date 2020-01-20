@@ -1,4 +1,4 @@
-import React, { ReactElement, MouseEvent, useRef, useEffect } from 'react';
+import React, { ReactElement, MouseEvent, useState, useEffect, useRef } from 'react';
 import { Album } from '../../../store/modules/album';
 import { Track } from '../../../store/modules/track';
 import { formatDuration } from '../../../utils/datetimeUtils';
@@ -9,7 +9,9 @@ type PlaybackBarProps = {
   currentTrack: Track;
   currentTime: number;
   duration: number;
+  waveform: string;
   onProgressBarClick: Function;
+  onWaveformNotFound: Function;
 }
 
 const PROGRESS_AREA_CLICK_DEFER_TIME = 100;
@@ -20,10 +22,13 @@ export const PlaybackBar = ({
   currentTrack,
   currentTime,
   duration,
-  onProgressBarClick
+  waveform,
+  onProgressBarClick,
+  onWaveformNotFound
 }: PlaybackBarProps): ReactElement => {
   const progressAreaRef = useRef(null);
   const progressCursorRef = useRef(null);
+  const [waveformLoaded, setWaveformLoaded] = useState(false);
 
   function disableTransition(time: number): void {
     progressAreaRef.current.classList.toggle('no-transition', true);
@@ -59,6 +64,15 @@ export const PlaybackBar = ({
     progressCursorRef.current.style.opacity = 0;
   }
 
+  function onWaveformLoad(): void {
+    setWaveformLoaded(true);
+  }
+
+  function onWaveformError(): void {
+    setWaveformLoaded(false);
+    onWaveformNotFound();
+  }
+
   const percent = (currentTime / duration) * 100;
   const progressAreaStyle = {
     transform: `translateX(${percent}%)`,
@@ -71,6 +85,13 @@ export const PlaybackBar = ({
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
       onClick={onClick}>
+      <div className="waveform">
+        <img
+          src={waveform}
+          onLoad={onWaveformLoad}
+          onError={onWaveformError}
+          className={waveformLoaded ? 'loaded' : null}/>
+      </div>
       <span className="duration duration-elapsed">{formatDuration(Math.ceil(currentTime))}</span>
       <div className="info-wrapper">
         <p className="current-track-title">{currentTrack.title}</p>

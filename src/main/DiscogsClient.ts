@@ -1,8 +1,9 @@
 import { Client } from 'disconnect';
 import * as fs from 'fs';
 import * as Path from 'path';
+import { saveData } from './saveData';
 import { EntityHashMap } from '../renderer/utils/storeUtils';
-import { AlbumNotFoundError, FileSystemError } from '../errrors';
+import { AlbumNotFoundError } from '../errrors';
 
 type Credentials = {
   consumerKey: string;
@@ -16,12 +17,20 @@ export default class DiscogsClient {
   db: Function;
   cache: EntityHashMap<string>;
   disabled: boolean;
-  constructor(coversPath: string, userAgent: string, credentials: Credentials, disabled: boolean) {
+  debug: boolean;
+  constructor(
+    coversPath: string,
+    userAgent: string,
+    credentials: Credentials,
+    disabled: boolean,
+    debug: boolean
+  ) {
     this.coversPath = coversPath;
     this.credentials = credentials;
     this.discogs = new Client(userAgent, credentials);
     this.cache = {};
     this.disabled = disabled;
+    this.debug = debug;
   }
 
   async getAlbumCover(artist: string, title: string, _id: string): Promise<string> {
@@ -39,8 +48,17 @@ export default class DiscogsClient {
       return '';
     }
 
-    const imageData = await this._getAlbumCoverFromDiscogs(artist, title, _id);
-    const result = await this._persistImage(imageData, imagePath);
+    let imageData;
+    try {
+      imageData = await this._getAlbumCoverFromDiscogs(artist, title, _id);
+    } catch (error) {
+      if (error instanceof AlbumNotFoundError) {
+        this.debug && console.log(`[Discogs] no cover found for ${artist} - ${title} [${_id}]`);
+        return null;
+      }
+    }
+
+    const result = await saveData(imageData, imagePath, 'binary');
     if (result) {
       this.cache[_id] = imagePath;
       return this.cache[_id];
@@ -54,20 +72,5 @@ export default class DiscogsClient {
       throw new AlbumNotFoundError(`No results for: [${_id}] ${artist} - ${title}`);
     }
     return await db.getImage(results[0].cover_image);
-  }
-
-  async _persistImage(imageData: string, imagePath: string): Promise<string> {
-    try {
-      return new Promise((resolve, reject) => {
-        fs.writeFile(imagePath, imageData, 'binary', (error) => {
-          if (error) {
-            reject(error);
-          }
-          resolve(imagePath);
-        })
-      });
-    } catch (error) {
-      throw new FileSystemError(`Error writing to ${imagePath}`);
-    }
   }
 }

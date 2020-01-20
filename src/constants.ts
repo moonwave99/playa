@@ -17,8 +17,11 @@ export enum SEARCH_URLS {
 }
 
 export const COLORS = {
+  MAIN_COLOR: '#9b4dca',
   SKELETON_COLOR: '#282828'
 };
+
+export const WAVEFORM_PEAKS_COUNT = 1000;
 
 export const IPC_MESSAGES = {
   IPC_ERROR: 'error',
@@ -44,6 +47,8 @@ export const IPC_MESSAGES = {
   IPC_SEARCH_RESPONSE : 'search:response',
   IPC_COVER_GET_REQUEST: 'cover:get:request',
   IPC_COVER_GET_RESPONSE: 'cover:get:response',
+  IPC_WAVEFORM_SAVE_REQUEST: 'waveform:save:request',
+  IPC_WAVEFORM_GET_BASE_PATH: 'waveform:get-base-path',
   IPC_DIALOG_SHOW_MESSAGE: 'dialog:show-message',
   IPC_ALBUM_GET_SINGLE_INFO: 'album:get-single:info'
 };

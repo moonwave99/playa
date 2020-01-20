@@ -3,20 +3,26 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import cx from 'classnames';
+import sha1 from 'sha1';
 import { PlaybackBar } from './PlaybackBar/PlaybackBar';
 import { CoverView } from '../AlbumListView/AlbumView/CoverView/CoverView';
 import { playerSelector, togglePlayback, playTrack, seekTo } from '../../store/modules/player';
+import { getWaveformRequest } from '../../store/modules/waveform';
 import { getPrevTrack, getNextTrack } from '../../utils/tracklistUtils';
 import Player, { PlaybackInfo, PLAYER_EVENTS } from '../../player';
+
 import { QUEUE } from '../../routes';
+import { confirmDialog } from '../../utils/dialogUtils';
 import './PlayerView.scss';
 
 type PlayerViewProps = {
 	player: Player;
+	waveformBasePath: string;
 }
 
 export const PlayerView: FC<PlayerViewProps> = ({
-	player
+	player,
+	waveformBasePath
 }): ReactElement => {
 	const history = useHistory();
 	const dispatch = useDispatch();
@@ -27,8 +33,17 @@ export const PlayerView: FC<PlayerViewProps> = ({
     currentAlbum,
     currentTrack,
 		queue,
-		cover
+		cover,
+		waveform
   } = useSelector(playerSelector);
+
+	function handlePlayerError(_error: Error, info: PlaybackInfo): void {
+		confirmDialog({
+			title: 'Cannot find track',
+			message: `Cannot find track: ${info.currentTrack}`,
+			buttons: ['OK']
+		});
+	}
 
 	useEffect(() => {
 		function handlePlayerUpdate({ currentTime, duration, isPlaying }: PlaybackInfo): void {
@@ -38,10 +53,12 @@ export const PlayerView: FC<PlayerViewProps> = ({
 		player.on(PLAYER_EVENTS.PLAY, handlePlayerUpdate);
 		player.on(PLAYER_EVENTS.PAUSE, handlePlayerUpdate);
 		player.on(PLAYER_EVENTS.TICK, handlePlayerUpdate);
+		player.on(PLAYER_EVENTS.ERROR, handlePlayerError);
 		return (): void => {
 			player.removeListener(PLAYER_EVENTS.PLAY, handlePlayerUpdate);
 			player.removeListener(PLAYER_EVENTS.PAUSE, handlePlayerUpdate);
 			player.removeListener(PLAYER_EVENTS.TICK, handlePlayerUpdate);
+			player.removeListener(PLAYER_EVENTS.ERROR, handlePlayerError);
 		}
 	}, [playbackInfo, isPlaying]);
 
@@ -100,8 +117,22 @@ export const PlayerView: FC<PlayerViewProps> = ({
 		setPlaybackInfo([currentTime, duration]);
 	}
 
-	function onCoverClick(): void{
+	function onCoverClick(): void {
 		history.replace(QUEUE);
+	}
+
+	function onWaveformNotFound(): void {
+		dispatch(getWaveformRequest(currentTrack));
+	}
+
+	function getWaveformPath(): string {
+		if (waveform) {
+			return waveform;
+		}
+		if (!currentTrack) {
+			return null;
+		}
+		return `file://${waveformBasePath}/${sha1(currentTrack._id)}.svg`;
 	}
 
 	const playbackButtonClasses = cx(
@@ -138,6 +169,8 @@ export const PlayerView: FC<PlayerViewProps> = ({
 					currentAlbum={currentAlbum}
 					currentTime={playbackInfo[0]}
 					duration={playbackInfo[1]}
+					waveform={getWaveformPath()}
+					onWaveformNotFound={onWaveformNotFound}
 					onProgressBarClick={onProgressBarClick}/>
 			}
 		</section>

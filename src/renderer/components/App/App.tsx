@@ -29,11 +29,13 @@ import {
 type AppProps = {
   player: Player;
   lastOpenedPlaylistId: Playlist['_id'];
+  waveformBasePath: string;
 }
 
 export const App: FC<AppProps> = ({
   player,
-  lastOpenedPlaylistId
+  lastOpenedPlaylistId,
+  waveformBasePath
 }): ReactElement => {
   const history = useHistory();
   const dispatch = useDispatch();
@@ -110,7 +112,7 @@ export const App: FC<AppProps> = ({
         </div>
       </div>
       <div className="player-wrapper">
-        <PlayerView player={player}/>
+        <PlayerView player={player} waveformBasePath={waveformBasePath}/>
       </div>
     </main>
   );

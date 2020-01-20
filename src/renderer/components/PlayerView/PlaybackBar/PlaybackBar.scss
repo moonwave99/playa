@@ -15,6 +15,28 @@
     background-color: $mainColor;
     z-index: 10;
   }
+  .waveform {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2 * $playerHeight;
+    z-index: 0;
+    opacity: 0.3;
+    img {
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      &.loaded {
+        opacity: 1;
+        transition: opacity .3s ease-in;
+      }
+    }
+  }
+  .duration,
+  .info-wrapper {
+    z-index: 1010;
+  }
   .duration {
     display: flex;
     align-self: center;

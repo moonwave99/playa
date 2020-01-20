@@ -2,10 +2,12 @@ import { app, BrowserWindow, shell } from 'electron';
 import { is } from 'electron-util';
 import * as Path from 'path';
 import * as url from 'url';
+import getUserDataPath from './getUserDataPath';
 
 import initMenu from './initializers/initMenu';
 import initDatabase from './initializers/initDatabase';
 import initDiscogsClient from './initializers/initDiscogsClient';
+import initWaveform from './initializers/initWaveform';
 import initURLHandler from './initializers/initURLHandler';
 import initAppState from './initializers/initAppState';
 import initDialog from './initializers/initDialog';
@@ -65,10 +67,9 @@ function createWindow({
   }
 }
 
-let userDataPath = app.getPath('userData');
+const userDataPath = getUserDataPath();
 let disableRequests = false;
 if (is.development) {
-  userDataPath = userDataPath.replace('Electron', APP_NAME);
   disableRequests = process.env.DISABLE_DISCOGS_REQUESTS === 'true';
 }
 initDialog();
@@ -82,6 +83,8 @@ initDiscogsClient({
   discogsSecret: DISCOGS_SECRET,
   disableRequests
 });
+
+initWaveform(userDataPath);
 
 const appState = initAppState(userDataPath);
 const { lastWindowSize, lastWindowPosition } = appState.getState();

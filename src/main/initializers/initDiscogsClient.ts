@@ -29,7 +29,8 @@ export default function initDiscogsClient({
     coversPath,
     `${appName}/${appVersion}`,
     { consumerKey: discogsKey, consumerSecret: discogsSecret },
-    disableRequests
+    disableRequests,
+    process.env.DEBUG === 'true'
   );
 
   ipc.handle(IPC_COVER_GET_REQUEST, async (_event, { artist, title, _id }) =>

@@ -14,9 +14,17 @@ type PlayerSelectorInfo = {
   currentTrack: Track;
   queue: Album[];
   cover: string;
+  waveform: string;
 }
 
-export function playerSelector({ player, playlists, albums, tracks, covers }: ApplicationState): PlayerSelectorInfo {
+export function playerSelector({
+  player,
+  playlists,
+  albums,
+  tracks,
+  covers,
+  waveforms
+}: ApplicationState): PlayerSelectorInfo {
   const {
     currentPlaylistId,
     currentAlbumId,
@@ -28,6 +36,7 @@ export function playerSelector({ player, playlists, albums, tracks, covers }: Ap
     currentAlbum: albums.allById[currentAlbumId],
     currentTrack: tracks.allById[currentTrackId],
     cover: covers.allById[currentAlbumId],
+    waveform: waveforms.allById[currentTrackId],
     queue
   };
 }

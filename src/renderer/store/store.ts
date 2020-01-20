@@ -12,6 +12,7 @@ import albumReducer, { AlbumState } from './modules/album';
 import searchReducer, { SearchState } from './modules/search';
 import trackReducer, { TrackState } from './modules/track';
 import coverReducer, { CoverState } from './modules/cover';
+import waveformReducer, { WaveformState } from './modules/waveform';
 
 const history = createHashHistory();
 const initialState = {};
@@ -25,6 +26,7 @@ export interface ApplicationState {
   search: SearchState;
   tracks: TrackState;
   covers: CoverState;
+  waveforms: WaveformState;
 }
 
 function createRootReducer (history: History, player: Player): Reducer {
@@ -36,7 +38,8 @@ function createRootReducer (history: History, player: Player): Reducer {
     albums: albumReducer,
     search: searchReducer,
     tracks: trackReducer,
-    covers: coverReducer
+    covers: coverReducer,
+    waveforms: waveformReducer
   });
 }
 
