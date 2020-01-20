@@ -34,17 +34,13 @@ async function loadMetadata(paths: string[]): Promise<MetadataResult[]> {
   );
 }
 
-// #TODO:
-// 1. persist tracks in db cache;
-// 2. handle errors;
-// 3. test the thing.
 export default async function loadTracklist(ids: string[], db: Database): Promise<Track[]> {
   const results = await db.getList<Track>(ids);
   if (results.length > 0) {
     return results;
   }
   const meta = await loadMetadata(ids);
-  return meta.map(({ _id, metadata, status }) => {
+  const loadedTracks = meta.map(({ _id, metadata, status }) => {
     if (status === TrackStatus.OK) {
       const { duration } = metadata.format;
       const { title, artist, track } = metadata.common;
@@ -68,4 +64,8 @@ export default async function loadTracklist(ids: string[], db: Database): Promis
       duration: null
     }
   });
+  await db.saveBulk<Track>(
+    loadedTracks.filter(({ found }) => found)
+  );
+  return loadedTracks;
 }

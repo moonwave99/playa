@@ -19,13 +19,15 @@ interface Row<T> {
 }
 
 export default class Database {
-  protected db: any;  // eslint-disable-line
+  private db: any;  // eslint-disable-line
+  private debug: boolean;
   constructor(databasePath: string, databaseName: string, debug: boolean){
     const LocalPouchDB = PouchDB.defaults({
       prefix: databasePath
     });
     this.db = new LocalPouchDB(databaseName);
-    if (debug) {
+    this.debug = debug;
+    if (this.debug) {
       PouchDB.replicate(
         this.db,
         `http://localhost:5984/${databaseName}`,
@@ -89,6 +91,14 @@ export default class Database {
       return Promise.resolve({ ...entity, _rev: response.rev });
     }
     throw new Error(`Problems persisting entity: ${_id} - ${_rev}`);
+  }
+
+  async saveBulk<T>(entities: T[]): Promise<T[]> {
+    const results = await this.db.bulkDocs(entities);
+    if (this.debug) {
+      console.log('[Database] Saving bulk: ', entities);
+    }
+    return results;
   }
 
   async delete<T extends Entity>(entity: T): Promise<Entity> {
