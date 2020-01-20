@@ -1,6 +1,6 @@
 import { remote, ipcRenderer as ipc } from 'electron';
 const { Menu, MenuItem } = remote;
-
+import { playTrack } from '../store/modules/player';
 import { IPC_MESSAGES, SEARCH_URLS } from '../../constants';
 const {
   IPC_SYS_REVEAL_IN_FINDER,
@@ -15,6 +15,7 @@ export enum ContextMenuTypes {
 }
 
 interface IsAlbum {
+  _id: string;
   path: string;
   title: string;
   artist: string;
@@ -25,13 +26,22 @@ export interface ContextMenuOptions {
   context: IsAlbum;
 }
 
-export default function openContextMenu(options: ContextMenuOptions): void {
+export default function openContextMenu(options: ContextMenuOptions, dispatch?: Function): void {
   const menu = new Menu();
   const query = `${options.context.artist} ${options.context.title}`;
   const fullTitle = `${options.context.artist} - ${options.context.title}`;
   switch (options.type) {
     case ContextMenuTypes.RESULT_LIST_ITEM:
     case ContextMenuTypes.ALBUM_COVER:
+      menu.append(new MenuItem({
+        label: `Play '${fullTitle}'`,
+        click(): void {
+          dispatch(playTrack({
+            albumId: options.context._id
+          }));
+        },
+      }));
+      menu.append(new MenuItem({ type: 'separator' }));
       menu.append(new MenuItem({
         label: `Show '${fullTitle}' in Finder`,
         click(): void {

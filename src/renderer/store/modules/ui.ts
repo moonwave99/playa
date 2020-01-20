@@ -64,7 +64,7 @@ export const updateTitle = (title: string): Function =>
 
 export const showContextMenu = (options: ContextMenuOptions): Function =>
   (dispatch: Function): void => {
-    openContextMenu(options);
+    openContextMenu(options, dispatch);
     dispatch({
       type: SHOW_CONTEXT_MENU,
       options
