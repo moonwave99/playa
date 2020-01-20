@@ -4,9 +4,11 @@ import initReducer, {
   playTrack,
   togglePlayback,
   seekTo,
+  unloadTrack,
   PLAYER_PLAY_TRACK,
   PLAYER_TOGGLE_PLAYBACK,
-  PLAYER_SEEK_TO
+  PLAYER_SEEK_TO,
+  PLAYER_UNLOAD_TRACK
 } from './player';
 
 import Player from '../../player';
@@ -42,6 +44,14 @@ describe('player actions', () => {
       position: 0
     });
   });
+
+  it('should dispatch unloadTrack request', () => {
+    const dispatch = jest.fn();
+    unloadTrack()(dispatch);
+    expect(dispatch).toHaveBeenCalledWith({
+      type: PLAYER_UNLOAD_TRACK
+    });
+  });
 });
 
 describe('player reducer', () => {
@@ -67,6 +77,12 @@ describe('player reducer', () => {
     expect(reducer(initialState, {
       type: PLAYER_SEEK_TO,
       position: 0
+    })).toEqual(initialState);
+  });
+
+  it('should handle PLAYER_UNLOAD_TRACK', () => {
+    expect(reducer({...initialState, ...{ currentTrackId: '1' }}, {
+      type: PLAYER_UNLOAD_TRACK
     })).toEqual(initialState);
   });
 });

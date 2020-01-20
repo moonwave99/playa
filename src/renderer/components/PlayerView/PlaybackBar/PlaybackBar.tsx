@@ -31,9 +31,9 @@ export const PlaybackBar = ({
   const [waveformLoaded, setWaveformLoaded] = useState(false);
 
   function disableTransition(time: number): void {
-    progressAreaRef.current.classList.toggle('no-transition', true);
+    progressAreaRef.current && progressAreaRef.current.classList.toggle('no-transition', true);
     setTimeout(
-      () => progressAreaRef.current.classList.toggle('no-transition', false)
+      () => progressAreaRef.current && progressAreaRef.current.classList.toggle('no-transition', false)
       , time
     );
   }

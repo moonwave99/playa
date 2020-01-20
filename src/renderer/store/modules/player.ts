@@ -53,6 +53,7 @@ export const PLAYER_PLAY_TRACK      = 'playa/player/PLAY_TRACK';
 export const PLAYER_TOGGLE_PLAYBACK = 'playa/player/PLAYER_TOGGLE_PLAYBACK';
 export const PLAYER_SEEK_TO         = 'playa/player/PLAYER_SEEK_TO';
 export const PLAYER_UPDATE_QUEUE    = 'playa/player/UPDATE_QUEUE';
+export const PLAYER_UNLOAD_TRACK    = 'playa/player/UNLOAD_TRACK';
 
 interface PlayTrackAction {
   type: typeof PLAYER_PLAY_TRACK;
@@ -75,12 +76,16 @@ interface UpdateQueueAction {
   type: typeof PLAYER_UPDATE_QUEUE;
   queue: Album[];
 }
+interface UnloadTrackAction {
+  type: typeof PLAYER_UNLOAD_TRACK;
+}
 
 export type PlayerActionTypes =
    PlayTrackAction
   | TogglePlaybackAction
   | SeekToAction
-  | UpdateQueueAction;
+  | UpdateQueueAction
+  | UnloadTrackAction;
 
 type PlayActionParams = {
   playlistId?: Playlist['_id'];
@@ -145,6 +150,13 @@ export const updateQueue = (queue: Album[] = []): Function =>
     });
   }
 
+export const unloadTrack = (): Function =>
+  (dispatch: Function): void => {
+    dispatch({
+      type: PLAYER_UNLOAD_TRACK
+    });
+  }
+
 const INITIAL_STATE: PlayerState = {
   queue: [] as Album[],
   currentPlaylistId: null,
@@ -183,6 +195,11 @@ export default function initReducer(player: Player) {
           ...state,
           queue: action.queue
         };
+      case PLAYER_UNLOAD_TRACK:
+        return {
+          ...state,
+          currentTrackId: null
+        }
       default:
         return state;
     }
