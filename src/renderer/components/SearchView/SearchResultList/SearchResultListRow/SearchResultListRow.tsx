@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Row, Cell } from 'react-table';
 import { useDrag } from 'react-dnd';
 import cx from 'classnames';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CoverView } from '../../../AlbumListView/AlbumView/CoverView/CoverView';
 import { ApplicationState } from '../../../../store/store';
 import { UIDragTypes } from '../../../../store/modules/ui';
@@ -13,6 +14,7 @@ import { getCoverRequest } from '../../../../store/modules/cover';
 type SearchResultListRowProps = {
   row: Row;
   album: Album;
+  isCurrent: boolean;
   onResultContextMenu: Function;
   onResultDoubleClick: Function;
 }
@@ -20,6 +22,7 @@ type SearchResultListRowProps = {
 export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
   row,
   album,
+  isCurrent,
   onResultContextMenu,
   onResultDoubleClick
 }) => {
@@ -39,7 +42,7 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
     collect: monitor => ({
       opacity: monitor.isDragging() ? 0.4 : 1,
     })
-  });  
+  });
 
   function onConTextMenu(): void {
     onResultContextMenu(album);
@@ -66,17 +69,20 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
               src={cover}/>
           </div>;
         break;
-      case 'type':
-        cellContent = <span className={cx('tag', `tag-${cell.value}`)}>{cell.value}</span>;
-        break;
       case 'artist':
         cellContent =
           <a href="#" onClick={onArtistClick}>
             {cell.value === VARIOUS_ARTISTS_ID ? 'V/A' : cell.value}
           </a>;
         break;
+      case 'title':
+        cellContent = <>{cell.value} { isCurrent ? <FontAwesomeIcon icon="volume-up"/> : null }</>;
+        break;
       case 'year':
         cellContent = cell.value || '-';
+        break;
+      case 'type':
+        cellContent = <span className={cx('tag', `tag-${cell.value}`)}>{cell.value}</span>;
         break;
       default:
         cellContent = cell.value;
@@ -85,9 +91,10 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
     return <td {...cell.getCellProps()} className={`cell cell-${cell.column.id}`}>{cellContent}</td>;
   }
 
+  const classNames = cx('search-result-list-item', { 'is-current' : isCurrent });
   return (
     <tr {...row.getRowProps()}
-      className="search-result-list-item"
+      className={classNames}
       style={{ opacity }}
       onContextMenu={onConTextMenu}>
       {row.cells.map(renderCell)}

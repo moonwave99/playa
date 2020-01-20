@@ -20,8 +20,9 @@ export const SearchView: FC<SearchViewProps> = () => {
   const {
     query,
     results,
-    isSearching
-  } = useSelector(({ search }: ApplicationState) => search);
+    isSearching,
+    currentAlbumId
+  } = useSelector(({ search, player }: ApplicationState) => ({...search, ...player }));
   const history = useHistory();
   const dispatch = useDispatch();
 
@@ -70,6 +71,7 @@ export const SearchView: FC<SearchViewProps> = () => {
             results={results}
             query={query}
             isSearching={isSearching}
+            currentAlbumId={currentAlbumId}
             onResultContextMenu={onResultContextMenu}
             onResultDoubleClick={onResultDoubleClick}/>
         </CSSTransition>

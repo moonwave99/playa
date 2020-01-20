@@ -49,6 +49,15 @@
 				@include albumCover($searchResultsCoverWidth, $backgroundColor);
 			}
 		}
+		&.is-current {
+			background-color: rgba($mainColor, .1);
+			transition: background-color .3s ease-in-out;
+		}
+		&:not(.is-current) {
+			.cell-cover figure {
+				@include playOverlay('../../../static/icons/album/play.svg');
+			}
+		}
 		.cell {
 			&-year,
 			&-artist,
@@ -66,7 +75,6 @@
 				padding: .25rem 0 .25rem .25rem;
 				figure {
 					@include albumCover($searchResultsCoverWidth);
-					@include playOverlay('../../../static/icons/album/play.svg');
 				}
 			}
 			&-year,

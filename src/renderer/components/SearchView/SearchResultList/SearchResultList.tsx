@@ -8,6 +8,7 @@ type SearchResultListProps = {
   results: Array<Album>;
   query: string;
   isSearching: boolean;
+  currentAlbumId?: Album['_id'];
   onResultContextMenu: Function;
   onResultDoubleClick: Function;
 };
@@ -16,6 +17,7 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
   results,
   query,
   isSearching,
+  currentAlbumId,
   onResultContextMenu,
   onResultDoubleClick
 }) => {
@@ -36,7 +38,7 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
     {
       Header: 'Year',
       accessor: 'year'
-    },    
+    },
     {
       Header: 'Type',
       accessor: 'type'
@@ -83,6 +85,7 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
               key={row.original._id}
               row={row}
               album={row.original}
+              isCurrent={row.original._id === currentAlbumId}
               onResultContextMenu={onResultContextMenu}
               onResultDoubleClick={onResultDoubleClick}/>
           })}
