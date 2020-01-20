@@ -791,6 +791,13 @@
     "@types/history" "*"
     "@types/react" "*"
 
+"@types/react-table@^7.0.3":
+  version "7.0.3"
+  resolved "https://registry.yarnpkg.com/@types/react-table/-/react-table-7.0.3.tgz#ded8918c61c7853c281076988d8ea18612c65967"
+  integrity sha512-iR+zL53bQi10tOpLyFh0L0X1LAf5KhHmeMxjZlIsID2K4L2t00wiZ1kA5j4MvuqfK37LdgWccH72ZmXhitQgdw==
+  dependencies:
+    "@types/react" "*"
+
 "@types/react-transition-group@^4.2.3":
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/@types/react-transition-group/-/react-transition-group-4.2.3.tgz#4924133f7268694058e415bf7aea2d4c21131470"
@@ -7225,11 +7232,6 @@ rc@^1.2.8:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
-react-addons-test-utils@^15.6.2:
-  version "15.6.2"
-  resolved "https://registry.yarnpkg.com/react-addons-test-utils/-/react-addons-test-utils-15.6.2.tgz#c12b6efdc2247c10da7b8770d185080a7b047156"
-  integrity sha1-wStu/cIkfBDae4dw0YUICnsEcVY=
-
 react-contenteditable@^3.3.3:
   version "3.3.3"
   resolved "https://registry.yarnpkg.com/react-contenteditable/-/react-contenteditable-3.3.3.tgz#73ea271a0e84d54516e6075c318d4372e5b95c70"
@@ -7310,6 +7312,11 @@ react-router@5.1.2, react-router@^5.1.2:
     react-is "^16.6.0"
     tiny-invariant "^1.0.2"
     tiny-warning "^1.0.0"
+
+react-table@^7.0.0-rc.15:
+  version "7.0.0-rc.15"
+  resolved "https://registry.yarnpkg.com/react-table/-/react-table-7.0.0-rc.15.tgz#bb855e4e2abbb4aaf0ed2334404a41f3ada8e13a"
+  integrity sha512-ofMOlgrioHhhvHjvjsQkxvfQzU98cqwy6BjPGNwhLN1vhgXeWi0mUGreaCPvRenEbTiXsQbMl4k3Xmx3Mut8Rw==
 
 react-test-renderer@^16.0.0-0:
   version "16.12.0"
