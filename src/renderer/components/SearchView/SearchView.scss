@@ -3,9 +3,10 @@
 .search-view {
   height: 100%;
   width: 100%;
+  display: flex;
+  flex-direction: column;
   .results-wrapper {
     overflow: auto;
-    padding: 0;
-    height: calc(100% - #{$searchBarHeight});
+    padding: 0 $mainUnit 2 * $mainUnit $mainUnit;
   }
 }
