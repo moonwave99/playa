@@ -65,21 +65,15 @@ a {
     width: $sidebarWidth;
 		display: flex;
 		height: 100%;
+		@media (max-width: $smallWindowThreshold) {
+			width: $smallSidebarWidth;
+		}
   }
 
   .main-wrapper {
 		display: flex;
 		flex: 1;
 		overflow: scroll;
-  }
-
-  .search-container {
-    background-color: $backgroundColor;
-    z-index:1000;
-    width: calc(100vw - #{$sidebarWidth});
-    margin-left: $sidebarWidth;
-    position: fixed;
-    top: 0;
   }
 
   .search-container-enter {

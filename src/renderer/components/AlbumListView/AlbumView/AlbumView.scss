@@ -5,6 +5,9 @@
   display: flex;
   margin-bottom: $mainUnit * 3;
   position: relative;
+  @media (max-width: $smallWindowThreshold) {
+    flex-direction: column;
+  }
   &:after {
     content: '';
     position: absolute;
@@ -43,6 +46,9 @@
   .album-content {
     padding-left: $mainUnit;
     flex: 1;
+    @media (max-width: $smallWindowThreshold) {
+      padding-left: 0;
+    }
     header {
       margin-bottom: $mainUnit * .5;
       h2 {

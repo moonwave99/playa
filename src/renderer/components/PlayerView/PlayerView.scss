@@ -11,6 +11,9 @@
     width: $sidebarWidth;
     display: flex;
     justify-content: space-between;
+    @media (max-width: $smallWindowThreshold) {
+      width: $smallSidebarWidth;
+    }
   }
   .player-controls {
     height: 100%;
