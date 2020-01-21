@@ -18,19 +18,29 @@ interface Row<T> {
   error?: boolean;
 }
 
+type DatabaseParams = {
+  path: string;
+  name: string;
+  debug?: boolean;
+}
+
 export default class Database {
   private db: any;  // eslint-disable-line
   private debug: boolean;
-  constructor(databasePath: string, databaseName: string, debug: boolean){
+  constructor({
+    path,
+    name,
+    debug = false
+  }: DatabaseParams) {
     const LocalPouchDB = PouchDB.defaults({
-      prefix: databasePath
+      prefix: path
     });
-    this.db = new LocalPouchDB(databaseName);
+    this.db = new LocalPouchDB(name);
     this.debug = debug;
     if (this.debug) {
       PouchDB.replicate(
         this.db,
-        `http://localhost:5984/${databaseName}`,
+        `http://localhost:5984/${name}`,
         { live: true }
       );
     }

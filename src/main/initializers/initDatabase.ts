@@ -18,12 +18,12 @@ const {
 } = IPC_MESSAGES;
 
 export default function initDatabase(userDataPath: string): void {
-  const databasePath = userDataPath + Path.sep + 'databases' + Path.sep;
-  const db = {
-    album: new Database(databasePath, 'album', true),
-    playlist: new Database(databasePath, 'playlist', true),
-    track: new Database(databasePath, 'track', true)
-  };
+  const path = userDataPath + Path.sep + 'databases' + Path.sep;
+  const debug = process.env.DEBUG === 'true';
+  const db: { [key: string]: Database }
+    = ['playlist', 'album', 'track'].reduce((memo, key) =>
+      ({ ...memo, [key]: new Database({ path, debug, name: key })})
+    , {});
 
   ipc.handle(IPC_PLAYLIST_GET_ALL_REQUEST,
     async () => await db.playlist.findAll()
