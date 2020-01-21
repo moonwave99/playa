@@ -1,5 +1,5 @@
 import { Playlist } from '../src/renderer/store/modules/playlist';
-import { Album } from '../src/renderer/store/modules/album';
+import { Album, AlbumTypes } from '../src/renderer/store/modules/album';
 import { Track } from '../src/renderer/store/modules/track';
 
 const createDatesList = [1,2,3].map(x => new Date(`2020-01-0${x}`).toISOString());
@@ -29,7 +29,7 @@ export const albums: Album[] = [
     artist: 'Slowdive',
     title: 'Just For a Day',
     year: 1991,
-    type: 'album',
+    type: AlbumTypes.Album,
     created: createDatesList[0],
     path: '/path/to/album_1',
     tracks: []
@@ -39,7 +39,7 @@ export const albums: Album[] = [
     artist: 'My Bloody Valentine',
     title: 'Loveless',
     year: 1991,
-    type: 'album',
+    type: AlbumTypes.Album,
     created: createDatesList[1],
     path: '/path/to/album_2',
     tracks: []
