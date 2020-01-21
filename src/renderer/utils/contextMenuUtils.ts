@@ -1,5 +1,6 @@
 import { remote, ipcRenderer as ipc, MenuItemConstructorOptions } from 'electron';
 const { Menu, MenuItem } = remote;
+import { Playlist, savePlaylistRequest } from '../store/modules/playlist';
 import { Album } from '../store/modules/album';
 import { playTrack } from '../store/modules/player';
 import { IPC_MESSAGES, SEARCH_URLS } from '../../constants';
@@ -8,7 +9,12 @@ const {
   IPC_SYS_OPEN_URL
 } = IPC_MESSAGES;
 
-export const RESULT_LIST_ITEM = 'RESULT_LIST_ITEM';
+export const PLAYLIST_CONTEXT_ACTIONS = 'playa/context-menu/playlist-actions';
+export const ALBUM_CONTEXT_ACTIONS = 'playa/context-menu/album-actions';
+
+export enum PlaylistActionItems {
+  REMOVE_ALBUM
+}
 
 export enum AlbumActionItems {
   PLAYBACK,
@@ -54,23 +60,19 @@ function searchOnlineActions(album: Album): MenuItemConstructorOptions[] {
   ]
 }
 
-type OpenAlbumContextMenuParams = {
+type GetAlbumContextMenuParams = {
+  type: typeof ALBUM_CONTEXT_ACTIONS;
   album: Album;
   actions: AlbumActionItems[];
   dispatch?: Function;
 }
 
-// #TODO:
-// 1. remove from playlist
-// 2. play after current
-// 3. enqueue
-export function openAlbumContextMenu({
+function getAlbumContextMenuActions({
   album,
   actions = [],
   dispatch
-}: OpenAlbumContextMenuParams): void {
-  const menu = new Menu();
-  actions.reduce((memo, action, index, original) => {
+}: GetAlbumContextMenuParams): MenuItemConstructorOptions[] {
+  return actions.reduce((memo, action, index, original) => {
     switch (action) {
       case AlbumActionItems.PLAYBACK:
         return [
@@ -93,6 +95,75 @@ export function openAlbumContextMenu({
       default:
         return memo;
     }
-  }, []).forEach(item => menu.append(new MenuItem(item)));
+  }, []);
+}
+
+function playlistActions(
+  playlist: Playlist,
+  selection: Album['_id'][],
+  dispatch: Function
+): MenuItemConstructorOptions[] {
+  return [
+    {
+      label: `Remove selected album(s) from playlist`,
+      click(): void { dispatch(savePlaylistRequest({
+        ...playlist,
+        albums: playlist.albums.filter(_id => selection.indexOf(_id) === -1)
+      }))}
+    }
+  ];
+}
+
+type GetPlaylistContextMenuParams = {
+  type: typeof PLAYLIST_CONTEXT_ACTIONS;
+  playlist: Playlist;
+  selection?: Album['_id'][];
+  actions: PlaylistActionItems[];
+  dispatch?: Function;
+}
+
+export function getPlaylistContextMenuActions({
+  playlist,
+  selection = [],
+  actions = [],
+  dispatch
+}: GetPlaylistContextMenuParams): MenuItemConstructorOptions[] {
+
+  return actions.reduce((memo, action, index, original) => {
+    switch (action) {
+      case PlaylistActionItems.REMOVE_ALBUM:
+        return [
+          ...memo,
+          ...playlistActions(playlist, selection, dispatch),
+          ...index < original.length ? [{ type : 'separator'}] : []
+        ];
+      default:
+        return memo;
+    }
+  }, []);
+}
+
+type ContextMenuParams =
+    GetAlbumContextMenuParams
+  | GetPlaylistContextMenuParams;
+
+export function openContextMenu(params: ContextMenuParams[]): void {
+  const menu = new Menu();
+  const groups: MenuItemConstructorOptions[][] = params.map((param) => {
+    switch (param.type) {
+      case ALBUM_CONTEXT_ACTIONS:
+        return getAlbumContextMenuActions(param);
+      case PLAYLIST_CONTEXT_ACTIONS:
+        return getPlaylistContextMenuActions(param);
+    }
+  });
+
+  groups.forEach((group, index) => {
+    group.forEach(item => menu.append(new MenuItem(item)));
+    if (index < groups.length) {
+      menu.append(new MenuItem({ type: 'separator' }));
+    }
+  });
+
   menu.popup({ window: remote.getCurrentWindow() });
 }

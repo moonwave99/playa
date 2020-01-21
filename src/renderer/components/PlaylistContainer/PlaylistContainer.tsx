@@ -11,7 +11,13 @@ import { Track } from '../../store/modules/track';
 import { playTrack } from '../../store/modules/player';
 import { toObj } from '../../utils/storeUtils';
 import { confirmDialog } from '../../utils/dialogUtils';
-import { openAlbumContextMenu, AlbumActionItems } from '../../utils/contextMenuUtils';
+import {
+  PLAYLIST_CONTEXT_ACTIONS,
+  ALBUM_CONTEXT_ACTIONS,
+  openContextMenu,
+  PlaylistActionItems,
+  AlbumActionItems
+} from '../../utils/contextMenuUtils';
 
 export const PlaylistContainer = (): ReactElement => {
   const dispatch = useDispatch();
@@ -70,15 +76,27 @@ export const PlaylistContainer = (): ReactElement => {
   }
 
   function onAlbumContextMenu(album: Album): void {
-    openAlbumContextMenu({
-      album,
-      dispatch,
-      actions: [
-        AlbumActionItems.PLAYBACK,
-        AlbumActionItems.SYSTEM,
-        AlbumActionItems.SEARCH_ONLINE
-      ]
-    });
+    openContextMenu([
+      {
+        type: PLAYLIST_CONTEXT_ACTIONS,
+        playlist,
+        selection: [album._id],
+        dispatch,
+        actions: [
+          PlaylistActionItems.REMOVE_ALBUM
+        ]
+      },
+      {
+        type: ALBUM_CONTEXT_ACTIONS,
+        album,
+        dispatch,
+        actions: [
+          AlbumActionItems.PLAYBACK,
+          AlbumActionItems.SYSTEM,
+          AlbumActionItems.SEARCH_ONLINE
+        ]
+      }
+    ]);
   }
 
   function onAlbumDoubleClick(album: Album, track: Track): void {

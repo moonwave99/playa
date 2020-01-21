@@ -7,7 +7,11 @@ import { Track } from '../../store/modules/track';
 import { playTrack } from '../../store/modules/player';
 import { updateTitle } from '../../store/modules/ui';
 import { toObj } from '../../utils/storeUtils';
-import { openAlbumContextMenu, AlbumActionItems } from '../../utils/contextMenuUtils';
+import {
+  ALBUM_CONTEXT_ACTIONS,
+  openContextMenu,
+  AlbumActionItems
+} from '../../utils/contextMenuUtils';
 import './QueueView.scss';
 
 type QueueViewProps = {
@@ -28,15 +32,18 @@ export const QueueView: FC<QueueViewProps> = () => {
   }, [queue]);
 
   function onAlbumContextMenu(album: Album): void {
-    openAlbumContextMenu({
-      album,
-      dispatch,
-      actions: [
-        AlbumActionItems.PLAYBACK,
-        AlbumActionItems.SYSTEM,
-        AlbumActionItems.SEARCH_ONLINE
-      ]
-    });
+    openContextMenu([
+      {
+        type: ALBUM_CONTEXT_ACTIONS,
+        album,
+        dispatch,
+        actions: [
+          AlbumActionItems.PLAYBACK,
+          AlbumActionItems.SYSTEM,
+          AlbumActionItems.SEARCH_ONLINE
+        ]
+      }      
+    ]);
   }
 
   function onAlbumDoubleClick(album: Album, track: Track): void {

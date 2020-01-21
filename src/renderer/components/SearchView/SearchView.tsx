@@ -9,7 +9,11 @@ import { updateTitle } from '../../store/modules/ui';
 import { Album } from '../../store/modules/album';
 import { searchRequest } from '../../store/modules/search';
 import { playTrack } from '../../store/modules/player';
-import { openAlbumContextMenu, AlbumActionItems } from '../../utils/contextMenuUtils';
+import {
+  ALBUM_CONTEXT_ACTIONS,
+  openContextMenu,
+  AlbumActionItems
+} from '../../utils/contextMenuUtils';
 import './SearchView.scss';
 
 type SearchViewProps = {
@@ -46,15 +50,18 @@ export const SearchView: FC<SearchViewProps> = () => {
   };
 
   function onResultContextMenu(album: Album): void {
-    openAlbumContextMenu({
-      album,
-      dispatch,
-      actions: [
-        AlbumActionItems.PLAYBACK,
-        AlbumActionItems.SYSTEM,
-        AlbumActionItems.SEARCH_ONLINE
-      ]
-    });
+    openContextMenu([
+      {
+        type: ALBUM_CONTEXT_ACTIONS,
+        album,
+        dispatch,
+        actions: [
+          AlbumActionItems.PLAYBACK,
+          AlbumActionItems.SYSTEM,
+          AlbumActionItems.SEARCH_ONLINE
+        ]
+      }
+    ]);
   }
 
   function onResultDoubleClick(album: Album): void {
