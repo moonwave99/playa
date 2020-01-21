@@ -2,17 +2,7 @@
 @import "../../../styles/mixins";
 
 .search-result-list-empty-component {
-	margin: 0;
-	padding: calc(var(--section-gutter) * 2) 0;
-	height: var(--section-gutter);
-	line-height: var(--section-gutter);
-	font-size: var(--section-gutter);
-	opacity: .5;
-	text-align: center;
-	max-width: 100%;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;	
+	@include emptyComponent();
 }
 
 .search-result-list {

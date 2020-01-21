@@ -68,4 +68,7 @@
       margin: 0;
     }
   }
+  .playlist-empty-placeholder {
+    @include emptyComponent();
+  }
 }
