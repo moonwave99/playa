@@ -71,7 +71,9 @@ export const AlbumView: FC<AlbumViewProps> = ({
   }
 
   function renderNotFoundTracksButton(): ReactElement {
-    return <button onClick={onNotFoundButtonClick} className="button button-outline">Reload tracks</button>
+    return <button
+      onClick={onNotFoundButtonClick}
+      className="button button-outline">Reload tracks</button>
   }
 
   const albumClasses = cx('album-view', { 'is-current': isCurrent });
@@ -97,9 +99,10 @@ export const AlbumView: FC<AlbumViewProps> = ({
           </h3>
         </header>
         <TracklistView
+          albumType={type}
           currentTrackId={currentTrackId}
           isAlbumFromVariousArtists={artist === VARIOUS_ARTISTS_ID}
-          rawTracks={album.tracks}
+          rawTracks={tracks}
           tracklist={tracklist}
           onTrackDoubleClick={onTrackDoubleClick}/>
       </section>

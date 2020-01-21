@@ -1,6 +1,7 @@
 import React, { FC, ReactElement, SyntheticEvent } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import cx from 'classnames';
+import { AlbumTypes } from '../../../../store/modules/album';
 import { Track } from '../../../../store/modules/track';
 import { formatTrackNumber } from '../../../../utils/tracklistUtils';
 import { formatDuration } from '../../../../utils/datetimeUtils';
@@ -8,6 +9,7 @@ import { COLORS } from '../../../../../constants';
 import './TracklistView.scss';
 
 type TracklistViewProps = {
+  albumType: AlbumTypes;
   currentTrackId: Track['_id'];
   tracklist: Track[];
   rawTracks: string[];
@@ -17,6 +19,7 @@ type TracklistViewProps = {
 
 // #TODO reload onClick if some tracks are not found
 export const TracklistView: FC<TracklistViewProps> = ({
+  albumType,
   currentTrackId,
   tracklist = [],
   rawTracks = [],
@@ -43,9 +46,16 @@ export const TracklistView: FC<TracklistViewProps> = ({
   }
 
   function renderArtist(artist: string): ReactElement {
-    return isAlbumFromVariousArtists
+    return isAlbumFromVariousArtists || albumType === AlbumTypes.Remix
       ? <span className="artist">{artist}</span>
       : null;
+  }
+
+  function renderTrackNumber(number: number): ReactElement {
+    const classNames = cx('track-number',
+      { 'hidden' : albumType === AlbumTypes.Remix}
+    );
+    return <span className={classNames}>{formatTrackNumber(number)}</span>;
   }
 
   function renderTrack(track: Track): ReactElement {
@@ -66,7 +76,7 @@ export const TracklistView: FC<TracklistViewProps> = ({
 
     return (
       <li key={_id} className={trackClassNames} onDoubleClick={onDoubleClick}>
-        <span className="track-number">{formatTrackNumber(number)}</span>
+        {renderTrackNumber(number)}
         <span className="playback-info">
           <FontAwesomeIcon
             icon={ isCurrent ? 'volume-up' : 'play'}

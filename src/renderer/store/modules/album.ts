@@ -10,12 +10,24 @@ const {
 
 export const VARIOUS_ARTISTS_ID = '_various-artists';
 
+export enum AlbumTypes {
+  Album = 'album',
+  Ep = 'ep',
+  Single = 'single',
+  Compilation = 'compilation',
+  Remix = 'remix',
+  Bootleg = 'bootleg',
+  Various = 'various',
+  Soundtrack = 'soundtrack',
+  Tribute = 'tribute'
+}
+
 export interface Album {
   _id: string;
   artist: string;
   title: string;
   year?: number;
-  type: string;
+  type: AlbumTypes;
   created: string;
   path: string;
   tracks: string[];
@@ -27,7 +39,7 @@ export function getDefaultAlbum(): Album {
     _id: null,
     artist: '',
     title: '',
-    type: 'album',
+    type: AlbumTypes.Album,
     created: now,
     path: '',
     tracks: []

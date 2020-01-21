@@ -36,7 +36,8 @@
           display: none;
         }
       }
-      &.is-current {
+      &.is-current,
+      &.is-current .artist {
         color: $mainColor;
       }
       .playback-info,
@@ -50,6 +51,9 @@
       .track-number {
         &:after {
           content: '.'
+        }
+        &.hidden {
+          visibility: hidden;
         }
       }
       .artist {
