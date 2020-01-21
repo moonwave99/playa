@@ -3,7 +3,7 @@
 
 .album-view {
   display: flex;
-  margin-bottom: $mainUnit * 3;
+  margin-bottom: calc(var(--section-gutter) * 3);
   position: relative;
   @media (max-width: $smallWindowThreshold) {
     flex-direction: column;
@@ -13,7 +13,7 @@
     position: absolute;
     width: 30%;
     left: 35%;
-    bottom: $mainUnit * -1.5;
+    bottom: calc(var(--section-gutter) * -1.5);
     height: 1px;
     background-color: $albumSeparatorColor;
   }
@@ -26,7 +26,7 @@
     width: $albumCoverWidth;
     .album-cover {
       @include albumCover($albumCoverWidth);
-      margin: 0 0 $mainUnit * 0.5 0;
+      margin: 0 0 calc(var(--section-gutter) * 0.5) 0;
     }
     .album-actions {
       text-align: center;

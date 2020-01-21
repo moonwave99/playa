@@ -88,6 +88,7 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
         ? <AlbumListView
             sortable={true}
             albums={albums}
+            albumView={albumView}
             originalOrder={playlist.albums}
             currentAlbumId={currentAlbumId}
             currentTrackId={currentTrackId}

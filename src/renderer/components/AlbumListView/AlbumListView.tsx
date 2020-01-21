@@ -1,4 +1,3 @@
-import { ipcRenderer as ipc, Event } from 'electron';
 import React, { ReactElement, FC, useState, useEffect, useCallback } from 'react';
 import { AlbumView } from './AlbumView/AlbumView';
 import { CompactAlbumView } from './CompactAlbumView/CompactAlbumView';
@@ -7,9 +6,6 @@ import { Track } from '../../store/modules/track';
 import { UIAlbumView } from '../../store/modules/ui';
 import { EntityHashMap, immutableMove } from '../../utils/storeUtils';
 
-import { IPC_MESSAGES } from '../../../constants';
-const { IPC_UI_TOGGLE_ALBUM_VIEW } = IPC_MESSAGES;
-
 import './AlbumListView.scss';
 
 type AlbumListViewProps = {
@@ -17,6 +13,7 @@ type AlbumListViewProps = {
   originalOrder: string[];
   currentAlbumId: Album['_id'];
   currentTrackId: Track['_id'];
+  albumView: UIAlbumView;
   onAlbumOrderChange?: Function;
   onAlbumContextMenu: Function;
   onAlbumDoubleClick: Function;
@@ -28,24 +25,18 @@ export const AlbumListView: FC<AlbumListViewProps> = ({
   originalOrder,
   currentAlbumId,
   currentTrackId,
+  albumView,
   onAlbumOrderChange,
   onAlbumContextMenu,
   onAlbumDoubleClick,
   sortable = false
 }) => {
-  const [albumView, setAlbumView] = useState(UIAlbumView.Extended);
   const [albumOrder, setAlbumOrder] = useState(originalOrder);
 
   useEffect(
     () => setAlbumOrder(originalOrder)
     , [originalOrder]
   );
-
-  useEffect(() => {
-    const handler = (_event: Event, _albumView: UIAlbumView): void => setAlbumView(_albumView);
-    ipc.on(IPC_UI_TOGGLE_ALBUM_VIEW, handler);
-    return (): typeof ipc => ipc.removeListener(IPC_UI_TOGGLE_ALBUM_VIEW, handler);
-  }, []);
 
   const onAlbumMove = useCallback(
     (dragIndex: number, hoverIndex: number): void => setAlbumOrder(immutableMove<Album['_id']>(albumOrder, dragIndex, hoverIndex))

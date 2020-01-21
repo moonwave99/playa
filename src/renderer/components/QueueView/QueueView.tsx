@@ -5,7 +5,7 @@ import { AlbumListView } from '../AlbumListView/AlbumListView';
 import { Album } from '../../store/modules/album';
 import { Track } from '../../store/modules/track';
 import { playTrack } from '../../store/modules/player';
-import { updateTitle } from '../../store/modules/ui';
+import { updateTitle, UIAlbumView } from '../../store/modules/ui';
 import { toObj } from '../../utils/storeUtils';
 import {
   ALBUM_CONTEXT_ACTIONS,
@@ -59,6 +59,7 @@ export const QueueView: FC<QueueViewProps> = () => {
       <h1>playback queue</h1>
       { queue.length > 0
         ? <AlbumListView
+            albumView={UIAlbumView.Extended}
             sortable={false}
             albums={toObj(queue)}
             originalOrder={queue.map(({ _id }) => _id)}

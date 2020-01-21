@@ -45,7 +45,7 @@ export const AllPlaylistsView: FC<AllPlaylistsViewProps> = ({
     columns,
     data: playlists,
   });
-  
+
   function renderCell(cell: Cell): ReactElement {
     const playlist = cell.row.original as Playlist;
     const { _id } = playlist;
@@ -74,7 +74,11 @@ export const AllPlaylistsView: FC<AllPlaylistsViewProps> = ({
         cellContent = cell.value;
         break;
     }
-    return <td {...cell.getCellProps()}>{cellContent}</td>;
+    return (
+      <td {...cell.getCellProps()} className={`cell cell-${cell.column.id}`}>
+        {cellContent}
+      </td>
+    );
   }
 
   return (
@@ -84,7 +88,7 @@ export const AllPlaylistsView: FC<AllPlaylistsViewProps> = ({
         <thead>
           <tr>
           {headers.map(column => (
-            <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+            <th {...column.getHeaderProps()} className={`header header-${column.id}`}>{column.render('Header')}</th>
           ))}
           </tr>
         </thead>

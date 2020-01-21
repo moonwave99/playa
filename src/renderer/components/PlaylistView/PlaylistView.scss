@@ -2,7 +2,7 @@
 @import "../../styles/mixins";
 
 .playlist-view {
-  padding: $mainUnit;
+  padding: var(--section-gutter);
   overflow: auto;
   height: 100%;
   width: 100%;
@@ -37,8 +37,11 @@
     }
     .playlist-view-actions{
       position: fixed;
-      top: $mainUnit * 1.1;
-      right: $mainUnit;
+      top: var(--section-gutter);
+      right: var(--section-gutter);
+      @media (max-width: $miniWindowThreshold) {
+        display: none;
+      }
       .playlist-view-action-button {
         margin: 0 0 0 .5rem;
         padding: 0;

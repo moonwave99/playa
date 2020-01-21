@@ -2,7 +2,7 @@
 @import "../../styles/mixins";
 
 .all-playlists-view {
-  padding: $mainUnit;
+  padding: var(--section-gutter);
   height: 100%;
   width: 100%;
   overflow: auto;
@@ -17,6 +17,11 @@
     tr {
       td, th {
         border-color: $backgroundLightColor;
+        @media (max-width: $miniWindowThreshold) {
+          &:not(.cell-title) {
+            display: none;
+          }
+        }
       }
       th {
         text-align: left;

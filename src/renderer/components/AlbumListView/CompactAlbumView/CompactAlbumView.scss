@@ -8,6 +8,7 @@
   position: relative;
   border: 2px solid transparent;
   transition: background-color .3s ease-in-out, border-color .3s ease-in-out;
+  border-bottom: 1px solid $backgroundLightColor;
   &.sortable::before {
     content: '⋮';
     cursor: move;
@@ -20,6 +21,9 @@
     font-size: 3rem;
     color: $backgroundLightColor;
     transition: color .3s ease-in-out;
+    @media (max-width: $miniWindowThreshold) {
+      left: -1.5rem;
+    }
   }
   &:not(.is-current):hover {
     background-color: $backgroundLightColor;
@@ -37,6 +41,9 @@
   &.is-current {
     border: 2px solid $mainColor;
     border-radius: .5rem;
+  }
+  @media (max-width: $miniWindowThreshold) {
+    padding: .5rem 0 .5rem 0rem;
   }
   .album-cover {
     @include albumCover($albumCoverCompactWidth);

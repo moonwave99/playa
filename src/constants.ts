@@ -4,7 +4,7 @@ export const IS_MACOS = (os.platform() === "darwin");
 
 export const DEFAULT_WIDTH = 1200;
 export const DEFAULT_HEIGHT = 800;
-export const MIN_WIDTH = DEFAULT_WIDTH / 2;
+export const MIN_WIDTH = DEFAULT_WIDTH / 3;
 export const MIN_HEIGHT = DEFAULT_HEIGHT / 2;
 
 export const RECENT_PLAYLIST_COUNT = 10;

@@ -71,12 +71,15 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
         break;
       case 'artist':
         cellContent =
-          <a href="#" onClick={onArtistClick}>
+          <a href="#" onClick={onArtistClick} title={cell.value}>
             {cell.value === VARIOUS_ARTISTS_ID ? 'V/A' : cell.value}
           </a>;
         break;
       case 'title':
-        cellContent = <>{cell.value} { isCurrent ? <FontAwesomeIcon icon="volume-up"/> : null }</>;
+        cellContent =
+          <span className="title" title={cell.value}>
+            {cell.value} { isCurrent ? <FontAwesomeIcon icon="volume-up"/> : null }
+          </span>;
         break;
       case 'year':
         cellContent = cell.value || '-';
@@ -88,7 +91,11 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
         cellContent = cell.value;
         break;
     }
-    return <td {...cell.getCellProps()} className={`cell cell-${cell.column.id}`}>{cellContent}</td>;
+    return (
+      <td {...cell.getCellProps()} className={`cell cell-${cell.column.id}`}>
+        {cellContent}
+      </td>
+    );
   }
 
   const classNames = cx('search-result-list-item', { 'is-current' : isCurrent });

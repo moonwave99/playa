@@ -30,7 +30,7 @@ export const SidebarView: FC<SidebarViewProps> = ({
 		<aside className="sidebar">
 			<section className="sidebar-header">
 				<div className="button-wrapper">
-					<Link to={SEARCH} className="button button-primary">
+					<Link to={SEARCH} className="button">
 						<FontAwesomeIcon icon="search" className="button-icon"/>
 						<span className="button-text">Search</span>
 					</Link>
@@ -43,7 +43,7 @@ export const SidebarView: FC<SidebarViewProps> = ({
 			<section className="sidebar-footer">
 				<SidebarPlaylistList playlists={recentPlaylists} currentPlaylistId={currentPlaylistId}/>
 				<div className="button-wrapper">
-					<button type="button" className="button button-primary" onClick={_onCreatePlaylistButtonClick}>
+					<button type="button" className="button" onClick={_onCreatePlaylistButtonClick}>
 						<FontAwesomeIcon icon="plus" className="button-icon"/>
 						<span className="button-text">New Playlist</span>
 					</button>

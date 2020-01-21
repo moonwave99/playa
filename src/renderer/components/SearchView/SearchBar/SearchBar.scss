@@ -3,10 +3,17 @@
 
 .search-bar {
 	margin: 0;
-	padding: $mainUnit $mainUnit $mainUnit / 2 $mainUnit;
+	padding:
+		var(--section-gutter)
+		var(--section-gutter)
+		calc(var(--section-gutter) / 2)
+		var(--section-gutter);
 	display: flex;
+	@media (max-width: $miniWindowThreshold) {
+		padding: var(--section-gutter);
+	}
 	.search-input,
-	button {
+	.button {
 		margin: 0;
 	}
 	.search-input {
@@ -15,10 +22,21 @@
 		display: flex;
 		flex-grow: 1;
 	}
-	button {
+	.button {
 		background-color: $mainColor;
 		transition: background-color .2s ease-in-out;
 		border-radius: 0 .4rem .4rem 0;
-		width: $searchButtonWidth;
+		width: calc(var(--section-gutter) * 11/3);
+		.icon {
+			display: none;
+		}
+		@media (max-width: $miniWindowThreshold) {
+			.text {
+				display: none;
+			}
+			.icon {
+				display: inline-block;
+			}
+		}
 	}
 }

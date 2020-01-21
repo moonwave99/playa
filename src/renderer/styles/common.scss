@@ -88,9 +88,6 @@ a {
 	.button-icon {
 		margin-right: 1rem;
 	}
-	.button-text {
-
-	}
 }
 
 input[type=text],
@@ -107,4 +104,11 @@ input[type=search] {
   box-sizing: inherit;
   padding: 0 1.0rem;
   width: 100%;
+}
+
+:root {
+  --section-gutter: #{$mainUnit};
+	@media (max-width: $miniWindowThreshold) {
+		--section-gutter: #{$mainUnit / 2};
+	}
 }

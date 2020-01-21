@@ -12,12 +12,21 @@
 }
 
 .search-result-list {
-	padding: 0 $mainUnit $mainUnit $mainUnit;
+	padding: 0  var(--section-gutter) var(--section-gutter) var(--section-gutter);
   overflow: auto;
 	width: 100%;
 	border-spacing: 0;
 	border-collapse: collapse;
 	@include fadeInOut();
+	td, th {
+		@media (max-width: $miniWindowThreshold) {
+			&.header,
+			&.cell-year,
+			&.cell-type {
+				display: none;
+			}
+		}
+	}
 	.search-result-list-header {
 		line-height: $mainUnit;
 		color: $highlightColor;
@@ -65,7 +74,7 @@
 			&-year,
 			&-artist,
 			&-title, {
-				padding: 0 2rem;
+				padding: 0 calc(var(--section-gutter) * 2/3);
 			}
 			&-artist {
 				color: $highlightColor;
@@ -85,7 +94,21 @@
 				text-align: center;
 			}
 			&-type{
-				padding-right: $mainUnit / 3;
+				padding-right: calc(var(--section-gutter) / 3);
+			}
+			@media (max-width: $miniWindowThreshold) {
+				&-artist,
+				&-title, {
+					display: block;
+					white-space: nowrap;
+	        overflow: hidden;
+	        text-overflow: ellipsis;
+					line-height: var(--section-gutter);
+					max-width: calc(100vw - #{$searchResultsCoverWidth} - var(--section-gutter) * 2);
+				}
+				&-artist {
+					padding-top: .5rem;
+				}
 			}
 		}
 		.tag {

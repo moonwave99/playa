@@ -16,6 +16,9 @@
 		@media (max-width: $smallWindowThreshold) {
 			width: $smallSidebarWidth;
 		}
+		@media (max-width: $miniWindowThreshold) {
+			display: none;
+		}
   }
 
   .main-wrapper {

@@ -7,6 +7,10 @@
   flex-direction: column;
   .results-wrapper {
     overflow: auto;
-    padding: 0 $mainUnit 2 * $mainUnit $mainUnit;
+    padding:
+      0
+      var(--section-gutter)
+      calc(var(--section-gutter) * 2)
+      var(--section-gutter);
   }
 }

@@ -74,7 +74,9 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
         <thead className="search-result-list-header">
           <tr>
           {headers.map(column => (
-            <th {...column.getHeaderProps()} className={`header-${column.id}`}>{column.render('Header')}</th>
+            <th {...column.getHeaderProps()} className={`header header-${column.id}`}>
+              {column.render('Header')}
+            </th>
           ))}
           </tr>
         </thead>
