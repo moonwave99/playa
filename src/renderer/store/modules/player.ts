@@ -3,6 +3,7 @@ import Player from '../../player';
 import { Playlist } from './playlist';
 import { Album, getAlbumContentResponse } from './album';
 import { Track, getTrackListResponse } from './track';
+import { immutableInsertAtIndex } from '../../utils/storeUtils';
 import { ApplicationState } from '../store';
 
 import { IPC_MESSAGES } from '../../../constants';
@@ -37,28 +38,29 @@ export function playerSelector({
     currentTrack: tracks.allById[currentTrackId],
     cover: covers.allById[currentAlbumId],
     waveform: waveforms.allById[currentTrackId],
-    queue
+    queue: queue.map(x => albums.allById[x])
   };
 }
 
 export interface PlayerState {
-  queue: Album[];
+  queue: Album['_id'][];
   currentPlaylistId: Playlist['_id'] | null;
   currentAlbumId: Album['_id'] | null;
   currentTrackId: Track['_id'] | null;
   isPlaying: boolean;
 }
 
-export const PLAYER_PLAY_TRACK      = 'playa/player/PLAY_TRACK';
-export const PLAYER_TOGGLE_PLAYBACK = 'playa/player/PLAYER_TOGGLE_PLAYBACK';
-export const PLAYER_SEEK_TO         = 'playa/player/PLAYER_SEEK_TO';
-export const PLAYER_UPDATE_QUEUE    = 'playa/player/UPDATE_QUEUE';
-export const PLAYER_UNLOAD_TRACK    = 'playa/player/UNLOAD_TRACK';
+export const PLAYER_PLAY_TRACK            = 'playa/player/PLAY_TRACK';
+export const PLAYER_TOGGLE_PLAYBACK       = 'playa/player/PLAYER_TOGGLE_PLAYBACK';
+export const PLAYER_SEEK_TO               = 'playa/player/PLAYER_SEEK_TO';
+export const PLAYER_UPDATE_QUEUE          = 'playa/player/UPDATE_QUEUE';
+export const PLAYER_ENQUEUE_AFTER_CURRENT = 'playa/player/ENQUEUE_AFTER_CURRENT';
+export const PLAYER_ENQUEUE_AT_END        = 'playa/player/ENQUEUE_AT_THE_END';
+export const PLAYER_UNLOAD_TRACK          = 'playa/player/UNLOAD_TRACK';
 
 interface PlayTrackAction {
   type: typeof PLAYER_PLAY_TRACK;
-  queue: Album[];
-  playlistId?: Playlist['_id'];
+  playlistId: Playlist['_id'];
   albumId: Album['_id'];
   trackId?: Track['_id'];
 }
@@ -74,10 +76,20 @@ interface SeekToAction {
 
 interface UpdateQueueAction {
   type: typeof PLAYER_UPDATE_QUEUE;
-  queue: Album[];
+  queue: Album['_id'][];
 }
 interface UnloadTrackAction {
   type: typeof PLAYER_UNLOAD_TRACK;
+}
+
+interface EnqueueAfterCurrentAction {
+  type: typeof PLAYER_ENQUEUE_AFTER_CURRENT;
+  albumId: Album['_id'];
+}
+
+interface EnqueueAtEndAction {
+  type: typeof PLAYER_ENQUEUE_AT_END;
+  albumId: Album['_id'];
 }
 
 export type PlayerActionTypes =
@@ -85,6 +97,8 @@ export type PlayerActionTypes =
   | TogglePlaybackAction
   | SeekToAction
   | UpdateQueueAction
+  | EnqueueAfterCurrentAction
+  | EnqueueAtEndAction
   | UnloadTrackAction;
 
 type PlayActionParams = {
@@ -99,8 +113,7 @@ export const playTrack = ({
   trackId
 }: PlayActionParams): Function =>
   async (dispatch: Function, getState: Function): Promise<void> => {
-    const { playlists, albums, tracks }: ApplicationState = getState();
-    const playlist = playlists.allById[playlistId];
+    const { albums, tracks }: ApplicationState = getState();
     let album = albums.allById[albumId];
     const track = tracks.allById[trackId];
 
@@ -114,16 +127,11 @@ export const playTrack = ({
       dispatch(getTrackListResponse(foundTracks));
     }
 
-    const queue = playlistId
-      ? playlist.albums.map(x => albums.allById[x])
-      : [album];
-
     dispatch({
       type: PLAYER_PLAY_TRACK,
       albumId,
       playlistId,
-      trackId: trackId || album.tracks[0],
-      queue
+      trackId: trackId || album.tracks[0]
     });
   }
 
@@ -142,12 +150,29 @@ export const seekTo = (position: number): Function =>
     });
   }
 
-export const updateQueue = (queue: Album[] = []): Function =>
+export const updateQueue = (queue: Album['_id'][] = []): Function =>
   (dispatch: Function): void => {
     dispatch({
       type: PLAYER_UPDATE_QUEUE,
       queue
     });
+  }
+
+export const enqueueAfterCurrent = (albumId: Album['_id']): Function =>
+  (dispatch: Function, getState: Function): void => {
+    const { player }: ApplicationState = getState();
+    const currentAlbumIndex = player.queue.indexOf(player.currentAlbumId);
+    dispatch(
+      updateQueue(
+        immutableInsertAtIndex(player.queue, albumId, currentAlbumIndex +1)
+      )
+    );
+  }
+
+export const enqueueAtEnd = (albumId: Album['_id']): Function =>
+  (dispatch: Function, getState: Function): void => {
+    const { player }: ApplicationState = getState();
+    dispatch(updateQueue([...player.queue, albumId]));
   }
 
 export const unloadTrack = (): Function =>
@@ -158,7 +183,7 @@ export const unloadTrack = (): Function =>
   }
 
 const INITIAL_STATE: PlayerState = {
-  queue: [] as Album[],
+  queue: [] as Album['_id'][],
   currentPlaylistId: null,
   currentAlbumId: null,
   currentTrackId: null,
@@ -175,7 +200,7 @@ export default function initReducer(player: Player) {
         player.loadTrack(action.trackId);
         player.play();
         return {
-          queue: action.queue,
+          ...state,
           currentPlaylistId: action.playlistId,
           currentAlbumId: action.albumId,
           currentTrackId: action.trackId,

@@ -67,3 +67,15 @@ export function immutableMove<T>(
     return prev;
   }, [] as  T[]);
 }
+
+export function immutableInsertAtIndex<T>(
+  array: T[],
+  insert: T,
+  index: number
+): T[] {
+  return [
+    ...array.slice(0, index),
+    insert,
+    ...array.slice(index)
+  ];
+}

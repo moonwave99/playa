@@ -36,22 +36,21 @@ export const AlbumListView: FC<AlbumListViewProps> = ({
   const [albumView, setAlbumView] = useState(UIAlbumView.Extended);
   const [albumOrder, setAlbumOrder] = useState(originalOrder);
 
-  useEffect(() => {
-    setAlbumOrder(originalOrder);
-  }, [originalOrder]);
+  useEffect(
+    () => setAlbumOrder(originalOrder)
+    , [originalOrder]
+  );
 
   useEffect(() => {
-    const handler = (_event: Event, _albumView: UIAlbumView): void => {
-      setAlbumView(_albumView);
-    };
+    const handler = (_event: Event, _albumView: UIAlbumView): void => setAlbumView(_albumView);
     ipc.on(IPC_UI_TOGGLE_ALBUM_VIEW, handler);
     return (): typeof ipc => ipc.removeListener(IPC_UI_TOGGLE_ALBUM_VIEW, handler);
   }, []);
 
-  const onAlbumMove = useCallback((dragIndex: number, hoverIndex: number): void => {
-    const newOrder = immutableMove<Album['_id']>(albumOrder, dragIndex, hoverIndex);
-    setAlbumOrder(newOrder);
-  }, [albumOrder]);
+  const onAlbumMove = useCallback(
+    (dragIndex: number, hoverIndex: number): void => setAlbumOrder(immutableMove<Album['_id']>(albumOrder, dragIndex, hoverIndex))
+    , [albumOrder]
+  );
 
   function onDragEnd(): void {
     onAlbumOrderChange && onAlbumOrderChange(albumOrder);

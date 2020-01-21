@@ -2,7 +2,9 @@ import {
   toObj,
   updateId,
   removeIds,
-  ensureAll
+  ensureAll,
+  immutableMove,
+  immutableInsertAtIndex
 } from './storeUtils';
 
 const entitiesArray = [
@@ -71,5 +73,19 @@ describe('ensureAll', () => {
     ensured.forEach((x) => {
       expect(x).toEqual(expect.objectContaining(defaultValues));
     })
+  });
+});
+
+describe ('immutableMove', () => {
+  it('should return a copy of original array with item moved :from => :to', () => {
+    const array = [1, 2, 3];
+    expect(immutableMove<number>(array, 1, 2)).toEqual([1, 3, 2]);
+  });
+});
+
+describe ('immutableInsertAtIndex', () => {
+  it('should return a copy of original array with item inserted at :index', () => {
+    const array = [1, 2, 3];
+    expect(immutableInsertAtIndex<number>(array, 4, 1)).toEqual([1, 4, 2, 3]);
   });
 });

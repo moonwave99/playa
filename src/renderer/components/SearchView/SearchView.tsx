@@ -8,7 +8,7 @@ import { ApplicationState } from '../../store/store';
 import { updateTitle } from '../../store/modules/ui';
 import { Album } from '../../store/modules/album';
 import { searchRequest } from '../../store/modules/search';
-import { playTrack } from '../../store/modules/player';
+import { playTrack, updateQueue } from '../../store/modules/player';
 import {
   ALBUM_CONTEXT_ACTIONS,
   openContextMenu,
@@ -57,6 +57,7 @@ export const SearchView: FC<SearchViewProps> = () => {
         dispatch,
         actions: [
           AlbumActionItems.PLAYBACK,
+          AlbumActionItems.ENQUEUE,
           AlbumActionItems.SYSTEM,
           AlbumActionItems.SEARCH_ONLINE
         ]
@@ -64,8 +65,9 @@ export const SearchView: FC<SearchViewProps> = () => {
     ]);
   }
 
-  function onResultDoubleClick(album: Album): void {
-    dispatch(playTrack({ albumId: album._id }));
+  function onResultDoubleClick({ _id: albumId }: Album): void {
+    dispatch(updateQueue([albumId]));
+    dispatch(playTrack({ albumId }));
   }
 
 	return (

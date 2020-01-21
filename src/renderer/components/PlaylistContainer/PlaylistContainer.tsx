@@ -15,7 +15,6 @@ import {
   PLAYLIST_CONTEXT_ACTIONS,
   ALBUM_CONTEXT_ACTIONS,
   openContextMenu,
-  PlaylistActionItems,
   AlbumActionItems
 } from '../../utils/contextMenuUtils';
 
@@ -57,7 +56,9 @@ export const PlaylistContainer = (): ReactElement => {
 
   function onAlbumOrderChange(newOrder: string[]): void {
     dispatch(savePlaylistRequest({ ...playlist, albums: newOrder }));
-    dispatch(updateQueue(newOrder.map(x => albums[x])));
+    if (playlist._id === currentPlaylistId) {
+      dispatch(updateQueue(newOrder.map(x => albums[x]._id)));
+    }
   }
 
   function onTitleChange(title: string ): void {
@@ -81,10 +82,7 @@ export const PlaylistContainer = (): ReactElement => {
         type: PLAYLIST_CONTEXT_ACTIONS,
         playlist,
         selection: [album._id],
-        dispatch,
-        actions: [
-          PlaylistActionItems.REMOVE_ALBUM
-        ]
+        dispatch
       },
       {
         type: ALBUM_CONTEXT_ACTIONS,
@@ -100,6 +98,7 @@ export const PlaylistContainer = (): ReactElement => {
   }
 
   function onAlbumDoubleClick(album: Album, track: Track): void {
+    dispatch(updateQueue(playlist.albums));
     dispatch(playTrack({
       playlistId: playlist._id,
       albumId: album._id,

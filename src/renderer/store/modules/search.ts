@@ -1,6 +1,10 @@
 import { ipcRenderer as ipc } from 'electron';
 import { ensureAll } from '../../utils/storeUtils';
-import { Album, getDefaultAlbum } from './album';
+import {
+  Album,
+  getDefaultAlbum,
+  ALBUM_GET_LIST_RESPONSE
+} from './album';
 
 import { IPC_MESSAGES } from '../../../constants';
 
@@ -37,6 +41,10 @@ export type SearchActionTypes =
 export const searchRequest = (query: string): Function =>
   async (dispatch: Function): Promise<void> => {
     const results = await ipc.invoke(IPC_SEARCH_REQUEST, query);
+    dispatch({
+      type: ALBUM_GET_LIST_RESPONSE,
+      results
+    });
     dispatch({
       type: SEARCH_RESPONSE,
       results,

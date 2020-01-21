@@ -6,7 +6,13 @@ import cx from 'classnames';
 import sha1 from 'sha1';
 import { PlaybackBar } from './PlaybackBar/PlaybackBar';
 import { CoverView } from '../AlbumListView/AlbumView/CoverView/CoverView';
-import { playerSelector, togglePlayback, playTrack, seekTo, unloadTrack } from '../../store/modules/player';
+import {
+	playerSelector,
+	togglePlayback,
+	playTrack,
+	seekTo,
+	unloadTrack
+} from '../../store/modules/player';
 import { getWaveformRequest } from '../../store/modules/waveform';
 import { getPrevTrack, getNextTrack } from '../../utils/tracklistUtils';
 import Player, { PlaybackInfo, PLAYER_EVENTS } from '../../player';

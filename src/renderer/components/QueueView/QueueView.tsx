@@ -29,7 +29,7 @@ export const QueueView: FC<QueueViewProps> = () => {
 
   useEffect(() => {
     dispatch(updateTitle(`playback queue: ${queue.length} albums`));
-  }, [queue]);
+  }, [queue.length]);
 
   function onAlbumContextMenu(album: Album): void {
     openContextMenu([
@@ -42,7 +42,7 @@ export const QueueView: FC<QueueViewProps> = () => {
           AlbumActionItems.SYSTEM,
           AlbumActionItems.SEARCH_ONLINE
         ]
-      }      
+      }
     ]);
   }
 

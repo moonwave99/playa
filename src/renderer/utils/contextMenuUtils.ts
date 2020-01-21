@@ -2,7 +2,7 @@ import { remote, ipcRenderer as ipc, MenuItemConstructorOptions } from 'electron
 const { Menu, MenuItem } = remote;
 import { Playlist, savePlaylistRequest } from '../store/modules/playlist';
 import { Album } from '../store/modules/album';
-import { playTrack } from '../store/modules/player';
+import { playTrack, enqueueAfterCurrent, enqueueAtEnd } from '../store/modules/player';
 import { IPC_MESSAGES, SEARCH_URLS } from '../../constants';
 const {
   IPC_SYS_REVEAL_IN_FINDER,
@@ -13,11 +13,28 @@ export const PLAYLIST_CONTEXT_ACTIONS = 'playa/context-menu/playlist-actions';
 export const ALBUM_CONTEXT_ACTIONS = 'playa/context-menu/album-actions';
 
 export enum PlaylistActionItems {
-  REMOVE_ALBUM
+  REMOVE_ALBUMS
+}
+
+function removeAlbumActions(
+  playlist: Playlist,
+  selection: Album['_id'][],
+  dispatch: Function
+): MenuItemConstructorOptions[] {
+  return [
+    {
+      label: `Remove selected album(s) from playlist`,
+      click(): void { dispatch(savePlaylistRequest({
+        ...playlist,
+        albums: playlist.albums.filter(_id => selection.indexOf(_id) === -1)
+      }))}
+    }
+  ];
 }
 
 export enum AlbumActionItems {
   PLAYBACK,
+  ENQUEUE,
   SYSTEM,
   SEARCH_ONLINE
 }
@@ -29,6 +46,21 @@ function playbackActions(album: Album, dispatch: Function): MenuItemConstructorO
     {
       label: `Play '${fullTitle}'`,
       click(): void { dispatch(playTrack({ albumId: _id })) }
+    },
+  ];
+}
+
+function enqueueActions(album: Album, dispatch: Function): MenuItemConstructorOptions[] {
+  const { _id, artist, title } = album;
+  const fullTitle = `${artist} - ${title}`;
+  return [
+    {
+      label: `Enqueue '${fullTitle}' after current album`,
+      click(): void { dispatch(enqueueAfterCurrent(_id)) }
+    },
+    {
+      label: `Enqueue '${fullTitle}' at the end`,
+      click(): void { dispatch(enqueueAtEnd(_id)) }
     },
   ];
 }
@@ -60,6 +92,14 @@ function searchOnlineActions(album: Album): MenuItemConstructorOptions[] {
   ]
 }
 
+const actionsMap = {
+  [PlaylistActionItems.REMOVE_ALBUMS]: removeAlbumActions,
+  [AlbumActionItems.PLAYBACK]: playbackActions,
+  [AlbumActionItems.ENQUEUE]: enqueueActions,
+  [AlbumActionItems.SYSTEM]: systemActions,
+  [AlbumActionItems.SEARCH_ONLINE]: searchOnlineActions
+};
+
 type GetAlbumContextMenuParams = {
   type: typeof ALBUM_CONTEXT_ACTIONS;
   album: Album;
@@ -72,75 +112,26 @@ function getAlbumContextMenuActions({
   actions = [],
   dispatch
 }: GetAlbumContextMenuParams): MenuItemConstructorOptions[] {
-  return actions.reduce((memo, action, index, original) => {
-    switch (action) {
-      case AlbumActionItems.PLAYBACK:
-        return [
-          ...memo,
-          ...playbackActions(album, dispatch),
-          ...index < original.length ? [{ type : 'separator'}] : []
-        ];
-      case AlbumActionItems.SYSTEM:
-        return [
-          ...memo,
-          ...systemActions(album),
-          ...index < original.length ? [{ type : 'separator'}] : []
-        ];
-      case AlbumActionItems.SEARCH_ONLINE:
-        return [
-          ...memo,
-          ...searchOnlineActions(album),
-          ...index < original.length ? [{ type : 'separator'}] : []
-        ];
-      default:
-        return memo;
-    }
-  }, []);
-}
-
-function playlistActions(
-  playlist: Playlist,
-  selection: Album['_id'][],
-  dispatch: Function
-): MenuItemConstructorOptions[] {
-  return [
-    {
-      label: `Remove selected album(s) from playlist`,
-      click(): void { dispatch(savePlaylistRequest({
-        ...playlist,
-        albums: playlist.albums.filter(_id => selection.indexOf(_id) === -1)
-      }))}
-    }
-  ];
+  return actions.reduce((memo, action, index, original) => [
+    ...memo,
+    ...actionsMap[action](album, dispatch),
+    ...index < original.length ? [{ type : 'separator'}] : []
+  ], []);
 }
 
 type GetPlaylistContextMenuParams = {
   type: typeof PLAYLIST_CONTEXT_ACTIONS;
   playlist: Playlist;
   selection?: Album['_id'][];
-  actions: PlaylistActionItems[];
   dispatch?: Function;
 }
 
 export function getPlaylistContextMenuActions({
   playlist,
   selection = [],
-  actions = [],
   dispatch
 }: GetPlaylistContextMenuParams): MenuItemConstructorOptions[] {
-
-  return actions.reduce((memo, action, index, original) => {
-    switch (action) {
-      case PlaylistActionItems.REMOVE_ALBUM:
-        return [
-          ...memo,
-          ...playlistActions(playlist, selection, dispatch),
-          ...index < original.length ? [{ type : 'separator'}] : []
-        ];
-      default:
-        return memo;
-    }
-  }, []);
+  return removeAlbumActions(playlist, selection, dispatch);
 }
 
 type ContextMenuParams =
