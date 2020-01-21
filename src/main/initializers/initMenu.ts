@@ -40,6 +40,12 @@ export default function initMenu(window: Electron.BrowserWindow): void {
     {
       label: 'Edit',
       submenu: [
+        { role: 'undo' },
+        { role: 'redo' },
+        { type: 'separator' },
+        { role: 'cut' },
+        { role: 'copy' },
+        { role: 'paste' },
         { role: 'selectAll' },
         {
           label: 'Search',
@@ -59,6 +65,7 @@ export default function initMenu(window: Electron.BrowserWindow): void {
             generatePath(PLAYLIST_SHOW, { _id: new Date().toISOString() })
           )
         },
+        { type: 'separator' },
         {
           label: 'Show All',
           accelerator: 'cmd+p',
@@ -69,6 +76,7 @@ export default function initMenu(window: Electron.BrowserWindow): void {
           accelerator: 'cmd+0',
           click: (): void => window.webContents.send(IPC_UI_NAVIGATE_TO, QUEUE)
         },
+        { type: 'separator' },
         {
           label: 'Show Extended View',
           accelerator: 'cmd+1',
