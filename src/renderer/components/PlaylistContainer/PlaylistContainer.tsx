@@ -5,13 +5,13 @@ import { PlaylistView } from '../PlaylistView/PlaylistView';
 import { ApplicationState } from '../../store/store';
 import { savePlaylistRequest, getDefaultPlaylist } from '../../store/modules/playlist';
 import { updateQueue } from '../../store/modules/player';
-import { updateState, updateTitle, showContextMenu } from '../../store/modules/ui';
+import { updateState, updateTitle } from '../../store/modules/ui';
 import { Album, getAlbumListRequest } from '../../store/modules/album';
 import { Track } from '../../store/modules/track';
 import { playTrack } from '../../store/modules/player';
 import { toObj } from '../../utils/storeUtils';
 import { confirmDialog } from '../../utils/dialogUtils';
-import { ContextMenuTypes } from '../../utils/contextMenuUtils';
+import { openAlbumContextMenu, AlbumActionItems } from '../../utils/contextMenuUtils';
 
 export const PlaylistContainer = (): ReactElement => {
   const dispatch = useDispatch();
@@ -70,10 +70,15 @@ export const PlaylistContainer = (): ReactElement => {
   }
 
   function onAlbumContextMenu(album: Album): void {
-    dispatch(showContextMenu({
-      type: ContextMenuTypes.ALBUM_COVER,
-      context: album
-    }));
+    openAlbumContextMenu({
+      album,
+      dispatch,
+      actions: [
+        AlbumActionItems.PLAYBACK,
+        AlbumActionItems.SYSTEM,
+        AlbumActionItems.SEARCH_ONLINE
+      ]
+    });
   }
 
   function onAlbumDoubleClick(album: Album, track: Track): void {

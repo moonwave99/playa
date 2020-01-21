@@ -5,11 +5,11 @@ import { useHistory } from 'react-router';
 import { SearchBar } from './SearchBar/SearchBar';
 import { SearchResultList } from './SearchResultList/SearchResultList';
 import { ApplicationState } from '../../store/store';
-import { updateTitle, showContextMenu } from '../../store/modules/ui';
+import { updateTitle } from '../../store/modules/ui';
 import { Album } from '../../store/modules/album';
 import { searchRequest } from '../../store/modules/search';
 import { playTrack } from '../../store/modules/player';
-import { ContextMenuTypes } from '../../utils/contextMenuUtils';
+import { openAlbumContextMenu, AlbumActionItems } from '../../utils/contextMenuUtils';
 import './SearchView.scss';
 
 type SearchViewProps = {
@@ -46,10 +46,15 @@ export const SearchView: FC<SearchViewProps> = () => {
   };
 
   function onResultContextMenu(album: Album): void {
-    dispatch(showContextMenu({
-      type: ContextMenuTypes.RESULT_LIST_ITEM,
-      context: album
-    }));
+    openAlbumContextMenu({
+      album,
+      dispatch,
+      actions: [
+        AlbumActionItems.PLAYBACK,
+        AlbumActionItems.SYSTEM,
+        AlbumActionItems.SEARCH_ONLINE
+      ]
+    });
   }
 
   function onResultDoubleClick(album: Album): void {

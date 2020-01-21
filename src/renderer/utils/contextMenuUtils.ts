@@ -1,5 +1,6 @@
 import { remote, ipcRenderer as ipc, MenuItemConstructorOptions } from 'electron';
 const { Menu, MenuItem } = remote;
+import { Album } from '../store/modules/album';
 import { playTrack } from '../store/modules/player';
 import { IPC_MESSAGES, SEARCH_URLS } from '../../constants';
 const {
@@ -9,53 +10,89 @@ const {
 
 export const RESULT_LIST_ITEM = 'RESULT_LIST_ITEM';
 
-export enum ContextMenuTypes {
-  RESULT_LIST_ITEM,
-  ALBUM_COVER
+export enum AlbumActionItems {
+  PLAYBACK,
+  SYSTEM,
+  SEARCH_ONLINE
 }
 
-interface IsAlbum {
-  _id: string;
-  path: string;
-  title: string;
-  artist: string;
+function playbackActions(album: Album, dispatch: Function): MenuItemConstructorOptions[] {
+  const { _id, artist, title } = album;
+  const fullTitle = `${artist} - ${title}`;
+  return [
+    {
+      label: `Play '${fullTitle}'`,
+      click(): void { dispatch(playTrack({ albumId: _id })) }
+    },
+  ];
 }
 
-export interface ContextMenuOptions {
-  type: ContextMenuTypes;
-  context: IsAlbum;
+function systemActions(album: Album): MenuItemConstructorOptions[] {
+  const { artist, title, path } = album;
+  const fullTitle = `${artist} - ${title}`;
+  return [
+    {
+      label: `Reveal '${fullTitle}' in Finder`,
+      click(): void { ipc.send(IPC_SYS_REVEAL_IN_FINDER, path) }
+    }
+  ];
 }
 
-export default function openContextMenu(options: ContextMenuOptions, dispatch?: Function): void {
+function searchOnlineActions(album: Album): MenuItemConstructorOptions[] {
+  const { artist, title, } = album;
+  const query = `${artist} ${title}`;
+  const fullTitle = `${artist} - ${title}`;
+  return [
+    {
+      label: `Search '${fullTitle}' on rateyourmusic`,
+      click(): void { ipc.send(IPC_SYS_OPEN_URL, SEARCH_URLS.RYM, query) }
+    },
+    {
+      label: `Search '${fullTitle}' on Discogs`,
+      click(): void { ipc.send(IPC_SYS_OPEN_URL, SEARCH_URLS.DISCOGS, query) }
+    }
+  ]
+}
+
+type OpenAlbumContextMenuParams = {
+  album: Album;
+  actions: AlbumActionItems[];
+  dispatch?: Function;
+}
+
+// #TODO:
+// 1. remove from playlist
+// 2. play after current
+// 3. enqueue
+export function openAlbumContextMenu({
+  album,
+  actions = [],
+  dispatch
+}: OpenAlbumContextMenuParams): void {
   const menu = new Menu();
-  const query = `${options.context.artist} ${options.context.title}`;
-  const fullTitle = `${options.context.artist} - ${options.context.title}`;
-  let menuItems: MenuItemConstructorOptions[];
-  switch (options.type) {
-    case ContextMenuTypes.RESULT_LIST_ITEM:
-    case ContextMenuTypes.ALBUM_COVER:
-      menuItems = [
-        {
-          label: `Play '${fullTitle}'`,
-          click(): void { dispatch(playTrack({ albumId: options.context._id })) }
-        },
-        { type: 'separator' },
-        {
-          label: `Reveal '${fullTitle}' in Finder`,
-          click(): void { ipc.send(IPC_SYS_REVEAL_IN_FINDER, options.context.path) }
-        },
-        { type: 'separator' },
-        {
-          label: `Search '${fullTitle}' on rateyourmusic`,
-          click(): void { ipc.send(IPC_SYS_OPEN_URL, SEARCH_URLS.RYM, query) }
-        },
-        {
-          label: `Search '${fullTitle}' on Discogs`,
-          click(): void { ipc.send(IPC_SYS_OPEN_URL, SEARCH_URLS.DISCOGS, query) }
-        }
-      ];
-      break;
-  }
-  menuItems.forEach(item => menu.append(new MenuItem(item)));
+  actions.reduce((memo, action, index, original) => {
+    switch (action) {
+      case AlbumActionItems.PLAYBACK:
+        return [
+          ...memo,
+          ...playbackActions(album, dispatch),
+          ...index < original.length ? [{ type : 'separator'}] : []
+        ];
+      case AlbumActionItems.SYSTEM:
+        return [
+          ...memo,
+          ...systemActions(album),
+          ...index < original.length ? [{ type : 'separator'}] : []
+        ];
+      case AlbumActionItems.SEARCH_ONLINE:
+        return [
+          ...memo,
+          ...searchOnlineActions(album),
+          ...index < original.length ? [{ type : 'separator'}] : []
+        ];
+      default:
+        return memo;
+    }
+  }, []).forEach(item => menu.append(new MenuItem(item)));
   menu.popup({ window: remote.getCurrentWindow() });
 }

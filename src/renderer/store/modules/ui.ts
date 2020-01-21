@@ -1,5 +1,4 @@
 import { ipcRenderer as ipc } from 'electron';
-import openContextMenu, { ContextMenuOptions } from '../../utils/contextMenuUtils';
 
 import { IPC_MESSAGES } from '../../../constants';
 const {
@@ -22,7 +21,6 @@ export type UIState = {
 
 export const STATE_UPDATE = 'playa/ui/STATE_UPDATE';
 export const TITLE_UPDATE = 'playa/ui/TITLE_UPDATE';
-export const SHOW_CONTEXT_MENU = 'playa/ui/SHOW_CONTEXT_MENU';
 
 interface UpdateStateAction {
   type: typeof STATE_UPDATE;
@@ -34,15 +32,9 @@ interface UpdateTitleAction {
   title: string;
 }
 
-interface ShowContextMenuAction {
-  type: typeof SHOW_CONTEXT_MENU;
-  options: ContextMenuOptions;
-}
-
 export type UIActionTypes =
     UpdateStateAction
-  | UpdateTitleAction
-  | ShowContextMenuAction;
+  | UpdateTitleAction;
 
 export const updateState = (params: object): Function =>
   (dispatch: Function): void => {
@@ -62,15 +54,6 @@ export const updateTitle = (title: string): Function =>
     });
   }
 
-export const showContextMenu = (options: ContextMenuOptions): Function =>
-  (dispatch: Function): void => {
-    openContextMenu(options, dispatch);
-    dispatch({
-      type: SHOW_CONTEXT_MENU,
-      options
-    });
-  }
-
 const INITIAL_STATE = {
   started: true
 };
@@ -82,7 +65,6 @@ export default function reducer(
 	switch (action.type) {
     case STATE_UPDATE:
     case TITLE_UPDATE:
-    case SHOW_CONTEXT_MENU:
 		default:
 			return state;
 	}

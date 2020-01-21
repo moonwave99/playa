@@ -3,13 +3,9 @@ import reducer, {
   UIState,
   updateState,
   updateTitle,
-  showContextMenu,
   STATE_UPDATE,
-  TITLE_UPDATE,
-  SHOW_CONTEXT_MENU,
+  TITLE_UPDATE
 } from './ui';
-
-import { ContextMenuTypes } from '../../utils/contextMenuUtils';
 
 describe('ui actions', () => {
   describe('updateState', () => {
@@ -35,29 +31,6 @@ describe('ui actions', () => {
       });
     });
   });
-
-  describe('showContextMenu', () => {
-    it('should dispatch a showContextMenu request', () => {
-      const dispatch = jest.fn();
-      const context = {
-        _id: '123',
-        path: '/path/to/123',
-        artist: 'Slowdive',
-        title: 'Just for a Day'
-      };
-      showContextMenu({
-        type: ContextMenuTypes.RESULT_LIST_ITEM,
-        context
-      })(dispatch);
-      expect(dispatch).toHaveBeenCalledWith({
-        type: SHOW_CONTEXT_MENU,
-        options: {
-          type: ContextMenuTypes.RESULT_LIST_ITEM,
-          context
-        }
-      });
-    });
-  });
 });
 
 describe('ui reducer', () => {
@@ -76,22 +49,6 @@ describe('ui reducer', () => {
     expect(reducer({} as UIState, {
       type: TITLE_UPDATE,
       title: 'title'
-    })).toEqual({});
-  });
-
-  it('should handle SHOW_CONTEXT_MENU', () => {
-    const context = {
-      _id: '123',
-      path: '/path/to/123',
-      artist: 'Slowdive',
-      title: 'Just for a Day'
-    };
-    expect(reducer({} as UIState, {
-      type: SHOW_CONTEXT_MENU,
-      options: {
-        type: ContextMenuTypes.RESULT_LIST_ITEM,
-        context
-      }
     })).toEqual({});
   });
 });
