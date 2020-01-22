@@ -25,8 +25,8 @@ export function getDefaultTrack(): Track {
     found: false,
     artist: '',
     title: '',
-    number: 0,
-    duration: 0
+    number: null,
+    duration: null
   };
 }
 

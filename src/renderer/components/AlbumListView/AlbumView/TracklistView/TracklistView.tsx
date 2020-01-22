@@ -1,4 +1,5 @@
 import React, { FC, ReactElement, SyntheticEvent } from 'react';
+import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import cx from 'classnames';
 import { AlbumTypes } from '../../../../store/modules/album';
@@ -6,6 +7,7 @@ import { Track } from '../../../../store/modules/track';
 import { formatTrackNumber } from '../../../../utils/tracklistUtils';
 import { formatDuration } from '../../../../utils/datetimeUtils';
 import { COLORS } from '../../../../../constants';
+import { SEARCH } from '../../../../routes';
 import './TracklistView.scss';
 
 type TracklistViewProps = {
@@ -47,7 +49,7 @@ export const TracklistView: FC<TracklistViewProps> = ({
 
   function renderArtist(artist: string): ReactElement {
     return isAlbumFromVariousArtists || albumType === AlbumTypes.Remix
-      ? <span className="artist">{artist}</span>
+      ? <><Link className="artist" to={`${SEARCH}?query=${artist}`}>{artist}</Link>&nbsp;-&nbsp;</>
       : null;
   }
 

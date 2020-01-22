@@ -2,6 +2,8 @@ import PouchDB from 'pouchdb';
 import PouchFind from 'pouchdb-find';
 import search from 'pouchdb-quick-search';
 
+import { DatabaseError } from '../errrors';
+
 PouchDB.plugin(PouchFind);
 PouchDB.plugin(search);
 
@@ -16,6 +18,13 @@ interface Row<T> {
   id: string;
   score: number;
   error?: boolean;
+}
+
+interface Result {
+  ok?: boolean;
+  error?: string;
+  id?: string;
+  rev?: string;
 }
 
 type DatabaseParams = {
@@ -100,24 +109,41 @@ export default class Database {
     if (response.ok === true) {
       return Promise.resolve({ ...entity, _rev: response.rev });
     }
-    throw new Error(`Problems persisting entity: ${_id} - ${_rev}`);
+    throw new DatabaseError(`Problems persisting entity: ${_id} - ${_rev}`);
   }
 
   async saveBulk<T>(entities: T[]): Promise<T[]> {
-    const results = await this.db.bulkDocs(entities);
-    if (this.debug) {
-      console.log('[Database] Saving bulk: ', entities);
-    }
-    return results;
+    this.debug && console.log('[Database] Saving bulk:', entities);
+    return await this.db.bulkDocs(entities);
   }
 
   async delete<T extends Entity>(entity: T): Promise<Entity> {
     const doc: T = await this.get(entity._id);
-    doc._deleted = true;
-    const response = await this.db.put(doc);
+    const response = await this.db.put({
+      ...doc,
+      _deleted: true
+    });
     if (response.ok === true) {
       return Promise.resolve({ ...doc, _rev: response.rev });
     }
-    throw new Error(`Problems deleting entity: ${doc._id} - ${doc._rev}`);
+    throw new DatabaseError(`Problems deleting entity: ${doc._id} - ${doc._rev}`);
+  }
+
+  async deleteBulk<T>(entities: T[]): Promise<T[]> {
+    this.debug && console.log('[Database] Deleting bulk:', entities);
+    return await this.db.bulkDocs(
+      entities.map(e => ({ ...e, _deleted: true }))
+    );
+  }
+
+  async removeBulk<T>(entities: T[]): Promise<Result[]> {
+    return Promise.all(
+      entities.map(async entity => await this.db.remove(entity))
+    ).then((results) => {
+      this.debug && console.log('[Database] Removing bulk: ', entities);
+      return results;
+    }).catch(() => {
+      throw new DatabaseError('Problems bulk removing entities');
+    });
   }
 }

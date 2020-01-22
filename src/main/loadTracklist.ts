@@ -1,16 +1,16 @@
 import { parseFile, IAudioMetadata } from 'music-metadata';
 import Database from './database';
-import { Track } from '../renderer/store/modules/track';
+import { Track, getDefaultTrack } from '../renderer/store/modules/track';
 
 interface MetadataResult {
   _id: string;
   metadata?: IAudioMetadata;
-  status: string;
+  status: TrackStatus;
 }
 
 enum TrackStatus {
-  OK = 'OK',
-  NOT_FOUND = 'NOT_FOUND'
+  OK,
+  NOT_FOUND
 }
 
 async function loadMetadata(paths: string[]): Promise<MetadataResult[]> {
@@ -34,11 +34,18 @@ async function loadMetadata(paths: string[]): Promise<MetadataResult[]> {
   );
 }
 
-export default async function loadTracklist(ids: string[], db: Database): Promise<Track[]> {
+export default async function loadTracklist(
+  ids: string[],
+  db: Database,
+  forceUpdate = false
+): Promise<Track[]> {
   const results = await db.getList<Track>(ids);
-  if (results.length > 0) {
+  if (forceUpdate) {
+    await db.removeBulk(results);
+  } else if (results.length > 0) {
     return results;
   }
+
   const meta = await loadMetadata(ids);
   const loadedTracks = meta.map(({ _id, metadata, status }) => {
     if (status === TrackStatus.OK) {
@@ -55,13 +62,9 @@ export default async function loadTracklist(ids: string[], db: Database): Promis
       };
     }
     return {
+      ...getDefaultTrack(),
       _id,
-      path: _id,
-      found: false,
-      artist: null,
-      title: null,
-      number: null,
-      duration: null
+      path: _id
     }
   });
   await db.saveBulk<Track>(

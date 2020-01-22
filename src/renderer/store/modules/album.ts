@@ -1,11 +1,13 @@
 import { ipcRenderer as ipc } from 'electron';
+import { getTrackListResponse } from './track';
 import { EntityHashMap, toObj, ensureAll, updateId } from '../../utils/storeUtils';
 
 import { IPC_MESSAGES } from '../../../constants';
 
 const {
   IPC_ALBUM_GET_LIST_REQUEST,
-  IPC_ALBUM_CONTENT_REQUEST
+  IPC_ALBUM_CONTENT_REQUEST,
+  IPC_TRACK_GET_LIST_REQUEST
 } = IPC_MESSAGES;
 
 export const VARIOUS_ARTISTS_ID = '_various-artists';
@@ -103,6 +105,14 @@ export const getAlbumContentResponse = (album: Album): Function =>
       type: ALBUM_GET_CONTENT_RESPONSE,
       album
     });
+  }
+
+export const reloadAlbumContent = (album: Album): Function =>
+  async (dispatch: Function): Promise<void> => {
+    const reloadedAlbum = await ipc.invoke(IPC_ALBUM_CONTENT_REQUEST, album);
+    const reloadedTracks = await ipc.invoke(IPC_TRACK_GET_LIST_REQUEST, reloadedAlbum.tracks, true);
+    dispatch(getAlbumContentResponse(reloadedAlbum));
+    dispatch(getTrackListResponse(reloadedTracks));
   }
 
 const INITIAL_STATE = {

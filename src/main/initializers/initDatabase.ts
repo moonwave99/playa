@@ -55,7 +55,7 @@ export default function initDatabase(userDataPath: string): void {
   });
 
   ipc.handle(IPC_TRACK_GET_LIST_REQUEST,
-    async (_event, ids) =>  await loadTracklist(ids, db.track)
+    async (_event, ids, forceUpdate) =>  await loadTracklist(ids, db.track, forceUpdate)
   );
 
   ipc.handle(IPC_ALBUM_GET_SINGLE_INFO, async (_event, ids) => {

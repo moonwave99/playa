@@ -1,7 +1,7 @@
 import { remote, ipcRenderer as ipc, MenuItemConstructorOptions } from 'electron';
 const { Menu, MenuItem } = remote;
 import { Playlist, savePlaylistRequest } from '../store/modules/playlist';
-import { Album } from '../store/modules/album';
+import { Album, reloadAlbumContent } from '../store/modules/album';
 import { playTrack, enqueueAfterCurrent, enqueueAtEnd } from '../store/modules/player';
 import { IPC_MESSAGES, SEARCH_URLS } from '../../constants';
 const {
@@ -65,13 +65,17 @@ function enqueueActions(album: Album, dispatch: Function): MenuItemConstructorOp
   ];
 }
 
-function systemActions(album: Album): MenuItemConstructorOptions[] {
+function systemActions(album: Album, dispatch: Function): MenuItemConstructorOptions[] {
   const { artist, title, path } = album;
   const fullTitle = `${artist} - ${title}`;
   return [
     {
       label: `Reveal '${fullTitle}' in Finder`,
       click(): void { ipc.send(IPC_SYS_REVEAL_IN_FINDER, path) }
+    },
+    {
+      label: `Reload '${fullTitle}' tracks`,
+      click(): void { dispatch(reloadAlbumContent(album)) }
     }
   ];
 }

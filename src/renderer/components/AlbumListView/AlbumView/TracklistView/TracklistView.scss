@@ -12,7 +12,6 @@
       margin: 1rem 0;
       line-height: 1.5rem;
       display: flex;
-      transition: background-color .3s ease-in, .3s ease-in;
       width: 100%;
       &:first-child {
         margin-top: 0;
@@ -21,11 +20,11 @@
         color: transparent;
         height: 1.5rem;
         margin: 1rem 0;
+        transition: background-color .3s ease-in-out;
       }
       &:hover {
-        .title {
-          text-decoration: underline;
-        }
+        background-color: $backgroundLightColor;
+        transition: background-color .1s ease-in-out;
       }
       &.is-current,
       &.ready:hover {
@@ -58,7 +57,9 @@
       }
       .artist {
         color: $highlightColor;
-        margin-right: 1rem;
+        &:hover {
+          text-decoration: underline;
+        }
       }
       .duration {
         margin-left: auto;
