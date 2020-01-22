@@ -1,6 +1,7 @@
 import React, { ReactElement, useEffect } from 'react';
 import { findDOMNode } from 'react-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { playerSelector } from '../../store/modules/player';
 import { AlbumListView } from '../AlbumListView/AlbumListView';
 import { Album } from '../../store/modules/album';
@@ -16,6 +17,7 @@ import {
 import './QueueView.scss';
 
 export const QueueView = (): ReactElement => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const {
 		currentPlaylist,
@@ -67,7 +69,7 @@ export const QueueView = (): ReactElement => {
 
 	return (
 		<section className="queue" id="queue">
-      <h1>Playback Queue</h1>
+      <h1>{t('queue.title')}</h1>
       { queue.length > 0
         ? <AlbumListView
             albumView={UIAlbumView.Extended}
@@ -78,7 +80,7 @@ export const QueueView = (): ReactElement => {
             currentTrackId={currentTrack ? currentTrack._id : null}
             onAlbumContextMenu={onAlbumContextMenu}
             onAlbumDoubleClick={onAlbumDoubleClick}/>
-        : <p className="queue-empty-placeholder">Queue is empty.</p>
+        : <p className="queue-empty-placeholder">{t('queue.empty')}</p>
       }
 		</section>
 	);

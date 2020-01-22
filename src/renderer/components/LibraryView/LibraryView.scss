@@ -11,6 +11,15 @@
     line-height: $mainUnit;
     color: $highlightColor;
   }
+  .button-add-album {
+    position: fixed;
+    padding: 0 1rem;
+    top: var(--section-gutter);
+    right: var(--section-gutter);
+    @media (max-width: $miniWindowThreshold) {
+      display: none;
+    }
+  }
   .library-empty-placeholder {
     @include emptyComponent();
   }

@@ -1,0 +1,56 @@
+{
+  "translation": {
+    "sidebar": {
+      "buttons": {
+        "search": "Search",
+        "library": "Library",
+        "playlist": {
+          "recent": "Recent Playlists",
+          "new": "New Playlist",
+          "all": "All Playlists"
+        },
+        "queue": "Playback Queue"
+      }
+    },
+    "queue": {
+      "title": "Playback Queue",
+      "empty": "Queue is empty."
+    },
+    "library": {
+      "title": "Your Music Library",
+      "buttons": {
+        "addNewAlbum": "Add New Album"
+      }
+    },
+    "albums": {
+      "props": {
+        "artist": "Artist",
+        "title": "Title",
+        "year": "Year",
+        "type": "Type"
+      }
+    },
+    "playlists": {
+      "title": "All Playlists",
+      "createdOn": "Created on {{date}}",
+      "empty": "Playlist is empty.",
+      "props": {
+        "title": "Title",
+        "created": "Created on",
+        "accessed": "Last accessed"
+      },
+      "actions": {
+        "delete": "Delete"
+      }
+    },
+    "search": {
+      "empty": "No results for",
+      "buttons": {
+        "search": "Search…"
+      },
+      "form": {
+        "placeholder": "Search for…"
+      }
+    }
+  }
+}

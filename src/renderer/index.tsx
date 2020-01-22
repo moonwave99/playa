@@ -9,6 +9,7 @@ import WebFont from 'webfontloader';
 import Player from './player';
 import { App } from './components/App/App';
 import { initStore, history } from './store/store';
+import initI18n from './lib/initI18n';
 import initFontAwesome from './lib/initFontAwesome';
 
 import { FONTS, IPC_MESSAGES } from '../constants';
@@ -17,21 +18,20 @@ const {
   IPC_WAVEFORM_GET_BASE_PATH
 } = IPC_MESSAGES;
 
-WebFont.load({
-  custom: {
-    families: FONTS
-  }
-});
-
 (async (): Promise<void> => {
+  WebFont.load({ custom: { families: FONTS } });
   initFontAwesome();
+  initI18n();
+
   const player = new Player({
     audioElement: document.getElementById('player') as HTMLAudioElement
   });
+
   const {
     lastOpenedPlaylistId,
     queue
   } = await ipc.invoke(IPC_UI_STATE_LOAD);
+  
   const waveformBasePath = await ipc.invoke(IPC_WAVEFORM_GET_BASE_PATH);
   const store = initStore(player);
 

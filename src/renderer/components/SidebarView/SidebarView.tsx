@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { SidebarPlaylistList } from './SidebarPlaylistList/SidebarPlaylistList';
 import { Playlist } from '../../store/modules/playlist';
@@ -22,6 +23,7 @@ export const SidebarView: FC<SidebarViewProps> = ({
 	currentPlaylistId,
 	onCreatePlaylistButtonClick
 }) => {
+	const { t } = useTranslation();
 
 	function _onCreatePlaylistButtonClick(): void {
 		onCreatePlaylistButtonClick();
@@ -33,11 +35,11 @@ export const SidebarView: FC<SidebarViewProps> = ({
 				<div className="button-wrapper">
 					<Link to={SEARCH} className="button">
 						<FontAwesomeIcon icon="search" className="button-icon"/>
-						<span className="button-text">Search</span>
+						<span className="button-text">{t('sidebar.buttons.search')}</span>
 					</Link>
 					<Link to={LIBRARY} className="button button-outline">
 						<FontAwesomeIcon icon="music" className="button-icon"/>
-						<span className="button-text">Library</span>
+						<span className="button-text">{t('sidebar.buttons.library')}</span>
 					</Link>
 				</div>
 			</section>
@@ -46,15 +48,15 @@ export const SidebarView: FC<SidebarViewProps> = ({
 				<div className="button-wrapper">
 					<button type="button" className="button" onClick={_onCreatePlaylistButtonClick}>
 						<FontAwesomeIcon icon="plus" className="button-icon"/>
-						<span className="button-text">New Playlist</span>
+						<span className="button-text">{t('sidebar.buttons.playlist.new')}</span>
 					</button>
 					<Link to={PLAYLIST_ALL} className="button button-outline">
 						<FontAwesomeIcon icon="list" className="button-icon"/>
-						<span className="button-text">All Playlists</span>
+						<span className="button-text">{t('sidebar.buttons.playlist.all')}</span>
 					</Link>
 					<Link to={QUEUE} className="button button-outline">
 						<FontAwesomeIcon icon="play" className="button-icon"/>
-						<span className="button-text">Playback Queue</span>
+						<span className="button-text">{t('sidebar.buttons.queue')}</span>
 					</Link>
 				</div>
 			</section>

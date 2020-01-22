@@ -1,5 +1,6 @@
 import React, { ReactElement, useMemo } from 'react';
 import { useTable } from 'react-table';
+import { useTranslation } from 'react-i18next';
 import { SearchResultListRow } from './SearchResultListRow/SearchResultListRow';
 import { Album } from '../../../store/modules/album';
 import './SearchResultList.scss';
@@ -21,28 +22,16 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
   onResultContextMenu,
   onResultDoubleClick
 }) => {
-
+  const { t } = useTranslation();
   const columns = useMemo(() => [
     {
       Header: '',
       id: 'cover'
     },
-    {
-      Header: 'Artist',
-      accessor: 'artist'
-    },
-    {
-      Header: 'Title',
-      accessor: 'title'
-    },
-    {
-      Header: 'Year',
-      accessor: 'year'
-    },
-    {
-      Header: 'Type',
-      accessor: 'type'
-    }
+    ...['artist', 'title', 'year', 'type'].map(x => ({
+      Header: t(`albums.props.${x}`),
+      accessor: x
+    }))
  ],[]);
 
   const {
@@ -59,7 +48,7 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
   function renderEmptyComponent(query: string): ReactElement {
     return (
       <p className="search-result-list-empty-component">
-        No results for <span className="highlight">{query}</span>.
+        {t('search.empty')} <span className='highlight'>{query}</span>.
       </p>
     );
   }

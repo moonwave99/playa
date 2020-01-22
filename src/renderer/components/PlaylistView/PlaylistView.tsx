@@ -1,6 +1,7 @@
 import { ipcRenderer as ipc, Event } from 'electron';
 import React, { ReactElement, FC, useState, useEffect } from 'react';
 import cx from 'classnames';
+import { useTranslation } from 'react-i18next';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { PlaylistViewTitle } from './PlaylistViewTitle/PlaylistViewTitle';
 import { AlbumListView } from '../AlbumListView/AlbumListView';
@@ -38,6 +39,7 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
   onAlbumContextMenu,
   onAlbumDoubleClick
 }) => {
+  const { t } = useTranslation();
   const [albumView, setAlbumView] = useState(UIAlbumView.Extended);
   const hasAlbums = Object.keys(albums).length > 0 && playlist.albums.length > 0;
 
@@ -82,7 +84,7 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
             onTitleChange={onTitleChange}/>
         </div>
         { renderActionButtons() }
-        <p className="playlist-info header-like">Created on {date}</p>
+        <p className="playlist-info header-like">{t('playlists.createdOn', { date })}</p>
       </header>
       { hasAlbums
         ? <AlbumListView
@@ -95,7 +97,7 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
             onAlbumOrderChange={onAlbumOrderChange}
             onAlbumContextMenu={onAlbumContextMenu}
             onAlbumDoubleClick={onAlbumDoubleClick}/>
-        : <p className="playlist-empty-placeholder">Playlist is empty.</p>
+        : <p className="playlist-empty-placeholder">{t('playlists.empty')}</p>
       }
     </section>
 	);

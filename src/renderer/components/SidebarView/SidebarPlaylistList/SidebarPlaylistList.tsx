@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import { useRouteMatch } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { SidebarPlaylistListItem } from './SidebarPlaylistListItem/SidebarPlaylistListItem';
 import { Playlist } from '../../../store/modules/playlist';
 import { PLAYLIST_SHOW } from '../../../routes';
@@ -22,6 +23,7 @@ export const SidebarPlaylistList: FC<SidebarPlaylistListProps> = ({
   playlists = [],
   currentPlaylistId
 }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const match = useRouteMatch(PLAYLIST_SHOW);
   let params: MatchParams = {};
@@ -42,7 +44,7 @@ export const SidebarPlaylistList: FC<SidebarPlaylistListProps> = ({
 
   return (
     <div className="sidebar-playlist-list">
-      <h2>Recent Playlists</h2>
+      <h2>{t('sidebar.buttons.playlist.recent')}</h2>
       <ul>
         { playlists.map(
           playlist => <SidebarPlaylistListItem

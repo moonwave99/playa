@@ -1,5 +1,7 @@
 import React, { ReactElement, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getLatestRequest } from '../../store/modules/library';
 import { AlbumGridView } from './AlbumGridView/AlbumGridView';
 import { updateTitle } from '../../store/modules/ui';
@@ -21,6 +23,7 @@ import {
 import './LibraryView.scss';
 
 export const LibraryView = (): ReactElement => {
+  const { t } = useTranslation();
 	const dispatch = useDispatch();
 	const latest = useSelector(({ library }) => library.latest);
 	useEffect(() => {
@@ -59,7 +62,12 @@ export const LibraryView = (): ReactElement => {
 
 	return (
 		<section className="library">
-      <h1>Library</h1>
+      <header>
+        <h1>{t('library.title')}</h1>
+        <button className="button button-add-album">
+          <FontAwesomeIcon className="button-icon" icon="plus"/> {t('library.buttons.addNewAlbum')}
+        </button>
+      </header>
 			<AlbumGridView
 				albums={latest}
 				onAlbumContextMenu={onAlbumContextMenu}
