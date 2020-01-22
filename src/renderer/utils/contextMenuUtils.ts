@@ -1,18 +1,59 @@
 import { remote, ipcRenderer as ipc, MenuItemConstructorOptions } from 'electron';
 const { Menu, MenuItem } = remote;
-import { Playlist, savePlaylistRequest } from '../store/modules/playlist';
-import { Album, reloadAlbumContent } from '../store/modules/album';
-import { playTrack, enqueueAfterCurrent, enqueueAtEnd } from '../store/modules/player';
+
+import {
+  Playlist,
+  deletePlaylistRequest,
+  savePlaylistRequest
+} from '../store/modules/playlist';
+
+import {
+  Album,
+  reloadAlbumContent
+} from '../store/modules/album';
+
+import {
+  playTrack,
+  enqueueAfterCurrent,
+  enqueueAtEnd
+} from '../store/modules/player';
+
+import { confirmDialog } from './dialogUtils';
 import { IPC_MESSAGES, SEARCH_URLS } from '../../constants';
 const {
   IPC_SYS_REVEAL_IN_FINDER,
   IPC_SYS_OPEN_URL
 } = IPC_MESSAGES;
 
-export const PLAYLIST_CONTEXT_ACTIONS = 'playa/context-menu/playlist-actions';
-export const ALBUM_CONTEXT_ACTIONS = 'playa/context-menu/album-actions';
+export const PLAYLIST_LIST_CONTEXT_ACTIONS    = 'playa/context-menu/playlist-list-actions';
+export const PLAYLIST_CONTENT_CONTEXT_ACTIONS = 'playa/context-menu/playlist-content-actions';
+export const ALBUM_CONTEXT_ACTIONS            = 'playa/context-menu/album-actions';
 
-export enum PlaylistActionItems {
+export enum PlaylistListActionItems {
+  DELETE_PLAYLIST
+}
+
+function deletePlaylistActions(
+  playlist: Playlist,
+  dispatch: Function
+): MenuItemConstructorOptions[] {
+  return [
+    {
+      label: `Delete playlist`,
+      click: async (): Promise<void> => {
+        const confirmed = confirmDialog({
+          title: 'Playlist Delete',
+          message: `You are about to delete playlist '${playlist.title}', are you sure?`
+        });
+        if (confirmed) {
+          dispatch(deletePlaylistRequest(playlist));
+        }
+      }
+    }
+  ];
+}
+
+export enum PlaylistContentActionItems {
   REMOVE_ALBUMS
 }
 
@@ -97,12 +138,41 @@ function searchOnlineActions(album: Album): MenuItemConstructorOptions[] {
 }
 
 const actionsMap = {
-  [PlaylistActionItems.REMOVE_ALBUMS]: removeAlbumActions,
+  [PlaylistListActionItems.DELETE_PLAYLIST]: deletePlaylistActions,
+  [PlaylistContentActionItems.REMOVE_ALBUMS]: removeAlbumActions,
   [AlbumActionItems.PLAYBACK]: playbackActions,
   [AlbumActionItems.ENQUEUE]: enqueueActions,
   [AlbumActionItems.SYSTEM]: systemActions,
   [AlbumActionItems.SEARCH_ONLINE]: searchOnlineActions
 };
+
+type GetPlaylistListContextMenuParams = {
+  type: typeof PLAYLIST_LIST_CONTEXT_ACTIONS;
+  playlist: Playlist;
+  dispatch?: Function;
+}
+
+export function getPlaylistListContextMenuActions({
+  playlist,
+  dispatch
+}: GetPlaylistListContextMenuParams): MenuItemConstructorOptions[] {
+  return deletePlaylistActions(playlist, dispatch);
+}
+
+type GetPlaylistContentContextMenuParams = {
+  type: typeof PLAYLIST_CONTENT_CONTEXT_ACTIONS;
+  playlist: Playlist;
+  selection?: Album['_id'][];
+  dispatch?: Function;
+}
+
+export function getPlaylistContentContextMenuActions({
+  playlist,
+  selection = [],
+  dispatch
+}: GetPlaylistContentContextMenuParams): MenuItemConstructorOptions[] {
+  return removeAlbumActions(playlist, selection, dispatch);
+}
 
 type GetAlbumContextMenuParams = {
   type: typeof ALBUM_CONTEXT_ACTIONS;
@@ -123,33 +193,21 @@ function getAlbumContextMenuActions({
   ], []);
 }
 
-type GetPlaylistContextMenuParams = {
-  type: typeof PLAYLIST_CONTEXT_ACTIONS;
-  playlist: Playlist;
-  selection?: Album['_id'][];
-  dispatch?: Function;
-}
-
-export function getPlaylistContextMenuActions({
-  playlist,
-  selection = [],
-  dispatch
-}: GetPlaylistContextMenuParams): MenuItemConstructorOptions[] {
-  return removeAlbumActions(playlist, selection, dispatch);
-}
-
 type ContextMenuParams =
-    GetAlbumContextMenuParams
-  | GetPlaylistContextMenuParams;
+    GetPlaylistListContextMenuParams
+  | GetPlaylistContentContextMenuParams
+  | GetAlbumContextMenuParams;
 
 export function openContextMenu(params: ContextMenuParams[]): void {
   const menu = new Menu();
   const groups: MenuItemConstructorOptions[][] = params.map((param) => {
     switch (param.type) {
+      case PLAYLIST_LIST_CONTEXT_ACTIONS:
+        return getPlaylistListContextMenuActions(param);
+      case PLAYLIST_CONTENT_CONTEXT_ACTIONS:
+        return getPlaylistContentContextMenuActions(param);
       case ALBUM_CONTEXT_ACTIONS:
         return getAlbumContextMenuActions(param);
-      case PLAYLIST_CONTEXT_ACTIONS:
-        return getPlaylistContextMenuActions(param);
     }
   });
 

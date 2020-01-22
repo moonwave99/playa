@@ -18,15 +18,14 @@ export const AllPlaylistContainer: FC<AllPlaylistContainerProps> = ({
     dispatch(updateTitle('playlists: all'));
   }, []);
 
-  function onPlaylistDelete(playlist: Playlist): void {
-    confirmDialog({
+  async function onPlaylistDelete(playlist: Playlist): Promise<void> {
+    const confirmed = confirmDialog({
       title: 'Playlist Delete',
       message: `You are about to delete playlist '${playlist.title}', are you sure?`
-    }).then((confirmed) => {
-      if (confirmed) {
-        dispatch(deletePlaylistRequest(playlist));
-      }
     });
+    if (confirmed) {
+      dispatch(deletePlaylistRequest(playlist));
+    }
   }
 
   return (

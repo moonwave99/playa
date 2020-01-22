@@ -12,7 +12,7 @@ import { playTrack } from '../../store/modules/player';
 import { toObj } from '../../utils/storeUtils';
 import { confirmDialog } from '../../utils/dialogUtils';
 import {
-  PLAYLIST_CONTEXT_ACTIONS,
+  PLAYLIST_CONTENT_CONTEXT_ACTIONS,
   ALBUM_CONTEXT_ACTIONS,
   openContextMenu,
   AlbumActionItems
@@ -79,7 +79,7 @@ export const PlaylistContainer = (): ReactElement => {
   function onAlbumContextMenu(album: Album): void {
     openContextMenu([
       {
-        type: PLAYLIST_CONTEXT_ACTIONS,
+        type: PLAYLIST_CONTENT_CONTEXT_ACTIONS,
         playlist,
         selection: [album._id],
         dispatch

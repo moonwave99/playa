@@ -13,6 +13,7 @@ type SidebarPlaylistListItemProps = {
   playlist: Playlist;
   isCurrent: boolean;
   isPlaying: boolean;
+  onContextMenu: Function;
 }
 
 type DropItem = {
@@ -23,7 +24,8 @@ type DropItem = {
 export const SidebarPlaylistListItem: FC<SidebarPlaylistListItemProps> = ({
   playlist,
   isCurrent,
-  isPlaying
+  isPlaying,
+  onContextMenu
 }) => {
   const dispatch = useDispatch();
   const [{ isOver, canDrop }, drop] = useDrop({
@@ -44,6 +46,10 @@ export const SidebarPlaylistListItem: FC<SidebarPlaylistListItemProps> = ({
     return isCurrent;
   }
 
+  function _onContextMenu(): void {
+    onContextMenu(playlist);
+  }
+
   const classNames = cx('playlist', {
     'is-playing': isPlaying,
     'drag-is-over': isOver,
@@ -54,6 +60,7 @@ export const SidebarPlaylistListItem: FC<SidebarPlaylistListItemProps> = ({
     <li ref={drop} className={classNames}>
       <Link
         onClick={onClick}
+        onContextMenu={_onContextMenu}
         title={playlist._id}
         to={generatePath(PLAYLIST_SHOW, { _id: playlist._id })}
         className="sidebar-playlist-item">
