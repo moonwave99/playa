@@ -18,7 +18,7 @@ import { getPrevTrack, getNextTrack } from '../../utils/tracklistUtils';
 import Player, { PlaybackInfo, PLAYER_EVENTS } from '../../player';
 
 import { QUEUE } from '../../routes';
-import { confirmDialog } from '../../utils/dialogUtils';
+import { confirmDialog } from '../../lib/dialog';
 import './PlayerView.scss';
 
 type PlayerViewProps = {

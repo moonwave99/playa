@@ -10,13 +10,13 @@ import { Album, getAlbumListRequest } from '../../store/modules/album';
 import { Track } from '../../store/modules/track';
 import { playTrack } from '../../store/modules/player';
 import { toObj } from '../../utils/storeUtils';
-import { confirmDialog } from '../../utils/dialogUtils';
+import { confirmDialog } from '../../lib/dialog';
 import {
   PLAYLIST_CONTENT_CONTEXT_ACTIONS,
   ALBUM_CONTEXT_ACTIONS,
   openContextMenu,
   AlbumActionItems
-} from '../../utils/contextMenuUtils';
+} from '../../lib/contextMenu';
 
 export const PlaylistContainer = (): ReactElement => {
   const dispatch = useDispatch();

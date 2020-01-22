@@ -8,7 +8,7 @@ import { PLAYLIST_SHOW } from '../../../routes';
 import {
   PLAYLIST_LIST_CONTEXT_ACTIONS,
   openContextMenu
-} from '../../../utils/contextMenuUtils';
+} from '../../../lib/contextMenu';
 
 import './SidebarPlaylistList.scss';
 

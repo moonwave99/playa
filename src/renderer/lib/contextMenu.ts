@@ -18,7 +18,7 @@ import {
   enqueueAtEnd
 } from '../store/modules/player';
 
-import { confirmDialog } from './dialogUtils';
+import { confirmDialog } from './dialog';
 import { IPC_MESSAGES, SEARCH_URLS } from '../../constants';
 const {
   IPC_SYS_REVEAL_IN_FINDER,

@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { AllPlaylistsView } from '../AllPlaylistsView/AllPlaylistsView';
 import { Playlist, deletePlaylistRequest } from '../../store/modules/playlist';
 import { updateTitle } from '../../store/modules/ui';
-import { confirmDialog } from '../../utils/dialogUtils';
+import { confirmDialog } from '../../lib/dialog';
 
 type AllPlaylistContainerProps = {
   playlists: Playlist[];

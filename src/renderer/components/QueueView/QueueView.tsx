@@ -12,7 +12,7 @@ import {
   ALBUM_CONTEXT_ACTIONS,
   openContextMenu,
   AlbumActionItems
-} from '../../utils/contextMenuUtils';
+} from '../../lib/contextMenu';
 import './QueueView.scss';
 
 export const QueueView = (): ReactElement => {

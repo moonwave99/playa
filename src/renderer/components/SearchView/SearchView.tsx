@@ -13,7 +13,7 @@ import {
   ALBUM_CONTEXT_ACTIONS,
   openContextMenu,
   AlbumActionItems
-} from '../../utils/contextMenuUtils';
+} from '../../lib/contextMenu';
 import './SearchView.scss';
 
 type SearchViewProps = {
