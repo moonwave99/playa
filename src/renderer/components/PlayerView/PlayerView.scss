@@ -7,12 +7,20 @@
   background-color: $backgroundLightColor;
   border-top: 1px solid $backgroundDarkColor;
   display: flex;
+  @media (max-width: $miniWindowThreshold) {
+    height: $miniPlayerHeight;
+    flex-direction: column;
+  }
   .player-sidebar-wrapper {
-    width: $sidebarWidth;
+    width: $sidebarWidth - $playerCoverSize;
     display: flex;
     justify-content: space-between;
     @media (max-width: $smallWindowThreshold) {
-      width: $smallSidebarWidth;
+      width: $smallSidebarWidth - $playerCoverSize;
+    }
+    @media (max-width: $miniWindowThreshold) {
+      width: 100%;
+      height: $mainUnit;
     }
   }
   .player-controls {
@@ -21,6 +29,10 @@
     flex: 1;
     align-items: center;
     justify-content: space-evenly;
+    @media (max-width: $miniWindowThreshold) {
+      border-bottom: 1px solid $backgroundColor;
+      background-color: $backgroundDarkColor;
+    }
     .control {
       background-color: transparent;
       background-repeat: no-repeat;
@@ -43,15 +55,27 @@
         font-size: 3rem;
         flex: 0.5;
       }
+      @media (max-width: $miniWindowThreshold) {
+        &-prev,
+        &-next {
+          font-size: 1.5rem;
+        }
+        &-playback {
+          font-size: 1.5rem;
+        }
+      }
     }
   }
 
   .player-album-cover-wrapper {
-    width: $playerHeight;
+    width: $playerCoverSize;
     display: flex;
     align-items: center;
     .player-album-cover {
-      @include albumCover($playerHeight, $backgroundDarkColor, 60%);
+      @include albumCover($playerCoverSize, $backgroundDarkColor, 60%);
+    }
+    @media (max-width: $miniWindowThreshold) {
+      display: none;
     }
   }
 }

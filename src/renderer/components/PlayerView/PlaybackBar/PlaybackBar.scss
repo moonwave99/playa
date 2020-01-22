@@ -40,8 +40,12 @@
   .duration {
     display: flex;
     align-self: center;
-    padding: 0 $mainUnit;
+    padding: 0 var(--section-gutter);
+    font-size: $playerDurationFontSize;
     font-family: 'Fira Mono', monospace;
+    @media (max-width: $miniWindowThreshold) {
+      font-size: $playerDurationFontSize * 0.9;
+    }
   }
   .info-wrapper {
     display: flex;
@@ -49,10 +53,20 @@
     align-items: center;
     justify-content: space-evenly;
     flex-direction: column;
+    text-align: center;
     .current-track-title,
     .current-track-info {
-      display: flex;
       margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 45vw;
+      @media (max-width: $smallWindowThreshold) {
+        max-width: 40vw;
+      }
+      @media (max-width: $miniWindowThreshold) {
+        max-width: 60vw;
+      }
     }
     .current-track-title {
       font-size: $playerTrackTitleFontSize
@@ -60,6 +74,14 @@
     .current-track-info {
       font-size: $playerTrackInfoFontSize;
       color: $highlightColor;
+    }
+    @media (max-width: $miniWindowThreshold) {
+      .current-track-title {
+        font-size: $playerTrackTitleFontSize * 0.8;
+      }
+      .current-track-info {
+        font-size: $playerTrackInfoFontSize;
+      }
     }
   }
   .progress-area {

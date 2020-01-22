@@ -31,6 +31,8 @@ $tracklistMaxWidth: 60rem;
 
 $searchBarHeight: 3 * $mainUnit;
 $playerHeight: 2 * $mainUnit;
+$playerCoverSize: $playerHeight;
+$playerDurationFontSize: 1rem;
 $playerTrackTitleFontSize: 1.2rem;
 $playerTrackInfoFontSize: .9rem;
 $playbackControlSize: 3rem;
@@ -40,3 +42,5 @@ $playerProgressAreaBackgroundColor: rgba(black, .2);
 $smallWindowThreshold: 21 * $mainUnit;
 $smallSidebarWidth: 21rem;
 $miniWindowThreshold: 15 * $mainUnit;
+
+$miniPlayerHeight: 3 * $mainUnit;

@@ -162,14 +162,14 @@ export const PlayerView: FC<PlayerViewProps> = ({
 						<FontAwesomeIcon icon="step-forward" fixedWidth/>
 					</button>
 				</section>
-				<section className="player-album-cover-wrapper">
-					<CoverView
-						className="player-album-cover"
-						src={cover}
-						album={currentAlbum}
-						onClick={onCoverClick}/>
-				</section>
 			</div>
+			<section className="player-album-cover-wrapper">
+				<CoverView
+					className="player-album-cover"
+					src={cover}
+					album={currentAlbum}
+					onClick={onCoverClick}/>
+			</section>			
 			{ currentTrack && currentAlbum &&
 				<PlaybackBar
 					currentTrack={currentTrack}

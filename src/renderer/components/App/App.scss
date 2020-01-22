@@ -7,6 +7,9 @@
   .main-container {
     height: calc(100vh - #{$playerHeight});
 		display: flex;
+    @media (max-width: $miniWindowThreshold) {
+			height: calc(100vh - #{$miniPlayerHeight});
+		}
   }
 
 	.sidebar-wrapper {

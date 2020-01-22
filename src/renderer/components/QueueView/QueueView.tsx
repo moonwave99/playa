@@ -56,7 +56,7 @@ export const QueueView: FC<QueueViewProps> = () => {
 
 	return (
 		<section className="queue">
-      <h1>playback queue</h1>
+      <h1>Playback Queue</h1>
       { queue.length > 0
         ? <AlbumListView
             albumView={UIAlbumView.Extended}
