@@ -1,5 +1,5 @@
 import * as fs from 'fs-extra';
-import { FileSystemError } from '../errrors';
+import { FileSystemError } from '../errors';
 
 interface AppStateValues {
   lastOpenedPlaylistId: string;

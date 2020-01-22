@@ -2,7 +2,7 @@ import { ipcMain as ipc } from 'electron';
 import * as Path from 'path';
 import sha1 from 'sha1';
 import { saveData } from '../saveData';
-import { FileSystemError } from '../../errrors';
+import { FileSystemError } from '../../errors';
 
 import { WAVEFORM_PEAKS_COUNT, IPC_MESSAGES, COLORS } from '../../constants';
 

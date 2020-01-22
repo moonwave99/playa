@@ -2,7 +2,7 @@ import PouchDB from 'pouchdb';
 import PouchFind from 'pouchdb-find';
 import search from 'pouchdb-quick-search';
 
-import { DatabaseError } from '../errrors';
+import { DatabaseError } from '../errors';
 
 PouchDB.plugin(PouchFind);
 PouchDB.plugin(search);

@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as Path from 'path';
 import { saveData } from './saveData';
 import { EntityHashMap } from '../renderer/utils/storeUtils';
-import { AlbumNotFoundError } from '../errrors';
+import { AlbumNotFoundError } from '../errors';
 
 type Credentials = {
   consumerKey: string;
