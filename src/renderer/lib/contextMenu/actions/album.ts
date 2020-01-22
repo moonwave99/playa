@@ -70,6 +70,10 @@ function searchOnlineActions(album: Album): MenuItemConstructorOptions[] {
     {
       label: `Search '${fullTitle}' on Discogs`,
       click(): void { ipc.send(IPC_SYS_OPEN_URL, SEARCH_URLS.DISCOGS, query) }
+    },
+    {
+      label: `Search '${fullTitle}' on Youtube`,
+      click(): void { ipc.send(IPC_SYS_OPEN_URL, SEARCH_URLS.YOUTUBE, query) }
     }
   ]
 }

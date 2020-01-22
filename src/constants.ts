@@ -13,7 +13,8 @@ export const MUSIC_FILE_EXTENSIONS = ['mp3', 'm4a', 'flac', 'ogg'];
 
 export enum SEARCH_URLS {
   DISCOGS = 'http://www.discogs.com/search?type=release&q=',
-  RYM = 'https://rateyourmusic.com/search?searchtype=l&searchterm='
+  RYM = 'https://rateyourmusic.com/search?searchtype=l&searchterm=',
+  YOUTUBE = 'https://www.youtube.com/results?search_query='
 }
 
 export const COLORS = {
