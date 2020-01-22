@@ -1,5 +1,6 @@
 import React, { FC, SyntheticEvent, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import cx from 'classnames';
 import { useDrag, useDrop, DropTargetMonitor } from 'react-dnd';
 import { XYCoord } from 'dnd-core';
@@ -121,7 +122,7 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
         src={cover}
         album={album}/>
       <p className="album-content header-like">
-        <span className="title">{title}</span>
+        <span className="title">{title}{ isCurrent ? <FontAwesomeIcon className="icon" icon="volume-up"/> : null }</span>
         <span className="info">
           {artist === VARIOUS_ARTISTS_ID ? 'V/A' : artist}{year ? `, ${year}` : null} - <span className={tagClasses}>{type}</span>
         </span>

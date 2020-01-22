@@ -39,8 +39,7 @@
     opacity: 0;
   }
   &.is-current {
-    border: 2px solid $mainColor;
-    border-radius: .5rem;
+    background-color: rgba($mainColor, .3);
   }
   @media (max-width: $miniWindowThreshold) {
     padding: .5rem 0 .5rem 0rem;
@@ -57,6 +56,9 @@
       color: $highlightColor;
       font-size: 1.2rem;
       line-height: 2rem;
+      .icon {
+        margin-left: .5rem;
+      }
     }
     .album-type {
       @include albumTypeColor();

@@ -19,7 +19,10 @@
   }
   &:not(.is-current) {
     .album-cover {
-      @include playOverlay('../../../static/icons/album/play.svg', 33%);
+      @include playOverlay(
+        $iconUrl: '../../../static/icons/album/play.svg',
+        $bgSize: 33%
+      );
     }
   }
   .album-aside {
@@ -36,10 +39,13 @@
     }
   }
   &.is-current {
-    .album-content {
-      header h2 {
-        color: $mainColor;
-      }
+    .album-cover {
+      @include playOverlay(
+        $iconUrl: '../../../static/icons/album/volume.svg',
+        $bgSize: 33%,
+        $initialOpacity: .8,
+        $finalOpacity: .8
+      );
     }
   }
 
