@@ -5,7 +5,6 @@ import { useDrag } from 'react-dnd';
 import cx from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CoverView } from '../../../AlbumListView/AlbumView/CoverView/CoverView';
-import { ApplicationState } from '../../../../store/store';
 import { UIDragTypes } from '../../../../store/modules/ui';
 import { Album, VARIOUS_ARTISTS_ID } from '../../../../store/modules/album';
 import { searchRequest } from '../../../../store/modules/search';
@@ -28,7 +27,7 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
 }) => {
   const dispatch = useDispatch();
   const { _id } = album;
-  const cover = useSelector(({ covers }: ApplicationState) => covers.allById[_id]);
+  const cover = useSelector(({ covers }) => covers.allById[_id]);
 
   useEffect(() => {
     dispatch(getCoverRequest(album));

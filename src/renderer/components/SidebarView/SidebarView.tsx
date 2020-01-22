@@ -7,7 +7,8 @@ import './SidebarView.scss';
 import {
 	QUEUE,
 	SEARCH,
-	PLAYLIST_ALL
+	PLAYLIST_ALL,
+	LIBRARY
 } from '../../routes';
 
 type SidebarViewProps = {
@@ -34,9 +35,9 @@ export const SidebarView: FC<SidebarViewProps> = ({
 						<FontAwesomeIcon icon="search" className="button-icon"/>
 						<span className="button-text">Search</span>
 					</Link>
-					<Link to={QUEUE} className="button button-outline">
+					<Link to={LIBRARY} className="button button-outline">
 						<FontAwesomeIcon icon="music" className="button-icon"/>
-						<span className="button-text">Playback Queue</span>
+						<span className="button-text">Library</span>
 					</Link>
 				</div>
 			</section>
@@ -50,6 +51,10 @@ export const SidebarView: FC<SidebarViewProps> = ({
 					<Link to={PLAYLIST_ALL} className="button button-outline">
 						<FontAwesomeIcon icon="list" className="button-icon"/>
 						<span className="button-text">All Playlists</span>
+					</Link>
+					<Link to={QUEUE} className="button button-outline">
+						<FontAwesomeIcon icon="play" className="button-icon"/>
+						<span className="button-text">Playback Queue</span>
 					</Link>
 				</div>
 			</section>

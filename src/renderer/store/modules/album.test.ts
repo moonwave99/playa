@@ -6,7 +6,6 @@ import { albums } from '../../../../test/fixtures';
 const mockStore = configureStore([thunk]);
 
 import reducer, {
-  Album,
   AlbumActionTypes,
   AlbumState,
   getAlbumListRequest,

@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import { SearchBar } from './SearchBar/SearchBar';
 import { SearchResultList } from './SearchResultList/SearchResultList';
-import { ApplicationState } from '../../store/store';
 import { updateTitle } from '../../store/modules/ui';
 import { Album } from '../../store/modules/album';
 import { searchRequest } from '../../store/modules/search';
@@ -26,7 +25,7 @@ export const SearchView: FC<SearchViewProps> = () => {
     results,
     isSearching,
     currentAlbumId
-  } = useSelector(({ search, player }: ApplicationState) => ({...search, ...player }));
+  } = useSelector(({ search, player }) => ({...search, ...player }));
   const history = useHistory();
   const dispatch = useDispatch();
 

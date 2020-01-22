@@ -4,6 +4,7 @@ import { generatePath } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Player from '../../player';
 import { PlayerView } from '../PlayerView/PlayerView';
+import { LibraryView } from '../LibraryView/LibraryView';
 import { QueueView } from '../QueueView/QueueView';
 import { SearchView } from '../SearchView/SearchView';
 import { SidebarView } from '../SidebarView/SidebarView';
@@ -20,7 +21,8 @@ import {
   QUEUE,
   SEARCH,
   PLAYLIST_ALL,
-  PLAYLIST_SHOW
+  PLAYLIST_SHOW,
+  LIBRARY
 } from '../../routes';
 
 import {
@@ -105,6 +107,9 @@ export const App: FC<AppProps> = ({
         </div>
         <div className="main-wrapper">
           <Switch>
+            <Route path={LIBRARY}>
+              <LibraryView/>
+            </Route>
             <Route path={QUEUE}>
               <QueueView/>
             </Route>

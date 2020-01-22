@@ -86,6 +86,26 @@ export default class Database {
     return doc;
   }
 
+  async getLatest<T>({
+    dateFrom = new Date().toISOString(),
+    dateField = 'created',
+    limit = 20
+  }): Promise<T[]> {
+    await this.db.createIndex({
+      index: {
+        fields: [dateField]
+      }
+    });
+    const { docs } = await this.db.find({
+      selector: {
+        [dateField]: { $gt: dateFrom }
+      },
+      sort: [dateField],
+      limit
+    });
+    return docs;
+  }
+
   async getList<T>(ids: Entity['_id'][]): Promise<Array<T>> {
     const { rows } = await this.db.allDocs({
       keys: ids,

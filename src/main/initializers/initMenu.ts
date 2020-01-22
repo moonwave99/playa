@@ -7,6 +7,7 @@ const {
 } = IPC_MESSAGES;
 
 import {
+  LIBRARY,
   QUEUE,
   SEARCH,
   PLAYLIST_ALL,
@@ -51,6 +52,16 @@ export default function initMenu(window: Electron.BrowserWindow): void {
           label: 'Search',
           accelerator: 'cmd+f',
           click: (): void => window.webContents.send(IPC_UI_NAVIGATE_TO, SEARCH)
+        }
+      ]
+    },
+    {
+      label: 'Library',
+      submenu: [
+        {
+          label: 'Show Library',
+          accelerator: 'cmd+l',
+          click: (): void => window.webContents.send(IPC_UI_NAVIGATE_TO, LIBRARY)
         }
       ]
     },

@@ -1,0 +1,17 @@
+@import "../../styles/variables";
+@import "../../styles/mixins";
+
+.library {
+  padding: var(--section-gutter);
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+  h1 {
+    margin: 0 0 $mainUnit 0;
+    line-height: $mainUnit;
+    color: $highlightColor;
+  }
+  .library-empty-placeholder {
+    @include emptyComponent();
+  }
+}

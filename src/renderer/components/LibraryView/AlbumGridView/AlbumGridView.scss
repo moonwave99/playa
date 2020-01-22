@@ -1,0 +1,18 @@
+@import "../../../styles/variables";
+@import "../../../styles/mixins";
+
+.album-grid {
+  .album-grid-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    .album-grid-tile {
+      flex-basis: 100%;
+      flex: 1;
+      .album-cover {
+        @include albumCover($libraryAlbumCoverWidth, $backgroundColor);
+        @include playOverlay('../../../static/icons/album/play.svg');
+      }
+    }
+  }
+}

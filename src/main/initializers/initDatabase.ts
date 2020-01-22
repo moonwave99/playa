@@ -13,6 +13,7 @@ const {
   IPC_SEARCH_REQUEST,
   IPC_ALBUM_GET_LIST_REQUEST,
   IPC_ALBUM_CONTENT_REQUEST,
+  IPC_ALBUM_GET_LATEST_REQUEST,
   IPC_TRACK_GET_LIST_REQUEST,
   IPC_ALBUM_GET_SINGLE_INFO
 } = IPC_MESSAGES;
@@ -52,6 +53,10 @@ export default function initDatabase(userDataPath: string, debug = false): void 
     const tracks = await loadAlbum(album.path);
     return await db.album.save({ ...album, tracks });
   });
+
+  ipc.handle(IPC_ALBUM_GET_LATEST_REQUEST,
+    async (_event, dateFrom, limit) => await db.album.getLatest({ dateFrom, limit })
+  );
 
   ipc.handle(IPC_TRACK_GET_LIST_REQUEST,
     async (_event, ids, forceUpdate) =>  await loadTracklist(ids, db.track, forceUpdate)

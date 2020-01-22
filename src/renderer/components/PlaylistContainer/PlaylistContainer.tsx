@@ -2,10 +2,10 @@ import React, { ReactElement, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 import { PlaylistView } from '../PlaylistView/PlaylistView';
-import { ApplicationState } from '../../store/store';
 import { savePlaylistRequest, getDefaultPlaylist } from '../../store/modules/playlist';
 import { updateQueue } from '../../store/modules/player';
 import { updateState, updateTitle } from '../../store/modules/ui';
+import { Playlist } from '../../store/modules/playlist';
 import { Album, getAlbumListRequest } from '../../store/modules/album';
 import { Track } from '../../store/modules/track';
 import { playTrack } from '../../store/modules/player';
@@ -28,13 +28,14 @@ export const PlaylistContainer = (): ReactElement => {
     currentPlaylistId,
     currentAlbumId,
     currentTrackId
-  } = useSelector((state: ApplicationState) => {
-    const playlist = state.playlists.allById[_id] || getDefaultPlaylist();
-    const albums = playlist.albums.map((id) => state.albums.allById[id]).filter(x => !!x);
+  } = useSelector(({ playlists, albums, player }) => {
+    const playlist: Playlist = playlists.allById[_id] || getDefaultPlaylist();
     return {
       playlist,
-      albums: toObj(albums),
-      ...state.player
+      albums: toObj(
+        playlist.albums.map((id) => albums.allById[id]).filter(x => !!x)
+      ),
+      ...player
     }
   });
 
