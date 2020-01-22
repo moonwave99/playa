@@ -55,7 +55,7 @@ export default function initDatabase(userDataPath: string, debug = false): void 
   });
 
   ipc.handle(IPC_ALBUM_GET_LATEST_REQUEST,
-    async (_event, dateFrom, limit) => await db.album.getLatest({ dateFrom, limit })
+    async (_event, dateFrom, limit) => await db.album.getLatest({ dateFrom, limit, order: 'desc' })
   );
 
   ipc.handle(IPC_TRACK_GET_LIST_REQUEST,

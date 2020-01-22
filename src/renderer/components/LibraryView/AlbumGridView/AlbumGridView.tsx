@@ -1,6 +1,7 @@
 import React, { ReactElement, FC } from 'react';
 import { AlbumGridTileView } from './AlbumGridTileView/AlbumGridTileView';
 import { Album } from '../../../store/modules/album';
+import { LIBRARY_GRID_COLUMN_COUNT } from '../../../../constants';
 
 import './AlbumGridView.scss';
 
@@ -9,8 +10,6 @@ type AlbumGridViewProps = {
   onAlbumContextMenu: Function;
   onAlbumDoubleClick: Function;
 };
-
-const COLUMN_COUNT = 5;
 
 export const AlbumGridView: FC<AlbumGridViewProps> = ({
   albums,
@@ -29,7 +28,7 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
   }
 
   const rows = albums.reduce((memo, item, index) => {
-    const rowIndex = Math.floor(index / COLUMN_COUNT);
+    const rowIndex = Math.floor(index / LIBRARY_GRID_COLUMN_COUNT);
     if (!memo[rowIndex]) {
       memo.push([]);
     }

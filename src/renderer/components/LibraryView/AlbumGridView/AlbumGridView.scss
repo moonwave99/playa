@@ -10,7 +10,7 @@
       flex-basis: 100%;
       flex: 1;
       .album-cover {
-        @include albumCover($libraryAlbumCoverWidth, $backgroundColor);
+        @include albumCover($libraryAlbumCoverWidth, $backgroundDarkColor);
         @include playOverlay('../../../static/icons/album/play.svg');
       }
     }

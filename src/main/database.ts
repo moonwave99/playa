@@ -4,6 +4,9 @@ import search from 'pouchdb-quick-search';
 
 import { DatabaseError } from '../errors';
 
+const DEFAULT_QUERY_LIMIT = 20;
+const DEFAULT_QUERY_ORDER = 'asc';
+
 PouchDB.plugin(PouchFind);
 PouchDB.plugin(search);
 
@@ -89,7 +92,8 @@ export default class Database {
   async getLatest<T>({
     dateFrom = new Date().toISOString(),
     dateField = 'created',
-    limit = 20
+    limit = DEFAULT_QUERY_LIMIT,
+    order = DEFAULT_QUERY_ORDER
   }): Promise<T[]> {
     await this.db.createIndex({
       index: {
@@ -100,7 +104,7 @@ export default class Database {
       selector: {
         [dateField]: { $gt: dateFrom }
       },
-      sort: [dateField],
+      sort: [{ [dateField] : order }],
       limit
     });
     return docs;

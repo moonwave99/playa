@@ -11,13 +11,25 @@ import {
   AlbumActionItems
 } from '../../lib/contextMenu/actions/album';
 
+import { daysAgo } from '../../utils/datetimeUtils';
+
+import {
+  LIBRARY_LATEST_ALBUM_LIMIT,
+	LIBRARY_LATEST_DAY_COUNT
+} from '../../../constants';
+
 import './LibraryView.scss';
 
 export const LibraryView = (): ReactElement => {
 	const dispatch = useDispatch();
 	const latest = useSelector(({ library }) => library.latest);
 	useEffect(() => {
-		dispatch(getLatestRequest('2019-12-20'));
+		dispatch(
+			getLatestRequest(
+				daysAgo({ days: LIBRARY_LATEST_DAY_COUNT }),
+				LIBRARY_LATEST_ALBUM_LIMIT
+			)
+		);
 	}, []);
 
 	useEffect(() => {

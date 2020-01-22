@@ -19,3 +19,11 @@ export function formatDate({
 }: formatDateOptions): string {
   return new Date(date).toLocaleDateString(locale, options);
 }
+
+export function daysAgo({
+  date = new Date(),
+  days = 1
+}): string {
+  date.setDate(date.getDate() - days);
+  return date.toISOString();
+}
