@@ -1,4 +1,7 @@
+import configureStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
 import { tracks } from '../../../../test/fixtures';
+const mockStore = configureStore([thunk]);
 
 import reducer, {
   WaveformActionTypes,
@@ -10,13 +13,17 @@ import reducer, {
 
 describe('waveform actions', () => {
   describe('getWaveformRequest', () => {
-    it.skip('should dispatch getWaveformRequest request', () => {
-      const dispatch = jest.fn();
-      getWaveformRequest(tracks[0])(dispatch);
-      expect(dispatch).toHaveBeenCalledWith({
-        type: WAVEFORM_GET_REQUEST,
-        track: tracks[0]
-      });
+    it('should dispatch getWaveformRequest request', async () => {
+      const store = mockStore({});
+      const expectedActions = [
+        {
+          type: WAVEFORM_GET_RESPONSE,
+          track: tracks[0]
+        }
+      ];
+      await getWaveformRequest(tracks[0])(store.dispatch);
+      const actualActions = store.getActions();
+      expect(actualActions).toEqual(expectedActions);
     });
   });
 });

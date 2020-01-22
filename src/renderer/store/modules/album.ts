@@ -83,14 +83,6 @@ export type AlbumActionTypes =
   | GetAlbumContentRequestAction
   | GetAlbumContentResponseAction;
 
-export const getAlbumListRequest = (ids: string[]): Function =>
-  async (dispatch: Function): Promise<void> => {
-    dispatch({
-      type: ALBUM_GET_LIST_RESPONSE,
-      results: await ipc.invoke(IPC_ALBUM_GET_LIST_REQUEST, ids)
-    });
-  }
-
 export const getAlbumListResponse = (results: Album[]): Function =>
   (dispatch: Function): void => {
     dispatch({
@@ -99,12 +91,13 @@ export const getAlbumListResponse = (results: Album[]): Function =>
     });
   }
 
-export const getAlbumContentRequest = (album: Album): Function =>
+export const getAlbumListRequest = (ids: string[]): Function =>
   async (dispatch: Function): Promise<void> => {
-    dispatch({
-      type: ALBUM_GET_CONTENT_RESPONSE,
-      album: await ipc.invoke(IPC_ALBUM_CONTENT_REQUEST, album)
-    });
+    dispatch(
+      getAlbumListResponse(
+        await ipc.invoke(IPC_ALBUM_GET_LIST_REQUEST, ids)
+      )
+    );
   }
 
 export const getAlbumContentResponse = (album: Album): Function =>
@@ -113,6 +106,15 @@ export const getAlbumContentResponse = (album: Album): Function =>
       type: ALBUM_GET_CONTENT_RESPONSE,
       album
     });
+  }
+
+export const getAlbumContentRequest = (album: Album): Function =>
+  async (dispatch: Function): Promise<void> => {
+    dispatch(
+      getAlbumContentResponse(
+        await ipc.invoke(IPC_ALBUM_CONTENT_REQUEST, album)
+      )
+    );
   }
 
 export const reloadAlbumContent = (album: Album): Function =>

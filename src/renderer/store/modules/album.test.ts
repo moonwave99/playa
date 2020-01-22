@@ -1,44 +1,67 @@
+import configureStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
 import { toObj } from '../../utils/storeUtils';
 import { albums } from '../../../../test/fixtures';
 
+const mockStore = configureStore([thunk]);
+
 import reducer, {
+  Album,
   AlbumActionTypes,
   AlbumState,
   getAlbumListRequest,
+  getAlbumListResponse,
   getAlbumContentRequest,
   getAlbumContentResponse,
+  reloadAlbumContent,
   ALBUM_GET_LIST_REQUEST,
   ALBUM_GET_LIST_RESPONSE,
   ALBUM_GET_CONTENT_REQUEST,
   ALBUM_GET_CONTENT_RESPONSE
 } from './album';
 
+import { Track, TRACK_GET_LIST_RESPONSE } from './track';
+
 describe('album actions', () => {
   describe('getAlbumListRequest', () => {
-    it.skip('should dispatch getAlbumListRequest request', () => {
-      const dispatch = jest.fn();
-      getAlbumListRequest(['1', '2'])(dispatch);
-      expect(dispatch).toHaveBeenCalledWith({
-        type: ALBUM_GET_LIST_REQUEST,
-        ids: ['1', '2']
-      });
+    it('should dispatch expected actions', async () => {
+      const store = mockStore({});
+      const expectedActions = [
+        { type: ALBUM_GET_LIST_RESPONSE }
+      ];
+      await getAlbumListRequest(['1', '2'])(store.dispatch);
+      const actualActions = store.getActions();
+      expect(actualActions).toEqual(expectedActions);
+    });
+  });
+
+  describe('getAlbumListResponse', () => {
+    it('should dispatch expected actions', async () => {
+      const store = mockStore({});
+      const expectedActions = [
+        { type: ALBUM_GET_LIST_RESPONSE, results: albums }
+      ];
+      await getAlbumListResponse(albums)(store.dispatch);
+      const actualActions = store.getActions();
+      expect(actualActions).toEqual(expectedActions);
     });
   });
 
   describe('getAlbumContentRequest', () => {
-    it.skip('should dispatch getAlbumContentRequest request', () => {
-      const dispatch = jest.fn();
+    it('should dispatch expected actions', async () => {
+      const store = mockStore({});
       const album = albums[0];
-      getAlbumContentRequest(album)(dispatch);
-      expect(dispatch).toHaveBeenCalledWith({
-        type: ALBUM_GET_CONTENT_REQUEST,
-        album
-      });
+      const expectedActions = [
+        { type: ALBUM_GET_CONTENT_RESPONSE, album }
+      ];
+      await getAlbumContentRequest(album)(store.dispatch);
+      const actualActions = store.getActions();
+      expect(actualActions).toEqual(expectedActions);
     });
   });
 
   describe('getAlbumContentResponse', () => {
-    it('should dispatch getAlbumContentResponse request', () => {
+    it('should dispatch expected actions', () => {
       const dispatch = jest.fn();
       const album = albums[0];
       getAlbumContentResponse(album)(dispatch);
@@ -46,6 +69,26 @@ describe('album actions', () => {
         type: ALBUM_GET_CONTENT_RESPONSE,
         album
       });
+    });
+  });
+
+  describe('reloadAlbumContent', () => {
+    it('should dispatch expected actions', async () => {
+      const store = mockStore({});
+      const album = albums[0];
+      const expectedActions = [
+        {
+          type: ALBUM_GET_CONTENT_RESPONSE,
+          album
+        },
+        {
+          type: TRACK_GET_LIST_RESPONSE,
+          results: undefined as Track[]
+        }
+      ];
+      await reloadAlbumContent(album)(store.dispatch);
+      const actualActions = store.getActions();
+      expect(actualActions).toEqual(expectedActions);
     });
   });
 });
