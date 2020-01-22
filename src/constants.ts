@@ -59,5 +59,6 @@ export const IPC_MESSAGES = {
   IPC_WAVEFORM_SAVE_REQUEST: 'waveform:save:request',
   IPC_WAVEFORM_GET_BASE_PATH: 'waveform:get-base-path',
   IPC_DIALOG_SHOW_MESSAGE: 'dialog:show-message',
+  IPC_DIALOG_SELECT_FOLDER: 'dialog:select-folder',
   IPC_ALBUM_GET_SINGLE_INFO: 'album:get-single:info'
 };

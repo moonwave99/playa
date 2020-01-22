@@ -1,7 +1,10 @@
 import { ipcRenderer as ipc } from 'electron';
 import { IPC_MESSAGES } from '../../constants';
 
-const { IPC_DIALOG_SHOW_MESSAGE } = IPC_MESSAGES;
+const {
+  IPC_DIALOG_SHOW_MESSAGE,
+  IPC_DIALOG_SELECT_FOLDER
+} = IPC_MESSAGES;
 
 type ConfirmDialogOptions = {
   title: string;
@@ -31,4 +34,9 @@ export async function confirmDialog({
     cancelId
   });
   return response === 0;
+}
+
+export async function selectFolderDialog(): Promise<string> {
+  const { canceled, filePaths } = await ipc.invoke(IPC_DIALOG_SELECT_FOLDER);
+  return canceled ? null : filePaths[0];
 }
