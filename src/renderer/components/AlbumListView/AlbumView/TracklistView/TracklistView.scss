@@ -16,6 +16,11 @@
       &:first-child {
         margin-top: 0;
       }
+      &:last-child {
+        &, &.not-ready {
+          margin-bottom: 0;
+        }
+      }
       &.not-ready {
         color: transparent;
         height: 1.5rem;

@@ -79,7 +79,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
   const albumClasses = cx('album-view', { 'is-current': isCurrent });
   const tagClasses = cx('album-type', `album-type-${type}`);
   return (
-    <article className={albumClasses}>
+    <article className={albumClasses} id={_id}>
       <aside className="album-aside">
         <CoverView
           className="album-cover"

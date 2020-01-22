@@ -20,6 +20,7 @@ const {
 type PlayerSelectorInfo = {
   currentPlaylist: Playlist;
   currentAlbum: Album;
+  currentAlbumId: Album['_id'];
   currentTrack: Track;
   queue: Album[];
   cover: string;
@@ -43,6 +44,7 @@ export function playerSelector({
   return {
     currentPlaylist: playlists.allById[currentPlaylistId],
     currentAlbum: albums.allById[currentAlbumId],
+    currentAlbumId,
     currentTrack: tracks.allById[currentTrackId],
     cover: covers.allById[currentAlbumId],
     waveform: waveforms.allById[currentTrackId],

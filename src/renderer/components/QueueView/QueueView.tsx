@@ -1,4 +1,5 @@
-import React, { FC, useEffect } from 'react';
+import React, { ReactElement, useEffect } from 'react';
+import { findDOMNode } from 'react-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { playerSelector } from '../../store/modules/player';
 import { AlbumListView } from '../AlbumListView/AlbumListView';
@@ -14,15 +15,12 @@ import {
 } from '../../utils/contextMenuUtils';
 import './QueueView.scss';
 
-type QueueViewProps = {
-
-};
-
-export const QueueView: FC<QueueViewProps> = () => {
+export const QueueView = (): ReactElement => {
   const dispatch = useDispatch();
   const {
 		currentPlaylist,
     currentAlbum,
+    currentAlbumId,
     currentTrack,
 		queue
   } = useSelector(playerSelector);
@@ -30,6 +28,19 @@ export const QueueView: FC<QueueViewProps> = () => {
   useEffect(() => {
     dispatch(updateTitle(`playback queue: ${queue.length} albums`));
   }, [queue.length]);
+
+  useEffect(() => {
+    const target = findDOMNode(document.getElementById(currentAlbumId)) as HTMLElement;
+    if (!target) {
+      return;
+    }
+    setImmediate(() => {
+      target.scrollIntoView({
+        block: 'center',
+        behavior: 'smooth'
+      });
+    });
+  }, [currentAlbumId]);
 
   function onAlbumContextMenu(album: Album): void {
     openContextMenu([
@@ -55,7 +66,7 @@ export const QueueView: FC<QueueViewProps> = () => {
   }
 
 	return (
-		<section className="queue">
+		<section className="queue" id="queue">
       <h1>Playback Queue</h1>
       { queue.length > 0
         ? <AlbumListView

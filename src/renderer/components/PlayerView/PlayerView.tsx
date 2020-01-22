@@ -169,7 +169,7 @@ export const PlayerView: FC<PlayerViewProps> = ({
 					src={cover}
 					album={currentAlbum}
 					onClick={onCoverClick}/>
-			</section>			
+			</section>
 			{ currentTrack && currentAlbum &&
 				<PlaybackBar
 					currentTrack={currentTrack}
