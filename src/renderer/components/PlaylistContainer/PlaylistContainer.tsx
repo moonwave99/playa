@@ -11,12 +11,12 @@ import { Track } from '../../store/modules/track';
 import { playTrack } from '../../store/modules/player';
 import { toObj } from '../../utils/storeUtils';
 import { confirmDialog } from '../../lib/dialog';
+import { openContextMenu } from '../../lib/contextMenu/contextMenu';
+import { PLAYLIST_CONTENT_CONTEXT_ACTIONS } from '../../lib/contextMenu/actions/playlistContent';
 import {
-  PLAYLIST_CONTENT_CONTEXT_ACTIONS,
   ALBUM_CONTEXT_ACTIONS,
-  openContextMenu,
   AlbumActionItems
-} from '../../lib/contextMenu';
+} from '../../lib/contextMenu/actions/album';
 
 export const PlaylistContainer = (): ReactElement => {
   const dispatch = useDispatch();

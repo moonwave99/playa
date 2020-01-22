@@ -9,11 +9,11 @@ import { updateTitle } from '../../store/modules/ui';
 import { Album } from '../../store/modules/album';
 import { searchRequest } from '../../store/modules/search';
 import { playTrack, updateQueue } from '../../store/modules/player';
+import { openContextMenu } from '../../lib/contextMenu/contextMenu';
 import {
   ALBUM_CONTEXT_ACTIONS,
-  openContextMenu,
   AlbumActionItems
-} from '../../lib/contextMenu';
+} from '../../lib/contextMenu/actions/album';
 import './SearchView.scss';
 
 type SearchViewProps = {

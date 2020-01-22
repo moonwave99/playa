@@ -4,11 +4,8 @@ import { useRouteMatch } from 'react-router';
 import { SidebarPlaylistListItem } from './SidebarPlaylistListItem/SidebarPlaylistListItem';
 import { Playlist } from '../../../store/modules/playlist';
 import { PLAYLIST_SHOW } from '../../../routes';
-
-import {
-  PLAYLIST_LIST_CONTEXT_ACTIONS,
-  openContextMenu
-} from '../../../lib/contextMenu';
+import { openContextMenu } from '../../../lib/contextMenu/contextMenu';
+import { PLAYLIST_LIST_CONTEXT_ACTIONS } from '../../../lib/contextMenu/actions/playlistList';
 
 import './SidebarPlaylistList.scss';
 
@@ -38,7 +35,7 @@ export const SidebarPlaylistList: FC<SidebarPlaylistListProps> = ({
       {
         type: PLAYLIST_LIST_CONTEXT_ACTIONS,
         playlist,
-        dispatch
+        dispatch,
       }
     ]);
   }

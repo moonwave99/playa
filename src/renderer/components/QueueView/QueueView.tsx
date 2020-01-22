@@ -8,11 +8,11 @@ import { Track } from '../../store/modules/track';
 import { playTrack } from '../../store/modules/player';
 import { updateTitle, UIAlbumView } from '../../store/modules/ui';
 import { toObj } from '../../utils/storeUtils';
+import { openContextMenu } from '../../lib/contextMenu/contextMenu';
 import {
   ALBUM_CONTEXT_ACTIONS,
-  openContextMenu,
   AlbumActionItems
-} from '../../lib/contextMenu';
+} from '../../lib/contextMenu/actions/album';
 import './QueueView.scss';
 
 export const QueueView = (): ReactElement => {
