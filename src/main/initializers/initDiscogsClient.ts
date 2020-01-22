@@ -14,6 +14,7 @@ type initDiscogsClientParams = {
   discogsKey: string;
   discogsSecret: string;
   disableRequests?: boolean;
+  debug?: boolean;
 }
 
 export default function initDiscogsClient({
@@ -22,7 +23,8 @@ export default function initDiscogsClient({
   appVersion,
   discogsKey,
   discogsSecret,
-  disableRequests = false
+  disableRequests = false,
+  debug = false
 }: initDiscogsClientParams): void {
   const coversPath = Path.join(userDataPath, 'new_covers');
   const discogsClient = new DiscogsClient(
@@ -30,7 +32,7 @@ export default function initDiscogsClient({
     `${appName}/${appVersion}`,
     { consumerKey: discogsKey, consumerSecret: discogsSecret },
     disableRequests,
-    process.env.DEBUG === 'true'
+    debug
   );
 
   ipc.handle(IPC_COVER_GET_REQUEST, async (_event, { artist, title, _id }) =>

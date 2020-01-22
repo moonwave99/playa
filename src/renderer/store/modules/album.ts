@@ -91,6 +91,14 @@ export const getAlbumListRequest = (ids: string[]): Function =>
     });
   }
 
+export const getAlbumListResponse = (results: Album[]): Function =>
+  (dispatch: Function): void => {
+    dispatch({
+      type: ALBUM_GET_LIST_RESPONSE,
+      results
+    });
+  }
+
 export const getAlbumContentRequest = (album: Album): Function =>
   async (dispatch: Function): Promise<void> => {
     dispatch({

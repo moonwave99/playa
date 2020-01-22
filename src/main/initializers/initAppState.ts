@@ -9,10 +9,10 @@ const {
   IPC_UI_STATE_UPDATE,
 } = IPC_MESSAGES;
 
-export default function initAppState(userDataPath: string): AppState {
+export default function initAppState(userDataPath: string, debug = false): AppState {
   const appState = new AppState(
     Path.join(userDataPath, 'appState.json'),
-    process.env.DEBUG === 'true'
+    debug
   );
   appState.load();
 

@@ -17,9 +17,8 @@ const {
   IPC_ALBUM_GET_SINGLE_INFO
 } = IPC_MESSAGES;
 
-export default function initDatabase(userDataPath: string): void {
+export default function initDatabase(userDataPath: string, debug = false): void {
   const path = userDataPath + Path.sep + 'databases' + Path.sep;
-  const debug = process.env.DEBUG === 'true';
   const db: { [key: string]: Database }
     = ['playlist', 'album', 'track'].reduce((memo, key) =>
       ({ ...memo, [key]: new Database({ path, debug, name: key })})

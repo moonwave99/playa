@@ -1,13 +1,21 @@
 import { ipcRenderer as ipc } from 'electron';
 import Player from '../../player';
 import { Playlist } from './playlist';
-import { Album, getAlbumContentResponse } from './album';
+import {
+  Album,
+  getAlbumListResponse,
+  getAlbumContentResponse
+} from './album';
 import { Track, getTrackListResponse } from './track';
+import { updateState } from './ui';
 import { immutableInsertAtIndex } from '../../utils/storeUtils';
 import { ApplicationState } from '../store';
 
 import { IPC_MESSAGES } from '../../../constants';
-const { IPC_ALBUM_GET_SINGLE_INFO } = IPC_MESSAGES;
+const {
+  IPC_ALBUM_GET_LIST_REQUEST,
+  IPC_ALBUM_GET_SINGLE_INFO
+} = IPC_MESSAGES;
 
 type PlayerSelectorInfo = {
   currentPlaylist: Playlist;
@@ -151,7 +159,12 @@ export const seekTo = (position: number): Function =>
   }
 
 export const updateQueue = (queue: Album['_id'][] = []): Function =>
-  (dispatch: Function): void => {
+  async (dispatch: Function, getState: Function): Promise<void> => {
+    const { albums } = getState();
+    const missingAlbumIDs = queue.filter(x => !albums.allById[x]);
+    const results = await ipc.invoke(IPC_ALBUM_GET_LIST_REQUEST, missingAlbumIDs);
+    dispatch(getAlbumListResponse(results));
+    dispatch(updateState({ queue }));
     dispatch({
       type: PLAYER_UPDATE_QUEUE,
       queue

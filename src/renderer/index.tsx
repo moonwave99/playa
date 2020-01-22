@@ -21,7 +21,10 @@ const {
   const player = new Player({
     audioElement: document.getElementById('player') as HTMLAudioElement
   });
-  const { lastOpenedPlaylistId } = await ipc.invoke(IPC_UI_STATE_LOAD);
+  const {
+    lastOpenedPlaylistId,
+    queue
+  } = await ipc.invoke(IPC_UI_STATE_LOAD);
   const waveformBasePath = await ipc.invoke(IPC_WAVEFORM_GET_BASE_PATH);
   const store = initStore(player);
 
@@ -32,7 +35,8 @@ const {
           <App
             player={player}
             waveformBasePath={waveformBasePath}
-            lastOpenedPlaylistId={lastOpenedPlaylistId}/>
+            lastOpenedPlaylistId={lastOpenedPlaylistId}
+            queue={queue}/>
         </DndProvider>
       </ConnectedRouter>
     </Provider>,

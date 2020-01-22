@@ -12,7 +12,8 @@ import { PlaylistContainer } from '../PlaylistContainer/PlaylistContainer';
 
 import initIpc from '../../lib/initIpc';
 import { Playlist, getAllPlaylistsRequest } from '../../store/modules/playlist';
-import { togglePlayback } from '../../store/modules/player';
+import { Album } from '../../store/modules/album';
+import { updateQueue, togglePlayback } from '../../store/modules/player';
 import './App.scss';
 
 import {
@@ -30,12 +31,14 @@ type AppProps = {
   player: Player;
   lastOpenedPlaylistId: Playlist['_id'];
   waveformBasePath: string;
+  queue: Album['_id'][];
 }
 
 export const App: FC<AppProps> = ({
   player,
   lastOpenedPlaylistId,
-  waveformBasePath
+  waveformBasePath,
+  queue
 }): ReactElement => {
   const history = useHistory();
   const dispatch = useDispatch();
@@ -79,6 +82,12 @@ export const App: FC<AppProps> = ({
       history.replace(generatePath(PLAYLIST_SHOW, { _id: lastOpenedPlaylistId }));
     }
   }, [lastOpenedPlaylistId]);
+
+  useEffect(() => {
+    if (queue.length) {
+      dispatch(updateQueue(queue));
+    }
+  }, [queue]);
 
   function onCreatePlaylistButtonClick(): void {
     const now = new Date().toISOString();

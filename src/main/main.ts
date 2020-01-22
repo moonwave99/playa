@@ -68,12 +68,11 @@ function createWindow({
 }
 
 const userDataPath = getUserDataPath();
-let disableRequests = false;
-if (is.development) {
-  disableRequests = process.env.DISABLE_DISCOGS_REQUESTS === 'true';
-}
+const disableRequests = process.env.DISABLE_DISCOGS_REQUESTS === 'true';
+const debug = process.env.DEBUG === 'true';
+
 initDialog();
-initDatabase(userDataPath);
+initDatabase(userDataPath, debug);
 initURLHandler();
 initDiscogsClient({
   userDataPath,
@@ -81,12 +80,13 @@ initDiscogsClient({
   appVersion: APP_VERSION,
   discogsKey: DISCOGS_KEY,
   discogsSecret: DISCOGS_SECRET,
-  disableRequests
+  disableRequests,
+  debug
 });
 
 initWaveform(userDataPath);
 
-const appState = initAppState(userDataPath);
+const appState = initAppState(userDataPath, debug);
 const { lastWindowSize, lastWindowPosition } = appState.getState();
 
 app.on('ready', async () => {

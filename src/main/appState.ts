@@ -5,6 +5,7 @@ interface AppStateValues {
   lastOpenedPlaylistId: string;
   lastWindowSize: [number, number];
   lastWindowPosition: [number, number];
+  queue: string[];
 }
 
 export default class AppState {
@@ -16,6 +17,7 @@ export default class AppState {
     this.debug = debug;
   }
   setState(state: object): AppState {
+    this.debug && console.log('[AppState] Updating state', this.appState, state);
     this.appState = {
       ...this.appState,
       ...state
@@ -33,7 +35,8 @@ export default class AppState {
       this.appState = {
         lastOpenedPlaylistId: null,
         lastWindowSize: [null, null],
-        lastWindowPosition: [null, null]
+        lastWindowPosition: [null, null],
+        queue: []
       };
     }
     return this;
