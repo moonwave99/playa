@@ -112,3 +112,12 @@ input[type=search] {
 		--section-gutter: #{$mainUnit / 2};
 	}
 }
+
+.app-wrapper {
+	opacity: 0;
+}
+
+.wf-active .app-wrapper{
+	opacity: 1;
+	transition: .3s ease-in-out;
+}

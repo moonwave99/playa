@@ -5,16 +5,23 @@ import { ConnectedRouter } from 'connected-react-router';
 import { Provider } from 'react-redux';
 import { DndProvider } from 'react-dnd';
 import Backend from 'react-dnd-html5-backend';
+import WebFont from 'webfontloader';
 import Player from './player';
 import { App } from './components/App/App';
 import { initStore, history } from './store/store';
 import initFontAwesome from './lib/initFontAwesome';
 
-import { IPC_MESSAGES } from '../constants';
+import { FONTS, IPC_MESSAGES } from '../constants';
 const {
   IPC_UI_STATE_LOAD,
   IPC_WAVEFORM_GET_BASE_PATH
 } = IPC_MESSAGES;
+
+WebFont.load({
+  custom: {
+    families: FONTS
+  }
+});
 
 (async (): Promise<void> => {
   initFontAwesome();

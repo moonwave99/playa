@@ -21,6 +21,8 @@ export const COLORS = {
   SKELETON_COLOR: '#282828'
 };
 
+export const FONTS = ['Fira Mono', 'Inter UI', 'Nunito'];
+
 export const WAVEFORM_PEAKS_COUNT = 1000;
 
 export const IPC_MESSAGES = {
@@ -41,6 +43,8 @@ export const IPC_MESSAGES = {
   IPC_ALBUM_GET_LIST_RESPONSE : 'album:get-list:response',
   IPC_ALBUM_CONTENT_REQUEST : 'album:content:request',
   IPC_ALBUM_CONTENT_RESPONSE : 'album:content:response',
+  IPC_ALBUM_GET_LATEST_REQUEST : 'album:get-latest:request',
+  IPC_ALBUM_GET_LATEST_RESPONSE : 'album:get-latest:response',
   IPC_TRACK_GET_LIST_REQUEST : 'track:get-list:request',
   IPC_TRACK_GET_LIST_RESPONSE : 'track:get-list:response',
   IPC_SEARCH_REQUEST : 'search:request',
