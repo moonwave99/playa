@@ -1,7 +1,8 @@
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { albums } from '../../../../test/fixtures';
+import { albums, playlists } from '../../../../test/fixtures';
 import { Album, ALBUM_GET_LIST_RESPONSE } from './album';
+import { toObj } from '../../utils/storeUtils';
 
 const mockStore = configureStore([thunk]);
 
@@ -34,6 +35,9 @@ describe('library actions', () => {
   describe('removeAlbums', () => {
     it('should dispatch LIBRARY_GET_LATEST_RESPONSE', async () => {
       const store = mockStore({
+        playlists: {
+          allById: toObj(playlists)
+        },
         library: {
           latest: albums
         },

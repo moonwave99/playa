@@ -6,6 +6,10 @@ export interface EntityHashMap<T> {
   [key: string]: T;
 }
 
+export function toArray<T>(hashMap: EntityHashMap<T>): T[] {
+  return Object.keys(hashMap).map((id) => hashMap[id]);
+}
+
 export function toObj<T extends Entity>(array: T[]): EntityHashMap<T> {
   return array.reduce((memo: EntityHashMap<T>, entity: T) => {
     memo[entity._id] = entity;

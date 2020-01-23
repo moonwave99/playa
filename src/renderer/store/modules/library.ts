@@ -1,6 +1,12 @@
-import { uniqBy } from 'lodash';
+import { intersection, uniqBy, without } from 'lodash';
 import { ipcRenderer as ipc } from 'electron';
-import { ensureAll } from '../../utils/storeUtils';
+import { toArray, ensureAll } from '../../utils/storeUtils';
+
+import {
+  Playlist,
+  PLAYLIST_GET_LIST_RESPONSE
+} from './playlist';
+
 import {
   Album,
   getDefaultAlbum,
@@ -15,7 +21,8 @@ import { IPC_MESSAGES } from '../../../constants';
 
 const {
   IPC_ALBUM_GET_LATEST_REQUEST,
-  IPC_ALBUM_DELETE_LIST_REQUEST
+  IPC_ALBUM_DELETE_LIST_REQUEST,
+  IPC_PLAYLIST_SAVE_LIST_REQUEST
 } = IPC_MESSAGES;
 
 export interface LibraryState {
@@ -67,23 +74,57 @@ export const addAlbumsToLibrary = (albums: Album[]): Function =>
     })
   }
 
+// #TODO: remove album from playlists, bulk update
 export const removeAlbums = (albums: Album[]): Function =>
   async (dispatch: Function, getState: Function): Promise<void> => {
-    const { library, player } = getState();
+    const {
+      library,
+      player,
+      playlists
+    } = getState();
     const currentAlbums: Album[] = library.latest;
     const queue: Album['_id'][] = player.queue;
     const albumsToRemoveIDs = albums.map(({ _id }) => _id);
+
     const results = await ipc.invoke(IPC_ALBUM_DELETE_LIST_REQUEST, albums);
-    if (results.length > 0) {
-      dispatch({
-        type: LIBRARY_GET_LATEST_RESPONSE,
-        results: currentAlbums.filter(({ _id }) => albumsToRemoveIDs.indexOf(_id) < 0)
-      });
-      dispatch({
-        type: PLAYER_UPDATE_QUEUE,
-        queue: queue.filter((_id) => albumsToRemoveIDs.indexOf(_id) < 0)
-      });
+
+    if (results.length === 0) {
+      return;
     }
+
+    dispatch({
+      type: LIBRARY_GET_LATEST_RESPONSE,
+      results: currentAlbums.filter(({ _id }) => albumsToRemoveIDs.indexOf(_id) < 0)
+    });
+    dispatch({
+      type: PLAYER_UPDATE_QUEUE,
+      queue: queue.filter((_id) => albumsToRemoveIDs.indexOf(_id) < 0)
+    });
+
+    const playlistsToUpdate =
+      toArray(playlists.allById)
+      .filter(({ albums: albumIDs }) =>
+        intersection(albumIDs, albumsToRemoveIDs).length > 0
+      ).map((playlist: Playlist) => {
+        return {
+          ...playlist,
+          albums: without(playlist.albums, ...albumsToRemoveIDs)
+        }
+      });
+
+    if (playlistsToUpdate.length === 0) {
+      return;
+    }
+    const updatedPlaylists: Array<{ id: string; rev: string; ok: boolean }>
+      = await ipc.invoke(IPC_PLAYLIST_SAVE_LIST_REQUEST, playlistsToUpdate);
+
+    dispatch({
+      type: PLAYLIST_GET_LIST_RESPONSE,
+      playlists: updatedPlaylists.map(({ id, rev: _rev }) => ({
+        ...playlistsToUpdate.find(({ _id }) => _id === id),
+        _rev
+      }))
+    });
   }
 
 const INITIAL_STATE = {

@@ -1,5 +1,6 @@
 import {
   toObj,
+  toArray,
   updateId,
   removeIds,
   ensureAll,
@@ -22,6 +23,18 @@ const entitiesObject = {
 describe('toObj', () => {
   it('should convert an array to an EntityHashMap', () => {
     expect(toObj(entitiesArray)).toEqual(entitiesObject);
+  });
+  it('should return the identity if composed with toArray', () => {
+    expect(toArray(toObj(entitiesArray))).toEqual(entitiesArray);
+  });
+});
+
+describe('toArray', () => {
+  it('should convert an EntityHashMap to array', () => {
+    expect(toArray(entitiesObject)).toEqual(entitiesArray);
+  });
+  it('should return the identity if composed with toObj', () => {
+    expect(toObj(toArray(entitiesObject))).toEqual(entitiesObject);
   });
 });
 

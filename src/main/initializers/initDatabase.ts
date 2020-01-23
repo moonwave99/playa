@@ -9,6 +9,7 @@ import { IPC_MESSAGES } from '../../constants';
 const {
   IPC_PLAYLIST_GET_ALL_REQUEST,
   IPC_PLAYLIST_SAVE_REQUEST,
+  IPC_PLAYLIST_SAVE_LIST_REQUEST,
   IPC_PLAYLIST_DELETE_REQUEST,
   IPC_SEARCH_REQUEST,
   IPC_ALBUM_GET_LIST_REQUEST,
@@ -40,6 +41,10 @@ export default function initDatabase(userDataPath: string, debug = false): void 
         ...playlist,
         accessed: new Date().toISOString()
       })
+  );
+
+  ipc.handle(IPC_PLAYLIST_SAVE_LIST_REQUEST,
+    async (_event, playlists) => await db.playlist.saveBulk(playlists)
   );
 
   ipc.handle(IPC_PLAYLIST_DELETE_REQUEST,

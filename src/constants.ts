@@ -42,6 +42,8 @@ export const IPC_MESSAGES = {
   IPC_PLAYLIST_GET_ALL_RESPONSE : 'playlist:get-all:response',
   IPC_PLAYLIST_SAVE_REQUEST : 'playlist:save:request',
   IPC_PLAYLIST_SAVE_RESPONSE : 'playlist:save:response',
+  IPC_PLAYLIST_SAVE_LIST_REQUEST : 'playlist:save-list:request',
+  IPC_PLAYLIST_SAVE_LIST_RESPONSE : 'playlist:save-list:response',
   IPC_PLAYLIST_DELETE_REQUEST : 'playlist:delete:request',
   IPC_PLAYLIST_DELETE_RESPONSE : 'playlist:delete:response',
   IPC_ALBUM_SAVE_REQUEST : 'album:save:request',

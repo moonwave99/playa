@@ -34,12 +34,14 @@ export function getDefaultPlaylist(): Playlist {
   };
 }
 
-export const PLAYLIST_GET_ALL_REQUEST  = 'playa/playlists/GET_ALL_REQUEST';
-export const PLAYLIST_GET_ALL_RESPONSE = 'playa/playlists/GET_ALL_RESPONSE';
-export const PLAYLIST_SAVE_REQUEST     = 'playa/playlists/SAVE_REQUEST';
-export const PLAYLIST_SAVE_RESPONSE    = 'playa/playlists/SAVE_RESPONSE';
-export const PLAYLIST_DELETE_REQUEST   = 'playa/playlists/DELETE_REQUEST';
-export const PLAYLIST_DELETE_RESPONSE  = 'playa/playlists/DELETE_RESPONSE';
+export const PLAYLIST_GET_ALL_REQUEST   = 'playa/playlists/GET_ALL_REQUEST';
+export const PLAYLIST_GET_ALL_RESPONSE  = 'playa/playlists/GET_ALL_RESPONSE';
+export const PLAYLIST_GET_LIST_REQUEST  = 'playa/playlists/GET_LIST_REQUEST';
+export const PLAYLIST_GET_LIST_RESPONSE = 'playa/playlists/GET_LIST_RESPONSE';
+export const PLAYLIST_SAVE_REQUEST      = 'playa/playlists/SAVE_REQUEST';
+export const PLAYLIST_SAVE_RESPONSE     = 'playa/playlists/SAVE_RESPONSE';
+export const PLAYLIST_DELETE_REQUEST    = 'playa/playlists/DELETE_REQUEST';
+export const PLAYLIST_DELETE_RESPONSE   = 'playa/playlists/DELETE_RESPONSE';
 
 interface GetAllPlaylistRequestAction {
   type: typeof PLAYLIST_GET_ALL_REQUEST;
@@ -47,6 +49,11 @@ interface GetAllPlaylistRequestAction {
 
 interface GetAllPlaylistResponseAction {
   type: typeof PLAYLIST_GET_ALL_RESPONSE;
+  playlists: Playlist[];
+}
+
+interface GetListPlaylistResponseAction {
+  type: typeof PLAYLIST_GET_LIST_RESPONSE;
   playlists: Playlist[];
 }
 
@@ -73,6 +80,7 @@ interface DeletePlaylistResponseAction {
 export type PlaylistActionTypes =
     GetAllPlaylistRequestAction
   | GetAllPlaylistResponseAction
+  | GetListPlaylistResponseAction
   | SavePlaylistRequestAction
   | SavePlaylistResponseAction
   | DeletePlaylistRequestAction
@@ -118,6 +126,14 @@ export default function reducer(
       return {
         ...state,
         allById: toObj(ensureAll<Playlist>(action.playlists, getDefaultPlaylist))
+      };
+    case PLAYLIST_GET_LIST_RESPONSE:
+      return {
+        ...state,
+        allById: {
+          ...state.allById,
+          ...toObj(ensureAll<Playlist>(action.playlists, getDefaultPlaylist))
+        }
       };
     case PLAYLIST_SAVE_RESPONSE:
       return {
