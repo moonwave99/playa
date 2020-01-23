@@ -54,6 +54,7 @@ export const ImportView: FC<ImportViewProps> = ({
       accessor: 'isVariousArtists',
       title: t('library.import.form.isVariousArtists'),
       type: 'checkbox',
+      required: false,
       onChange: (): void => setAlbumFromVA(!isAlbumFromVA)
     },
     {

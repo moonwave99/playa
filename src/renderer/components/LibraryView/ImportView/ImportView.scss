@@ -14,13 +14,15 @@ $labelHeight: 2rem;
       flex: 1;
       font-size: $baseFontSize;
       color: $lightColor;
-      user-select: text;
       margin: 0 0 0 1rem;
       line-height: $mainUnit;
       border-radius: .25rem;
       background-color: $backgroundDarkColor;
       padding: 0 1rem;
       overflow-x: scroll;
+      code {
+        user-select: text;
+      }
     }
   }
 
@@ -59,11 +61,11 @@ $labelHeight: 2rem;
       &.type {
         flex: 0 0 calc(100% / 3);
         padding-right: $labelHeight * 0.5;
+        margin: 0;
       }
     }
     .button-wrapper {
-      width: calc(100% / 3);
-      float: left;
+      flex: 0 0 calc(100% / 3);
       margin: 0;
       padding-top: $labelHeight;
       .button {
