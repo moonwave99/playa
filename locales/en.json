@@ -20,6 +20,23 @@
       "title": "Your Music Library",
       "buttons": {
         "addNewAlbum": "Add New Album"
+      },
+      "dialogs": {
+        "albumAlreadyExists": {
+          "title": "Album already exists",
+          "message": "{{-folder}} already imported"
+        },
+        "tracksNotFound": {
+          "title": "No tracks found",
+          "message": "No tracks were found in selected directory. Supported files are 'mp3', 'm4a', 'flac', 'ogg'."
+        }
+      },
+      "import": {
+        "title": "Import Album:",
+        "form": {
+          "submit": "Looks fine!",
+          "isVariousArtists": "Album is from V/A"
+        }
       }
     },
     "albums": {

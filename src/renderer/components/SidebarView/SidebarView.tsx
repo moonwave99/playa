@@ -41,6 +41,10 @@ export const SidebarView: FC<SidebarViewProps> = ({
 						<FontAwesomeIcon icon="music" className="button-icon"/>
 						<span className="button-text">{t('sidebar.buttons.library')}</span>
 					</Link>
+					<Link to={QUEUE} className="button button-outline">
+						<FontAwesomeIcon icon="play" className="button-icon"/>
+						<span className="button-text">{t('sidebar.buttons.queue')}</span>
+					</Link>					
 				</div>
 			</section>
 			<section className="sidebar-footer">
@@ -53,10 +57,6 @@ export const SidebarView: FC<SidebarViewProps> = ({
 					<Link to={PLAYLIST_ALL} className="button button-outline">
 						<FontAwesomeIcon icon="list" className="button-icon"/>
 						<span className="button-text">{t('sidebar.buttons.playlist.all')}</span>
-					</Link>
-					<Link to={QUEUE} className="button button-outline">
-						<FontAwesomeIcon icon="play" className="button-icon"/>
-						<span className="button-text">{t('sidebar.buttons.queue')}</span>
 					</Link>
 				</div>
 			</section>

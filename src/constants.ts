@@ -44,6 +44,10 @@ export const IPC_MESSAGES = {
   IPC_PLAYLIST_SAVE_RESPONSE : 'playlist:save:response',
   IPC_PLAYLIST_DELETE_REQUEST : 'playlist:delete:request',
   IPC_PLAYLIST_DELETE_RESPONSE : 'playlist:delete:response',
+  IPC_ALBUM_SAVE_REQUEST : 'album:save:request',
+  IPC_ALBUM_SAVE_RESPONSE : 'album:save:response',
+  IPC_ALBUM_DELETE_LIST_REQUEST : 'album:delete-list:request',
+  IPC_ALBUM_DELETE_LIST_RESPONSE : 'album:delete-list:response',
   IPC_ALBUM_GET_LIST_REQUEST : 'album:get-list:request',
   IPC_ALBUM_GET_LIST_RESPONSE : 'album:get-list:response',
   IPC_ALBUM_CONTENT_REQUEST : 'album:content:request',
@@ -60,5 +64,8 @@ export const IPC_MESSAGES = {
   IPC_WAVEFORM_GET_BASE_PATH: 'waveform:get-base-path',
   IPC_DIALOG_SHOW_MESSAGE: 'dialog:show-message',
   IPC_DIALOG_SELECT_FOLDER: 'dialog:select-folder',
-  IPC_ALBUM_GET_SINGLE_INFO: 'album:get-single:info'
+  IPC_ALBUM_EXISTS: 'album:exists',
+  IPC_ALBUM_GET_SINGLE_INFO: 'album:get-single:info',
+  IPC_ALBUM_CONTENT_RAW_REQUEST: 'album:content:raw-request',
+  IPC_TRACK_GET_LIST_RAW_REQUEST: 'track:get-list:raw-request'
 };

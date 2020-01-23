@@ -13,8 +13,11 @@
       padding: $mainUnit;
       .button {
         width: 100%;
-        margin: 0 0 1.6rem 0;
+        margin: 0 0 $mainUnit / 2 0;
         padding: 0;
+        &:last-child {
+          margin: 0;
+        }
       }
     }
   }

@@ -131,7 +131,7 @@ export const playTrack = ({
       const {
         album: foundAlbum,
         tracks: foundTracks
-      } = await ipc.invoke(IPC_ALBUM_GET_SINGLE_INFO, [albumId]);
+      } = await ipc.invoke(IPC_ALBUM_GET_SINGLE_INFO, albumId);
       album = foundAlbum;
       dispatch(getAlbumContentResponse(foundAlbum));
       dispatch(getTrackListResponse(foundTracks));

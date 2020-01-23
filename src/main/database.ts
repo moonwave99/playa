@@ -116,7 +116,7 @@ export default class Database {
       include_docs: true, // eslint-disable-line
     });
     return rows
-      .filter((row: Row<T>) => !row.error)
+      .filter((row: Row<T>) => !row.error && row.doc)
       .map((row: Row<T>) => row.doc);
   }
 

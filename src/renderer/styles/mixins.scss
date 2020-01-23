@@ -163,3 +163,39 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+@mixin clearFix(){
+  &:before,
+  &:after{
+    content: " ";
+    display: table;
+  }
+
+  &:after{
+    display: block;
+    clear: both;
+    height: 1px;
+    margin-top: -1px;
+    visibility: hidden;
+  }
+  &{
+    *zoom: 1;
+  }
+}
+
+@mixin horizontalSeparator(
+  $separatorWidth: 30%,
+  $color: $albumSeparatorColor
+) {
+  margin-bottom: calc(var(--section-gutter) * 3);
+  position: relative;
+  &:after {
+    content: '';
+    position: absolute;
+    width: $separatorWidth;
+    left: calc((100% - #{$separatorWidth}) / 2);
+    bottom: calc(var(--section-gutter) * -1.5);
+    height: 1px;
+    background-color: $color;
+  }
+}

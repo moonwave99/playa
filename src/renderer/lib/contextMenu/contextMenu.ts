@@ -19,10 +19,17 @@ import {
   getActions as getPlaylistContextActions
 } from './actions/playlistContent';
 
+import {
+  LIBRARY_CONTENT_CONTEXT_ACTIONS,
+  GetLibraryContentContextMenuParams,
+  getActions as getLibraryContextActions
+} from './actions/libraryContent';
+
 type ContextMenuParams =
     GetPlaylistListContextMenuParams
   | GetPlaylistContentContextMenuParams
-  | GetAlbumContextMenuParams;
+  | GetAlbumContextMenuParams
+  | GetLibraryContentContextMenuParams;
 
 export function openContextMenu(params: ContextMenuParams[]): void {
   const menu = new Menu();
@@ -34,6 +41,8 @@ export function openContextMenu(params: ContextMenuParams[]): void {
         return getPlaylistContextActions(param);
       case ALBUM_CONTEXT_ACTIONS:
         return getAlbumActions(param);
+      case LIBRARY_CONTENT_CONTEXT_ACTIONS:
+        return getLibraryContextActions(param);
     }
   });
 

@@ -8,13 +8,14 @@ const mockStore = configureStore([thunk]);
 import reducer, {
   LibraryActionTypes,
   getLatestRequest,
+  removeAlbums,
   LIBRARY_GET_LATEST_REQUEST,
   LIBRARY_GET_LATEST_RESPONSE
 } from './library';
 
 describe('library actions', () => {
   describe('getLatestRequest', () => {
-    it('should dispatch albumGetList and libraryGetLatest actions', async () => {
+    it('should dispatch LIBRARY_GET_LATEST_REQUEST and LIBRARY_GET_LATEST_RESPONSE', async () => {
       const store = mockStore({});
       const expectedActions = [
         { type: ALBUM_GET_LIST_RESPONSE },
@@ -26,11 +27,30 @@ describe('library actions', () => {
       expect(actualActions).toEqual(expectedActions);
     });
   });
+  describe('removeAlbums', () => {
+    it('should dispatch LIBRARY_GET_LATEST_RESPONSE', async () => {
+      const store = mockStore({
+        library: {
+          latest: albums
+        }
+      });
+      const expectedActions = [
+        {
+          type: LIBRARY_GET_LATEST_RESPONSE,
+          results: [albums[1]]
+        }
+      ];
+      await removeAlbums([albums[0]])(store.dispatch, store.getState);
+      const actualActions = store.getActions();
+      expect(actualActions).toEqual(expectedActions);
+    });
+  });
 });
 
 describe('library reducer', () => {
   const initialState = {
     latest: [] as Album[],
+    latestAlbumID: null as Album['_id']
   }
   it('should return the initial state', () => {
     expect(reducer(undefined, {} as LibraryActionTypes))
@@ -41,7 +61,8 @@ describe('library reducer', () => {
     expect(reducer(initialState, {
       type: LIBRARY_GET_LATEST_REQUEST
     })).toEqual({
-      latest: []
+      latest: [],
+      latestAlbumID: null
     });
   });
 
@@ -51,7 +72,8 @@ describe('library reducer', () => {
       type: LIBRARY_GET_LATEST_RESPONSE,
       results
     })).toEqual({
-      latest: albums
+      latest: albums,
+      latestAlbumID: albums[1]._id
     });
   });
 });

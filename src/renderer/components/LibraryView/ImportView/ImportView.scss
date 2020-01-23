@@ -1,0 +1,76 @@
+@import "../../../styles/variables";
+@import "../../../styles/mixins";
+
+$labelHeight: 2rem;
+
+.import-view {
+  h2 {
+    margin: 0;
+    line-height: $mainUnit;
+    color: $highlightColor;
+    display: flex;
+    justify-content: space-between;
+    .folder-name {
+      flex: 1;
+      font-size: $baseFontSize;
+      color: $lightColor;
+      user-select: text;
+      margin: 0 0 0 1rem;
+      line-height: $mainUnit;
+      border-radius: .25rem;
+      background-color: $backgroundDarkColor;
+      padding: 0 1rem;
+      overflow-x: scroll;
+    }
+  }
+
+  .import-form {
+    margin: calc(var(--section-gutter) * 0.5) 0 var(--section-gutter) 0;
+    display: flex;
+    flex-wrap: wrap;
+    @include horizontalSeparator($separatorWidth: 30%);
+    .form-field {
+      margin: 0 0 1rem 0;
+      flex: 0 0 100%;
+      label {
+        color: $mainColor;
+        line-height: $labelHeight;
+      }
+      select,
+      input {
+        @include input();
+      }
+      input[type="checkbox"] {
+        margin-right: $labelHeight * 0.25;
+      }
+      &.artist {
+        flex: 0 0 calc(100% / 3 * 2);
+        padding-right: $labelHeight * 0.5;
+      }
+      &.isVariousArtists {
+        flex: 0 0 calc(100% / 3);
+        margin-top: $labelHeight;
+        line-height: $mainUnit;
+        label {
+          color: $lightColor;
+        }
+      }
+      &.year,
+      &.type {
+        flex: 0 0 calc(100% / 3);
+        padding-right: $labelHeight * 0.5;
+      }
+    }
+    .button-wrapper {
+      width: calc(100% / 3);
+      float: left;
+      margin: 0;
+      padding-top: $labelHeight;
+      .button {
+        width: 100%;
+        margin: 0;
+        padding: 0 1rem;
+      }
+    }
+  }
+}

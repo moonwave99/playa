@@ -21,7 +21,12 @@ $tributeColor: #A45E11;
 $baseFontSize: 14px;
 $mainUnit: 3rem;
 
+$wideWindowThreshold: 25 * $mainUnit;
+$smallWindowThreshold: 21 * $mainUnit;
+$miniWindowThreshold: 15 * $mainUnit;
+
 $sidebarWidth: 27rem;
+$smallSidebarWidth: 21rem;
 $searchButtonWidth: 11rem;
 $searchResultsCoverWidth: 1.2 * $mainUnit;
 
@@ -33,6 +38,7 @@ $libraryAlbumCoverWidth: 100%;
 
 $searchBarHeight: 3 * $mainUnit;
 $playerHeight: 2 * $mainUnit;
+$miniPlayerHeight: 3 * $mainUnit;
 $playerCoverSize: $playerHeight;
 $playerDurationFontSize: 1rem;
 $playerTrackTitleFontSize: 1.2rem;
@@ -41,8 +47,4 @@ $playbackControlSize: 3rem;
 $playerProgressBottomHeight: 5px;
 $playerProgressAreaBackgroundColor: rgba(black, .2);
 
-$smallWindowThreshold: 21 * $mainUnit;
-$smallSidebarWidth: 21rem;
-$miniWindowThreshold: 15 * $mainUnit;
-
-$miniPlayerHeight: 3 * $mainUnit;
+$modalMaxWidth: 50vw;

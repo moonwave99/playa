@@ -37,7 +37,8 @@ async function loadMetadata(paths: string[]): Promise<MetadataResult[]> {
 export default async function loadTracklist(
   ids: string[],
   db: Database,
-  forceUpdate = false
+  forceUpdate = false,
+  persist = true
 ): Promise<Track[]> {
   const results = await db.getList<Track>(ids);
   if (forceUpdate) {
@@ -67,8 +68,10 @@ export default async function loadTracklist(
       path: _id
     }
   });
-  await db.saveBulk<Track>(
-    loadedTracks.filter(({ found }) => found)
-  );
+  if (persist) {
+    await db.saveBulk<Track>(
+      loadedTracks.filter(({ found }) => found)
+    );
+  }
   return loadedTracks;
 }

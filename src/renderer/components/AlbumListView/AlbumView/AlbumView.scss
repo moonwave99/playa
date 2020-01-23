@@ -3,24 +3,14 @@
 
 .album-view {
   display: flex;
-  margin-bottom: calc(var(--section-gutter) * 3);
-  position: relative;
-  --separator-width: 30%;
+  @include horizontalSeparator($separatorWidth: 30%);
   @media (max-width: $smallWindowThreshold) {
     flex-direction: column;
   }
   @media (max-width: $miniWindowThreshold) {
-    --separator-width: 90%;
+    @include horizontalSeparator($separatorWidth: 90%);
   }
-  &:after {
-    content: '';
-    position: absolute;
-    width: var(--separator-width);
-    left: calc((100% - var(--separator-width)) / 2);
-    bottom: calc(var(--section-gutter) * -1.5);
-    height: 1px;
-    background-color: $albumSeparatorColor;
-  }
+
   &:not(.is-current) {
     .album-cover {
       @include playOverlay(

@@ -99,9 +99,8 @@ export const AlbumView: FC<AlbumViewProps> = ({
           </h3>
         </header>
         <TracklistView
-          albumType={type}
           currentTrackId={currentTrackId}
-          isAlbumFromVariousArtists={artist === VARIOUS_ARTISTS_ID}
+          showArtists={artist === VARIOUS_ARTISTS_ID}
           rawTracks={tracks}
           tracklist={tracklist}
           onTrackDoubleClick={onTrackDoubleClick}/>

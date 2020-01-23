@@ -20,7 +20,7 @@ const mainConfig = {
 		extensions: ['.js', '.json', '.ts'],
 	},
 	externals: {
-    pouchdb: "require('pouchdb')"
+    pouchdb: "require('pouchdb')",
   },
 	module: {
 		rules: [{

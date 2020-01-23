@@ -2,7 +2,6 @@ import React, { FC, ReactElement, SyntheticEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import cx from 'classnames';
-import { AlbumTypes } from '../../../../store/modules/album';
 import { Track } from '../../../../store/modules/track';
 import { formatTrackNumber } from '../../../../utils/tracklistUtils';
 import { formatDuration } from '../../../../utils/datetimeUtils';
@@ -11,21 +10,23 @@ import { SEARCH } from '../../../../routes';
 import './TracklistView.scss';
 
 type TracklistViewProps = {
-  albumType: AlbumTypes;
-  currentTrackId: Track['_id'];
+  className?: string;
+  currentTrackId?: Track['_id'];
   tracklist: Track[];
   rawTracks: string[];
-  isAlbumFromVariousArtists: boolean;
-  onTrackDoubleClick: Function;
+  showArtists: boolean;
+  showTrackNumbers?: boolean;
+  onTrackDoubleClick?: Function;
 }
 
 // #TODO reload onClick if some tracks are not found
 export const TracklistView: FC<TracklistViewProps> = ({
-  albumType,
+  className,
   currentTrackId,
   tracklist = [],
   rawTracks = [],
-  isAlbumFromVariousArtists,
+  showTrackNumbers = true,
+  showArtists = false,
   onTrackDoubleClick
 }) => {
   const maxNameLength = Math.max(...rawTracks.map(x => x.length));
@@ -48,14 +49,14 @@ export const TracklistView: FC<TracklistViewProps> = ({
   }
 
   function renderArtist(artist: string): ReactElement {
-    return isAlbumFromVariousArtists || albumType === AlbumTypes.Remix
+    return showArtists
       ? <><Link className="artist" to={`${SEARCH}?query=${artist}`}>{artist}</Link>&nbsp;-&nbsp;</>
       : null;
   }
 
   function renderTrackNumber(number: number): ReactElement {
     const classNames = cx('track-number',
-      { 'hidden' : albumType === AlbumTypes.Remix}
+      { 'hidden' : !showTrackNumbers}
     );
     return <span className={classNames}>{formatTrackNumber(number)}</span>;
   }
@@ -68,7 +69,7 @@ export const TracklistView: FC<TracklistViewProps> = ({
 
     function onDoubleClick(event: SyntheticEvent): void {
       event.preventDefault();
-      onTrackDoubleClick(track);
+      onTrackDoubleClick && onTrackDoubleClick(track);
     }
 
     const isCurrent = _id === currentTrackId;
@@ -91,7 +92,7 @@ export const TracklistView: FC<TracklistViewProps> = ({
       </li>
     );
   }
-  const classNames = cx('tracklist-view');
+  const classNames = cx('tracklist-view', className);
   return (
     <section className={classNames}>
       { tracklist.length > 0

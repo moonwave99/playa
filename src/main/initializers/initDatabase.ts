@@ -12,10 +12,15 @@ const {
   IPC_PLAYLIST_DELETE_REQUEST,
   IPC_SEARCH_REQUEST,
   IPC_ALBUM_GET_LIST_REQUEST,
+  IPC_ALBUM_SAVE_REQUEST,
   IPC_ALBUM_CONTENT_REQUEST,
   IPC_ALBUM_GET_LATEST_REQUEST,
   IPC_TRACK_GET_LIST_REQUEST,
-  IPC_ALBUM_GET_SINGLE_INFO
+  IPC_ALBUM_GET_SINGLE_INFO,
+  IPC_ALBUM_EXISTS,
+  IPC_ALBUM_DELETE_LIST_REQUEST,
+  IPC_ALBUM_CONTENT_RAW_REQUEST,
+  IPC_TRACK_GET_LIST_RAW_REQUEST
 } = IPC_MESSAGES;
 
 export default function initDatabase(userDataPath: string, debug = false): void {
@@ -54,16 +59,20 @@ export default function initDatabase(userDataPath: string, debug = false): void 
     return await db.album.save({ ...album, tracks });
   });
 
+  ipc.handle(IPC_ALBUM_SAVE_REQUEST,
+    async (_event, album) => await db.album.save(album)
+  );
+
   ipc.handle(IPC_ALBUM_GET_LATEST_REQUEST,
     async (_event, dateFrom, limit) => await db.album.getLatest({ dateFrom, limit, order: 'desc' })
   );
 
   ipc.handle(IPC_TRACK_GET_LIST_REQUEST,
-    async (_event, ids, forceUpdate) =>  await loadTracklist(ids, db.track, forceUpdate)
+    async (_event, ids, forceUpdate, persist) =>  await loadTracklist(ids, db.track, forceUpdate, persist)
   );
 
-  ipc.handle(IPC_ALBUM_GET_SINGLE_INFO, async (_event, ids) => {
-    const albums: Album[] = await db.album.getList(ids);
+  ipc.handle(IPC_ALBUM_GET_SINGLE_INFO, async (_event, albumID) => {
+    const albums: Album[] = await db.album.getList([albumID]);
     let tracks = albums[0].tracks || [];
     if (tracks.length === 0) {
       tracks = await loadAlbum(albums[0].path);
@@ -77,4 +86,21 @@ export default function initDatabase(userDataPath: string, debug = false): void 
       tracks: foundTracks
     };
   });
+
+  ipc.handle(IPC_ALBUM_EXISTS,
+    async (_event, folder) => {
+      const results = await db.album.find<Album>(folder, ['path']);
+      return results.length > 0;
+    }
+  );
+
+  ipc.handle(IPC_ALBUM_DELETE_LIST_REQUEST,
+    async (_event, albums) => await db.album.deleteBulk(albums)
+  );
+  ipc.handle(IPC_ALBUM_CONTENT_RAW_REQUEST,
+    async (_event, path) => await loadAlbum(path)
+  );
+  ipc.handle(IPC_TRACK_GET_LIST_RAW_REQUEST,
+    async (_event, tracks: string[]) => await loadTracklist(tracks, db.track, true, false)
+  );
 }

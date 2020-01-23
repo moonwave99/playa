@@ -5,6 +5,7 @@ import { ConnectedRouter } from 'connected-react-router';
 import { Provider } from 'react-redux';
 import { DndProvider } from 'react-dnd';
 import Backend from 'react-dnd-html5-backend';
+import ReactModal from 'react-modal';
 import WebFont from 'webfontloader';
 import Player from './player';
 import { App } from './components/App/App';
@@ -31,9 +32,11 @@ const {
     lastOpenedPlaylistId,
     queue
   } = await ipc.invoke(IPC_UI_STATE_LOAD);
-  
+
   const waveformBasePath = await ipc.invoke(IPC_WAVEFORM_GET_BASE_PATH);
   const store = initStore(player);
+
+  ReactModal.setAppElement('#app');
 
   ReactDOM.render(
     <Provider store={store}>

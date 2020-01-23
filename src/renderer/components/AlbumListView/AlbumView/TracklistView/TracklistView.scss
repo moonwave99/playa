@@ -2,6 +2,25 @@
 @import "../../../../styles/mixins";
 
 .tracklist-view {
+  &:not(.not-playable) {
+    ol {
+      > li {
+        &:hover {
+          background-color: $backgroundLightColor;
+          transition: background-color .1s ease-in-out;
+        }
+        &.is-current,
+        &.ready:hover {
+          .playback-info {
+            display: inline-block;
+          }
+          .track-number {
+            display: none;
+          }
+        }        
+      }
+    }
+  }
   ol {
     margin: 0;
     padding: 0;
@@ -26,19 +45,6 @@
         height: 1.5rem;
         margin: 1rem 0;
         transition: background-color .3s ease-in-out;
-      }
-      &:hover {
-        background-color: $backgroundLightColor;
-        transition: background-color .1s ease-in-out;
-      }
-      &.is-current,
-      &.ready:hover {
-        .playback-info {
-          display: inline-block;
-        }
-        .track-number {
-          display: none;
-        }
       }
       &.is-current,
       &.is-current .artist {

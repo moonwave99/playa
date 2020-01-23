@@ -5,6 +5,7 @@ import { EntityHashMap, toObj, ensureAll, updateId } from '../../utils/storeUtil
 import { IPC_MESSAGES } from '../../../constants';
 
 const {
+  IPC_ALBUM_SAVE_REQUEST,
   IPC_ALBUM_GET_LIST_REQUEST,
   IPC_ALBUM_CONTENT_REQUEST,
   IPC_TRACK_GET_LIST_REQUEST
@@ -52,6 +53,8 @@ export interface AlbumState {
   allById: EntityHashMap<Album>;
 }
 
+export const ALBUM_SAVE_REQUEST         = 'playa/album/SAVE_REQUEST';
+export const ALBUM_SAVE_RESPONSE        = 'playa/album/SAVE_RESPONSE';
 export const ALBUM_GET_LIST_REQUEST     = 'playa/album/GET_LIST_REQUEST';
 export const ALBUM_GET_LIST_RESPONSE    = 'playa/album/GET_LIST_RESPONSE';
 export const ALBUM_GET_CONTENT_REQUEST  = 'playa/album/GET_CONTENT_REQUEST';
@@ -67,6 +70,11 @@ interface GetAlbumListResponseAction {
   results: Album[];
 }
 
+interface SaveAlbumResponseAction {
+  type: typeof ALBUM_SAVE_RESPONSE;
+  album: Album;
+}
+
 interface GetAlbumContentRequestAction {
   type: typeof ALBUM_GET_CONTENT_REQUEST;
   album: Album;
@@ -78,7 +86,8 @@ interface GetAlbumContentResponseAction {
 }
 
 export type AlbumActionTypes =
-    GetAlbumListRequestAction
+    SaveAlbumResponseAction
+  | GetAlbumListRequestAction
   | GetAlbumListResponseAction
   | GetAlbumContentRequestAction
   | GetAlbumContentResponseAction;
@@ -98,6 +107,15 @@ export const getAlbumListRequest = (ids: string[]): Function =>
         await ipc.invoke(IPC_ALBUM_GET_LIST_REQUEST, ids)
       )
     );
+  }
+
+export const saveAlbumRequest = (album: Album): Function =>
+  async (dispatch: Function): Promise<void> => {
+    const savedAlbum = await ipc.invoke(IPC_ALBUM_SAVE_REQUEST, album);
+    dispatch({
+      type: ALBUM_SAVE_RESPONSE,
+      album: savedAlbum
+    });
   }
 
 export const getAlbumContentResponse = (album: Album): Function =>
@@ -142,6 +160,7 @@ export default function reducer(
           ...toObj(ensureAll<Album>(action.results, getDefaultAlbum))
         }
       };
+    case ALBUM_SAVE_RESPONSE:
     case ALBUM_GET_CONTENT_RESPONSE:
       return {
         ...state,
