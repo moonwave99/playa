@@ -13,6 +13,10 @@ import reducer, {
   LIBRARY_GET_LATEST_RESPONSE
 } from './library';
 
+import {
+  PLAYER_UPDATE_QUEUE
+} from './player';
+
 describe('library actions', () => {
   describe('getLatestRequest', () => {
     it('should dispatch LIBRARY_GET_LATEST_REQUEST and LIBRARY_GET_LATEST_RESPONSE', async () => {
@@ -32,15 +36,23 @@ describe('library actions', () => {
       const store = mockStore({
         library: {
           latest: albums
+        },
+        player: {
+          queue: albums.map(({ _id }) => _id)
         }
       });
       const expectedActions = [
         {
           type: LIBRARY_GET_LATEST_RESPONSE,
           results: [albums[1]]
+        },
+        {
+          type: PLAYER_UPDATE_QUEUE,
+          queue: [albums[1]._id]
         }
       ];
       await removeAlbums([albums[0]])(store.dispatch, store.getState);
+
       const actualActions = store.getActions();
       expect(actualActions).toEqual(expectedActions);
     });

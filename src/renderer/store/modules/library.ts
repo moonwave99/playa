@@ -7,6 +7,10 @@ import {
   ALBUM_GET_LIST_RESPONSE
 } from './album';
 
+import {
+  PLAYER_UPDATE_QUEUE
+} from './player';
+
 import { IPC_MESSAGES } from '../../../constants';
 
 const {
@@ -65,15 +69,20 @@ export const addAlbumsToLibrary = (albums: Album[]): Function =>
 
 export const removeAlbums = (albums: Album[]): Function =>
   async (dispatch: Function, getState: Function): Promise<void> => {
-    const { library } = getState();
+    const { library, player } = getState();
     const currentAlbums: Album[] = library.latest;
+    const queue: Album['_id'][] = player.queue;
     const albumsToRemoveIDs = albums.map(({ _id }) => _id);
     const results = await ipc.invoke(IPC_ALBUM_DELETE_LIST_REQUEST, albums);
     if (results.length > 0) {
       dispatch({
         type: LIBRARY_GET_LATEST_RESPONSE,
         results: currentAlbums.filter(({ _id }) => albumsToRemoveIDs.indexOf(_id) < 0)
-      })
+      });
+      dispatch({
+        type: PLAYER_UPDATE_QUEUE,
+        queue: queue.filter((_id) => albumsToRemoveIDs.indexOf(_id) < 0)
+      });
     }
   }
 
