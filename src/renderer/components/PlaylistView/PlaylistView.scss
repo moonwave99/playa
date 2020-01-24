@@ -22,7 +22,7 @@
       }
       h1 {
         flex: 1;
-        margin-right: 3 * $mainUnit;
+        margin-right: 5 * $mainUnit;
         transition: background-color .3s ease-in;
         &:focus{
           border-bottom: 1px solid $mainColor;
@@ -35,27 +35,20 @@
         margin-right: .5rem;
       }
     }
-    .playlist-view-actions{
-      position: fixed;
-      top: var(--section-gutter);
-      right: var(--section-gutter);
-      @media (max-width: $miniWindowThreshold) {
-        display: none;
-      }
-      .playlist-view-action-button {
-        margin: 0 0 0 .5rem;
-        padding: 0;
-        background: transparent;
+    .playlist-info {
+      display: flex;
+      line-height: 2rem;
+      .playlist-toggle-view-button {
+        background: none;
+        outline: none;
         border: none;
-        font-size: 2rem;
-        color: $lightColor;
-        transition: color .3s ease-in-out;
-        &.is-current,
-        &.is-current:hover {
-          color: $mainColor;
-        }
+        color: $highlightColor;
+        margin-left: auto;
         &:hover {
-          color: $highlightColor;
+          text-decoration: underline;
+        }
+        .button-icon {
+          margin-right: .5rem;
         }
       }
     }

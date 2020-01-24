@@ -58,6 +58,10 @@
       },
       "actions": {
         "delete": "Delete"
+      },
+      "toggleView": {
+        "showCompact": "Show compact view",
+        "showExtended": "Show extended view"
       }
     },
     "search": {

@@ -3,6 +3,7 @@ import React, { ReactElement, FC, useState, useEffect } from 'react';
 import cx from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { IconName } from '@fortawesome/fontawesome-svg-core';
 import { PlaylistViewTitle } from './PlaylistViewTitle/PlaylistViewTitle';
 import { AlbumListView } from '../AlbumListView/AlbumListView';
 import { Playlist } from '../../store/modules/playlist';
@@ -52,20 +53,22 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
   }, []);
 
 
-  function renderActionButtons(): ReactElement {
+  function renderToggleViewButton(): ReactElement {
+    const { icon, i18nkey, otherView } = {
+      icon: albumView === UIAlbumView.Compact ? 'th-list' : 'list-alt',
+      i18nkey: `playlists.toggleView.show${albumView === UIAlbumView.Compact ? 'Extended' : 'Compact'}`,
+      otherView: albumView === UIAlbumView.Compact ? UIAlbumView.Extended : UIAlbumView.Compact
+    };
+    function onButtonClick(): void {
+      setAlbumView(otherView);
+    }
     return (
-      <div className="playlist-view-actions">
-        <button
-          className={cx('playlist-view-action-button', { 'is-current': albumView === UIAlbumView.Extended })}
-          onClick={(): void => setAlbumView(UIAlbumView.Extended)}>
-          <FontAwesomeIcon icon="list-alt" className="playlist-icon" fixedWidth/>
-        </button>
-        <button
-          className={cx('playlist-view-action-button', { 'is-current': albumView === UIAlbumView.Compact })}
-          onClick={(): void => setAlbumView(UIAlbumView.Compact)}>
-          <FontAwesomeIcon icon="th-list" className="playlist-icon" fixedWidth/>
-        </button>
-      </div>
+      <button
+        className="playlist-toggle-view-button"
+        onClick={onButtonClick}>
+        <FontAwesomeIcon icon={icon as IconName} className="button-icon"/>
+        {t(i18nkey)}
+      </button>
     );
   }
 
@@ -82,9 +85,12 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
           <PlaylistViewTitle
             playlist={playlist}
             onTitleChange={onTitleChange}/>
+
         </div>
-        { renderActionButtons() }
-        <p className="playlist-info header-like">{t('playlists.createdOn', { date })}</p>
+        <p className="playlist-info header-like">
+          <span>{t('playlists.createdOn', { date })}</span>
+          { renderToggleViewButton() }
+        </p>
       </header>
       { hasAlbums
         ? <AlbumListView
