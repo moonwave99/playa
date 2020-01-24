@@ -74,7 +74,6 @@ export const addAlbumsToLibrary = (albums: Album[]): Function =>
     })
   }
 
-// #TODO: remove album from playlists, bulk update
 export const removeAlbums = (albums: Album[]): Function =>
   async (dispatch: Function, getState: Function): Promise<void> => {
     const {
