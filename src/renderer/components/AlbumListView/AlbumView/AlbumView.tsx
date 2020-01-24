@@ -41,14 +41,14 @@ export const AlbumView: FC<AlbumViewProps> = ({
   useEffect(() => {
     if (tracks.length === 0) {
       dispatch(getAlbumContentRequest(album));
-    } else {
+    } else if (tracklist.length === 0){
       dispatch(getTrackListRequest(tracks));
     }
-  }, [tracks.length]);
+  }, [tracks.length, tracklist.length]);
 
   useEffect(() => {
-    dispatch(getCoverRequest(album));
-  }, []);
+    !cover && dispatch(getCoverRequest(album));
+  }, [cover]);
 
   function onNotFoundButtonClick(): void {
     dispatch(getAlbumContentRequest(album));
