@@ -39,7 +39,8 @@
   }
   &.is-current {
     @media (min-width: $miniWindowThreshold + 1) {
-      box-shadow: inset 0 0 0 1px $mainColor;
+      background-color: rgba($mainColor, .2);
+      transition: background-color .3s ease-in-out;
     }
   }
 
