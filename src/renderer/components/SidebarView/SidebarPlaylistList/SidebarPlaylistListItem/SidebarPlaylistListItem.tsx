@@ -13,7 +13,8 @@ type SidebarPlaylistListItemProps = {
   playlist: Playlist;
   isCurrent: boolean;
   isPlaying: boolean;
-  onContextMenu: Function;
+  onContextMenu?: Function;
+  onPlayButtonDoubleClick?: Function;
 }
 
 type DropItem = {
@@ -25,7 +26,8 @@ export const SidebarPlaylistListItem: FC<SidebarPlaylistListItemProps> = ({
   playlist,
   isCurrent,
   isPlaying,
-  onContextMenu
+  onContextMenu,
+  onPlayButtonDoubleClick
 }) => {
   const dispatch = useDispatch();
   const [{ isOver, canDrop }, drop] = useDrop({
@@ -47,7 +49,11 @@ export const SidebarPlaylistListItem: FC<SidebarPlaylistListItemProps> = ({
   }
 
   function _onContextMenu(): void {
-    onContextMenu(playlist);
+    onContextMenu && onContextMenu(playlist);
+  }
+
+  function _onPlayButtonDoubleClick(): void {
+    onPlayButtonDoubleClick && onPlayButtonDoubleClick(playlist);
   }
 
   const classNames = cx('playlist', {
@@ -70,6 +76,14 @@ export const SidebarPlaylistListItem: FC<SidebarPlaylistListItemProps> = ({
             fixedWidth/>
           {playlist.title}
       </Link>
+      { isPlaying ? null :
+        <button className="play-button" onDoubleClick={_onPlayButtonDoubleClick}>
+          <FontAwesomeIcon
+            icon="play-circle"
+            className="play-button-icon"
+            fixedWidth/>
+        </button>
+      }
     </li>
   );
 }

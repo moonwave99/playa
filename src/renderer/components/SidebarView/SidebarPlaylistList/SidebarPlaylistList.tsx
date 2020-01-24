@@ -4,6 +4,7 @@ import { useRouteMatch } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { SidebarPlaylistListItem } from './SidebarPlaylistListItem/SidebarPlaylistListItem';
 import { Playlist } from '../../../store/modules/playlist';
+import { playTrack } from '../../../store/modules/player';
 import { PLAYLIST_SHOW } from '../../../routes';
 import { openContextMenu } from '../../../lib/contextMenu/contextMenu';
 import { PLAYLIST_LIST_CONTEXT_ACTIONS } from '../../../lib/contextMenu/actions/playlistList';
@@ -42,6 +43,13 @@ export const SidebarPlaylistList: FC<SidebarPlaylistListProps> = ({
     ]);
   }
 
+  function onPlayButtonDoubleClick({ _id, albums }: Playlist): void {
+    if (albums.length === 0) {
+      return;
+    }
+    dispatch(playTrack({ playlistId: _id, albumId: albums[0]}));
+  }
+
   return (
     <div className="sidebar-playlist-list">
       <h2>{t('sidebar.buttons.playlist.recent')}</h2>
@@ -52,7 +60,8 @@ export const SidebarPlaylistList: FC<SidebarPlaylistListProps> = ({
             isCurrent={playlist._id === params._id}
             isPlaying={playlist._id === currentPlaylistId}
             playlist={playlist}
-            onContextMenu={onPlaylistContextMenu}/>
+            onContextMenu={onPlaylistContextMenu}
+            onPlayButtonDoubleClick={onPlayButtonDoubleClick}/>
         ) }
       </ul>
     </div>
