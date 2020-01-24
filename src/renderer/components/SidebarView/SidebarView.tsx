@@ -1,6 +1,8 @@
-import React, { FC } from 'react';
+import React, { ReactElement, FC } from 'react';
+import { useRouteMatch } from 'react-router';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { IconName } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { SidebarPlaylistList } from './SidebarPlaylistList/SidebarPlaylistList';
 import { Playlist } from '../../store/modules/playlist';
@@ -18,6 +20,20 @@ type SidebarViewProps = {
 	onCreatePlaylistButtonClick: Function;
 };
 
+const icons: { [key: string]: IconName } = {
+	[QUEUE]: 'play',
+	[SEARCH]: 'search',
+	[PLAYLIST_ALL]: 'list',
+	[LIBRARY]: 'music'
+};
+
+const i18nkeys: { [key: string]: string } = {
+	[QUEUE]: 'sidebar.buttons.queue',
+	[SEARCH]: 'sidebar.buttons.search',
+	[PLAYLIST_ALL]: 'sidebar.buttons.playlist.all',
+	[LIBRARY]: 'sidebar.buttons.library'
+};
+
 export const SidebarView: FC<SidebarViewProps> = ({
 	recentPlaylists = [],
 	currentPlaylistId,
@@ -29,22 +45,23 @@ export const SidebarView: FC<SidebarViewProps> = ({
 		onCreatePlaylistButtonClick();
 	}
 
+	function renderLink(route: string): ReactElement {
+		const classNames = useRouteMatch(route) ? 'button' : 'button button-outline';
+		return (
+			<Link to={route} className={classNames}>
+				<FontAwesomeIcon icon={icons[route]} className="button-icon"/>
+				<span className="button-text">{t(i18nkeys[route])}</span>
+			</Link>
+		);
+	}
+
 	return (
 		<aside className="sidebar">
 			<section className="sidebar-header">
 				<div className="button-wrapper">
-					<Link to={SEARCH} className="button">
-						<FontAwesomeIcon icon="search" className="button-icon"/>
-						<span className="button-text">{t('sidebar.buttons.search')}</span>
-					</Link>
-					<Link to={LIBRARY} className="button button-outline">
-						<FontAwesomeIcon icon="music" className="button-icon"/>
-						<span className="button-text">{t('sidebar.buttons.library')}</span>
-					</Link>
-					<Link to={QUEUE} className="button button-outline">
-						<FontAwesomeIcon icon="play" className="button-icon"/>
-						<span className="button-text">{t('sidebar.buttons.queue')}</span>
-					</Link>					
+					{renderLink(SEARCH)}
+					{renderLink(LIBRARY)}
+					{renderLink(QUEUE)}
 				</div>
 			</section>
 			<section className="sidebar-footer">
@@ -54,10 +71,7 @@ export const SidebarView: FC<SidebarViewProps> = ({
 						<FontAwesomeIcon icon="plus" className="button-icon"/>
 						<span className="button-text">{t('sidebar.buttons.playlist.new')}</span>
 					</button>
-					<Link to={PLAYLIST_ALL} className="button button-outline">
-						<FontAwesomeIcon icon="list" className="button-icon"/>
-						<span className="button-text">{t('sidebar.buttons.playlist.all')}</span>
-					</Link>
+					{renderLink(PLAYLIST_ALL)}
 				</div>
 			</section>
 		</aside>
