@@ -83,6 +83,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
 
   const albumClasses = cx('album-view', { 'is-current': isCurrent });
   const tagClasses = cx('album-type', `album-type-${type}`);
+  const showArtists = artist === VARIOUS_ARTISTS_ID || type === AlbumTypes.Remix;
   return (
     <article className={albumClasses} id={_id}>
       <aside className="album-aside">
@@ -105,7 +106,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
         </header>
         <TracklistView
           currentTrackId={currentTrackId}
-          showArtists={artist === VARIOUS_ARTISTS_ID}
+          showArtists={showArtists}
           showTrackNumbers={showTrackNumbers}
           rawTracks={tracks}
           tracklist={tracklist}

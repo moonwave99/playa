@@ -17,7 +17,7 @@
           .track-number {
             display: none;
           }
-        }        
+        }
       }
     }
   }
@@ -32,6 +32,10 @@
       line-height: 1.5rem;
       display: flex;
       width: 100%;
+      user-select: text;
+      > * {
+        user-select: text;
+      }
       &:first-child {
         margin-top: 0;
       }
