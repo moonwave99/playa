@@ -5,6 +5,14 @@ const {
   IPC_UI_STATE_UPDATE
 } = IPC_MESSAGES;
 
+const MAX_TITLE_LENGTH = 50;
+
+function trimTitle(title: string): string {
+  return title.length > MAX_TITLE_LENGTH
+    ? `${title.substr(0, MAX_TITLE_LENGTH)}…`
+    : title;
+}
+
 export const UIDragTypes = {
   SEARCH_RESULTS: 'SEARCH_RESULTS',
   COMPACT_ALBUMS: 'COMPACT_ALBUMS',
@@ -48,7 +56,7 @@ export const updateState = (params: object): Function =>
 
 export const updateTitle = (title: string): Function =>
   (dispatch: Function): void => {
-    document.title = title;
+    document.title = trimTitle(title);
     dispatch({
       type: TITLE_UPDATE,
       title
