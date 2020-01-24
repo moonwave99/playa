@@ -50,7 +50,7 @@ export const TracklistView: FC<TracklistViewProps> = ({
 
   function renderArtist(artist: string): ReactElement {
     return showArtists
-      ? <><Link className="artist" to={`${SEARCH}?query=${artist}`}>{artist}</Link>&nbsp;-&nbsp;</>
+      ? <><Link className="artist" to={`${SEARCH}?query=artist: ${artist}`}>{artist}</Link>&nbsp;-&nbsp;</>
       : null;
   }
 

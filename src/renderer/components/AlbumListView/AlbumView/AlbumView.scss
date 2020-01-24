@@ -6,7 +6,7 @@
   background-color: rgba($backgroundDarkColor, .3);
   border-radius: 1rem;
   border: 1px solid transparent;
-  padding: 1.5rem;
+  padding: var(--section-gutter);
   margin-bottom: var(--section-gutter);
   @media (max-width: $smallWindowThreshold) {
     flex-direction: column;

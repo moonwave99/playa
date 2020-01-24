@@ -181,6 +181,11 @@ export const ImportView: FC<ImportViewProps> = ({
     );
   }
 
+  const showTrackNumbers = [
+    AlbumTypes.Remix,
+    AlbumTypes.Various
+  ].indexOf(albumType) < 0;
+
   return (
 		<div className="import-view">
       <h2>
@@ -194,7 +199,7 @@ export const ImportView: FC<ImportViewProps> = ({
         className="not-playable"
         rawTracks={tracks.map(({ path }) => path)}
         showArtists={isAlbumFromVA}
-        showTrackNumbers={albumType !== AlbumTypes.Remix}
+        showTrackNumbers={showTrackNumbers}
         tracklist={tracks}/>
     </div>
 	);

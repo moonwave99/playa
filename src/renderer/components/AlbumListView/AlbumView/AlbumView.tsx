@@ -5,7 +5,7 @@ import cx from 'classnames';
 import { CoverView } from './CoverView/CoverView';
 import { TracklistView } from './TracklistView/TracklistView';
 import { ApplicationState } from '../../../store/store';
-import { Album, VARIOUS_ARTISTS_ID, getAlbumContentRequest } from '../../../store/modules/album';
+import { Album, AlbumTypes, VARIOUS_ARTISTS_ID, getAlbumContentRequest } from '../../../store/modules/album';
 import { Track } from '../../../store/modules/track';
 import { getTrackListRequest } from '../../../store/modules/track';
 import { getCoverRequest } from '../../../store/modules/cover';
@@ -64,7 +64,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
 
   function renderArtist(): ReactElement {
     return <Link
-      to={`${generatePath(SEARCH)}?query=${artist}`}
+      to={`${generatePath(SEARCH)}?query=artist: ${artist}`}
       className="album-artist">
         {artist === VARIOUS_ARTISTS_ID ? 'V/A' : artist}
       </Link>;
@@ -75,6 +75,11 @@ export const AlbumView: FC<AlbumViewProps> = ({
       onClick={onNotFoundButtonClick}
       className="button button-outline">Reload tracks</button>
   }
+
+  const showTrackNumbers = [
+    AlbumTypes.Remix,
+    AlbumTypes.Various
+  ].indexOf(type) < 0;
 
   const albumClasses = cx('album-view', { 'is-current': isCurrent });
   const tagClasses = cx('album-type', `album-type-${type}`);
@@ -101,6 +106,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
         <TracklistView
           currentTrackId={currentTrackId}
           showArtists={artist === VARIOUS_ARTISTS_ID}
+          showTrackNumbers={showTrackNumbers}
           rawTracks={tracks}
           tracklist={tracklist}
           onTrackDoubleClick={onTrackDoubleClick}/>

@@ -1,5 +1,5 @@
 import { ipcRenderer as ipc } from 'electron';
-import { getTrackListResponse } from './track';
+import { Track, getTrackListResponse } from './track';
 import { EntityHashMap, toObj, ensureAll, updateId } from '../../utils/storeUtils';
 
 import { IPC_MESSAGES } from '../../../constants';
@@ -33,7 +33,7 @@ export interface Album {
   type: AlbumTypes;
   created: string;
   path: string;
-  tracks: string[];
+  tracks: Track['_id'][];
 }
 
 export function getDefaultAlbum(): Album {

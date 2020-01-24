@@ -58,7 +58,18 @@ export default class Database {
     }
   }
 
-  async find<T>(query: string, fields: string[]): Promise<Array<T>> {
+  // uses pouchdb-find plugin, see: https://pouchdb.com/guides/mango-queries.html
+  async find<T>(selector: { [key: string]: string|number }): Promise<Array<T>> {
+    const fields = Object.keys(selector);
+    await this.db.createIndex({
+      index: { fields }
+    });
+    const { docs } = await this.db.find({ selector });
+    return docs;
+  }
+
+  // uses pouchdb-quick-search plugin, see: https://github.com/pouchdb-community/pouchdb-quick-search
+  async search<T>(query: string, fields: string[]): Promise<Array<T>> {
     const { rows } = await this.db.search({
       query: query,
       fields,

@@ -1,6 +1,6 @@
 import { ipcRenderer as ipc } from 'electron';
 import { EntityHashMap } from '../../utils/storeUtils';
-import { Album } from './album';
+import { Album, AlbumTypes } from './album';
 import { IPC_MESSAGES } from '../../../constants';
 
 const {
@@ -32,6 +32,10 @@ export type CoverActionTypes =
 
 export const getCoverRequest = (album: Album): Function =>
   async (dispatch: Function): Promise<void> => {
+    const { type } = album;
+    if (type === AlbumTypes.Remix || type === AlbumTypes.Various) {
+      return;
+    }
     dispatch({
       type: COVER_GET_RESPONSE,
       path: await ipc.invoke(IPC_COVER_GET_REQUEST, album),

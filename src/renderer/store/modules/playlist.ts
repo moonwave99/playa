@@ -1,5 +1,13 @@
 import { ipcRenderer as ipc } from 'electron';
-import { EntityHashMap, toObj, removeIds, ensureAll, updateId } from '../../utils/storeUtils';
+import {
+  EntityHashMap,
+  toObj,
+  removeIds,
+  ensureAll,
+  updateId
+} from '../../utils/storeUtils';
+
+import { Album } from './album';
 
 import { IPC_MESSAGES } from '../../../constants';
 
@@ -15,7 +23,7 @@ export interface Playlist {
   title: string;
   created: string;
   accessed: string;
-  albums: string[];
+  albums: Album['_id'][];
 }
 
 export interface PlaylistState {

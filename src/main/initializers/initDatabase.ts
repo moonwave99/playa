@@ -4,6 +4,7 @@ import Database from '../database';
 import loadAlbum from '../loadAlbum';
 import loadTracklist from '../loadTracklist';
 import { Album } from '../../renderer/store/modules/album';
+import { parseQuery } from '../../renderer/utils/searchUtils';
 import { IPC_MESSAGES } from '../../constants';
 
 const {
@@ -23,6 +24,8 @@ const {
   IPC_ALBUM_CONTENT_RAW_REQUEST,
   IPC_TRACK_GET_LIST_RAW_REQUEST
 } = IPC_MESSAGES;
+
+const DEFAULT_SEARCH_FIELDS = ['title', 'artist'];
 
 export default function initDatabase(userDataPath: string, debug = false): void {
   const path = userDataPath + Path.sep + 'databases' + Path.sep;
@@ -51,8 +54,22 @@ export default function initDatabase(userDataPath: string, debug = false): void 
     async (_event, playlist) => await db.playlist.delete(playlist)
   );
 
+  // #TODO filter results if originalQuery given
   ipc.handle(IPC_SEARCH_REQUEST, async (_event, query) => {
-    return await db.album.find(query, ['artist', 'title']);
+    const { selector = {}, query: originalQuery } = parseQuery(query);
+    if (!originalQuery) {
+      return await db.album.find(selector);
+    }
+
+    const results = await db.album.search(originalQuery, DEFAULT_SEARCH_FIELDS);
+    console.log(results, selector)
+    const filters = Object.keys(selector);
+    if (filters.length === 0) {
+      return results;
+    }
+    return results.filter((x: { [key: string]: string | number}) => {
+      return filters.every((f: string) => x[f] === selector[f])
+    });
   });
 
   ipc.handle(IPC_ALBUM_GET_LIST_REQUEST,
@@ -94,7 +111,7 @@ export default function initDatabase(userDataPath: string, debug = false): void 
 
   ipc.handle(IPC_ALBUM_EXISTS,
     async (_event, folder) => {
-      const results = await db.album.find<Album>(folder, ['path']);
+      const results = await db.album.find<Album>({ path: folder });
       return results.length > 0;
     }
   );

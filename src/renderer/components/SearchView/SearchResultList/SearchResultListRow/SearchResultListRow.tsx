@@ -53,7 +53,7 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
 
   function onArtistClick(event: SyntheticEvent): void {
     event.preventDefault();
-    dispatch(searchRequest(album.artist));
+    dispatch(searchRequest(`artist: ${album.artist}`));
   }
 
   function renderCell(cell: Cell): ReactElement {
