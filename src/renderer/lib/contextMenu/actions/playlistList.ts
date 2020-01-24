@@ -6,6 +6,30 @@ import {
   deletePlaylistRequest,
 } from '../../../store/modules/playlist';
 
+import {
+  playTrack,
+  updateQueue
+} from '../../../store/modules/player';
+
+function playPlaylistActions(
+  playlist: Playlist,
+  dispatch: Function
+): MenuItemConstructorOptions[] {
+  return [
+    {
+      label: `Play playlist`,
+      click: async (): Promise<void> => {
+        const { _id: playlistId, albums } = playlist;
+        if (albums.length === 0) {
+          return;
+        }
+        dispatch(dispatch(updateQueue(albums)));
+        dispatch(playTrack({ playlistId, albumId: albums[0] }));
+      }
+    }
+  ];
+}
+
 function deletePlaylistActions(
   playlist: Playlist,
   dispatch: Function
@@ -29,6 +53,7 @@ function deletePlaylistActions(
 export const PLAYLIST_LIST_CONTEXT_ACTIONS = 'playa/context-menu/playlist-list-actions';
 
 export enum PlaylistListActionItems {
+  PLAY_PLAYLIST,
   DELETE_PLAYLIST
 }
 
@@ -40,12 +65,16 @@ export type GetPlaylistListContextMenuParams = {
 }
 
 const actionsMap = {
+  [PlaylistListActionItems.PLAY_PLAYLIST]: playPlaylistActions,
   [PlaylistListActionItems.DELETE_PLAYLIST]: deletePlaylistActions
 };
 
 export function getActions({
   playlist,
-  actions = [PlaylistListActionItems.DELETE_PLAYLIST],
+  actions = [
+    PlaylistListActionItems.PLAY_PLAYLIST,
+    PlaylistListActionItems.DELETE_PLAYLIST
+  ],
   dispatch
 }: GetPlaylistListContextMenuParams): MenuItemConstructorOptions[] {
   return actions.reduce((memo, action, index, original) => [

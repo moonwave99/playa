@@ -7,7 +7,10 @@ import { Playlist } from '../../../store/modules/playlist';
 import { playTrack, updateQueue } from '../../../store/modules/player';
 import { PLAYLIST_SHOW } from '../../../routes';
 import { openContextMenu } from '../../../lib/contextMenu/contextMenu';
-import { PLAYLIST_LIST_CONTEXT_ACTIONS } from '../../../lib/contextMenu/actions/playlistList';
+import {
+  PLAYLIST_LIST_CONTEXT_ACTIONS,
+  PlaylistListActionItems
+} from '../../../lib/contextMenu/actions/playlistList';
 
 import './SidebarPlaylistList.scss';
 
@@ -39,6 +42,10 @@ export const SidebarPlaylistList: FC<SidebarPlaylistListProps> = ({
         type: PLAYLIST_LIST_CONTEXT_ACTIONS,
         playlist,
         dispatch,
+        actions: [
+          PlaylistListActionItems.PLAY_PLAYLIST,
+          PlaylistListActionItems.DELETE_PLAYLIST
+        ]
       }
     ]);
   }
