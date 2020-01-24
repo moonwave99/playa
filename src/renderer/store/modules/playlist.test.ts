@@ -1,5 +1,8 @@
-import { playlists } from '../../../../test/fixtures';
+import configureStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+const mockStore = configureStore([thunk]);
 
+import { playlists } from '../../../../test/fixtures';
 import reducer, {
   Playlist,
   PlaylistActionTypes,
@@ -17,36 +20,37 @@ import reducer, {
 
 describe('playlist actions', () => {
   describe('getAllPlaylistsRequest', () => {
-    it.skip('should dispatch a getAllPlaylistsRequest request', () => {
-      const dispatch = jest.fn();
-      getAllPlaylistsRequest()(dispatch);
-      expect(dispatch).toHaveBeenCalledWith({
-        type: PLAYLIST_GET_ALL_REQUEST
-      });
+    it('should dispatch PLAYLIST_GET_ALL_RESPONSE', async () => {
+      const store = mockStore({});
+      await getAllPlaylistsRequest()(store.dispatch);
+      expect(store.getActions()).toEqual([{
+        type: PLAYLIST_GET_ALL_RESPONSE,
+        playlists
+      }]);
     });
   });
 
   describe('savePlaylistRequest', () => {
-    it.skip('should dispatch a savePlaylistRequest request', () => {
-      const dispatch = jest.fn();
-      const playlist = {} as Playlist;
-      savePlaylistRequest(playlist)(dispatch);
-      expect(dispatch).toHaveBeenCalledWith({
-        type: PLAYLIST_SAVE_REQUEST,
+    it('should dispatch PLAYLIST_SAVE_REQUEST', async () => {
+      const store = mockStore({});
+      const playlist = playlists[0];
+      await savePlaylistRequest(playlist)(store.dispatch);
+      expect(store.getActions()).toEqual([{
+        type: PLAYLIST_SAVE_RESPONSE,
         playlist
-      });
+      }]);
     });
   });
 
   describe('deletePlaylistRequest', () => {
-    it.skip('should dispatch a deletePlaylistRequest request', () => {
-      const dispatch = jest.fn();
-      const playlist = {} as Playlist;
-      deletePlaylistRequest(playlist)(dispatch);
-      expect(dispatch).toHaveBeenCalledWith({
-        type: PLAYLIST_DELETE_REQUEST,
+    it('should dispatch PLAYLIST_DELETE_RESPONSE', async () => {
+      const store = mockStore({});
+      const playlist = playlists[0];
+      await deletePlaylistRequest(playlist)(store.dispatch);
+      expect(store.getActions()).toEqual([{
+        type: PLAYLIST_DELETE_RESPONSE,
         playlist
-      });
+      }]);
     });
   });
 });

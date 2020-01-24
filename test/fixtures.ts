@@ -46,12 +46,23 @@ export const albums: Album[] = [
   }
 ];
 
-export const tracks: Track[] = [{
-  _id: '1',
-  path: '/path/to/track_1',
-  found: true,
-  artist: 'Slowdive',
-  title: 'Spanish Air',
-  number: 1,
-  duration: 123
-}];
+export const tracks: Track[] = [
+  {
+    _id: '1',
+    path: '/path/to/track_1',
+    found: true,
+    artist: 'Slowdive',
+    title: 'Spanish Air',
+    number: 1,
+    duration: 123
+  },
+  {
+    _id: '2',
+    path: '/path/to/track_2',
+    found: true,
+    artist: 'Slowdive',
+    title: "Celia's Dream",
+    number: 2,
+    duration: 456
+  }
+];

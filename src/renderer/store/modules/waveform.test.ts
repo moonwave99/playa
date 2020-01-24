@@ -1,8 +1,8 @@
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { tracks } from '../../../../test/fixtures';
 const mockStore = configureStore([thunk]);
 
+import { tracks } from '../../../../test/fixtures';
 import reducer, {
   WaveformActionTypes,
   WaveformState,
@@ -22,8 +22,7 @@ describe('waveform actions', () => {
         }
       ];
       await getWaveformRequest(tracks[0])(store.dispatch);
-      const actualActions = store.getActions();
-      expect(actualActions).toEqual(expectedActions);
+      expect(store.getActions()).toEqual(expectedActions);
     });
   });
 });

@@ -1,10 +1,10 @@
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+const mockStore = configureStore([thunk]);
+
 import { albums, playlists } from '../../../../test/fixtures';
 import { Album, ALBUM_GET_LIST_RESPONSE } from './album';
 import { toObj } from '../../utils/storeUtils';
-
-const mockStore = configureStore([thunk]);
 
 import reducer, {
   LibraryActionTypes,
@@ -28,8 +28,7 @@ describe('library actions', () => {
       ];
       const now = new Date().toISOString();
       await getLatestRequest(now, 20)(store.dispatch);
-      const actualActions = store.getActions();
-      expect(actualActions).toEqual(expectedActions);
+      expect(store.getActions()).toEqual(expectedActions);
     });
   });
   describe('removeAlbums', () => {
@@ -56,9 +55,7 @@ describe('library actions', () => {
         }
       ];
       await removeAlbums([albums[0]])(store.dispatch, store.getState);
-
-      const actualActions = store.getActions();
-      expect(actualActions).toEqual(expectedActions);
+      expect(store.getActions()).toEqual(expectedActions);
     });
   });
 });

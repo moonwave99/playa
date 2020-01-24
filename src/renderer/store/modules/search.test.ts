@@ -1,3 +1,7 @@
+import configureStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+const mockStore = configureStore([thunk]);
+
 import { albums } from '../../../../test/fixtures';
 import { Album } from './album';
 
@@ -9,15 +13,26 @@ import reducer, {
   SEARCH_RESPONSE
 } from './search';
 
+import {
+  ALBUM_GET_LIST_RESPONSE
+} from './album';
+
 describe('search actions', () => {
   describe('searchRequest', () => {
-    it.skip('should dispatch searchAlbumsRequest request', () => {
-      const dispatch = jest.fn();
-      searchRequest('#!q')(dispatch);
-      expect(dispatch).toHaveBeenCalledWith({
-        type: SEARCH_REQUEST,
-        query: '#!q'
-      });
+    it('should dispatch searchAlbumsRequest request', async () => {
+      const store = mockStore({});
+      await searchRequest('#!q')(store.dispatch);
+      expect(store.getActions()).toEqual([
+        {
+          type: ALBUM_GET_LIST_RESPONSE,
+          results: albums
+        },
+        {
+          type: SEARCH_RESPONSE,
+          results: albums,
+          query: '#!q'
+        }
+      ]);
     });
   });
 });

@@ -1,10 +1,9 @@
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { toObj } from '../../utils/storeUtils';
-import { albums } from '../../../../test/fixtures';
-
 const mockStore = configureStore([thunk]);
 
+import { toObj } from '../../utils/storeUtils';
+import { albums, tracks } from '../../../../test/fixtures';
 import reducer, {
   AlbumActionTypes,
   AlbumState,
@@ -19,7 +18,7 @@ import reducer, {
   ALBUM_GET_CONTENT_RESPONSE
 } from './album';
 
-import { Track, TRACK_GET_LIST_RESPONSE } from './track';
+import { TRACK_GET_LIST_RESPONSE } from './track';
 
 describe('album actions', () => {
   describe('getAlbumListRequest', () => {
@@ -29,8 +28,7 @@ describe('album actions', () => {
         { type: ALBUM_GET_LIST_RESPONSE }
       ];
       await getAlbumListRequest(['1', '2'])(store.dispatch);
-      const actualActions = store.getActions();
-      expect(actualActions).toEqual(expectedActions);
+      expect(store.getActions()).toEqual(expectedActions);
     });
   });
 
@@ -41,8 +39,7 @@ describe('album actions', () => {
         { type: ALBUM_GET_LIST_RESPONSE, results: albums }
       ];
       await getAlbumListResponse(albums)(store.dispatch);
-      const actualActions = store.getActions();
-      expect(actualActions).toEqual(expectedActions);
+      expect(store.getActions()).toEqual(expectedActions);
     });
   });
 
@@ -51,11 +48,10 @@ describe('album actions', () => {
       const store = mockStore({});
       const album = albums[0];
       const expectedActions = [
-        { type: ALBUM_GET_CONTENT_RESPONSE, album }
+        { type: ALBUM_GET_CONTENT_RESPONSE, album: { ...album, tracks: ['1', '2'] }}
       ];
       await getAlbumContentRequest(album)(store.dispatch);
-      const actualActions = store.getActions();
-      expect(actualActions).toEqual(expectedActions);
+      expect(store.getActions()).toEqual(expectedActions);
     });
   });
 
@@ -78,16 +74,15 @@ describe('album actions', () => {
       const expectedActions = [
         {
           type: ALBUM_GET_CONTENT_RESPONSE,
-          album
+          album: { ...album, tracks: tracks.map(x => x._id) }
         },
         {
           type: TRACK_GET_LIST_RESPONSE,
-          results: undefined as Track[]
+          results: tracks
         }
       ];
       await reloadAlbumContent(album)(store.dispatch);
-      const actualActions = store.getActions();
-      expect(actualActions).toEqual(expectedActions);
+      expect(store.getActions()).toEqual(expectedActions);
     });
   });
 });

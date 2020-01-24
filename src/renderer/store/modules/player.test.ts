@@ -1,3 +1,9 @@
+import configureStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+const mockStore = configureStore([thunk]);
+
+import { toObj } from '../../utils/storeUtils';
+import { albums, tracks } from '../../../../test/fixtures';
 import initReducer, {
   PlayerActionTypes,
   PlayerState,
@@ -14,18 +20,27 @@ import initReducer, {
 import Player from '../../player';
 
 describe('player actions', () => {
-  it.skip('should dispatch play request', async () => {
-    const dispatch = jest.fn();
+  it('should dispatch play request', async () => {
+    const store = mockStore({
+      albums: {
+        allById: toObj(albums)
+      },
+      tracks: {
+        allById: toObj(tracks)
+      }
+    });
     const playbackIds = {
       playlistId: '1',
-      albumId: '2',
-      trackId: '3'
+      albumId: '1',
+      trackId: '2'
     };
-    await playTrack(playbackIds)(dispatch);
-    expect(dispatch).toHaveBeenCalledWith({
-      type: PLAYER_PLAY_TRACK,
-      ...playbackIds
-    });
+    await playTrack(playbackIds)(store.dispatch, store.getState);
+    expect(store.getActions()).toEqual([
+      {
+        type: PLAYER_PLAY_TRACK,
+        ...playbackIds
+      }
+    ]);
   });
 
   it('should dispatch togglePlayback request', () => {

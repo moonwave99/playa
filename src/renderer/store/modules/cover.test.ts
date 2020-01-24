@@ -1,5 +1,8 @@
-import { albums } from '../../../../test/fixtures';
+import configureStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+const mockStore = configureStore([thunk]);
 
+import { albums } from '../../../../test/fixtures';
 import reducer, {
   CoverActionTypes,
   CoverState,
@@ -10,13 +13,13 @@ import reducer, {
 
 describe('cover actions', () => {
   describe('getCoverRequest', () => {
-    it.skip('should dispatch getCoverRequest request', () => {
-      const dispatch = jest.fn();
-      getCoverRequest(albums[0])(dispatch);
-      expect(dispatch).toHaveBeenCalledWith({
-        type: COVER_GET_REQUEST,
-        album: albums[0]
-      });
+    it('should dispatch getCoverRequest request', async () => {
+      const store = mockStore({});
+      const album = albums[0];
+      await getCoverRequest(album)(store.dispatch);
+      expect(store.getActions()).toEqual([
+        { type: COVER_GET_RESPONSE, album, path: '/path/to/cover' },
+      ]);
     });
   });
 });

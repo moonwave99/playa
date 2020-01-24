@@ -1,8 +1,11 @@
+import configureStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+const mockStore = configureStore([thunk]);
+
 import { toObj } from '../../utils/storeUtils';
 import { tracks } from '../../../../test/fixtures';
 
 import reducer, {
-  Track,
   TrackActionTypes,
   TrackState,
   getTrackListRequest,
@@ -13,24 +16,23 @@ import reducer, {
 
 describe('album actions', () => {
   describe('getTrackListRequest', () => {
-    it.skip('should dispatch getTrackListRequest request', () => {
-      const dispatch = jest.fn();
-      getTrackListRequest(['1', '2'])(dispatch);
-      expect(dispatch).toHaveBeenCalledWith({
-        type: TRACK_GET_LIST_REQUEST,
-        ids: ['1', '2']
-      });
+    it('should dispatch getTrackListRequest request', async () => {
+      const store = mockStore({});
+      await getTrackListRequest(tracks.map(x => x._id))(store.dispatch);
+      expect(store.getActions()).toEqual([{
+        type: TRACK_GET_LIST_RESPONSE,
+        results: tracks
+      }]);
     });
   });
 
   describe('getTrackListResponse', () => {
     it('should dispatch getTrackListResponse request', () => {
       const dispatch = jest.fn();
-      const results: Track[] = [];
-      getTrackListResponse(results)(dispatch);
+      getTrackListResponse(tracks)(dispatch);
       expect(dispatch).toHaveBeenCalledWith({
         type: TRACK_GET_LIST_RESPONSE,
-        results
+        results: tracks
       });
     });
   });
