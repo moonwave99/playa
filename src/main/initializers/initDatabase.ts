@@ -54,22 +54,23 @@ export default function initDatabase(userDataPath: string, debug = false): void 
     async (_event, playlist) => await db.playlist.delete(playlist)
   );
 
-  // #TODO filter results if originalQuery given
   ipc.handle(IPC_SEARCH_REQUEST, async (_event, query) => {
     const { selector = {}, query: originalQuery } = parseQuery(query);
+
     if (!originalQuery) {
       return await db.album.find(selector);
     }
 
     const results = await db.album.search(originalQuery, DEFAULT_SEARCH_FIELDS);
-    console.log(results, selector)
+
     const filters = Object.keys(selector);
     if (filters.length === 0) {
       return results;
     }
-    return results.filter((x: { [key: string]: string | number}) => {
-      return filters.every((f: string) => x[f] === selector[f])
-    });
+
+    return results.filter((x: { [key: string]: string | number}) =>
+      filters.every((f: string) => x[f] === selector[f])
+    );
   });
 
   ipc.handle(IPC_ALBUM_GET_LIST_REQUEST,
