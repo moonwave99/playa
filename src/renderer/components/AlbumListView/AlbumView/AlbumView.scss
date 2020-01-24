@@ -3,11 +3,17 @@
 
 .album-view {
   display: flex;
-  @include horizontalSeparator($separatorWidth: 30%);
+  background-color: rgba($backgroundDarkColor, .3);
+  border-radius: 1rem;
+  border: 1px solid transparent;
+  padding: 1.5rem;
+  margin-bottom: var(--section-gutter);
   @media (max-width: $smallWindowThreshold) {
     flex-direction: column;
   }
   @media (max-width: $miniWindowThreshold) {
+    background-color: transparent;
+    padding: 0;
     @include horizontalSeparator($separatorWidth: 90%);
   }
 
@@ -33,13 +39,9 @@
     }
   }
   &.is-current {
-    .album-cover {
-      @include playOverlay(
-        $iconUrl: '../../../static/icons/album/volume.svg',
-        $bgSize: 33%,
-        $initialOpacity: .8,
-        $finalOpacity: .8
-      );
+    border: 1px solid $mainColor;
+    @media (max-width: $miniWindowThreshold) {
+      border: 1px solid transparent;
     }
   }
 
@@ -59,6 +61,10 @@
         font-weight: bold;
         letter-spacing: .01em;
         transition: color .3s ease-in-out;
+        @media (max-width: $miniWindowThreshold) {
+          font-size: 1.2rem;
+          line-height:  2rem;
+        }
       }
       h3 {
         margin: 0;
