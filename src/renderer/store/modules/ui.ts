@@ -7,7 +7,8 @@ const {
 
 export const UIDragTypes = {
   SEARCH_RESULTS: 'SEARCH_RESULTS',
-  COMPACT_ALBUMS: 'COMPACT_ALBUMS'
+  COMPACT_ALBUMS: 'COMPACT_ALBUMS',
+  LIBRARY_ALBUMS: 'LIBRARY_ALBUMS'
 };
 
 export enum UIAlbumView {

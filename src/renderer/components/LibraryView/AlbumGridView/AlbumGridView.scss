@@ -7,11 +7,23 @@
     flex-direction: row;
     flex-wrap: wrap;
     .album-grid-tile {
-      flex-basis: 100%;
-      flex: 1;
+      flex: calc(100% / var(--library-columns));
       .album-cover {
         @include albumCover($libraryAlbumCoverWidth, $backgroundDarkColor);
-        @include playOverlay('../../../static/icons/album/play.svg');
+      }
+      &:not(.is-playing) {
+        @include playOverlay('../../../static/icons/album/play.svg', $mainUnit);
+      }
+      &.is-playing {
+        .album-cover {
+          box-shadow: 0 0 0 5px $mainColor;
+          z-index: 1000;
+          position: relative;
+          img {
+            position: relative;
+            z-index: -1;
+          }
+        }
       }
     }
   }

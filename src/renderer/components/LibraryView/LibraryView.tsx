@@ -158,6 +158,7 @@ export const LibraryView = (): ReactElement => {
       </header>
 			<AlbumGridView
 				albums={latest}
+        currentAlbumId={playingAlbumID}
 				onAlbumContextMenu={onAlbumContextMenu}
 				onAlbumDoubleClick={onAlbumDoubleClick}/>
       <ReactModal

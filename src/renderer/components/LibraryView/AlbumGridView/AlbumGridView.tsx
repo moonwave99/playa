@@ -7,12 +7,14 @@ import './AlbumGridView.scss';
 
 type AlbumGridViewProps = {
   albums: Album[];
+  currentAlbumId: Album['_id'];
   onAlbumContextMenu: Function;
   onAlbumDoubleClick: Function;
 };
 
 export const AlbumGridView: FC<AlbumGridViewProps> = ({
   albums,
+  currentAlbumId,
   onAlbumContextMenu,
   onAlbumDoubleClick
 }) => {
@@ -22,6 +24,7 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
       <AlbumGridTileView
         key={album._id}
         album={album}
+        isPlaying={album._id === currentAlbumId}
         onDoubleClick={onAlbumDoubleClick}
         onContextMenu={onAlbumContextMenu}/>
     );

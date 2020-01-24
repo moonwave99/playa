@@ -4,7 +4,7 @@ import { useRouteMatch } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { SidebarPlaylistListItem } from './SidebarPlaylistListItem/SidebarPlaylistListItem';
 import { Playlist } from '../../../store/modules/playlist';
-import { playTrack } from '../../../store/modules/player';
+import { playTrack, updateQueue } from '../../../store/modules/player';
 import { PLAYLIST_SHOW } from '../../../routes';
 import { openContextMenu } from '../../../lib/contextMenu/contextMenu';
 import { PLAYLIST_LIST_CONTEXT_ACTIONS } from '../../../lib/contextMenu/actions/playlistList';
@@ -47,6 +47,7 @@ export const SidebarPlaylistList: FC<SidebarPlaylistListProps> = ({
     if (albums.length === 0) {
       return;
     }
+    dispatch(updateQueue(albums));
     dispatch(playTrack({ playlistId: _id, albumId: albums[0]}));
   }
 

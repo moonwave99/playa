@@ -6,8 +6,7 @@
 	align-items: center;
 	padding: .5rem 0 .5rem 2rem;
   position: relative;
-  border: 2px solid transparent;
-  transition: background-color .3s ease-in-out, border-color .3s ease-in-out;
+  transition: background-color .3s ease-in-out;
   border-bottom: 1px solid $backgroundLightColor;
   &.sortable::before {
     content: '⋮';

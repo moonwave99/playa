@@ -119,8 +119,16 @@ input[type=search] {
 
 :root {
   --section-gutter: #{$mainUnit};
+	--library-columns: 4;
+	@media (min-width: $wideWindowThreshold) {
+		--library-columns: 5;
+	}
+	@media (max-width: $smallWindowThreshold) {
+		--library-columns: 3;
+	}
 	@media (max-width: $miniWindowThreshold) {
 		--section-gutter: #{$mainUnit / 2};
+		--library-columns: 2;
 	}
 }
 

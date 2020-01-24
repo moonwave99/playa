@@ -31,7 +31,10 @@ export const SidebarPlaylistListItem: FC<SidebarPlaylistListItemProps> = ({
 }) => {
   const dispatch = useDispatch();
   const [{ isOver, canDrop }, drop] = useDrop({
-    accept: [UIDragTypes.SEARCH_RESULTS],
+    accept: [
+      UIDragTypes.SEARCH_RESULTS,
+      UIDragTypes.LIBRARY_ALBUMS
+    ],
     drop: (item: DropItem) => {
       dispatch(savePlaylistRequest({
         ...playlist,
