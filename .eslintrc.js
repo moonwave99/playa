@@ -3,11 +3,14 @@ module.exports = {
 	parser: '@typescript-eslint/parser',
 	plugins: [
 		'@typescript-eslint',
-		'react'
+		'react',
+		'react-hooks'
 	],
 	rules: {
 		'react/jsx-uses-react': 'error',
-		'react/jsx-uses-vars': 'error'
+		'react/jsx-uses-vars': 'error',
+		'react-hooks/rules-of-hooks': 'error',
+    'react-hooks/exhaustive-deps': 'warn'		
 	},
 	extends: [
 		'eslint:recommended',
