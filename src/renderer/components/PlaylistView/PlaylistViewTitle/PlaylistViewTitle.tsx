@@ -1,5 +1,4 @@
-import React, { FC, useState, useEffect, useRef, KeyboardEvent } from 'react';
-import ContentEditable from 'react-contenteditable';
+import React, { ReactElement, FC, useState, useEffect, useRef, KeyboardEvent } from 'react';
 import { Playlist } from '../../../store/modules/playlist';
 
 type PlaylistViewTitleProps = {
@@ -8,52 +7,68 @@ type PlaylistViewTitleProps = {
 };
 
 export const PlaylistViewTitle: FC<PlaylistViewTitleProps> = ({ playlist, onTitleChange }) => {
-	const { title } = playlist;
+	const [title, setTitle] = useState(playlist.title);
 	const [isTitleEditing, setTitleEditing] = useState(false);
-	const titleRef = useRef<HTMLInputElement>(null);
+	const inputRef = useRef<HTMLInputElement>(null);
 
-	function onTitleBlur(): void {
+	function onSubmit(): void {
 		setTitleEditing(false);
-		onTitleChange(titleRef.current.innerText);
+		onTitleChange(title);
 	}
 
-	function onTitleFocus(): void {
+	function onTitleClick(): void {
 		setTitleEditing(true);
 	}
 
 	useEffect(() => {
 		if (!playlist._rev) {
-			titleRef.current.focus();
+			setTitleEditing(true);
 		}
 	}, [playlist._rev]);
 
-	function onChange(): void { return; }
+	useEffect(() => {
+		setTitle(playlist.title);
+	}, [playlist.title]);
+
+	function onChange(): void {
+		setTitle(inputRef.current.value);
+	}
+
+	function onBlur(): void {
+		setTitleEditing(false);
+	}
 
 	function onKeyDown(event: KeyboardEvent): void {
 		const { key } = event;
 		switch (key) {
-			case 'Enter':
-				event.preventDefault();
-				titleRef.current.blur();
-				break;
 			case 'Escape':
 				event.preventDefault();
-				titleRef.current.innerText = title;
-				titleRef.current.blur();
+				setTitleEditing(false);
 				break;
 		}
 	}
 
+	function renderForm(): ReactElement {
+		return (
+			<form onSubmit={onSubmit}>
+				<input
+					className="header-like"
+					ref={inputRef}
+					defaultValue={title}
+					type="text"
+					onChange={onChange}
+					onKeyDown={onKeyDown}
+					onBlur={onBlur}
+					required
+					autoFocus
+					data-key-catch="Space"/>
+			</form>
+		);
+	}
+
 	return (
-		<ContentEditable
-			data-key-catch="Space"
-			innerRef={titleRef}
-			html={title}
-			onFocus={onTitleFocus}
-			onBlur={onTitleBlur}
-			onKeyDown={onKeyDown}
-			onChange={onChange}
-			className={isTitleEditing ? 'editing' : null}
-			tagName='h1'/>
+		isTitleEditing
+			? renderForm()
+			: <h1 onClick={onTitleClick}>{title}</h1>
 	);
 }

@@ -24,15 +24,20 @@
         flex: 1;
         margin-right: 5 * $mainUnit;
         transition: background-color .3s ease-in;
-        &:focus{
-          border-bottom: 1px solid $mainColor;
-          margin-bottom: -1px;
-          background-color: $backgroundLightColor;
-        }
       }
-      .header-like {
-        color: $lightColor;
-        margin-right: .5rem;
+      form {
+        flex: 1;
+        .header-like {
+          color: $lightColor;
+          flex: 1;
+          padding: 0;
+          border-radius: 0;
+          border-top: none;
+          border-left: none;
+          border-right: none;
+          border-bottom: 1px solid $mainColor;
+          background-color: $backgroundLightColor;
+        }        
       }
     }
     .playlist-info {
