@@ -1,5 +1,5 @@
 import React, { ReactElement, FC } from 'react';
-import { useRouteMatch } from 'react-router';
+import { useLocation, matchPath } from 'react-router';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { IconName } from '@fortawesome/fontawesome-svg-core';
@@ -40,17 +40,18 @@ export const SidebarView: FC<SidebarViewProps> = ({
 	onCreatePlaylistButtonClick
 }) => {
 	const { t } = useTranslation();
-
+	const location = useLocation();
+	
 	function _onCreatePlaylistButtonClick(): void {
 		onCreatePlaylistButtonClick();
 	}
 
-	function renderLink(route: string): ReactElement {
-		const classNames = useRouteMatch(route) ? 'button' : 'button button-outline';
+	function renderLink(path: string): ReactElement {
+		const classNames = matchPath(location.pathname, { path }) ? 'button' : 'button button-outline';
 		return (
-			<Link to={route} className={classNames}>
-				<FontAwesomeIcon icon={icons[route]} className="button-icon"/>
-				<span className="button-text">{t(i18nkeys[route])}</span>
+			<Link to={path} className={classNames}>
+				<FontAwesomeIcon icon={icons[path]} className="button-icon"/>
+				<span className="button-text">{t(i18nkeys[path])}</span>
 			</Link>
 		);
 	}
