@@ -48,7 +48,9 @@
         color: transparent;
         height: 1.5rem;
         margin: 1rem 0;
-        transition: background-color .3s ease-in-out;
+        &:first-child {
+          margin-top: 0;
+        }
       }
       &.is-current,
       &.is-current .artist {

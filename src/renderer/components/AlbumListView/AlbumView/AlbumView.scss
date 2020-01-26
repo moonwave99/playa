@@ -3,19 +3,18 @@
 
 .album-view {
   display: flex;
-  background-color: rgba($backgroundDarkColor, .3);
-  border-radius: 1rem;
-  padding: var(--section-gutter);
-  margin-bottom: var(--section-gutter);
+  margin: 0 var(--section-gutter) var(--section-gutter) var(--section-gutter);
   @media (max-width: $smallWindowThreshold) {
     flex-direction: column;
   }
   @media (max-width: $miniWindowThreshold) {
     background-color: transparent;
     padding: 0;
-    @include horizontalSeparator($separatorWidth: 90%);
+    margin-top: 0;
+    margin-left: 0;
+    margin-right: 0;
+    @include horizontalSeparator($separatorWidth: calc(100vw - 2 * var(--section-gutter)));
   }
-
   &:not(.is-current) {
     .album-cover {
       @include playOverlay(
@@ -25,10 +24,64 @@
     }
   }
   .album-aside {
-    width: $albumCoverWidth;
+    width: calc(#{$albumCoverWidth} + 2 * var(--section-gutter));
+    padding:
+      var(--section-gutter)
+      calc(var(--section-gutter) * 1)
+      var(--section-gutter)
+      var(--section-gutter);
+    border-top-left-radius: 1rem;
+    border-bottom-left-radius: 1rem;
+    background-color: rgba($backgroundDarkColor, .4);
     .album-cover {
       @include albumCover($albumCoverWidth);
       margin: 0 0 calc(var(--section-gutter) * 0.5) 0;
+    }
+    @media (max-width: $smallWindowThreshold) {
+      width: 100%;
+      border-top-right-radius: 1rem;
+      border-bottom-left-radius: 0;
+      padding-bottom: calc(var(--section-gutter) * .5);
+    }
+    @media (max-width: $miniWindowThreshold) {
+      background-color: transparent;
+    }
+    header {
+      @media (max-width: $miniWindowThreshold) {
+        width: 100%;
+        margin-bottom: var(--section-gutter);
+      }
+      h2 {
+        margin: 0;
+        font-size: 1.8rem;
+        line-height: 2.5rem;
+        color: $highlightColor;
+        font-weight: bold;
+        letter-spacing: .01em;
+        transition: color .3s ease-in-out;
+        @media (max-width: $miniWindowThreshold) {
+          font-size: 1.2rem;
+          line-height: 2rem;
+        }
+      }
+      .album-artist,
+      .album-info {
+        margin: 0;
+        font-size: 1rem;
+        letter-spacing: 0;
+        line-height: 2rem;
+        font-weight: normal;
+        .album-artist-link {
+          text-decoration: underline;
+          color: $lightColor;
+          &:hover {
+            color: $highlightColor;
+          }
+        }
+        .album-type {
+          @include albumTypeColor();
+        }
+      }
     }
     .album-actions {
       text-align: center;
@@ -37,6 +90,7 @@
       }
     }
   }
+
   &.is-current {
     @media (min-width: $miniWindowThreshold + 1) {
       background-color: rgba($mainColor, .2);
@@ -45,43 +99,23 @@
   }
 
   .album-content {
-    padding-left: $mainUnit;
     flex: 1;
+    padding:
+      var(--section-gutter)
+      var(--section-gutter)
+      var(--section-gutter)
+      calc(var(--section-gutter) * 0.5);
+    border-top-right-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+    background-color: rgba($backgroundDarkColor, .7);
     @media (max-width: $smallWindowThreshold) {
-      padding-left: 0;
+      padding-top: calc(var(--section-gutter) * .5);
+      padding-left: var(--section-gutter);
+      border-top-right-radius: 0;
+      border-bottom-left-radius: 1rem;
     }
-    header {
-      margin-bottom: $mainUnit * .5;
-      h2 {
-        margin: 0;
-        font-size: 1.8rem;
-        line-height: 3rem;
-        color: $highlightColor;
-        font-weight: bold;
-        letter-spacing: .01em;
-        transition: color .3s ease-in-out;
-        @media (max-width: $miniWindowThreshold) {
-          font-size: 1.2rem;
-          line-height:  2rem;
-        }
-      }
-      h3 {
-        margin: 0;
-        font-size: 1.2rem;
-        letter-spacing: 0;
-        line-height: 2rem;
-        font-weight: normal;
-      }
-    }
-    .album-artist {
-      text-decoration: underline;
-      color: $lightColor;
-      &:hover {
-        color: $highlightColor;
-      }
-    }
-    .album-type {
-      @include albumTypeColor();
+    @media (max-width: $miniWindowThreshold) {
+      background-color: transparent;
     }
   }
 }

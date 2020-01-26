@@ -2,12 +2,19 @@
 @import "../../styles/mixins";
 
 .playlist-view {
-  padding: var(--section-gutter);
+  padding: 0;
   overflow: auto;
   height: 100%;
   width: 100%;
   .playlist-header {
-    margin-bottom: $mainUnit;
+    padding:
+      var(--section-gutter)
+      var(--section-gutter)
+      calc(var(--section-gutter) * .5)
+      var(--section-gutter);
+    @media (max-width: $miniWindowThreshold) {
+      @include horizontalSeparator($separatorWidth: calc(100vw - 2 * var(--section-gutter)));
+    }
     .playlist-header-row {
       display: flex;
       flex-direction: row;
@@ -37,18 +44,22 @@
           border-right: none;
           border-bottom: 1px solid $mainColor;
           background-color: $backgroundLightColor;
-        }        
+        }
       }
     }
     .playlist-info {
       display: flex;
       line-height: 2rem;
+      margin-bottom: 0;
       .playlist-toggle-view-button {
         background: none;
         outline: none;
         border: none;
         color: $highlightColor;
         margin-left: auto;
+        @media (max-width: $miniWindowThreshold) {
+          display: none;
+        }
         &:hover {
           text-decoration: underline;
         }
@@ -64,6 +75,9 @@
     margin: 0;
     > li {
       margin: 0;
+      &:last-child{
+        margin-bottom: var(--section-gutter);
+      }
     }
   }
   .playlist-empty-placeholder {

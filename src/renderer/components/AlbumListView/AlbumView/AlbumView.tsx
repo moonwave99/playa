@@ -62,7 +62,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
   function renderArtist(): ReactElement {
     return <Link
       to={`${generatePath(SEARCH)}?query=artist: ${artist}`}
-      className="album-artist">
+      className="album-artist-link">
         {artist === VARIOUS_ARTISTS_ID ? 'V/A' : artist}
       </Link>;
   }
@@ -90,17 +90,16 @@ export const AlbumView: FC<AlbumViewProps> = ({
           album={album}
           onDoubleClick={onCoverDoubleClick}
           onContextMenu={onContextMenu}/>
+        <header>
+          <h2>{title}</h2>
+          <p className="album-artist">{renderArtist()}</p>
+          <p className="album-info">{year ? `${year} - ` : null}<span className={tagClasses}>{type}</span></p>
+        </header>
         <div className="album-actions">
-        { notFoundTracks && renderNotFoundTracksButton() }
+          { notFoundTracks && renderNotFoundTracksButton() }
         </div>
       </aside>
       <section className="album-content">
-        <header>
-          <h2>{title}</h2>
-          <h3>
-            {renderArtist()}{year ? `, ${year}` : null} - <span className={tagClasses}>{type}</span>
-          </h3>
-        </header>
         <TracklistView
           currentTrackId={currentTrackId}
           showArtists={showArtists}

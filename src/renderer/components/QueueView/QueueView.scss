@@ -2,12 +2,13 @@
 @import "../../styles/mixins";
 
 .queue {
-  padding: var(--section-gutter);
+  padding: 0;
   height: 100%;
   width: 100%;
   overflow: auto;
   h1 {
-    margin: 0 0 $mainUnit 0;
+    margin: 0;
+    padding: var(--section-gutter) var(--section-gutter) calc(var(--section-gutter) * .5) var(--section-gutter);
     line-height: $mainUnit;
     color: $highlightColor;
   }
