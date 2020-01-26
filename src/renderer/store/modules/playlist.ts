@@ -7,7 +7,7 @@ import {
   updateId
 } from '../../utils/storeUtils';
 
-import { Album } from './album';
+import { Album, getAlbumListRequest } from './album';
 
 import { IPC_MESSAGES } from '../../../constants';
 
@@ -42,6 +42,8 @@ export function getDefaultPlaylist(): Playlist {
   };
 }
 
+export const PLAYLIST_GET_REQUEST       = 'playa/playlists/GET_REQUEST';
+export const PLAYLIST_GET_RESPONSE      = 'playa/playlists/GET_RESPONSE';
 export const PLAYLIST_GET_ALL_REQUEST   = 'playa/playlists/GET_ALL_REQUEST';
 export const PLAYLIST_GET_ALL_RESPONSE  = 'playa/playlists/GET_ALL_RESPONSE';
 export const PLAYLIST_GET_LIST_REQUEST  = 'playa/playlists/GET_LIST_REQUEST';
@@ -50,6 +52,16 @@ export const PLAYLIST_SAVE_REQUEST      = 'playa/playlists/SAVE_REQUEST';
 export const PLAYLIST_SAVE_RESPONSE     = 'playa/playlists/SAVE_RESPONSE';
 export const PLAYLIST_DELETE_REQUEST    = 'playa/playlists/DELETE_REQUEST';
 export const PLAYLIST_DELETE_RESPONSE   = 'playa/playlists/DELETE_RESPONSE';
+
+interface GetPlaylistRequestAction {
+  type: typeof PLAYLIST_GET_REQUEST;
+  id: Playlist['_id'];
+}
+
+interface GetPlaylistResponseAction {
+  type: typeof PLAYLIST_GET_RESPONSE;
+  playlist: Playlist;
+}
 
 interface GetAllPlaylistRequestAction {
   type: typeof PLAYLIST_GET_ALL_REQUEST;
@@ -86,13 +98,41 @@ interface DeletePlaylistResponseAction {
 }
 
 export type PlaylistActionTypes =
-    GetAllPlaylistRequestAction
+    GetPlaylistRequestAction
+  | GetPlaylistResponseAction
+  | GetAllPlaylistRequestAction
   | GetAllPlaylistResponseAction
   | GetListPlaylistResponseAction
   | SavePlaylistRequestAction
   | SavePlaylistResponseAction
   | DeletePlaylistRequestAction
   | DeletePlaylistResponseAction;
+
+export const getPlaylistsRequest = (id: Playlist['_id']): Function =>
+  async (dispatch: Function, getState: Function): Promise<void> => {
+    const { playlists, albums } = getState();
+    let playlist = playlists.allById[id];
+
+    if (!playlist) {
+      const results = await ipc.invoke(IPC_PLAYLIST_GET_ALL_REQUEST, [id]);
+      if (results.length === 0) {
+        return;
+      }
+
+      playlist = results[0];
+      dispatch({
+        type: PLAYLIST_GET_RESPONSE,
+        playlist
+      });
+    }
+
+    const notFoundAlbums =
+      playlist.albums.filter((_id: Album['_id']) => !albums.allById[_id]);
+
+    if (notFoundAlbums.length > 0) {
+      dispatch(getAlbumListRequest(notFoundAlbums));
+    }
+  }
 
 export const getAllPlaylistsRequest = (): Function =>
   async (dispatch: Function): Promise<void> => {
@@ -143,6 +183,7 @@ export default function reducer(
           ...toObj(ensureAll<Playlist>(action.playlists, getDefaultPlaylist))
         }
       };
+    case PLAYLIST_GET_RESPONSE:
     case PLAYLIST_SAVE_RESPONSE:
       return {
         ...state,

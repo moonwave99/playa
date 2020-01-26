@@ -7,9 +7,11 @@ import reducer, {
   Playlist,
   PlaylistActionTypes,
   PlaylistState,
+  getPlaylistsRequest,
   getAllPlaylistsRequest,
   savePlaylistRequest,
   deletePlaylistRequest,
+  PLAYLIST_GET_RESPONSE,
   PLAYLIST_GET_ALL_REQUEST,
   PLAYLIST_GET_ALL_RESPONSE,
   PLAYLIST_SAVE_REQUEST,
@@ -19,6 +21,20 @@ import reducer, {
 } from './playlist';
 
 describe('playlist actions', () => {
+  describe('getPlaylistsRequest', () => {
+    it('should dispatch expected actions', async () => {
+      const store = mockStore({
+        playlists: { allById: {}},
+        albums: { allById: {}},
+      });
+      await getPlaylistsRequest('1')(store.dispatch, store.getState);
+      expect(store.getActions()).toEqual([{
+        type: PLAYLIST_GET_RESPONSE,
+        playlist: playlists[0]
+      }]);
+    });
+  });
+  
   describe('getAllPlaylistsRequest', () => {
     it('should dispatch PLAYLIST_GET_ALL_RESPONSE', async () => {
       const store = mockStore({});

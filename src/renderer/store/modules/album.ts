@@ -1,5 +1,6 @@
 import { ipcRenderer as ipc } from 'electron';
 import { Track, getTrackListResponse } from './track';
+import { getCoverRequest } from './cover';
 import { EntityHashMap, toObj, ensureAll, updateId } from '../../utils/storeUtils';
 
 import { IPC_MESSAGES } from '../../../constants';
@@ -53,6 +54,8 @@ export interface AlbumState {
   allById: EntityHashMap<Album>;
 }
 
+export const ALBUM_GET_REQUEST          = 'playa/album/GET_REQUEST';
+export const ALBUM_GET_RESPONSE         = 'playa/album/GET_RESPONSE';
 export const ALBUM_SAVE_REQUEST         = 'playa/album/SAVE_REQUEST';
 export const ALBUM_SAVE_RESPONSE        = 'playa/album/SAVE_RESPONSE';
 export const ALBUM_GET_LIST_REQUEST     = 'playa/album/GET_LIST_REQUEST';
@@ -60,9 +63,19 @@ export const ALBUM_GET_LIST_RESPONSE    = 'playa/album/GET_LIST_RESPONSE';
 export const ALBUM_GET_CONTENT_REQUEST  = 'playa/album/GET_CONTENT_REQUEST';
 export const ALBUM_GET_CONTENT_RESPONSE = 'playa/album/GET_CONTENT_RESPONSE';
 
+interface GetAlbumRequestAction {
+  type: typeof ALBUM_GET_REQUEST;
+  id: Album['_id'];
+}
+
+interface GetAlbumResponseAction {
+  type: typeof ALBUM_GET_RESPONSE;
+  album: Album;
+}
+
 interface GetAlbumListRequestAction {
   type: typeof ALBUM_GET_LIST_REQUEST;
-  ids: string[];
+  ids: Album['_id'][];
 }
 
 interface GetAlbumListResponseAction {
@@ -86,11 +99,45 @@ interface GetAlbumContentResponseAction {
 }
 
 export type AlbumActionTypes =
-    SaveAlbumResponseAction
+    GetAlbumRequestAction
+  | GetAlbumResponseAction
+  | SaveAlbumResponseAction
   | GetAlbumListRequestAction
   | GetAlbumListResponseAction
   | GetAlbumContentRequestAction
   | GetAlbumContentResponseAction;
+
+export const getAlbumRequest = (id: Album['_id']): Function =>
+  async (dispatch: Function, getState: Function): Promise<void> => {
+    const { albums, tracks } = getState();
+    let album = albums.allById[id];
+
+    if (!album) {
+      const results = await ipc.invoke(IPC_ALBUM_GET_LIST_REQUEST, [id]);
+      if (results.length === 0) {
+        return;
+      }
+      album = results[0];
+    }
+
+    if (album.tracks.length === 0) {
+      album = await ipc.invoke(IPC_ALBUM_CONTENT_REQUEST, album);
+      dispatch({
+        type: ALBUM_GET_RESPONSE,
+        album
+      });
+    }
+
+    const notFoundTracks =
+      album.tracks.filter((_id: Track['_id']) => !tracks.allById[_id]);
+
+    if (notFoundTracks.length > 0) {
+      const albumTracks = await ipc.invoke(IPC_TRACK_GET_LIST_REQUEST, notFoundTracks);
+      dispatch(getTrackListResponse(albumTracks));
+    }
+
+    dispatch(getCoverRequest(album));
+  }
 
 export const getAlbumListResponse = (results: Album[]): Function =>
   (dispatch: Function): void => {
@@ -100,7 +147,7 @@ export const getAlbumListResponse = (results: Album[]): Function =>
     });
   }
 
-export const getAlbumListRequest = (ids: string[]): Function =>
+export const getAlbumListRequest = (ids: Album['_id'][]): Function =>
   async (dispatch: Function): Promise<void> => {
     dispatch(
       getAlbumListResponse(
@@ -124,15 +171,6 @@ export const getAlbumContentResponse = (album: Album): Function =>
       type: ALBUM_GET_CONTENT_RESPONSE,
       album
     });
-  }
-
-export const getAlbumContentRequest = (album: Album): Function =>
-  async (dispatch: Function): Promise<void> => {
-    dispatch(
-      getAlbumContentResponse(
-        await ipc.invoke(IPC_ALBUM_CONTENT_REQUEST, album)
-      )
-    );
   }
 
 export const reloadAlbumContent = (album: Album): Function =>
@@ -161,6 +199,7 @@ export default function reducer(
         }
       };
     case ALBUM_SAVE_RESPONSE:
+    case ALBUM_GET_RESPONSE:
     case ALBUM_GET_CONTENT_RESPONSE:
       return {
         ...state,

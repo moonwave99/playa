@@ -7,11 +7,12 @@ import { albums, tracks } from '../../../../test/fixtures';
 import reducer, {
   AlbumActionTypes,
   AlbumState,
+  getAlbumRequest,
   getAlbumListRequest,
   getAlbumListResponse,
-  getAlbumContentRequest,
   getAlbumContentResponse,
   reloadAlbumContent,
+  ALBUM_GET_RESPONSE,
   ALBUM_GET_LIST_REQUEST,
   ALBUM_GET_LIST_RESPONSE,
   ALBUM_GET_CONTENT_REQUEST,
@@ -19,13 +20,42 @@ import reducer, {
 } from './album';
 
 import { TRACK_GET_LIST_RESPONSE } from './track';
+import { COVER_GET_RESPONSE } from './cover';
 
 describe('album actions', () => {
+  describe('getAlbumRequest', () => {
+    it('should dispatch expected actions', async () => {
+      const store = mockStore({
+        albums: {
+          allById: {}
+        },
+        tracks: {
+          allById: {}
+        },
+        covers: {
+          allById: {}
+        }
+      });
+      const albumWithTracks = {...albums[0], tracks: ['1', '2']};
+      const expectedActions = [
+        { type: ALBUM_GET_RESPONSE, album: albumWithTracks },
+        { type: TRACK_GET_LIST_RESPONSE, results: tracks },
+        { type: COVER_GET_RESPONSE, album: albumWithTracks, path: '/path/to/cover' }
+      ];
+      await getAlbumRequest('1')(store.dispatch, store.getState);
+      expect(store.getActions()).toEqual(expectedActions);
+    });
+  });
+
   describe('getAlbumListRequest', () => {
     it('should dispatch expected actions', async () => {
-      const store = mockStore({});
+      const store = mockStore({
+        albums: {
+          allById: {}
+        }
+      });
       const expectedActions = [
-        { type: ALBUM_GET_LIST_RESPONSE }
+        { type: ALBUM_GET_LIST_RESPONSE, results: albums }
       ];
       await getAlbumListRequest(['1', '2'])(store.dispatch);
       expect(store.getActions()).toEqual(expectedActions);
@@ -39,18 +69,6 @@ describe('album actions', () => {
         { type: ALBUM_GET_LIST_RESPONSE, results: albums }
       ];
       await getAlbumListResponse(albums)(store.dispatch);
-      expect(store.getActions()).toEqual(expectedActions);
-    });
-  });
-
-  describe('getAlbumContentRequest', () => {
-    it('should dispatch expected actions', async () => {
-      const store = mockStore({});
-      const album = albums[0];
-      const expectedActions = [
-        { type: ALBUM_GET_CONTENT_RESPONSE, album: { ...album, tracks: ['1', '2'] }}
-      ];
-      await getAlbumContentRequest(album)(store.dispatch);
       expect(store.getActions()).toEqual(expectedActions);
     });
   });

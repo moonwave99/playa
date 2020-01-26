@@ -43,19 +43,18 @@ export const PlayerView: FC<PlayerViewProps> = ({
 		waveform
   } = useSelector(playerSelector);
 
-	function handlePlayerError(_error: Error, info: PlaybackInfo): void {
-		confirmDialog({
-			title: 'Cannot find track',
-			message: `Cannot find track: ${info.currentTrack}`,
-			buttons: ['OK']
-		});
-		dispatch(unloadTrack());
-	}
-
 	useEffect(() => {
 		function handlePlayerUpdate({ currentTime, duration, isPlaying }: PlaybackInfo): void {
 			setPlaybackInfo([currentTime, duration]);
 			setPlaying(isPlaying);
+		}
+		function handlePlayerError(_error: Error, info: PlaybackInfo): void {
+			confirmDialog({
+				title: 'Cannot find track',
+				message: `Cannot find track: ${info.currentTrack}`,
+				buttons: ['OK']
+			});
+			dispatch(unloadTrack());
 		}
 		player.on(PLAYER_EVENTS.PLAY, handlePlayerUpdate);
 		player.on(PLAYER_EVENTS.PAUSE, handlePlayerUpdate);
@@ -67,7 +66,7 @@ export const PlayerView: FC<PlayerViewProps> = ({
 			player.removeListener(PLAYER_EVENTS.TICK, handlePlayerUpdate);
 			player.removeListener(PLAYER_EVENTS.ERROR, handlePlayerError);
 		}
-	}, [playbackInfo, isPlaying]);
+	}, [player, playbackInfo, isPlaying]);
 
 	useEffect(() => {
 		function handlePlayerEnded(): void {
@@ -84,7 +83,7 @@ export const PlayerView: FC<PlayerViewProps> = ({
 		return (): void => {
 			player.removeListener(PLAYER_EVENTS.TRACK_ENDED, handlePlayerEnded);
 		}
-	}, [queue, currentAlbum, currentTrack]);
+	}, [queue, player, currentPlaylist, currentAlbum, currentTrack]);
 
 	function onPlaybackButtonClick(): void {
 		dispatch(togglePlayback());

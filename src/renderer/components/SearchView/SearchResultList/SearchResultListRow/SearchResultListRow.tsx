@@ -30,8 +30,8 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
   const cover = useSelector(({ covers }) => covers.allById[_id]);
 
   useEffect(() => {
-    !cover && dispatch(getCoverRequest(album));
-  }, [cover]);
+    dispatch(getCoverRequest(album));
+  }, [album]);
 
   const [{ opacity }, drag] = useDrag({
     item: {

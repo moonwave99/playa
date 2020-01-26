@@ -35,8 +35,8 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
   });
 
   useEffect(() => {
-    !cover && dispatch(getCoverRequest(album));
-  }, [cover]);
+    dispatch(getCoverRequest(album));
+  }, [album]);
 
   function _onContextMenu(): void {
     onContextMenu && onContextMenu(album);

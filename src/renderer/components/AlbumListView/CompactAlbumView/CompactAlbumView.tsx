@@ -42,8 +42,8 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
 
   const dispatch = useDispatch();
   useEffect(() => {
-    !cover && dispatch(getCoverRequest(album));
-  }, [cover]);
+    dispatch(getCoverRequest(album));
+  }, [album]);
 
   const ref = useRef<HTMLDivElement>(null);
   const [{ isOver, canDrop }, drop] = useDrop({

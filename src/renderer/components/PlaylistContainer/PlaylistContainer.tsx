@@ -5,8 +5,8 @@ import { PlaylistView } from '../PlaylistView/PlaylistView';
 import { savePlaylistRequest, getDefaultPlaylist } from '../../store/modules/playlist';
 import { updateQueue } from '../../store/modules/player';
 import { updateState, updateTitle } from '../../store/modules/ui';
-import { Playlist } from '../../store/modules/playlist';
-import { Album, getAlbumListRequest } from '../../store/modules/album';
+import { Playlist, getPlaylistsRequest } from '../../store/modules/playlist';
+import { Album } from '../../store/modules/album';
 import { Track } from '../../store/modules/track';
 import { playTrack } from '../../store/modules/player';
 import { toObj } from '../../utils/storeUtils';
@@ -45,15 +45,15 @@ export const PlaylistContainer = (): ReactElement => {
 
   useEffect(() => {
     if (playlist._rev) {
-      dispatch(updateState({ lastOpenedPlaylistId: _id }));
+      dispatch(updateState({ lastOpenedPlaylistId: playlist._id }));
     }
   }, [playlist._id, playlist._rev]);
 
   useEffect(() => {
-    if (playlist._rev && playlist.albums.length > 0) {
-      dispatch(getAlbumListRequest(playlist.albums));
+    if (playlist._rev) {
+      dispatch(getPlaylistsRequest(playlist._id));
     }
-  }, [playlist.albums, playlist._rev]);
+  }, [playlist]);
 
   function onAlbumOrderChange(newOrder: string[]): void {
     dispatch(savePlaylistRequest({ ...playlist, albums: newOrder }));

@@ -31,9 +31,12 @@ export type CoverActionTypes =
   | GetCoverResponseAction;
 
 export const getCoverRequest = (album: Album): Function =>
-  async (dispatch: Function): Promise<void> => {
-    const { type } = album;
-    if (type === AlbumTypes.Remix || type === AlbumTypes.Various) {
+  async (dispatch: Function, getState: Function): Promise<void> => {
+    const { covers } = getState();
+    const { _id, type } = album;
+    const albumTypeHasNoCover =
+      type === AlbumTypes.Remix || type === AlbumTypes.Various;
+    if (covers.allById[_id] || albumTypeHasNoCover) {
       return;
     }
     dispatch({

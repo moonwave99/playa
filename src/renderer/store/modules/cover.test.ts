@@ -14,9 +14,13 @@ import reducer, {
 describe('cover actions', () => {
   describe('getCoverRequest', () => {
     it('should dispatch getCoverRequest request', async () => {
-      const store = mockStore({});
+      const store = mockStore({
+        covers: {
+          allById: {}
+        }
+      });
       const album = albums[0];
-      await getCoverRequest(album)(store.dispatch);
+      await getCoverRequest(album)(store.dispatch, store.getState);
       expect(store.getActions()).toEqual([
         { type: COVER_GET_RESPONSE, album, path: '/path/to/cover' },
       ]);

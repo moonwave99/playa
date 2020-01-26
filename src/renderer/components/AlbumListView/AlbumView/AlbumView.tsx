@@ -5,10 +5,8 @@ import cx from 'classnames';
 import { CoverView } from './CoverView/CoverView';
 import { TracklistView } from './TracklistView/TracklistView';
 import { ApplicationState } from '../../../store/store';
-import { Album, AlbumTypes, VARIOUS_ARTISTS_ID, getAlbumContentRequest } from '../../../store/modules/album';
+import { Album, AlbumTypes, VARIOUS_ARTISTS_ID, getAlbumRequest } from '../../../store/modules/album';
 import { Track } from '../../../store/modules/track';
-import { getTrackListRequest } from '../../../store/modules/track';
-import { getCoverRequest } from '../../../store/modules/cover';
 import { SEARCH } from '../../../routes';
 import './AlbumView.scss';
 
@@ -27,31 +25,30 @@ export const AlbumView: FC<AlbumViewProps> = ({
   onContextMenu,
   onDoubleClick
 }) => {
-  const { _id, type, year, artist, title, tracks } = album;
-  const { tracklist, notFoundTracks, cover } = useSelector((state: ApplicationState) => {
-    const tracklist = tracks.map((id) => state.tracks.allById[id]).filter(x => !!x) || [];
+  const { _id, type, year, artist, title } = album;
+  const {
+    tracklist,
+    notFoundTracks,
+    cover
+  } = useSelector(({ tracks, covers }: ApplicationState) => {
+    const tracklist =
+      album.tracks
+        .map((id) => tracks.allById[id])
+        .filter(x => !!x) || [];
     return {
       tracklist,
       notFoundTracks: tracklist.filter(({ found }) => found === false).length > 0,
-      cover: state.covers.allById[_id]
+      cover: covers.allById[_id]
     };
   });
 
   const dispatch = useDispatch();
   useEffect(() => {
-    if (tracks.length === 0) {
-      dispatch(getAlbumContentRequest(album));
-    } else if (tracklist.length === 0){
-      dispatch(getTrackListRequest(tracks));
-    }
-  }, [tracks.length, tracklist.length]);
-
-  useEffect(() => {
-    !cover && dispatch(getCoverRequest(album));
-  }, [cover]);
+    dispatch(getAlbumRequest(_id));
+  }, [_id]);
 
   function onNotFoundButtonClick(): void {
-    dispatch(getAlbumContentRequest(album));
+    dispatch(getAlbumRequest(_id));
   }
 
   function onCoverDoubleClick(album: Album): void {
@@ -108,7 +105,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
           currentTrackId={currentTrackId}
           showArtists={showArtists}
           showTrackNumbers={showTrackNumbers}
-          rawTracks={tracks}
+          rawTracks={album.tracks}
           tracklist={tracklist}
           onTrackDoubleClick={onTrackDoubleClick}/>
       </section>
