@@ -70,6 +70,10 @@ export const addAlbumsToLibrary = (albums: Album[]): Function =>
     dispatch({
       type: LIBRARY_ADD_TO_LATEST_ALBUMS,
       albums
+    });
+    dispatch({
+      type: ALBUM_GET_LIST_RESPONSE,
+      results: albums
     })
   }
 
