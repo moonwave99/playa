@@ -1,6 +1,6 @@
-import { intersection, uniqBy, without } from 'lodash';
+import { intersection, uniq, without } from 'lodash';
 import { ipcRenderer as ipc } from 'electron';
-import { toArray, ensureAll } from '../../utils/storeUtils';
+import { toArray } from '../../utils/storeUtils';
 
 import {
   Playlist,
@@ -9,7 +9,6 @@ import {
 
 import {
   Album,
-  getDefaultAlbum,
   ALBUM_GET_LIST_RESPONSE
 } from './album';
 
@@ -27,7 +26,7 @@ const {
 
 export interface LibraryState {
   latestAlbumID: Album['_id'];
-  latest: Album[];
+  latest: Album['_id'][];
 }
 
 export const LIBRARY_GET_LATEST_REQUEST   = 'playa/library/GET_LATEST_REQUEST';
@@ -55,7 +54,7 @@ export type LibraryActionTypes =
 
 export const getLatestRequest = (dateFrom = new Date().toISOString(), limit = 20): Function =>
   async (dispatch: Function): Promise<void> => {
-    const results = await ipc.invoke(IPC_ALBUM_GET_LATEST_REQUEST, dateFrom, limit);
+    const results: Album[] = await ipc.invoke(IPC_ALBUM_GET_LATEST_REQUEST, dateFrom, limit);
     dispatch({
       type: ALBUM_GET_LIST_RESPONSE,
       results
@@ -74,18 +73,18 @@ export const addAlbumsToLibrary = (albums: Album[]): Function =>
     })
   }
 
-export const removeAlbums = (albums: Album[]): Function =>
+export const removeAlbums = (albumsToRemove: Album[]): Function =>
   async (dispatch: Function, getState: Function): Promise<void> => {
     const {
       library,
+      albums,
       player,
       playlists
     } = getState();
-    const currentAlbums: Album[] = library.latest;
+    const currentAlbums: Album[] = library.latest.map((_id: Album['_id']) => albums.allById[_id]);
     const queue: Album['_id'][] = player.queue;
-    const albumsToRemoveIDs = albums.map(({ _id }) => _id);
-
-    const results = await ipc.invoke(IPC_ALBUM_DELETE_LIST_REQUEST, albums);
+    const albumsToRemoveIDs = albumsToRemove.map(({ _id }) => _id);
+    const results = await ipc.invoke(IPC_ALBUM_DELETE_LIST_REQUEST, albumsToRemove);
 
     if (results.length === 0) {
       return;
@@ -97,7 +96,7 @@ export const removeAlbums = (albums: Album[]): Function =>
     });
     dispatch({
       type: PLAYER_UPDATE_QUEUE,
-      queue: queue.filter((_id) => albumsToRemoveIDs.indexOf(_id) < 0)
+      queue: queue.filter(_id => albumsToRemoveIDs.indexOf(_id) < 0)
     });
 
     const playlistsToUpdate =
@@ -127,7 +126,7 @@ export const removeAlbums = (albums: Album[]): Function =>
   }
 
 const INITIAL_STATE = {
-  latest: [] as Album[],
+  latest: [] as Album['_id'][],
   latestAlbumID: null as Album['_id']
 };
 
@@ -145,12 +144,12 @@ export default function reducer(
     case LIBRARY_GET_LATEST_RESPONSE:
       return {
         latestAlbumID: getLatestAlbumID(action.results),
-        latest: ensureAll<Album>(action.results, getDefaultAlbum),
+        latest: action.results.map(({ _id }) => _id)
       };
     case LIBRARY_ADD_TO_LATEST_ALBUMS:
       return {
         latestAlbumID: getLatestAlbumID(action.albums),
-        latest: uniqBy([...action.albums, ...state.latest], '_id')
+        latest: uniq([...action.albums.map(({ _id }) => _id), ...state.latest])
       };
     case LIBRARY_GET_LATEST_REQUEST:
 		default:

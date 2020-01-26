@@ -38,7 +38,10 @@ describe('library actions', () => {
           allById: toObj(playlists)
         },
         library: {
-          latest: albums
+          latest: albums.map(({ _id }) => _id)
+        },
+        albums: {
+          allById: toObj(albums)
         },
         player: {
           queue: albums.map(({ _id }) => _id)
@@ -62,7 +65,7 @@ describe('library actions', () => {
 
 describe('library reducer', () => {
   const initialState = {
-    latest: [] as Album[],
+    latest: [] as Album['_id'][],
     latestAlbumID: null as Album['_id']
   }
   it('should return the initial state', () => {
@@ -85,7 +88,7 @@ describe('library reducer', () => {
       type: LIBRARY_GET_LATEST_RESPONSE,
       results
     })).toEqual({
-      latest: albums,
+      latest: albums.map(({ _id }) => _id),
       latestAlbumID: albums[1]._id
     });
   });

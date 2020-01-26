@@ -48,8 +48,9 @@ export const LibraryView = (): ReactElement => {
     latest,
     latestAlbumID,
     playingAlbumID
-  } = useSelector(({ library, player }) => ({
-    ...library,
+  } = useSelector(({ albums, library, player }) => ({
+    latest: library.latest.map((_id: Album['_id']) => albums.allById[_id]),
+    latestAlbumID: library.latestAlbumID,
     playingAlbumID: player.currentAlbumId
   }));
 	useEffect(() => {
