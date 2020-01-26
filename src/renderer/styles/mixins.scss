@@ -158,10 +158,7 @@
   font-size: var(--section-gutter);
   opacity: .5;
   text-align: center;
-  max-width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  @include ellipsis(100%);
 }
 
 @mixin clearFix(){
@@ -197,5 +194,14 @@
     bottom: calc(var(--section-gutter) * -1.5);
     height: 1px;
     background-color: $color;
+  }
+}
+
+@mixin ellipsis($width: null) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  @if $width {
+    max-width: $width;
   }
 }

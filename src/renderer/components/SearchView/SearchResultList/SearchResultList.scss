@@ -32,6 +32,10 @@
 			th {
 				text-align: left;
 				padding: 0 2rem;
+				&.header-artist,
+				&.header-title {
+					max-width: $searchResultsCellMaxWidth;
+				}
 				&.header-year,
 				&.header-type {
 					text-align: center;
@@ -74,6 +78,11 @@
 			&-title, {
 				padding: 0 calc(var(--section-gutter) * 2/3);
 			}
+			&-artist,
+			&-title, {
+				@include ellipsis();
+				max-width: $searchResultsCellMaxWidth;
+			}
 			&-artist {
 				color: $highlightColor;
 				&:hover {
@@ -98,9 +107,6 @@
 				&-artist,
 				&-title, {
 					display: block;
-					white-space: nowrap;
-	        overflow: hidden;
-	        text-overflow: ellipsis;
 					line-height: var(--section-gutter);
 					max-width: calc(100vw - #{$searchResultsCoverWidth} - var(--section-gutter) * 2);
 				}

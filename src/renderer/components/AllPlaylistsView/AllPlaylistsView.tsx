@@ -79,7 +79,7 @@ export const AllPlaylistsView: FC<AllPlaylistsViewProps> = ({
 		<div className="all-playlists-view">
       <h1>{t('playlists.title')}</h1>
       <table {...getTableProps()} className="all-playlists-table">
-        <thead>
+        <thead className="all-playlists-table-header">
           <tr>
           {headers.map(column => (
             <th {...column.getHeaderProps()} className={`header header-${column.id}`}>{column.render('Header')}</th>

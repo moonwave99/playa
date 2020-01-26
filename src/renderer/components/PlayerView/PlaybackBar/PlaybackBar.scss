@@ -57,15 +57,12 @@
     .current-track-title,
     .current-track-info {
       margin: 0;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 45vw;
+      @include ellipsis($playerMaxInfoWidth);
       @media (max-width: $smallWindowThreshold) {
-        max-width: 40vw;
+        max-width: $playerMaxInfoSmallWidth;
       }
       @media (max-width: $miniWindowThreshold) {
-        max-width: 60vw;
+        max-width: $playerMaxInfoMiniWidth;
       }
     }
     .current-track-title {
