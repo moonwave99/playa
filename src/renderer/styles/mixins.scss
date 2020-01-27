@@ -127,6 +127,7 @@
   }
   &:hover::after {
     opacity: $finalOpacity;
+    pointer-events: none;
   }
 }
 
