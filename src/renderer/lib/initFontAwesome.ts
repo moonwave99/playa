@@ -13,7 +13,9 @@ import {
   faThList,
   faListAlt,
   faSearch,
-  faFileImport
+  faFileImport,
+  faMinusCircle,
+  faFolderOpen
 } from '@fortawesome/free-solid-svg-icons';
 
 export default function initFontAwesome(): void {
@@ -31,6 +33,8 @@ export default function initFontAwesome(): void {
     faThList,
     faListAlt,
     faSearch,
-    faFileImport
+    faFileImport,
+    faMinusCircle,
+    faFolderOpen
   );
 }

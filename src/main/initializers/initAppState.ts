@@ -6,7 +6,7 @@ import { IPC_MESSAGES } from '../../constants';
 
 const {
   IPC_UI_STATE_LOAD,
-  IPC_UI_STATE_UPDATE,
+  IPC_UI_UPDATE_STATE,
 } = IPC_MESSAGES;
 
 export default function initAppState(userDataPath: string, debug = false): AppState {
@@ -17,7 +17,7 @@ export default function initAppState(userDataPath: string, debug = false): AppSt
   appState.load();
 
   ipc.handle(IPC_UI_STATE_LOAD, async () => appState.getState() );
-  ipc.on(IPC_UI_STATE_UPDATE, (_event, params: object) => appState.setState(params) );
+  ipc.on(IPC_UI_UPDATE_STATE, (_event, params: object) => appState.setState(params) );
 
   return appState;
 }

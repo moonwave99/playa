@@ -9,11 +9,11 @@ import { Track } from '../../store/modules/track';
 import { playTrack } from '../../store/modules/player';
 import { updateTitle, UIAlbumView } from '../../store/modules/ui';
 import { toObj } from '../../utils/storeUtils';
-import { openContextMenu } from '../../lib/contextMenu/contextMenu';
+import { openContextMenu } from '../../lib/contextMenu';
 import {
   ALBUM_CONTEXT_ACTIONS,
-  AlbumActionItems
-} from '../../lib/contextMenu/actions/album';
+  AlbumActionsGroups
+} from '../../actions/albumActions';
 import './QueueView.scss';
 
 export const QueueView = (): ReactElement => {
@@ -50,10 +50,10 @@ export const QueueView = (): ReactElement => {
         type: ALBUM_CONTEXT_ACTIONS,
         album,
         dispatch,
-        actions: [
-          AlbumActionItems.PLAYBACK,
-          AlbumActionItems.SYSTEM,
-          AlbumActionItems.SEARCH_ONLINE
+        actionGroups: [
+          AlbumActionsGroups.PLAYBACK,
+          AlbumActionsGroups.SYSTEM,
+          AlbumActionsGroups.SEARCH_ONLINE
         ]
       }
     ]);
@@ -67,11 +67,14 @@ export const QueueView = (): ReactElement => {
     }));
   }
 
+  function albumActionHandler(): void { return; }
+
 	return (
 		<section className="queue" id="queue">
       <h1>{t('queue.title')}</h1>
       { queue.length > 0
         ? <AlbumListView
+            albumActionHandler={albumActionHandler}
             albumView={UIAlbumView.Extended}
             sortable={false}
             albums={toObj(queue)}

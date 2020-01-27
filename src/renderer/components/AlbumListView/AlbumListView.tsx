@@ -14,6 +14,7 @@ type AlbumListViewProps = {
   currentAlbumId: Album['_id'];
   currentTrackId: Track['_id'];
   albumView: UIAlbumView;
+  albumActionHandler: Function;
   onAlbumOrderChange?: Function;
   onAlbumContextMenu: Function;
   onAlbumDoubleClick: Function;
@@ -26,6 +27,7 @@ export const AlbumListView: FC<AlbumListViewProps> = ({
   currentAlbumId,
   currentTrackId,
   albumView,
+  albumActionHandler,
   onAlbumOrderChange,
   onAlbumContextMenu,
   onAlbumDoubleClick,
@@ -39,7 +41,8 @@ export const AlbumListView: FC<AlbumListViewProps> = ({
   );
 
   const onAlbumMove = useCallback(
-    (dragIndex: number, hoverIndex: number): void => setAlbumOrder(immutableMove<Album['_id']>(albumOrder, dragIndex, hoverIndex))
+    (dragIndex: number, hoverIndex: number): void =>
+      setAlbumOrder(immutableMove<Album['_id']>(albumOrder, dragIndex, hoverIndex))
     , [albumOrder]
   );
 
@@ -48,7 +51,6 @@ export const AlbumListView: FC<AlbumListViewProps> = ({
   }
 
   function renderAlbum(album: Album, index: number): ReactElement {
-    // #TODO investigate render issue
     if (!album) {
       return null;
     }
@@ -58,7 +60,7 @@ export const AlbumListView: FC<AlbumListViewProps> = ({
     switch (albumView) {
       case UIAlbumView.Extended:
         return (
-          <li key={album._id}>
+          <li key={`${album._id}`}>
             <AlbumView
               isCurrent={album._id === currentAlbumId}
               currentTrackId={currentTrackId}
@@ -69,12 +71,13 @@ export const AlbumListView: FC<AlbumListViewProps> = ({
         );
       case UIAlbumView.Compact:
         return (
-          <li key={album._id}>
+          <li key={`${album._id}`}>
             <CompactAlbumView
               album={album}
               index={index}
               isCurrent={album._id === currentAlbumId}
               sortable={sortable}
+              albumActionHandler={albumActionHandler}
               onDragEnd={onDragEnd}
               onAlbumMove={onAlbumMove}
               onContextMenu={onAlbumContextMenu}

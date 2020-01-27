@@ -4,19 +4,23 @@
 .compact-album-view {
   display: flex;
 	align-items: center;
-	padding: .5rem 0 .5rem 2rem;
+	padding: 1rem 2rem;
   position: relative;
   transition: background-color .3s ease-in-out;
-  border-bottom: 1px solid $backgroundLightColor;
-  &:first-of-type {
-    border-top: 1px solid $backgroundLightColor;
-  }  
+  border-radius: 1rem;
+  background-color: rgba($backgroundDarkColor, .4);
+  margin: 0 var(--section-gutter) 1rem var(--section-gutter);
+  max-width: 100%;
+  @media (min-width: $wideWindowThreshold) {
+		width: $albumCompactMaxWidth;
+	}
+
   &.sortable::before {
     content: '⋮';
     cursor: move;
     position: absolute;
-    top: .5rem;
-    left: 0rem;
+    top: 1rem;
+    left: .5rem;
     line-height: $albumCoverCompactWidth;
     height: $albumCoverCompactWidth;
     vertical-align: middle;
@@ -58,6 +62,22 @@
     }
     .album-type {
       @include albumTypeColor();
+    }
+  }
+  .album-actions {
+    flex: 0 0 25%;
+    margin-left: auto;
+    text-align: right;
+    .album-actions-button {
+      font-size: 1.5rem;
+      background: none;
+      outline: none;
+      border: none;
+      color: $darkColor;
+      transition: color .2s ease-in-out;
+      &:hover {
+        color: $lightColor;
+      }
     }
   }
 }

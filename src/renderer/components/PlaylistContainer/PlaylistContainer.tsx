@@ -2,21 +2,29 @@ import React, { ReactElement, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 import { PlaylistView } from '../PlaylistView/PlaylistView';
-import { savePlaylistRequest, getDefaultPlaylist } from '../../store/modules/playlist';
-import { updateQueue } from '../../store/modules/player';
-import { updateState, updateTitle } from '../../store/modules/ui';
-import { Playlist, getPlaylistsRequest } from '../../store/modules/playlist';
+import {
+  Playlist,
+  getPlaylistsRequest,
+  savePlaylistRequest,
+  getDefaultPlaylist
+} from '../../store/modules/playlist';
+import { updateQueue, playTrack } from '../../store/modules/player';
+import { showDialog, updateState, updateTitle } from '../../store/modules/ui';
 import { Album } from '../../store/modules/album';
 import { Track } from '../../store/modules/track';
-import { playTrack } from '../../store/modules/player';
 import { toObj } from '../../utils/storeUtils';
-import { confirmDialog } from '../../lib/dialog';
-import { openContextMenu } from '../../lib/contextMenu/contextMenu';
-import { PLAYLIST_CONTENT_CONTEXT_ACTIONS } from '../../lib/contextMenu/actions/playlistContent';
+import { openContextMenu } from '../../lib/contextMenu';
+import {
+  PLAYLIST_CONTENT_CONTEXT_ACTIONS,
+  PlaylistContentActions,
+  mapAction as playlistMapAction
+} from '../../actions/playlistContentActions';
 import {
   ALBUM_CONTEXT_ACTIONS,
-  AlbumActionItems
-} from '../../lib/contextMenu/actions/album';
+  AlbumActions,
+  AlbumActionsGroups,
+  mapAction as albumMapAction
+} from '../../actions/albumActions';
 
 export const PlaylistContainer = (): ReactElement => {
   const dispatch = useDispatch();
@@ -67,11 +75,12 @@ export const PlaylistContainer = (): ReactElement => {
       return;
     }
     if (title === '') {
-      confirmDialog({
-        title: 'Playlist Rename',
-        message: 'Playlist title cannot be empty.',
-        buttons: ['OK']
-      });
+      dispatch(
+        showDialog(
+          'Playlist Rename',
+          'Playlist title cannot be empty.'
+        )
+      );
       return;
     }
     dispatch(savePlaylistRequest({ ...playlist, title }));
@@ -89,15 +98,16 @@ export const PlaylistContainer = (): ReactElement => {
         type: ALBUM_CONTEXT_ACTIONS,
         album,
         dispatch,
-        actions: [
-          AlbumActionItems.PLAYBACK,
-          AlbumActionItems.SYSTEM,
-          AlbumActionItems.SEARCH_ONLINE
+        actionGroups: [
+          AlbumActionsGroups.PLAYBACK,
+          AlbumActionsGroups.SYSTEM,
+          AlbumActionsGroups.SEARCH_ONLINE
         ]
       }
     ]);
   }
 
+  // #TODO: move to playlistContentActions
   function onAlbumDoubleClick(album: Album, track: Track): void {
     dispatch(updateQueue(playlist.albums));
     dispatch(playTrack({
@@ -107,6 +117,21 @@ export const PlaylistContainer = (): ReactElement => {
     }));
   }
 
+  function albumActionHandler(action: PlaylistContentActions | AlbumActions, album: Album): void {
+    switch (action) {
+      case PlaylistContentActions.REMOVE_ALBUM:
+        playlistMapAction(PlaylistContentActions.REMOVE_ALBUM)({
+          playlist,
+          selection: [album._id],
+          dispatch
+        }).handler();
+        break;
+      case AlbumActions.REVEAL_IN_FINDER:
+        albumMapAction(AlbumActions.REVEAL_IN_FINDER)({ album, dispatch }).handler();
+        break;
+    }
+  }
+
 	return (
     <PlaylistView
        albums={albums}
@@ -114,6 +139,7 @@ export const PlaylistContainer = (): ReactElement => {
        isCurrent={currentPlaylistId === playlist._id}
        currentAlbumId={currentAlbumId}
        currentTrackId={currentTrackId}
+       albumActionHandler={albumActionHandler}
        onAlbumOrderChange={onAlbumOrderChange}
        onTitleChange={onTitleChange}
        onAlbumContextMenu={onAlbumContextMenu}

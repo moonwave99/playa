@@ -19,7 +19,7 @@ export const AllPlaylistContainer: FC<AllPlaylistContainerProps> = ({
   }, []);
 
   async function onPlaylistDelete(playlist: Playlist): Promise<void> {
-    const confirmed = confirmDialog({
+    const confirmed = await confirmDialog({
       title: 'Playlist Delete',
       message: `You are about to delete playlist '${playlist.title}', are you sure?`
     });

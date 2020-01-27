@@ -3,8 +3,8 @@ import reducer, {
   UIState,
   updateState,
   updateTitle,
-  STATE_UPDATE,
-  TITLE_UPDATE
+  UPDATE_STATE,
+  UPDATE_TITLE
 } from './ui';
 
 describe('ui actions', () => {
@@ -14,7 +14,7 @@ describe('ui actions', () => {
       const params = {};
       updateState(params)(dispatch);
       expect(dispatch).toHaveBeenCalledWith({
-        type: STATE_UPDATE,
+        type: UPDATE_STATE,
         params
       });
     });
@@ -26,7 +26,7 @@ describe('ui actions', () => {
       const title = 'title';
       updateTitle(title)(dispatch);
       expect(dispatch).toHaveBeenCalledWith({
-        type: TITLE_UPDATE,
+        type: UPDATE_TITLE,
         title
       });
     });
@@ -38,16 +38,16 @@ describe('ui reducer', () => {
     expect(reducer(undefined, {} as UIActionTypes)).toEqual({ started: true});
   });
 
-  it('should handle STATE_UPDATE', () => {
+  it('should handle UPDATE_STATE', () => {
     expect(reducer({} as UIState, {
-      type: STATE_UPDATE,
+      type: UPDATE_STATE,
       params: {}
     })).toEqual({});
   });
 
-  it('should handle TITLE_UPDATE', () => {
+  it('should handle UPDATE_TITLE', () => {
     expect(reducer({} as UIState, {
-      type: TITLE_UPDATE,
+      type: UPDATE_TITLE,
       title: 'title'
     })).toEqual({});
   });

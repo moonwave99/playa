@@ -4,26 +4,26 @@ const { Menu, MenuItem } = remote;
 import {
   ALBUM_CONTEXT_ACTIONS,
   GetAlbumContextMenuParams,
-  getActions as getAlbumActions
-} from './actions/album';
+  getActionGroups as getAlbumActionGroups
+} from '../actions/albumActions';
 
 import {
   PLAYLIST_LIST_CONTEXT_ACTIONS,
   GetPlaylistListContextMenuParams,
-  getActions as getPlaylistListActions
-} from './actions/playlistList';
+  getActionGroups as getPlaylistListActionGroups
+} from '../actions/playlistListActions';
 
 import {
   PLAYLIST_CONTENT_CONTEXT_ACTIONS,
   GetPlaylistContentContextMenuParams,
-  getActions as getPlaylistContextActions
-} from './actions/playlistContent';
+  getActionGroups as getPlaylistContextActionGroups
+} from '../actions/playlistContentActions';
 
 import {
   LIBRARY_CONTENT_CONTEXT_ACTIONS,
   GetLibraryContentContextMenuParams,
-  getActions as getLibraryContextActions
-} from './actions/libraryContent';
+  getActionGroups as getLibraryContextActionGroups
+} from '../actions/libraryContentActions';
 
 type ContextMenuParams =
     GetPlaylistListContextMenuParams
@@ -36,13 +36,13 @@ export function openContextMenu(params: ContextMenuParams[]): void {
   const groups: MenuItemConstructorOptions[][] = params.map((param) => {
     switch (param.type) {
       case PLAYLIST_LIST_CONTEXT_ACTIONS:
-        return getPlaylistListActions(param);
+        return getPlaylistListActionGroups(param);
       case PLAYLIST_CONTENT_CONTEXT_ACTIONS:
-        return getPlaylistContextActions(param);
+        return getPlaylistContextActionGroups(param);
       case ALBUM_CONTEXT_ACTIONS:
-        return getAlbumActions(param);
+        return getAlbumActionGroups(param);
       case LIBRARY_CONTENT_CONTEXT_ACTIONS:
-        return getLibraryContextActions(param);
+        return getLibraryContextActionGroups(param);
     }
   });
 

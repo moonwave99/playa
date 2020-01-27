@@ -7,11 +7,11 @@ import { updateTitle } from '../../store/modules/ui';
 import { Album } from '../../store/modules/album';
 import { searchRequest } from '../../store/modules/search';
 import { playTrack, updateQueue } from '../../store/modules/player';
-import { openContextMenu } from '../../lib/contextMenu/contextMenu';
+import { openContextMenu } from '../../lib/contextMenu';
 import {
   ALBUM_CONTEXT_ACTIONS,
-  AlbumActionItems
-} from '../../lib/contextMenu/actions/album';
+  AlbumActionsGroups
+} from '../../actions/albumActions';
 import './SearchView.scss';
 
 type SearchViewProps = {
@@ -48,11 +48,11 @@ export const SearchView: FC<SearchViewProps> = () => {
         type: ALBUM_CONTEXT_ACTIONS,
         album,
         dispatch,
-        actions: [
-          AlbumActionItems.PLAYBACK,
-          AlbumActionItems.ENQUEUE,
-          AlbumActionItems.SYSTEM,
-          AlbumActionItems.SEARCH_ONLINE
+        actionGroups: [
+          AlbumActionsGroups.PLAYBACK,
+          AlbumActionsGroups.ENQUEUE,
+          AlbumActionsGroups.SYSTEM,
+          AlbumActionsGroups.SEARCH_ONLINE
         ]
       }
     ]);

@@ -1,8 +1,9 @@
 import { ipcRenderer as ipc } from 'electron';
+import { confirmDialog } from '../../lib/dialog'
 
 import { IPC_MESSAGES } from '../../../constants';
 const {
-  IPC_UI_STATE_UPDATE
+  IPC_UI_UPDATE_STATE
 } = IPC_MESSAGES;
 
 const MAX_TITLE_LENGTH = 50;
@@ -28,28 +29,46 @@ export type UIState = {
   started?: boolean;
 };
 
-export const STATE_UPDATE = 'playa/ui/STATE_UPDATE';
-export const TITLE_UPDATE = 'playa/ui/TITLE_UPDATE';
+export const SHOW_DIALOG  = 'playa/ui/SHOW_DIALOG';
+export const UPDATE_STATE = 'playa/ui/UPDATE_STATE';
+export const UPDATE_TITLE = 'playa/ui/UPDATE_TITLE';
+
+interface ShowDialogAction {
+  type: typeof SHOW_DIALOG;
+}
 
 interface UpdateStateAction {
-  type: typeof STATE_UPDATE;
+  type: typeof UPDATE_STATE;
   params: object;
 }
 
 interface UpdateTitleAction {
-  type: typeof TITLE_UPDATE;
+  type: typeof UPDATE_TITLE;
   title: string;
 }
 
 export type UIActionTypes =
-    UpdateStateAction
+    ShowDialogAction
+  | UpdateStateAction
   | UpdateTitleAction;
+
+export const showDialog = (
+  title: string,
+  message: string,
+  buttons: string[] = ['OK']
+): Function =>
+  (dispatch: Function): void => {
+    confirmDialog({ title, message, buttons });
+    dispatch({
+      type: SHOW_DIALOG
+    });
+  }
 
 export const updateState = (params: object): Function =>
   (dispatch: Function): void => {
-    ipc.send(IPC_UI_STATE_UPDATE, params);
+    ipc.send(IPC_UI_UPDATE_STATE, params);
     dispatch({
-      type: STATE_UPDATE,
+      type: UPDATE_STATE,
       params
     });
   }
@@ -58,7 +77,7 @@ export const updateTitle = (title: string): Function =>
   (dispatch: Function): void => {
     document.title = trimTitle(title);
     dispatch({
-      type: TITLE_UPDATE,
+      type: UPDATE_TITLE,
       title
     });
   }
@@ -72,8 +91,9 @@ export default function reducer(
   action: UIActionTypes
 ): UIState {
 	switch (action.type) {
-    case STATE_UPDATE:
-    case TITLE_UPDATE:
+    case SHOW_DIALOG:
+    case UPDATE_STATE:
+    case UPDATE_TITLE:
 		default:
 			return state;
 	}

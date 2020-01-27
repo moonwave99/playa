@@ -23,6 +23,7 @@ type PlaylistViewProps = {
   isCurrent: boolean;
   currentAlbumId: Album['_id'];
   currentTrackId: Track['_id'];
+  albumActionHandler: Function;
   onTitleChange: Function;
   onAlbumOrderChange: Function;
   onAlbumContextMenu: Function;
@@ -35,6 +36,7 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
   isCurrent = false,
   currentAlbumId,
   currentTrackId,
+  albumActionHandler,
   onAlbumOrderChange,
   onTitleChange,
   onAlbumContextMenu,
@@ -102,7 +104,8 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
             currentTrackId={currentTrackId}
             onAlbumOrderChange={onAlbumOrderChange}
             onAlbumContextMenu={onAlbumContextMenu}
-            onAlbumDoubleClick={onAlbumDoubleClick}/>
+            onAlbumDoubleClick={onAlbumDoubleClick}
+            albumActionHandler={albumActionHandler}/>
         : <p className="playlist-empty-placeholder">{t('playlists.empty')}</p>
       }
     </section>

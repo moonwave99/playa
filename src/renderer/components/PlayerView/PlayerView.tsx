@@ -13,12 +13,13 @@ import {
 	seekTo,
 	unloadTrack
 } from '../../store/modules/player';
-import { getWaveformRequest } from '../../store/modules/waveform';
 import { getPrevTrack, getNextTrack } from '../../utils/tracklistUtils';
+import { getWaveformRequest } from '../../store/modules/waveform';
+import { showDialog } from '../../store/modules/ui';
+
 import Player, { PlaybackInfo, PLAYER_EVENTS } from '../../player';
 
 import { QUEUE } from '../../routes';
-import { confirmDialog } from '../../lib/dialog';
 import './PlayerView.scss';
 
 type PlayerViewProps = {
@@ -49,11 +50,12 @@ export const PlayerView: FC<PlayerViewProps> = ({
 			setPlaying(isPlaying);
 		}
 		function handlePlayerError(_error: Error, info: PlaybackInfo): void {
-			confirmDialog({
-				title: 'Cannot find track',
-				message: `Cannot find track: ${info.currentTrack}`,
-				buttons: ['OK']
-			});
+			dispatch(
+				showDialog(
+					'Cannot find track',
+					`Cannot find track: ${info.currentTrack}`
+				)
+			);
 			dispatch(unloadTrack());
 		}
 		player.on(PLAYER_EVENTS.PLAY, handlePlayerUpdate);

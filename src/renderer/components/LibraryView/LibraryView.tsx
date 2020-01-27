@@ -12,18 +12,18 @@ import { Album, saveAlbumRequest } from '../../store/modules/album';
 import { Track, getTrackListRequest } from '../../store/modules/track';
 import { addAlbumsToLibrary } from '../../store/modules/library';
 import { playTrack, updateQueue } from '../../store/modules/player';
-import { confirmDialog } from '../../lib/dialog';
-import { openContextMenu } from '../../lib/contextMenu/contextMenu';
+import { showDialog } from '../../store/modules/ui';
+import { openContextMenu } from '../../lib/contextMenu';
 import { selectFolderDialog } from '../../lib/dialog';
 import {
   ALBUM_CONTEXT_ACTIONS,
-  AlbumActionItems
-} from '../../lib/contextMenu/actions/album';
+  AlbumActionsGroups
+} from '../../actions/albumActions';
 
 import {
   LIBRARY_CONTENT_CONTEXT_ACTIONS,
-  LibraryContentActionItems
-} from '../../lib/contextMenu/actions/libraryContent';
+  LibraryContentActionGroups
+} from '../../actions/libraryContentActions';
 
 import { daysAgo } from '../../utils/datetimeUtils';
 
@@ -75,11 +75,11 @@ export const LibraryView = (): ReactElement => {
         type: ALBUM_CONTEXT_ACTIONS,
         album,
         dispatch,
-        actions: [
-          AlbumActionItems.PLAYBACK,
-          AlbumActionItems.ENQUEUE,
-          AlbumActionItems.SYSTEM,
-          AlbumActionItems.SEARCH_ONLINE
+        actionGroups: [
+          AlbumActionsGroups.PLAYBACK,
+          AlbumActionsGroups.ENQUEUE,
+          AlbumActionsGroups.SYSTEM,
+          AlbumActionsGroups.SEARCH_ONLINE
         ]
       },
       {
@@ -87,13 +87,14 @@ export const LibraryView = (): ReactElement => {
         selection: [album],
         dispatch,
         playingAlbumID,
-        actions: [
-          LibraryContentActionItems.REMOVE_ALBUMS
+        actionGroups: [
+          LibraryContentActionGroups.ALBUMS
         ]
       }
     ]);
 	}
 
+  // #TODO: move to libraryContentActions
 	function onAlbumDoubleClick({ _id: albumId }: Album): void {
 		dispatch(updateQueue([albumId]));
 		dispatch(playTrack({ albumId }));
@@ -107,21 +108,23 @@ export const LibraryView = (): ReactElement => {
 
     const folderAlreadyImported = await ipc.invoke(IPC_ALBUM_EXISTS, folder);
     if (folderAlreadyImported) {
-      confirmDialog({
-        title: t('library.dialogs.albumAlreadyExists.title'),
-        message: t('library.dialogs.albumAlreadyExists.message', { folder }),
-        buttons: ['OK']
-      });
+      dispatch(
+        showDialog(
+          t('library.dialogs.albumAlreadyExists.title'),
+          t('library.dialogs.albumAlreadyExists.message', { folder })
+        )
+      );
       return;
     }
 
     const folderTracks = await ipc.invoke(IPC_ALBUM_CONTENT_RAW_REQUEST, folder);
     if (folderTracks.length === 0) {
-      confirmDialog({
-        title: t('library.dialogs.tracksNotFound.title'),
-        message: t('library.dialogs.tracksNotFound.message'),
-        buttons: ['OK']
-      });
+      dispatch(
+        showDialog(
+          t('library.dialogs.tracksNotFound.title'),
+          t('library.dialogs.tracksNotFound.message')
+        )
+      );
       return;
     }
 
