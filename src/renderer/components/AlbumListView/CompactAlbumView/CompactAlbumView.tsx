@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import cx from 'classnames';
 import { useDrag, useDrop, DropTargetMonitor } from 'react-dnd';
 import { XYCoord } from 'dnd-core';
-import { AlbumActionsView } from '../AlbumActionsView/AlbumActionsView';
+import { AlbumActionsView, ActionsConfig } from '../AlbumActionsView/AlbumActionsView';
 import { CoverView } from '../AlbumView/CoverView/CoverView';
 import { Album, VARIOUS_ARTISTS_ID } from '../../../store/modules/album';
 import { UIDragTypes } from '../../../store/modules/ui';
@@ -21,7 +21,7 @@ type CompactAlbumViewProps = {
   album: Album;
   index: number;
   isCurrent: boolean;
-  albumActionHandler: Function;
+  albumActions?: ActionsConfig[];
   onDragEnd?: Function;
   onAlbumMove: Function;
   onContextMenu: Function;
@@ -33,12 +33,11 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
   album,
   index,
   isCurrent = false,
-  albumActionHandler,
+  albumActions,
   onDragEnd,
   onAlbumMove,
   onContextMenu,
   onDoubleClick,
-
   sortable = false
 }) => {
   const { _id, type, year, artist, title } = album;
@@ -133,7 +132,7 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
           {artist === VARIOUS_ARTISTS_ID ? 'V/A' : artist}{year ? `, ${year}` : null} - <span className={tagClasses}>{type}</span>
         </span>
       </p>
-      <AlbumActionsView album={album} albumActionHandler={albumActionHandler}/>
+      { albumActions.length > 0 && <AlbumActionsView album={album} actions={albumActions}/>}
     </article>
   );
 }

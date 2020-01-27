@@ -1,6 +1,7 @@
 import React, { ReactElement, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
+import { IconName } from '@fortawesome/fontawesome-svg-core';
 import { PlaylistView } from '../PlaylistView/PlaylistView';
 
 import {
@@ -28,7 +29,7 @@ import {
   AlbumActionsGroups
 } from '../../actions/albumActions';
 
-import actionsMap, { AllActions } from '../../actions/actions';
+import actionsMap from '../../actions/actions';
 
 export const PlaylistContainer = (): ReactElement => {
   const dispatch = useDispatch();
@@ -113,23 +114,29 @@ export const PlaylistContainer = (): ReactElement => {
     }).handler();
   }
 
-  function albumActionHandler(action: AllActions, album: Album): void {
-    switch (action) {
-      case PlaylistContentActions.REMOVE_ALBUM:
+  const albumActions = [
+    {
+      icon: 'minus-circle' as IconName,
+      handler: (album: Album): void => {
         actionsMap(PlaylistContentActions.REMOVE_ALBUM)({
           playlist,
           selection: [album._id],
           dispatch
         }).handler();
-        break;
-      case AlbumActions.REVEAL_IN_FINDER:
+      },
+      title: 'Remove from playlist'
+    },
+    {
+      icon: 'folder-open' as IconName,
+      handler: (album: Album): void => {
         actionsMap(AlbumActions.REVEAL_IN_FINDER)({
           album,
           dispatch
         }).handler();
-        break;
+      },
+      title: 'Reveal in Finder'
     }
-  }
+  ];
 
 	return (
     <PlaylistView
@@ -138,7 +145,7 @@ export const PlaylistContainer = (): ReactElement => {
        isCurrent={currentPlaylistId === playlist._id}
        currentAlbumId={currentAlbumId}
        currentTrackId={currentTrackId}
-       albumActionHandler={albumActionHandler}
+       albumActions={albumActions}
        onAlbumOrderChange={onAlbumOrderChange}
        onTitleChange={onTitleChange}
        onAlbumContextMenu={onAlbumContextMenu}

@@ -1,0 +1,16 @@
+@import "../../../styles/variables";
+@import "../../../styles/mixins";
+
+.album-actions {
+  .album-actions-button {
+    font-size: 1.5rem;
+    background: none;
+    outline: none;
+    border: none;
+    color: $lightColor;
+    transition: color .2s ease-in-out;
+    &:hover {
+      color: $highlightColor;
+    }
+  }
+}

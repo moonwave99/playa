@@ -7,6 +7,7 @@ import { TracklistView } from './TracklistView/TracklistView';
 import { ApplicationState } from '../../../store/store';
 import { Album, AlbumTypes, VARIOUS_ARTISTS_ID, getAlbumRequest } from '../../../store/modules/album';
 import { Track } from '../../../store/modules/track';
+import { AlbumActionsView, ActionsConfig } from '../AlbumActionsView/AlbumActionsView';
 import { SEARCH } from '../../../routes';
 import './AlbumView.scss';
 
@@ -14,14 +15,17 @@ type AlbumViewProps = {
   album: Album;
   isCurrent: boolean;
   currentTrackId: Track['_id'];
+  albumActions?: ActionsConfig[];
   onContextMenu: Function;
   onDoubleClick: Function;
 }
 
+// #TODO push notFoundAction
 export const AlbumView: FC<AlbumViewProps> = ({
   album,
   isCurrent = false,
   currentTrackId,
+  albumActions,
   onContextMenu,
   onDoubleClick
 }) => {
@@ -47,10 +51,6 @@ export const AlbumView: FC<AlbumViewProps> = ({
     dispatch(getAlbumRequest(_id));
   }, [_id]);
 
-  function onNotFoundButtonClick(): void {
-    dispatch(getAlbumRequest(_id));
-  }
-
   function onCoverDoubleClick(album: Album): void {
     onDoubleClick(album);
   }
@@ -65,12 +65,6 @@ export const AlbumView: FC<AlbumViewProps> = ({
       className="album-artist-link">
         {artist === VARIOUS_ARTISTS_ID ? 'V/A' : artist}
       </Link>;
-  }
-
-  function renderNotFoundTracksButton(): ReactElement {
-    return <button
-      onClick={onNotFoundButtonClick}
-      className="button button-outline">Reload tracks</button>
   }
 
   const showTrackNumbers = [
@@ -95,9 +89,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
           <p className="album-artist">{renderArtist()}</p>
           <p className="album-info">{year ? `${year} - ` : null}<span className={tagClasses}>{type}</span></p>
         </header>
-        <div className="album-actions">
-          { notFoundTracks && renderNotFoundTracksButton() }
-        </div>
+        { albumActions.length > 0 && <AlbumActionsView album={album} actions={albumActions}/>}
       </aside>
       <section className="album-content">
         <TracklistView

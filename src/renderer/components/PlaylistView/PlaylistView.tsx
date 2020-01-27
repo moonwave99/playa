@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconName } from '@fortawesome/fontawesome-svg-core';
 import { PlaylistViewTitle } from './PlaylistViewTitle/PlaylistViewTitle';
 import { AlbumListView } from '../AlbumListView/AlbumListView';
+import { ActionsConfig } from '../AlbumListView/AlbumActionsView/AlbumActionsView';
 import { Playlist } from '../../store/modules/playlist';
 import { Album } from '../../store/modules/album';
 import { Track } from '../../store/modules/track';
@@ -23,7 +24,7 @@ type PlaylistViewProps = {
   isCurrent: boolean;
   currentAlbumId: Album['_id'];
   currentTrackId: Track['_id'];
-  albumActionHandler: Function;
+  albumActions: ActionsConfig[];
   onTitleChange: Function;
   onAlbumOrderChange: Function;
   onAlbumContextMenu: Function;
@@ -36,7 +37,7 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
   isCurrent = false,
   currentAlbumId,
   currentTrackId,
-  albumActionHandler,
+  albumActions,
   onAlbumOrderChange,
   onTitleChange,
   onAlbumContextMenu,
@@ -101,10 +102,10 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
             originalOrder={playlist.albums}
             currentAlbumId={currentAlbumId}
             currentTrackId={currentTrackId}
+            albumActions={albumActions}
             onAlbumOrderChange={onAlbumOrderChange}
             onAlbumContextMenu={onAlbumContextMenu}
-            onAlbumDoubleClick={onAlbumDoubleClick}
-            albumActionHandler={albumActionHandler}/>
+            onAlbumDoubleClick={onAlbumDoubleClick}/>
         : <p className="playlist-empty-placeholder">{t('playlists.empty')}</p>
       }
     </section>

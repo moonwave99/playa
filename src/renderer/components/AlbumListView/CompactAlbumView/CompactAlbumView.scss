@@ -68,16 +68,5 @@
     flex: 0 0 25%;
     margin-left: auto;
     text-align: right;
-    .album-actions-button {
-      font-size: 1.5rem;
-      background: none;
-      outline: none;
-      border: none;
-      color: $darkColor;
-      transition: color .2s ease-in-out;
-      &:hover {
-        color: $lightColor;
-      }
-    }
   }
 }

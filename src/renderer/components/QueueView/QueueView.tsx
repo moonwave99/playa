@@ -2,6 +2,7 @@ import React, { ReactElement, useEffect } from 'react';
 import { findDOMNode } from 'react-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { IconName } from '@fortawesome/fontawesome-svg-core';
 import { playerSelector } from '../../store/modules/player';
 import { AlbumListView } from '../AlbumListView/AlbumListView';
 import { Album } from '../../store/modules/album';
@@ -12,8 +13,12 @@ import { toObj } from '../../utils/storeUtils';
 import { openContextMenu } from '../../lib/contextMenu';
 import {
   ALBUM_CONTEXT_ACTIONS,
+  AlbumActions,
   AlbumActionsGroups
 } from '../../actions/albumActions';
+
+import actionsMap from '../../actions/actions';
+
 import './QueueView.scss';
 
 export const QueueView = (): ReactElement => {
@@ -67,19 +72,30 @@ export const QueueView = (): ReactElement => {
     }));
   }
 
-  function albumActionHandler(): void { return; }
+  const albumActions = [
+    {
+      icon: 'folder-open' as IconName,
+      handler: (album: Album): void => {
+        actionsMap(AlbumActions.REVEAL_IN_FINDER)({
+          album,
+          dispatch
+        }).handler();
+      },
+      title: 'Reveal in Finder'
+    }
+  ];
 	return (
 		<section className="queue" id="queue">
       <h1>{t('queue.title')}</h1>
       { queue.length > 0
         ? <AlbumListView
-            albumActionHandler={albumActionHandler}
             albumView={UIAlbumView.Extended}
             sortable={false}
             albums={toObj(queue)}
             originalOrder={queue.map(({ _id }) => _id)}
             currentAlbumId={currentAlbum ? currentAlbum._id : null}
             currentTrackId={currentTrack ? currentTrack._id : null}
+            albumActions={albumActions}
             onAlbumContextMenu={onAlbumContextMenu}
             onAlbumDoubleClick={onAlbumDoubleClick}/>
         : <p className="queue-empty-placeholder">{t('queue.empty')}</p>

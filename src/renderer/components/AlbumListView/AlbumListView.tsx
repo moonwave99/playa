@@ -1,6 +1,7 @@
 import React, { ReactElement, FC, useState, useEffect, useCallback } from 'react';
 import { AlbumView } from './AlbumView/AlbumView';
 import { CompactAlbumView } from './CompactAlbumView/CompactAlbumView';
+import { ActionsConfig } from './AlbumActionsView/AlbumActionsView';
 import { Album } from '../../store/modules/album';
 import { Track } from '../../store/modules/track';
 import { UIAlbumView } from '../../store/modules/ui';
@@ -14,7 +15,7 @@ type AlbumListViewProps = {
   currentAlbumId: Album['_id'];
   currentTrackId: Track['_id'];
   albumView: UIAlbumView;
-  albumActionHandler: Function;
+  albumActions: ActionsConfig[];
   onAlbumOrderChange?: Function;
   onAlbumContextMenu: Function;
   onAlbumDoubleClick: Function;
@@ -27,7 +28,7 @@ export const AlbumListView: FC<AlbumListViewProps> = ({
   currentAlbumId,
   currentTrackId,
   albumView,
-  albumActionHandler,
+  albumActions,
   onAlbumOrderChange,
   onAlbumContextMenu,
   onAlbumDoubleClick,
@@ -65,6 +66,7 @@ export const AlbumListView: FC<AlbumListViewProps> = ({
               isCurrent={album._id === currentAlbumId}
               currentTrackId={currentTrackId}
               album={album}
+              albumActions={albumActions}
               onContextMenu={onAlbumContextMenu}
               onDoubleClick={onDoubleClick}/>
           </li>
@@ -77,7 +79,7 @@ export const AlbumListView: FC<AlbumListViewProps> = ({
               index={index}
               isCurrent={album._id === currentAlbumId}
               sortable={sortable}
-              albumActionHandler={albumActionHandler}
+              albumActions={albumActions}
               onDragEnd={onDragEnd}
               onAlbumMove={onAlbumMove}
               onContextMenu={onAlbumContextMenu}

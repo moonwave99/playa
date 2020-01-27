@@ -1,35 +1,46 @@
-import React, { FC } from 'react';
+import React, { ReactElement, FC } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { IconName } from '@fortawesome/fontawesome-svg-core';
 import { Album } from '../../../store/modules/album';
-import { AlbumActions } from '../../../actions/albumActions';
-import { PlaylistContentActions } from '../../../actions/playlistContentActions';
+import './AlbumActionsView.scss';
+
+export type ActionsConfig = {
+  icon: IconName;
+  handler: Function;
+  title: string;
+}
 
 type AlbumActionsViewProps = {
   album: Album;
-  albumActionHandler: Function;
+  actions: ActionsConfig[];
 }
 
 export const AlbumActionsView: FC<AlbumActionsViewProps> = ({
   album,
-  albumActionHandler
+  actions = []
 }) => {
-
-  function onRevealButtonClick(): void {
-    albumActionHandler(AlbumActions.REVEAL_IN_FINDER, album);
-  }
-
-  function onRemoveButtonClick(): void {
-    albumActionHandler(PlaylistContentActions.REMOVE_ALBUM, album);
+  function renderButton({
+    icon,
+    handler,
+    title
+  }: ActionsConfig, index: number): ReactElement {
+    function onClick(): void {
+      handler(album);
+    }
+    return (
+      <button
+        key={index}
+        title={title}
+        className="album-actions-button"
+        onClick={onClick}>
+        <FontAwesomeIcon className="icon" icon={icon}/>
+      </button>
+    );
   }
 
   return (
     <div className="album-actions">
-      <button className="album-actions-button" onClick={onRevealButtonClick}>
-        <FontAwesomeIcon className="icon" icon="folder-open"/>
-      </button>
-      <button className="album-actions-button" onClick={onRemoveButtonClick}>
-        <FontAwesomeIcon className="icon" icon="minus-circle"/>
-      </button>
+      {actions.map(renderButton)}
     </div>
   );
 }
