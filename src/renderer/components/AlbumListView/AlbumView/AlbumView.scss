@@ -95,8 +95,11 @@
     .album-actions {
       margin: 1rem 0 0 0;
       visibility: hidden;
-      .album-actions-button:first-child {
-        padding-left: 0;
+      .album-actions-button {
+        font-size: 1.2rem;
+        &:first-child {
+          padding-left: 0;
+        }
       }
     }
   }

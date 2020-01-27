@@ -59,6 +59,10 @@ export const AlbumView: FC<AlbumViewProps> = ({
     onDoubleClick(album, track);
   }
 
+  function _onContextMenu(): void {
+    onContextMenu && onContextMenu(album);
+  }
+
   function renderArtist(): ReactElement {
     return <Link
       to={`${generatePath(SEARCH)}?query=artist: ${artist}`}
@@ -76,14 +80,13 @@ export const AlbumView: FC<AlbumViewProps> = ({
   const tagClasses = cx('album-type', `album-type-${type}`);
   const showArtists = artist === VARIOUS_ARTISTS_ID || type === AlbumTypes.Remix;
   return (
-    <article className={albumClasses} id={_id}>
+    <article className={albumClasses} id={_id} onContextMenu={_onContextMenu}>
       <aside className="album-aside">
         <CoverView
           className="album-cover"
           src={cover}
           album={album}
-          onDoubleClick={onCoverDoubleClick}
-          onContextMenu={onContextMenu}/>
+          onDoubleClick={onCoverDoubleClick}/>
         <header>
           <h2>{title}</h2>
           <p className="album-artist">{renderArtist()}</p>
