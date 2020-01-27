@@ -7,7 +7,6 @@ import { PlayerView } from '../PlayerView/PlayerView';
 import { LibraryView } from '../LibraryView/LibraryView';
 import { QueueView } from '../QueueView/QueueView';
 import { SearchView } from '../SearchView/SearchView';
-import { SearchBar } from '../SearchBar/SearchBar';
 import { SidebarView } from '../SidebarView/SidebarView';
 import { AllPlaylistContainer } from '../AllPlaylistContainer/AllPlaylistContainer';
 import { PlaylistContainer } from '../PlaylistContainer/PlaylistContainer';
@@ -120,25 +119,16 @@ export const App: FC<AppProps> = ({
 		history.push(`${SEARCH}?query=${query}`);
   }
 
-	function renderSearchBar(): ReactElement {
-		return (
-			<div className="searchbar-wrapper">
-        <SearchBar
-					hasFocus={hasSearchFocus}
-					onFormSubmit={onSearchFormSubmit}
-					onBlur={onSearchBarBlur}/>
-      </div>
-		);
-	}
-
   return (
     <main className="app">
       <div className="main-container">
-        {renderSearchBar()}
         <div className="sidebar-wrapper">
           <SidebarView
+            hasSearchFocus={hasSearchFocus}
             currentPlaylistId={currentPlaylistId}
             recentPlaylists={recentPlaylists}
+            onSearchFormSubmit={onSearchFormSubmit}
+            onSearchBarBlur={onSearchBarBlur}
             onCreatePlaylistButtonClick={onCreatePlaylistButtonClick} />
         </div>
         <div className="main-wrapper">

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { IconName } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { SearchBar } from '../SearchBar/SearchBar';
 import { SidebarPlaylistList } from './SidebarPlaylistList/SidebarPlaylistList';
 import { Playlist } from '../../store/modules/playlist';
 import './SidebarView.scss';
@@ -15,9 +16,12 @@ import {
 } from '../../routes';
 
 type SidebarViewProps = {
+	hasSearchFocus: boolean;
 	recentPlaylists: Playlist[];
 	currentPlaylistId: Playlist['_id'];
 	onCreatePlaylistButtonClick: Function;
+	onSearchBarBlur: Function;
+	onSearchFormSubmit: Function;
 };
 
 const icons: { [key: string]: IconName } = {
@@ -35,9 +39,12 @@ const i18nkeys: { [key: string]: string } = {
 };
 
 export const SidebarView: FC<SidebarViewProps> = ({
+	hasSearchFocus,
 	recentPlaylists = [],
 	currentPlaylistId,
-	onCreatePlaylistButtonClick
+	onCreatePlaylistButtonClick,
+	onSearchBarBlur,
+	onSearchFormSubmit
 }) => {
 	const { t } = useTranslation();
 	const location = useLocation();
@@ -56,10 +63,22 @@ export const SidebarView: FC<SidebarViewProps> = ({
 		);
 	}
 
+	function renderSearchBar(): ReactElement {
+		return (
+			<div className="searchbar-wrapper">
+        <SearchBar
+					hasFocus={hasSearchFocus}
+					onFormSubmit={onSearchFormSubmit}
+					onBlur={onSearchBarBlur}/>
+      </div>
+		);
+	}
+
 	return (
 		<aside className="sidebar">
 			<section className="sidebar-header">
 				<div className="button-wrapper">
+					{renderSearchBar()}
 					{renderLink(LIBRARY)}
 					{renderLink(QUEUE)}
 				</div>

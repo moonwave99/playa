@@ -5,9 +5,6 @@
 	margin: 0;
 	padding: 0;
 	display: flex;
-	@media (max-width: $miniWindowThreshold) {
-		padding: var(--section-gutter);
-	}
 	.search-input,
 	.button {
 		margin: 0;

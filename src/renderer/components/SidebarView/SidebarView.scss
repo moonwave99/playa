@@ -7,7 +7,6 @@
   overflow: scroll;
   display: flex;
   flex-direction: column;
-  padding-top: 1.5 * $mainUnit;
   .sidebar-header,
   .sidebar-footer {
     .button-wrapper {
@@ -24,5 +23,31 @@
   }
   .sidebar-header {
     flex: 1;
+  }
+  .searchbar-wrapper {
+    width: 100%;
+    flex: 1;
+    margin: 0 0 $mainUnit / 2 0;
+    .search-bar {
+      .button-search {
+        width: auto;
+        padding: 0 .5rem;
+        &:hover {
+          border-color: $mainColor;
+        }
+      }
+    }
+  }
+  @media (max-width: $miniWindowThreshold) {
+    flex: 1;
+    height: auto;
+    .sidebar-footer,
+    .sidebar-playlist-list,
+    .button-wrapper > .button {
+      display: none;
+    }
+    .searchbar-wrapper {
+      margin: 0;
+    }
   }
 }
