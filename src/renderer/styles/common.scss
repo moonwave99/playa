@@ -118,12 +118,15 @@ input[type=search] {
 }
 
 :root {
+	--sidebar-width: #{$sidebarWidth};
   --section-gutter: #{$mainUnit};
 	--library-columns: 4;
 	@media (min-width: $wideWindowThreshold) {
 		--library-columns: 5;
 	}
 	@media (max-width: $smallWindowThreshold) {
+		--sidebar-width: #{$smallSidebarWidth};
+		--section-gutter: #{$mainUnit / 2};
 		--library-columns: 3;
 	}
 	@media (max-width: $miniWindowThreshold) {

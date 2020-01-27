@@ -21,8 +21,13 @@ describe('search actions', () => {
   describe('searchRequest', () => {
     it('should dispatch searchAlbumsRequest request', async () => {
       const store = mockStore({});
-      await searchRequest('#!q')(store.dispatch);
+      const query = '#!q';
+      await searchRequest(query)(store.dispatch);
       expect(store.getActions()).toEqual([
+        {
+          type: SEARCH_REQUEST,
+          query
+        },
         {
           type: ALBUM_GET_LIST_RESPONSE,
           results: albums
@@ -30,7 +35,7 @@ describe('search actions', () => {
         {
           type: SEARCH_RESPONSE,
           results: albums,
-          query: '#!q'
+          query
         }
       ]);
     });
@@ -49,13 +54,14 @@ describe('search reducer', () => {
   });
 
   it('should handle SEARCH_REQUEST', () => {
+    const query = '#!q';
     expect(reducer({} as SearchState, {
       type: SEARCH_REQUEST,
-      query: '#!q'
+      query
     })).toEqual({
       results: [],
-      query: '#!q',
-      isSearching: true
+      isSearching: true,
+      query
     });
   });
 

@@ -74,7 +74,7 @@ export const addAlbumsToLibrary = (albums: Album[]): Function =>
     dispatch({
       type: ALBUM_GET_LIST_RESPONSE,
       results: albums
-    })
+    });
   }
 
 export const removeAlbums = (albumsToRemove: Album[]): Function =>

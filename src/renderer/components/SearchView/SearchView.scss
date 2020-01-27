@@ -3,14 +3,24 @@
 .search-view {
   height: 100%;
   width: 100%;
-  display: flex;
-  flex-direction: column;
+  h1 {
+    margin: 0;
+    line-height: $mainUnit;
+    font-size: 2rem;
+    font-weight: normal;
+    letter-spacing: -.1rem;
+    margin:
+      var(--section-gutter)
+      var(--section-gutter)
+      calc(var(--section-gutter) * .5)
+      var(--section-gutter);
+  }
   .results-wrapper {
     overflow: auto;
     padding:
       0
       var(--section-gutter)
-      calc(var(--section-gutter) * 2)
+      var(--section-gutter)
       var(--section-gutter);
   }
 }

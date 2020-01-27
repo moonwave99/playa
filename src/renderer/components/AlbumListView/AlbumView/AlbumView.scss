@@ -93,6 +93,7 @@
 
   &.is-current {
     @media (min-width: $miniWindowThreshold + 1) {
+      border-radius: 1rem;
       background-color: rgba($mainColor, .2);
       transition: background-color .3s ease-in-out;
     }

@@ -11,14 +11,37 @@
 			height: calc(100vh - #{$miniPlayerHeight});
 		}
   }
+  .searchbar-wrapper {
+    position: fixed;
+    top: var(--section-gutter);
+    left: var(--section-gutter);
+    width: calc(var(--sidebar-width) - 2 * var(--section-gutter));
+    @media (max-width: $miniWindowThreshold) {
+      width: 100vw;
+      top: 0;
+      left: 0;
+      z-index: 2000;
+      background-color: $backgroundColor;
+    }
+    .search-bar {
+      margin: 0 0 $mainUnit / 2 0;
+      @media (max-width: $miniWindowThreshold) {
+        margin: 0;
+      }
+      .button-search {
+        width: auto;
+        padding: 0 .5rem;
+        &:hover {
+          border-color: $mainColor;
+        }
+      }
+    }
+  }
 
 	.sidebar-wrapper {
-    width: $sidebarWidth;
+    width: var(--sidebar-width);
 		display: flex;
 		height: 100%;
-		@media (max-width: $smallWindowThreshold) {
-			width: $smallSidebarWidth;
-		}
 		@media (max-width: $miniWindowThreshold) {
 			display: none;
 		}
@@ -28,6 +51,9 @@
 		display: flex;
 		flex: 1;
 		overflow: scroll;
+    @media (max-width: $miniWindowThreshold) {
+      padding-top: calc(3 * var(--section-gutter));
+    }
   }
 
   .search-container-enter {

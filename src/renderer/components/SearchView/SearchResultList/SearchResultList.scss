@@ -54,6 +54,9 @@
 		margin: 0;
 		line-height: $mainUnit;
 		border-bottom: 1px solid $backgroundLightColor;
+		@media (max-width: $miniWindowThreshold){
+			font-size: .9rem;
+		}		
 		&:first-of-type {
 			border-top: 1px solid $backgroundLightColor;
 		}

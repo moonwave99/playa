@@ -7,10 +7,11 @@
   overflow: scroll;
   display: flex;
   flex-direction: column;
+  padding-top: 1.5 * $mainUnit;
   .sidebar-header,
   .sidebar-footer {
     .button-wrapper {
-      padding: $mainUnit;
+      padding: var(--section-gutter);
       .button {
         width: 100%;
         margin: 0 0 $mainUnit / 2 0;

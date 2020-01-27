@@ -35,6 +35,7 @@ export const IPC_MESSAGES = {
   IPC_UI_STATE_LOAD: 'ui:state:load',
   IPC_UI_STATE_UPDATE: 'ui:state:update',
   IPC_UI_NAVIGATE_TO: 'ui:navigate-to',
+  IPC_UI_FOCUS_SEARCH: 'ui:focus-search',
   IPC_UI_TOGGLE_ALBUM_VIEW: 'ui:toggle-album-view',
   IPC_SYS_REVEAL_IN_FINDER: 'sys:reveal-in-finder',
   IPC_SYS_OPEN_URL: 'sys:open-url',

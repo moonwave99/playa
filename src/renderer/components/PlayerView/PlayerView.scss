@@ -12,12 +12,9 @@
     flex-direction: column;
   }
   .player-sidebar-wrapper {
-    width: $sidebarWidth - $playerCoverSize;
+    width: calc(var(--sidebar-width) - #{$playerCoverSize});
     display: flex;
     justify-content: space-between;
-    @media (max-width: $smallWindowThreshold) {
-      width: $smallSidebarWidth - $playerCoverSize;
-    }
     @media (max-width: $miniWindowThreshold) {
       width: 100%;
       height: $mainUnit;

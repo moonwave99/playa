@@ -40,6 +40,10 @@ export type SearchActionTypes =
 
 export const searchRequest = (query: string): Function =>
   async (dispatch: Function): Promise<void> => {
+    dispatch({
+      type: SEARCH_REQUEST,
+      query
+    });
     const results = await ipc.invoke(IPC_SEARCH_REQUEST, query);
     dispatch({
       type: ALBUM_GET_LIST_RESPONSE,

@@ -1,4 +1,4 @@
-import React, { FC, ReactElement, useEffect } from 'react';
+import React, { FC, ReactElement, useState, useEffect } from 'react';
 import { Switch, Route, useHistory } from 'react-router';
 import { generatePath } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -7,6 +7,7 @@ import { PlayerView } from '../PlayerView/PlayerView';
 import { LibraryView } from '../LibraryView/LibraryView';
 import { QueueView } from '../QueueView/QueueView';
 import { SearchView } from '../SearchView/SearchView';
+import { SearchBar } from '../SearchBar/SearchBar';
 import { SidebarView } from '../SidebarView/SidebarView';
 import { AllPlaylistContainer } from '../AllPlaylistContainer/AllPlaylistContainer';
 import { PlaylistContainer } from '../PlaylistContainer/PlaylistContainer';
@@ -61,21 +62,36 @@ export const App: FC<AppProps> = ({
     }
   });
 
-  useEffect(() => {
-    initIpc(history);
+  const [hasSearchFocus, setSearchFocus] = useState(false);
+
+  function onFocusSearch(): void {
+    setSearchFocus(true);
+  }
+
+  function onKeyDown(event: KeyboardEvent): void {
     // catch space keypress on non [data-key-catch] elements and toggle playback
-    document.addEventListener('keydown', (event: KeyboardEvent) => {
-      const target = event.target as HTMLElement;
-      switch (event.code) {
-        case 'Space':
-          if (target.dataset.keyCatch !== 'Space') {
-            dispatch(togglePlayback());
-            event.preventDefault();
-          }
-          break;
-      }
-    });
+    const target = event.target as HTMLElement;
+    switch (event.code) {
+      case 'Space':
+        if (target.dataset.keyCatch !== 'Space') {
+          dispatch(togglePlayback());
+          event.preventDefault();
+        }
+        break;
+    }
+  }
+
+  useEffect(() => {
     dispatch(getAllPlaylistsRequest());
+    const unsubscribeIpc = initIpc({
+      history,
+      focusSearchHandler: onFocusSearch
+    });
+    document.addEventListener('keydown', onKeyDown);
+    return (): void => {
+      document.removeEventListener('keydown', onKeyDown);
+      unsubscribeIpc();
+    };
   }, []);
 
   // reopen last opened playlist on app restart
@@ -96,9 +112,29 @@ export const App: FC<AppProps> = ({
     history.replace(generatePath(PLAYLIST_SHOW, { _id: now }));
   }
 
+  function onSearchBarBlur(): void {
+    setSearchFocus(false);
+  }
+
+  function onSearchFormSubmit(query: string): void {
+		history.push(`${SEARCH}?query=${query}`);
+  }
+
+	function renderSearchBar(): ReactElement {
+		return (
+			<div className="searchbar-wrapper">
+        <SearchBar
+					hasFocus={hasSearchFocus}
+					onFormSubmit={onSearchFormSubmit}
+					onBlur={onSearchBarBlur}/>
+      </div>
+		);
+	}
+
   return (
     <main className="app">
       <div className="main-container">
+        {renderSearchBar()}
         <div className="sidebar-wrapper">
           <SidebarView
             currentPlaylistId={currentPlaylistId}

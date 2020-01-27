@@ -41,7 +41,7 @@ export const SidebarView: FC<SidebarViewProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const location = useLocation();
-	
+
 	function _onCreatePlaylistButtonClick(): void {
 		onCreatePlaylistButtonClick();
 	}
@@ -60,7 +60,6 @@ export const SidebarView: FC<SidebarViewProps> = ({
 		<aside className="sidebar">
 			<section className="sidebar-header">
 				<div className="button-wrapper">
-					{renderLink(SEARCH)}
 					{renderLink(LIBRARY)}
 					{renderLink(QUEUE)}
 				</div>

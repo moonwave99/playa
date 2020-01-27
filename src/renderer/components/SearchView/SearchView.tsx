@@ -2,7 +2,6 @@ import React, { useEffect, FC } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
-import { SearchBar } from './SearchBar/SearchBar';
 import { SearchResultList } from './SearchResultList/SearchResultList';
 import { updateTitle } from '../../store/modules/ui';
 import { Album } from '../../store/modules/album';
@@ -35,18 +34,13 @@ export const SearchView: FC<SearchViewProps> = () => {
       : 'search';
     dispatch(updateTitle(title));
   }, [results, query]);
-
+  const q = new URLSearchParams(history.location.search);
+  const queryFromURL = q.get('query');
   useEffect(() => {
-    const q = new URLSearchParams(history.location.search);
-    const queryFromURL = q.get('query');
     if (queryFromURL) {
       dispatch(searchRequest(queryFromURL));
     }
-  }, []);
-
-  const onFormSubmit = (query: string): void => {
-    dispatch(searchRequest(query));
-  };
+  }, [queryFromURL]);
 
   function onResultContextMenu(album: Album): void {
     openContextMenu([
@@ -71,9 +65,7 @@ export const SearchView: FC<SearchViewProps> = () => {
 
 	return (
     <div className="search-view">
-      <div className="searchbar-wrapper">
-        <SearchBar onFormSubmit={onFormSubmit} />
-      </div>
+      <h1>Results for: <span className="highlight">{query}</span></h1>
       <div className="results-wrapper">
         <CSSTransition
           in={!isSearching}

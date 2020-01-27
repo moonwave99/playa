@@ -3,13 +3,13 @@ import { generatePath } from 'react-router-dom';
 import { IPC_MESSAGES } from '../../constants';
 const {
   IPC_UI_NAVIGATE_TO,
+  IPC_UI_FOCUS_SEARCH,
   IPC_UI_TOGGLE_ALBUM_VIEW
 } = IPC_MESSAGES;
 
 import {
   LIBRARY,
   QUEUE,
-  SEARCH,
   PLAYLIST_ALL,
   PLAYLIST_SHOW,
 } from '../../renderer/routes';
@@ -51,7 +51,7 @@ export default function initMenu(window: Electron.BrowserWindow): void {
         {
           label: 'Search',
           accelerator: 'cmd+f',
-          click: (): void => window.webContents.send(IPC_UI_NAVIGATE_TO, SEARCH)
+          click: (): void => window.webContents.send(IPC_UI_FOCUS_SEARCH)
         }
       ]
     },

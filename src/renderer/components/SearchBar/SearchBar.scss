@@ -1,13 +1,9 @@
-@import "../../../styles/variables";
-@import "../../../styles/mixins";
+@import "../../styles/variables";
+@import "../../styles/mixins";
 
 .search-bar {
 	margin: 0;
-	padding:
-		var(--section-gutter)
-		var(--section-gutter)
-		calc(var(--section-gutter) / 2)
-		var(--section-gutter);
+	padding: 0;
 	display: flex;
 	@media (max-width: $miniWindowThreshold) {
 		padding: var(--section-gutter);
@@ -21,22 +17,12 @@
 		border-radius: .4rem 0 0 .4rem;
 		display: flex;
 		flex-grow: 1;
+		border-right: none;
 	}
 	.button {
-		background-color: $mainColor;
 		transition: background-color .2s ease-in-out;
 		border-radius: 0 .4rem .4rem 0;
+		border-left: none;
 		width: calc(var(--section-gutter) * 11/3);
-		.icon {
-			display: none;
-		}
-		@media (max-width: $miniWindowThreshold) {
-			.text {
-				display: none;
-			}
-			.icon {
-				display: inline-block;
-			}
-		}
 	}
 }
