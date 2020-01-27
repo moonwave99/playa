@@ -68,7 +68,6 @@ export const QueueView = (): ReactElement => {
   }
 
   function albumActionHandler(): void { return; }
-
 	return (
 		<section className="queue" id="queue">
       <h1>{t('queue.title')}</h1>

@@ -4,10 +4,15 @@ import { useRouteMatch } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { SidebarPlaylistListItem } from './SidebarPlaylistListItem/SidebarPlaylistListItem';
 import { Playlist } from '../../../store/modules/playlist';
-import { playTrack, updateQueue } from '../../../store/modules/player';
 import { PLAYLIST_SHOW } from '../../../routes';
 import { openContextMenu } from '../../../lib/contextMenu';
-import { PLAYLIST_LIST_CONTEXT_ACTIONS } from '../../../actions/playlistListActions';
+
+import {
+  PLAYLIST_LIST_CONTEXT_ACTIONS,
+  PlaylistListActions
+} from '../../../actions/playlistListActions';
+
+import actionsMap from '../../../actions/actions';
 
 import './SidebarPlaylistList.scss';
 
@@ -43,13 +48,11 @@ export const SidebarPlaylistList: FC<SidebarPlaylistListProps> = ({
     ]);
   }
 
-  // #TODO: move to playlistListActions
-  function onPlayButtonDoubleClick({ _id, albums }: Playlist): void {
-    if (albums.length === 0) {
-      return;
-    }
-    dispatch(updateQueue(albums));
-    dispatch(playTrack({ playlistId: _id, albumId: albums[0]}));
+  function onPlayButtonDoubleClick(playlist: Playlist): void {
+    actionsMap(PlaylistListActions.PLAY_PLAYLIST)({
+      playlist,
+      dispatch
+    }).handler();
   }
 
   return (

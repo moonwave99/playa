@@ -10,11 +10,13 @@ import './AllPlaylistsView.scss';
 type AllPlaylistsViewProps = {
   playlists: Playlist[];
   onPlaylistDelete: Function;
+  onPlaylistContextMenu: Function;
 };
 
 export const AllPlaylistsView: FC<AllPlaylistsViewProps> = ({
   playlists = [],
-  onPlaylistDelete
+  onPlaylistDelete,
+  onPlaylistContextMenu
 }) => {
   const { t } = useTranslation();
   const columns = useMemo(() => [
@@ -91,7 +93,7 @@ export const AllPlaylistsView: FC<AllPlaylistsViewProps> = ({
             row => {
               prepareRow(row);
               return (
-                <tr {...row.getRowProps()}>
+                <tr {...row.getRowProps()} onContextMenu={(): void => onPlaylistContextMenu(row.original)}>
                   {row.cells.map(renderCell)}
                 </tr>
               )}

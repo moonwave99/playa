@@ -1,4 +1,5 @@
 import { MenuItemConstructorOptions } from 'electron';
+import { ActionCreator } from './actions';
 
 import {
   Playlist,
@@ -7,20 +8,13 @@ import {
 
 import { Album } from '../store/modules/album';
 
-type ActionCreator = (actionParams: ActionParams) => Action;
-
-type Action = {
-  title: string;
-  handler: Function;
-}
-
-type ActionParams = {
+export type ActionParams = {
   playlist: Playlist;
   selection: Album['_id'][];
   dispatch?: Function;
 }
 
-export const removeAlbumAction: ActionCreator = ({
+export const removeAlbumAction: ActionCreator<ActionParams> = ({
   playlist,
   selection = [],
   dispatch
@@ -40,11 +34,8 @@ export enum PlaylistContentActions {
   REMOVE_ALBUM = 'REMOVE_ALBUM'
 }
 
-export function mapAction(actionID: PlaylistContentActions): ActionCreator {
-  switch (actionID) {
-    case PlaylistContentActions.REMOVE_ALBUM:
-      return removeAlbumAction;
-  }
+export const PlaylistContentActionsMap = {
+  [PlaylistContentActions.REMOVE_ALBUM]: removeAlbumAction
 }
 
 export enum PlaylistContentActionGroups {
@@ -72,7 +63,7 @@ export function getActionGroups({
   return actionGroups.reduce((memo, group, index, original) => [
     ...memo,
     ...actionGroupsMap[group]
-      .map(mapAction)
+      .map(actionID => PlaylistContentActionsMap[actionID])
       .map(action => {
         const { title, handler } = action({ playlist, selection, dispatch });
         return { label: title, click: handler };

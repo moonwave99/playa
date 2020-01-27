@@ -11,19 +11,21 @@ import { updateTitle } from '../../store/modules/ui';
 import { Album, saveAlbumRequest } from '../../store/modules/album';
 import { Track, getTrackListRequest } from '../../store/modules/track';
 import { addAlbumsToLibrary } from '../../store/modules/library';
-import { playTrack, updateQueue } from '../../store/modules/player';
 import { showDialog } from '../../store/modules/ui';
 import { openContextMenu } from '../../lib/contextMenu';
 import { selectFolderDialog } from '../../lib/dialog';
 import {
   ALBUM_CONTEXT_ACTIONS,
-  AlbumActionsGroups
+  AlbumActionsGroups,
+  AlbumActions
 } from '../../actions/albumActions';
 
 import {
   LIBRARY_CONTENT_CONTEXT_ACTIONS,
   LibraryContentActionGroups
 } from '../../actions/libraryContentActions';
+
+import actionsMap from '../../actions/actions';
 
 import { daysAgo } from '../../utils/datetimeUtils';
 
@@ -44,6 +46,11 @@ import './LibraryView.scss';
 export const LibraryView = (): ReactElement => {
   const { t } = useTranslation();
 	const dispatch = useDispatch();
+  
+  const [folderToImport, setFolderToImport] = useState(null);
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [tracksToImport, setTracksToImport] = useState([]);
+
 	const {
     latest,
     latestAlbumID,
@@ -53,6 +60,7 @@ export const LibraryView = (): ReactElement => {
     latestAlbumID: library.latestAlbumID,
     playingAlbumID: player.currentAlbumId
   }));
+
 	useEffect(() => {
 		dispatch(
 			getLatestRequest(
@@ -61,9 +69,6 @@ export const LibraryView = (): ReactElement => {
 			)
 		);
 	}, []);
-  const [folderToImport, setFolderToImport] = useState(null);
-  const [showImportModal, setShowImportModal] = useState(false);
-  const [tracksToImport, setTracksToImport] = useState([]);
 
 	useEffect(() => {
     dispatch(updateTitle('Library'));
@@ -94,10 +99,12 @@ export const LibraryView = (): ReactElement => {
     ]);
 	}
 
-  // #TODO: move to libraryContentActions
-	function onAlbumDoubleClick({ _id: albumId }: Album): void {
-		dispatch(updateQueue([albumId]));
-		dispatch(playTrack({ albumId }));
+	function onAlbumDoubleClick(album: Album): void {
+    actionsMap(AlbumActions.PLAY_ALBUM)({
+      album,
+      queue: [album._id],
+      dispatch
+    }).handler();
 	}
 
   async function onAddAlbumButtonClick(): Promise<void> {

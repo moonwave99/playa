@@ -2,29 +2,33 @@ import React, { ReactElement, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 import { PlaylistView } from '../PlaylistView/PlaylistView';
+
 import {
   Playlist,
   getPlaylistsRequest,
   savePlaylistRequest,
   getDefaultPlaylist
 } from '../../store/modules/playlist';
-import { updateQueue, playTrack } from '../../store/modules/player';
-import { showDialog, updateState, updateTitle } from '../../store/modules/ui';
+
+import { updateQueue } from '../../store/modules/player';
+import { updateState, updateTitle } from '../../store/modules/ui';
 import { Album } from '../../store/modules/album';
 import { Track } from '../../store/modules/track';
 import { toObj } from '../../utils/storeUtils';
 import { openContextMenu } from '../../lib/contextMenu';
+
 import {
   PLAYLIST_CONTENT_CONTEXT_ACTIONS,
-  PlaylistContentActions,
-  mapAction as playlistMapAction
+  PlaylistContentActions
 } from '../../actions/playlistContentActions';
+
 import {
   ALBUM_CONTEXT_ACTIONS,
   AlbumActions,
-  AlbumActionsGroups,
-  mapAction as albumMapAction
+  AlbumActionsGroups
 } from '../../actions/albumActions';
+
+import actionsMap, { AllActions } from '../../actions/actions';
 
 export const PlaylistContainer = (): ReactElement => {
   const dispatch = useDispatch();
@@ -74,15 +78,6 @@ export const PlaylistContainer = (): ReactElement => {
     if (title === playlist.title) {
       return;
     }
-    if (title === '') {
-      dispatch(
-        showDialog(
-          'Playlist Rename',
-          'Playlist title cannot be empty.'
-        )
-      );
-      return;
-    }
     dispatch(savePlaylistRequest({ ...playlist, title }));
   }
 
@@ -97,6 +92,7 @@ export const PlaylistContainer = (): ReactElement => {
       {
         type: ALBUM_CONTEXT_ACTIONS,
         album,
+        queue: playlist.albums,
         dispatch,
         actionGroups: [
           AlbumActionsGroups.PLAYBACK,
@@ -107,27 +103,30 @@ export const PlaylistContainer = (): ReactElement => {
     ]);
   }
 
-  // #TODO: move to playlistContentActions
   function onAlbumDoubleClick(album: Album, track: Track): void {
-    dispatch(updateQueue(playlist.albums));
-    dispatch(playTrack({
+    actionsMap(AlbumActions.PLAY_ALBUM)({
+      queue: playlist.albums,
       playlistId: playlist._id,
-      albumId: album._id,
-      trackId: track ? track._id : null
-    }));
+      album,
+      trackId: track ? track._id : null,
+      dispatch
+    }).handler();
   }
 
-  function albumActionHandler(action: PlaylistContentActions | AlbumActions, album: Album): void {
+  function albumActionHandler(action: AllActions, album: Album): void {
     switch (action) {
       case PlaylistContentActions.REMOVE_ALBUM:
-        playlistMapAction(PlaylistContentActions.REMOVE_ALBUM)({
+        actionsMap(PlaylistContentActions.REMOVE_ALBUM)({
           playlist,
           selection: [album._id],
           dispatch
         }).handler();
         break;
       case AlbumActions.REVEAL_IN_FINDER:
-        albumMapAction(AlbumActions.REVEAL_IN_FINDER)({ album, dispatch }).handler();
+        actionsMap(AlbumActions.REVEAL_IN_FINDER)({
+          album,
+          dispatch
+        }).handler();
         break;
     }
   }

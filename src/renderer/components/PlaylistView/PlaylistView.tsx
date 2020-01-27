@@ -87,7 +87,6 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
           <PlaylistViewTitle
             playlist={playlist}
             onTitleChange={onTitleChange}/>
-
         </div>
         <p className="playlist-info header-like">
           <span>{t('playlists.createdOn', { date })}</span>

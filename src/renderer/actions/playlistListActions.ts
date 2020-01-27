@@ -1,4 +1,5 @@
 import { MenuItemConstructorOptions } from 'electron';
+import { ActionCreator } from './actions';
 import { confirmDialog } from '../lib/dialog';
 
 import {
@@ -11,19 +12,12 @@ import {
   updateQueue
 } from '../store/modules/player';
 
-type ActionCreator = (actionParams: ActionParams) => Action;
-
-type Action = {
-  title: string;
-  handler: Function;
-}
-
-type ActionParams = {
+export type ActionParams = {
   playlist: Playlist;
   dispatch?: Function;
 }
 
-export const playPlaylistAction: ActionCreator = ({
+export const playPlaylistAction: ActionCreator<ActionParams> = ({
   playlist,
   dispatch
 }) => {
@@ -40,7 +34,7 @@ export const playPlaylistAction: ActionCreator = ({
   };
 }
 
-export const deletePlaylistAction: ActionCreator = ({
+export const deletePlaylistAction: ActionCreator<ActionParams> = ({
   playlist,
   dispatch
 }) => {
@@ -65,13 +59,9 @@ export enum PlaylistListActions {
   DELETE_PLAYLIST = 'DELETE_PLAYLIST'
 }
 
-export function mapAction(actionID: PlaylistListActions): ActionCreator {
-  switch (actionID) {
-    case PlaylistListActions.PLAY_PLAYLIST:
-      return playPlaylistAction;
-    case PlaylistListActions.DELETE_PLAYLIST:
-      return deletePlaylistAction;
-  }
+export const PlaylistListActionsMap = {
+  [PlaylistListActions.PLAY_PLAYLIST]: playPlaylistAction,
+  [PlaylistListActions.DELETE_PLAYLIST]: deletePlaylistAction
 }
 
 export enum PlaylistListActionGroups {
@@ -102,7 +92,7 @@ export function getActionGroups({
   return actionGroups.reduce((memo, group, index, original) => [
     ...memo,
     ...actionGroupsMap[group]
-      .map(mapAction)
+      .map(actionID => PlaylistListActionsMap[actionID])
       .map(action => {
         const { title, handler } = action({ playlist, dispatch });
         return { label: title, click: handler };

@@ -1,9 +1,16 @@
 import React, { FC, ReactElement, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { AllPlaylistsView } from '../AllPlaylistsView/AllPlaylistsView';
-import { Playlist, deletePlaylistRequest } from '../../store/modules/playlist';
+import { Playlist } from '../../store/modules/playlist';
 import { updateTitle } from '../../store/modules/ui';
-import { confirmDialog } from '../../lib/dialog';
+import { openContextMenu } from '../../lib/contextMenu';
+
+import actionsMap from '../../actions/actions';
+
+import {
+  PLAYLIST_LIST_CONTEXT_ACTIONS,
+  PlaylistListActions
+} from '../../actions/playlistListActions';
 
 type AllPlaylistContainerProps = {
   playlists: Playlist[];
@@ -18,18 +25,26 @@ export const AllPlaylistContainer: FC<AllPlaylistContainerProps> = ({
     dispatch(updateTitle('playlists: all'));
   }, []);
 
+  function onPlaylistContextMenu(playlist: Playlist): void {
+    openContextMenu([
+      {
+        type: PLAYLIST_LIST_CONTEXT_ACTIONS,
+        playlist,
+        dispatch
+      }
+    ]);
+  }
+
   async function onPlaylistDelete(playlist: Playlist): Promise<void> {
-    const confirmed = await confirmDialog({
-      title: 'Playlist Delete',
-      message: `You are about to delete playlist '${playlist.title}', are you sure?`
-    });
-    if (confirmed) {
-      dispatch(deletePlaylistRequest(playlist));
-    }
+    actionsMap(PlaylistListActions.DELETE_PLAYLIST)({
+      playlist,
+      dispatch
+    }).handler();
   }
 
   return (
     <AllPlaylistsView
+      onPlaylistContextMenu={onPlaylistContextMenu}
       onPlaylistDelete={onPlaylistDelete}
       playlists={playlists}/>
   );

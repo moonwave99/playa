@@ -1,4 +1,5 @@
 import { ipcRenderer as ipc, MenuItemConstructorOptions } from 'electron';
+import { Action, ActionCreator } from './actions';
 
 import {
   Album,
@@ -7,9 +8,13 @@ import {
 
 import {
   playTrack,
+  updateQueue,
   enqueueAfterCurrent,
   enqueueAtEnd
 } from '../store/modules/player';
+
+import { Playlist } from '../store/modules/playlist';
+import { Track } from '../store/modules/track';
 
 import { IPC_MESSAGES, SEARCH_URLS } from '../../constants';
 const {
@@ -17,22 +22,18 @@ const {
   IPC_SYS_OPEN_URL
 } = IPC_MESSAGES;
 
-type ActionCreator = (actionParams: ActionParams) => Action;
-
-type Action = {
-  title: string;
-  handler: Function;
-}
-
-type ActionParams = {
+export type ActionParams = {
   album: Album;
+  queue?: Album['_id'][];
+  playlistId?: Playlist['_id'];
+  trackId?: Track['_id'];
   dispatch?: Function;
 }
 
 function createSearchAction(
   searchURL: SEARCH_URLS,
   siteName: string
-): ActionCreator {
+): ActionCreator<ActionParams> {
   return ({ album }): Action => {
     const { artist, title, } = album;
     const query = `${artist} ${title}`;
@@ -44,16 +45,25 @@ function createSearchAction(
   }
 }
 
-export const playbackAction: ActionCreator = ({ album, dispatch }) => {
-  const { _id, artist, title } = album;
+export const playAlbumAction: ActionCreator<ActionParams> = ({
+  album,
+  queue,
+  playlistId,
+  trackId,
+  dispatch
+}) => {
+  const { _id: albumId, artist, title } = album;
   const fullTitle = `${artist} - ${title}`;
   return {
     title: `Play '${fullTitle}'`,
-    handler(): void { dispatch(playTrack({ albumId: _id })) }
+    handler(): void {
+      dispatch(updateQueue(queue));
+      dispatch(playTrack({ playlistId, albumId, trackId }))
+    }
   };
 }
 
-export const enqueueAfterCurrentAction: ActionCreator = ({ album, dispatch }) => {
+export const enqueueAfterCurrentAction: ActionCreator<ActionParams> = ({ album, dispatch }) => {
   const { _id, artist, title } = album;
   const fullTitle = `${artist} - ${title}`;
   return {
@@ -62,7 +72,7 @@ export const enqueueAfterCurrentAction: ActionCreator = ({ album, dispatch }) =>
   };
 }
 
-export const enqueueAtEndAction: ActionCreator = ({ album, dispatch }) => {
+export const enqueueAtEndAction: ActionCreator<ActionParams> = ({ album, dispatch }) => {
   const { _id, artist, title } = album;
   const fullTitle = `${artist} - ${title}`;
   return {
@@ -71,7 +81,7 @@ export const enqueueAtEndAction: ActionCreator = ({ album, dispatch }) => {
   };
 }
 
-export const revealInFinderAction: ActionCreator = ({ album }) => {
+export const revealInFinderAction: ActionCreator<ActionParams> = ({ album }) => {
   const { artist, title, path } = album;
   const fullTitle = `${artist} - ${title}`;
   return {
@@ -80,7 +90,7 @@ export const revealInFinderAction: ActionCreator = ({ album }) => {
   };
 }
 
-export const reloadAlbumContentAction: ActionCreator = ({ album, dispatch }) => {
+export const reloadAlbumContentAction: ActionCreator<ActionParams> = ({ album, dispatch }) => {
   const { artist, title } = album;
   const fullTitle = `${artist} - ${title}`;
   return {
@@ -96,7 +106,7 @@ export const searchOnYoutubeAction = createSearchAction(SEARCH_URLS.YOUTUBE, 'Yo
 export const ALBUM_CONTEXT_ACTIONS = 'playa/context-menu/album-actions';
 
 export enum AlbumActions {
-  PLAYBACK = 'PLAYBACK',
+  PLAY_ALBUM = 'PLAY_ALBUM',
   ENQUEUE_AFTER_CURRENT = 'ENQUEUE_AFTER_CURRENT',
   ENQUEUE_AT_END = 'ENQUEUE_AT_END',
   REVEAL_IN_FINDER = 'REVEAL_IN_FINDER',
@@ -106,25 +116,15 @@ export enum AlbumActions {
   SEARCH_ON_YOUTUBE = 'SEARCH_ON_YOUTUBE'
 }
 
-export function mapAction(actionID: AlbumActions): ActionCreator {
-  switch (actionID) {
-    case AlbumActions.PLAYBACK:
-      return playbackAction;
-    case AlbumActions.ENQUEUE_AFTER_CURRENT:
-      return enqueueAfterCurrentAction;
-    case AlbumActions.ENQUEUE_AT_END:
-      return enqueueAtEndAction;
-    case AlbumActions.REVEAL_IN_FINDER:
-      return revealInFinderAction;
-    case AlbumActions.RELOAD_ALBUM_CONTENT:
-      return reloadAlbumContentAction;
-    case AlbumActions.SEARCH_ON_RYM:
-      return searchOnRYMAction;
-    case AlbumActions.SEARCH_ON_DISCOGS:
-      return searchOnDiscogsAction;
-    case AlbumActions.SEARCH_ON_YOUTUBE:
-      return searchOnYoutubeAction;
-  }
+export const AlbumActionsMap: { [key: string]: ActionCreator<ActionParams> } = {
+  [AlbumActions.PLAY_ALBUM]: playAlbumAction,
+  [AlbumActions.ENQUEUE_AFTER_CURRENT]: enqueueAfterCurrentAction,
+  [AlbumActions.ENQUEUE_AT_END]: enqueueAtEndAction,
+  [AlbumActions.REVEAL_IN_FINDER]: revealInFinderAction,
+  [AlbumActions.RELOAD_ALBUM_CONTENT]: reloadAlbumContentAction,
+  [AlbumActions.SEARCH_ON_RYM]: searchOnRYMAction,
+  [AlbumActions.SEARCH_ON_DISCOGS]: searchOnDiscogsAction,
+  [AlbumActions.SEARCH_ON_YOUTUBE]: searchOnYoutubeAction
 }
 
 export enum AlbumActionsGroups {
@@ -136,6 +136,7 @@ export enum AlbumActionsGroups {
 
 export type GetAlbumContextMenuParams = {
   type: typeof ALBUM_CONTEXT_ACTIONS;
+  queue?: Album['_id'][];
   actionGroups: AlbumActionsGroups[];
   album: Album;
   dispatch?: Function;
@@ -143,7 +144,7 @@ export type GetAlbumContextMenuParams = {
 
 const actionGroupsMap: { [key: string]: AlbumActions[] } = {
   [AlbumActionsGroups.PLAYBACK]: [
-    AlbumActions.PLAYBACK
+    AlbumActions.PLAY_ALBUM
   ],
   [AlbumActionsGroups.ENQUEUE]: [
     AlbumActions.ENQUEUE_AFTER_CURRENT,
@@ -167,7 +168,7 @@ export function getActionGroups({
   return actionGroups.reduce((memo, group, index, original) => [
     ...memo,
     ...actionGroupsMap[group]
-      .map(mapAction)
+      .map(actionID => AlbumActionsMap[actionID])
       .map(action => {
         const { title, handler } = action(args);
         return { label: title, click: handler };

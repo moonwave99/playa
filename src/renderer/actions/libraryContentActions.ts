@@ -1,5 +1,6 @@
 import { MenuItemConstructorOptions } from 'electron';
 import { confirmDialog } from '../lib/dialog'
+import { ActionCreator } from './actions';
 
 import {
   removeAlbums,
@@ -8,20 +9,13 @@ import {
 import { showDialog } from '../store/modules/ui';
 import { Album } from '../store/modules/album';
 
-type ActionCreator = (actionParams: ActionParams) => Action;
-
-type Action = {
-  title: string;
-  handler: Function;
-}
-
-type ActionParams = {
+export type ActionParams = {
   selection: Album[];
   playingAlbumID: Album['_id'];
   dispatch?: Function;
 }
 
-export const removeAlbumsAction: ActionCreator = ({
+export const removeAlbumsAction: ActionCreator<ActionParams> = ({
   selection = [],
   playingAlbumID,
   dispatch
@@ -50,11 +44,8 @@ export enum LibraryContentActions {
   REMOVE_ALBUM = 'REMOVE_ALBUM'
 }
 
-export function mapAction(actionID: LibraryContentActions): ActionCreator {
-  switch (actionID) {
-    case LibraryContentActions.REMOVE_ALBUM:
-      return removeAlbumsAction;
-  }
+export const LibraryContentActionsMap: { [key: string]: ActionCreator<ActionParams> } = {
+  [LibraryContentActions.REMOVE_ALBUM]: removeAlbumsAction
 }
 
 export enum LibraryContentActionGroups {
@@ -82,7 +73,7 @@ export function getActionGroups({
   return actionGroups.reduce((memo, group, index, original) => [
     ...memo,
     ...actionGroupsMap[group]
-      .map(mapAction)
+      .map(actionID => LibraryContentActionsMap[actionID])
       .map(action => {
         const { title, handler } = action({ selection, playingAlbumID, dispatch });
         return { label: title, click: handler };

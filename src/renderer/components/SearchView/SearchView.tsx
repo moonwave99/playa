@@ -6,12 +6,15 @@ import { SearchResultList } from './SearchResultList/SearchResultList';
 import { updateTitle } from '../../store/modules/ui';
 import { Album } from '../../store/modules/album';
 import { searchRequest } from '../../store/modules/search';
-import { playTrack, updateQueue } from '../../store/modules/player';
 import { openContextMenu } from '../../lib/contextMenu';
 import {
   ALBUM_CONTEXT_ACTIONS,
-  AlbumActionsGroups
+  AlbumActionsGroups,
+  AlbumActions
 } from '../../actions/albumActions';
+
+import actionsMap from '../../actions/actions';
+
 import './SearchView.scss';
 
 type SearchViewProps = {
@@ -34,6 +37,7 @@ export const SearchView: FC<SearchViewProps> = () => {
       : 'search';
     dispatch(updateTitle(title));
   }, [results, query]);
+
   const q = new URLSearchParams(history.location.search);
   const queryFromURL = q.get('query');
   useEffect(() => {
@@ -47,6 +51,7 @@ export const SearchView: FC<SearchViewProps> = () => {
       {
         type: ALBUM_CONTEXT_ACTIONS,
         album,
+        queue: [album._id],
         dispatch,
         actionGroups: [
           AlbumActionsGroups.PLAYBACK,
@@ -58,9 +63,12 @@ export const SearchView: FC<SearchViewProps> = () => {
     ]);
   }
 
-  function onResultDoubleClick({ _id: albumId }: Album): void {
-    dispatch(updateQueue([albumId]));
-    dispatch(playTrack({ albumId }));
+  function onResultDoubleClick(album: Album): void {
+    actionsMap(AlbumActions.PLAY_ALBUM)({
+      album,
+      queue: [album._id],
+      dispatch
+    }).handler();
   }
 
 	return (
