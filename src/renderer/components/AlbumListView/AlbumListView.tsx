@@ -16,6 +16,7 @@ type AlbumListViewProps = {
   currentTrackId: Track['_id'];
   albumView: UIAlbumView;
   albumActions: ActionsConfig[];
+  dragType: string;
   onAlbumOrderChange?: Function;
   onAlbumContextMenu: Function;
   onAlbumDoubleClick: Function;
@@ -29,6 +30,7 @@ export const AlbumListView: FC<AlbumListViewProps> = ({
   currentTrackId,
   albumView,
   albumActions,
+  dragType,
   onAlbumOrderChange,
   onAlbumContextMenu,
   onAlbumDoubleClick,
@@ -65,6 +67,7 @@ export const AlbumListView: FC<AlbumListViewProps> = ({
             <AlbumView
               isCurrent={album._id === currentAlbumId}
               currentTrackId={currentTrackId}
+              dragType={dragType}
               album={album}
               albumActions={albumActions}
               onContextMenu={onAlbumContextMenu}

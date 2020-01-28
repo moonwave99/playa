@@ -10,7 +10,7 @@ import { ActionsConfig } from '../AlbumListView/AlbumActionsView/AlbumActionsVie
 import { Playlist } from '../../store/modules/playlist';
 import { Album } from '../../store/modules/album';
 import { Track } from '../../store/modules/track';
-import { UIAlbumView } from '../../store/modules/ui';
+import { UIAlbumView, UIDragTypes } from '../../store/modules/ui';
 import { EntityHashMap } from '../../utils/storeUtils';
 import { formatDate } from '../../utils/datetimeUtils';
 import './PlaylistView.scss';
@@ -103,6 +103,7 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
             currentAlbumId={currentAlbumId}
             currentTrackId={currentTrackId}
             albumActions={albumActions}
+            dragType={UIDragTypes.PLAYLIST_ALBUMS}
             onAlbumOrderChange={onAlbumOrderChange}
             onAlbumContextMenu={onAlbumContextMenu}
             onAlbumDoubleClick={onAlbumDoubleClick}/>

@@ -8,7 +8,7 @@ import { AlbumListView } from '../AlbumListView/AlbumListView';
 import { Album } from '../../store/modules/album';
 import { Track } from '../../store/modules/track';
 import { playTrack } from '../../store/modules/player';
-import { updateTitle, UIAlbumView } from '../../store/modules/ui';
+import { updateTitle, UIAlbumView, UIDragTypes } from '../../store/modules/ui';
 import { toObj } from '../../utils/storeUtils';
 import { openContextMenu } from '../../lib/contextMenu';
 import {
@@ -96,6 +96,7 @@ export const QueueView = (): ReactElement => {
             currentAlbumId={currentAlbum ? currentAlbum._id : null}
             currentTrackId={currentTrack ? currentTrack._id : null}
             albumActions={albumActions}
+            dragType={UIDragTypes.QUEUE_ALBUMS}
             onAlbumContextMenu={onAlbumContextMenu}
             onAlbumDoubleClick={onAlbumDoubleClick}/>
         : <p className="queue-empty-placeholder">{t('queue.empty')}</p>

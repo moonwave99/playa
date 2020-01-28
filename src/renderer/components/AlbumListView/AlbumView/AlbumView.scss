@@ -45,7 +45,6 @@
     transition: background-color .3s ease-in-out;
     .album-cover {
       @include albumCover($albumCoverWidth);
-      margin: 0 0 calc(var(--section-gutter) * 0.5) 0;
     }
     @media (max-width: $smallWindowThreshold) {
       width: 100%;
@@ -63,7 +62,7 @@
         margin-bottom: var(--section-gutter);
       }
       h2 {
-        margin: 0;
+        margin: calc(var(--section-gutter) * 0.5) 0 0 0;
         font-size: 1.8rem;
         line-height: 2.5rem;
         color: $highlightColor;

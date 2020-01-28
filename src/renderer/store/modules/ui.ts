@@ -16,6 +16,8 @@ function trimTitle(title: string): string {
 
 export const UIDragTypes = {
   SEARCH_RESULTS: 'SEARCH_RESULTS',
+  PLAYLIST_ALBUMS: 'PLAYLIST_ALBUMS',
+  QUEUE_ALBUMS: 'QUEUE_ALBUMS',
   COMPACT_ALBUMS: 'COMPACT_ALBUMS',
   LIBRARY_ALBUMS: 'LIBRARY_ALBUMS'
 };

@@ -1,6 +1,7 @@
 import React, { FC, ReactElement, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, generatePath } from 'react-router-dom';
+import { useDrag } from 'react-dnd';
 import Vibro from 'node-vibrant';
 import cx from 'classnames';
 import { CoverView } from './CoverView/CoverView';
@@ -16,6 +17,7 @@ type AlbumViewProps = {
   album: Album;
   isCurrent: boolean;
   currentTrackId: Track['_id'];
+  dragType: string;
   albumActions?: ActionsConfig[];
   onContextMenu: Function;
   onDoubleClick: Function;
@@ -35,6 +37,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
   album,
   isCurrent = false,
   currentTrackId,
+  dragType,
   albumActions,
   onContextMenu,
   onDoubleClick
@@ -59,6 +62,16 @@ export const AlbumView: FC<AlbumViewProps> = ({
   useEffect(() => {
     dispatch(getAlbumRequest(_id));
   }, [_id]);
+
+  const [{ opacity }, drag] = useDrag({
+    item: {
+      type: dragType,
+      _id
+    },
+    collect: monitor => ({
+      opacity: monitor.isDragging() ? 0.4 : 1,
+    })
+  });
 
   function onCoverDoubleClick(album: Album): void {
     onDoubleClick(album);
@@ -110,12 +123,14 @@ export const AlbumView: FC<AlbumViewProps> = ({
   return (
     <article className={albumClasses} id={_id} onContextMenu={_onContextMenu}>
       <aside className="album-aside" style={{ backgroundColor: palette.DarkMuted }}>
-        <CoverView
-          className="album-cover"
-          src={cover}
-          album={album}
-          onImageLoad={onImageLoad}
-          onDoubleClick={onCoverDoubleClick}/>
+        <div ref={drag} style={{ opacity }}>
+          <CoverView
+            className="album-cover"
+            src={cover}
+            album={album}
+            onImageLoad={onImageLoad}
+            onDoubleClick={onCoverDoubleClick}/>
+          </div>
         <header>
           <h2 style={{ color: palette.LightVibrant }}>{title}</h2>
           <p className="album-artist">{renderArtist()}</p>

@@ -2,8 +2,6 @@
 @import "../../../styles/mixins";
 
 .compact-album-view {
-  display: flex;
-	align-items: center;
 	padding: 1rem 2rem;
   position: relative;
   transition: background-color .3s ease-in-out;
@@ -15,7 +13,12 @@
 		width: $albumCompactMaxWidth;
 	}
 
-  &.sortable::before {
+  .album-inner-wrapper {
+    display: flex;
+    align-items: center;
+  }
+
+  &.sortable .album-inner-wrapper::before {
     content: '⋮';
     cursor: move;
     position: absolute;
@@ -28,18 +31,25 @@
     color: $backgroundLightColor;
     transition: color .3s ease-in-out;
   }
-  &:not(.is-current):hover {
-    background-color: $backgroundLightColor;
+
+  &:not(.is-current):hover .album-inner-wrapper{
     &:before {
       color: $highlightColor;
     }
+  }
+
+  &:not(.is-current):hover {
+    background-color: $backgroundLightColor;
     .album-cover {
       @include albumCover($albumCoverCompactWidth, $backgroundColor);
       @include playOverlay('../../../static/icons/album/play.svg');
     }
   }
   &.drag-is-dragging {
-    opacity: 0;
+    background-color: rgba($mainColor, .3);
+    .album-inner-wrapper {
+      opacity: 0;
+    }
   }
   &.is-current {
     background-color: rgba($mainColor, .3);

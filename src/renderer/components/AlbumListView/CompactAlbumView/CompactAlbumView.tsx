@@ -120,19 +120,21 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
       ref={ref}
       onDoubleClick={_onDoubleClick}
       onContextMenu={_onContextMenu}>
-      <CoverView
-        className="album-cover"
-        src={cover}
-        album={album}/>
-      <p className="album-content header-like">
-        <span className="title">
-          {title}{ isCurrent ? <FontAwesomeIcon className="icon" icon="volume-up"/> : null }
-        </span>
-        <span className="info">
-          {artist === VARIOUS_ARTISTS_ID ? 'V/A' : artist}{year ? `, ${year}` : null} - <span className={tagClasses}>{type}</span>
-        </span>
-      </p>
-      { albumActions.length > 0 && <AlbumActionsView album={album} actions={albumActions}/>}
+      <div className="album-inner-wrapper">
+        <CoverView
+          className="album-cover"
+          src={cover}
+          album={album}/>
+        <p className="album-content header-like">
+          <span className="title">
+            {title}{ isCurrent ? <FontAwesomeIcon className="icon" icon="volume-up"/> : null }
+          </span>
+          <span className="info">
+            {artist === VARIOUS_ARTISTS_ID ? 'V/A' : artist}{year ? `, ${year}` : null} - <span className={tagClasses}>{type}</span>
+          </span>
+        </p>
+        { albumActions.length > 0 && <AlbumActionsView album={album} actions={albumActions}/>}
+      </div>
     </article>
   );
 }
