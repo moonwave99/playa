@@ -14,6 +14,11 @@ function trimTitle(title: string): string {
     : title;
 }
 
+export type UIDropItem = {
+  type: string;
+  _id: string;
+};
+
 export const UIDragTypes = {
   SEARCH_RESULTS: 'SEARCH_RESULTS',
   PLAYLIST_ALBUMS: 'PLAYLIST_ALBUMS',

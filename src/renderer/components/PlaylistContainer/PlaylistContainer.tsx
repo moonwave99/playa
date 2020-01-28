@@ -1,14 +1,13 @@
 import React, { ReactElement, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router';
+import { useParams, useHistory } from 'react-router';
 import { IconName } from '@fortawesome/fontawesome-svg-core';
 import { PlaylistView } from '../PlaylistView/PlaylistView';
 
 import {
   Playlist,
-  getPlaylistsRequest,
-  savePlaylistRequest,
-  getDefaultPlaylist
+  getPlaylistRequest,
+  savePlaylistRequest
 } from '../../store/modules/playlist';
 
 import { updateQueue } from '../../store/modules/player';
@@ -29,10 +28,13 @@ import {
   AlbumActionsGroups
 } from '../../actions/albumActions';
 
+import { QUEUE } from '../../routes';
+
 import actionsMap from '../../actions/actions';
 
 export const PlaylistContainer = (): ReactElement => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const { _id } = useParams();
 
   const {
@@ -42,13 +44,22 @@ export const PlaylistContainer = (): ReactElement => {
     currentAlbumId,
     currentTrackId
   } = useSelector(({ playlists, albums, player }) => {
-    const playlist: Playlist = playlists.allById[_id] || getDefaultPlaylist();
+    const playlist: Playlist = playlists.allById[_id] || {};
+    const playlistAlbums = playlist.albums
+      ? toObj(
+          playlist.albums.map((id) => albums.allById[id]).filter(x => !!x)
+        )
+      : [];
     return {
       playlist,
-      albums: toObj(
-        playlist.albums.map((id) => albums.allById[id]).filter(x => !!x)
-      ),
+      albums: playlistAlbums,
       ...player
+    };
+  });
+
+  useEffect(() => {
+    if (!playlist._id) {
+      history.replace(QUEUE);
     }
   });
 
@@ -64,7 +75,7 @@ export const PlaylistContainer = (): ReactElement => {
 
   useEffect(() => {
     if (playlist._rev) {
-      dispatch(getPlaylistsRequest(playlist._id));
+      dispatch(getPlaylistRequest(playlist._id));
     }
   }, [playlist]);
 
@@ -76,7 +87,7 @@ export const PlaylistContainer = (): ReactElement => {
   }
 
   function onTitleChange(title: string ): void {
-    if (title === playlist.title) {
+    if (title === playlist.title && playlist._rev) {
       return;
     }
     dispatch(savePlaylistRequest({ ...playlist, title }));

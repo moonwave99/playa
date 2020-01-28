@@ -5,7 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { IconName } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { SearchBar } from '../SearchBar/SearchBar';
-import { SidebarPlaylistList } from './SidebarPlaylistList/SidebarPlaylistList';
+import { NewPlaylistButton } from './NewPlaylistButton/NewPlaylistButton';
+import { PlaylistList } from './PlaylistList/PlaylistList';
 import { Playlist } from '../../store/modules/playlist';
 import './SidebarView.scss';
 import {
@@ -19,7 +20,7 @@ type SidebarViewProps = {
 	hasSearchFocus: boolean;
 	recentPlaylists: Playlist[];
 	currentPlaylistId: Playlist['_id'];
-	onCreatePlaylistButtonClick: Function;
+	onCreatePlaylist: Function;
 	onSearchBarBlur: Function;
 	onSearchFormSubmit: Function;
 };
@@ -42,16 +43,12 @@ export const SidebarView: FC<SidebarViewProps> = ({
 	hasSearchFocus,
 	recentPlaylists = [],
 	currentPlaylistId,
-	onCreatePlaylistButtonClick,
+	onCreatePlaylist,
 	onSearchBarBlur,
 	onSearchFormSubmit
 }) => {
 	const { t } = useTranslation();
 	const location = useLocation();
-
-	function _onCreatePlaylistButtonClick(): void {
-		onCreatePlaylistButtonClick();
-	}
 
 	function renderLink(path: string): ReactElement {
 		const classNames = matchPath(location.pathname, { path }) ? 'button' : 'button button-outline';
@@ -84,12 +81,12 @@ export const SidebarView: FC<SidebarViewProps> = ({
 				</div>
 			</section>
 			<section className="sidebar-footer">
-				<SidebarPlaylistList playlists={recentPlaylists} currentPlaylistId={currentPlaylistId}/>
+				<h2 className="sidebar-title">{t('sidebar.buttons.playlist.recent')}</h2>
+				<NewPlaylistButton
+					onClick={onCreatePlaylist}
+					onDrop={onCreatePlaylist}/>
+				<PlaylistList playlists={recentPlaylists} currentPlaylistId={currentPlaylistId}/>
 				<div className="button-wrapper">
-					<button type="button" className="button" onClick={_onCreatePlaylistButtonClick}>
-						<FontAwesomeIcon icon="plus" className="button-icon"/>
-						<span className="button-text">{t('sidebar.buttons.playlist.new')}</span>
-					</button>
 					{renderLink(PLAYLIST_ALL)}
 				</div>
 			</section>

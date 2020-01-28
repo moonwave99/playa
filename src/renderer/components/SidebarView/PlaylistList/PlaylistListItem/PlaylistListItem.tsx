@@ -6,10 +6,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { uniq } from 'lodash';
 import cx from 'classnames';
 import { Playlist, savePlaylistRequest } from '../../../../store/modules/playlist';
-import { UIDragTypes } from '../../../../store/modules/ui';
+import { UIDragTypes, UIDropItem } from '../../../../store/modules/ui';
 import { PLAYLIST_SHOW } from '../../../../routes';
 
-type SidebarPlaylistListItemProps = {
+type PlaylistListItemProps = {
   playlist: Playlist;
   isCurrent: boolean;
   isPlaying: boolean;
@@ -17,12 +17,7 @@ type SidebarPlaylistListItemProps = {
   onPlayButtonDoubleClick?: Function;
 }
 
-type DropItem = {
-  type: string;
-  _id: string;
-}
-
-export const SidebarPlaylistListItem: FC<SidebarPlaylistListItemProps> = ({
+export const PlaylistListItem: FC<PlaylistListItemProps> = ({
   playlist,
   isCurrent,
   isPlaying,
@@ -37,7 +32,7 @@ export const SidebarPlaylistListItem: FC<SidebarPlaylistListItemProps> = ({
       UIDragTypes.PLAYLIST_ALBUMS,
       UIDragTypes.QUEUE_ALBUMS
     ],
-    drop: (item: DropItem) => {
+    drop: (item: UIDropItem) => {
       dispatch(savePlaylistRequest({
         ...playlist,
         albums: uniq([...playlist.albums, item._id])
@@ -62,6 +57,7 @@ export const SidebarPlaylistListItem: FC<SidebarPlaylistListItemProps> = ({
   }
 
   const classNames = cx('playlist', {
+    'is-new': !playlist._rev,
     'is-playing': isPlaying,
     'drag-is-over': isOver,
     'drag-can-drop': canDrop
@@ -74,14 +70,14 @@ export const SidebarPlaylistListItem: FC<SidebarPlaylistListItemProps> = ({
         onContextMenu={_onContextMenu}
         title={playlist._id}
         to={generatePath(PLAYLIST_SHOW, { _id: playlist._id })}
-        className="sidebar-playlist-item">
+        className="playlist-item">
           <FontAwesomeIcon
             icon={ isPlaying ? 'volume-up' : 'file-audio'}
             className="playlist-icon"
             fixedWidth/>
           {playlist.title}
       </Link>
-      { isPlaying ? null :
+      { isPlaying || playlist.albums.length === 0 ? null :
         <button className="play-button" onDoubleClick={_onPlayButtonDoubleClick}>
           <FontAwesomeIcon
             icon="play-circle"

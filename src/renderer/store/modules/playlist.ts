@@ -1,4 +1,5 @@
 import { ipcRenderer as ipc } from 'electron';
+import { sample } from 'lodash';
 import {
   EntityHashMap,
   toObj,
@@ -30,12 +31,20 @@ export interface PlaylistState {
   allById: EntityHashMap<Playlist>;
 }
 
+const NEW_PLAYLIST_NAMES: string[] = [
+  'Awesome Playlist',
+  'Incredible Playlist',
+  'Wonderful Playlist',
+  'Blissful Playlist',
+  'Unbeatable Playlist'
+];
+
 export function getDefaultPlaylist(): Playlist {
   const now = new Date().toISOString();
   return {
     _id: now,
     _rev: null,
-    title: 'New Playlist',
+    title: sample(NEW_PLAYLIST_NAMES),
     created: now,
     accessed: now,
     albums: []
@@ -108,7 +117,7 @@ export type PlaylistActionTypes =
   | DeletePlaylistRequestAction
   | DeletePlaylistResponseAction;
 
-export const getPlaylistsRequest = (id: Playlist['_id']): Function =>
+export const getPlaylistRequest = (id: Playlist['_id']): Function =>
   async (dispatch: Function, getState: Function): Promise<void> => {
     const { playlists, albums } = getState();
     let playlist = playlists.allById[id];

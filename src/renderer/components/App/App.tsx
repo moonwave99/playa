@@ -12,7 +12,12 @@ import { AllPlaylistContainer } from '../AllPlaylistContainer/AllPlaylistContain
 import { PlaylistContainer } from '../PlaylistContainer/PlaylistContainer';
 
 import initIpc from '../../lib/initIpc';
-import { Playlist, getAllPlaylistsRequest } from '../../store/modules/playlist';
+import {
+  Playlist,
+  getDefaultPlaylist,
+  getAllPlaylistsRequest,
+  PLAYLIST_GET_RESPONSE
+} from '../../store/modules/playlist';
 import { Album } from '../../store/modules/album';
 import { updateQueue, togglePlayback } from '../../store/modules/player';
 import './App.scss';
@@ -106,9 +111,13 @@ export const App: FC<AppProps> = ({
     }
   }, [queue]);
 
-  function onCreatePlaylistButtonClick(): void {
-    const now = new Date().toISOString();
-    history.replace(generatePath(PLAYLIST_SHOW, { _id: now }));
+  function onCreatePlaylist(albums: Album['_id'][] = []): void {
+    const playlist = getDefaultPlaylist();
+    dispatch({
+      type: PLAYLIST_GET_RESPONSE,
+      playlist: { ...playlist, albums }
+    });
+    history.replace(generatePath(PLAYLIST_SHOW, { _id: playlist._id }));
   }
 
   function onSearchBarBlur(): void {
@@ -129,7 +138,7 @@ export const App: FC<AppProps> = ({
             recentPlaylists={recentPlaylists}
             onSearchFormSubmit={onSearchFormSubmit}
             onSearchBarBlur={onSearchBarBlur}
-            onCreatePlaylistButtonClick={onCreatePlaylistButtonClick} />
+            onCreatePlaylist={onCreatePlaylist} />
         </div>
         <div className="main-wrapper">
           <Switch>

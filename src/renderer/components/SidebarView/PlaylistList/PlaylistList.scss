@@ -1,0 +1,67 @@
+@import "../../../styles/variables";
+@import "../../../styles/mixins";
+
+.playlist-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  .playlist {
+    height: $mainUnit;
+    line-height: $mainUnit;
+    vertical-align: middle;
+    margin: 0;
+    display: flex;
+    &.drag-is-over {
+      background-color: $highlightColor;
+      .playlist-item {
+        color: $darkColor;
+      }
+    }
+    &.is-new {
+      .playlist-item {
+        font-weight: bold;
+        color: $highlightColor;
+      }
+    }
+    &.is-current {
+      .playlist-item {
+        font-weight: bold;
+      }
+    }
+    &.is-playing {
+      .playlist-item {
+        color: $mainColor;
+      }
+    }
+    &:hover {
+      .play-button .play-button-icon {
+        display: inline;
+      }
+    }
+    .playlist-item {
+      display: block;
+      flex: 1;
+      padding: 0 0 0 $mainUnit;
+      color: $lightColor;
+      transition: color .3s ease-in-out;
+      @include ellipsis();
+      &:hover {
+        text-decoration: underline;
+      }
+      .playlist-icon{
+        margin-right: 1rem;
+      }
+    }
+    .play-button {
+      flex: 0 0 $mainUnit;
+      background: none;
+      outline: none;
+      border: none;
+      font-size: 1.2rem;
+      .play-button-icon {
+        display: none;
+        color: $mainColor;
+      }
+    }
+  }
+}

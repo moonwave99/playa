@@ -36,6 +36,7 @@ export const PlaylistViewTitle: FC<PlaylistViewTitleProps> = ({ playlist, onTitl
 
 	function onBlur(): void {
 		setTitleEditing(false);
+		onTitleChange(title);
 	}
 
 	function onKeyDown(event: KeyboardEvent): void {

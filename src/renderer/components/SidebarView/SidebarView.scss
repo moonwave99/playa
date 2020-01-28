@@ -18,6 +18,10 @@
         &:last-child {
           margin: 0;
         }
+        &:not(.button-outline):hover {
+          background-color: $mainColor;
+          border-color: $mainColor;
+        }
       }
     }
   }
@@ -38,11 +42,52 @@
       }
     }
   }
+
+  .sidebar-title {
+    height: $mainUnit;
+    line-height: $mainUnit;
+    padding: 0 $mainUnit;
+    margin: 0;
+    font-family: 'Inter UI', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: $highlightColor;
+    letter-spacing: .01em;
+    text-transform: uppercase;
+  }
+
+  .new-playlist-button {
+    height: $mainUnit;
+    line-height: $mainUnit;
+    vertical-align: middle;
+    margin: 0;
+    padding: 0 0 0 $mainUnit;
+    outline: none;
+    background: none;
+    border: none;
+    color: $mainColor;
+    font-size: 1rem;
+    display: block;
+    width: 100%;
+    text-align: left;
+    &:hover {
+      text-decoration: underline;
+    }
+    .icon {
+      margin-right: 1rem;
+    }
+    &.drag-is-over {
+      background-color: $highlightColor;
+      color: $mainColor;
+      transition: color .3s ease-in-out;
+    }
+  }
+
   @media (max-width: $miniWindowThreshold) {
     flex: 1;
     height: auto;
     .sidebar-footer,
-    .sidebar-playlist-list,
+    .playlist-list,
     .button-wrapper > .button {
       display: none;
     }

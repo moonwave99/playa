@@ -1,8 +1,7 @@
 import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import { useRouteMatch } from 'react-router';
-import { useTranslation } from 'react-i18next';
-import { SidebarPlaylistListItem } from './SidebarPlaylistListItem/SidebarPlaylistListItem';
+import { PlaylistListItem } from './PlaylistListItem/PlaylistListItem';
 import { Playlist } from '../../../store/modules/playlist';
 import { PLAYLIST_SHOW } from '../../../routes';
 import { openContextMenu } from '../../../lib/contextMenu';
@@ -14,9 +13,9 @@ import {
 
 import actionsMap from '../../../actions/actions';
 
-import './SidebarPlaylistList.scss';
+import './PlaylistList.scss';
 
-type SidebarPlaylistListProps = {
+type PlaylistListProps = {
   playlists: Playlist[];
   currentPlaylistId: Playlist['_id'];
 }
@@ -25,11 +24,10 @@ type MatchParams = {
   _id?: string;
 }
 
-export const SidebarPlaylistList: FC<SidebarPlaylistListProps> = ({
+export const PlaylistList: FC<PlaylistListProps> = ({
   playlists = [],
   currentPlaylistId
 }) => {
-  const { t } = useTranslation();
   const dispatch = useDispatch();
   const match = useRouteMatch(PLAYLIST_SHOW);
   let params: MatchParams = {};
@@ -56,19 +54,16 @@ export const SidebarPlaylistList: FC<SidebarPlaylistListProps> = ({
   }
 
   return (
-    <div className="sidebar-playlist-list">
-      <h2>{t('sidebar.buttons.playlist.recent')}</h2>
-      <ul>
-        { playlists.map(
-          playlist => <SidebarPlaylistListItem
-            key={playlist._id}
-            isCurrent={playlist._id === params._id}
-            isPlaying={playlist._id === currentPlaylistId}
-            playlist={playlist}
-            onContextMenu={onPlaylistContextMenu}
-            onPlayButtonDoubleClick={onPlayButtonDoubleClick}/>
-        ) }
-      </ul>
-    </div>
+    <ul className="playlist-list">
+      { playlists.map(
+        playlist => <PlaylistListItem
+          key={playlist._id}
+          isCurrent={playlist._id === params._id}
+          isPlaying={playlist._id === currentPlaylistId}
+          playlist={playlist}
+          onContextMenu={onPlaylistContextMenu}
+          onPlayButtonDoubleClick={onPlayButtonDoubleClick}/>
+      ) }
+    </ul>
   );
 }

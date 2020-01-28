@@ -6,7 +6,7 @@
         "library": "Library",
         "playlist": {
           "recent": "Recent Playlists",
-          "new": "New Playlist",
+          "new": "Create New Playlist",
           "all": "All Playlists"
         },
         "queue": "Playback Queue"
