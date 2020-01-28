@@ -9,6 +9,7 @@ type CoverViewProps = {
   onClick?: Function;
   onDoubleClick?: Function;
   onContextMenu?: Function;
+  onImageLoad?: Function;
 }
 
 export const CoverView: FC<CoverViewProps> = ({
@@ -17,7 +18,8 @@ export const CoverView: FC<CoverViewProps> = ({
   album,
   onClick,
   onDoubleClick,
-  onContextMenu
+  onContextMenu,
+  onImageLoad
 }) => {
   const [loaded, setLoaded] = useState(false);
 
@@ -29,8 +31,9 @@ export const CoverView: FC<CoverViewProps> = ({
     return `Play [${_id}] ${artist} - ${title}`;
   }
 
-  function onImageLoad(): void {
+  function _onImageLoad(): void {
     setLoaded(true);
+    onImageLoad && onImageLoad(src);
   }
 
   function onFigureClick(): void {
@@ -56,7 +59,7 @@ export const CoverView: FC<CoverViewProps> = ({
       onContextMenu={onFigureContextMenu}>
       <img
         className={imageClassNames}
-        onLoad={onImageLoad}
+        onLoad={_onImageLoad}
         src={src}/>
     </figure>
   );

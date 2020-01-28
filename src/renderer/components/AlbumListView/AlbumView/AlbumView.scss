@@ -42,6 +42,7 @@
     background-color: rgba($backgroundDarkColor, .4);
     display: flex;
     flex-direction: column;
+    transition: background-color .3s ease-in-out;
     .album-cover {
       @include albumCover($albumCoverWidth);
       margin: 0 0 calc(var(--section-gutter) * 0.5) 0;
@@ -53,7 +54,8 @@
       padding-bottom: calc(var(--section-gutter) * .5);
     }
     @media (max-width: $miniWindowThreshold) {
-      background-color: transparent;
+      background-color: transparent!important;
+      border-radius: 0;
     }
     header {
       @media (max-width: $miniWindowThreshold) {

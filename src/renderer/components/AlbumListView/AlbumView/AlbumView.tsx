@@ -1,6 +1,7 @@
-import React, { FC, ReactElement, useEffect } from 'react';
+import React, { FC, ReactElement, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, generatePath } from 'react-router-dom';
+import Vibro from 'node-vibrant';
 import cx from 'classnames';
 import { CoverView } from './CoverView/CoverView';
 import { TracklistView } from './TracklistView/TracklistView';
@@ -20,6 +21,15 @@ type AlbumViewProps = {
   onDoubleClick: Function;
 }
 
+type Palette = {
+  DarkMuted: string;
+  DarkVibrant: string;
+  Muted: string;
+  Vibrant: string;
+  LightMuted: string;
+  LightVibrant: string;
+}
+
 // #TODO push notFoundAction
 export const AlbumView: FC<AlbumViewProps> = ({
   album,
@@ -29,10 +39,10 @@ export const AlbumView: FC<AlbumViewProps> = ({
   onContextMenu,
   onDoubleClick
 }) => {
+  const [palette, setPalette] = useState({} as Palette);
   const { _id, type, year, artist, title } = album;
   const {
     tracklist,
-    notFoundTracks,
     cover
   } = useSelector(({ tracks, covers }: ApplicationState) => {
     const tracklist =
@@ -41,7 +51,6 @@ export const AlbumView: FC<AlbumViewProps> = ({
         .filter(x => !!x) || [];
     return {
       tracklist,
-      notFoundTracks: tracklist.filter(({ found }) => found === false).length > 0,
       cover: covers.allById[_id]
     };
   });
@@ -63,6 +72,25 @@ export const AlbumView: FC<AlbumViewProps> = ({
     onContextMenu && onContextMenu(album);
   }
 
+  async function onImageLoad(src: string): Promise<void> {
+    const {
+      DarkMuted,
+      DarkVibrant,
+      Muted,
+      Vibrant,
+      LightMuted,
+      LightVibrant
+    } = await Vibro.from(src).getPalette();
+    setPalette({
+      DarkMuted: DarkMuted.getHex(),
+      DarkVibrant: DarkVibrant.getHex(),
+      Muted: Muted.getHex(),
+      Vibrant: Vibrant.getHex(),
+      LightMuted: LightMuted.getHex(),
+      LightVibrant: LightVibrant.getHex()
+    });
+  }
+
   function renderArtist(): ReactElement {
     return <Link
       to={`${generatePath(SEARCH)}?query=artist: ${artist}`}
@@ -81,14 +109,15 @@ export const AlbumView: FC<AlbumViewProps> = ({
   const showArtists = artist === VARIOUS_ARTISTS_ID || type === AlbumTypes.Remix;
   return (
     <article className={albumClasses} id={_id} onContextMenu={_onContextMenu}>
-      <aside className="album-aside">
+      <aside className="album-aside" style={{ backgroundColor: palette.DarkMuted }}>
         <CoverView
           className="album-cover"
           src={cover}
           album={album}
+          onImageLoad={onImageLoad}
           onDoubleClick={onCoverDoubleClick}/>
         <header>
-          <h2>{title}</h2>
+          <h2 style={{ color: palette.LightVibrant }}>{title}</h2>
           <p className="album-artist">{renderArtist()}</p>
           <p className="album-info">{year ? `${year} - ` : null}<span className={tagClasses}>{type}</span></p>
         </header>
