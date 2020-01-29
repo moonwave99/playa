@@ -2,6 +2,7 @@ import React, { ReactElement, SyntheticEvent, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Row, Cell } from 'react-table';
 import { useDrag } from 'react-dnd';
+import { useInView } from 'react-intersection-observer';
 import cx from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CoverView } from '../../../AlbumListView/AlbumView/CoverView/CoverView';
@@ -27,11 +28,12 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
 }) => {
   const dispatch = useDispatch();
   const { _id } = album;
+  const [viewRef, inView] = useInView({ triggerOnce: true });
   const cover = useSelector(({ covers }) => covers.allById[_id]);
 
   useEffect(() => {
-    dispatch(getCoverRequest(album));
-  }, [album]);
+    inView && dispatch(getCoverRequest(album));
+  }, [album, inView]);
 
   const [{ opacity }, drag] = useDrag({
     item: {
@@ -102,7 +104,8 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
     <tr {...row.getRowProps()}
       className={classNames}
       style={{ opacity }}
-      onContextMenu={onConTextMenu}>
+      onContextMenu={onConTextMenu}
+      ref={viewRef}>
       {row.cells.map(renderCell)}
     </tr>
   );

@@ -2,6 +2,7 @@ import React, { FC, ReactElement, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, generatePath } from 'react-router-dom';
 import { useDrag } from 'react-dnd';
+import { useInView } from 'react-intersection-observer';
 import Vibro from 'node-vibrant';
 import cx from 'classnames';
 import { CoverView } from './CoverView/CoverView';
@@ -44,6 +45,8 @@ export const AlbumView: FC<AlbumViewProps> = ({
 }) => {
   const [palette, setPalette] = useState({} as Palette);
   const { _id, type, year, artist, title } = album;
+  const [viewRef, inView] = useInView({ triggerOnce: true });
+
   const {
     tracklist,
     cover
@@ -60,8 +63,8 @@ export const AlbumView: FC<AlbumViewProps> = ({
 
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(getAlbumRequest(_id));
-  }, [_id]);
+    inView && dispatch(getAlbumRequest(_id));
+  }, [_id, inView]);
 
   const [{ opacity }, drag] = useDrag({
     item: {
@@ -121,7 +124,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
   const tagClasses = cx('album-type', `album-type-${type}`);
   const showArtists = artist === VARIOUS_ARTISTS_ID || type === AlbumTypes.Remix;
   return (
-    <article className={albumClasses} id={_id} onContextMenu={_onContextMenu}>
+    <article className={albumClasses} id={_id} onContextMenu={_onContextMenu} ref={viewRef}>
       <aside className="album-aside" style={{ backgroundColor: palette.DarkMuted }}>
         <div ref={drag} style={{ opacity }}>
           <CoverView
