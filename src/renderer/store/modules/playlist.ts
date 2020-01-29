@@ -1,4 +1,5 @@
 import { ipcRenderer as ipc } from 'electron';
+import createCachedSelector from 're-reselect';
 import { sample } from 'lodash';
 import {
   EntityHashMap,
@@ -8,7 +9,17 @@ import {
   updateId
 } from '../../utils/storeUtils';
 
-import { Album, getAlbumListRequest } from './album';
+import { ApplicationState } from '../store';
+
+import {
+  Album,
+  selectors as albumSelectors,
+  getAlbumListRequest
+} from './album';
+import { Track } from './track';
+import {
+  selectors as playerSelectors,
+} from './player';
 
 import { IPC_MESSAGES } from '../../../constants';
 
@@ -30,6 +41,40 @@ export interface Playlist {
 export interface PlaylistState {
   allById: EntityHashMap<Playlist>;
 }
+
+export const selectors = {
+  state: ({ playlists }: ApplicationState): PlaylistState => playlists,
+  allById: ({ playlists }: ApplicationState): EntityHashMap<Playlist> => playlists.allById,
+  findById: ({ playlists }: ApplicationState, id: Playlist['_id']): Playlist => playlists.allById[id]
+};
+
+type GetPlaylistByIdSelection = {
+  playlist: Playlist;
+  albums: EntityHashMap<Album>;
+  currentPlaylistId: Playlist['_id'];
+  currentAlbumId: Album['_id'];
+  currentTrackId: Track['_id'];
+}
+
+export const getPlaylistById = createCachedSelector(
+  selectors.findById,
+  albumSelectors.allById,
+  playerSelectors.state,
+  (playlist, albums, player): GetPlaylistByIdSelection => {
+    const foundAlbums = playlist.albums ? toObj(
+      playlist.albums
+        .map((id: Album['_id']) => albums[id])
+        .filter(x => !!x)
+    ) : {};
+    return {
+      ...player,
+      playlist,
+      albums: foundAlbums
+    }
+  }
+)(
+  (_state_: ApplicationState, id: Playlist['_id']): Playlist['_id'] => id
+);
 
 const NEW_PLAYLIST_NAMES: string[] = [
   'Awesome Playlist',

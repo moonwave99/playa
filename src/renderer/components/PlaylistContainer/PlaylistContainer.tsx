@@ -5,16 +5,16 @@ import { IconName } from '@fortawesome/fontawesome-svg-core';
 import { PlaylistView } from '../PlaylistView/PlaylistView';
 
 import {
-  Playlist,
   getPlaylistRequest,
-  savePlaylistRequest
+  savePlaylistRequest,
+  getPlaylistById
 } from '../../store/modules/playlist';
 
+import { ApplicationState } from '../../store/store';
 import { updateQueue } from '../../store/modules/player';
 import { updateState, updateTitle } from '../../store/modules/ui';
 import { Album } from '../../store/modules/album';
 import { Track } from '../../store/modules/track';
-import { toObj } from '../../utils/storeUtils';
 import { openContextMenu } from '../../lib/contextMenu';
 
 import {
@@ -43,19 +43,7 @@ export const PlaylistContainer = (): ReactElement => {
     currentPlaylistId,
     currentAlbumId,
     currentTrackId
-  } = useSelector(({ playlists, albums, player }) => {
-    const playlist: Playlist = playlists.allById[_id] || {};
-    const playlistAlbums = playlist.albums
-      ? toObj(
-          playlist.albums.map((id) => albums.allById[id]).filter(x => !!x)
-        )
-      : [];
-    return {
-      playlist,
-      albums: playlistAlbums,
-      ...player
-    };
-  });
+  } = useSelector((state: ApplicationState) => getPlaylistById(state, _id));
 
   useEffect(() => {
     if (!playlist._id) {

@@ -9,7 +9,8 @@ import { CoverView } from '../../../AlbumListView/AlbumView/CoverView/CoverView'
 import { UIDragTypes } from '../../../../store/modules/ui';
 import { Album, VARIOUS_ARTISTS_ID } from '../../../../store/modules/album';
 import { searchRequest } from '../../../../store/modules/search';
-import { getCoverRequest } from '../../../../store/modules/cover';
+import { getCoverRequest, selectors as coverSelectors } from '../../../../store/modules/cover';
+import { ApplicationState } from '../../../../store/store';
 
 type SearchResultListRowProps = {
   row: Row;
@@ -29,7 +30,7 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
   const dispatch = useDispatch();
   const { _id } = album;
   const [viewRef, inView] = useInView({ triggerOnce: true });
-  const cover = useSelector(({ covers }) => covers.allById[_id]);
+  const cover = useSelector((state: ApplicationState) => coverSelectors.findById(state, _id));
 
   useEffect(() => {
     inView && dispatch(getCoverRequest(album));

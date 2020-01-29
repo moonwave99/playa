@@ -8,7 +8,7 @@ import cx from 'classnames';
 import { CoverView } from './CoverView/CoverView';
 import { TracklistView } from './TracklistView/TracklistView';
 import { ApplicationState } from '../../../store/store';
-import { Album, AlbumTypes, VARIOUS_ARTISTS_ID, getAlbumRequest } from '../../../store/modules/album';
+import { Album, AlbumTypes, VARIOUS_ARTISTS_ID, getAlbumRequest, getAlbumContentById } from '../../../store/modules/album';
 import { Track } from '../../../store/modules/track';
 import { AlbumActionsView, ActionsConfig } from '../AlbumActionsView/AlbumActionsView';
 import { SEARCH } from '../../../routes';
@@ -50,16 +50,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
   const {
     tracklist,
     cover
-  } = useSelector(({ tracks, covers }: ApplicationState) => {
-    const tracklist =
-      album.tracks
-        .map((id) => tracks.allById[id])
-        .filter(x => !!x) || [];
-    return {
-      tracklist,
-      cover: covers.allById[_id]
-    };
-  });
+  } = useSelector((state: ApplicationState) => getAlbumContentById(state, _id));
 
   const dispatch = useDispatch();
   useEffect(() => {

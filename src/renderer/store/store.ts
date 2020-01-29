@@ -18,7 +18,7 @@ import waveformReducer, { WaveformState } from './modules/waveform';
 const history = createHashHistory();
 const initialState = {};
 
-export interface ApplicationState {
+export type ApplicationState = {
   router: RouterState;
   ui: UIState;
   player: PlayerState;

@@ -1,5 +1,6 @@
 import { ipcRenderer as ipc } from 'electron';
 import { EntityHashMap } from '../../utils/storeUtils';
+import { ApplicationState } from '../store';
 import { Album, AlbumTypes } from './album';
 import { IPC_MESSAGES } from '../../../constants';
 
@@ -10,6 +11,12 @@ const {
 export interface CoverState {
   allById: EntityHashMap<string>;
 }
+
+export const selectors = {
+  state: ({ covers }: ApplicationState): CoverState => covers,
+  allById: ({ covers }: ApplicationState): EntityHashMap<string> => covers.allById,
+  findById: ({ covers }: ApplicationState, id: string): string => covers.allById[id]
+};
 
 export const COVER_GET_REQUEST  = 'playa/cover/COVER_GET_REQUEST';
 export const COVER_GET_RESPONSE = 'playa/cover/COVER_GET_RESPONSE';

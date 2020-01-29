@@ -8,7 +8,8 @@ import { AlbumActionsView, ActionsConfig } from '../AlbumActionsView/AlbumAction
 import { CoverView } from '../AlbumView/CoverView/CoverView';
 import { Album, VARIOUS_ARTISTS_ID } from '../../../store/modules/album';
 import { UIDragTypes } from '../../../store/modules/ui';
-import { getCoverRequest } from '../../../store/modules/cover';
+import { getCoverRequest, selectors as coverSelectors } from '../../../store/modules/cover';
+import { ApplicationState } from '../../../store/store';
 import './CompactAlbumView.scss';
 
 interface DragItem {
@@ -41,7 +42,7 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
   sortable = false
 }) => {
   const { _id, type, year, artist, title } = album;
-  const cover = useSelector(({ covers }) => covers.allById[_id]);
+  const cover = useSelector((state: ApplicationState) => coverSelectors.findById(state, _id));
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -79,8 +80,8 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
       }
       onAlbumMove(dragIndex, hoverIndex);
       item.index = hoverIndex;
-    },
-  })
+    }
+  });
 
   const [{ isDragging }, drag] = useDrag({
     item: { type: UIDragTypes.COMPACT_ALBUMS, _id, index },

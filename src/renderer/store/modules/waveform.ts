@@ -1,5 +1,6 @@
 import { ipcRenderer as ipc } from 'electron';
 import { EntityHashMap } from '../../utils/storeUtils';
+import { ApplicationState } from '../store';
 import { Track } from './track';
 import { Waveform } from '../../lib/waveform';
 import { IPC_MESSAGES, WAVEFORM_PEAKS_COUNT } from '../../../constants';
@@ -11,6 +12,12 @@ const {
 export interface WaveformState {
   allById: EntityHashMap<string>;
 }
+
+export const selectors = {
+  state: ({ waveforms }: ApplicationState): WaveformState => waveforms,
+  allById: ({ waveforms }: ApplicationState): EntityHashMap<string> => waveforms.allById,
+  findById: ({ waveforms }: ApplicationState, id: string): string => waveforms.allById[id]
+};
 
 export const WAVEFORM_GET_REQUEST  = 'playa/waveform/WAVEFORM_GET_REQUEST';
 export const WAVEFORM_GET_RESPONSE = 'playa/waveform/WAVEFORM_GET_RESPONSE';

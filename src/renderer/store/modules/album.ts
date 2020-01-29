@@ -1,7 +1,24 @@
 import { ipcRenderer as ipc } from 'electron';
-import { Track, getTrackListResponse } from './track';
-import { getCoverRequest } from './cover';
-import { EntityHashMap, toObj, ensureAll, updateId } from '../../utils/storeUtils';
+import createCachedSelector from 're-reselect';
+import {
+  EntityHashMap,
+  toObj,
+  ensureAll,
+  updateId
+} from '../../utils/storeUtils';
+
+import { ApplicationState } from '../store';
+
+import {
+  Track,
+  selectors as trackSelectors,
+  getTrackListResponse
+} from './track';
+
+import {
+  selectors as coverSelectors,
+  getCoverRequest
+} from './cover';
 
 import { IPC_MESSAGES } from '../../../constants';
 
@@ -26,7 +43,7 @@ export enum AlbumTypes {
   Tribute = 'tribute'
 }
 
-export interface Album {
+export type Album = {
   _id: string;
   artist: string;
   title: string;
@@ -53,6 +70,27 @@ export function getDefaultAlbum(): Album {
 export interface AlbumState {
   allById: EntityHashMap<Album>;
 }
+
+export const selectors = {
+  state: ({ albums }: ApplicationState): AlbumState => albums,
+  allById: ({ albums }: ApplicationState): EntityHashMap<Album> => albums.allById,
+  findById: ({ albums }: ApplicationState, id: Album['_id']): Album => albums.allById[id]
+};
+
+type GetAlbumContentByIdSelection = {
+  tracklist: Track[];
+  cover: string;
+}
+
+export const getAlbumContentById = createCachedSelector(
+  selectors.findById,
+  trackSelectors.allById,
+  coverSelectors.allById,
+  (album, tracks, covers): GetAlbumContentByIdSelection => ({
+    tracklist: album.tracks.map(id => tracks[id]).filter(x => !!x),
+    cover: covers[album._id]
+  })
+)((_state_: ApplicationState, id: Album['_id']) => id);
 
 export const ALBUM_GET_REQUEST          = 'playa/album/GET_REQUEST';
 export const ALBUM_GET_RESPONSE         = 'playa/album/GET_RESPONSE';

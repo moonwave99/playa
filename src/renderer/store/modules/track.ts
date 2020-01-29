@@ -1,5 +1,6 @@
 import { ipcRenderer as ipc } from 'electron';
 import { EntityHashMap, toObj, ensureAll } from '../../utils/storeUtils';
+import { ApplicationState } from '../store';
 
 import { IPC_MESSAGES } from '../../../constants';
 
@@ -8,7 +9,7 @@ const {
 } = IPC_MESSAGES;
 
 
-export interface Track {
+export type Track = {
   _id: string;
   path: string;
   found: boolean;
@@ -33,6 +34,12 @@ export function getDefaultTrack(): Track {
 export interface TrackState {
   allById: EntityHashMap<Track>;
 }
+
+export const selectors = {
+  state: ({ tracks }: ApplicationState): TrackState => tracks,
+  allById: ({ tracks }: ApplicationState): EntityHashMap<Track> => tracks.allById,
+  findById: ({ tracks }: ApplicationState, id: Track['_id']): Track => tracks.allById[id]
+};
 
 export const TRACK_GET_LIST_REQUEST  = 'playa/track/GET_LIST_REQUEST';
 export const TRACK_GET_LIST_RESPONSE = 'playa/track/GET_LIST_RESPONSE';

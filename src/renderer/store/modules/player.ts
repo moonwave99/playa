@@ -17,7 +17,19 @@ const {
   IPC_ALBUM_GET_SINGLE_INFO
 } = IPC_MESSAGES;
 
-type PlayerSelectorInfo = {
+export interface PlayerState {
+  queue: Album['_id'][];
+  currentPlaylistId: Playlist['_id'] | null;
+  currentAlbumId: Album['_id'] | null;
+  currentTrackId: Track['_id'] | null;
+  isPlaying: boolean;
+}
+
+export const selectors = {
+  state: ({ player }: ApplicationState): PlayerState => player
+};
+
+type GetPlayerInfoSelection = {
   currentPlaylist: Playlist;
   currentAlbum: Album;
   currentAlbumId: Album['_id'];
@@ -34,7 +46,7 @@ export function playerSelector({
   tracks,
   covers,
   waveforms
-}: ApplicationState): PlayerSelectorInfo {
+}: ApplicationState): GetPlayerInfoSelection {
   const {
     currentPlaylistId,
     currentAlbumId,
@@ -50,14 +62,6 @@ export function playerSelector({
     waveform: waveforms.allById[currentTrackId],
     queue: queue.map(x => albums.allById[x])
   };
-}
-
-export interface PlayerState {
-  queue: Album['_id'][];
-  currentPlaylistId: Playlist['_id'] | null;
-  currentAlbumId: Album['_id'] | null;
-  currentTrackId: Track['_id'] | null;
-  isPlaying: boolean;
 }
 
 export const PLAYER_PLAY_TRACK            = 'playa/player/PLAY_TRACK';
