@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as Path from 'path';
 import { saveData } from './saveData';
 import { EntityHashMap } from '../renderer/utils/storeUtils';
+import log, { LogContext, LogLevel } from './logger';
 import { AlbumNotFoundError } from '../errors';
 
 type Credentials = {
@@ -16,6 +17,7 @@ export default class DiscogsClient {
   discogs: typeof Client;
   db: Function;
   cache: EntityHashMap<string>;
+  notFoundCache: EntityHashMap<boolean>;
   disabled: boolean;
   debug: boolean;
   constructor(
@@ -29,11 +31,15 @@ export default class DiscogsClient {
     this.credentials = credentials;
     this.discogs = new Client(userAgent, credentials);
     this.cache = {};
+    this.notFoundCache = {};
     this.disabled = disabled;
     this.debug = debug;
   }
 
   async getAlbumCover(artist: string, title: string, _id: string): Promise<string> {
+    if (this.notFoundCache[_id]) {
+      return null;
+    }
     if (this.cache[_id]) {
       return this.cache[_id];
     }
@@ -41,6 +47,7 @@ export default class DiscogsClient {
     const imagePath = Path.join(this.coversPath, `${_id}.jpg`);
     if (fs.existsSync(imagePath)) {
       this.cache[_id] = imagePath;
+      this.notFoundCache[_id] = false;
       return this.cache[_id];
     }
 
@@ -53,7 +60,12 @@ export default class DiscogsClient {
       imageData = await this._getAlbumCoverFromDiscogs(artist, title, _id);
     } catch (error) {
       if (error instanceof AlbumNotFoundError) {
-        this.debug && console.log(`[Discogs] no cover found for ${artist} - ${title} [${_id}]`);
+        log({
+          context: LogContext.Discogs,
+          level: LogLevel.Warning,
+          message: `No cover found for ${artist} - ${title} [${_id}]`
+        });
+        this.notFoundCache[_id] = true;
         return null;
       }
     }
@@ -61,6 +73,7 @@ export default class DiscogsClient {
     const result = await saveData(imageData, imagePath, 'binary');
     if (result) {
       this.cache[_id] = imagePath;
+      this.notFoundCache[_id] = false;
       return this.cache[_id];
     }
   }

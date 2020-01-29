@@ -1,4 +1,5 @@
 import * as fs from 'fs-extra';
+import log, { LogContext } from './logger';
 import { FileSystemError } from '../errors';
 
 interface AppStateValues {
@@ -11,13 +12,15 @@ interface AppStateValues {
 export default class AppState {
   appState: AppStateValues;
   path: string;
-  debug: boolean;
-  constructor(path: string, debug: boolean) {
+  constructor(path: string) {
     this.path = path;
-    this.debug = debug;
   }
   setState(state: object): AppState {
-    this.debug && console.log('[AppState] Updating state', this.appState, state);
+    log({
+      context: LogContext.AppState,
+      message: 'Updating state'
+    }, this.appState, state);
+
     this.appState = {
       ...this.appState,
       ...state
@@ -30,7 +33,12 @@ export default class AppState {
   load(): AppState {
     try {
       this.appState = fs.readJSONSync(this.path);
-      this.debug && console.log(`[AppState] Loaded from ${this.path}...`, this.appState);
+
+      log({
+        context: LogContext.AppState,
+        message: `Loaded from ${this.path}...`
+      }, this.appState);
+
     } catch (error) {
       this.appState = {
         lastOpenedPlaylistId: null,
@@ -43,7 +51,11 @@ export default class AppState {
   }
   save(): AppState {
     try {
-      console.log(`[AppState] Saving to ${this.path}...`, this.appState);
+      log({
+        context: LogContext.AppState,
+        message: `Saving to ${this.path}...`
+      }, this.appState);
+
       fs.outputJSONSync(this.path, this.appState);
     } catch (error) {
       throw new FileSystemError(`[AppState]: error writing to ${this.path}`);

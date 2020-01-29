@@ -2,6 +2,7 @@ import PouchDB from 'pouchdb';
 import PouchFind from 'pouchdb-find';
 import search from 'pouchdb-quick-search';
 
+import log, { LogContext } from './logger';
 import { DatabaseError } from '../errors';
 
 const DEFAULT_QUERY_LIMIT = 20;
@@ -148,7 +149,10 @@ export default class Database {
   }
 
   async saveBulk<T>(entities: T[]): Promise<T[]> {
-    this.debug && console.log('[Database] Saving bulk:', entities);
+    log({
+      context: LogContext.Database,
+      message: 'Saving bulk'
+    }, entities);
     return await this.db.bulkDocs(entities);
   }
 
@@ -165,7 +169,10 @@ export default class Database {
   }
 
   async deleteBulk<T>(entities: T[]): Promise<T[]> {
-    this.debug && console.log('[Database] Deleting bulk:', entities);
+    log({
+      context: LogContext.Database,
+      message: 'Deleting bulk'
+    }, entities);
     return await this.db.bulkDocs(
       entities.map(e => ({ ...e, _deleted: true }))
     );
@@ -175,7 +182,10 @@ export default class Database {
     return Promise.all(
       entities.map(async entity => await this.db.remove(entity))
     ).then((results) => {
-      this.debug && console.log('[Database] Removing bulk: ', entities);
+      log({
+        context: LogContext.Database,
+        message: 'Removing bulk'
+      }, entities);
       return results;
     }).catch(() => {
       throw new DatabaseError('Problems bulk removing entities');

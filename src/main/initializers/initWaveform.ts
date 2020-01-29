@@ -2,6 +2,7 @@ import { ipcMain as ipc } from 'electron';
 import * as Path from 'path';
 import sha1 from 'sha1';
 import { saveData } from '../saveData';
+import log, { LogContext, LogLevel } from '../logger';
 import { FileSystemError } from '../../errors';
 
 import { WAVEFORM_PEAKS_COUNT, IPC_MESSAGES, COLORS } from '../../constants';
@@ -29,7 +30,11 @@ export default function initWaveform(userDataPath: string): void {
       return await saveData(renderWaveformSVG(content), targetPath, 'utf8');
     } catch (error) {
       if (error instanceof FileSystemError) {
-        console.log(`[Waveform] could not save waveform for ${trackId}`);
+        log({
+          context: LogContext.Waveform,
+          level: LogLevel.Warning,
+          message: `Could not save waveform for ${trackId}`
+        }, content);
       }
     }
   });

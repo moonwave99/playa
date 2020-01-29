@@ -19,7 +19,7 @@ export default function initIpc({
   focusSearchHandler
 }: InitIpcParams): Function {
   function errorHandler (_event: IpcRendererEvent, error: Error): void {
-    console.log(error);
+    console.log('[ipc]', error);
   }
   function navigateHandler (_event: IpcRendererEvent, path: string): void {
     history.replace(path);

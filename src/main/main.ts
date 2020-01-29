@@ -86,7 +86,7 @@ initDiscogsClient({
 
 initWaveform(userDataPath);
 
-const appState = initAppState(userDataPath, debug);
+const appState = initAppState(userDataPath);
 const { lastWindowSize, lastWindowPosition } = appState.getState();
 
 app.on('ready', async () => {
