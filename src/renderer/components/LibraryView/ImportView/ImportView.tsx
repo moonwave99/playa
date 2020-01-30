@@ -197,10 +197,10 @@ export const ImportView: FC<ImportViewProps> = ({
       {renderForm()}
       <TracklistView
         className="not-playable"
-        rawTracks={tracks.map(({ path }) => path)}
+        tracks={tracks}
+        tracklist={tracks.map(({ path }) => path)}
         showArtists={isAlbumFromVA}
-        showTrackNumbers={showTrackNumbers}
-        tracklist={tracks}/>
+        showTrackNumbers={showTrackNumbers}/>
     </div>
 	);
 }

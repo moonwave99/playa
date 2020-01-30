@@ -38,12 +38,12 @@ export interface TrackState {
 export const selectors = {
   state: ({ tracks }: ApplicationState): TrackState => tracks,
   allById: ({ tracks }: ApplicationState): EntityHashMap<Track> => tracks.allById,
-  findById: ({ tracks }: ApplicationState, id: Track['_id']): Track => tracks.allById[id]
+  findById: ({ tracks }: ApplicationState, id: Track['_id']): Track => tracks.allById[id],
+  findByList: ({ tracks }: ApplicationState, ids: Track['_id'][]): Track[] => ids.map(id => tracks.allById[id])
 };
 
 export const TRACK_GET_LIST_REQUEST  = 'playa/track/GET_LIST_REQUEST';
 export const TRACK_GET_LIST_RESPONSE = 'playa/track/GET_LIST_RESPONSE';
-
 
 interface GetTrackListRequestAction {
   type: typeof TRACK_GET_LIST_REQUEST;

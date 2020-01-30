@@ -74,11 +74,12 @@ export interface AlbumState {
 export const selectors = {
   state: ({ albums }: ApplicationState): AlbumState => albums,
   allById: ({ albums }: ApplicationState): EntityHashMap<Album> => albums.allById,
-  findById: ({ albums }: ApplicationState, id: Album['_id']): Album => albums.allById[id]
+  findById: ({ albums }: ApplicationState, id: Album['_id']): Album => albums.allById[id],
+  findByList: ({ albums }: ApplicationState, ids: Album['_id'][]): Album[] => ids.map(id => albums.allById[id])
 };
 
 type GetAlbumContentByIdSelection = {
-  tracklist: Track[];
+  tracks: Track[];
   cover: string;
 }
 
@@ -87,7 +88,7 @@ export const getAlbumContentById = createCachedSelector(
   trackSelectors.allById,
   coverSelectors.allById,
   (album, tracks, covers): GetAlbumContentByIdSelection => ({
-    tracklist: album.tracks.map(id => tracks[id]).filter(x => !!x),
+    tracks: album.tracks.map(id => tracks[id]).filter(x => !!x),
     cover: covers[album._id]
   })
 )((_state_: ApplicationState, id: Album['_id']) => id);

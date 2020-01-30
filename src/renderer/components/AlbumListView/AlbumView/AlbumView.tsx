@@ -48,8 +48,8 @@ export const AlbumView: FC<AlbumViewProps> = ({
   const [viewRef, inView] = useInView({ triggerOnce: true });
 
   const {
-    tracklist,
-    cover
+    cover,
+    tracks
   } = useSelector((state: ApplicationState) => getAlbumContentById(state, _id));
 
   const dispatch = useDispatch();
@@ -134,11 +134,11 @@ export const AlbumView: FC<AlbumViewProps> = ({
       </aside>
       <section className="album-content">
         <TracklistView
+          tracklist={album.tracks}
+          tracks={tracks}
           currentTrackId={currentTrackId}
           showArtists={showArtists}
           showTrackNumbers={showTrackNumbers}
-          rawTracks={album.tracks}
-          tracklist={tracklist}
           onTrackDoubleClick={onTrackDoubleClick}/>
       </section>
     </article>
