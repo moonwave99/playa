@@ -1,5 +1,5 @@
 import { configure } from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
+import Adapter = require('enzyme-adapter-react-16');
 const globalAny: any = global;
 
 globalAny.AudioContext = jest.fn().mockImplementation(() => {
