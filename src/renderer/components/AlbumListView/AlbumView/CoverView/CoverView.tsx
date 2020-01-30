@@ -28,7 +28,7 @@ export const CoverView: FC<CoverViewProps> = ({
       return '';
     }
     const { _id, artist, title } = album;
-    return `Play [${_id}] ${artist} - ${title}`;
+    return `[${_id}] ${artist} - ${title}`;
   }
 
   function _onImageLoad(): void {
@@ -47,20 +47,22 @@ export const CoverView: FC<CoverViewProps> = ({
   function onFigureContextMenu(): void {
     onContextMenu && onContextMenu(album);
   }
+
   const figureClassNames = cx(className, { loaded });
   const imageClassNames = cx({ empty: !src });
-
+  const title = formatCoverTitle();
   return (
     <figure
       className={figureClassNames}
-      title={formatCoverTitle()}
+      title={title}
       onClick={onFigureClick}
       onDoubleClick={onFigureDoubleClick}
       onContextMenu={onFigureContextMenu}>
       <img
         className={imageClassNames}
         onLoad={_onImageLoad}
-        src={src}/>
+        src={src}
+        alt={title}/>
     </figure>
   );
 }
