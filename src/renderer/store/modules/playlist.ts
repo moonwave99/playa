@@ -61,14 +61,14 @@ export const getPlaylistById = createCachedSelector(
   albumSelectors.allById,
   playerSelectors.state,
   (playlist, albums, player): GetPlaylistByIdSelection => {
-    const foundAlbums = playlist.albums ? toObj(
+    const foundAlbums = playlist && playlist.albums ? toObj(
       playlist.albums
         .map((id: Album['_id']) => albums[id])
         .filter(x => !!x)
     ) : {};
     return {
       ...player,
-      playlist,
+      playlist: playlist || {} as Playlist,
       albums: foundAlbums
     }
   }

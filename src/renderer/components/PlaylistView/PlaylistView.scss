@@ -6,6 +6,7 @@
   overflow: auto;
   height: 100%;
   width: 100%;
+  @include fadeInOut();
   .playlist-header {
     padding:
       var(--section-gutter)

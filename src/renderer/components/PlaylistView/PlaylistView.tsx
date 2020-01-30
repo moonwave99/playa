@@ -45,7 +45,7 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
 }) => {
   const { t } = useTranslation();
   const [albumView, setAlbumView] = useState(UIAlbumView.Extended);
-  const hasAlbums = Object.keys(albums).length > 0 && playlist.albums.length > 0;
+  const hasAlbums = playlist.albums.length > 0;
 
   useEffect(() => {
     const handler = (_event: Event, _albumView: UIAlbumView): void => {

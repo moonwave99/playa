@@ -1,6 +1,7 @@
-import React, { ReactElement, useEffect } from 'react';
+import React, { ReactElement, useState, useEffect } from 'react';
+import { CSSTransition } from 'react-transition-group';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams, useHistory } from 'react-router';
+import { Redirect, useParams } from 'react-router';
 import { IconName } from '@fortawesome/fontawesome-svg-core';
 import { PlaylistView } from '../PlaylistView/PlaylistView';
 
@@ -34,8 +35,8 @@ import actionsMap from '../../actions/actions';
 
 export const PlaylistContainer = (): ReactElement => {
   const dispatch = useDispatch();
-  const history = useHistory();
   const { _id } = useParams();
+  const [loading, setLoading] = useState(false);
 
   const {
     playlist,
@@ -46,12 +47,6 @@ export const PlaylistContainer = (): ReactElement => {
   } = useSelector((state: ApplicationState) => getPlaylistById(state, _id));
 
   useEffect(() => {
-    if (!playlist._id) {
-      history.replace(QUEUE);
-    }
-  });
-
-  useEffect(() => {
     dispatch(updateTitle(`playlist: ${playlist.title}`));
   }, [playlist.title]);
 
@@ -59,10 +54,12 @@ export const PlaylistContainer = (): ReactElement => {
     if (playlist._rev) {
       dispatch(updateState({ lastOpenedPlaylistId: playlist._id }));
     }
+    setLoading(false);
   }, [playlist._id, playlist._rev]);
 
   useEffect(() => {
     if (playlist._rev) {
+      setLoading(true);
       dispatch(getPlaylistRequest(playlist._id));
     }
   }, [playlist]);
@@ -138,16 +135,24 @@ export const PlaylistContainer = (): ReactElement => {
   ];
 
 	return (
-    <PlaylistView
-       albums={albums}
-       playlist={playlist}
-       isCurrent={currentPlaylistId === playlist._id}
-       currentAlbumId={currentAlbumId}
-       currentTrackId={currentTrackId}
-       albumActions={albumActions}
-       onAlbumOrderChange={onAlbumOrderChange}
-       onTitleChange={onTitleChange}
-       onAlbumContextMenu={onAlbumContextMenu}
-       onAlbumDoubleClick={onAlbumDoubleClick}/>
+    !playlist._id
+      ? <Redirect to={QUEUE}/>
+      : <CSSTransition
+          in={loading}
+          timeout={300}
+          classNames="playlist-view"
+          unmountOnExit>
+          <PlaylistView
+           albums={albums}
+           playlist={playlist}
+           isCurrent={currentPlaylistId === playlist._id}
+           currentAlbumId={currentAlbumId}
+           currentTrackId={currentTrackId}
+           albumActions={albumActions}
+           onAlbumOrderChange={onAlbumOrderChange}
+           onTitleChange={onTitleChange}
+           onAlbumContextMenu={onAlbumContextMenu}
+           onAlbumDoubleClick={onAlbumDoubleClick}/>
+       </CSSTransition>
 	);
 };
