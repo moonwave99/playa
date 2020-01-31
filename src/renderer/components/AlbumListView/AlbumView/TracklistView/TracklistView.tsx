@@ -48,7 +48,7 @@ export const TracklistView: FC<TracklistViewProps> = ({
         isCurrent={_id === currentTrackId}
         showArtists={showArtists}
         showTrackNumber={showTrackNumbers}
-        onTrackDoubleClick={onTrackDoubleClick}/>
+        onDoubleClick={onTrackDoubleClick}/>
     );
   }
 

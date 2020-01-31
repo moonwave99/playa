@@ -12,7 +12,7 @@ type TracklistViewItemProps = {
   isCurrent?: boolean;
   showArtists?: boolean;
   showTrackNumber?: boolean;
-  onTrackDoubleClick?: Function;
+  onDoubleClick?: Function;
 }
 
 // #TODO reload onClick if some tracks are not found
@@ -21,13 +21,13 @@ export const TracklistViewItem: FC<TracklistViewItemProps> = ({
   isCurrent = false,
   showTrackNumber = true,
   showArtists = false,
-  onTrackDoubleClick
+  onDoubleClick
 }) => {
   const { title, artist, duration, number } = track;
 
   function renderArtist(artist: string): ReactElement {
     return showArtists
-      ? <><Link className="artist" to={`${SEARCH}?query=artist: ${artist}`}>{artist}</Link>&nbsp;-&nbsp;</>
+      ? <><Link className="track-artist" to={`${SEARCH}?query=artist: ${artist}`}>{artist}</Link>&nbsp;-&nbsp;</>
       : null;
   }
 
@@ -38,17 +38,17 @@ export const TracklistViewItem: FC<TracklistViewItemProps> = ({
     return <span className={classNames}>{formatTrackNumber(number)}</span>;
   }
 
-  function onDoubleClick(event: SyntheticEvent): void {
+  function _onDoubleClick(event: SyntheticEvent): void {
     event.preventDefault();
-    onTrackDoubleClick && onTrackDoubleClick(track);
+    onDoubleClick && onDoubleClick(track);
   }
 
-  const trackClassNames = cx('ready', {
+  const trackClassNames = cx('tracklist-item', 'ready', {
     'is-current': isCurrent
   });
 
   return (
-    <li className={trackClassNames} onDoubleClick={onDoubleClick}>
+    <li className={trackClassNames} onDoubleClick={_onDoubleClick}>
       {renderTrackNumber(number)}
       <span className="playback-info">
         <FontAwesomeIcon
@@ -57,8 +57,8 @@ export const TracklistViewItem: FC<TracklistViewItemProps> = ({
           fixedWidth/>
       </span>
       {renderArtist(artist)}
-      <span className="title">{title}</span>
-      <span className="duration">{formatDuration(duration)}</span>
+      <span className="track-title">{title}</span>
+      <span className="track-duration">{formatDuration(duration)}</span>
     </li>
   );
 }

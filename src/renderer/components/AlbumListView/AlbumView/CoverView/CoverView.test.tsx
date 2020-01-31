@@ -13,7 +13,7 @@ describe('CoverView tests', () => {
     expect(wrapper.is('figure')).toBe(true);
   });
 
-  it('should have an <img> with an alt attribute', () => {
+  it('should contain an <img> with an alt attribute', () => {
     const wrapper = render(
       <CoverView src='path/to/image.jpg' album={albums[0]} />
     );
@@ -22,14 +22,14 @@ describe('CoverView tests', () => {
     expect(img.attr('alt')).toBeDefined();
   });
 
-  it('should have an <img>.empty if src if empty', () => {
+  it('should contain an <img>.empty if src if empty', () => {
     const wrapper = render(
       <CoverView src='' album={albums[0]} />
     );
     expect(wrapper.find('img.empty')).toHaveLength(1);
   });
 
-  it('should have the passed className', () => {
+  it('should contain the passed className', () => {
     const wrapper = render(
       <CoverView src='path/to/image.jpg' album={albums[0]} className="yo"/>
     );
