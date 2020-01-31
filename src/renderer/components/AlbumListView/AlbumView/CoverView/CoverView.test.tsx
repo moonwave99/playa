@@ -54,7 +54,7 @@ describe('CoverView tests', () => {
     expect(handler).toHaveBeenCalledWith(albums[0]);
   });
 
-  it('should call the onContextMenu handler when clicked', () => {
+  it('should call the onContextMenu handler when right clicked', () => {
     const handler = jest.fn();
     const wrapper = mount(
       <CoverView src='path/to/image.jpg' album={albums[0]} onContextMenu={handler}/>

@@ -14,7 +14,7 @@ describe('TracklistView tests', () => {
     expect(wrapper.is('.tracklist-view')).toBe(true);
   });
 
-  it('should render n=tracklist length <li>s', () => {
+  it('should render n=tracklist.length <li>s', () => {
     const wrapper = render(
       <TracklistView tracks={tracks} tracklist={tracklist}/>
     );

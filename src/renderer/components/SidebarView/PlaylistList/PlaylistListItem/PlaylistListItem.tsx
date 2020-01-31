@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { ReactElement, SyntheticEvent, FC } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link, generatePath } from 'react-router-dom';
 import { useDrop } from 'react-dnd';
@@ -11,19 +11,20 @@ import { PLAYLIST_SHOW } from '../../../../routes';
 
 type PlaylistListItemProps = {
   playlist: Playlist;
-  isCurrent: boolean;
-  isPlaying: boolean;
+  isCurrent?: boolean;
+  isPlaying?: boolean;
   onContextMenu?: Function;
   onPlayButtonDoubleClick?: Function;
 }
 
 export const PlaylistListItem: FC<PlaylistListItemProps> = ({
   playlist,
-  isCurrent,
-  isPlaying,
+  isCurrent = false,
+  isPlaying = false,
   onContextMenu,
   onPlayButtonDoubleClick
 }) => {
+  const { _id, _rev, title, albums } = playlist;
   const dispatch = useDispatch();
   const [{ isOver, canDrop }, drop] = useDrop({
     accept: [
@@ -32,10 +33,10 @@ export const PlaylistListItem: FC<PlaylistListItemProps> = ({
       UIDragTypes.PLAYLIST_ALBUMS,
       UIDragTypes.QUEUE_ALBUMS
     ],
-    drop: (item: UIDropItem) => {
+    drop: ({ _id }: UIDropItem) => {
       dispatch(savePlaylistRequest({
         ...playlist,
-        albums: uniq([...playlist.albums, item._id])
+        albums: uniq([...albums, _id])
       }));
     },
     collect: monitor => ({
@@ -44,8 +45,10 @@ export const PlaylistListItem: FC<PlaylistListItemProps> = ({
     }),
   });
 
-  function onClick(): boolean {
-    return isCurrent;
+  function onClick(event: SyntheticEvent): void {
+    if (isCurrent) {
+      event.preventDefault();
+    }
   }
 
   function _onContextMenu(): void {
@@ -56,35 +59,41 @@ export const PlaylistListItem: FC<PlaylistListItemProps> = ({
     onPlayButtonDoubleClick && onPlayButtonDoubleClick(playlist);
   }
 
-  const classNames = cx('playlist', {
-    'is-new': !playlist._rev,
+  function renderPlayButton(): ReactElement {
+    if (isPlaying || albums.length === 0) {
+      return null;
+    }
+    return (
+      <button className="play-button" onDoubleClick={_onPlayButtonDoubleClick}>
+        <FontAwesomeIcon
+          icon="play-circle"
+          className="play-button-icon"
+          fixedWidth/>
+      </button>
+    );
+  }  
+
+  const classNames = cx('playlist-list-item', {
+    'is-new': !_rev,
     'is-playing': isPlaying,
     'drag-is-over': isOver,
     'drag-can-drop': canDrop
   });
 
   return (
-    <li ref={drop} className={classNames}>
+    <li ref={drop} className={classNames} onContextMenu={_onContextMenu}>
       <Link
         onClick={onClick}
-        onContextMenu={_onContextMenu}
-        title={playlist._id}
-        to={generatePath(PLAYLIST_SHOW, { _id: playlist._id })}
-        className="playlist-item">
+        title={_id}
+        to={generatePath(PLAYLIST_SHOW, { _id })}
+        className="playlist-list-item-link">
           <FontAwesomeIcon
             icon={ isPlaying ? 'volume-up' : 'file-audio'}
             className="playlist-icon"
             fixedWidth/>
-          {playlist.title}
+          {title}
       </Link>
-      { isPlaying || playlist.albums.length === 0 ? null :
-        <button className="play-button" onDoubleClick={_onPlayButtonDoubleClick}>
-          <FontAwesomeIcon
-            icon="play-circle"
-            className="play-button-icon"
-            fixedWidth/>
-        </button>
-      }
+      { renderPlayButton() }
     </li>
   );
 }

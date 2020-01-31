@@ -5,7 +5,7 @@
   list-style: none;
   padding: 0;
   margin: 0;
-  .playlist {
+  .playlist-list-item {
     height: $mainUnit;
     line-height: $mainUnit;
     vertical-align: middle;
@@ -13,23 +13,23 @@
     display: flex;
     &.drag-is-over {
       background-color: $highlightColor;
-      .playlist-item {
+      .playlist-list-item-link {
         color: $darkColor;
       }
     }
     &.is-new {
-      .playlist-item {
+      .playlist-list-item-link {
         font-weight: bold;
         color: $highlightColor;
       }
     }
     &.is-current {
-      .playlist-item {
+      .playlist-list-item-link {
         font-weight: bold;
       }
     }
     &.is-playing {
-      .playlist-item {
+      .playlist-list-item-link {
         color: $mainColor;
       }
     }
@@ -38,7 +38,7 @@
         display: inline;
       }
     }
-    .playlist-item {
+    .playlist-list-item-link {
       display: block;
       flex: 1;
       padding: 0 0 0 $mainUnit;

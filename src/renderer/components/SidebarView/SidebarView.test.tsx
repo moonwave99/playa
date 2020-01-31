@@ -15,9 +15,9 @@ describe('SidebarView tests', () => {
 				hasSearchFocus={false}
 				recentPlaylists={playlists}
 				currentPlaylistId={null}
-				onCreatePlaylist={jest.fn}
-				onSearchBarBlur={jest.fn}
-				onSearchFormSubmit={jest.fn}
+				onCreatePlaylist={jest.fn()}
+				onSearchBarBlur={jest.fn()}
+				onSearchFormSubmit={jest.fn()}
 			/>
 		);
 		expect(wrapper.is('.sidebar')).toBe(true);
@@ -29,9 +29,9 @@ describe('SidebarView tests', () => {
 				hasSearchFocus={false}
 				recentPlaylists={playlists}
 				currentPlaylistId={null}
-				onCreatePlaylist={jest.fn}
-				onSearchBarBlur={jest.fn}
-				onSearchFormSubmit={jest.fn}
+				onCreatePlaylist={jest.fn()}
+				onSearchBarBlur={jest.fn()}
+				onSearchFormSubmit={jest.fn()}
 			/>
 		);
 		expect(wrapper.find('.button-library').is(':not(.button-outline)')).toBe(true);

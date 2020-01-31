@@ -93,7 +93,7 @@ export const renderInAll = wrap(
   Wrappers.DndProvider
 );
 
-export const mounInAll = wrap(
+export const mountInAll = wrap(
   Renderers.mount,
   Wrappers.Provider,
   Wrappers.Router,

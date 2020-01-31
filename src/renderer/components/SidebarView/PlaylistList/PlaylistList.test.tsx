@@ -14,4 +14,8 @@ describe('PlaylistList tests', () => {
     const wrapper = renderInAll(<PlaylistList playlists={playlists} currentPlaylistId={null}/>);
     expect(wrapper.is('.playlist-list')).toBe(true);
   });
+  it('should render n=playlists.length list items', () => {
+    const wrapper = renderInAll(<PlaylistList playlists={playlists} currentPlaylistId={null}/>);
+    expect(wrapper.find('li')).toHaveLength(playlists.length);
+  });
 });
