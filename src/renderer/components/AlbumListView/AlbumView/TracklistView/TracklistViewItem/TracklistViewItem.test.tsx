@@ -5,7 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { TracklistViewItem } from './TracklistViewItem';
 import { tracks } from '../../../../../../../test/fixtures';
 
-describe('TracklistView tests', () => {
+describe('TracklistViewItem tests', () => {
   it('should render a .tracklist-item', () => {
     const wrapper = render(
       <TracklistViewItem track={tracks[0]}/>
