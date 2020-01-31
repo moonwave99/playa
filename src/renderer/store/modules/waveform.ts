@@ -46,11 +46,13 @@ export const getWaveformRequest = (track: Track): Function =>
     });
     await waveform.load();
     const waveformContent = waveform.getPath();
-    dispatch({
-      type: WAVEFORM_GET_RESPONSE,
-      path: await ipc.invoke(IPC_WAVEFORM_SAVE_REQUEST, track._id, waveformContent),
-      track
-    });
+    if (waveformContent) {
+      dispatch({
+        type: WAVEFORM_GET_RESPONSE,
+        path: await ipc.invoke(IPC_WAVEFORM_SAVE_REQUEST, track._id, waveformContent),
+        track
+      });
+    }
   }
 
 const INITIAL_STATE = {

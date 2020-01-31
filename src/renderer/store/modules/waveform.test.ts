@@ -11,6 +11,15 @@ import reducer, {
   WAVEFORM_GET_RESPONSE
 } from './waveform';
 
+jest.mock('../../lib/waveform', () => {
+  return {
+    Waveform: class{
+      getPath(): string { return 'data'; }
+      async load(): Promise<void> { true }
+    }
+  }
+});
+
 describe('waveform actions', () => {
   describe('getWaveformRequest', () => {
     it('should dispatch getWaveformRequest request', async () => {

@@ -73,7 +73,6 @@ export class Waveform {
 
 	getPath(): string {
 		if (!this.audioBuffer) {
-			console.log('[Waveform] No audio buffer to proccess');
 			return null;
 		}
 
