@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { render, mount } from 'enzyme';
-import { renderInRouter } from '../../../../../../../test/utils';
+import { renderInRouter } from '../../../../../../../test/testUtils';
 
 import { TracklistViewItem } from './TracklistViewItem';
 import { tracks } from '../../../../../../../test/fixtures';

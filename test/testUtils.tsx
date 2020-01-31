@@ -29,7 +29,14 @@ const routerWrapper = function(element: ReactElement) {
   return <MemoryRouter>{element}</MemoryRouter>;
 }
 
-const providerWrapper = function(element: ReactElement, store: object) {
+// increment based on test fails
+const defaultStore = {
+  covers: {
+    allById: {}
+  }
+};
+
+const providerWrapper = function(element: ReactElement, store: object = defaultStore) {
   const mockedStore = configureMockStore()(store);
   return <Provider store={mockedStore}>{element}</Provider>;
 }
@@ -70,6 +77,27 @@ export const renderInDnDProvider =
   (element: ReactElement) => wrap(Renderers.render, Wrappers.DndProvider)(element);
 export const mountInDnDProvider =
   (element: ReactElement) => wrap(Renderers.mount, Wrappers.DndProvider)(element);
+
+export const shallowInAll = wrap(
+  Renderers.shallow,
+  Wrappers.Provider,
+  Wrappers.Router,
+  Wrappers.DndProvider
+);
+
+export const renderInAll = wrap(
+  Renderers.render,
+  Wrappers.Provider,
+  Wrappers.Router,
+  Wrappers.DndProvider
+);
+
+export const mounInAll = wrap(
+  Renderers.mount,
+  Wrappers.Provider,
+  Wrappers.Router,
+  Wrappers.DndProvider
+);
 
 export const mockRouter = function({
   routeParams = { _id: '1' },
