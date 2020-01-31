@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { IconName } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import cx from 'classnames';
 import { SearchBar } from '../SearchBar/SearchBar';
 import { NewPlaylistButton } from './NewPlaylistButton/NewPlaylistButton';
 import { PlaylistList } from './PlaylistList/PlaylistList';
@@ -50,8 +51,10 @@ export const SidebarView: FC<SidebarViewProps> = ({
 	const { t } = useTranslation();
 	const location = useLocation();
 
-	function renderLink(path: string): ReactElement {
-		const classNames = matchPath(location.pathname, { path }) ? 'button' : 'button button-outline';
+	function renderLink(path: string, className: string): ReactElement {
+		const classNames = cx('button', `button-${className}`, {
+			'button-outline': !matchPath(location.pathname, { path })
+		});
 		return (
 			<Link to={path} className={classNames}>
 				<FontAwesomeIcon icon={icons[path]} className="button-icon"/>
@@ -76,8 +79,8 @@ export const SidebarView: FC<SidebarViewProps> = ({
 			<section className="sidebar-header">
 				<div className="button-wrapper">
 					{renderSearchBar()}
-					{renderLink(LIBRARY)}
-					{renderLink(QUEUE)}
+					{renderLink(LIBRARY, 'library')}
+					{renderLink(QUEUE, 'queue')}
 				</div>
 			</section>
 			<section className="sidebar-footer">
@@ -87,7 +90,7 @@ export const SidebarView: FC<SidebarViewProps> = ({
 					onDrop={onCreatePlaylist}/>
 				<PlaylistList playlists={recentPlaylists} currentPlaylistId={currentPlaylistId}/>
 				<div className="button-wrapper">
-					{renderLink(PLAYLIST_ALL)}
+					{renderLink(PLAYLIST_ALL, 'all-playlists')}
 				</div>
 			</section>
 		</aside>

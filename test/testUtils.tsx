@@ -25,16 +25,17 @@ export enum Wrappers {
   DndProvider = 'DndProvider'
 }
 
-const routerWrapper = function(element: ReactElement) {
-  return <MemoryRouter>{element}</MemoryRouter>;
-}
-
 // increment based on test fails
 const defaultStore = {
   covers: {
     allById: {}
   }
 };
+
+
+const routerWrapper = function(element: ReactElement) {
+  return <MemoryRouter>{element}</MemoryRouter>;
+}
 
 const providerWrapper = function(element: ReactElement, store: object = defaultStore) {
   const mockedStore = configureMockStore()(store);
@@ -101,11 +102,13 @@ export const mounInAll = wrap(
 
 export const mockRouter = function({
   routeParams = { _id: '1' },
-  routeMatch = { url: '/'}
+  routeMatch = { url: '/'},
+  location = { pathname: '/' }
 }) {
   jest.mock('react-router', () => ({
     ...jest.requireActual('react-router'),
     useParams: () => routeParams,
-    useRouteMatch: () => routeMatch
+    useRouteMatch: () => routeMatch,
+    useLocation: () => location
   }));
 }
