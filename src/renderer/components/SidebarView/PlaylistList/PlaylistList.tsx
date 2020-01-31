@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { ReactElement, FC } from 'react';
 import { useDispatch } from 'react-redux';
 import { useRouteMatch } from 'react-router';
 import { PlaylistListItem } from './PlaylistListItem/PlaylistListItem';
@@ -53,17 +53,22 @@ export const PlaylistList: FC<PlaylistListProps> = ({
     }).handler();
   }
 
+  function renderPlaylist(playlist: Playlist): ReactElement {
+    const { _id } = playlist;
+    return (
+      <PlaylistListItem
+        key={_id}
+        isCurrent={_id === params._id}
+        isPlaying={_id === currentPlaylistId}
+        playlist={playlist}
+        onContextMenu={onPlaylistContextMenu}
+        onPlayButtonDoubleClick={onPlayButtonDoubleClick}/>
+    );
+  }
+
   return (
     <ul className="playlist-list">
-      { playlists.map(
-        playlist => <PlaylistListItem
-          key={playlist._id}
-          isCurrent={playlist._id === params._id}
-          isPlaying={playlist._id === currentPlaylistId}
-          playlist={playlist}
-          onContextMenu={onPlaylistContextMenu}
-          onPlayButtonDoubleClick={onPlayButtonDoubleClick}/>
-      ) }
+      { playlists.map(renderPlaylist) }
     </ul>
   );
 }

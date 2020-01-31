@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { render, mount } from 'enzyme';
-import { MemoryRouter } from 'react-router-dom';
+import { renderInRouter } from '../../../../../../../test/utils';
 
 import { TracklistViewItem } from './TracklistViewItem';
 import { tracks } from '../../../../../../../test/fixtures';
@@ -51,10 +51,8 @@ describe('TracklistViewItem tests', () => {
 
   it('should contain a .track-artist containing the track artist(s) if showArtists is true', () => {
     const track = tracks[0];
-    const wrapper = render(
-      <MemoryRouter>
-        <TracklistViewItem track={tracks[0]} showArtists/>
-      </MemoryRouter>
+    const wrapper = renderInRouter(
+      <TracklistViewItem track={tracks[0]} showArtists/>
     );
     expect(wrapper.find('.track-artist').text()).toEqual(track.artist);
   });

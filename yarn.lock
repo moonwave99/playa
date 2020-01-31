@@ -7620,6 +7620,13 @@ react-dnd-html5-backend@^10.0.2:
   dependencies:
     dnd-core "^10.0.2"
 
+react-dnd-test-backend@^10.0.2:
+  version "10.0.2"
+  resolved "https://registry.yarnpkg.com/react-dnd-test-backend/-/react-dnd-test-backend-10.0.2.tgz#4f21b3bbf188ff5000dee1949e4053cb6e38080d"
+  integrity sha512-cYTvE+JEIY24SeytWM4xQobsEforuW2TjhZ1DOQmlEwL1rr5kIuuWAmsYM30Mtv5G1oyNYqzxhAZ6+w3y1IX5g==
+  dependencies:
+    dnd-core "^10.0.2"
+
 react-dnd@^10.0.2:
   version "10.0.2"
   resolved "https://registry.yarnpkg.com/react-dnd/-/react-dnd-10.0.2.tgz#a6ad8eb3d9f2c573031f7ce05012e5c767a0b1fc"
