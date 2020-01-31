@@ -2,7 +2,7 @@ import * as React from 'react';
 import { render, mount } from 'enzyme';
 
 import { CoverView } from './CoverView';
-import { albums } from '../../../../../../test/fixtures';
+import { albums } from '../../../../../../test/testFixtures';
 
 describe('CoverView tests', () => {
   it('should render a <figure> with a title attribute', () => {

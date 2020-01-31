@@ -3,7 +3,7 @@ import thunk from 'redux-thunk';
 const mockStore = configureStore([thunk]);
 
 import { toObj } from '../../utils/storeUtils';
-import { albums, tracks } from '../../../../test/fixtures';
+import { albums, tracks } from '../../../../test/testFixtures';
 import reducer, {
   AlbumActionTypes,
   AlbumState,

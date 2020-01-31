@@ -7,7 +7,7 @@ mockRouter({
 });
 
 import { PlaylistList } from './PlaylistList';
-import { playlists } from '../../../../../test/fixtures';
+import { playlists } from '../../../../../test/testFixtures';
 
 describe('PlaylistList tests', () => {
   it('should render a .playlist-list', () => {

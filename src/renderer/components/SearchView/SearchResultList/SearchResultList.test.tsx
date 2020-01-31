@@ -3,7 +3,7 @@ import { render } from 'enzyme';
 import { renderInAll } from '../../../../../test/testUtils';
 
 import { SearchResultList } from './SearchResultList';
-import { albums } from '../../../../../test/fixtures';
+import { albums } from '../../../../../test/testFixtures';
 
 describe('SearchResultList tests', () => {
   it('should render n=results.length rows', () => {

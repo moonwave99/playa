@@ -3,7 +3,7 @@ import { render, mount } from 'enzyme';
 import { renderInRouter } from '../../../../../../../test/testUtils';
 
 import { TracklistViewItem } from './TracklistViewItem';
-import { tracks } from '../../../../../../../test/fixtures';
+import { tracks } from '../../../../../../../test/testFixtures';
 
 describe('TracklistViewItem tests', () => {
   it('should render a .tracklist-item', () => {

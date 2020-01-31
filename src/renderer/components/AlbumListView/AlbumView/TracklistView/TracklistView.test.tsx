@@ -2,7 +2,7 @@ import * as React from 'react';
 import { render } from 'enzyme';
 
 import { TracklistView } from './TracklistView';
-import { tracks } from '../../../../../../test/fixtures';
+import { tracks } from '../../../../../../test/testFixtures';
 
 describe('TracklistView tests', () => {
   const tracklist = tracks.map(({ _id }) => _id);

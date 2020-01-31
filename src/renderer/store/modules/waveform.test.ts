@@ -2,7 +2,7 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 const mockStore = configureStore([thunk]);
 
-import { tracks } from '../../../../test/fixtures';
+import { tracks } from '../../../../test/testFixtures';
 import reducer, {
   WaveformActionTypes,
   WaveformState,

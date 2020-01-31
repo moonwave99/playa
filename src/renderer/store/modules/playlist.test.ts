@@ -2,7 +2,7 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 const mockStore = configureStore([thunk]);
 
-import { playlists } from '../../../../test/fixtures';
+import { playlists } from '../../../../test/testFixtures';
 import reducer, {
   Playlist,
   PlaylistActionTypes,

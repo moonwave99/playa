@@ -2,7 +2,7 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 const mockStore = configureStore([thunk]);
 
-import { albums, playlists } from '../../../../test/fixtures';
+import { albums, playlists } from '../../../../test/testFixtures';
 import { Album, ALBUM_GET_LIST_RESPONSE } from './album';
 import { toObj } from '../../utils/storeUtils';
 

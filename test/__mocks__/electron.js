@@ -1,4 +1,4 @@
-const fixtures = require('../fixtures');
+const fixtures = require('../testFixtures');
 const { IPC_MESSAGES } = require('../../src/constants');
 const {
   IPC_PLAYLIST_GET_ALL_REQUEST,
