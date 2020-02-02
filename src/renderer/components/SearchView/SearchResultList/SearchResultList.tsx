@@ -77,8 +77,8 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
               row={row}
               album={row.original}
               isCurrent={row.original._id === currentAlbumId}
-              onResultContextMenu={onResultContextMenu}
-              onResultDoubleClick={onResultDoubleClick}/>
+              onContextMenu={onResultContextMenu}
+              onCoverDoubleClick={onResultDoubleClick}/>
           })}
         </tbody>
       </table>

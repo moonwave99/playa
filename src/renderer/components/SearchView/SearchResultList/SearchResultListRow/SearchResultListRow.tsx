@@ -15,17 +15,17 @@ import { ApplicationState } from '../../../../store/store';
 type SearchResultListRowProps = {
   row: Row;
   album: Album;
-  isCurrent: boolean;
-  onResultContextMenu: Function;
-  onResultDoubleClick: Function;
+  isCurrent?: boolean;
+  onContextMenu: Function;
+  onCoverDoubleClick: Function;
 }
 
 export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
   row,
   album,
-  isCurrent,
-  onResultContextMenu,
-  onResultDoubleClick
+  isCurrent = false,
+  onContextMenu,
+  onCoverDoubleClick
 }) => {
   const dispatch = useDispatch();
   const { _id } = album;
@@ -46,12 +46,12 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
     })
   });
 
-  function onConTextMenu(): void {
-    onResultContextMenu(album);
+  function _onConTextMenu(): void {
+    onContextMenu(album);
   }
 
-  function onDoubleClick(): void {
-    onResultDoubleClick(album);
+  function _onCoverDoubleClick(): void {
+    onCoverDoubleClick(album);
   }
 
   function onArtistClick(event: SyntheticEvent): void {
@@ -66,7 +66,7 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
         cellContent =
           <div ref={drag}>
             <CoverView
-              onDoubleClick={onDoubleClick}
+              onDoubleClick={_onCoverDoubleClick}
               album={album}
               src={cover}/>
           </div>;
@@ -105,7 +105,7 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
     <tr {...row.getRowProps()}
       className={classNames}
       style={{ opacity }}
-      onContextMenu={onConTextMenu}
+      onContextMenu={_onConTextMenu}
       ref={viewRef}>
       {row.cells.map(renderCell)}
     </tr>
