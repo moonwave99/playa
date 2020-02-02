@@ -1,4 +1,4 @@
-import React, { useEffect, FC } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
@@ -17,11 +17,7 @@ import actionsMap from '../../actions/actions';
 
 import './SearchView.scss';
 
-type SearchViewProps = {
-
-};
-
-export const SearchView: FC<SearchViewProps> = () => {
+export const SearchView = (): ReactElement => {
   const {
     query,
     results,
