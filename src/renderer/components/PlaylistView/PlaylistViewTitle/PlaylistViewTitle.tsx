@@ -6,7 +6,10 @@ type PlaylistViewTitleProps = {
   onTitleChange: Function;
 };
 
-export const PlaylistViewTitle: FC<PlaylistViewTitleProps> = ({ playlist, onTitleChange }) => {
+export const PlaylistViewTitle: FC<PlaylistViewTitleProps> = ({
+	playlist,
+	onTitleChange
+}) => {
 	const [title, setTitle] = useState(playlist.title);
 	const [isTitleEditing, setTitleEditing] = useState(false);
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -51,7 +54,7 @@ export const PlaylistViewTitle: FC<PlaylistViewTitleProps> = ({ playlist, onTitl
 
 	function renderForm(): ReactElement {
 		return (
-			<form onSubmit={onSubmit}>
+			<form className="playlist-title-form" onSubmit={onSubmit}>
 				<input
 					className="header-like"
 					ref={inputRef}
@@ -70,6 +73,6 @@ export const PlaylistViewTitle: FC<PlaylistViewTitleProps> = ({ playlist, onTitl
 	return (
 		isTitleEditing
 			? renderForm()
-			: <h1 onClick={onTitleClick}>{title}</h1>
+			: <h1 className="playlist-title" onClick={onTitleClick}>{title}</h1>
 	);
 }
