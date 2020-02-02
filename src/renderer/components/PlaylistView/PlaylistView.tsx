@@ -21,7 +21,7 @@ const { IPC_UI_TOGGLE_ALBUM_VIEW } = IPC_MESSAGES;
 type PlaylistViewProps = {
   albums: EntityHashMap<Album>;
   playlist: Playlist;
-  isCurrent: boolean;
+  isCurrent?: boolean;
   currentAlbumId: Album['_id'];
   currentTrackId: Track['_id'];
   albumActions: ActionsConfig[];
@@ -65,9 +65,13 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
     function onButtonClick(): void {
       setAlbumView(otherView);
     }
+    const buttonClasses = cx('playlist-toggle-view-button', {
+      compact: albumView === UIAlbumView.Compact,
+      extended: albumView === UIAlbumView.Extended
+    });
     return (
       <button
-        className="playlist-toggle-view-button"
+        className={buttonClasses}
         onClick={onButtonClick}>
         <FontAwesomeIcon icon={icon as IconName} className="button-icon"/>
         {t(i18nkey)}
@@ -90,7 +94,9 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
             onTitleChange={onTitleChange}/>
         </div>
         <p className="playlist-info header-like">
-          <span>{t('playlists.createdOn', { date })}</span>
+          <span className="playlist-info-created-on">
+          {t('playlists.createdOn', { date })}
+          </span>
           { renderToggleViewButton() }
         </p>
       </header>
