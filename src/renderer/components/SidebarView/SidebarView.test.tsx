@@ -3,7 +3,7 @@ import { renderInAll, mockRouter } from '../../../../test/testUtils';
 import { playlists } from '../../../../test/testFixtures';
 
 mockRouter({
-  location: { pathname: '/library' }
+  location: { pathname: '/library', search: '' }
 });
 
 import { SidebarView } from './SidebarView';

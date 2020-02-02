@@ -103,7 +103,10 @@ export const mountInAll = wrap(
 export const mockRouter = function({
   routeParams = { _id: '1' },
   routeMatch = { url: '/'},
-  location = { pathname: '/', search: '' }
+  location = {
+    pathname: '/',
+    search: ''
+  }
 }) {
   jest.mock('react-router', () => ({
     ...jest.requireActual('react-router'),
