@@ -149,20 +149,28 @@ export const PlayerView: FC<PlayerViewProps> = ({
 		{ 'is-playing': isPlaying}
 	);
 
+	function renderPlayerControls(): ReactElement {
+		return (
+			<section className="player-controls">
+				<button className="control control-prev" onClick={onPrevButtonClick}>
+					<FontAwesomeIcon icon="step-backward" fixedWidth/>
+				</button>
+				<button className={playbackButtonClasses} onClick={onPlaybackButtonClick}>
+					<FontAwesomeIcon icon={isPlaying ? 'pause' : 'play'} fixedWidth/>
+				</button>
+				<button className="control control-next" onClick={onNextButtonClick}>
+					<FontAwesomeIcon icon="step-forward" fixedWidth/>
+				</button>
+			</section>
+		);
+	}	
+
+	const shouldRenderPlaybackBar = currentTrack && currentAlbum;
+
 	return (
     <section className="player">
 			<div className="player-sidebar-wrapper">
-				<section className="player-controls">
-					<button className="control control-prev" onClick={onPrevButtonClick}>
-						<FontAwesomeIcon icon="step-backward" fixedWidth/>
-					</button>
-					<button className={playbackButtonClasses} onClick={onPlaybackButtonClick}>
-						<FontAwesomeIcon icon={isPlaying ? 'pause' : 'play'} fixedWidth/>
-					</button>
-					<button className="control control-next" onClick={onNextButtonClick}>
-						<FontAwesomeIcon icon="step-forward" fixedWidth/>
-					</button>
-				</section>
+				{renderPlayerControls()}
 			</div>
 			<section className="player-album-cover-wrapper">
 				<CoverView
@@ -171,7 +179,7 @@ export const PlayerView: FC<PlayerViewProps> = ({
 					album={currentAlbum}
 					onClick={onCoverClick}/>
 			</section>
-			{ currentTrack && currentAlbum &&
+			{ shouldRenderPlaybackBar &&
 				<PlaybackBar
 					currentTrack={currentTrack}
 					currentAlbum={currentAlbum}
