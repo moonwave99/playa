@@ -5,12 +5,16 @@ import cx from 'classnames';
 import './SearchBar.scss';
 
 type SearchBarProps = {
-	hasFocus: boolean;
+	hasFocus?: boolean;
 	onFormSubmit: Function;
 	onBlur: Function;
 };
 
-export const SearchBar: FC<SearchBarProps> = ({ hasFocus, onFormSubmit, onBlur }) => {
+export const SearchBar: FC<SearchBarProps> = ({
+	hasFocus = false,
+	onFormSubmit,
+	onBlur
+}) => {
 	const { t } = useTranslation();
 	const inputRef = useRef<HTMLInputElement>(null);
 	const _onFormSubmit = (event: SyntheticEvent): void => {
