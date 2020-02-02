@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events';
+import { encodePath } from './utils/pathUtils';
 
 type PlayerParams = {
   audioElement: HTMLAudioElement;
@@ -41,7 +42,7 @@ export default class Player extends EventEmitter {
   }
   loadTrack(path: string): void {
     if (path) {
-      this.audioElement.src = path;
+      this.audioElement.src = encodePath(path);
     }
     this.playing = false;
   }

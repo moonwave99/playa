@@ -1,3 +1,5 @@
+import { encodePath } from '../utils/pathUtils';
+
 // #SEE: https://github.com/antonkalinin/audio-waveform-svg-path
 type WaveformParams = {
 	path: string;
@@ -13,7 +15,7 @@ export class Waveform {
 		path,
 		peaksCount
 	}: WaveformParams) {
-		this.path = path;
+		this.path = encodePath(path);
 		this.peaksCount = peaksCount;
 		this.context = new AudioContext();
 	}
