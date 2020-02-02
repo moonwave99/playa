@@ -1,6 +1,6 @@
 import { ipcMain as ipc } from 'electron';
 import * as Path from 'path';
-import DiscogsClient from '../discogsClient';
+import DiscogsClient from '../lib/discogsClient';
 import { IPC_MESSAGES } from '../../constants';
 
 const {

@@ -15,5 +15,5 @@ globalAny.fetchMock = globalAny.fetch;
 
 configure({ adapter: new Adapter() });
 
-import initI18n from '../src/renderer/lib/initI18n';
+import initI18n from '../src/renderer/initializers/initI18n';
 initI18n();

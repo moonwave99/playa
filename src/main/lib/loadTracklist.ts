@@ -1,6 +1,6 @@
 import { parseFile, IAudioMetadata } from 'music-metadata';
 import Database from './database';
-import { Track, getDefaultTrack } from '../renderer/store/modules/track';
+import { Track, getDefaultTrack } from '../../renderer/store/modules/track';
 
 interface MetadataResult {
   _id: string;

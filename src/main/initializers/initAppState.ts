@@ -1,6 +1,6 @@
 import * as Path from 'path';
 import { ipcMain as ipc } from 'electron';
-import AppState from '../appState';
+import AppState from '../lib/appState';
 
 import { IPC_MESSAGES } from '../../constants';
 

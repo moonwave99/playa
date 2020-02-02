@@ -1,5 +1,5 @@
 import { ipcRenderer as ipc } from 'electron';
-import Player from '../../player';
+import Player from '../../lib/player';
 import { Playlist } from './playlist';
 import {
   Album,

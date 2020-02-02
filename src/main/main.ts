@@ -2,7 +2,7 @@ import { app, BrowserWindow, shell } from 'electron';
 import { is } from 'electron-util';
 import * as Path from 'path';
 import * as url from 'url';
-import getUserDataPath from './getUserDataPath';
+import getUserDataPath from './lib/getUserDataPath';
 
 import initMenu from './initializers/initMenu';
 import initDatabase from './initializers/initDatabase';

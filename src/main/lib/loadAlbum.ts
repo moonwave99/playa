@@ -1,7 +1,7 @@
 import * as Path from 'path';
 import glob from 'globby';
 
-import { MUSIC_FILE_EXTENSIONS } from '../constants';
+import { MUSIC_FILE_EXTENSIONS } from '../../constants';
 
 //#TODO: fix db for [Ep] => [EP]
 function escapePath(path: string): string {

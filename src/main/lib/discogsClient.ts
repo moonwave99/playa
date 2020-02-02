@@ -2,9 +2,9 @@ import { Client } from 'disconnect';
 import * as fs from 'fs';
 import * as Path from 'path';
 import { saveData } from './saveData';
-import { EntityHashMap } from '../renderer/utils/storeUtils';
+import { EntityHashMap } from '../../renderer/utils/storeUtils';
 import log, { LogContext, LogLevel } from './logger';
-import { AlbumNotFoundError } from '../errors';
+import { AlbumNotFoundError } from '../../errors';
 
 type Credentials = {
   consumerKey: string;

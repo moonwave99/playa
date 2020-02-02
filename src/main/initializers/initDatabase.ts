@@ -1,8 +1,8 @@
 import { ipcMain as ipc } from 'electron';
 import * as Path from 'path';
-import Database from '../database';
-import loadAlbum from '../loadAlbum';
-import loadTracklist from '../loadTracklist';
+import Database from '../lib/database';
+import loadAlbum from '../lib/loadAlbum';
+import loadTracklist from '../lib/loadTracklist';
 import { Album } from '../../renderer/store/modules/album';
 import { parseQuery } from '../../renderer/utils/searchUtils';
 import { IPC_MESSAGES } from '../../constants';

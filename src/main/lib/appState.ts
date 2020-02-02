@@ -1,6 +1,6 @@
 import * as fs from 'fs-extra';
 import log, { LogContext } from './logger';
-import { FileSystemError } from '../errors';
+import { FileSystemError } from '../../errors';
 
 interface AppStateValues {
   lastOpenedPlaylistId: string;

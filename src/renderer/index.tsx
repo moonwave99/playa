@@ -7,11 +7,11 @@ import { DndProvider } from 'react-dnd';
 import Backend from 'react-dnd-html5-backend';
 import ReactModal from 'react-modal';
 import WebFont from 'webfontloader';
-import Player from './player';
+import Player from './lib/player';
 import { App } from './components/App/App';
 import { initStore, history } from './store/store';
-import initI18n from './lib/initI18n';
-import initFontAwesome from './lib/initFontAwesome';
+import initI18n from './initializers/initI18n';
+import initFontAwesome from './initializers/initFontAwesome';
 
 import { FONTS, IPC_MESSAGES } from '../constants';
 const {

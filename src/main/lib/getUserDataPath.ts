@@ -1,6 +1,6 @@
 import { app } from 'electron';
 import { is } from 'electron-util';
-import { name as APP_NAME } from '../../package.json';
+import { name as APP_NAME } from '../../../package.json';
 
 export default function getUserDataPath(): string {
   let userDataPath = app.getPath('userData');

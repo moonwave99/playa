@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { encodePath } from './utils/pathUtils';
+import { encodePath } from '../utils/pathUtils';
 
 type PlayerParams = {
   audioElement: HTMLAudioElement;

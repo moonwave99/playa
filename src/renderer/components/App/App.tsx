@@ -2,7 +2,7 @@ import React, { FC, ReactElement, useState, useEffect } from 'react';
 import { Switch, Route, useHistory } from 'react-router';
 import { generatePath } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import Player from '../../player';
+import Player from '../../lib/player';
 import { PlayerView } from '../PlayerView/PlayerView';
 import { LibraryView } from '../LibraryView/LibraryView';
 import { QueueView } from '../QueueView/QueueView';
@@ -11,7 +11,7 @@ import { SidebarView } from '../SidebarView/SidebarView';
 import { AllPlaylistContainer } from '../AllPlaylistContainer/AllPlaylistContainer';
 import { PlaylistContainer } from '../PlaylistContainer/PlaylistContainer';
 
-import initIpc from '../../lib/initIpc';
+import initIpc from '../../initializers/initIpc';
 import {
   Playlist,
   getDefaultPlaylist,

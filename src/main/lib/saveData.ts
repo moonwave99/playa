@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import { FileSystemError } from '../errors';
+import { FileSystemError } from '../../errors';
 
 export async function saveData(
   data: string,

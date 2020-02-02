@@ -17,7 +17,7 @@ import initReducer, {
   PLAYER_UNLOAD_TRACK
 } from './player';
 
-import Player from '../../player';
+import Player from '../../lib/player';
 
 describe('player actions', () => {
   it('should dispatch play request', async () => {

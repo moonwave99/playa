@@ -3,7 +3,7 @@ import PouchFind from 'pouchdb-find';
 import search from 'pouchdb-quick-search';
 
 import log, { LogContext } from './logger';
-import { DatabaseError } from '../errors';
+import { DatabaseError } from '../../errors';
 
 const DEFAULT_QUERY_LIMIT = 20;
 const DEFAULT_QUERY_ORDER = 'asc';

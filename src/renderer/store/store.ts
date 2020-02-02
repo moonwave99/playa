@@ -4,7 +4,7 @@ import { createLogger } from 'redux-logger';
 import thunk from 'redux-thunk';
 import { History, createHashHistory } from 'history';
 
-import Player from '../player';
+import Player from '../lib/player';
 import uiReducer, { UIState } from './modules/ui';
 import initPlayerReducer, { PlayerState } from './modules/player';
 import playlistReducer, { PlaylistState } from './modules/playlist';

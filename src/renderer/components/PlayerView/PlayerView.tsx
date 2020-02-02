@@ -17,7 +17,7 @@ import { getPrevTrack, getNextTrack } from '../../utils/tracklistUtils';
 import { getWaveformRequest } from '../../store/modules/waveform';
 import { showDialog } from '../../store/modules/ui';
 
-import Player, { PlaybackInfo, PLAYER_EVENTS } from '../../player';
+import Player, { PlaybackInfo, PLAYER_EVENTS } from '../../lib/player';
 
 import { QUEUE } from '../../routes';
 import './PlayerView.scss';
