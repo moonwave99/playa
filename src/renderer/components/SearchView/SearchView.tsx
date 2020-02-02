@@ -1,7 +1,7 @@
 import React, { useEffect, FC } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router';
+import { useLocation } from 'react-router';
 import { SearchResultList } from './SearchResultList/SearchResultList';
 import { updateTitle } from '../../store/modules/ui';
 import { Album } from '../../store/modules/album';
@@ -28,7 +28,8 @@ export const SearchView: FC<SearchViewProps> = () => {
     isSearching,
     currentAlbumId
   } = useSelector(({ search, player }) => ({...search, ...player }));
-  const history = useHistory();
+
+  const location = useLocation();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -38,8 +39,9 @@ export const SearchView: FC<SearchViewProps> = () => {
     dispatch(updateTitle(title));
   }, [results, query]);
 
-  const q = new URLSearchParams(history.location.search);
+  const q = new URLSearchParams(location.search);
   const queryFromURL = q.get('query');
+
   useEffect(() => {
     if (queryFromURL) {
       dispatch(searchRequest(queryFromURL));

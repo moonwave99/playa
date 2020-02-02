@@ -15,7 +15,7 @@ type SearchResultListProps = {
 };
 
 export const SearchResultList: React.FC<SearchResultListProps> = ({
-  results,
+  results = [],
   query,
   isSearching,
   currentAlbumId,

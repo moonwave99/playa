@@ -32,6 +32,22 @@ describe('SearchResultListRow tests', () => {
 		expect(wrapper.is('.search-result-list-item')).toBe(true);
   });
 
+  it('should be .is-current if isCurrent = true', () => {
+		const wrapper = renderInAll(
+			<SearchResultListRow
+        isCurrent
+        row={row}
+        onContextMenu={jest.fn()}
+        onCoverDoubleClick={jest.fn()}
+        album={albums[0]}/>
+		, {
+      covers: {
+        allById: {}
+      }
+    });
+		expect(wrapper.is('.is-current')).toBe(true);
+  });
+
   it('should call the onContextMenu handler when right clicked', () => {
     const handler = jest.fn();
     const wrapper = mountInAll(
