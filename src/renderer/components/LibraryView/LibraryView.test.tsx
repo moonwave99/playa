@@ -32,7 +32,7 @@ const defaultStore = {
 };
 
 describe('LibraryView tests', () => {
-  it('should render a. library', () => {
+  it('should render a .library', () => {
     const wrapper = mountInAll(
       <LibraryView/>
     , defaultStore);
