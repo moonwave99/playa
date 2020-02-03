@@ -11,6 +11,7 @@ import reducer, {
   getAllPlaylistsRequest,
   savePlaylistRequest,
   deletePlaylistRequest,
+  PLAYLIST_GET_REQUEST,
   PLAYLIST_GET_RESPONSE,
   PLAYLIST_GET_ALL_REQUEST,
   PLAYLIST_GET_ALL_RESPONSE,
@@ -28,13 +29,19 @@ describe('playlist actions', () => {
         albums: { allById: {}},
       });
       await getPlaylistRequest('1')(store.dispatch, store.getState);
-      expect(store.getActions()).toEqual([{
-        type: PLAYLIST_GET_RESPONSE,
-        playlist: playlists[0]
-      }]);
+      expect(store.getActions()).toEqual([
+        {
+          type: PLAYLIST_GET_REQUEST,
+          id: '1'
+        },
+        {
+          type: PLAYLIST_GET_RESPONSE,
+          playlist: playlists[0]
+        }
+      ]);
     });
   });
-  
+
   describe('getAllPlaylistsRequest', () => {
     it('should dispatch PLAYLIST_GET_ALL_RESPONSE', async () => {
       const store = mockStore({});
@@ -74,7 +81,8 @@ describe('playlist actions', () => {
 describe('playlist reducer', () => {
   it('should return the initial state', () => {
     expect(reducer(undefined, {} as PlaylistActionTypes)).toEqual({
-      allById: {}
+      allById: {},
+      isLoading: false
     });
   });
 
@@ -108,7 +116,8 @@ describe('playlist reducer', () => {
       allById: {
         "1": playlists[0],
         "2": playlists[1]
-      }
+      },
+      isLoading: false
     };
 
     const updatedPlaylist = { ...playlists[0], title: 'Updated Title' };
@@ -119,7 +128,8 @@ describe('playlist reducer', () => {
       allById: {
         "1": updatedPlaylist,
         "2": playlists[1]
-      }
+      },
+      isLoading: false
     });
   });
 
@@ -135,7 +145,8 @@ describe('playlist reducer', () => {
       allById: {
         "1": playlists[0],
         "2": playlists[1]
-      }
+      },
+      isLoading: false
     };
 
     it('should remove playlist by given id if found', () => {

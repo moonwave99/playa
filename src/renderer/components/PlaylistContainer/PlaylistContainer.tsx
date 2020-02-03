@@ -1,4 +1,4 @@
-import React, { ReactElement, useState, useEffect } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect, useParams } from 'react-router';
@@ -36,14 +36,14 @@ import actionsMap from '../../actions/actions';
 export const PlaylistContainer = (): ReactElement => {
   const dispatch = useDispatch();
   const { _id } = useParams();
-  const [loading, setLoading] = useState(false);
 
   const {
     playlist,
     albums,
     currentPlaylistId,
     currentAlbumId,
-    currentTrackId
+    currentTrackId,
+    isLoading
   } = useSelector((state: ApplicationState) => getPlaylistById(state, _id));
 
   useEffect(() => {
@@ -54,12 +54,10 @@ export const PlaylistContainer = (): ReactElement => {
     if (playlist._rev) {
       dispatch(updateState({ lastOpenedPlaylistId: playlist._id }));
     }
-    setLoading(false);
   }, [playlist._id, playlist._rev]);
 
   useEffect(() => {
     if (playlist._rev) {
-      setLoading(true);
       dispatch(getPlaylistRequest(playlist._id));
     }
   }, [playlist]);
@@ -138,7 +136,7 @@ export const PlaylistContainer = (): ReactElement => {
     !playlist._id
       ? <Redirect to={QUEUE}/>
       : <CSSTransition
-          in={loading}
+          in={!isLoading}
           timeout={300}
           classNames="playlist-view"
           unmountOnExit>

@@ -40,6 +40,7 @@ export interface Playlist {
 
 export interface PlaylistState {
   allById: EntityHashMap<Playlist>;
+  isLoading: boolean;
 }
 
 export const selectors = {
@@ -51,16 +52,18 @@ export const selectors = {
 type GetPlaylistByIdSelection = {
   playlist: Playlist;
   albums: EntityHashMap<Album>;
+  isLoading: boolean;
   currentPlaylistId: Playlist['_id'];
   currentAlbumId: Album['_id'];
   currentTrackId: Track['_id'];
 }
 
 export const getPlaylistById = createCachedSelector(
+  selectors.state,
   selectors.findById,
   albumSelectors.allById,
   playerSelectors.state,
-  (playlist, albums, player): GetPlaylistByIdSelection => {
+  (state, playlist, albums, player): GetPlaylistByIdSelection => {
     const foundAlbums = playlist && playlist.albums ? toObj(
       playlist.albums
         .map((id: Album['_id']) => albums[id])
@@ -68,6 +71,7 @@ export const getPlaylistById = createCachedSelector(
     ) : {};
     return {
       ...player,
+      isLoading: state.isLoading,
       playlist: playlist || {} as Playlist,
       albums: foundAlbums
     }
@@ -164,6 +168,11 @@ export type PlaylistActionTypes =
 
 export const getPlaylistRequest = (id: Playlist['_id']): Function =>
   async (dispatch: Function, getState: Function): Promise<void> => {
+    dispatch({
+      type: PLAYLIST_GET_REQUEST,
+      id
+    });
+
     const { playlists, albums } = getState();
     let playlist = playlists.allById[id];
 
@@ -172,12 +181,7 @@ export const getPlaylistRequest = (id: Playlist['_id']): Function =>
       if (results.length === 0) {
         return;
       }
-
       playlist = results[0];
-      dispatch({
-        type: PLAYLIST_GET_RESPONSE,
-        playlist
-      });
     }
 
     const notFoundAlbums =
@@ -186,6 +190,10 @@ export const getPlaylistRequest = (id: Playlist['_id']): Function =>
     if (notFoundAlbums.length > 0) {
       dispatch(getAlbumListRequest(notFoundAlbums));
     }
+    dispatch({
+      type: PLAYLIST_GET_RESPONSE,
+      playlist
+    });
   }
 
 export const getAllPlaylistsRequest = (): Function =>
@@ -216,7 +224,8 @@ export const deletePlaylistRequest = (playlist: Playlist): Function =>
   }
 
 const INITIAL_STATE: PlaylistState = {
-	allById: {}
+	allById: {},
+  isLoading: false
 }
 
 export default function reducer(
@@ -224,6 +233,11 @@ export default function reducer(
   action: PlaylistActionTypes
 ): PlaylistState {
   switch (action.type) {
+    case PLAYLIST_GET_REQUEST:
+      return {
+        ...state,
+        isLoading: true
+      };
     case PLAYLIST_GET_ALL_RESPONSE:
       return {
         ...state,
@@ -241,6 +255,7 @@ export default function reducer(
     case PLAYLIST_SAVE_RESPONSE:
       return {
         ...state,
+        isLoading: false,
         allById: updateId(state.allById, action.playlist._id, action.playlist)
       };
     case PLAYLIST_DELETE_RESPONSE:

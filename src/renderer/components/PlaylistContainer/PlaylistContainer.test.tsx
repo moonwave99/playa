@@ -32,8 +32,8 @@ const defaultStore = {
 };
 
 describe('PlaylistContainer tests', () => {
-  it.skip('should contain a .playlist-view', () => {
+  it('should contain a .playlist-view', () => {
     const wrapper = renderInAll(<PlaylistContainer/>, defaultStore);
-    expect(wrapper.find('.playlist-view')).toHaveLength(1);
+    expect(wrapper.is('.playlist-view')).toBe(true);
   });
 });
