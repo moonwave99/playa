@@ -10,14 +10,14 @@ import { UIDragTypes } from '../../../../store/modules/ui';
 
 type AlbumGridTileViewProps = {
   album: Album;
-  isPlaying: boolean;
+  isPlaying?: boolean;
   onContextMenu?: Function;
   onDoubleClick?: Function;
 };
 
 export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
   album,
-  isPlaying,
+  isPlaying = false,
   onContextMenu,
   onDoubleClick
 }) => {
