@@ -2,6 +2,7 @@ import { flow } from 'lodash';
 import React, { ReactElement } from 'React';
 import { Provider } from 'react-redux';
 import configureMockStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
 import { MemoryRouter } from 'react-router-dom';
 import { DndProvider } from 'react-dnd';
 import Backend from 'react-dnd-test-backend';
@@ -38,7 +39,7 @@ const routerWrapper = function(element: ReactElement) {
 }
 
 const providerWrapper = function(element: ReactElement, store: object = defaultStore) {
-  const mockedStore = configureMockStore()(store);
+  const mockedStore = configureMockStore([thunk])(store);
   return <Provider store={mockedStore}>{element}</Provider>;
 }
 
