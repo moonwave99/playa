@@ -6,10 +6,11 @@ import { useDrag, useDrop, DropTargetMonitor } from 'react-dnd';
 import { XYCoord } from 'dnd-core';
 import { AlbumActionsView, ActionsConfig } from '../AlbumActionsView/AlbumActionsView';
 import { CoverView } from '../AlbumView/CoverView/CoverView';
-import { Album, VARIOUS_ARTISTS_ID } from '../../../store/modules/album';
+import { Album } from '../../../store/modules/album';
 import { UIDragTypes } from '../../../store/modules/ui';
 import { getCoverRequest, selectors as coverSelectors } from '../../../store/modules/cover';
 import { ApplicationState } from '../../../store/store';
+import { formatArtist } from '../../../utils/albumUtils';
 import './CompactAlbumView.scss';
 
 interface DragItem {
@@ -41,7 +42,7 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
   onDoubleClick,
   sortable = false
 }) => {
-  const { _id, type, year, artist, title } = album;
+  const { _id, type, year, title } = album;
   const cover = useSelector((state: ApplicationState) => coverSelectors.findById(state, _id));
 
   const dispatch = useDispatch();
@@ -131,7 +132,7 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
             {title}{ isCurrent ? <FontAwesomeIcon className="icon" icon="volume-up"/> : null }
           </span>
           <span className="info">
-            {artist === VARIOUS_ARTISTS_ID ? 'V/A' : artist}{year ? `, ${year}` : null} - <span className={tagClasses}>{type}</span>
+            {formatArtist(album)}{year ? `, ${year}` : null} - <span className={tagClasses}>{type}</span>
           </span>
         </p>
         { albumActions.length > 0 && <AlbumActionsView album={album} actions={albumActions}/>}

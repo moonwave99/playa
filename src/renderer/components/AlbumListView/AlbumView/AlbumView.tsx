@@ -8,9 +8,14 @@ import cx from 'classnames';
 import { CoverView } from './CoverView/CoverView';
 import { TracklistView } from './TracklistView/TracklistView';
 import { ApplicationState } from '../../../store/store';
-import { Album, AlbumTypes, VARIOUS_ARTISTS_ID, getAlbumRequest, getAlbumContentById } from '../../../store/modules/album';
+import { Album, getAlbumRequest, getAlbumContentById } from '../../../store/modules/album';
 import { Track } from '../../../store/modules/track';
 import { AlbumActionsView, ActionsConfig } from '../AlbumActionsView/AlbumActionsView';
+import {
+  formatArtist,
+  showTrackNumbers,
+  showTrackArtists
+} from '../../../utils/albumUtils';
 import { SEARCH } from '../../../routes';
 import './AlbumView.scss';
 
@@ -99,21 +104,17 @@ export const AlbumView: FC<AlbumViewProps> = ({
   }
 
   function renderArtist(): ReactElement {
-    return <Link
-      to={`${generatePath(SEARCH)}?query=artist: ${artist}`}
-      className="album-artist-link">
-        {artist === VARIOUS_ARTISTS_ID ? 'V/A' : artist}
-      </Link>;
+    return (
+      <Link
+        to={`${generatePath(SEARCH)}?query=artist: ${artist}`}
+        className="album-artist-link">
+          {formatArtist(album)}
+      </Link>
+    );
   }
-
-  const showTrackNumbers = [
-    AlbumTypes.Remix,
-    AlbumTypes.Various
-  ].indexOf(type) < 0;
 
   const albumClasses = cx('album-view', { 'is-current': isCurrent });
   const tagClasses = cx('album-type', `album-type-${type}`);
-  const showArtists = artist === VARIOUS_ARTISTS_ID || type === AlbumTypes.Remix;
   return (
     <article className={albumClasses} id={_id} onContextMenu={_onContextMenu} ref={viewRef}>
       <aside className="album-aside" style={{ backgroundColor: palette.DarkMuted }}>
@@ -128,7 +129,9 @@ export const AlbumView: FC<AlbumViewProps> = ({
         <header>
           <h2 style={{ color: palette.LightVibrant }}>{title}</h2>
           <p className="album-artist">{renderArtist()}</p>
-          <p className="album-info">{year ? `${year} - ` : null}<span className={tagClasses}>{type}</span></p>
+          <p className="album-info">
+            {year ? `${year} - ` : null}<span className={tagClasses}>{type}</span>
+          </p>
         </header>
         { albumActions.length > 0 && <AlbumActionsView album={album} actions={albumActions}/>}
       </aside>
@@ -137,8 +140,8 @@ export const AlbumView: FC<AlbumViewProps> = ({
           tracklist={album.tracks}
           tracks={tracks}
           currentTrackId={currentTrackId}
-          showArtists={showArtists}
-          showTrackNumbers={showTrackNumbers}
+          showArtists={showTrackArtists(album)}
+          showTrackNumbers={showTrackNumbers(album)}
           onTrackDoubleClick={onTrackDoubleClick}/>
       </section>
     </article>
