@@ -64,16 +64,16 @@ describe('PlayerView tests', () => {
     expect(wrapper.find('.player-album-cover')).toHaveLength(1);
   });
 
-  it('should render no .player-playback-bar if no current track is set', () => {
+  it('should render no .playback-bar if no current track is set', () => {
     const wrapper = renderInAll(
 			<PlayerView
 				waveformBasePath=''
 				player={player}/>,
 				defaultStore);
-    expect(wrapper.find('.player-playback-bar')).toHaveLength(0);
+    expect(wrapper.find('.playback-bar')).toHaveLength(0);
   });
 
-  it('should render a .player-playback-bar if current track is set', () => {
+  it('should render a .playback-bar if current track is set', () => {
     const wrapper = renderInAll(
 			<PlayerView
 				waveformBasePath=''
@@ -87,6 +87,6 @@ describe('PlayerView tests', () => {
 					currentTrackId: '1'
 				}
 			});
-    expect(wrapper.find('.player-playback-bar')).toHaveLength(1);
+    expect(wrapper.find('.playback-bar')).toHaveLength(1);
   });
 });
