@@ -100,7 +100,7 @@ describe('PlaylistListItem tests', () => {
         playlist={playlist}/>
     );
     const playButton = wrapper.find('.play-button');
-    playButton.simulate('doubleclick');
+    playButton.simulate('doubleClick');
     expect(handler).toHaveBeenCalledWith(playlist);
   });
 });

@@ -21,13 +21,13 @@ interface DragItem {
 type CompactAlbumViewProps = {
   album: Album;
   index: number;
-  isCurrent: boolean;
+  isCurrent?: boolean;
   albumActions?: ActionsConfig[];
   onDragEnd?: Function;
   onAlbumMove: Function;
   onContextMenu: Function;
   onDoubleClick: Function;
-  sortable: boolean;
+  sortable?: boolean;
 }
 
 export const CompactAlbumView: FC<CompactAlbumViewProps> = ({

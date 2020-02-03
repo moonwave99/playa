@@ -3,7 +3,7 @@ import { renderInAll, mountInAll } from '../../../../../test/testUtils';
 import { playlists, albums } from '../../../../../test/testFixtures';
 import { toObj } from '../../../utils/storeUtils';
 
-import { AlbumView } from './AlbumView';
+import { CompactAlbumView } from './CompactAlbumView';
 
 const defaultStore = {
   player: {
@@ -26,41 +26,56 @@ const defaultStore = {
   }
 };
 
-describe('AlbumView tests', () => {
-  it('should render an .album-view', () => {
+describe('CompactAlbumView tests', () => {
+  it('should render a .compact-album-view', () => {
     const wrapper = renderInAll(
-      <AlbumView
-        currentTrackId={null}
+      <CompactAlbumView
+        index={0}
         album={albums[0]}
-        dragType={''}
         albumActions={[]}
+        onAlbumMove={jest.fn()}
         onContextMenu={jest.fn()}
         onDoubleClick={jest.fn()}/>
       , defaultStore);
-    expect(wrapper.is('.album-view')).toBe(true);
+    expect(wrapper.is('.compact-album-view')).toBe(true);
   });
 
   it('should be .is-current if isCurrent', () => {
     const wrapper = renderInAll(
-      <AlbumView
+      <CompactAlbumView
         isCurrent
-        currentTrackId={null}
+        index={0}
         album={albums[0]}
-        dragType={''}
         albumActions={[]}
+        onAlbumMove={jest.fn()}
         onContextMenu={jest.fn()}
         onDoubleClick={jest.fn()}/>
       , defaultStore);
     expect(wrapper.is('.is-current')).toBe(true);
   });
 
+  it('should be .sortable if sortable', () => {
+    const wrapper = renderInAll(
+      <CompactAlbumView
+        sortable
+        index={0}
+        album={albums[0]}
+        albumActions={[]}
+        onAlbumMove={jest.fn()}
+        onContextMenu={jest.fn()}
+        onDoubleClick={jest.fn()}/>
+      , defaultStore);
+    expect(wrapper.is('.sortable')).toBe(true);
+  });
+
   it('should contain an .album-cover', () => {
     const wrapper = renderInAll(
-      <AlbumView
-        currentTrackId={null}
+      <CompactAlbumView
+        isCurrent
+        index={0}
         album={albums[0]}
-        dragType={''}
         albumActions={[]}
+        onAlbumMove={jest.fn()}
         onContextMenu={jest.fn()}
         onDoubleClick={jest.fn()}/>
       , defaultStore);
@@ -69,66 +84,43 @@ describe('AlbumView tests', () => {
 
   it('should contain the album title', () => {
     const wrapper = renderInAll(
-      <AlbumView
-        currentTrackId={null}
+      <CompactAlbumView
+        isCurrent
+        index={0}
         album={albums[0]}
-        dragType={''}
         albumActions={[]}
+        onAlbumMove={jest.fn()}
         onContextMenu={jest.fn()}
         onDoubleClick={jest.fn()}/>
       , defaultStore);
-    expect(wrapper.find('h2').text()).toBe(albums[0].title);
+    expect(wrapper.find('.title').text())
+      .toBe(albums[0].title);
   });
 
-  it('should contain the album artist', () => {
+  it('should contain the album info', () => {
     const wrapper = renderInAll(
-      <AlbumView
-        currentTrackId={null}
+      <CompactAlbumView
+        isCurrent
+        index={0}
         album={albums[0]}
-        dragType={''}
         albumActions={[]}
+        onAlbumMove={jest.fn()}
         onContextMenu={jest.fn()}
         onDoubleClick={jest.fn()}/>
       , defaultStore);
-    expect(wrapper.find('.album-artist').text())
-      .toBe(albums[0].artist);
-  });
-
-  it('should contain the album information', () => {
-    const wrapper = renderInAll(
-      <AlbumView
-        currentTrackId={null}
-        album={albums[0]}
-        dragType={''}
-        albumActions={[]}
-        onContextMenu={jest.fn()}
-        onDoubleClick={jest.fn()}/>
-      , defaultStore);
-    expect(wrapper.find('.album-info').text())
-      .toBe(`${albums[0].year} - ${albums[0].type}`);
-  });
-
-  it('should contain the album tracklist', () => {
-    const wrapper = renderInAll(
-      <AlbumView
-        currentTrackId={null}
-        album={albums[0]}
-        dragType={''}
-        albumActions={[]}
-        onContextMenu={jest.fn()}
-        onDoubleClick={jest.fn()}/>
-      , defaultStore);
-    expect(wrapper.find('.tracklist-view')).toHaveLength(1);
+    expect(wrapper.find('.info').text())
+      .toBe(`${albums[0].artist}, ${albums[0].year} - ${albums[0].type}`);
   });
 
   it('should call the onContextMenu handler when right clicked', () => {
     const handler = jest.fn();
     const wrapper = mountInAll(
-      <AlbumView
-        currentTrackId={null}
+      <CompactAlbumView
+        isCurrent
+        index={0}
         album={albums[0]}
-        dragType={''}
         albumActions={[]}
+        onAlbumMove={jest.fn()}
         onContextMenu={handler}
         onDoubleClick={jest.fn()}/>
       , defaultStore);
@@ -139,15 +131,16 @@ describe('AlbumView tests', () => {
   it('should call the onDoubleClick handler when the cover is double clicked', () => {
     const handler = jest.fn();
     const wrapper = mountInAll(
-      <AlbumView
-        currentTrackId={null}
+      <CompactAlbumView
+        isCurrent
+        index={0}
         album={albums[0]}
-        dragType={''}
         albumActions={[]}
+        onAlbumMove={jest.fn()}
         onContextMenu={jest.fn()}
         onDoubleClick={handler}/>
       , defaultStore);
-    wrapper.find('figure.album-cover').simulate('doubleClick')
+    wrapper.simulate('doubleClick')
     expect(handler).toHaveBeenCalledWith(albums[0]);
   });
 });
