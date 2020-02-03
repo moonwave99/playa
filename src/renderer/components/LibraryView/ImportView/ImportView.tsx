@@ -8,6 +8,7 @@ import {
   VARIOUS_ARTISTS_ID
 } from '../../../store/modules/album';
 import { Track } from '../../../store/modules/track';
+import { showTrackNumbers } from '../../../utils/albumUtils';
 import './ImportView.scss';
 
 type ImportViewProps = {
@@ -181,11 +182,6 @@ export const ImportView: FC<ImportViewProps> = ({
     );
   }
 
-  const showTrackNumbers = [
-    AlbumTypes.Remix,
-    AlbumTypes.Various
-  ].indexOf(albumType) < 0;
-
   return (
 		<div className="import-view">
       <h2>
@@ -200,7 +196,7 @@ export const ImportView: FC<ImportViewProps> = ({
         tracks={tracks}
         tracklist={tracks.map(({ path }) => path)}
         showArtists={isAlbumFromVA}
-        showTrackNumbers={showTrackNumbers}/>
+        showTrackNumbers={showTrackNumbers({ type: albumType } as Album)}/>
     </div>
 	);
 }
