@@ -16,7 +16,7 @@ import './AlbumView.scss';
 
 type AlbumViewProps = {
   album: Album;
-  isCurrent: boolean;
+  isCurrent?: boolean;
   currentTrackId: Track['_id'];
   dragType: string;
   albumActions?: ActionsConfig[];
