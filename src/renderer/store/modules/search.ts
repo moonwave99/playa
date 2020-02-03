@@ -12,8 +12,6 @@ const {
   IPC_SEARCH_REQUEST,
 } = IPC_MESSAGES;
 
-export const VARIOUS_ARTISTS_ID = '_various-artists';
-
 export interface SearchState {
   results: Album[];
   query: string;
