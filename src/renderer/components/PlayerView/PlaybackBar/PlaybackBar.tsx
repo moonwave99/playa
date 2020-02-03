@@ -80,7 +80,7 @@ export const PlaybackBar = ({
 
 	return (
     <section
-      className="player-playback-bar"
+      className="playback-bar"
       onMouseEnter={onMouseEnter}
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
