@@ -20,7 +20,7 @@ type AlbumListViewProps = {
   onAlbumOrderChange?: Function;
   onAlbumContextMenu: Function;
   onAlbumDoubleClick: Function;
-  sortable: boolean;
+  sortable?: boolean;
 };
 
 export const AlbumListView: FC<AlbumListViewProps> = ({
