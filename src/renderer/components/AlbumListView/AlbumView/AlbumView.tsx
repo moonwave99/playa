@@ -106,7 +106,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
   function renderArtist(): ReactElement {
     return (
       <Link
-        to={`${generatePath(SEARCH)}?query=artist: ${artist}`}
+        to={`${generatePath(SEARCH)}?query=artist: ${encodeURIComponent(artist)}`}
         className="album-artist-link">
           {formatArtist(album)}
       </Link>

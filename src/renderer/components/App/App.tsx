@@ -125,7 +125,7 @@ export const App: FC<AppProps> = ({
   }
 
   function onSearchFormSubmit(query: string): void {
-		history.push(`${SEARCH}?query=${query}`);
+		history.push(`${SEARCH}?query=${encodeURIComponent(query)}`);
   }
 
   return (
