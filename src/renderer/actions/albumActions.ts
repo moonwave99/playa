@@ -95,7 +95,7 @@ export const reloadAlbumContentAction: ActionCreator<ActionParams> = ({ album, d
   const fullTitle = `${artist} - ${title}`;
   return {
     title: `Reload '${fullTitle}' tracks`,
-    handler(): void { dispatch(reloadAlbumContent(album)) }
+    handler(): Function { return dispatch(reloadAlbumContent(album)) }
   };
 }
 
