@@ -6,11 +6,13 @@ const {
   IPC_SEARCH_REQUEST,
   IPC_PLAYLIST_SAVE_REQUEST,
   IPC_PLAYLIST_DELETE_REQUEST,
+  IPC_PLAYLIST_SAVE_LIST_REQUEST,
   IPC_ALBUM_GET_LIST_REQUEST,
   IPC_ALBUM_CONTENT_REQUEST,
   IPC_ALBUM_GET_SINGLE_INFO,
   IPC_ALBUM_DELETE_LIST_REQUEST,
-  IPC_TRACK_GET_LIST_REQUEST
+  IPC_TRACK_GET_LIST_REQUEST,
+  IPC_DIALOG_SHOW_MESSAGE
 } = IPC_MESSAGES;
 
 class Menu {
@@ -26,6 +28,8 @@ module.exports = {
     send: jest.fn(),
     invoke: (message, ...args) => {
       switch (message) {
+        case IPC_DIALOG_SHOW_MESSAGE:
+          return { response: 0 };
         case IPC_PLAYLIST_GET_ALL_REQUEST:
           return fixtures.playlists;
         case IPC_COVER_GET_REQUEST:
@@ -33,6 +37,8 @@ module.exports = {
         case IPC_PLAYLIST_SAVE_REQUEST:
         case IPC_PLAYLIST_DELETE_REQUEST:
           return fixtures.playlists[0];
+        case IPC_PLAYLIST_SAVE_LIST_REQUEST:
+          return args[0].map(({ _id, _rev }) => ({ id: _id, rev: _rev }));
         case IPC_SEARCH_REQUEST:
         case IPC_ALBUM_GET_LIST_REQUEST:
         case IPC_ALBUM_DELETE_LIST_REQUEST:

@@ -22,18 +22,18 @@ export const removeAlbumsAction: ActionCreator<ActionParams> = ({
 }) => {
   return {
     title: `Remove selected album(s) from library`,
-    async handler(): Promise<void> {
+    async handler(): Promise<Function> {
       if (selection.map(({ _id }) => _id).indexOf(playingAlbumID) > -1) {
-        dispatch(showDialog('Album in play', 'Album is currently in playback!'));
-        return;
+        return dispatch(showDialog('Album in play', 'Album is currently in playback!'));
       }
       const confirmed = await confirmDialog({
         title: 'Playlist Delete',
         message: `You are about to delete ${selection.length} album(s) from your library, are you sure?`
       });
       if (confirmed) {
-        dispatch(removeAlbums(selection));
+        return dispatch(removeAlbums(selection));
       }
+      return function(): void { true };
     }
   };
 }
