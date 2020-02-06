@@ -2,7 +2,7 @@ import { EventEmitter } from 'events';
 import { encodePath } from '../utils/pathUtils';
 
 type PlayerParams = {
-  audioElement: HTMLAudioElement;
+  audioElement: AudioElement;
   resolution?: number;
 }
 
@@ -21,44 +21,46 @@ export const PLAYER_EVENTS = {
   ERROR: 'player:error'
 };
 
+export interface AudioElement extends EventTarget {
+  play: Function;
+  pause: Function;
+  currentTime: number;
+  duration: number;
+  paused: boolean;
+  src: string;
+  currentSrc: string;
+}
+
 export default class Player extends EventEmitter {
-  private audioElement: HTMLAudioElement;
-  private playing: boolean;
+  private audioElement: AudioElement;
   constructor({ audioElement }: PlayerParams) {
     super();
     this.audioElement = audioElement;
-    this.audioElement.onplaying = this._onPlaying.bind(this);
-    this.audioElement.onpause = this._onPause.bind(this);
-    this.audioElement.onended = this._onEnded.bind(this);
-    this.audioElement.onerror = this._onError.bind(this);
-    this.audioElement.ontimeupdate = this._onTimeupdate.bind(this);
+    this.audioElement.addEventListener('playing', this._onPlaying.bind(this));
+    this.audioElement.addEventListener('pause', this._onPause.bind(this));
+    this.audioElement.addEventListener('ended', this._onEnded.bind(this));
+    this.audioElement.addEventListener('error', this._onError.bind(this));
+    this.audioElement.addEventListener('timeupdate', this._onTimeupdate.bind(this));
   }
   loadTrack(path: string): void {
     if (path) {
       this.audioElement.src = encodePath(path);
     }
-    this.playing = false;
   }
   play(): void {
-    if (!this.playing) {
-      this.audioElement.play();
-    }
+    this.audioElement.play();
   }
   pause(): void {
-    if (this.playing) {
-      this.audioElement.pause();
-    }
+    this.audioElement.pause();
   }
   togglePlayback(): void {
     if (!this.audioElement.src) {
       return;
     }
-    if (this.playing) {
+    if (!this.audioElement.paused) {
       this.audioElement.pause();
-      this.playing = false;
     } else {
       this.audioElement.play();
-      this.playing = true;
     }
   }
   seekTo(position: number): void {
@@ -69,26 +71,23 @@ export default class Player extends EventEmitter {
       currentTime: this.audioElement.currentTime,
       duration: this.audioElement.duration,
       currentTrack: this.audioElement.currentSrc,
-      isPlaying: this.playing
+      isPlaying: !this.audioElement.paused
     };
   }
   isPlaying(): boolean {
-    return this.playing;
+    return !this.audioElement.paused;
   }
   onLoad(handler: (event: Event) => void): () => void {
     this.audioElement.addEventListener('loadedmetadata', handler);
     return (): void => this.audioElement.removeEventListener('loadedmetadata', handler);
   }
   private _onPlaying(): void {
-    this.playing = true;
     this.emit(PLAYER_EVENTS.PLAY, this.getPlaybackInfo());
   }
   private _onPause(): void {
-    this.playing = false;
     this.emit(PLAYER_EVENTS.PAUSE, this.getPlaybackInfo());
   }
   private _onEnded(): void {
-    this.playing = false;
     this.emit(PLAYER_EVENTS.TRACK_ENDED, this.audioElement.src);
   }
   private _onError(error: Error): void {

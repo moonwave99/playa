@@ -163,7 +163,7 @@ export const PlayerView: FC<PlayerViewProps> = ({
 				</button>
 			</section>
 		);
-	}	
+	}
 
 	const shouldRenderPlaybackBar = currentTrack && currentAlbum;
 
