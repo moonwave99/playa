@@ -89,12 +89,8 @@
     right: 0;
     left: 0;
     background-color: $playerProgressAreaBackgroundColor;
-    transition: transform 1s linear;
     z-index: 1000;
     border-bottom: $playerProgressBottomHeight +1 solid $darkColor;
-    &.no-transition {
-      transition: none;
-    }
   }
   .progress-cursor {
     height: $playerHeight;

@@ -1,4 +1,4 @@
-import React, { ReactElement, MouseEvent, useState, useEffect, useRef } from 'react';
+import React, { ReactElement, MouseEvent, useState, useRef } from 'react';
 import { Album } from '../../../store/modules/album';
 import { Track } from '../../../store/modules/track';
 import { formatDuration } from '../../../utils/datetimeUtils';
@@ -14,9 +14,6 @@ type PlaybackBarProps = {
   onWaveformNotFound: Function;
 }
 
-const PROGRESS_AREA_CLICK_DEFER_TIME = 100;
-const PROGRESS_AREA_TRACK_END_DEFER_TIME = 50;
-
 export const PlaybackBar = ({
   currentAlbum,
   currentTrack,
@@ -30,23 +27,9 @@ export const PlaybackBar = ({
   const progressCursorRef = useRef(null);
   const [waveformLoaded, setWaveformLoaded] = useState(false);
 
-  function disableTransition(time: number): void {
-    progressAreaRef.current && progressAreaRef.current.classList.toggle('no-transition', true);
-    setTimeout(
-      () => progressAreaRef.current && progressAreaRef.current.classList.toggle('no-transition', false)
-      , time
-    );
-  }
-
-  useEffect(
-    () => disableTransition(PROGRESS_AREA_TRACK_END_DEFER_TIME)
-    , [currentTrack]
-  );
-
   function onClick(event: MouseEvent): void {
     const bounds = event.currentTarget.getBoundingClientRect();
     const position = (event.clientX - bounds.left) / bounds.width;
-    disableTransition(PROGRESS_AREA_CLICK_DEFER_TIME);
     onProgressBarClick(position);
   }
 
