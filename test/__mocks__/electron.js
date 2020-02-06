@@ -36,7 +36,7 @@ module.exports = {
           return '/path/to/cover';
         case IPC_PLAYLIST_SAVE_REQUEST:
         case IPC_PLAYLIST_DELETE_REQUEST:
-          return fixtures.playlists[0];
+          return args[0];
         case IPC_PLAYLIST_SAVE_LIST_REQUEST:
           return args[0].map(({ _id, _rev }) => ({ id: _id, rev: _rev }));
         case IPC_SEARCH_REQUEST:
@@ -45,7 +45,10 @@ module.exports = {
           return fixtures.albums;
         case IPC_ALBUM_GET_SINGLE_INFO:
           return {
-            album: fixtures.albums[0],
+            album: {
+              ...fixtures.albums[0],
+              tracks: fixtures.tracks.map(({ _id }) => _id)
+            },
             tracks: fixtures.tracks
           };
         case IPC_ALBUM_CONTENT_REQUEST:

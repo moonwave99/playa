@@ -130,7 +130,6 @@ export const playTrack = ({
     const { albums, tracks }: ApplicationState = getState();
     let album = albums.allById[albumId];
     const track = tracks.allById[trackId];
-
     if (!album || !track) {
       const {
         album: foundAlbum,

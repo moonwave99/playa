@@ -36,7 +36,7 @@ describe('libraryContentActions', () => {
       expect(typeof handler).toBe('function');
     });
 
-    it('should remove selected album from library', async () => {
+    it('should dispatch expected actions', async () => {
       const store = mockStore({
         playlists: {
           allById: toObj([
