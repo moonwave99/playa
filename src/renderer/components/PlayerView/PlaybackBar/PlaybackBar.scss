@@ -5,6 +5,7 @@
   display: flex;
   flex: 1;
   position: relative;
+  overflow: hidden;
   &:after {
     content: '';
     position: absolute;
