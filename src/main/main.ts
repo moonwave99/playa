@@ -1,4 +1,4 @@
-import { app, BrowserWindow, shell } from 'electron';
+import { app, BrowserWindow, shell, Event } from 'electron';
 import { is } from 'electron-util';
 import * as Path from 'path';
 import * as url from 'url';
@@ -20,7 +20,8 @@ import {
   DEFAULT_HEIGHT,
   MIN_WIDTH,
   MIN_HEIGHT,
-  IS_MACOS
+  IS_MACOS,
+  IPC_MESSAGES
 } from '../constants';
 
 let mainWindow: Electron.BrowserWindow;
@@ -54,9 +55,13 @@ function createWindow({
   );
 
   // Open external URLs in default OS browser
-  mainWindow.webContents.on('new-window', (event: Electron.Event, url: string) => {
+  mainWindow.webContents.on('new-window', (event: Event, url: string) => {
     event.preventDefault();
     shell.openExternal(url);
+  });
+
+  mainWindow.on('swipe', (_event: Event, direction: string) => {
+    mainWindow.webContents.send(IPC_MESSAGES.IPC_UI_SWIPE, direction);
   });
 
   initMenu(mainWindow);
@@ -113,6 +118,4 @@ app.on('will-quit', () => {
   appState.save();
 });
 
-app.on('window-all-closed', () => {
-  app.quit();
-});
+app.on('window-all-closed', () => app.quit());
