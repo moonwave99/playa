@@ -64,5 +64,23 @@ export const tracks: Track[] = [
     title: "Celia's Dream",
     number: 2,
     duration: 456
+  },
+  {
+    _id: '3',
+    path: '/path/to/track_3',
+    found: true,
+    artist: 'My Bloody Valentine',
+    title: 'Only Shallow',
+    number: 1,
+    duration: 123
+  },
+  {
+    _id: '4',
+    path: '/path/to/track_3',
+    found: true,
+    artist: 'My Bloody Valentine',
+    title: "Loomer",
+    number: 2,
+    duration: 456
   }
 ];

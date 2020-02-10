@@ -197,11 +197,11 @@ describe('albumActions', () => {
       await handler();
       const expectedActions = [{
         type: TRACK_GET_LIST_RESPONSE,
-        results: tracks
+        results: [tracks[0], tracks[1]]
       },
       {
         type: ALBUM_GET_CONTENT_RESPONSE,
-        album: { ...album, tracks: tracks.map(({ _id }) => _id )}
+        album: { ...album, tracks: [tracks[0], tracks[1]].map(({ _id }) => _id )}
       }];
       expectedActions.forEach(
         action => expect(store.getActions()).toContainEqual(action)

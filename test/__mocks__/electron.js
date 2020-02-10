@@ -1,5 +1,7 @@
 const fixtures = require('../testFixtures');
+const { toObj } = require('../../src/renderer/utils/storeUtils');
 const { IPC_MESSAGES } = require('../../src/constants');
+
 const {
   IPC_PLAYLIST_GET_ALL_REQUEST,
   IPC_COVER_GET_REQUEST,
@@ -52,9 +54,14 @@ module.exports = {
             tracks: fixtures.tracks
           };
         case IPC_ALBUM_CONTENT_REQUEST:
-          return { ...args[0], tracks: fixtures.tracks.map(x => x._id) };
+          const album = args[0];
+          const tracks = album._id === '1'
+            ? [fixtures.tracks[0], fixtures.tracks[1]]
+            : [fixtures.tracks[2], fixtures.tracks[3]];
+          return { ...album, tracks: tracks.map(x => x._id) };
         case IPC_TRACK_GET_LIST_REQUEST:
-          return fixtures.tracks;
+          const tracksMap = toObj(fixtures.tracks);
+          return args[0].map(x => tracksMap[x]);
         default:
           return;
       }

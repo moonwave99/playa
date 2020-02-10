@@ -39,7 +39,7 @@ describe('album actions', () => {
       const albumWithTracks = {...albums[0], tracks: ['1', '2']};
       const expectedActions = [
         { type: ALBUM_GET_RESPONSE, album: albumWithTracks },
-        { type: TRACK_GET_LIST_RESPONSE, results: tracks },
+        { type: TRACK_GET_LIST_RESPONSE, results: [tracks[0], tracks[1]] },
         { type: COVER_GET_RESPONSE, album: albumWithTracks, path: '/path/to/cover' }
       ];
       await getAlbumRequest('1')(store.dispatch, store.getState);
@@ -92,11 +92,11 @@ describe('album actions', () => {
       const expectedActions = [
         {
           type: ALBUM_GET_CONTENT_RESPONSE,
-          album: { ...album, tracks: tracks.map(x => x._id) }
+          album: { ...album, tracks: [tracks[0], tracks[1]].map(x => x._id) }
         },
         {
           type: TRACK_GET_LIST_RESPONSE,
-          results: tracks
+          results: [tracks[0], tracks[1]]
         }
       ];
       await reloadAlbumContent(album)(store.dispatch);
