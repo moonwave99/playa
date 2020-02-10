@@ -11,7 +11,7 @@ const DEFAULT_QUERY_ORDER = 'asc';
 PouchDB.plugin(PouchFind);
 PouchDB.plugin(search);
 
-interface Entity {
+export interface Entity {
   _id: string;
   _rev: string;
   _deleted?: boolean;
