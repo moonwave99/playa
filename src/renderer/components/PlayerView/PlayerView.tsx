@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import cx from 'classnames';
 import sha1 from 'sha1';
 import { PlaybackBar } from './PlaybackBar/PlaybackBar';
+import { VolumeControl } from './VolumeControl/VolumeControl';
 import { CoverView } from '../AlbumListView/AlbumView/CoverView/CoverView';
 import {
 	playerSelector,
@@ -12,6 +13,7 @@ import {
 	playPreviousTrack,
 	playNextTrack,
 	seekTo,
+	changeVolume,
 	unloadTrack
 } from '../../store/modules/player';
 import { getWaveformRequest } from '../../store/modules/waveform';
@@ -102,6 +104,10 @@ export const PlayerView: FC<PlayerViewProps> = ({
 		history.replace(QUEUE);
 	}
 
+	function onVolumeChange(volume: number): void {
+		dispatch(changeVolume(volume));
+	}
+
 	function onWaveformNotFound(): void {
 		dispatch(getWaveformRequest(currentTrack));
 	}
@@ -139,6 +145,7 @@ export const PlayerView: FC<PlayerViewProps> = ({
 	}
 
 	const shouldRenderPlaybackBar = currentTrack && currentAlbum;
+	const shouldRenderVolumeControl = currentTrack && currentAlbum;
 
 	return (
     <section className="player">
@@ -161,6 +168,10 @@ export const PlayerView: FC<PlayerViewProps> = ({
 					waveform={getWaveformPath()}
 					onWaveformNotFound={onWaveformNotFound}
 					onProgressBarClick={onProgressBarClick}/>
+			}
+			{ shouldRenderVolumeControl &&
+				<VolumeControl
+					onVolumeChange={onVolumeChange}/>				
 			}
 		</section>
 	);

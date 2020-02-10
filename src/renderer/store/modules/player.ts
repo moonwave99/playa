@@ -70,6 +70,7 @@ export const PLAYER_TOGGLE_PLAYBACK       = 'playa/player/PLAYER_TOGGLE_PLAYBACK
 export const PLAYER_PLAY_PREV             = 'playa/player/PLAY_PREV';
 export const PLAYER_PLAY_NEXT             = 'playa/player/PLAY_NEXT';
 export const PLAYER_SEEK_TO               = 'playa/player/PLAYER_SEEK_TO';
+export const PLAYER_CHANGE_VOLUME         = 'playa/player/PLAYER_CHANGE_VOLUME';
 export const PLAYER_UPDATE_QUEUE          = 'playa/player/UPDATE_QUEUE';
 export const PLAYER_ENQUEUE_AFTER_CURRENT = 'playa/player/ENQUEUE_AFTER_CURRENT';
 export const PLAYER_ENQUEUE_AT_END        = 'playa/player/ENQUEUE_AT_THE_END';
@@ -99,6 +100,11 @@ interface SeekToAction {
   position: number;
 }
 
+interface ChangeVolumeAction {
+  type: typeof PLAYER_CHANGE_VOLUME;
+  volume: number;
+}
+
 interface UpdateQueueAction {
   type: typeof PLAYER_UPDATE_QUEUE;
   queue: Album['_id'][];
@@ -123,6 +129,7 @@ export type PlayerActionTypes =
   | PlayPrevAction
   | PlayNextAction
   | SeekToAction
+  | ChangeVolumeAction
   | UpdateQueueAction
   | EnqueueAfterCurrentAction
   | EnqueueAtEndAction
@@ -177,7 +184,7 @@ export const playPreviousTrack = (): Function =>
     } = playerSelector(getState());
     if (!currentTrack) {
       return;
-    }    
+    }
     const { albumId, trackId } = getPrevTrack(currentTrack._id, queue);
 		if (albumId && trackId ) {
 			dispatch(playTrack({
@@ -206,6 +213,14 @@ export const playNextTrack = (): Function =>
 				trackId
 			}));
 		}
+  }
+
+export const changeVolume = (volume: number): Function =>
+  (dispatch: Function): void => {
+    dispatch({
+      type: PLAYER_CHANGE_VOLUME,
+      volume
+    });
   }
 
 export const seekTo = (position: number): Function =>
@@ -285,6 +300,9 @@ export default function initReducer(player: Player) {
         };
       case PLAYER_SEEK_TO:
         player.seekTo(action.position);
+        return state;
+      case PLAYER_CHANGE_VOLUME:
+        player.changeVolume(action.volume);
         return state;
       case PLAYER_UPDATE_QUEUE:
         return {

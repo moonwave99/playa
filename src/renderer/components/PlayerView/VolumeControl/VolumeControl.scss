@@ -1,0 +1,12 @@
+@import "../../../styles/variables";
+@import "../../../styles/mixins";
+
+.volume-control {
+	display: flex;
+  flex: 0 0 $volumeControlWidth;
+	align-items: center;
+	padding: 1rem;
+	.volume-control-icon {
+		margin-right: 1rem;
+	}
+}

@@ -7,6 +7,7 @@ class MockAudioElement extends EventTarget {
   public currentTime: number;
   public duration: number;
   public src: string;
+  public volume: number;
   public currentSrc: string;
   constructor() {
     super();

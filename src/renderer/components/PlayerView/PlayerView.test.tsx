@@ -89,4 +89,30 @@ describe('PlayerView tests', () => {
 			});
     expect(wrapper.find('.playback-bar')).toHaveLength(1);
   });
+
+  it('should render no .volume-control if no current track is set', () => {
+    const wrapper = renderInAll(
+			<PlayerView
+				waveformBasePath=''
+				player={player}/>,
+				defaultStore);
+    expect(wrapper.find('.volume-control')).toHaveLength(0);
+  });
+
+  it('should render a .volume-control if current track is set', () => {
+    const wrapper = renderInAll(
+			<PlayerView
+				waveformBasePath=''
+				player={player}/>,
+			{
+				...defaultStore,
+				player: {
+					queue: ['1', '2'],
+					currentPlaylistId: '1',
+					currentAlbumId: '1',
+					currentTrackId: '1'
+				}
+			});
+    expect(wrapper.find('.volume-control')).toHaveLength(1);
+  });
 });

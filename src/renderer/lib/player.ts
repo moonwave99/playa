@@ -29,6 +29,7 @@ export interface AudioElement extends EventTarget {
   paused: boolean;
   src: string;
   currentSrc: string;
+  volume: number;
 }
 
 export default class Player extends EventEmitter {
@@ -76,6 +77,9 @@ export default class Player extends EventEmitter {
   }
   isPlaying(): boolean {
     return !this.audioElement.paused;
+  }
+  changeVolume(volume: number): void {
+    this.audioElement.volume = volume;
   }
   onLoad(handler: (event: Event) => void): () => void {
     this.audioElement.addEventListener('loadedmetadata', handler);
