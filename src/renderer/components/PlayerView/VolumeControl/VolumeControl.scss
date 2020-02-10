@@ -29,6 +29,7 @@
 		&::-webkit-slider-runnable-track {
 			width: 100%;
 			height: .25rem;
+			margin-top: -.125rem;
 			background-color: $lightColor;
 		}
 	}
