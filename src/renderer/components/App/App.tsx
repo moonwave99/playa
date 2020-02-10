@@ -89,6 +89,7 @@ export const App: FC<AppProps> = ({
     dispatch(getAllPlaylistsRequest());
     const unsubscribeIpc = initIpc({
       history,
+      dispatch,
       focusSearchHandler: onFocusSearch
     });
     document.addEventListener('keydown', onKeyDown);

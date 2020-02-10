@@ -4,6 +4,8 @@ import { IPC_MESSAGES } from '../../constants';
 const {
   IPC_UI_NAVIGATE_TO,
   IPC_UI_FOCUS_SEARCH,
+  IPC_PLAYBACK_PREV_TRACK,
+  IPC_PLAYBACK_NEXT_TRACK,
   IPC_UI_TOGGLE_ALBUM_VIEW
 } = IPC_MESSAGES;
 
@@ -62,6 +64,21 @@ export default function initMenu(window: Electron.BrowserWindow): void {
           label: 'Show Library',
           accelerator: 'cmd+l',
           click: (): void => window.webContents.send(IPC_UI_NAVIGATE_TO, LIBRARY)
+        }
+      ]
+    },
+    {
+      label: 'Controls',
+      submenu: [
+        {
+          label: 'Previous Track',
+          accelerator: 'cmd+left',
+          click: (): void => window.webContents.send(IPC_PLAYBACK_PREV_TRACK)
+        },
+        {
+          label: 'Next Track',
+          accelerator: 'cmd+right',
+          click: (): void => window.webContents.send(IPC_PLAYBACK_NEXT_TRACK)
         }
       ]
     },

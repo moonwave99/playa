@@ -1,5 +1,6 @@
 import { History } from "history";
 import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
+import { playPreviousTrack, playNextTrack } from '../store/modules/player';
 
 import { IPC_MESSAGES } from '../../constants';
 
@@ -7,39 +8,44 @@ const {
   IPC_ERROR,
   IPC_UI_NAVIGATE_TO,
   IPC_UI_FOCUS_SEARCH,
+  IPC_PLAYBACK_PREV_TRACK,
+  IPC_PLAYBACK_NEXT_TRACK,
   IPC_UI_SWIPE
 } = IPC_MESSAGES;
 
 type InitIpcParams = {
   history: History;
+  dispatch: Function;
   focusSearchHandler: (_event: IpcRendererEvent) => void;
 }
 
 export default function initIpc({
   history,
+  dispatch,
   focusSearchHandler
 }: InitIpcParams): Function {
-  function errorHandler (_event: IpcRendererEvent, error: Error): void {
-    console.log('[ipc]', error);
-  }
-  function navigateHandler (_event: IpcRendererEvent, path: string): void {
-    history.replace(path);
-  }
-  function swipeHandler(_event: IpcRendererEvent, direction: string): void {
-    if (direction === 'left') {
-      history.goBack();
-    } else {
-      history.goForward();
+  const handlerMap = {
+    [IPC_ERROR]: (_event: IpcRendererEvent, error: Error): void => console.log('[ipc]', error),
+    [IPC_UI_NAVIGATE_TO]: (_event: IpcRendererEvent, path: string): void => history.replace(path),
+    [IPC_UI_FOCUS_SEARCH]: focusSearchHandler,
+    [IPC_PLAYBACK_PREV_TRACK]: (): void => dispatch(playPreviousTrack()),
+    [IPC_PLAYBACK_NEXT_TRACK]: (): void => dispatch(playNextTrack()),
+    [IPC_UI_SWIPE]: (_event: IpcRendererEvent, direction: string): void => {
+      if (direction === 'left') {
+        history.goBack();
+      } else {
+        history.goForward();
+      }
     }
   }
-  ipc.on(IPC_ERROR, errorHandler);
-  ipc.on(IPC_UI_NAVIGATE_TO, navigateHandler);
-  ipc.on(IPC_UI_FOCUS_SEARCH, focusSearchHandler);
-  ipc.on(IPC_UI_SWIPE, swipeHandler);
+
+  Object.entries(handlerMap).forEach(
+    ([event, handler]) => ipc.on(event, handler)
+  );
+
   return (): void => {
-    ipc.removeListener(IPC_ERROR, errorHandler);
-    ipc.removeListener(IPC_UI_NAVIGATE_TO, navigateHandler);
-    ipc.removeListener(IPC_UI_FOCUS_SEARCH, focusSearchHandler);
-    ipc.removeListener(IPC_UI_SWIPE, swipeHandler);
+    Object.entries(handlerMap).forEach(
+      ([event, handler]) => ipc.removeListener(event, handler)
+    );
   }
 }
