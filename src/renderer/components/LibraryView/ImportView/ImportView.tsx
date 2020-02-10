@@ -1,4 +1,4 @@
-import React, { ReactElement, SyntheticEvent, FC, useState, useRef } from 'react';
+import React, { ReactElement, ChangeEvent, FormEvent, FC, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TracklistView } from '../../AlbumListView/AlbumView/TracklistView/TracklistView';
 import {
@@ -31,7 +31,7 @@ type FormFieldParams = {
   disabled?: boolean;
   required?: boolean;
   options?: SelectOption[];
-  onChange?: (event: SyntheticEvent) => void;
+  onChange?: (event: ChangeEvent) => void;
 }
 
 export const ImportView: FC<ImportViewProps> = ({
@@ -72,7 +72,7 @@ export const ImportView: FC<ImportViewProps> = ({
       accessor: 'type',
       title: t('albums.props.type'),
       type: 'select',
-      onChange: (event: SyntheticEvent): void => {
+      onChange: (event: ChangeEvent): void => {
         const target = event.target as HTMLSelectElement;
         setAlbumType(
           target[target.selectedIndex].getAttribute('value') as AlbumTypes
@@ -82,7 +82,7 @@ export const ImportView: FC<ImportViewProps> = ({
     }
   ];
 
-  const _onFormSubmit = (event: SyntheticEvent): void => {
+  const _onFormSubmit = (event: FormEvent): void => {
 		event.preventDefault();
     const formData = new FormData(formRef.current);
     const {
