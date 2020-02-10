@@ -114,7 +114,7 @@ export default class Database {
     });
     const { docs } = await this.db.find({
       selector: {
-        [dateField]: { $gt: dateFrom }
+        [dateField]: { $gte: dateFrom }
       },
       sort: [{ [dateField] : order }],
       limit
