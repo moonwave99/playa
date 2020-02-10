@@ -9,11 +9,11 @@ import { CoverView } from '../AlbumListView/AlbumView/CoverView/CoverView';
 import {
 	playerSelector,
 	togglePlayback,
-	playTrack,
+	playPreviousTrack,
+	playNextTrack,
 	seekTo,
 	unloadTrack
 } from '../../store/modules/player';
-import { getPrevTrack, getNextTrack } from '../../utils/tracklistUtils';
 import { getWaveformRequest } from '../../store/modules/waveform';
 import { showDialog } from '../../store/modules/ui';
 
@@ -72,14 +72,7 @@ export const PlayerView: FC<PlayerViewProps> = ({
 
 	useEffect(() => {
 		function handlePlayerEnded(): void {
-			const { albumId, trackId } = getNextTrack(currentTrack._id, queue);
-			if (albumId && trackId ) {
-				dispatch(playTrack({
-					playlistId: currentPlaylist ? currentPlaylist._id : null,
-					albumId,
-					trackId
-				}));
-			}
+			dispatch(playNextTrack());
 		}
 		player.on(PLAYER_EVENTS.TRACK_ENDED, handlePlayerEnded);
 		return (): void => {
@@ -92,31 +85,11 @@ export const PlayerView: FC<PlayerViewProps> = ({
 	}
 
 	function onPrevButtonClick(): void {
-		if (!currentAlbum) {
-			return;
-		}
-		const { albumId, trackId } = getPrevTrack(currentTrack._id, queue);
-		if (albumId && trackId ) {
-			dispatch(playTrack({
-				playlistId: currentPlaylist ? currentPlaylist._id : null,
-				albumId,
-				trackId
-			}));
-		}
+		dispatch(playPreviousTrack());
 	}
 
 	function onNextButtonClick(): void {
-		if (!currentAlbum) {
-			return;
-		}
-		const { albumId, trackId } = getNextTrack(currentTrack._id, queue);
-		if (albumId && trackId ) {
-			dispatch(playTrack({
-				playlistId: currentPlaylist ? currentPlaylist._id : null,
-				albumId,
-				trackId
-			}));
-		}
+		dispatch(playNextTrack());
 	}
 
 	function onProgressBarClick(position: number): void {
