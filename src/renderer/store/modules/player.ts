@@ -188,7 +188,7 @@ export const playPreviousTrack = (): Function =>
     const { albumId, trackId } = getPrevTrack(currentTrack._id, queue);
 		if (albumId && trackId ) {
 			dispatch(playTrack({
-				playlistId: currentPlaylist._id,
+				playlistId: currentPlaylist ? currentPlaylist._id : null,
 				albumId,
 				trackId
 			}));
@@ -208,7 +208,7 @@ export const playNextTrack = (): Function =>
     const { albumId, trackId } = getNextTrack(currentTrack._id, queue);
 		if (albumId && trackId ) {
 			dispatch(playTrack({
-				playlistId: currentPlaylist._id,
+				playlistId: currentPlaylist ? currentPlaylist._id : null,
 				albumId,
 				trackId
 			}));
