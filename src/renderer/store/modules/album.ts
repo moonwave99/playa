@@ -72,10 +72,10 @@ export interface AlbumState {
 }
 
 export const selectors = {
-  state: ({ albums }: ApplicationState): AlbumState => albums,
-  allById: ({ albums }: ApplicationState): EntityHashMap<Album> => albums.allById,
-  findById: ({ albums }: ApplicationState, id: Album['_id']): Album => albums.allById[id],
-  findByList: ({ albums }: ApplicationState, ids: Album['_id'][]): Album[] => ids.map(id => albums.allById[id])
+  state: ({ albums }: { albums: AlbumState }): AlbumState => albums,
+  allById: ({ albums }: { albums: AlbumState }): EntityHashMap<Album> => albums.allById,
+  findById: ({ albums }: { albums: AlbumState }, id: Album['_id']): Album => albums.allById[id],
+  findByList: ({ albums }: { albums: AlbumState }, ids: Album['_id'][]): Album[] => ids.map(id => albums.allById[id])
 };
 
 type GetAlbumContentByIdSelection = {

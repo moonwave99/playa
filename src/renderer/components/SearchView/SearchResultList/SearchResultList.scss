@@ -5,18 +5,23 @@
 	@include emptyComponent();
 }
 
+$coverWidth: 6rem;
+$artistWidth: calc((100% - 6rem - 6rem - 6rem) / 3);
+$titleWidth: calc((100% - 6rem - 6rem - 6rem) / 3 * 2);
+$typeWidth: 6rem;
+$yearWidth: 6rem;
+$miniWindowRowHeight: 57px;
+
 .search-result-list {
-	padding:
-		0
-		var(--section-gutter)
-		var(--section-gutter)
-		var(--section-gutter);
+	padding: 0;
   overflow: auto;
 	width: 100%;
 	border-spacing: 0;
 	border-collapse: collapse;
 	@include fadeInOut();
-	td, th {
+	.td, .th {
+		display: flex;
+		align-items: center;
 		@media (max-width: $miniWindowThreshold) {
 			&.header,
 			&.cell-year,
@@ -25,38 +30,58 @@
 			}
 		}
 	}
+	.tr {
+		display: flex;
+		justify-content: space-between;
+		@media (max-width: $miniWindowThreshold) {
+			@include clearFix();
+			display: block;
+		}
+	}
 	.search-result-list-header {
 		line-height: $mainUnit;
 		color: $highlightColor;
-		tr {
-			th {
+		.tr {
+			.th {
 				text-align: left;
-				padding: 0 2rem;
-				&.header-artist,
-				&.header-title {
-					max-width: $searchResultsCellMaxWidth;
-				}
-				&.header-year,
-				&.header-type {
-					text-align: center;
-				}
 				&.header-cover {
 					padding-left: .25rem;
+					width: $coverWidth;
+				}
+				&.header-artist {
+					width: $artistWidth;
+				}
+				&.header-title {
+					width: $titleWidth;
+				}
+				&.header-year {
+					text-align: center;
+					width: $yearWidth;
 				}
 				&.header-type {
-					padding: 0 $mainUnit / 3 0 0;
-					width: 3 * $mainUnit;
+					text-align: center;
+					width: $typeWidth;
 				}
 			}
 		}
 	}
+
+	.tbody {
+		// viewport - player - table header - title
+		height: calc(100vh - 6rem - 3rem - 3rem - 1.5 * var(--section-gutter));		
+		@media (max-width: $miniWindowThreshold) {
+			// viewport - player - searchbar - title
+			height: calc(100vh - 9rem - 3rem - 3rem - 3.5 * var(--section-gutter));
+		}
+	}
 	.search-result-list-item {
-		margin: 0;
 		line-height: $mainUnit;
 		border-bottom: 1px solid $backgroundLightColor;
-		@media (max-width: $miniWindowThreshold){
+		height: $miniWindowRowHeight;
+		overflow: hidden;
+		@media (max-width: $miniWindowThreshold) {
 			font-size: .9rem;
-		}		
+		}
 		&:first-of-type {
 			border-top: 1px solid $backgroundLightColor;
 		}
@@ -76,34 +101,38 @@
 			}
 		}
 		.cell {
-			&-year,
-			&-artist,
-			&-title, {
-				padding: 0 calc(var(--section-gutter) * 2/3);
-			}
-			&-artist,
-			&-title, {
-				@include ellipsis();
-				max-width: $searchResultsCellMaxWidth;
+			min-width: 0;
+			&-cover {
+				width: $coverWidth;
+				padding: .25rem 0 .25rem .25rem;
+				figure {
+					@include albumCover($searchResultsCoverWidth);
+				}
+				@media (max-width: $miniWindowThreshold) {
+					width: auto;
+					float: left;
+					margin-right: 1rem;
+				}
 			}
 			&-artist {
+				@include ellipsis();
+				width: $artistWidth;
 				color: $highlightColor;
 				&:hover {
 					text-decoration: underline;
 				}
 			}
-			&-cover {
-				width: $searchResultsCoverWidth;
-				padding: .25rem 0 .25rem .25rem;
-				figure {
-					@include albumCover($searchResultsCoverWidth);
-				}
+			&-title {
+				@include ellipsis();
+				width: $titleWidth;
 			}
-			&-year,
-			&-type {
+			&-year {
+				width: $yearWidth;
 				text-align: center;
 			}
-			&-type{
+			&-type {
+				width: $typeWidth;
+				text-align: center;
 				padding-right: calc(var(--section-gutter) / 3);
 			}
 			@media (max-width: $miniWindowThreshold) {
@@ -112,6 +141,7 @@
 					display: block;
 					line-height: var(--section-gutter);
 					max-width: calc(100vw - #{$searchResultsCoverWidth} - var(--section-gutter) * 2);
+					width: auto;
 				}
 				&-artist {
 					padding-top: .5rem;
@@ -128,6 +158,7 @@
 			height: 2rem;
 			line-height: 2rem;
 			padding: 0;
+			width: 100%;
 		}
 	}
 }

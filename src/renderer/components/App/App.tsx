@@ -2,6 +2,7 @@ import React, { FC, ReactElement, useState, useEffect } from 'react';
 import { Switch, Route, useHistory } from 'react-router';
 import { generatePath } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { createSelector } from 'reselect';
 import Player from '../../lib/player';
 import { PlayerView } from '../PlayerView/PlayerView';
 import { LibraryView } from '../LibraryView/LibraryView';
@@ -12,14 +13,23 @@ import { AllPlaylistContainer } from '../AllPlaylistContainer/AllPlaylistContain
 import { PlaylistContainer } from '../PlaylistContainer/PlaylistContainer';
 
 import initIpc from '../../initializers/initIpc';
+
+import { Album } from '../../store/modules/album';
+
 import {
   Playlist,
   getDefaultPlaylist,
   getAllPlaylistsRequest,
+  selectors as playlistSelectors,
   PLAYLIST_GET_RESPONSE
 } from '../../store/modules/playlist';
-import { Album } from '../../store/modules/album';
-import { updateQueue, togglePlayback } from '../../store/modules/player';
+
+import {
+  updateQueue,
+  togglePlayback,
+  selectors as playerSelectors
+} from '../../store/modules/player';
+
 import './App.scss';
 
 import {
@@ -33,6 +43,23 @@ import {
 import {
   RECENT_PLAYLIST_COUNT
 } from '../../../constants';
+
+const appSelector = createSelector(
+  playlistSelectors.allById,
+  playerSelectors.state,
+  (playlists, player) => {
+    const playlistArray = Object.keys(playlists).map(id => playlists[id]);
+    const recentPlaylists = playlistArray
+      .sort((a: Playlist, b: Playlist) =>
+        new Date(b.accessed).getTime() - new Date(a.accessed).getTime()
+      ).slice(0, RECENT_PLAYLIST_COUNT);
+    return {
+      playlists: playlistArray,
+      recentPlaylists,
+      currentPlaylistId: player.currentPlaylistId
+    }
+  }
+);
 
 type AppProps = {
   player: Player;
@@ -53,18 +80,7 @@ export const App: FC<AppProps> = ({
     playlists,
     recentPlaylists,
     currentPlaylistId
-  } = useSelector(({ playlists, player }) => {
-    const playlistArray = Object.keys(playlists.allById).map(id => playlists.allById[id]);
-    const recentPlaylists = playlistArray
-      .sort((a: Playlist, b: Playlist) =>
-        new Date(b.accessed).getTime() - new Date(a.accessed).getTime()
-      ).slice(0, RECENT_PLAYLIST_COUNT);
-    return {
-      playlists: playlistArray,
-      recentPlaylists,
-      currentPlaylistId: player.currentPlaylistId
-    }
-  });
+  } = useSelector(appSelector);
 
   const [hasSearchFocus, setSearchFocus] = useState(false);
 

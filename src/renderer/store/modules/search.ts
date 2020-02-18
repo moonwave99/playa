@@ -1,5 +1,9 @@
 import { ipcRenderer as ipc } from 'electron';
+import { createSelector } from 'reselect';
 import { ensureAll } from '../../utils/storeUtils';
+
+import { ApplicationState } from '../store';
+
 import {
   Album,
   getDefaultAlbum,
@@ -14,9 +18,13 @@ const {
 
 export interface SearchState {
   results: Album[];
-  query: string;
   isSearching: boolean;
 }
+
+export const searchSelector = createSelector(
+  (state: ApplicationState): SearchState => state.search,
+  (search: SearchState) => search
+);
 
 export const SEARCH_REQUEST  = 'playa/search/SEARCH_REQUEST';
 export const SEARCH_RESPONSE = 'playa/search/SEARCH_RESPONSE';
@@ -56,7 +64,6 @@ export const searchRequest = (query: string): Function =>
 
 const INITIAL_STATE = {
   results: [] as Album[],
-  query: '',
   isSearching: false
 };
 
@@ -67,13 +74,11 @@ export default function reducer(
   switch (action.type) {
     case SEARCH_REQUEST:
       return {
-        query: action.query,
         results: [],
         isSearching: true
       };
     case SEARCH_RESPONSE:
       return {
-        query: action.query,
         results: ensureAll<Album>(action.results, getDefaultAlbum),
         isSearching: false
       };

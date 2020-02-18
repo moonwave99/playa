@@ -1,15 +1,14 @@
-import React, { ReactElement, SyntheticEvent, useEffect } from 'react';
+import React, { ReactElement, SyntheticEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Row, Cell } from 'react-table';
 import { useDrag } from 'react-dnd';
-import { useInView } from 'react-intersection-observer';
 import cx from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CoverView } from '../../../AlbumListView/AlbumView/CoverView/CoverView';
 import { UIDragTypes } from '../../../../store/modules/ui';
 import { Album, VARIOUS_ARTISTS_ID } from '../../../../store/modules/album';
 import { searchRequest } from '../../../../store/modules/search';
-import { getCoverRequest, selectors as coverSelectors } from '../../../../store/modules/cover';
+import { selectors as coverSelectors } from '../../../../store/modules/cover';
 import { ApplicationState } from '../../../../store/store';
 
 type SearchResultListRowProps = {
@@ -18,6 +17,7 @@ type SearchResultListRowProps = {
   isCurrent?: boolean;
   onContextMenu: Function;
   onCoverDoubleClick: Function;
+  style: object;
 }
 
 export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
@@ -25,17 +25,12 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
   album,
   isCurrent = false,
   onContextMenu,
-  onCoverDoubleClick
+  onCoverDoubleClick,
+  style
 }) => {
   const dispatch = useDispatch();
   const { _id } = album;
-  const [viewRef, inView] = useInView({ triggerOnce: true });
   const cover = useSelector((state: ApplicationState) => coverSelectors.findById(state, _id));
-
-  useEffect(() => {
-    inView && dispatch(getCoverRequest(album));
-  }, [album, inView]);
-
   const [{ opacity }, drag] = useDrag({
     item: {
       type: UIDragTypes.SEARCH_RESULTS,
@@ -94,20 +89,18 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
         break;
     }
     return (
-      <td {...cell.getCellProps()} className={`cell cell-${cell.column.id}`}>
+      <div {...cell.getCellProps()} className={`td cell cell-${cell.column.id}`}>
         {cellContent}
-      </td>
+      </div>
     );
   }
-
-  const classNames = cx('search-result-list-item', { 'is-current' : isCurrent });
+  const classNames = cx('search-result-list-item', 'tr', { 'is-current' : isCurrent });
   return (
-    <tr {...row.getRowProps()}
+    <div {...row.getRowProps()}
       className={classNames}
-      style={{ opacity }}
-      onContextMenu={_onConTextMenu}
-      ref={viewRef}>
+      style={{ ...style, opacity }}
+      onContextMenu={_onConTextMenu}>
       {row.cells.map(renderCell)}
-    </tr>
+    </div>
   );
 }

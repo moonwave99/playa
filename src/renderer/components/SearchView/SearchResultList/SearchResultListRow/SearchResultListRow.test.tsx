@@ -20,6 +20,7 @@ describe('SearchResultListRow tests', () => {
   it('should render a .search-result-list-item', () => {
 		const wrapper = renderInAll(
 			<SearchResultListRow
+        style={{}}
         row={row}
         onContextMenu={jest.fn()}
         onCoverDoubleClick={jest.fn()}
@@ -35,6 +36,7 @@ describe('SearchResultListRow tests', () => {
   it('should be .is-current if isCurrent = true', () => {
 		const wrapper = renderInAll(
 			<SearchResultListRow
+        style={{}}
         isCurrent
         row={row}
         onContextMenu={jest.fn()}
@@ -51,15 +53,12 @@ describe('SearchResultListRow tests', () => {
   it('should call the onContextMenu handler when right clicked', () => {
     const handler = jest.fn();
     const wrapper = mountInAll(
-      <table>
-        <tbody>
-          <SearchResultListRow
-            row={row}
-            onContextMenu={handler}
-            onCoverDoubleClick={jest.fn()}
-            album={albums[0]}/>
-        </tbody>
-      </table>
+      <SearchResultListRow
+        style={{}}
+        row={row}
+        onContextMenu={handler}
+        onCoverDoubleClick={jest.fn()}
+        album={albums[0]}/>
 		, {
       covers: {
         allById: {}
@@ -68,5 +67,4 @@ describe('SearchResultListRow tests', () => {
     wrapper.find('.search-result-list-item').simulate('contextmenu');
     expect(handler).toHaveBeenCalledWith(albums[0]);
   });
-
 });

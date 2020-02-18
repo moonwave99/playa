@@ -5,7 +5,7 @@ import { useLocation } from 'react-router';
 import { SearchResultList } from './SearchResultList/SearchResultList';
 import { updateTitle } from '../../store/modules/ui';
 import { Album } from '../../store/modules/album';
-import { searchRequest } from '../../store/modules/search';
+import { searchSelector, searchRequest } from '../../store/modules/search';
 import { openContextMenu } from '../../lib/contextMenu';
 import {
   ALBUM_CONTEXT_ACTIONS,
@@ -14,35 +14,36 @@ import {
 } from '../../actions/albumActions';
 
 import actionsMap from '../../actions/actions';
-
 import './SearchView.scss';
 
 export const SearchView = (): ReactElement => {
-  const {
-    query,
-    results,
-    isSearching,
-    currentAlbumId
-  } = useSelector(({ search, player }) => ({...search, ...player }));
-
   const location = useLocation();
   const dispatch = useDispatch();
+  const currentAlbumId = useSelector(({ player }) => player.currentAlbumId);
+  const {
+    results,
+    isSearching,
+  } = useSelector(searchSelector);
+
+  const q = new URLSearchParams(location.search);
+  const query = q.get('query');
 
   useEffect(() => {
+    if (isSearching) {
+      dispatch(updateTitle('searching...'));
+      return;
+    }
     const title = query
       ? `search: ${results.length} results for ${query}`
       : 'search';
     dispatch(updateTitle(title));
   }, [results, query]);
 
-  const q = new URLSearchParams(location.search);
-  const queryFromURL = q.get('query');
-
   useEffect(() => {
-    if (queryFromURL) {
-      dispatch(searchRequest(queryFromURL));
+    if (query) {
+      dispatch(searchRequest(query));
     }
-  }, [queryFromURL]);
+  }, [query]);
 
   function onResultContextMenu(album: Album): void {
     openContextMenu([

@@ -44,7 +44,6 @@ describe('search actions', () => {
 
 describe('search reducer', () => {
   const initialState = {
-    query: '',
     results: [] as Album[],
     isSearching: false
   }
@@ -61,7 +60,6 @@ describe('search reducer', () => {
     })).toEqual({
       results: [],
       isSearching: true,
-      query
     });
   });
 
@@ -74,7 +72,6 @@ describe('search reducer', () => {
       query
     })).toEqual({
       results,
-      query,
       isSearching: false
     });
   });

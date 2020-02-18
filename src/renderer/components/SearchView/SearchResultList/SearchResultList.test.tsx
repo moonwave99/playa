@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { render } from 'enzyme';
 import { renderInAll } from '../../../../../test/testUtils';
 
 import { SearchResultList } from './SearchResultList';
 import { albums } from '../../../../../test/testFixtures';
 
 describe('SearchResultList tests', () => {
-  it('should render n=results.length rows', () => {
+  it('should render a .search-result-list', () => {
     const wrapper = renderInAll(
       <SearchResultList
         results={albums}
@@ -15,11 +14,11 @@ describe('SearchResultList tests', () => {
         onResultContextMenu={jest.fn()}
         onResultDoubleClick={jest.fn()}/>
     );
-    expect(wrapper.find('tbody tr').length).toBe(albums.length);
+    expect(wrapper.is('.search-result-list')).toBe(true);
   });
 
   it('should render an empty component when results=0', () => {
-    const wrapper = render(
+    const wrapper = renderInAll(
       <SearchResultList
         results={[]}
         query="#!q"

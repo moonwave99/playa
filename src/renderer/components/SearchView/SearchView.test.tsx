@@ -10,30 +10,32 @@ import { SearchView } from './SearchView';
 
 describe('SearchView tests', () => {
   it('should render a .search-view', () => {
-		const wrapper = renderInAll(<SearchView/>);
+    const store = {
+      search: {},
+      player: {}
+    };
+		const wrapper = renderInAll(<SearchView/>, store);
 		expect(wrapper.is('.search-view')).toBe(true);
   });
 
   it('should contain a title', () => {
     const store = {
-      search: {
-        query: 'Slowdive'
-      }
+      search: {},
+      player: {}
     };
 		const wrapper = renderInAll(<SearchView/>, store);
-		expect(wrapper.find('h1').text())
-      .toBe(`Results for: ${store.search.query}`);
+		expect(wrapper.find('h1')).toHaveLength(1);
   });
 
   it('should contain a .search-result-list', () => {
     const store = {
       search: {
-        query: 'Slowdive',
         results: albums
       },
       covers: {
         allById: {}
-      }
+      },
+      player: {}
     };
 		const wrapper = renderInAll(<SearchView/>, store);
 		expect(wrapper.find('.search-result-list'))
@@ -43,9 +45,9 @@ describe('SearchView tests', () => {
   it('should render no children if isSearching', () => {
     const store = {
       search: {
-        query: 'Slowdive',
         isSearching: true
-      }
+      },
+      player: {}
     };
 		const wrapper = renderInAll(<SearchView/>, store);
 		expect(wrapper.find('.search-result-list'))
