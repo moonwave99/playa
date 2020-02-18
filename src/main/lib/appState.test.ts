@@ -35,6 +35,21 @@ describe('appState', () => {
     expect(appState.getState()).toEqual(state);
   });
 
+  it('should load default values if there are errors on load', () => {
+    mockFs({
+      [path]: '{invalidjson"'
+    });
+    const appState = new AppState(path);
+    appState.load();
+    expect(appState.getState()).toEqual({
+      lastOpenedPlaylistId: null,
+      lastWindowSize: [null, null],
+      lastWindowPosition: [null, null],
+      queue: [],
+      volume: 100      
+    });
+  });
+
   it('should save state to disk', () => {
     mockFs({
       [path]: '{}'
