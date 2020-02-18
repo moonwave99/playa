@@ -19,7 +19,7 @@ const {
   IPC_WAVEFORM_GET_BASE_PATH
 } = IPC_MESSAGES;
 
-(async (): Promise<void> => {
+window.addEventListener('load', async () => {
   WebFont.load({ custom: { families: FONTS } });
   initFontAwesome();
   initI18n();
@@ -30,8 +30,11 @@ const {
 
   const {
     lastOpenedPlaylistId,
-    queue
+    queue,
+    volume
   } = await ipc.invoke(IPC_UI_STATE_LOAD);
+
+  player.setVolume(+volume);
 
   const waveformBasePath = await ipc.invoke(IPC_WAVEFORM_GET_BASE_PATH);
   const store = initStore(player);
@@ -52,4 +55,4 @@ const {
     </Provider>,
     document.getElementById('app')
   );
-}) ();
+});

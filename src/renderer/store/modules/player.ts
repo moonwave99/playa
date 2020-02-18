@@ -100,7 +100,7 @@ interface SeekToAction {
   position: number;
 }
 
-interface ChangeVolumeAction {
+interface SetVolumeAction {
   type: typeof PLAYER_CHANGE_VOLUME;
   volume: number;
 }
@@ -109,6 +109,7 @@ interface UpdateQueueAction {
   type: typeof PLAYER_UPDATE_QUEUE;
   queue: Album['_id'][];
 }
+
 interface UnloadTrackAction {
   type: typeof PLAYER_UNLOAD_TRACK;
 }
@@ -129,7 +130,7 @@ export type PlayerActionTypes =
   | PlayPrevAction
   | PlayNextAction
   | SeekToAction
-  | ChangeVolumeAction
+  | SetVolumeAction
   | UpdateQueueAction
   | EnqueueAfterCurrentAction
   | EnqueueAtEndAction
@@ -215,8 +216,9 @@ export const playNextTrack = (): Function =>
 		}
   }
 
-export const changeVolume = (volume: number): Function =>
+export const setVolume = (volume: number): Function =>
   (dispatch: Function): void => {
+    dispatch(updateState({ volume }));
     dispatch({
       type: PLAYER_CHANGE_VOLUME,
       volume
@@ -302,7 +304,7 @@ export default function initReducer(player: Player) {
         player.seekTo(action.position);
         return state;
       case PLAYER_CHANGE_VOLUME:
-        player.changeVolume(action.volume);
+        player.setVolume(action.volume);
         return state;
       case PLAYER_UPDATE_QUEUE:
         return {

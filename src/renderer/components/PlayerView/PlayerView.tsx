@@ -13,7 +13,7 @@ import {
 	playPreviousTrack,
 	playNextTrack,
 	seekTo,
-	changeVolume,
+	setVolume,
 	unloadTrack
 } from '../../store/modules/player';
 import { getWaveformRequest } from '../../store/modules/waveform';
@@ -105,7 +105,7 @@ export const PlayerView: FC<PlayerViewProps> = ({
 	}
 
 	function onVolumeChange(volume: number): void {
-		dispatch(changeVolume(volume));
+		dispatch(setVolume(volume));
 	}
 
 	function onWaveformNotFound(): void {
@@ -171,7 +171,8 @@ export const PlayerView: FC<PlayerViewProps> = ({
 			}
 			{ shouldRenderVolumeControl &&
 				<VolumeControl
-					onVolumeChange={onVolumeChange}/>				
+					initialVolume={player.getVolume() * 100}
+					onVolumeChange={onVolumeChange}/>
 			}
 		</section>
 	);

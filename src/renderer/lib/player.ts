@@ -78,7 +78,10 @@ export default class Player extends EventEmitter {
   isPlaying(): boolean {
     return !this.audioElement.paused;
   }
-  changeVolume(volume: number): void {
+  getVolume(): number {
+    return this.audioElement.volume;
+  }
+  setVolume(volume: number): void {
     this.audioElement.volume = volume;
   }
   onLoad(handler: (event: Event) => void): () => void {

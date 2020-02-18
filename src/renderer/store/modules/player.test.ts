@@ -12,7 +12,7 @@ import initReducer, {
   playPreviousTrack,
   playNextTrack,
   seekTo,
-  changeVolume,
+  setVolume,
   unloadTrack,
   PLAYER_PLAY_TRACK,
   PLAYER_TOGGLE_PLAYBACK,
@@ -20,6 +20,8 @@ import initReducer, {
   PLAYER_CHANGE_VOLUME,
   PLAYER_UNLOAD_TRACK
 } from './player';
+
+import { UPDATE_STATE } from './ui';
 
 import Player from '../../lib/player';
 
@@ -64,13 +66,24 @@ describe('player actions', () => {
     });
   });
 
-  it('should dispatch changeVolume request', () => {
-    const dispatch = jest.fn();
-    changeVolume(0.5)(dispatch);
-    expect(dispatch).toHaveBeenCalledWith({
+  it('should dispatch setVolume request', () => {
+    const store = mockStore({});
+    setVolume(0.5)(store.dispatch);
+
+    const expectedActions = [{
       type: PLAYER_CHANGE_VOLUME,
       volume: 0.5
-    });
+    },
+    {
+      type: UPDATE_STATE,
+      params: {
+        volume: 0.5
+      }
+    }];
+
+    expectedActions.forEach(
+      action => expect(store.getActions()).toContainEqual(action)
+    );
   });
 
   it('should dispatch unloadTrack request', () => {
@@ -183,7 +196,7 @@ describe('player actions', () => {
 describe('player reducer', () => {
   const reducer = initReducer({
     seekTo: (position: number): void => { position },
-    changeVolume: (volume: number): void => { volume }
+    setVolume: (volume: number): void => { volume }
   } as Player);
 
   const initialState = {

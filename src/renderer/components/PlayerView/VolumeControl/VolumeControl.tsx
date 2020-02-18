@@ -6,12 +6,14 @@ import './VolumeControl.scss';
 
 type VolumeControlProps = {
   onVolumeChange: Function;
+  initialVolume?: number;
 };
 
 export const VolumeControl: FC<VolumeControlProps> = ({
-  onVolumeChange
+  onVolumeChange,
+  initialVolume = 100
 }) => {
-  const [volume, setVolume] = useState(100);
+  const [volume, setVolume] = useState(initialVolume);
 
   function onInputChange(event: ChangeEvent<HTMLInputElement>): void {
     const newValue = +(event.currentTarget.value);

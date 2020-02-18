@@ -33,7 +33,7 @@ export const WAVEFORM_PEAKS_COUNT = 1000;
 export const IPC_MESSAGES = {
   IPC_ERROR: 'error',
   IPC_UI_STATE_LOAD: 'ui:state:load',
-  IPC_UI_UPDATE_STATE: 'ui:state:update',
+  IPC_UI_STATE_UPDATE: 'ui:state:update',
   IPC_UI_NAVIGATE_TO: 'ui:navigate-to',
   IPC_UI_FOCUS_SEARCH: 'ui:focus-search',
   IPC_UI_TOGGLE_ALBUM_VIEW: 'ui:toggle-album-view',

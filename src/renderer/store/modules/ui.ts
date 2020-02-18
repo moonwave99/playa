@@ -3,7 +3,7 @@ import { confirmDialog } from '../../lib/dialog'
 
 import { IPC_MESSAGES } from '../../../constants';
 const {
-  IPC_UI_UPDATE_STATE
+  IPC_UI_STATE_UPDATE
 } = IPC_MESSAGES;
 
 const MAX_TITLE_LENGTH = 50;
@@ -73,7 +73,7 @@ export const showDialog = (
 
 export const updateState = (params: object): Function =>
   (dispatch: Function): void => {
-    ipc.send(IPC_UI_UPDATE_STATE, params);
+    ipc.send(IPC_UI_STATE_UPDATE, params);
     dispatch({
       type: UPDATE_STATE,
       params

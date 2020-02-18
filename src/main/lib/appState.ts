@@ -7,6 +7,7 @@ interface AppStateValues {
   lastWindowSize: [number, number];
   lastWindowPosition: [number, number];
   queue: string[];
+  volume: number;
 }
 
 export default class AppState {
@@ -20,7 +21,6 @@ export default class AppState {
       context: LogContext.AppState,
       message: 'Updating state'
     }, this.appState, state);
-
     this.appState = {
       ...this.appState,
       ...state
@@ -33,30 +33,28 @@ export default class AppState {
   load(): AppState {
     try {
       this.appState = fs.readJSONSync(this.path);
-
       log({
         context: LogContext.AppState,
         message: `Loaded from ${this.path}...`
       }, this.appState);
-
     } catch (error) {
       this.appState = {
         lastOpenedPlaylistId: null,
         lastWindowSize: [null, null],
         lastWindowPosition: [null, null],
-        queue: []
+        queue: [],
+        volume: 100
       };
     }
     return this;
   }
   save(): AppState {
     try {
+      fs.outputJSONSync(this.path, this.appState);
       log({
         context: LogContext.AppState,
         message: `Saving to ${this.path}...`
       }, this.appState);
-
-      fs.outputJSONSync(this.path, this.appState);
     } catch (error) {
       throw new FileSystemError(`[AppState]: error writing to ${this.path}`);
     }
