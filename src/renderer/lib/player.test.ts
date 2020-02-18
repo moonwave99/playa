@@ -1,6 +1,8 @@
 import { EntityHashMap } from '../utils/storeUtils';
 import Player, { PlaybackInfo, PLAYER_EVENTS } from './player';
 
+const DEFAULT_TRACK_DURATION = 100;
+
 class MockAudioElement extends EventTarget {
   private listeners: EntityHashMap<EventListenerOrEventListenerObject[]>;
   public paused: boolean;
@@ -9,9 +11,10 @@ class MockAudioElement extends EventTarget {
   public src: string;
   public volume: number;
   public currentSrc: string;
-  constructor() {
+  constructor(duration: number = DEFAULT_TRACK_DURATION) {
     super();
     this.paused = true;
+    this.duration = duration;
     this.listeners = {};
   }
   play(): void {
@@ -90,5 +93,62 @@ describe('Player', () => {
     Object.values(PLAYER_EVENTS).forEach(
       event => player.removeAllListeners(event)
     );
+  });
+
+  describe('play', () => {
+    it('should play loaded track', () => {
+      const player = new Player({
+        audioElement: new MockAudioElement()
+      });
+      player.loadTrack('/path/to/track');
+      player.play();
+      expect(player.isPlaying()).toBe(true);
+    });
+  });
+
+  describe('pause', () => {
+    it('should pause loaded track', () => {
+      const player = new Player({
+        audioElement: new MockAudioElement()
+      });
+      player.loadTrack('/path/to/track');
+      player.pause();
+      expect(player.isPlaying()).toBe(false);
+    });
+  });
+
+  describe('togglePlayback', () => {
+    it('should toggle playback', () => {
+      const player = new Player({
+        audioElement: new MockAudioElement()
+      });
+      player.loadTrack('/path/to/track');
+      player.togglePlayback();
+      expect(player.isPlaying()).toBe(true);
+      player.togglePlayback();
+      expect(player.isPlaying()).toBe(false);
+    });
+  });
+
+  describe('volume', () => {
+    it('should get and set volume', () => {
+      const player = new Player({
+        audioElement: new MockAudioElement()
+      });
+      player.setVolume(0.5);
+      expect(player.getVolume()).toBe(0.5);
+    });
+  });
+
+  describe('seekTo', () => {
+    it('should seek loaded track to given position', () => {
+      const player = new Player({
+        audioElement: new MockAudioElement()
+      });
+      player.loadTrack('/path/to/track');
+      player.seekTo(0.5);
+      const { currentTime } = player.getPlaybackInfo();
+      expect(currentTime).toBe(DEFAULT_TRACK_DURATION * 0.5);
+    });
   });
 });
