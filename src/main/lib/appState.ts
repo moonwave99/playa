@@ -38,6 +38,7 @@ export default class AppState {
         message: `Loaded from ${this.path}...`
       }, this.appState);
     } catch (error) {
+      console.log(error)
       this.appState = {
         lastOpenedPlaylistId: null,
         lastWindowSize: [null, null],
