@@ -6269,10 +6269,9 @@ mkdirp@0.5.1, mkdirp@0.x, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1:
   dependencies:
     minimist "0.0.8"
 
-mock-fs@^4.10.4:
+"mock-fs@https://github.com/tschaub/mock-fs#master":
   version "4.10.4"
-  resolved "https://registry.yarnpkg.com/mock-fs/-/mock-fs-4.10.4.tgz#4eaa3d6f7da2f44e1f3dd6b462cbbcb7b082e3d4"
-  integrity sha512-gDfZDLaPIvtOusbusLinfx6YSe2YpQsDT8qdP41P47dQ/NQggtkHukz7hwqgt8QvMBmAv+Z6DGmXPyb5BWX2nQ==
+  resolved "https://github.com/tschaub/mock-fs#60cca44760173080c00cbf610302a448aa176159"
 
 moment@^2.14.1, moment@^2.22.1:
   version "2.24.0"
