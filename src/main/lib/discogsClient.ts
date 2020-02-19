@@ -11,6 +11,14 @@ type Credentials = {
   consumerSecret: string;
 }
 
+type DiscogsClientParams = {
+  coversPath: string;
+  userAgent: string;
+  credentials: Credentials;
+  disabled?: boolean;
+  debug?: boolean;
+};
+
 export default class DiscogsClient {
   coversPath: string;
   credentials: Credentials;
@@ -20,13 +28,13 @@ export default class DiscogsClient {
   notFoundCache: EntityHashMap<boolean>;
   disabled: boolean;
   debug: boolean;
-  constructor(
-    coversPath: string,
-    userAgent: string,
-    credentials: Credentials,
-    disabled: boolean,
-    debug: boolean
-  ) {
+  constructor({
+    coversPath,
+    userAgent,
+    credentials,
+    disabled = false,
+    debug = false
+  }: DiscogsClientParams) {
     this.coversPath = coversPath;
     this.credentials = credentials;
     this.discogs = new Client(userAgent, credentials);
@@ -45,7 +53,13 @@ export default class DiscogsClient {
     }
 
     const imagePath = Path.join(this.coversPath, `${_id}.jpg`);
-    if (fs.existsSync(imagePath)) {
+    let imageFound = false;
+    try {
+      imageFound = fs.existsSync(imagePath);
+    } catch(_error) {
+      imageFound = false;
+    }
+    if (imageFound) {
       this.cache[_id] = imagePath;
       this.notFoundCache[_id] = false;
       return this.cache[_id];
@@ -69,12 +83,14 @@ export default class DiscogsClient {
         return null;
       }
     }
-
     const result = await saveData(imageData, imagePath, 'binary');
     if (result) {
       this.cache[_id] = imagePath;
       this.notFoundCache[_id] = false;
       return this.cache[_id];
+    } else {
+      this.notFoundCache[_id] = true;
+      return null;
     }
   }
 

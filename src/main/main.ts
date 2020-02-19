@@ -73,7 +73,7 @@ function createWindow({
 }
 
 const userDataPath = getUserDataPath();
-const disableRequests = process.env.DISABLE_DISCOGS_REQUESTS === 'true';
+const disableDiscogsRequests = process.env.DISABLE_DISCOGS_REQUESTS === 'true';
 const debug = process.env.DEBUG === 'true';
 
 initDialog();
@@ -85,7 +85,7 @@ initDiscogsClient({
   appVersion: APP_VERSION,
   discogsKey: DISCOGS_KEY,
   discogsSecret: DISCOGS_SECRET,
-  disableRequests,
+  disabled: disableDiscogsRequests,
   debug
 });
 
