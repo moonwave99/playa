@@ -73,11 +73,10 @@ export class Waveform {
 		this.audioBuffer = await this.context.decodeAudioData(await response.arrayBuffer());
 	}
 
-	getPath(): string {
+	getSVGPath(): string {
 		if (!this.audioBuffer) {
 			return null;
 		}
-
 		const numberOfChannels = this.audioBuffer.numberOfChannels;
 		const channels = [];
 

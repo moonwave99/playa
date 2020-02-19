@@ -45,7 +45,7 @@ export const getWaveformRequest = (track: Track): Function =>
       peaksCount: WAVEFORM_PEAKS_COUNT
     });
     await waveform.load();
-    const waveformContent = waveform.getPath();
+    const waveformContent = waveform.getSVGPath();
     if (waveformContent) {
       dispatch({
         type: WAVEFORM_GET_RESPONSE,

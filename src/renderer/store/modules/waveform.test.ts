@@ -14,7 +14,7 @@ import reducer, {
 jest.mock('../../lib/waveform', () => {
   return {
     Waveform: class{
-      getPath(): string { return 'data'; }
+      getSVGPath(): string { return 'data'; }
       async load(): Promise<void> { true }
     }
   }

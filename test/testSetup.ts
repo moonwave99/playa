@@ -8,7 +8,13 @@ React.useLayoutEffect = React.useEffect ;
 const globalAny: any = global;
 
 globalAny.AudioContext = jest.fn().mockImplementation(() => ({
-  decodeAudioData: () => {}
+  decodeAudioData: () => ({
+    duration: 1,
+    length: 44100,
+    numberOfChannels: 2,
+    sampleRate: 44100,
+    getChannelData: () => Array.from(Array(44100).keys()).map(() => Math.random())
+  })
 }));
 
 globalAny.fetch = require("jest-fetch-mock");
