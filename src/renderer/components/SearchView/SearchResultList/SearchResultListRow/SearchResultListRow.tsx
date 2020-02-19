@@ -1,4 +1,4 @@
-import React, { ReactElement, SyntheticEvent } from 'react';
+import React, { ReactElement, MouseEvent, SyntheticEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Row, Cell } from 'react-table';
 import { useDrag } from 'react-dnd';
@@ -13,8 +13,11 @@ import { ApplicationState } from '../../../../store/store';
 
 type SearchResultListRowProps = {
   row: Row;
+  index: number;
   album: Album;
+  selected?: boolean;
   isCurrent?: boolean;
+  onClick: Function;
   onContextMenu: Function;
   onCoverDoubleClick: Function;
   style: object;
@@ -22,8 +25,11 @@ type SearchResultListRowProps = {
 
 export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
   row,
+  index,
   album,
+  selected = false,
   isCurrent = false,
+  onClick,
   onContextMenu,
   onCoverDoubleClick,
   style
@@ -40,6 +46,10 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
       opacity: monitor.isDragging() ? 0.4 : 1,
     })
   });
+
+  function _onClick(event: MouseEvent): void {
+    onClick(event, index);
+  }
 
   function _onConTextMenu(): void {
     onContextMenu(album);
@@ -94,11 +104,15 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
       </div>
     );
   }
-  const classNames = cx('search-result-list-item', 'tr', { 'is-current' : isCurrent });
+  const classNames = cx('search-result-list-item', 'tr', {
+    'is-current' : isCurrent,
+    'selected': selected
+  });
   return (
     <div {...row.getRowProps()}
       className={classNames}
       style={{ ...style, opacity }}
+      onClick={_onClick}
       onContextMenu={_onConTextMenu}>
       {row.cells.map(renderCell)}
     </div>

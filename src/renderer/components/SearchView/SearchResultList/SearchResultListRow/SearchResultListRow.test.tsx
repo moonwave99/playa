@@ -43,6 +43,8 @@ describe('SearchResultListRow', () => {
 			<SearchResultListRow
         style={{}}
         row={row}
+        index={0}
+        onClick={jest.fn()}
         onContextMenu={jest.fn()}
         onCoverDoubleClick={jest.fn()}
         album={albums[0]}/>
@@ -60,6 +62,8 @@ describe('SearchResultListRow', () => {
         style={{}}
         isCurrent
         row={row}
+        index={0}
+        onClick={jest.fn()}
         onContextMenu={jest.fn()}
         onCoverDoubleClick={jest.fn()}
         album={albums[0]}/>
@@ -71,12 +75,53 @@ describe('SearchResultListRow', () => {
 		expect(wrapper.is('.is-current')).toBe(true);
   });
 
+  it('should be .selected if selected = true', () => {
+		const wrapper = renderInAll(
+			<SearchResultListRow
+        style={{}}
+        selected
+        row={row}
+        index={0}
+        onClick={jest.fn()}
+        onContextMenu={jest.fn()}
+        onCoverDoubleClick={jest.fn()}
+        album={albums[0]}/>
+		, {
+      covers: {
+        allById: {}
+      }
+    });
+		expect(wrapper.is('.selected')).toBe(true);
+  });
+
+  it('should call the onClick handler when right clicked', () => {
+    const handler = jest.fn();
+    const wrapper = mountInAll(
+      <SearchResultListRow
+        style={{}}
+        row={row}
+        index={0}
+        onClick={handler}
+        onContextMenu={jest.fn()}
+        onCoverDoubleClick={jest.fn()}
+        album={albums[0]}/>
+		, {
+      covers: {
+        allById: {}
+      }
+    });
+    wrapper.find('.search-result-list-item').simulate('click');
+    expect(handler).toHaveBeenCalled();
+  });
+
   it('should call the onContextMenu handler when right clicked', () => {
     const handler = jest.fn();
     const wrapper = mountInAll(
       <SearchResultListRow
         style={{}}
         row={row}
+        index={0}
+        onClick={jest.fn()}
         onContextMenu={handler}
         onCoverDoubleClick={jest.fn()}
         album={albums[0]}/>
@@ -94,6 +139,8 @@ describe('SearchResultListRow', () => {
       <SearchResultListRow
         style={{}}
         row={row}
+        index={0}
+        onClick={jest.fn()}
         onContextMenu={jest.fn()}
         onCoverDoubleClick={jest.fn()}
         album={albums[0]}/>

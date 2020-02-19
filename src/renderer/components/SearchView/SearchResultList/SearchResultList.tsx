@@ -1,4 +1,4 @@
-import React, { ReactElement, memo, useMemo, useState, useEffect } from 'react';
+import React, { ReactElement, MouseEvent, memo, useMemo, useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useTable } from 'react-table';
 import { FixedSizeList as List, ListOnItemsRenderedProps, ListChildComponentProps, areEqual } from 'react-window';
@@ -8,6 +8,7 @@ import memoize from 'memoize-one';
 import { SearchResultListRow } from './SearchResultListRow/SearchResultListRow';
 import { getCoverRequest } from '../../../store/modules/cover';
 import { Album } from '../../../store/modules/album';
+import { select } from '../../../utils/selectionUtils';
 import './SearchResultList.scss';
 
 type SearchResultListProps = {
@@ -30,6 +31,7 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
   onResultDoubleClick
 }) => {
   const [renderedItems, setRenderedItems] = useState([]);
+  const [selection, setSelection] = useState([]);
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const columns = useMemo(() => [
@@ -45,6 +47,9 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
 
  useEffect(() => {
    setRenderedItems([]);
+   setSelection(
+     results.map(({ _id }) => ({ _id, selected: false }))
+   );
  }, [results, query])
 
   const {
@@ -57,6 +62,18 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
     columns,
     data: results,
   });
+
+  function onResultClick(event: MouseEvent, index: number): void {
+    const { metaKey, shiftKey } = event;
+    setSelection(
+      select({
+        items: selection,
+        index,
+        metaKey,
+        shiftKey
+      })
+    );
+  }
 
   const Row = memo(({ data, index, style }: ListChildComponentProps) => {
     const {
@@ -74,10 +91,13 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
         left: `var(--section-gutter)`,
         width: `calc(100% - 2 * var(--section-gutter))`
       }}
+      selected={selection[index].selected}
       key={row.original._id}
       row={row}
+      index={index}
       album={row.original}
       isCurrent={row.original._id === currentAlbumId}
+      onClick={onResultClick}
       onContextMenu={onResultContextMenu}
       onCoverDoubleClick={onResultDoubleClick}/>;
   }, areEqual);
