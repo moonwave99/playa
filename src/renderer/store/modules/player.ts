@@ -1,12 +1,16 @@
 import { ipcRenderer as ipc } from 'electron';
+import { createSelector } from 'reselect';
 import Player from '../../lib/player';
-import { Playlist } from './playlist';
+import { Playlist, selectors as playlistSelectors } from './playlist';
 import {
   Album,
   getAlbumListResponse,
-  getAlbumContentResponse
+  getAlbumContentResponse,
+  selectors as albumSelectors
 } from './album';
-import { Track, getTrackListResponse } from './track';
+import { Track, getTrackListResponse, selectors as trackSelectors } from './track';
+import { selectors as coverSelectors } from './cover';
+import { selectors as waveformSelectors } from './waveform';
 import { updateState } from './ui';
 import { immutableInsertAtIndex } from '../../utils/storeUtils';
 import { getPrevTrack, getNextTrack } from '../../utils/tracklistUtils';
@@ -40,30 +44,31 @@ type GetPlayerInfoSelection = {
   waveform: string;
 }
 
-export function playerSelector({
-  player,
-  playlists,
-  albums,
-  tracks,
-  covers,
-  waveforms
-}: ApplicationState): GetPlayerInfoSelection {
-  const {
-    currentPlaylistId,
-    currentAlbumId,
-    currentTrackId,
-    queue
-  } = player;
-  return {
-    currentPlaylist: playlists.allById[currentPlaylistId],
-    currentAlbum: albums.allById[currentAlbumId],
-    currentAlbumId,
-    currentTrack: tracks.allById[currentTrackId],
-    cover: covers.allById[currentAlbumId],
-    waveform: waveforms.allById[currentTrackId],
-    queue: queue.map(x => albums.allById[x])
-  };
-}
+export const playerSelector = createSelector(
+  selectors.state,
+  playlistSelectors.allById,
+  albumSelectors.allById,
+  trackSelectors.allById,
+  coverSelectors.allById,
+  waveformSelectors.allById,
+  (player, playlists, albums, tracks, covers, waveforms): GetPlayerInfoSelection => {
+    const {
+      currentPlaylistId,
+      currentAlbumId,
+      currentTrackId,
+      queue
+    } = player;
+    return {
+      currentPlaylist: playlists[currentPlaylistId],
+      currentAlbum: albums[currentAlbumId],
+      currentAlbumId,
+      currentTrack: tracks[currentTrackId],
+      cover: covers[currentAlbumId],
+      waveform: waveforms[currentTrackId],
+      queue: queue.map(x => albums[x])
+    };
+  }
+);
 
 export const PLAYER_PLAY_TRACK            = 'playa/player/PLAY_TRACK';
 export const PLAYER_TOGGLE_PLAYBACK       = 'playa/player/PLAYER_TOGGLE_PLAYBACK';

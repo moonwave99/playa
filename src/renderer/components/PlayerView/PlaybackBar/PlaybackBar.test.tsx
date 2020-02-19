@@ -3,6 +3,7 @@ import { renderInAll, mountInAll } from '../../../../../test/testUtils';
 import { playlists, albums, tracks } from '../../../../../test/testFixtures';
 import { toObj } from '../../../utils/storeUtils';
 import { formatDuration } from '../../../utils/datetimeUtils';
+import Player from '../../../lib/player';
 
 import { PlaybackBar } from './PlaybackBar';
 
@@ -28,13 +29,15 @@ const defaultStore = {
 };
 
 describe('PlaybackBar tests', () => {
+  const player = new Player({
+    audioElement: document.createElement('audio')
+  });
   it('should render a .playback-bar', () => {
     const wrapper = renderInAll(
 			<PlaybackBar
         currentAlbum={albums[0]}
         currentTrack={tracks[0]}
-        currentTime={0}
-        duration={tracks[0].duration}
+        player={player}
         waveform='/path/to/waveform'
 				onWaveformNotFound={jest.fn()}
 				onProgressBarClick={jest.fn()}/>,
@@ -47,8 +50,7 @@ describe('PlaybackBar tests', () => {
 			<PlaybackBar
         currentAlbum={albums[0]}
         currentTrack={tracks[0]}
-        currentTime={0}
-        duration={tracks[0].duration}
+        player={player}
         waveform='/path/to/waveform'
 				onWaveformNotFound={jest.fn()}
 				onProgressBarClick={jest.fn()}/>,
@@ -61,8 +63,7 @@ describe('PlaybackBar tests', () => {
 			<PlaybackBar
         currentAlbum={albums[0]}
         currentTrack={tracks[0]}
-        currentTime={0}
-        duration={tracks[0].duration}
+        player={player}
         waveform='/path/to/waveform'
 				onWaveformNotFound={jest.fn()}
 				onProgressBarClick={jest.fn()}/>,
@@ -76,8 +77,7 @@ describe('PlaybackBar tests', () => {
 			<PlaybackBar
         currentAlbum={albums[0]}
         currentTrack={tracks[0]}
-        currentTime={0}
-        duration={tracks[0].duration}
+        player={player}
         waveform='/path/to/waveform'
 				onWaveformNotFound={jest.fn()}
 				onProgressBarClick={jest.fn()}/>,
@@ -90,8 +90,7 @@ describe('PlaybackBar tests', () => {
 			<PlaybackBar
         currentAlbum={albums[0]}
         currentTrack={tracks[0]}
-        currentTime={0}
-        duration={tracks[0].duration}
+        player={player}
         waveform='/path/to/waveform'
 				onWaveformNotFound={jest.fn()}
 				onProgressBarClick={jest.fn()}/>,
@@ -105,8 +104,7 @@ describe('PlaybackBar tests', () => {
 			<PlaybackBar
         currentAlbum={albums[0]}
         currentTrack={tracks[0]}
-        currentTime={0}
-        duration={tracks[0].duration}
+        player={player}
         waveform='/path/to/waveform'
 				onWaveformNotFound={jest.fn()}
 				onProgressBarClick={handler}/>,

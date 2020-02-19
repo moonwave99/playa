@@ -47,8 +47,7 @@ export const PlayerView: FC<PlayerViewProps> = ({
   } = useSelector(playerSelector);
 
 	useEffect(() => {
-		function handlePlayerUpdate({ currentTime, duration, isPlaying }: PlaybackInfo): void {
-			setPlaybackInfo([currentTime, duration]);
+		function handlePlayerUpdate({ isPlaying }: PlaybackInfo): void {
 			setPlaying(isPlaying);
 		}
 		function handlePlayerError(_error: Error, info: PlaybackInfo): void {
@@ -163,8 +162,7 @@ export const PlayerView: FC<PlayerViewProps> = ({
 				<PlaybackBar
 					currentTrack={currentTrack}
 					currentAlbum={currentAlbum}
-					currentTime={playbackInfo[0]}
-					duration={playbackInfo[1]}
+					player={player}
 					waveform={getWaveformPath()}
 					onWaveformNotFound={onWaveformNotFound}
 					onProgressBarClick={onProgressBarClick}/>

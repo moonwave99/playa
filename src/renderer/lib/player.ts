@@ -70,7 +70,7 @@ export default class Player extends EventEmitter {
   getPlaybackInfo(): PlaybackInfo {
     return {
       currentTime: this.audioElement.currentTime,
-      duration: this.audioElement.duration,
+      duration: this.audioElement.duration || 0,
       currentTrack: this.audioElement.currentSrc,
       isPlaying: !this.audioElement.paused
     };

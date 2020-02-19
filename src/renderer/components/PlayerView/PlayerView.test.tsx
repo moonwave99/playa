@@ -32,11 +32,10 @@ const defaultStore = {
   }
 };
 
-const player = new Player({
-	audioElement: document.createElement('audio')
-});
-
 describe('PlayerView tests', () => {
+  const player = new Player({
+    audioElement: document.createElement('audio')
+  });
   it('should render a .player', () => {
     const wrapper = renderInAll(
 			<PlayerView

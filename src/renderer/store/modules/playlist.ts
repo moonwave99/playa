@@ -17,9 +17,6 @@ import {
   getAlbumListRequest
 } from './album';
 import { Track } from './track';
-import {
-  selectors as playerSelectors,
-} from './player';
 
 import { IPC_MESSAGES } from '../../../constants';
 
@@ -62,7 +59,7 @@ export const getPlaylistById = createCachedSelector(
   selectors.state,
   selectors.findById,
   albumSelectors.allById,
-  playerSelectors.state,
+  ({ player }: ApplicationState) => player,
   (state, playlist, albums, player): GetPlaylistByIdSelection => {
     const foundAlbums = playlist && playlist.albums ? toObj(
       playlist.albums
