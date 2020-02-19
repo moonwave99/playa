@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { renderInAll } from '../../../../test/testUtils';
+import { renderInAll, mountInAll } from '../../../../test/testUtils';
 import { playlists, albums } from '../../../../test/testFixtures';
 import { toObj } from '../../utils/storeUtils';
 
@@ -32,5 +32,12 @@ describe('AllPlaylistContainer', () => {
       <AllPlaylistContainer playlists={playlists}/>
       , defaultStore);
     expect(wrapper.is('.all-playlists-view')).toBe(true);
+  });
+
+  it('should update page title', () => {
+    mountInAll(
+      <AllPlaylistContainer playlists={playlists}/>
+      , defaultStore);
+    expect(document.title).toBe('playlists: all');
   });
 });

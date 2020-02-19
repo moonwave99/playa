@@ -33,7 +33,7 @@ export const QueueView = (): ReactElement => {
   } = useSelector(playerSelector);
 
   useEffect(() => {
-    dispatch(updateTitle(`playback queue: ${queue.length} albums`));
+    dispatch(updateTitle(`playback queue: ${queue.length} album(s)`));
   }, [queue.length]);
 
   useEffect(() => {

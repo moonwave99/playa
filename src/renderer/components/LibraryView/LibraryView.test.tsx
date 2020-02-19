@@ -59,4 +59,11 @@ describe('LibraryView', () => {
     , defaultStore);
     expect(wrapper.find('.album-grid')).toHaveLength(1);
   });
+
+  it('should update page title', () => {
+    mountInAll(
+      <LibraryView/>
+    , defaultStore);
+    expect(document.title).toBe('library');
+  });
 });

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { renderInAll, mockRouter } from '../../../../test/testUtils';
+import { renderInAll, mountInAll, mockRouter } from '../../../../test/testUtils';
 import { albums } from '../../../../test/testFixtures';
 
 mockRouter({
@@ -52,5 +52,27 @@ describe('SearchView', () => {
 		const wrapper = renderInAll(<SearchView/>, store);
 		expect(wrapper.find('.search-result-list'))
       .toHaveLength(0);
+  });
+
+  it('should update page title if isSearching', () => {
+    const store = {
+      search: {
+        isSearching: true
+      },
+      player: {}
+    };
+    mountInAll(<SearchView/>, store);
+    expect(document.title).toBe('searching...');
+  });
+
+  it('should update page title with search info', () => {
+    const store = {
+      search: {
+        results: [] as object[]
+      },
+      player: {}
+    };
+    mountInAll(<SearchView/>, store);
+    expect(document.title).toBe(`search: 0 results for slowdive`);
   });
 });

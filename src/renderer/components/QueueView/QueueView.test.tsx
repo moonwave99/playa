@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { renderInAll } from '../../../../test/testUtils';
+import { renderInAll, mountInAll } from '../../../../test/testUtils';
 import { albums } from '../../../../test/testFixtures';
 import { toObj } from '../../utils/storeUtils';
 import { QueueView } from './QueueView';
@@ -51,5 +51,15 @@ describe('QueueView', () => {
     });
     expect(wrapper.find('.queue-empty-placeholder')).toHaveLength(0);
     expect(wrapper.find('.album-list')).toHaveLength(1);
+  });
+
+  it('should update page title with queue info', () => {
+    mountInAll(<QueueView/>, {
+      ...defaultStore,
+      player: {
+        queue: albums.map(({ _id }) => _id)
+      }
+    });
+    expect(document.title).toBe(`playback queue: ${albums.length} album(s)`);
   });
 });

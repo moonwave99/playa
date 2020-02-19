@@ -72,7 +72,7 @@ export const LibraryView = (): ReactElement => {
 	}, []);
 
 	useEffect(() => {
-    dispatch(updateTitle('Library'));
+    dispatch(updateTitle('library'));
   }, []);
 
 	function onAlbumContextMenu(album: Album): void {
