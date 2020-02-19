@@ -48,8 +48,8 @@ export const albums: Album[] = [
 
 export const tracks: Track[] = [
   {
-    _id: '1',
-    path: '/path/to/track_1',
+    _id: '/path/to/track_1.mp3',
+    path: '/path/to/track_1.mp3',
     found: true,
     artist: 'Slowdive',
     title: 'Spanish Air',
@@ -57,8 +57,8 @@ export const tracks: Track[] = [
     duration: 123
   },
   {
-    _id: '2',
-    path: '/path/to/track_2',
+    _id: '/path/to/track_2.mp3',
+    path: '/path/to/track_2.mp3',
     found: true,
     artist: 'Slowdive',
     title: "Celia's Dream",
@@ -66,8 +66,8 @@ export const tracks: Track[] = [
     duration: 456
   },
   {
-    _id: '3',
-    path: '/path/to/track_3',
+    _id: '/path/to/track_3.mp3',
+    path: '/path/to/track_3.mp3',
     found: true,
     artist: 'My Bloody Valentine',
     title: 'Only Shallow',
@@ -75,8 +75,8 @@ export const tracks: Track[] = [
     duration: 123
   },
   {
-    _id: '4',
-    path: '/path/to/track_3',
+    _id: '/path/to/track_4.mp3',
+    path: '/path/to/track_4.mp3',
     found: true,
     artist: 'My Bloody Valentine',
     title: "Loomer",

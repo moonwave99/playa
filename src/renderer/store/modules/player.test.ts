@@ -38,7 +38,7 @@ describe('player actions', () => {
     const playbackIds = {
       playlistId: '1',
       albumId: '1',
-      trackId: '2'
+      trackId: tracks[1]._id
     };
     await playTrack(playbackIds)(store.dispatch, store.getState);
     expect(store.getActions()).toEqual([
@@ -104,11 +104,11 @@ describe('player actions', () => {
           allById: toObj([
             {
               ...albums[0],
-              tracks: ['1', '2']
+              tracks: [tracks[0]._id, tracks[1]._id]
             },
             {
               ...albums[1],
-              tracks: ['3', '4']
+              tracks: [tracks[2]._id, tracks[3]._id]
             }
           ])
         },
@@ -118,7 +118,7 @@ describe('player actions', () => {
         player: {
           queue: ['1', '2'],
           currentAlbumId: '2',
-          currentTrackId: '3',
+          currentTrackId: tracks[2]._id,
           currentPlaylistId: '1'
         },
         covers: {
@@ -131,7 +131,7 @@ describe('player actions', () => {
       const playbackIds = {
         playlistId: '1',
         albumId: '1',
-        trackId: '2'
+        trackId: tracks[1]._id
       };
       await playPreviousTrack()(store.dispatch, store.getState);
       expect(store.getActions()).toEqual([
@@ -153,11 +153,11 @@ describe('player actions', () => {
           allById: toObj([
             {
               ...albums[0],
-              tracks: ['1', '2']
+              tracks: [tracks[0]._id, tracks[1]._id]
             },
             {
               ...albums[1],
-              tracks: ['3', '4']
+              tracks: [tracks[2]._id, tracks[3]._id]
             }
           ])
         },
@@ -167,7 +167,7 @@ describe('player actions', () => {
         player: {
           queue: ['1', '2'],
           currentAlbumId: '1',
-          currentTrackId: '2',
+          currentTrackId: tracks[1]._id,
           currentPlaylistId: '1'
         },
         covers: {
@@ -180,7 +180,7 @@ describe('player actions', () => {
       const playbackIds = {
         playlistId: '1',
         albumId: '2',
-        trackId: '3'
+        trackId: tracks[2]._id
       };
       await playNextTrack()(store.dispatch, store.getState);
       expect(store.getActions()).toEqual([

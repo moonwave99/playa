@@ -1,12 +1,8 @@
-import { playlists, albums } from '../testFixtures';
+import { playlists, albums, tracks } from '../testFixtures';
 import { toObj, toArray, EntityHashMap } from '../../src/renderer/utils/storeUtils';
 import { Album } from '../../src/renderer/store/modules/album';
 import { Playlist } from '../../src/renderer/store/modules/playlist';
-
-const db: { [key: string]: any } = {
-  playlist: toObj(playlists) as EntityHashMap<Playlist>,
-  album: toObj(albums) as EntityHashMap<Album>,
-};
+import { Track } from '../../src/renderer/store/modules/track';
 
 interface A {
   [key: string]: any;
@@ -21,25 +17,31 @@ type FindParams = {
 
 class LocalPouchDB {
   private name: string;
+  private db: { [key: string]: any };
   constructor(name: string){
     this.name = name;
+    this.db = {
+      playlist: toObj(playlists) as EntityHashMap<Playlist>,
+      album: toObj(albums) as EntityHashMap<Album>,
+      track: toObj([tracks[0], tracks[1]]) as EntityHashMap<Track>
+    };
   }
   async allDocs({ keys }: { keys?: string[] }): Promise<{ rows: object[] }> {
     if (!keys) {
       return Promise.resolve({
-        rows: toArray<{ _deleted?: boolean }>(db[this.name])
+        rows: toArray<{ _deleted?: boolean }>(this.db[this.name])
           .filter(x => !x._deleted)
           .map(x => ({ doc: x }))
       });
     }
     return Promise.resolve({
-      rows: keys.map(id => db[this.name][id])
-        .filter(x => !x._deleted)
+      rows: keys.map(id => this.db[this.name][id])
+        .filter(x => !(x || {})._deleted)
         .map(x => ({ doc: x }))
     });
   }
   async get(_id: string): Promise<object> {
-    const result = db[this.name][_id];
+    const result = this.db[this.name][_id];
     if (!result || result._deleted) {
       return Promise.resolve({});
     }
@@ -47,9 +49,9 @@ class LocalPouchDB {
   }
   async createIndex() { true }
   async put({ _id, _deleted }: { _id: string, _deleted?: boolean }) {
-    const newRev = `${+(db[this.name][_id]._rev)++}`;
+    const newRev = `${+(this.db[this.name][_id]._rev)++}`;
     if (_deleted === true) {
-      delete db[this.name][_id];
+      delete this.db[this.name][_id];
     }
     return _id === '1' ? {
       ok: true,
@@ -60,7 +62,7 @@ class LocalPouchDB {
   }
   async search({ query, fields }: { query: string, fields: string[] }) {
     return {
-      rows: toArray<A>(db[this.name]).filter(x => {
+      rows: toArray<A>(this.db[this.name]).filter(x => {
         let found = false;
         fields.forEach(field => {
           if (x[field].indexOf(query) > 0) {
@@ -77,7 +79,7 @@ class LocalPouchDB {
     limit = 0
   }: FindParams) {
     const keys = Object.keys(selector);
-    let docs = toArray<A>(db[this.name]).filter(
+    let docs = toArray<A>(this.db[this.name]).filter(
       x => keys.every(key => {
         switch(typeof selector[key]) {
           case 'string':
@@ -112,10 +114,10 @@ class LocalPouchDB {
     return { docs };
   }
   async remove(doc: { _id: string }) {
-    delete db[this.name][doc._id];
+    delete this.db[this.name][doc._id];
   }
   async bulkDocs(docs: { _id: string }[]) {
-    docs.forEach(doc => db[this.name][doc._id] = doc);
+    docs.forEach(doc => this.db[this.name][doc._id] = doc);
   }
 }
 

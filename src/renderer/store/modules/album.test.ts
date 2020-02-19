@@ -36,7 +36,7 @@ describe('album actions', () => {
           allById: {}
         }
       });
-      const albumWithTracks = {...albums[0], tracks: ['1', '2']};
+      const albumWithTracks = {...albums[0], tracks: [tracks[0]._id, tracks[1]._id]};
       const expectedActions = [
         { type: ALBUM_GET_RESPONSE, album: albumWithTracks },
         { type: TRACK_GET_LIST_RESPONSE, results: [tracks[0], tracks[1]] },

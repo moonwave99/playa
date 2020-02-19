@@ -41,13 +41,13 @@ export default async function loadTracklist(
   persist = true
 ): Promise<Track[]> {
   const results = await db.getList<Track>(ids);
+  let resultIDs = results.map(({ _id }) => _id);
   if (forceUpdate) {
     await db.removeBulk(results);
-  } else if (results.length > 0) {
-    return results;
+    resultIDs = [];
   }
-
-  const meta = await loadMetadata(ids);
+  const tracksNotInDB = ids.filter(id => resultIDs.indexOf(id) < 0);
+  const meta = await loadMetadata(tracksNotInDB);
   const loadedTracks = meta.map(({ _id, metadata, status }) => {
     if (status === TrackStatus.OK) {
       const { duration } = metadata.format;
@@ -73,5 +73,8 @@ export default async function loadTracklist(
       loadedTracks.filter(({ found }) => found)
     );
   }
-  return loadedTracks;
+  return [
+    ...results,
+    ...loadedTracks
+  ].sort((a, b) => a._id.localeCompare(b._id));
 }

@@ -36,7 +36,7 @@ describe('waveform actions', () => {
   });
 });
 
-describe('cover reducer', () => {
+describe('waveform reducer', () => {
   const initialState = {
     allById: {}
   }
@@ -60,7 +60,7 @@ describe('cover reducer', () => {
       track: tracks[0]
     })).toEqual({
       ...initialState,
-      allById: { '1': path }
+      allById: { [tracks[0]._id]: path }
     });
   });
 });

@@ -46,7 +46,7 @@ describe('playlistListActions', () => {
         allById: toObj([
           {
             ...albums[0],
-            tracks: ['1', '2']
+            tracks: [tracks[0]._id, tracks[1]._id]
           },
           albums[1]
         ])
@@ -67,7 +67,7 @@ describe('playlistListActions', () => {
       type: PLAYER_PLAY_TRACK,
       playlistId: playlistWithAlbums._id,
       albumId: playlistWithAlbums.albums[0],
-      trackId: '1'
+      trackId: tracks[0]._id
     }];
 
     expectedActions.forEach(

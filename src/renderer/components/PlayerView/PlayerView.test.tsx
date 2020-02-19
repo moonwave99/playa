@@ -83,7 +83,7 @@ describe('PlayerView', () => {
 					queue: ['1', '2'],
 					currentPlaylistId: '1',
 					currentAlbumId: '1',
-					currentTrackId: '1'
+					currentTrackId: tracks[0]._id
 				}
 			});
     expect(wrapper.find('.playback-bar')).toHaveLength(1);
@@ -109,7 +109,7 @@ describe('PlayerView', () => {
 					queue: ['1', '2'],
 					currentPlaylistId: '1',
 					currentAlbumId: '1',
-					currentTrackId: '1'
+					currentTrackId: tracks[0]._id
 				}
 			});
     expect(wrapper.find('.volume-control')).toHaveLength(1);
