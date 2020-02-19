@@ -16,7 +16,7 @@ const row = {
   values: {} as object
 }
 
-describe('SearchResultListRow tests', () => {
+describe('SearchResultListRow', () => {
   it('should render a .search-result-list-item', () => {
 		const wrapper = renderInAll(
 			<SearchResultListRow

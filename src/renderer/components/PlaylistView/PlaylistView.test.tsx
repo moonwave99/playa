@@ -27,7 +27,7 @@ const defaultStore = {
   }
 };
 
-describe('PlaylistView tests', () => {
+describe('PlaylistView', () => {
   it('should render a .playlist-view', () => {
     const wrapper = renderInAll(
       <PlaylistView

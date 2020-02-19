@@ -9,7 +9,7 @@ mockRouter({
 import { PlaylistList } from './PlaylistList';
 import { playlists } from '../../../../../test/testFixtures';
 
-describe('PlaylistList tests', () => {
+describe('PlaylistList', () => {
   it('should render a .playlist-list', () => {
     const wrapper = renderInAll(<PlaylistList playlists={playlists} currentPlaylistId={null}/>);
     expect(wrapper.is('.playlist-list')).toBe(true);

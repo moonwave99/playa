@@ -4,7 +4,7 @@ import { playlists } from '../../../../../test/testFixtures';
 
 import { PlaylistViewTitle } from './PlaylistViewTitle';
 
-describe('PlaylistViewTitle tests', () => {
+describe('PlaylistViewTitle', () => {
   it('should render a title', () => {
     const wrapper = render(
 			<PlaylistViewTitle

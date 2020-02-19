@@ -3,7 +3,7 @@ import { renderInAll } from '../../../../../test/testUtils';
 import { albums } from '../../../../../test/testFixtures';
 import { AlbumGridView } from './AlbumGridView';
 
-describe('AlbumGridView tests', () => {
+describe('AlbumGridView', () => {
   it('should render an .album-grid', () => {
     const wrapper = renderInAll(
       <AlbumGridView

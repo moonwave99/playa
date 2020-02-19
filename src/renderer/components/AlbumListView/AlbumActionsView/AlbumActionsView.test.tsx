@@ -3,7 +3,7 @@ import { render, mount } from 'enzyme';
 import { albums } from '../../../../../test/testFixtures';
 import { AlbumActionsView, ActionsConfig } from './AlbumActionsView';
 
-describe('AlbumActionsView tests', () => {
+describe('AlbumActionsView', () => {
 
   const actions = [
     {

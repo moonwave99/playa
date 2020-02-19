@@ -4,7 +4,7 @@ import { renderInAll } from '../../../../../test/testUtils';
 import { SearchResultList } from './SearchResultList';
 import { albums } from '../../../../../test/testFixtures';
 
-describe('SearchResultList tests', () => {
+describe('SearchResultList', () => {
   it('should render a .search-result-list', () => {
     const wrapper = renderInAll(
       <SearchResultList

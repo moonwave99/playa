@@ -8,7 +8,7 @@ mockRouter({
 
 import { SidebarView } from './SidebarView';
 
-describe('SidebarView tests', () => {
+describe('SidebarView', () => {
   it('should render a .sidebar', () => {
 		const wrapper = renderInAll(
 			<SidebarView

@@ -8,7 +8,7 @@ mockRouter({
 
 import { SearchView } from './SearchView';
 
-describe('SearchView tests', () => {
+describe('SearchView', () => {
   it('should render a .search-view', () => {
     const store = {
       search: {},

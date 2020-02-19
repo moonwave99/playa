@@ -26,7 +26,7 @@ const defaultStore = {
   }
 };
 
-describe('AlbumView tests', () => {
+describe('AlbumView', () => {
   it('should render an .album-view', () => {
     const wrapper = renderInAll(
       <AlbumView

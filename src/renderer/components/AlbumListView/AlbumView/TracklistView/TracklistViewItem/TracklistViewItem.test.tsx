@@ -5,7 +5,7 @@ import { renderInRouter } from '../../../../../../../test/testUtils';
 import { TracklistViewItem } from './TracklistViewItem';
 import { tracks } from '../../../../../../../test/testFixtures';
 
-describe('TracklistViewItem tests', () => {
+describe('TracklistViewItem', () => {
   it('should render a .tracklist-item', () => {
     const wrapper = render(
       <TracklistViewItem track={tracks[0]}/>

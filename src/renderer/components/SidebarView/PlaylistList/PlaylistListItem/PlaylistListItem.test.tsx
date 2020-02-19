@@ -4,7 +4,7 @@ import { renderInAll, mountInAll } from '../../../../../../test/testUtils';
 import { PlaylistListItem } from './PlaylistListItem';
 import { playlists } from '../../../../../../test/testFixtures';
 
-describe('PlaylistListItem tests', () => {
+describe('PlaylistListItem', () => {
   it('should render a .playlist-list-item', () => {
     const wrapper = renderInAll(
       <PlaylistListItem

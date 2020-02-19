@@ -4,7 +4,7 @@ import { render, mount } from 'enzyme';
 import { CoverView } from './CoverView';
 import { albums } from '../../../../../../test/testFixtures';
 
-describe('CoverView tests', () => {
+describe('CoverView', () => {
   it('should render a <figure> with a title attribute', () => {
     const wrapper = render(
       <CoverView src='path/to/image.jpg' album={albums[0]} />

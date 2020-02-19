@@ -4,7 +4,7 @@ import { render } from 'enzyme';
 import { TracklistView } from './TracklistView';
 import { tracks } from '../../../../../../test/testFixtures';
 
-describe('TracklistView tests', () => {
+describe('TracklistView', () => {
   const tracklist = tracks.map(({ _id }) => _id);
 
   it('should render a .tracklist-view', () => {

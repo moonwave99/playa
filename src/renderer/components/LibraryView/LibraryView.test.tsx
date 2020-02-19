@@ -31,7 +31,7 @@ const defaultStore = {
   }
 };
 
-describe('LibraryView tests', () => {
+describe('LibraryView', () => {
   it('should render a .library', () => {
     const wrapper = mountInAll(
       <LibraryView/>

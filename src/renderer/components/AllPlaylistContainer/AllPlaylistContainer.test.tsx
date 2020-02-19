@@ -26,7 +26,7 @@ const defaultStore = {
   }
 };
 
-describe('AllPlaylistContainer tests', () => {
+describe('AllPlaylistContainer', () => {
   it('should contain a .all-playlists-view', () => {
     const wrapper = renderInAll(
       <AllPlaylistContainer playlists={playlists}/>

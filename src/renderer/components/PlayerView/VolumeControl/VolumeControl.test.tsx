@@ -3,7 +3,7 @@ import { render, mount } from 'enzyme';
 
 import { VolumeControl } from './VolumeControl';
 
-describe('VolumeControl tests', () => {
+describe('VolumeControl', () => {
   it('should render a .volume-control', () => {
     const wrapper = render(
       <VolumeControl

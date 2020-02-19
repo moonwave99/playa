@@ -25,7 +25,7 @@ const defaultStore = {
   }
 };
 
-describe('QueueView tests', () => {
+describe('QueueView', () => {
   it('should render a .queue', () => {
     const wrapper = renderInAll(<QueueView/>, defaultStore);
     expect(wrapper.is('.queue')).toBe(true);

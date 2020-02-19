@@ -3,7 +3,7 @@ import { render } from 'enzyme';
 import { tracks } from '../../../../../test/testFixtures';
 import { ImportView } from './ImportView';
 
-describe('ImportView tests', () => {
+describe('ImportView', () => {
   it('should render an .import-view', () => {
     const wrapper = render(
       <ImportView

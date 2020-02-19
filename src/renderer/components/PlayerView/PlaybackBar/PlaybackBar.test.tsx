@@ -28,7 +28,7 @@ const defaultStore = {
   }
 };
 
-describe('PlaybackBar tests', () => {
+describe('PlaybackBar', () => {
   const player = new Player({
     audioElement: document.createElement('audio')
   });

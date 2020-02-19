@@ -31,9 +31,9 @@ const defaultStore = {
   }
 };
 
-describe('PlaylistContainer tests', () => {
+describe('PlaylistContainer', () => {
   it('should contain a .playlist-view', () => {
     const wrapper = renderInAll(<PlaylistContainer/>, defaultStore);
     expect(wrapper.is('.playlist-view')).toBe(true);
-  });
+  });  
 });

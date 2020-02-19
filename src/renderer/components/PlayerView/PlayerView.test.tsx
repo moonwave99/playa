@@ -32,7 +32,7 @@ const defaultStore = {
   }
 };
 
-describe('PlayerView tests', () => {
+describe('PlayerView', () => {
   const player = new Player({
     audioElement: document.createElement('audio')
   });

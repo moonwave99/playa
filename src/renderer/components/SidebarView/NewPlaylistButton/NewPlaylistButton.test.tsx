@@ -3,7 +3,7 @@ import { renderInDnDProvider, mountInDnDProvider } from '../../../../../test/tes
 
 import { NewPlaylistButton } from './NewPlaylistButton';
 
-describe('NewPlaylistButton tests', () => {
+describe('NewPlaylistButton', () => {
   it('should render a .new-playlist-button', () => {
 		const wrapper = renderInDnDProvider(
 			<NewPlaylistButton

@@ -3,7 +3,7 @@ import { renderInAll, mountInAll } from '../../../../../../test/testUtils';
 import { albums } from '../../../../../../test/testFixtures';
 import { AlbumGridTileView } from './AlbumGridTileView';
 
-describe('AlbumGridTileView tests', () => {
+describe('AlbumGridTileView', () => {
   it('should render a .album-grid-tile', () => {
     const wrapper = renderInAll(
       <AlbumGridTileView album={albums[0]}/>

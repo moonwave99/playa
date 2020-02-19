@@ -26,7 +26,7 @@ const defaultStore = {
   }
 };
 
-describe('CompactAlbumView tests', () => {
+describe('CompactAlbumView', () => {
   it('should render a .compact-album-view', () => {
     const wrapper = renderInAll(
       <CompactAlbumView

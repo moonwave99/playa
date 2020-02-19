@@ -3,7 +3,7 @@ import { render, mount } from 'enzyme';
 
 import { SearchBar } from './SearchBar';
 
-describe('SearchBar tests', () => {
+describe('SearchBar', () => {
   it('should render a .search-bar', () => {
     const wrapper = render(
       <SearchBar onFormSubmit={jest.fn()} onBlur={jest.fn()} />
