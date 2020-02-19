@@ -75,7 +75,7 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
       case 'title':
         cellContent =
           <span className="title" title={cell.value}>
-            {cell.value} { isCurrent ? <FontAwesomeIcon icon="volume-up"/> : null }
+            {cell.value}{ isCurrent ? <FontAwesomeIcon className="icon" icon="volume-up"/> : null }
           </span>;
         break;
       case 'year':
