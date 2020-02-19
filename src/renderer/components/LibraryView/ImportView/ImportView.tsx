@@ -9,6 +9,7 @@ import {
 } from '../../../store/modules/album';
 import { Track } from '../../../store/modules/track';
 import { showTrackNumbers } from '../../../utils/albumUtils';
+import { getYearFromPath } from '../../../utils/pathUtils';
 import './ImportView.scss';
 
 type ImportViewProps = {
@@ -43,6 +44,7 @@ export const ImportView: FC<ImportViewProps> = ({
   const [isAlbumFromVA, setAlbumFromVA] = useState(false);
   const { t } = useTranslation();
   const formRef = useRef(null);
+
   const formFields: FormFieldParams[] = [
     {
       accessor: 'artist',
@@ -66,7 +68,8 @@ export const ImportView: FC<ImportViewProps> = ({
     {
       accessor: 'year',
       title: t('albums.props.year'),
-      type: 'number'
+      type: 'number',
+      value: getYearFromPath(folderToImport)
     },
     {
       accessor: 'type',
