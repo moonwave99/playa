@@ -17,12 +17,22 @@ const {
   IPC_DIALOG_SHOW_MESSAGE
 } = IPC_MESSAGES;
 
-class Menu {
-  append() {}
-  popup() {}
+class MenuItem {
+  constructor(params){
+    Object.entries(params)
+      .map(([key, value]) => this[key] = value);
+  }
 }
 
-class MenuItem {}
+class Menu {
+  constructor(){
+    this.items = [];
+  }
+  append(item) {
+    this.items.push(item);
+  }
+  popup() {}
+}
 
 module.exports = {
   ipcRenderer: {

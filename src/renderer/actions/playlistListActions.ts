@@ -97,6 +97,6 @@ export function getActionGroups({
         const { title, handler } = action({ playlist, dispatch });
         return { label: title, click: handler };
       }),
-    ...index < original.length ? [{ type : 'separator'}] : []
+    ...index < original.length - 1 ? [{ type : 'separator'}] : []
   ], []);
 }

@@ -31,7 +31,7 @@ type ContextMenuParams =
   | GetAlbumContextMenuParams
   | GetLibraryContentContextMenuParams;
 
-export function openContextMenu(params: ContextMenuParams[]): void {
+export function openContextMenu(params: ContextMenuParams[]): { items: object[] } {
   const menu = new Menu();
   const groups: MenuItemConstructorOptions[][] = params.map((param) => {
     switch (param.type) {
@@ -48,10 +48,10 @@ export function openContextMenu(params: ContextMenuParams[]): void {
 
   groups.forEach((group, index) => {
     group.forEach(item => menu.append(new MenuItem(item)));
-    if (index < groups.length) {
+    if (index < groups.length - 1) {
       menu.append(new MenuItem({ type: 'separator' }));
     }
   });
-
   menu.popup({ window: remote.getCurrentWindow() });
+  return menu;
 }

@@ -78,6 +78,6 @@ export function getActionGroups({
         const { title, handler } = action({ selection, playingAlbumID, dispatch });
         return { label: title, click: handler };
       }),
-    ...index < original.length ? [{ type : 'separator'}] : []
+    ...index < original.length - 1 ? [{ type : 'separator'}] : []
   ], []);
 }

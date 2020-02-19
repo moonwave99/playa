@@ -173,6 +173,6 @@ export function getActionGroups({
         const { title, handler } = action(args);
         return { label: title, click: handler };
       }),
-    ...index < original.length ? [{ type : 'separator'}] : []
+    ...index < original.length - 1 ? [{ type : 'separator'}] : []
   ], []);
 }
