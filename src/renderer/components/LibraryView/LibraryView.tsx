@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getLatestRequest } from '../../store/modules/library';
 import { AlbumGridView } from './AlbumGridView/AlbumGridView';
 import { ImportView } from './ImportView/ImportView';
+import { ApplicationState } from '../../store/store';
 import { updateTitle } from '../../store/modules/ui';
 import { Album, saveAlbumRequest } from '../../store/modules/album';
 import { Track, getTrackListRequest } from '../../store/modules/track';
@@ -46,7 +47,7 @@ import './LibraryView.scss';
 export const LibraryView = (): ReactElement => {
   const { t } = useTranslation();
 	const dispatch = useDispatch();
-  
+
   const [folderToImport, setFolderToImport] = useState(null);
   const [showImportModal, setShowImportModal] = useState(false);
   const [tracksToImport, setTracksToImport] = useState([]);
@@ -55,7 +56,7 @@ export const LibraryView = (): ReactElement => {
     latest,
     latestAlbumID,
     playingAlbumID
-  } = useSelector(({ albums, library, player }) => ({
+  } = useSelector(({ albums, library, player }: ApplicationState) => ({
     latest: library.latest.map((_id: Album['_id']) => albums.allById[_id]),
     latestAlbumID: library.latestAlbumID,
     playingAlbumID: player.currentAlbumId

@@ -3,6 +3,7 @@ import { CSSTransition } from 'react-transition-group';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
 import { SearchResultList } from './SearchResultList/SearchResultList';
+import { ApplicationState } from '../../store/store';
 import { updateTitle } from '../../store/modules/ui';
 import { Album } from '../../store/modules/album';
 import { searchSelector, searchRequest } from '../../store/modules/search';
@@ -19,7 +20,7 @@ import './SearchView.scss';
 export const SearchView = (): ReactElement => {
   const location = useLocation();
   const dispatch = useDispatch();
-  const currentAlbumId = useSelector(({ player }) => player.currentAlbumId);
+  const currentAlbumId = useSelector(({ player }: ApplicationState) => player.currentAlbumId);
   const {
     results,
     isSearching,
