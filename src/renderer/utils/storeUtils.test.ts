@@ -5,7 +5,8 @@ import {
   removeIds,
   ensureAll,
   immutableMove,
-  immutableInsertAtIndex
+  immutableInsertAtIndex,
+  immutableInsertArrayAtIndex
 } from './storeUtils';
 
 const entitiesArray = [
@@ -100,5 +101,12 @@ describe ('immutableInsertAtIndex', () => {
   it('should return a copy of original array with item inserted at :index', () => {
     const array = [1, 2, 3];
     expect(immutableInsertAtIndex<number>(array, 4, 1)).toEqual([1, 4, 2, 3]);
+  });
+});
+
+describe ('immutableInsertArrayAtIndex', () => {
+  it('should return a copy of original array with arrayToInsert inserted at :index', () => {
+    const array = [1, 2, 3];
+    expect(immutableInsertArrayAtIndex<number>(array, [4, 5], 1)).toEqual([1, 4, 5, 2, 3]);
   });
 });

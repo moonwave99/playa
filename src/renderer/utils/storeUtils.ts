@@ -83,3 +83,15 @@ export function immutableInsertAtIndex<T>(
     ...array.slice(index)
   ];
 }
+
+export function immutableInsertArrayAtIndex<T>(
+  array: T[],
+  arrayToInsert: T[],
+  index: number
+): T[] {
+  return [
+    ...array.slice(0, index),
+    ...arrayToInsert,
+    ...array.slice(index)
+  ];
+}
