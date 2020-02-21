@@ -1,3 +1,4 @@
+import { uniq } from 'lodash';
 import { ipcRenderer as ipc } from 'electron';
 import { createSelector } from 'reselect';
 import Player from '../../lib/player';
@@ -12,7 +13,7 @@ import { Track, getTrackListResponse, selectors as trackSelectors } from './trac
 import { selectors as coverSelectors } from './cover';
 import { selectors as waveformSelectors } from './waveform';
 import { updateState } from './ui';
-import { immutableInsertAtIndex } from '../../utils/storeUtils';
+import { immutableInsertArrayAtIndex } from '../../utils/storeUtils';
 import { getPrevTrack, getNextTrack } from '../../utils/tracklistUtils';
 import { ApplicationState } from '../store';
 
@@ -241,31 +242,32 @@ export const seekTo = (position: number): Function =>
 export const updateQueue = (queue: Album['_id'][] = []): Function =>
   async (dispatch: Function, getState: Function): Promise<void> => {
     const { albums } = getState();
-    const missingAlbumIDs = queue.filter(x => !albums.allById[x]);
+    const uniqQueue = uniq(queue);
+    const missingAlbumIDs = uniqQueue.filter(x => !albums.allById[x]);
     const results = await ipc.invoke(IPC_ALBUM_GET_LIST_REQUEST, missingAlbumIDs);
     dispatch(getAlbumListResponse(results));
-    dispatch(updateState({ queue }));
+    dispatch(updateState({ queue: uniqQueue }));
     dispatch({
       type: PLAYER_UPDATE_QUEUE,
-      queue
+      queue: uniqQueue
     });
   }
 
-export const enqueueAfterCurrent = (albumId: Album['_id']): Function =>
+export const enqueueAfterCurrent = (albumIDs: Album['_id'][]): Function =>
   (dispatch: Function, getState: Function): void => {
     const { player }: ApplicationState = getState();
     const currentAlbumIndex = player.queue.indexOf(player.currentAlbumId);
     dispatch(
       updateQueue(
-        immutableInsertAtIndex(player.queue, albumId, currentAlbumIndex +1)
+        immutableInsertArrayAtIndex(player.queue, albumIDs, currentAlbumIndex +1)
       )
     );
   }
 
-export const enqueueAtEnd = (albumId: Album['_id']): Function =>
+export const enqueueAtEnd = (albumIDs: Album['_id'][]): Function =>
   (dispatch: Function, getState: Function): void => {
     const { player }: ApplicationState = getState();
-    dispatch(updateQueue([...player.queue, albumId]));
+    dispatch(updateQueue([...player.queue, ...albumIDs]));
   }
 
 export const unloadTrack = (): Function =>

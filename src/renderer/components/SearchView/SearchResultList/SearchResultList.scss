@@ -91,7 +91,7 @@ $miniWindowRowHeight: 57px;
 				@include albumCover($searchResultsCoverWidth, $backgroundColor);
 			}
 		}
-		&.is-current {
+		&.selected {
 			background-color: rgba($mainColor, .1);
 			transition: background-color .3s ease-in-out;
 		}

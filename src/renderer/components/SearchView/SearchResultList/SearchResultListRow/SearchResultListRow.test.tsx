@@ -110,7 +110,7 @@ describe('SearchResultListRow', () => {
         allById: {}
       }
     });
-    wrapper.find('.search-result-list-item').simulate('click');
+    wrapper.find('.search-result-list-item .cell-title').simulate('click');
     expect(handler).toHaveBeenCalled();
   });
 

@@ -10,7 +10,7 @@ describe('openContextMenu', () => {
     const menu = openContextMenu([
       {
         type: ALBUM_CONTEXT_ACTIONS,
-        album: albums[0],
+        albums: [albums[0]],
         dispatch,
         actionGroups: [
           AlbumActionsGroups.PLAYBACK,

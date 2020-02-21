@@ -1,4 +1,4 @@
-import React, { ReactElement, MouseEvent, memo, useMemo, useState, useEffect } from 'react';
+import React, { ReactElement, MouseEvent, memo, useMemo, useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { useTable } from 'react-table';
 import { FixedSizeList as List, ListOnItemsRenderedProps, ListChildComponentProps, areEqual } from 'react-window';
@@ -16,7 +16,7 @@ type SearchResultListProps = {
   query: string;
   isSearching: boolean;
   currentAlbumId?: Album['_id'];
-  onResultContextMenu: Function;
+  onContextMenu: Function;
   onResultDoubleClick: Function;
 };
 
@@ -27,13 +27,14 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
   query,
   isSearching,
   currentAlbumId,
-  onResultContextMenu,
+  onContextMenu,
   onResultDoubleClick
 }) => {
   const [renderedItems, setRenderedItems] = useState([]);
   const [selection, setSelection] = useState([]);
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const elementRef = useRef(null);
   const columns = useMemo(() => [
     {
       Header: '',
@@ -50,7 +51,20 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
    setSelection(
      results.map(({ _id }) => ({ _id, selected: false }))
    );
- }, [results, query])
+ }, [results, query]);
+
+ function handleClickOutside(event: Event): void {
+   if (elementRef.current && !elementRef.current.contains(event.target)) {
+     setSelection(
+       results.map(({ _id }) => ({ _id, selected: false }))
+     );
+   }
+ }
+
+ useEffect(() => {
+   document.addEventListener("mousedown", handleClickOutside);
+   return (): void => document.removeEventListener("mousedown", handleClickOutside);
+ }, [handleClickOutside]);
 
   const {
     getTableProps,
@@ -62,6 +76,18 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
     columns,
     data: results,
   });
+
+  function onResultContextMenu({ _id }: Album): void {
+    const selectedIDs = selection
+      .filter(({ selected }) => selected )
+      .map(({ _id }) => _id);
+
+    if (selectedIDs.indexOf(_id) > -1) {
+      onContextMenu(selectedIDs);
+    } else {
+      onContextMenu([_id]);
+    }
+  }
 
   function onResultClick(event: MouseEvent, index: number): void {
     const { metaKey, shiftKey } = event;
@@ -146,7 +172,7 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
       prepareRow
     );
     return (
-      <div {...getTableProps()} className="search-result-list">
+      <div {...getTableProps()} className="search-result-list" ref={elementRef}>
         <div className="thead search-result-list-header">
           <div className="tr">
           {headers.map(column => (

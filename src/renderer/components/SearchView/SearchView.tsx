@@ -46,26 +46,44 @@ export const SearchView = (): ReactElement => {
     }
   }, [query]);
 
-  function onResultContextMenu(album: Album): void {
-    openContextMenu([
-      {
-        type: ALBUM_CONTEXT_ACTIONS,
-        album,
-        queue: [album._id],
-        dispatch,
-        actionGroups: [
-          AlbumActionsGroups.PLAYBACK,
-          AlbumActionsGroups.ENQUEUE,
-          AlbumActionsGroups.SYSTEM,
-          AlbumActionsGroups.SEARCH_ONLINE
-        ]
-      }
-    ]);
+  function onContextMenu(albumIDs: Album['_id'][]): void {
+    if (albumIDs.length === 1) {
+      const album = results.find(({ _id }) => _id === albumIDs[0]);
+      openContextMenu([
+        {
+          type: ALBUM_CONTEXT_ACTIONS,
+          albums: [album],
+          queue: [albumIDs[0]],
+          dispatch,
+          actionGroups: [
+            AlbumActionsGroups.PLAYBACK,
+            AlbumActionsGroups.ENQUEUE,
+            AlbumActionsGroups.SYSTEM,
+            AlbumActionsGroups.SEARCH_ONLINE
+          ]
+        }
+      ]);
+    } else {
+      const albums = albumIDs.map(
+        id => results.find(({ _id }) => _id === id)
+      );
+      openContextMenu([
+        {
+          type: ALBUM_CONTEXT_ACTIONS,
+          albums,
+          queue: albumIDs,
+          dispatch,
+          actionGroups: [
+            AlbumActionsGroups.ENQUEUE
+          ]
+        }
+      ]);
+    }
   }
 
   function onResultDoubleClick(album: Album): void {
     actionsMap(AlbumActions.PLAY_ALBUM)({
-      album,
+      albums: [album],
       queue: [album._id],
       dispatch
     }).handler();
@@ -85,7 +103,7 @@ export const SearchView = (): ReactElement => {
             query={query}
             isSearching={isSearching}
             currentAlbumId={currentAlbumId}
-            onResultContextMenu={onResultContextMenu}
+            onContextMenu={onContextMenu}
             onResultDoubleClick={onResultDoubleClick}/>
         </CSSTransition>
       </div>

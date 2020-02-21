@@ -79,7 +79,7 @@ export const LibraryView = (): ReactElement => {
 		openContextMenu([
       {
         type: ALBUM_CONTEXT_ACTIONS,
-        album,
+        albums: [album],
         dispatch,
         actionGroups: [
           AlbumActionsGroups.PLAYBACK,
@@ -102,7 +102,7 @@ export const LibraryView = (): ReactElement => {
 
 	function onAlbumDoubleClick(album: Album): void {
     actionsMap(AlbumActions.PLAY_ALBUM)({
-      album,
+      albums: [album],
       queue: [album._id],
       dispatch
     }).handler();

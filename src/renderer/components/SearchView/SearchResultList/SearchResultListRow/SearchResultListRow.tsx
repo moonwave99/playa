@@ -66,8 +66,10 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
 
   function renderCell(cell: Cell): ReactElement {
     let cellContent = null;
+    let shouldHandleClick = true;
     switch (cell.column.id) {
       case 'cover':
+        shouldHandleClick = false;
         cellContent =
           <div ref={drag}>
             <CoverView
@@ -99,7 +101,9 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
         break;
     }
     return (
-      <div {...cell.getCellProps()} className={`td cell cell-${cell.column.id}`}>
+      <div {...cell.getCellProps()}
+        className={`td cell cell-${cell.column.id}`}
+        onClick={shouldHandleClick ? _onClick : null}>
         {cellContent}
       </div>
     );
@@ -112,7 +116,6 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
     <div {...row.getRowProps()}
       className={classNames}
       style={{ ...style, opacity }}
-      onClick={_onClick}
       onContextMenu={_onConTextMenu}>
       {row.cells.map(renderCell)}
     </div>

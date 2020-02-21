@@ -53,7 +53,7 @@ export const QueueView = (): ReactElement => {
     openContextMenu([
       {
         type: ALBUM_CONTEXT_ACTIONS,
-        album,
+        albums: [album],
         dispatch,
         actionGroups: [
           AlbumActionsGroups.PLAYBACK,
@@ -77,7 +77,7 @@ export const QueueView = (): ReactElement => {
       icon: 'folder-open' as IconName,
       handler: (album: Album): void => {
         actionsMap(AlbumActions.REVEAL_IN_FINDER)({
-          album,
+          albums: [album],
           dispatch
         }).handler();
       },

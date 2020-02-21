@@ -11,7 +11,7 @@ describe('SearchResultList', () => {
         results={albums}
         query="#!q"
         isSearching={false}
-        onResultContextMenu={jest.fn()}
+        onContextMenu={jest.fn()}
         onResultDoubleClick={jest.fn()}/>
     );
     expect(wrapper.is('.search-result-list')).toBe(true);
@@ -23,7 +23,7 @@ describe('SearchResultList', () => {
         results={[]}
         query="#!q"
         isSearching={false}
-        onResultContextMenu={jest.fn()}
+        onContextMenu={jest.fn()}
         onResultDoubleClick={jest.fn()}/>
     );
     expect(wrapper.is('.search-result-list-empty-component')).toBe(true);

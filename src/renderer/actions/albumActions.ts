@@ -23,7 +23,7 @@ const {
 } = IPC_MESSAGES;
 
 export type ActionParams = {
-  album: Album;
+  albums: Album[];
   queue?: Album['_id'][];
   playlistId?: Playlist['_id'];
   trackId?: Track['_id'];
@@ -34,8 +34,8 @@ function createSearchAction(
   searchURL: SEARCH_URLS,
   siteName: string
 ): ActionCreator<ActionParams> {
-  return ({ album }): Action => {
-    const { artist, title, } = album;
+  return ({ albums }): Action => {
+    const { artist, title, } = albums[0];
     const query = `${artist} ${title}`;
     const fullTitle = `${artist} - ${title}`;
     return {
@@ -46,13 +46,13 @@ function createSearchAction(
 }
 
 export const playAlbumAction: ActionCreator<ActionParams> = ({
-  album,
+  albums,
   queue,
   playlistId,
   trackId,
   dispatch
 }) => {
-  const { _id: albumId, artist, title } = album;
+  const { _id: albumId, artist, title } = albums[0];
   const fullTitle = `${artist} - ${title}`;
   return {
     title: `Play '${fullTitle}'`,
@@ -63,26 +63,22 @@ export const playAlbumAction: ActionCreator<ActionParams> = ({
   };
 }
 
-export const enqueueAfterCurrentAction: ActionCreator<ActionParams> = ({ album, dispatch }) => {
-  const { _id, artist, title } = album;
-  const fullTitle = `${artist} - ${title}`;
+export const enqueueAfterCurrentAction: ActionCreator<ActionParams> = ({ albums, dispatch }) => {
   return {
-    title: `Enqueue '${fullTitle}' after current album`,
-    handler(): void { dispatch(enqueueAfterCurrent(_id)) }
+    title: `Enqueue selection after current album`,
+    handler(): void { dispatch(enqueueAfterCurrent(albums.map(({ _id }) => _id))) }
   };
 }
 
-export const enqueueAtEndAction: ActionCreator<ActionParams> = ({ album, dispatch }) => {
-  const { _id, artist, title } = album;
-  const fullTitle = `${artist} - ${title}`;
+export const enqueueAtEndAction: ActionCreator<ActionParams> = ({ albums, dispatch }) => {
   return {
-    title: `Enqueue '${fullTitle}' at the end`,
-    handler(): void { dispatch(enqueueAtEnd(_id)) }
+    title: `Enqueue selection at the end`,
+    handler(): void { dispatch(enqueueAtEnd(albums.map(({ _id }) => _id))) }
   };
 }
 
-export const revealInFinderAction: ActionCreator<ActionParams> = ({ album }) => {
-  const { artist, title, path } = album;
+export const revealInFinderAction: ActionCreator<ActionParams> = ({ albums }) => {
+  const { artist, title, path } = albums[0];
   const fullTitle = `${artist} - ${title}`;
   return {
     title: `Reveal '${fullTitle}' in Finder`,
@@ -90,12 +86,12 @@ export const revealInFinderAction: ActionCreator<ActionParams> = ({ album }) => 
   };
 }
 
-export const reloadAlbumContentAction: ActionCreator<ActionParams> = ({ album, dispatch }) => {
-  const { artist, title } = album;
+export const reloadAlbumContentAction: ActionCreator<ActionParams> = ({ albums, dispatch }) => {
+  const { artist, title } = albums[0];
   const fullTitle = `${artist} - ${title}`;
   return {
     title: `Reload '${fullTitle}' tracks`,
-    handler(): Function { return dispatch(reloadAlbumContent(album)) }
+    handler(): Function { return dispatch(reloadAlbumContent(albums[0])) }
   };
 }
 
@@ -138,7 +134,7 @@ export type GetAlbumContextMenuParams = {
   type: typeof ALBUM_CONTEXT_ACTIONS;
   queue?: Album['_id'][];
   actionGroups: AlbumActionsGroups[];
-  album: Album;
+  albums: Album[];
   dispatch?: Function;
 }
 

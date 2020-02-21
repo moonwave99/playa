@@ -86,7 +86,7 @@ export const PlaylistContainer = (): ReactElement => {
       },
       {
         type: ALBUM_CONTEXT_ACTIONS,
-        album,
+        albums: [album],
         queue: playlist.albums,
         dispatch,
         actionGroups: [
@@ -102,7 +102,7 @@ export const PlaylistContainer = (): ReactElement => {
     actionsMap(AlbumActions.PLAY_ALBUM)({
       queue: playlist.albums,
       playlistId: playlist._id,
-      album,
+      albums: [album],
       trackId: track ? track._id : null,
       dispatch
     }).handler();
@@ -124,7 +124,7 @@ export const PlaylistContainer = (): ReactElement => {
       icon: 'folder-open' as IconName,
       handler: (album: Album): void => {
         actionsMap(AlbumActions.REVEAL_IN_FINDER)({
-          album,
+          albums: [album],
           dispatch
         }).handler();
       },
