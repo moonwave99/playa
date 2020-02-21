@@ -5,6 +5,7 @@ import { FixedSizeList as List, ListOnItemsRenderedProps, ListChildComponentProp
 import AutoSizer from "react-virtualized-auto-sizer";
 import { useTranslation } from 'react-i18next';
 import memoize from 'memoize-one';
+import { CustomDragLayer } from '../CustomDragLayer/CustomDragLayer';
 import { SearchResultListRow } from './SearchResultListRow/SearchResultListRow';
 import { getCoverRequest } from '../../../store/modules/cover';
 import { Album } from '../../../store/modules/album';
@@ -20,7 +21,18 @@ type SearchResultListProps = {
   onResultDoubleClick: Function;
 };
 
+type SelectionItem = {
+  _id: string;
+  selected: boolean;
+};
+
 const ITEM_SIZE = 57;
+
+function getSelectedIDs(selection: SelectionItem[]): string[] {
+  return selection
+    .filter(({ selected }) => selected )
+    .map(({ _id }) => _id);
+}
 
 export const SearchResultList: React.FC<SearchResultListProps> = ({
   results = [],
@@ -78,9 +90,7 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
   });
 
   function onResultContextMenu({ _id }: Album): void {
-    const selectedIDs = selection
-      .filter(({ selected }) => selected )
-      .map(({ _id }) => _id);
+    const selectedIDs = getSelectedIDs(selection);
 
     if (selectedIDs.indexOf(_id) > -1) {
       onContextMenu(selectedIDs);
@@ -104,6 +114,7 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
   const Row = memo(({ data, index, style }: ListChildComponentProps) => {
     const {
       rows,
+      selection,
       currentAlbumId,
       onResultContextMenu,
       onResultDoubleClick,
@@ -111,6 +122,8 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
     } = data;
     const row = rows[index];
     prepareRow(row);
+    const { _id } = row.original;
+    const selectedIDs = getSelectedIDs(selection);
     return <SearchResultListRow
       style={{
         ...style,
@@ -118,11 +131,12 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
         width: `calc(100% - 2 * var(--section-gutter))`
       }}
       selected={selection[index].selected}
-      key={row.original._id}
+      key={_id}
       row={row}
       index={index}
       album={row.original}
-      isCurrent={row.original._id === currentAlbumId}
+      isCurrent={_id === currentAlbumId}
+      selectedIDs={selectedIDs}
       onClick={onResultClick}
       onContextMenu={onResultContextMenu}
       onCoverDoubleClick={onResultDoubleClick}/>;
@@ -151,12 +165,14 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
 
   const createItemData = memoize((
     rows,
+    selection,
     currentAlbumId,
     onResultContextMenu,
     onResultDoubleClick,
     prepareRow
   ) => ({
     rows,
+    selection,
     currentAlbumId,
     onResultContextMenu,
     onResultDoubleClick,
@@ -166,39 +182,43 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
   function renderResults(): ReactElement {
     const itemData = createItemData(
       rows,
+      selection,
       currentAlbumId,
       onResultContextMenu,
       onResultDoubleClick,
       prepareRow
     );
     return (
-      <div {...getTableProps()} className="search-result-list" ref={elementRef}>
-        <div className="thead search-result-list-header">
-          <div className="tr">
-          {headers.map(column => (
-            <div {...column.getHeaderProps()} className={`th header header-${column.id}`}>
-              {column.render('Header')}
+      <>
+        <CustomDragLayer/>
+        <div {...getTableProps()} className="search-result-list" ref={elementRef}>
+          <div className="thead search-result-list-header">
+            <div className="tr">
+            {headers.map(column => (
+              <div {...column.getHeaderProps()} className={`th header header-${column.id}`}>
+                {column.render('Header')}
+              </div>
+            ))}
             </div>
-          ))}
+          </div>
+          <div {...getTableBodyProps()} className="tbody">
+            <AutoSizer>
+            {({ height, width }): ReactElement => {
+              return (
+                <List
+                  itemData={itemData}
+                  itemCount={results.length}
+                  itemSize={ITEM_SIZE}
+                  onItemsRendered={onItemsRendered}
+                  height={height}
+                  width={width}>
+                  {Row}
+                </List>
+              )}}
+            </AutoSizer>
           </div>
         </div>
-        <div {...getTableBodyProps()} className="tbody">
-          <AutoSizer>
-          {({ height, width }): ReactElement => {
-            return (
-              <List
-                itemData={itemData}
-                itemCount={results.length}
-                itemSize={ITEM_SIZE}
-                onItemsRendered={onItemsRendered}
-                height={height}
-                width={width}>
-                {Row}
-              </List>
-            )}}
-          </AutoSizer>
-        </div>
-      </div>
+      </>
     );
   }
 

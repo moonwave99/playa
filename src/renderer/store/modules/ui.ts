@@ -17,6 +17,7 @@ function trimTitle(title: string): string {
 export type UIDropItem = {
   type: string;
   _id: string;
+  selection?: string[];
 };
 
 export const UIDragTypes = {

@@ -1,0 +1,40 @@
+@import "../../../styles/variables";
+@import "../../../styles/mixins";
+
+$countBadgeSize: 1.5rem;
+$countBadgeOffset: 2rem;
+
+.custom-drag-layer {
+  position: fixed;
+  pointer-events: none;
+  z-index: 100;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+
+  .search-results-drag-preview {
+    width: $searchResultsCoverWidth;
+    height: $searchResultsCoverWidth;
+    background-color: $backgroundLightColor;
+    @include albumCover($searchResultsCoverWidth, $backgroundDarkColor);
+    position: relative;
+    border: 1px solid darken($lightColor, 40%);
+    box-shadow: 0px 0px 10px 0px rgba(white, 0.1);
+    .count-badge {
+      background-color: red;
+      width: $countBadgeSize;
+      height: $countBadgeSize;
+      border-radius: 50%;
+      position: absolute;
+      left: $countBadgeOffset;
+      bottom: -$countBadgeOffset;
+      color: $highlightColor;
+      text-align: center;
+      line-height: $countBadgeSize;
+      vertical-align: middle;
+      font-family: 'Fira Mono', monospace;
+      font-size: 0.9rem;
+    }
+  }
+}

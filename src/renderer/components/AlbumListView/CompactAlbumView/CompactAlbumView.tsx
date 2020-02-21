@@ -86,7 +86,7 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
 
   const [{ isDragging }, drag] = useDrag({
     item: { type: UIDragTypes.COMPACT_ALBUMS, _id, index },
-    collect: (monitor) => ({
+    collect: monitor => ({
       isDragging: monitor.isDragging(),
     }),
     end: (_item, monitor) => {

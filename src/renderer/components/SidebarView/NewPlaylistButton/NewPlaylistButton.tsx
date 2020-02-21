@@ -23,7 +23,9 @@ export const NewPlaylistButton: FC<NewPlaylistButtonProps> = ({
       UIDragTypes.PLAYLIST_ALBUMS,
       UIDragTypes.QUEUE_ALBUMS
     ],
-    drop: ({ _id }: UIDropItem) => onDrop([_id]),
+    drop: ({ selection }: UIDropItem) => {
+      onDrop(selection);
+    },
     collect: monitor => ({
       isOver: monitor.isOver(),
       canDrop: monitor.canDrop(),

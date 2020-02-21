@@ -1,7 +1,8 @@
-import React, { ReactElement, MouseEvent, SyntheticEvent } from 'react';
+import React, { ReactElement, MouseEvent, SyntheticEvent, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Row, Cell } from 'react-table';
 import { useDrag } from 'react-dnd';
+import { getEmptyImage } from 'react-dnd-html5-backend';
 import cx from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CoverView } from '../../../AlbumListView/AlbumView/CoverView/CoverView';
@@ -20,6 +21,7 @@ type SearchResultListRowProps = {
   onClick: Function;
   onContextMenu: Function;
   onCoverDoubleClick: Function;
+  selectedIDs?: string[];
   style: object;
 }
 
@@ -32,20 +34,27 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
   onClick,
   onContextMenu,
   onCoverDoubleClick,
+  selectedIDs = [],
   style
 }) => {
   const dispatch = useDispatch();
   const { _id } = album;
   const cover = useSelector((state: ApplicationState) => coverSelectors.findById(state, _id));
-  const [{ opacity }, drag] = useDrag({
+  const selection = selectedIDs.indexOf(_id) > -1 ? selectedIDs : [_id]
+  const [{ isDragging }, drag, preview] = useDrag({
     item: {
       type: UIDragTypes.SEARCH_RESULTS,
-      _id
+      _id,
+      selection
     },
-    collect: monitor => ({
-      opacity: monitor.isDragging() ? 0.4 : 1,
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
     })
   });
+
+  useEffect(() => {
+    preview(getEmptyImage(), { captureDraggingState: true })
+  }, [])
 
   function _onClick(event: MouseEvent): void {
     onClick(event, index);
@@ -71,12 +80,10 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
       case 'cover':
         shouldHandleClick = false;
         cellContent =
-          <div ref={drag}>
-            <CoverView
-              onDoubleClick={_onCoverDoubleClick}
-              album={album}
-              src={cover}/>
-          </div>;
+        <CoverView
+          onDoubleClick={_onCoverDoubleClick}
+          album={album}
+          src={cover}/>
         break;
       case 'artist':
         cellContent =
@@ -110,12 +117,14 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
   }
   const classNames = cx('search-result-list-item', 'tr', {
     'is-current' : isCurrent,
+    'is-dragging': isDragging,
     'selected': selected
   });
   return (
     <div {...row.getRowProps()}
+      ref={drag}
       className={classNames}
-      style={{ ...style, opacity }}
+      style={{ ...style }}
       onContextMenu={_onConTextMenu}>
       {row.cells.map(renderCell)}
     </div>

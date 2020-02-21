@@ -33,10 +33,10 @@ export const PlaylistListItem: FC<PlaylistListItemProps> = ({
       UIDragTypes.PLAYLIST_ALBUMS,
       UIDragTypes.QUEUE_ALBUMS
     ],
-    drop: ({ _id }: UIDropItem) => {
+    drop: ({ selection }: UIDropItem) => {
       dispatch(savePlaylistRequest({
         ...playlist,
-        albums: uniq([...albums, _id])
+        albums: uniq([...albums, ...selection])
       }));
     },
     collect: monitor => ({
@@ -71,7 +71,7 @@ export const PlaylistListItem: FC<PlaylistListItemProps> = ({
           fixedWidth/>
       </button>
     );
-  }  
+  }
 
   const classNames = cx('playlist-list-item', {
     'is-new': !_rev,

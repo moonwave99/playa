@@ -41,6 +41,7 @@ $miniWindowRowHeight: 57px;
 	.search-result-list-header {
 		line-height: $mainUnit;
 		color: $highlightColor;
+		padding: 0 var(--section-gutter);
 		.tr {
 			.th {
 				text-align: left;
@@ -94,6 +95,9 @@ $miniWindowRowHeight: 57px;
 		&.selected {
 			background-color: rgba($mainColor, .1);
 			transition: background-color .3s ease-in-out;
+		}
+		&.is-dragging {
+			opacity: 0.4;
 		}
 		&:not(.is-current) {
 			.cell-cover figure {
