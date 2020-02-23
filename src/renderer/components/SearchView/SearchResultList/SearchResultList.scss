@@ -93,7 +93,8 @@ $miniWindowRowHeight: 57px;
 			}
 		}
 		&.selected {
-			background-color: rgba($mainColor, .1);
+			background-color: $highlightColor;
+			color: $darkColor;
 			transition: background-color .3s ease-in-out;
 		}
 		&.is-dragging {
@@ -122,7 +123,7 @@ $miniWindowRowHeight: 57px;
 				@include ellipsis();
 				width: $artistWidth;
 				color: $highlightColor;
-				&:hover {
+				a:hover {
 					text-decoration: underline;
 				}
 			}
@@ -156,16 +157,8 @@ $miniWindowRowHeight: 57px;
 			}
 		}
 		.tag {
-			@include albumTypeBackground();
-			display: block;
+			@include albumType('color');
 			color: $highlightColor;
-			font-size: .75rem;
-			border-radius: .25rem;
-			text-align: center;
-			height: 2rem;
-			line-height: 2rem;
-			padding: 0;
-			width: 100%;
 		}
 	}
 }

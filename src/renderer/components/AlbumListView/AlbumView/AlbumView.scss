@@ -89,7 +89,7 @@
           }
         }
         .album-type {
-          @include albumTypeColor();
+          @include albumType('color');
         }
       }
     }

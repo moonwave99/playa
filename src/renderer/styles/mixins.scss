@@ -10,33 +10,33 @@
   }
 }
 
-@mixin albumTypeBackground() {
+@mixin albumType($param) {
   &-album {
-    background-color: $albumColor;
+    #{$param}: $albumColor;
   }
   &-ep {
-    background-color: $epColor;
+    #{$param}: $epColor;
   }
   &-single {
-    background-color: $singleColor;
+    #{$param}: $singleColor;
   }
   &-compilation {
-    background-color: $compilationColor;
+    #{$param}: $compilationColor;
   }
   &-remix {
-    background-color: $remixColor;
+    #{$param}: $remixColor;
   }
   &-bootleg {
-    background-color: $bootlegColor;
+    #{$param}: $bootlegColor;
   }
   &-various {
-    background-color: $variousColor;
+    #{$param}: $variousColor;
   }
   &-soundtrack {
-    background-color: $soundtrackColor;
+    #{$param}: $soundtrackColor;
   }
   &-tribute {
-    background-color: $tributeColor;
+    #{$param}: $tributeColor;
   }
 }
 
