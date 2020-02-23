@@ -65,7 +65,8 @@ export const AlbumView: FC<AlbumViewProps> = ({
   const [{ opacity }, drag] = useDrag({
     item: {
       type: dragType,
-      _id
+      _id,
+      selection: [_id]
     },
     collect: monitor => ({
       opacity: monitor.isDragging() ? 0.4 : 1,
