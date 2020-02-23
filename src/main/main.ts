@@ -119,3 +119,4 @@ app.on('will-quit', () => {
 });
 
 app.on('window-all-closed', () => app.quit());
+app.allowRendererProcessReuse = true;
