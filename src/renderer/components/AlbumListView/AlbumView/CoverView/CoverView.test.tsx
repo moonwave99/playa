@@ -73,13 +73,4 @@ describe('CoverView', () => {
     img.simulate('load');
     expect(handler).toHaveBeenCalledWith(src);
   });
-
-  it('should be .loaded once the image loads', () => {
-    const wrapper = mount(
-      <CoverView src='path/to/image.jpg' album={albums[0]} />
-    );
-    const img = wrapper.find('img');
-    img.simulate('load');
-    expect(wrapper.find('figure').is('.loaded')).toBe(true);
-  });
 });

@@ -1,7 +1,9 @@
+import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import { app, BrowserWindow, shell, Event } from 'electron';
 import { is } from 'electron-util';
 import * as Path from 'path';
 import * as url from 'url';
+import log, { LogContext, LogLevel } from './lib/logger';
 import getUserDataPath from './lib/getUserDataPath';
 
 import initMenu from './initializers/initMenu';
@@ -72,6 +74,22 @@ function createWindow({
   }
 }
 
+async function installExtensions(): Promise<void> {
+  try {
+    await installExtension(REACT_DEVELOPER_TOOLS);
+    log({
+      context: LogContext.Global,
+      message: 'Installed React DevTools'
+    });
+  } catch(error) {
+    log({
+      context: LogContext.Global,
+      level: LogLevel.Error,
+      message: 'Error installing React DevTools'
+    }, error);
+  }
+}
+
 const userDataPath = getUserDataPath();
 const disableDiscogsRequests = process.env.DISABLE_DISCOGS_REQUESTS === 'true';
 const debug = process.env.DEBUG === 'true';
@@ -95,6 +113,7 @@ const appState = initAppState(userDataPath);
 const { lastWindowSize, lastWindowPosition } = appState.getState();
 
 app.on('ready', async () => {
+  await installExtensions();
   createWindow({
     size: lastWindowSize,
     position: lastWindowPosition

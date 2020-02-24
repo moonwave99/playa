@@ -1,15 +1,16 @@
 import React, { ReactElement, MouseEvent, memo, useMemo, useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
-import { useTable } from 'react-table';
+import { useTable, Row } from 'react-table';
 import { FixedSizeList as List, ListOnItemsRenderedProps, ListChildComponentProps, areEqual } from 'react-window';
 import AutoSizer from "react-virtualized-auto-sizer";
 import { useTranslation } from 'react-i18next';
 import memoize from 'memoize-one';
+import mousetrap from 'mousetrap';
 import { CustomDragLayer } from '../CustomDragLayer/CustomDragLayer';
 import { SearchResultListRow } from './SearchResultListRow/SearchResultListRow';
 import { getCoverRequest } from '../../../store/modules/cover';
 import { Album } from '../../../store/modules/album';
-import { select } from '../../../utils/selectionUtils';
+import { select, selectionBounds, scaleSelection } from '../../../utils/selectionUtils';
 import './SearchResultList.scss';
 
 type SearchResultListProps = {
@@ -46,7 +47,9 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
   const [selection, setSelection] = useState([]);
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const keyDirection = useRef(0);
   const elementRef = useRef(null);
+  const listRef = useRef<List>(null);
   const columns = useMemo(() => [
     {
       Header: '',
@@ -67,6 +70,7 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
 
  function handleClickOutside(event: Event): void {
    if (elementRef.current && !elementRef.current.contains(event.target)) {
+     keyDirection.current = 0;
      setSelection(
        results.map(({ _id }) => ({ _id, selected: false }))
      );
@@ -74,9 +78,77 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
  }
 
  useEffect(() => {
-   document.addEventListener("mousedown", handleClickOutside);
-   return (): void => document.removeEventListener("mousedown", handleClickOutside);
+   document.addEventListener('mousedown', handleClickOutside);
+   return (): void => document.removeEventListener('mousedown', handleClickOutside);
  }, [handleClickOutside]);
+
+ function handleKeyUp(): void {
+   const [lowerBound] = selectionBounds(selection);
+   const index = Math.max(lowerBound - 1, 0);
+   setSelection(
+     select({
+       items: selection,
+       index
+     })
+   );
+   listRef.current.scrollToItem(index);
+ }
+
+ function handleKeyDown(): void {
+   const [, upperBound] = selectionBounds(selection);
+   const index = Math.min(upperBound + 1, selection.length - 1);
+   setSelection(
+     select({
+       items: selection,
+       index
+     })
+   );
+   listRef.current.scrollToItem(index);
+ }
+
+ function handleKeyShiftUp(): void {
+   if (keyDirection.current === 0) {
+     keyDirection.current = -1;
+   }
+   const newSelection = scaleSelection({
+     items: selection,
+     direction: keyDirection.current,
+     increment: keyDirection.current === -1 ? 1 : -1
+   });
+   if (newSelection.filter(({ selected }) => selected).length === 1) {
+     keyDirection.current = 0;
+   }
+   const [lowerBound] = selectionBounds(newSelection);
+   listRef.current.scrollToItem(lowerBound);
+   setSelection(newSelection);
+ }
+
+ function handleKeyShiftDown(): void {
+   if (keyDirection.current === 0) {
+     keyDirection.current = 1;
+   }
+   const newSelection = scaleSelection({
+     items: selection,
+     direction: keyDirection.current,
+     increment: keyDirection.current === 1 ? 1 : -1
+   });
+   if (newSelection.filter(({ selected }) => selected).length === 1) {
+     keyDirection.current = 0;
+   }
+   const [, upperBound] = selectionBounds(newSelection);
+   listRef.current.scrollToItem(upperBound);
+   setSelection(newSelection);
+ }
+
+ useEffect(() => {
+   mousetrap.bind('up', handleKeyUp);
+   mousetrap.bind('down', handleKeyDown);
+   mousetrap.bind('shift+up', handleKeyShiftUp);
+   mousetrap.bind('shift+down', handleKeyShiftDown);
+   return (): void => {
+     mousetrap.unbind(['up', 'down', 'shift+up', 'shift+down'])
+   };
+ }, [handleKeyUp, handleKeyDown, handleKeyShiftUp, handleKeyShiftDown]);
 
   const {
     getTableProps,
@@ -91,7 +163,6 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
 
   function onResultContextMenu({ _id }: Album): void {
     const selectedIDs = getSelectedIDs(selection);
-
     if (selectedIDs.indexOf(_id) > -1) {
       onContextMenu(selectedIDs);
     } else {
@@ -109,37 +180,76 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
         shiftKey
       })
     );
+    keyDirection.current = 0;
   }
 
-  const Row = memo(({ data, index, style }: ListChildComponentProps) => {
+  const ResultRow = memo(({
+    style,
+    index,
+    row,
+    selectedIDs,
+    selection,
+    onResultClick,
+    onResultDoubleClick,
+    onResultContextMenu
+  }: {
+    style: object;
+    index: number;
+    row: Row;
+    selectedIDs: string[];
+    selection: SelectionItem[];
+    currentAlbumId: string;
+    onResultClick: Function;
+    onResultDoubleClick: Function;
+    onResultContextMenu: Function;
+  }) => {
+    const album = row.original as Album;
+    const { _id } = album;
+    return (
+      <SearchResultListRow
+        style={{
+          ...style,
+          left: `var(--section-gutter)`,
+          width: `calc(100% - 2 * var(--section-gutter))`
+        }}
+        selected={selection[index].selected}
+        key={_id}
+        row={row}
+        index={index}
+        album={album}
+        onClick={onResultClick}
+        onContextMenu={onResultContextMenu}
+        onCoverDoubleClick={onResultDoubleClick}
+        isCurrent={_id === currentAlbumId}
+        selectedIDs={selectedIDs}/>
+    );
+  });
+
+  const GenerateRow = memo(({ data, index, style }: ListChildComponentProps) => {
     const {
       rows,
       selection,
       currentAlbumId,
+      onResultClick,
       onResultContextMenu,
       onResultDoubleClick,
       prepareRow
     } = data;
     const row = rows[index];
     prepareRow(row);
-    const { _id } = row.original;
     const selectedIDs = getSelectedIDs(selection);
-    return <SearchResultListRow
-      style={{
-        ...style,
-        left: `var(--section-gutter)`,
-        width: `calc(100% - 2 * var(--section-gutter))`
-      }}
-      selected={selection[index].selected}
-      key={_id}
-      row={row}
-      index={index}
-      album={row.original}
-      isCurrent={_id === currentAlbumId}
-      selectedIDs={selectedIDs}
-      onClick={onResultClick}
-      onContextMenu={onResultContextMenu}
-      onCoverDoubleClick={onResultDoubleClick}/>;
+    return (
+      <ResultRow
+        style={style}
+        index={index}
+        row={row}
+        selection={selection}
+        onResultClick={onResultClick}
+        onResultContextMenu={onResultContextMenu}
+        onResultDoubleClick={onResultDoubleClick}
+        currentAlbumId={currentAlbumId}
+        selectedIDs={selectedIDs}/>
+    );
   }, areEqual);
 
   function renderEmptyComponent(query: string): ReactElement {
@@ -167,6 +277,7 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
     rows,
     selection,
     currentAlbumId,
+    onResultClick,
     onResultContextMenu,
     onResultDoubleClick,
     prepareRow
@@ -174,6 +285,7 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
     rows,
     selection,
     currentAlbumId,
+    onResultClick,
     onResultContextMenu,
     onResultDoubleClick,
     prepareRow
@@ -184,6 +296,7 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
       rows,
       selection,
       currentAlbumId,
+      onResultClick,
       onResultContextMenu,
       onResultDoubleClick,
       prepareRow
@@ -206,13 +319,14 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
             {({ height, width }): ReactElement => {
               return (
                 <List
+                  ref={listRef}
                   itemData={itemData}
                   itemCount={results.length}
                   itemSize={ITEM_SIZE}
                   onItemsRendered={onItemsRendered}
                   height={height}
                   width={width}>
-                  {Row}
+                  {GenerateRow}
                 </List>
               )}}
             </AutoSizer>

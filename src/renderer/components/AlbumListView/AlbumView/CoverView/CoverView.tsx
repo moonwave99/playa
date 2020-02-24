@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useRef } from 'react';
 import cx from 'classnames';
 import { Album } from '../../../../store/modules/album';
 
@@ -21,8 +21,7 @@ export const CoverView: FC<CoverViewProps> = ({
   onContextMenu,
   onImageLoad
 }) => {
-  const [loaded, setLoaded] = useState(false);
-
+  const ref = useRef<HTMLDivElement>(null);
   function formatCoverTitle(): string {
     if (!album) {
       return '';
@@ -32,7 +31,7 @@ export const CoverView: FC<CoverViewProps> = ({
   }
 
   function _onImageLoad(): void {
-    setLoaded(true);
+    ref.current.classList.toggle('loaded', true);
     onImageLoad && onImageLoad(src);
   }
 
@@ -48,12 +47,12 @@ export const CoverView: FC<CoverViewProps> = ({
     onContextMenu && onContextMenu(album);
   }
 
-  const figureClassNames = cx(className, { loaded });
   const imageClassNames = cx({ empty: !src });
   const title = formatCoverTitle();
   return (
     <figure
-      className={figureClassNames}
+      ref={ref}
+      className={className}
       title={title}
       onClick={onFigureClick}
       onDoubleClick={onFigureDoubleClick}

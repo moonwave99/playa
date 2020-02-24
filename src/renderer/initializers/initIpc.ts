@@ -39,13 +39,12 @@ export default function initIpc({
     }
   }
 
-  Object.entries(handlerMap).forEach(
+  const entries = Object.entries(handlerMap);
+  entries.forEach(
     ([event, handler]) => ipc.on(event, handler)
   );
 
-  return (): void => {
-    Object.entries(handlerMap).forEach(
-      ([event, handler]) => ipc.removeListener(event, handler)
-    );
-  }
+  return (): void => entries.forEach(
+    ([event, handler]) => ipc.removeListener(event, handler)
+  );
 }

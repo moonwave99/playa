@@ -1,5 +1,6 @@
-import React, { ReactElement, MouseEvent, SyntheticEvent, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { ReactElement, MouseEvent, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { Link, generatePath } from 'react-router-dom';
 import { Row, Cell } from 'react-table';
 import { useDrag } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
@@ -8,9 +9,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CoverView } from '../../../AlbumListView/AlbumView/CoverView/CoverView';
 import { UIDragTypes } from '../../../../store/modules/ui';
 import { Album, VARIOUS_ARTISTS_ID } from '../../../../store/modules/album';
-import { searchRequest } from '../../../../store/modules/search';
 import { selectors as coverSelectors } from '../../../../store/modules/cover';
 import { ApplicationState } from '../../../../store/store';
+import { SEARCH } from '../../../../routes';
 
 type SearchResultListRowProps = {
   row: Row;
@@ -18,9 +19,9 @@ type SearchResultListRowProps = {
   album: Album;
   selected?: boolean;
   isCurrent?: boolean;
-  onClick: Function;
-  onContextMenu: Function;
-  onCoverDoubleClick: Function;
+  onClick?: Function;
+  onContextMenu?: Function;
+  onCoverDoubleClick?: Function;
   selectedIDs?: string[];
   style: object;
 }
@@ -37,7 +38,6 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
   selectedIDs = [],
   style
 }) => {
-  const dispatch = useDispatch();
   const { _id } = album;
   const cover = useSelector((state: ApplicationState) => coverSelectors.findById(state, _id));
   const selection = selectedIDs.indexOf(_id) > -1 ? selectedIDs : [_id]
@@ -68,11 +68,6 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
     onCoverDoubleClick(album);
   }
 
-  function onArtistClick(event: SyntheticEvent): void {
-    event.preventDefault();
-    dispatch(searchRequest(`artist: ${album.artist}`));
-  }
-
   function renderCell(cell: Cell): ReactElement {
     let cellContent = null;
     let shouldHandleClick = true;
@@ -82,14 +77,17 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
         cellContent =
         <CoverView
           onDoubleClick={_onCoverDoubleClick}
+          className="loaded"
           album={album}
           src={cover}/>
         break;
       case 'artist':
         cellContent =
-          <a href="#" onClick={onArtistClick} title={cell.value}>
-            {cell.value === VARIOUS_ARTISTS_ID ? 'V/A' : cell.value}
-          </a>;
+          <Link
+            to={`${generatePath(SEARCH)}?query=artist: ${encodeURIComponent(cell.value)}`}
+            className="album-artist-link">
+              {cell.value === VARIOUS_ARTISTS_ID ? 'V/A' : cell.value}
+          </Link>
         break;
       case 'title':
         cellContent =
