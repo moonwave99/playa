@@ -65,15 +65,26 @@ export const playAlbumAction: ActionCreator<ActionParams> = ({
 
 export const enqueueAfterCurrentAction: ActionCreator<ActionParams> = ({ albums, dispatch }) => {
   return {
-    title: `Enqueue selection after current album`,
+    title: `Enqueue after current album`,
     handler(): void { dispatch(enqueueAfterCurrent(albums.map(({ _id }) => _id))) }
   };
 }
 
 export const enqueueAtEndAction: ActionCreator<ActionParams> = ({ albums, dispatch }) => {
   return {
-    title: `Enqueue selection at the end`,
+    title: `Enqueue at the end`,
     handler(): void { dispatch(enqueueAtEnd(albums.map(({ _id }) => _id))) }
+  };
+}
+
+export const removeFromQueueAction: ActionCreator<ActionParams> = ({ albums, queue, dispatch }) => {
+  return {
+    title: `Remove from queue`,
+    handler(): void {
+      const albumIDs = albums.map(({ _id }) => _id);
+      const updatedQueue = queue.filter(_id => albumIDs.indexOf(_id) === -1);
+      dispatch(updateQueue(updatedQueue));
+    }
   };
 }
 
@@ -105,6 +116,7 @@ export enum AlbumActions {
   PLAY_ALBUM = 'PLAY_ALBUM',
   ENQUEUE_AFTER_CURRENT = 'ENQUEUE_AFTER_CURRENT',
   ENQUEUE_AT_END = 'ENQUEUE_AT_END',
+  REMOVE_FROM_QUEUE = 'REMOVE_FROM_QUEUE',
   REVEAL_IN_FINDER = 'REVEAL_IN_FINDER',
   RELOAD_ALBUM_CONTENT = 'RELOAD_ALBUM_CONTENT',
   SEARCH_ON_RYM = 'SEARCH_ON_RYM',
@@ -116,6 +128,7 @@ export const AlbumActionsMap: { [key: string]: ActionCreator<ActionParams> } = {
   [AlbumActions.PLAY_ALBUM]: playAlbumAction,
   [AlbumActions.ENQUEUE_AFTER_CURRENT]: enqueueAfterCurrentAction,
   [AlbumActions.ENQUEUE_AT_END]: enqueueAtEndAction,
+  [AlbumActions.REMOVE_FROM_QUEUE]: removeFromQueueAction,
   [AlbumActions.REVEAL_IN_FINDER]: revealInFinderAction,
   [AlbumActions.RELOAD_ALBUM_CONTENT]: reloadAlbumContentAction,
   [AlbumActions.SEARCH_ON_RYM]: searchOnRYMAction,
@@ -126,6 +139,7 @@ export const AlbumActionsMap: { [key: string]: ActionCreator<ActionParams> } = {
 export enum AlbumActionsGroups {
   PLAYBACK,
   ENQUEUE,
+  QUEUE,
   SYSTEM,
   SEARCH_ONLINE
 }
@@ -145,6 +159,9 @@ const actionGroupsMap: { [key: string]: AlbumActions[] } = {
   [AlbumActionsGroups.ENQUEUE]: [
     AlbumActions.ENQUEUE_AFTER_CURRENT,
     AlbumActions.ENQUEUE_AT_END
+  ],
+  [AlbumActionsGroups.QUEUE]: [
+    AlbumActions.REMOVE_FROM_QUEUE
   ],
   [AlbumActionsGroups.SYSTEM]: [
     AlbumActions.REVEAL_IN_FINDER,

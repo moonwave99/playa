@@ -22,6 +22,7 @@ import {
   playAlbumAction,
   enqueueAfterCurrentAction,
   enqueueAtEndAction,
+  removeFromQueueAction,
   revealInFinderAction,
   reloadAlbumContentAction,
   searchOnRYMAction,
@@ -83,7 +84,7 @@ describe('albumActions', () => {
   describe('enqueueAfterCurrentAction', () => {
     it('should return a title and a handler', async () => {
       const { title, handler } = enqueueAfterCurrentAction({ albums: [albums[0]] });
-      expect(title).toBe(`Enqueue selection after current album`);
+      expect(title).toBe(`Enqueue after current album`);
       expect(typeof handler).toBe('function');
     });
 
@@ -122,7 +123,7 @@ describe('albumActions', () => {
   describe('enqueueAtEndAction', () => {
     it('should return a title and a handler', async () => {
       const { title, handler } = enqueueAtEndAction({ albums: [albums[0]] });
-      expect(title).toBe(`Enqueue selection at the end`);
+      expect(title).toBe(`Enqueue at the end`);
       expect(typeof handler).toBe('function');
     });
 
@@ -151,6 +152,46 @@ describe('albumActions', () => {
       const expectedActions = [{
         type: PLAYER_UPDATE_QUEUE,
         queue: ['2', '3', album._id]
+      }];
+      expectedActions.forEach(
+        action => expect(store.getActions()).toContainEqual(action)
+      );
+    });
+  });
+
+  describe('removeFromQueueAction', () => {
+    it('should return a title and a handler', async () => {
+      const { title, handler } = removeFromQueueAction({ albums: [albums[0]], queue: [] });
+      expect(title).toBe(`Remove from queue`);
+      expect(typeof handler).toBe('function');
+    });
+
+    it('should dispatch expected actions', async () => {
+      const store = mockStore({
+        player: {
+          queue: ['2', '3'],
+          currentAlbumId: '2'
+        },
+        albums: {
+          allById: toObj(albums)
+        },
+        tracks: {
+          allById: toObj(tracks)
+        },
+        covers: {
+          allById: {}
+        }
+      });
+      const album = albums[0];
+      const { handler } = removeFromQueueAction({
+        albums: [album],
+        queue: ['1', '2', '3'],
+        dispatch: store.dispatch
+      });
+      await handler();
+      const expectedActions = [{
+        type: PLAYER_UPDATE_QUEUE,
+        queue: ['2', '3']
       }];
       expectedActions.forEach(
         action => expect(store.getActions()).toContainEqual(action)

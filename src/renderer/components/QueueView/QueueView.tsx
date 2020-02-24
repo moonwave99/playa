@@ -54,8 +54,10 @@ export const QueueView = (): ReactElement => {
       {
         type: ALBUM_CONTEXT_ACTIONS,
         albums: [album],
+        queue: queue.map(({ _id }) => _id),
         dispatch,
         actionGroups: [
+          AlbumActionsGroups.QUEUE,
           AlbumActionsGroups.PLAYBACK,
           AlbumActionsGroups.SYSTEM,
           AlbumActionsGroups.SEARCH_ONLINE
@@ -73,6 +75,17 @@ export const QueueView = (): ReactElement => {
   }
 
   const albumActions = [
+    {
+      icon: 'minus-circle' as IconName,
+      handler: (album: Album): void => {
+        actionsMap(AlbumActions.REMOVE_FROM_QUEUE)({
+          albums: [album],
+          queue: queue.map(({ _id }) => _id),
+          dispatch
+        }).handler();
+      },
+      title: 'Remove from queue'
+    },
     {
       icon: 'folder-open' as IconName,
       handler: (album: Album): void => {
