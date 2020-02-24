@@ -84,14 +84,27 @@ export default class DiscogsClient {
       }
     }
     const result = await saveData(imageData, imagePath, 'binary');
-    if (result) {
-      this.cache[_id] = imagePath;
-      this.notFoundCache[_id] = false;
-      return this.cache[_id];
+    return this._updateCache(result, _id, imagePath);
+  }
+
+  async getAlbumCoverFromURL(_id: string, url = ''): Promise<string> {
+    const imagePath = Path.join(this.coversPath, `${_id}.jpg`);
+    let result: boolean = null;
+    if (url.startsWith('http')) {
+      const db = this.discogs.database();
+      const imageData = await db.getImage(url);
+      result = await saveData(imageData, imagePath, 'binary');
     } else {
-      this.notFoundCache[_id] = true;
-      return null;
+      result = await new Promise((resolve, reject) => {
+        fs.copyFile(url, imagePath, (err) => {
+          if (err) {
+            reject(err);
+          }
+          resolve(true);
+        });
+      });
     }
+    return this._updateCache(result, _id, imagePath);
   }
 
   async _getAlbumCoverFromDiscogs(artist: string, title: string, _id: string): Promise<string> {
@@ -101,5 +114,16 @@ export default class DiscogsClient {
       throw new AlbumNotFoundError(`No results for: [${_id}] ${artist} - ${title}`);
     }
     return await db.getImage(results[0].cover_image);
+  }
+
+  _updateCache(result: boolean, _id: string, imagePath: string): string {
+    if (result) {
+      this.cache[_id] = imagePath;
+      this.notFoundCache[_id] = false;
+      return this.cache[_id];
+    } else {
+      this.notFoundCache[_id] = true;
+      return null;
+    }
   }
 }

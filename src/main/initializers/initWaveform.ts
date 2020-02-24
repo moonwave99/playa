@@ -27,7 +27,8 @@ export default function initWaveform(userDataPath: string): void {
   ipc.handle(IPC_WAVEFORM_SAVE_REQUEST, async (_event, trackId: string, content: string) => {
     const targetPath = Path.join(waveformBasePath, `${sha1(trackId)}.svg`);
     try {
-      return await saveData(renderWaveformSVG(content), targetPath, 'utf8');
+      await saveData(renderWaveformSVG(content), targetPath, 'utf8');
+      return targetPath;
     } catch (error) {
       if (error instanceof FileSystemError) {
         log({

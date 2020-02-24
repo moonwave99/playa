@@ -64,6 +64,8 @@ export const IPC_MESSAGES = {
   IPC_TRACK_GET_LIST_RESPONSE : 'track:get-list:response',
   IPC_SEARCH_REQUEST : 'search:request',
   IPC_SEARCH_RESPONSE : 'search:response',
+  IPC_COVER_GET_FROM_URL_REQUEST: 'cover:get-from-url:request',
+  IPC_COVER_GET_FROM_URL_RESPONSE: 'cover:get-from-url:response',
   IPC_COVER_GET_REQUEST: 'cover:get:request',
   IPC_COVER_GET_RESPONSE: 'cover:get:response',
   IPC_WAVEFORM_SAVE_REQUEST: 'waveform:save:request',

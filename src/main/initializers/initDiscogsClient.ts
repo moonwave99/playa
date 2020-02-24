@@ -5,6 +5,7 @@ import { IPC_MESSAGES } from '../../constants';
 
 const {
   IPC_COVER_GET_REQUEST,
+  IPC_COVER_GET_FROM_URL_REQUEST
 } = IPC_MESSAGES;
 
 type initDiscogsClientParams = {
@@ -40,5 +41,9 @@ export default function initDiscogsClient({
 
   ipc.handle(IPC_COVER_GET_REQUEST, async (_event, { artist, title, _id }) =>
     await discogsClient.getAlbumCover(artist, title, _id)
+  );
+
+  ipc.handle(IPC_COVER_GET_FROM_URL_REQUEST, async (_event, { _id }, url) =>
+    await discogsClient.getAlbumCoverFromURL(_id, url)
   );
 }

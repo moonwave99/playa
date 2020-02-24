@@ -5,7 +5,8 @@ import { Album, AlbumTypes } from './album';
 import { IPC_MESSAGES } from '../../../constants';
 
 const {
-  IPC_COVER_GET_REQUEST
+  IPC_COVER_GET_REQUEST,
+  IPC_COVER_GET_FROM_URL_REQUEST
 } = IPC_MESSAGES;
 
 export interface CoverState {
@@ -49,6 +50,26 @@ export const getCoverRequest = (album: Album): Function =>
     dispatch({
       type: COVER_GET_RESPONSE,
       path: await ipc.invoke(IPC_COVER_GET_REQUEST, album),
+      album
+    });
+  }
+
+export const getCoverFromUrlRequest = (
+  album: Album,
+  url: string,
+  timestamp = +new Date()
+): Function =>
+  async (dispatch: Function): Promise<void> => {
+    const { type } = album;
+    const albumTypeHasNoCover =
+      type === AlbumTypes.Remix || type === AlbumTypes.Various;
+    if (albumTypeHasNoCover) {
+      return;
+    }
+    const coverPath = await ipc.invoke(IPC_COVER_GET_FROM_URL_REQUEST, album, url);
+    dispatch({
+      type: COVER_GET_RESPONSE,
+      path: `${coverPath}?${timestamp}`,
       album
     });
   }

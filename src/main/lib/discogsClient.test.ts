@@ -7,7 +7,7 @@ import { saveData } from './saveData';
   path: string
 ) => {
   if (path === '/path/to/covers/1.jpg') {
-    return path;
+    return true;
   }
   return null;
 });

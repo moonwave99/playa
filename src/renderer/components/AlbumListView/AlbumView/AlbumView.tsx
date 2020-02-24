@@ -1,7 +1,8 @@
-import React, { FC, ReactElement, useState, useEffect } from 'react';
+import React, { FC, ReactElement, useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, generatePath } from 'react-router-dom';
-import { useDrag } from 'react-dnd';
+import { useDrag, useDrop, DragObjectWithType } from 'react-dnd';
+import { NativeTypes } from 'react-dnd-html5-backend';
 import { useInView } from 'react-intersection-observer';
 import Vibro from 'node-vibrant';
 import cx from 'classnames';
@@ -9,6 +10,7 @@ import { CoverView } from './CoverView/CoverView';
 import { TracklistView } from './TracklistView/TracklistView';
 import { ApplicationState } from '../../../store/store';
 import { Album, getAlbumRequest, getAlbumContentById } from '../../../store/modules/album';
+import { getCoverFromUrlRequest } from '../../../store/modules/cover';
 import { Track } from '../../../store/modules/track';
 import { AlbumActionsView, ActionsConfig } from '../AlbumActionsView/AlbumActionsView';
 import {
@@ -38,6 +40,11 @@ type Palette = {
   LightVibrant: string;
 }
 
+interface DragItem extends DragObjectWithType{
+  urls?: string[];
+  files?: File[];
+}
+
 // #TODO push notFoundAction
 export const AlbumView: FC<AlbumViewProps> = ({
   album,
@@ -48,6 +55,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
   onContextMenu,
   onDoubleClick
 }) => {
+  const ref = useRef<HTMLDivElement>(null);
   const [palette, setPalette] = useState({} as Palette);
   const { _id, type, year, artist, title } = album;
   const [viewRef, inView] = useInView({ triggerOnce: true });
@@ -72,6 +80,26 @@ export const AlbumView: FC<AlbumViewProps> = ({
       opacity: monitor.isDragging() ? 0.4 : 1,
     })
   });
+
+  const [{ isOver, canDrop }, drop] = useDrop({
+    accept: [NativeTypes.FILE, NativeTypes.URL],
+    drop: (item: DragItem) => {
+      let url = '';
+      if (item.urls) {
+        url = item.urls[0];
+      }
+      if (item.files) {
+        url = item.files[0].path;
+      }
+      dispatch(getCoverFromUrlRequest(album, url));
+    },
+    collect: monitor => ({
+      isOver: monitor.isOver(),
+      canDrop: monitor.canDrop(),
+    })
+  });
+
+  drag(drop(ref));
 
   function onCoverDoubleClick(album: Album): void {
     onDoubleClick(album);
@@ -116,12 +144,17 @@ export const AlbumView: FC<AlbumViewProps> = ({
 
   const albumClasses = cx('album-view', { 'is-current': isCurrent });
   const tagClasses = cx('album-type', `album-type-${type}`);
+
+  const coverClasses = cx('album-cover', {
+    'drag-is-over': isOver,
+    'drag-can-drop': canDrop
+  });
   return (
     <article className={albumClasses} id={_id} onContextMenu={_onContextMenu} ref={viewRef}>
       <aside className="album-aside" style={{ backgroundColor: palette.DarkMuted }}>
-        <div ref={drag} style={{ opacity }}>
+        <div ref={ref} style={{ opacity }} className="album-cover-wrapper">
           <CoverView
-            className="album-cover"
+            className={coverClasses}
             src={cover}
             album={album}
             onImageLoad={onImageLoad}

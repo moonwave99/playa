@@ -5,14 +5,14 @@ export async function saveData(
   data: string,
   path: string,
   format: 'binary' | 'utf8'
-): Promise<string> {
+): Promise<boolean> {
   try {
     return new Promise((resolve, reject) => {
       fs.writeFile(path, data, format, (error) => {
         if (error) {
           reject(error);
         }
-        resolve(path);
+        resolve(true);
       })
     });
   } catch (error) {

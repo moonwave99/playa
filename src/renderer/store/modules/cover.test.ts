@@ -7,13 +7,16 @@ import reducer, {
   CoverActionTypes,
   CoverState,
   getCoverRequest,
+  getCoverFromUrlRequest,
   COVER_GET_REQUEST,
   COVER_GET_RESPONSE
 } from './cover';
 
+import { AlbumTypes } from './album';
+
 describe('cover actions', () => {
   describe('getCoverRequest', () => {
-    it('should dispatch getCoverRequest request', async () => {
+    it('should dispatch expected actions', async () => {
       const store = mockStore({
         covers: {
           allById: {}
@@ -24,6 +27,46 @@ describe('cover actions', () => {
       expect(store.getActions()).toEqual([
         { type: COVER_GET_RESPONSE, album, path: '/path/to/cover' },
       ]);
+    });
+    it('should dispatch nothing if cover is already present in store', async () => {
+      const store = mockStore({
+        covers: {
+          allById: {
+            '1': '/path/to/cover'
+          }
+        }
+      });
+      const album = albums[0];
+      await getCoverRequest(album)(store.dispatch, store.getState);
+      expect(store.getActions()).toHaveLength(0);
+    });
+    it('should dispatch nothing if album should not display cover', async () => {
+      const store = mockStore({
+        covers: {
+          allById: {}
+        }
+      });
+      const album = { ...albums[0], type: AlbumTypes.Remix };
+      await getCoverRequest(album)(store.dispatch, store.getState);
+      expect(store.getActions()).toHaveLength(0);
+    });
+  });
+  describe('getCoverFromUrlRequest', () => {
+    it('should dispatch expected actions', async () => {
+      const store = mockStore({});
+      const album = albums[0];
+      const url = '/path/to/cover';
+      await getCoverFromUrlRequest(album, url, 123)(store.dispatch);
+      expect(store.getActions()).toEqual([
+        { type: COVER_GET_RESPONSE, album, path: '/path/to/cover?123' },
+      ]);
+    });
+    it('should dispatch nothing if album should not display cover', async () => {
+      const store = mockStore({});
+      const album = { ...albums[0], type: AlbumTypes.Remix };
+      const url = '/path/to/cover';
+      await getCoverFromUrlRequest(album, url)(store.dispatch);
+      expect(store.getActions()).toHaveLength(0);
     });
   });
 });

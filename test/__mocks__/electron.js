@@ -5,6 +5,7 @@ const { IPC_MESSAGES } = require('../../src/constants');
 const {
   IPC_PLAYLIST_GET_ALL_REQUEST,
   IPC_COVER_GET_REQUEST,
+  IPC_COVER_GET_FROM_URL_REQUEST,
   IPC_SEARCH_REQUEST,
   IPC_PLAYLIST_SAVE_REQUEST,
   IPC_PLAYLIST_DELETE_REQUEST,
@@ -45,6 +46,7 @@ module.exports = {
         case IPC_PLAYLIST_GET_ALL_REQUEST:
           return fixtures.playlists;
         case IPC_COVER_GET_REQUEST:
+        case IPC_COVER_GET_FROM_URL_REQUEST:
           return '/path/to/cover';
         case IPC_PLAYLIST_SAVE_REQUEST:
         case IPC_PLAYLIST_DELETE_REQUEST:
