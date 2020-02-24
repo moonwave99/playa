@@ -83,6 +83,14 @@
     }
   }
 
+  .button-queue {
+    &.drag-is-over.drag-can-drop {
+      transition: .3s background-color ease-in-out;
+      background-color: $highlightColor;
+      color: $mainColor;
+    }
+  }
+
   @media (max-width: $miniWindowThreshold) {
     flex: 1;
     height: auto;

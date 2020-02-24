@@ -6,12 +6,12 @@ import { IconName } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import cx from 'classnames';
 import { SearchBar } from '../SearchBar/SearchBar';
+import { QueueButton } from './QueueButton/QueueButton';
 import { NewPlaylistButton } from './NewPlaylistButton/NewPlaylistButton';
 import { PlaylistList } from './PlaylistList/PlaylistList';
 import { Playlist } from '../../store/modules/playlist';
 import './SidebarView.scss';
 import {
-	QUEUE,
 	SEARCH,
 	PLAYLIST_ALL,
 	LIBRARY
@@ -24,17 +24,16 @@ type SidebarViewProps = {
 	onCreatePlaylist: Function;
 	onSearchBarBlur: Function;
 	onSearchFormSubmit: Function;
+	onQueueButtonDrop: Function;
 };
 
 const icons: { [key: string]: IconName } = {
-	[QUEUE]: 'play',
 	[SEARCH]: 'search',
 	[PLAYLIST_ALL]: 'list',
 	[LIBRARY]: 'music'
 };
 
 const i18nkeys: { [key: string]: string } = {
-	[QUEUE]: 'sidebar.buttons.queue',
 	[SEARCH]: 'sidebar.buttons.search',
 	[PLAYLIST_ALL]: 'sidebar.buttons.playlist.all',
 	[LIBRARY]: 'sidebar.buttons.library'
@@ -46,7 +45,8 @@ export const SidebarView: FC<SidebarViewProps> = ({
 	currentPlaylistId,
 	onCreatePlaylist,
 	onSearchBarBlur,
-	onSearchFormSubmit
+	onSearchFormSubmit,
+	onQueueButtonDrop,
 }) => {
 	const { t } = useTranslation();
 	const location = useLocation();
@@ -80,7 +80,7 @@ export const SidebarView: FC<SidebarViewProps> = ({
 				<div className="button-wrapper">
 					{renderSearchBar()}
 					{renderLink(LIBRARY, 'library')}
-					{renderLink(QUEUE, 'queue')}
+					<QueueButton onDrop={onQueueButtonDrop}/>
 				</div>
 			</section>
 			<section className="sidebar-footer">

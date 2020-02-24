@@ -26,6 +26,7 @@ import {
 
 import {
   updateQueue,
+  enqueueAtEnd,
   togglePlayback,
   selectors as playerSelectors
 } from '../../store/modules/player';
@@ -137,6 +138,10 @@ export const App: FC<AppProps> = ({
     history.replace(generatePath(PLAYLIST_SHOW, { _id: playlist._id }));
   }
 
+  function onQueueButtonDrop(albums: Album['_id'][] = []): void {
+    dispatch(enqueueAtEnd(albums));
+  }
+
   function onSearchBarBlur(): void {
     setSearchFocus(false);
   }
@@ -155,7 +160,8 @@ export const App: FC<AppProps> = ({
             recentPlaylists={recentPlaylists}
             onSearchFormSubmit={onSearchFormSubmit}
             onSearchBarBlur={onSearchBarBlur}
-            onCreatePlaylist={onCreatePlaylist} />
+            onCreatePlaylist={onCreatePlaylist}
+            onQueueButtonDrop={onQueueButtonDrop}/>
         </div>
         <div className="main-wrapper">
           <Switch>

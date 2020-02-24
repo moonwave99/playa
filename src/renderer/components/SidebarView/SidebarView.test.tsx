@@ -18,6 +18,7 @@ describe('SidebarView', () => {
 				onCreatePlaylist={jest.fn()}
 				onSearchBarBlur={jest.fn()}
 				onSearchFormSubmit={jest.fn()}
+				onQueueButtonDrop={jest.fn()}
 			/>
 		);
 		expect(wrapper.is('.sidebar')).toBe(true);
@@ -32,6 +33,7 @@ describe('SidebarView', () => {
 				onCreatePlaylist={jest.fn()}
 				onSearchBarBlur={jest.fn()}
 				onSearchFormSubmit={jest.fn()}
+        onQueueButtonDrop={jest.fn()}
 			/>
 		);
 		expect(wrapper.find('.button-library').is(':not(.button-outline)')).toBe(true);

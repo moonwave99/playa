@@ -35,7 +35,8 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
   const [{ opacity }, drag] = useDrag({
     item: {
       type: UIDragTypes.LIBRARY_ALBUMS,
-      _id
+      _id,
+      selection: [_id]
     },
     collect: monitor => ({
       opacity: monitor.isDragging() ? 0.4 : 1,
