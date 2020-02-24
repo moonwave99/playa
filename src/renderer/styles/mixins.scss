@@ -206,3 +206,15 @@
     max-width: $width;
   }
 }
+
+@mixin droppable($borderColor: $mainColor, $opacity: .8) {
+  &.drag-is-over {
+    &.drag-can-drop {
+      img {
+        opacity: $opacity;
+        transition: opacity .2s ease-in-out;
+        border: 1px solid $borderColor;
+      }
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDrag } from 'react-dnd';
 import cx from 'classnames';
@@ -7,6 +7,7 @@ import { Album } from '../../../../store/modules/album';
 import { getCoverRequest, selectors as coverSelectors } from '../../../../store/modules/cover';
 import { ApplicationState } from '../../../../store/store';
 import { UIDragTypes } from '../../../../store/modules/ui';
+import useUpdateCover from '../../../../hooks/useUpdateCover/useUpdateCover';
 
 type AlbumGridTileViewProps = {
   album: Album;
@@ -21,9 +22,15 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
   onContextMenu,
   onDoubleClick
 }) => {
+  const ref = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
   const { _id } = album;
   const cover = useSelector((state: ApplicationState) => coverSelectors.findById(state, _id));
+  const {
+    canDrop,
+    isOver,
+    drop
+  } = useUpdateCover(album);
 
   const [{ opacity }, drag] = useDrag({
     item: {
@@ -34,6 +41,8 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
       opacity: monitor.isDragging() ? 0.4 : 1,
     })
   });
+
+  drag(drop(ref));
 
   useEffect(() => {
     dispatch(getCoverRequest(album));
@@ -47,10 +56,14 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
     onDoubleClick && onDoubleClick(album);
   }
 
-  const classNames = cx('album-grid-tile', { 'is-playing': isPlaying});
+  const classNames = cx('album-grid-tile', {
+    'is-playing': isPlaying,
+    'drag-is-over': isOver,
+    'drag-can-drop': canDrop
+  });
 	return (
     <article
-      ref={drag}
+      ref={ref}
       style={{ opacity }}
       className={classNames}
       onDoubleClick={_onDoubleClick}

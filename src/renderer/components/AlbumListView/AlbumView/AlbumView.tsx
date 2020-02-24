@@ -1,8 +1,7 @@
 import React, { FC, ReactElement, useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, generatePath } from 'react-router-dom';
-import { useDrag, useDrop, DragObjectWithType } from 'react-dnd';
-import { NativeTypes } from 'react-dnd-html5-backend';
+import { useDrag } from 'react-dnd';
 import { useInView } from 'react-intersection-observer';
 import Vibro from 'node-vibrant';
 import cx from 'classnames';
@@ -10,7 +9,6 @@ import { CoverView } from './CoverView/CoverView';
 import { TracklistView } from './TracklistView/TracklistView';
 import { ApplicationState } from '../../../store/store';
 import { Album, getAlbumRequest, getAlbumContentById } from '../../../store/modules/album';
-import { getCoverFromUrlRequest } from '../../../store/modules/cover';
 import { Track } from '../../../store/modules/track';
 import { AlbumActionsView, ActionsConfig } from '../AlbumActionsView/AlbumActionsView';
 import {
@@ -19,6 +17,7 @@ import {
   showTrackArtists
 } from '../../../utils/albumUtils';
 import { SEARCH } from '../../../routes';
+import useUpdateCover from '../../../hooks/useUpdateCover/useUpdateCover';
 import './AlbumView.scss';
 
 type AlbumViewProps = {
@@ -38,11 +37,6 @@ type Palette = {
   Vibrant: string;
   LightMuted: string;
   LightVibrant: string;
-}
-
-interface DragItem extends DragObjectWithType{
-  urls?: string[];
-  files?: File[];
 }
 
 // #TODO push notFoundAction
@@ -81,23 +75,11 @@ export const AlbumView: FC<AlbumViewProps> = ({
     })
   });
 
-  const [{ isOver, canDrop }, drop] = useDrop({
-    accept: [NativeTypes.FILE, NativeTypes.URL],
-    drop: (item: DragItem) => {
-      let url = '';
-      if (item.urls) {
-        url = item.urls[0];
-      }
-      if (item.files) {
-        url = item.files[0].path;
-      }
-      dispatch(getCoverFromUrlRequest(album, url));
-    },
-    collect: monitor => ({
-      isOver: monitor.isOver(),
-      canDrop: monitor.canDrop(),
-    })
-  });
+  const {
+    isOver,
+    canDrop,
+    drop
+  } = useUpdateCover(album);
 
   drag(drop(ref));
 

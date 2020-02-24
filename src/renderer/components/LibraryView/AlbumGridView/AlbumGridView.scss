@@ -8,6 +8,7 @@
     flex-wrap: wrap;
     .album-grid-tile {
       flex: calc(100% / var(--library-columns));
+      @include droppable();
       .album-cover {
         @include albumCover($libraryAlbumCoverWidth, $backgroundDarkColor);
       }

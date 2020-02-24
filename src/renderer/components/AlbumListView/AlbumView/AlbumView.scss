@@ -45,17 +45,9 @@
     transition: background-color .3s ease-in-out;
     .album-cover-wrapper {
       width: $albumCoverWidth;
-    }
-    .album-cover {
-      @include albumCover($albumCoverWidth);
-      &.drag-is-over {
-        &.drag-can-drop {
-          opacity: .8;
-          transition: opacity .2s ease-in-out;
-          img {
-            border: 1px solid $mainColor;
-          }
-        }
+      .album-cover {
+        @include albumCover($albumCoverWidth);
+        @include droppable();
       }
     }
     @media (max-width: $smallWindowThreshold) {
