@@ -46,7 +46,7 @@ describe('appState', () => {
       lastWindowSize: [null, null],
       lastWindowPosition: [null, null],
       queue: [],
-      volume: 100      
+      volume: 1   
     });
   });
 
