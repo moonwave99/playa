@@ -10,13 +10,7 @@ type selectParams = {
   shiftKey?: boolean;
 }
 
-type expandParams = {
-  items: Selection;
-  direction: number;
-  increment: number;
-}
-
-export function selectionBounds(items: Selection): [number, number] {
+export function selectionBounds(items: { selected: boolean }[]): [number, number] {
   let lowerBound = -1;
   let upperBound = -1;
 
@@ -80,31 +74,4 @@ export function select({
     _id,
     selected: i === index
   }));
-}
-
-export function scaleSelection({
-  items = [],
-  direction = 1,
-  increment = 1
-}: expandParams): Selection {
-  const [lowerBound, upperBound] = selectionBounds(items);
-  if (direction === 1) {
-    const index = Math.min(upperBound + increment, items.length);
-    return items.map(({ _id, selected }, i) => ({
-        _id,
-        selected: increment === 1
-          ? i === index || selected
-          : i >= lowerBound && i <= index
-      })
-    );
-  } else if (direction === -1) {
-    const index = Math.max(lowerBound - increment, 0);
-    return items.map(({ _id, selected }, i) => ({
-      _id,
-      selected: increment === 1
-        ? (i === index) || selected
-        : i <= upperBound && i >= index
-    }));
-  }
-  return items;
 }
