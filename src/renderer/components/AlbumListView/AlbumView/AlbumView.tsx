@@ -31,6 +31,7 @@ type AlbumViewProps = {
 }
 
 type Palette = {
+  loaded: boolean;
   DarkMuted: string;
   DarkVibrant: string;
   Muted: string;
@@ -105,6 +106,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
       LightVibrant
     } = await Vibro.from(src).getPalette();
     setPalette({
+      loaded: true,
       DarkMuted: DarkMuted.getHex(),
       DarkVibrant: DarkVibrant.getHex(),
       Muted: Muted.getHex(),
@@ -128,6 +130,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
   const tagClasses = cx('album-type', `album-type-${type}`);
 
   const coverClasses = cx('album-cover', {
+    'loaded': palette.loaded,
     'drag-is-over': isOver,
     'drag-can-drop': canDrop
   });
