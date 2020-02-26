@@ -89,6 +89,14 @@ export const SearchView = (): ReactElement => {
     }).handler();
   }
 
+  function onResultEnter(album: Album): void {
+    actionsMap(AlbumActions.PLAY_ALBUM)({
+      albums: [album],
+      queue: [album._id],
+      dispatch
+    }).handler();
+  }
+
 	return (
     <div className="search-view">
       <h1>Results for: <span className="highlight">{query}</span></h1>
@@ -104,6 +112,7 @@ export const SearchView = (): ReactElement => {
             isSearching={isSearching}
             currentAlbumId={currentAlbumId}
             onContextMenu={onContextMenu}
+            onResultEnter={onResultEnter}
             onResultDoubleClick={onResultDoubleClick}/>
         </CSSTransition>
       </div>

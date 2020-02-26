@@ -49,10 +49,12 @@ function select({
 
 type UseSelectParams<T> = {
   items: Array<T>;
+  onEnter?: Function;
 }
 
 export default function useSelect<T>({
-  items = []
+  items = [],
+  onEnter
 }: UseSelectParams<T>): {
   onItemClick: Function;
   selection: SelectionItem[];
@@ -107,9 +109,18 @@ export default function useSelect<T>({
       setSelection(newSelection);
     }
 
+    function _onEnter(): void {
+      onEnter && onEnter(
+        selection
+          .filter(({ selected }) => selected)
+          .map(({ index }) => index)
+      );
+    }
+
     mousetrap.bind('up', onUp);
     mousetrap.bind('down', onDown);
-    return (): void => { mousetrap.unbind(['up', 'down']) };
+    mousetrap.bind('enter', _onEnter);
+    return (): void => { mousetrap.unbind(['up', 'down', 'enter']) };
   }, [items.length, selection]);
 
   return {

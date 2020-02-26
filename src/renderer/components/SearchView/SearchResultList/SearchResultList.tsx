@@ -20,6 +20,7 @@ type SearchResultListProps = {
 	currentAlbumId?: Album['_id'];
 	onContextMenu: Function;
 	onResultDoubleClick: Function;
+	onResultEnter: Function;
 };
 
 const ITEM_SIZE = 57;
@@ -39,10 +40,22 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
 	isSearching,
 	currentAlbumId,
 	onContextMenu,
-	onResultDoubleClick
+	onResultDoubleClick,
+	onResultEnter
 }) => {
+
+	function _onResultEnter(selectedIndexes: number[]): void {
+		if (selectedIndexes.length !== 1) {
+			return;
+		}
+		onResultEnter(results[selectedIndexes[0]]);
+	}
+
 	const [renderedItems, setRenderedItems] = useState([]);
-	const { selection, direction, onItemClick } = useSelect({ items: results });
+	const { selection, direction, onItemClick } = useSelect({
+		items: results,
+		onEnter: _onResultEnter
+	});
 	const dispatch = useDispatch();
 	const { t } = useTranslation();
 	const elementRef = useRef(null);
