@@ -119,6 +119,9 @@ class LocalPouchDB {
   async bulkDocs(docs: { _id: string }[]) {
     docs.forEach(doc => this.db[this.name][doc._id] = doc);
   }
+  async close() {
+    return true;
+  }
 }
 
 class PoubchDB {

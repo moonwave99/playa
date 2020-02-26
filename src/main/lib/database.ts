@@ -191,4 +191,9 @@ export default class Database {
       throw new DatabaseError('Problems bulk removing entities');
     });
   }
+
+  async close(): Promise<boolean> {
+    await this.db.close();
+    return true;
+  }
 }

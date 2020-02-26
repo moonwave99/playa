@@ -223,4 +223,15 @@ describe('database', () => {
       expect(updatedPlaylists.length).toBe(0);
     });
   });
+
+  describe('close', () => {
+    const db = new Database({
+      path: '/path/to/db',
+      name: 'playlist'
+    });
+    it('should close connection to database', async () => {
+      const result = await db.close();
+      expect(result).toBe(true);
+    });
+  });
 });
