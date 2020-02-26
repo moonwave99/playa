@@ -1,7 +1,8 @@
-import React, { ReactElement, SyntheticEvent, FC, useMemo } from 'react';
-import { Link, generatePath } from 'react-router-dom';
+import React, { ReactElement, SyntheticEvent, MouseEvent, FC, useMemo } from 'react';
+import { Link, generatePath, useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useTable, Cell } from 'react-table';
+import useSelect from '../../hooks/useSelect/useSelect';
 import { Playlist } from '../../store/modules/playlist';
 import { formatDate } from '../../utils/datetimeUtils';
 import { PLAYLIST_SHOW } from '../../routes';
@@ -19,6 +20,7 @@ export const AllPlaylistsView: FC<AllPlaylistsViewProps> = ({
   onPlaylistContextMenu
 }) => {
   const { t } = useTranslation();
+  const history = useHistory();
   const columns = useMemo(() => [
    ...['title', 'created', 'accessed'].map(x => ({
      Header: t(`playlists.props.${x}`),
@@ -40,6 +42,19 @@ export const AllPlaylistsView: FC<AllPlaylistsViewProps> = ({
   } = useTable({
     columns,
     data: playlists,
+  });
+
+  function onEnter(selectedIndexes: number[]): void {
+		if (selectedIndexes.length !== 1) {
+			return;
+		}
+		const { _id } = playlists[selectedIndexes[0]];
+    history.push(generatePath(PLAYLIST_SHOW, { _id }));
+	}
+
+  const { selection, onItemClick } = useSelect({
+    items: playlists,
+    onEnter
   });
 
   function renderCell(cell: Cell): ReactElement {
@@ -90,10 +105,19 @@ export const AllPlaylistsView: FC<AllPlaylistsViewProps> = ({
         </thead>
         <tbody {...getTableBodyProps()}>
           {rows.map(
-            row => {
+            (row, index) => {
               prepareRow(row);
+              function onClick(event: MouseEvent): void {
+                onItemClick({
+                  index,
+                  ...event
+                });
+              }
               return (
-                <tr {...row.getRowProps()} onContextMenu={(): void => onPlaylistContextMenu(row.original)}>
+                <tr {...row.getRowProps()}
+                  onContextMenu={(): void => onPlaylistContextMenu(row.original)}
+                  onClick={onClick}
+                  className={selection[index].selected ? 'selected' : null}>
                   {row.cells.map(renderCell)}
                 </tr>
               )}

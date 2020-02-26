@@ -50,10 +50,13 @@
     		}
         &:hover td {
           background-color: $backgroundLightColor;
+          transition: background-color .1s ease-in-out;
+        }
+        &.selected td {
+          background-color: $highlightColor;
         }
         td {
           padding: 0 1rem;
-          transition: background-color .1s ease-in-out;
           &.cell-title {
             @include ellipsis($playlistTableMaxTitleWidth);
           }
