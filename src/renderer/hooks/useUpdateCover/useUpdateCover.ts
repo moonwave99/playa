@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux';
-import {useDrop, DragObjectWithType, DragElementWrapper } from 'react-dnd';
+import { useDrop, DragObjectWithType, DragElementWrapper } from 'react-dnd';
 import { NativeTypes } from 'react-dnd-html5-backend';
 
 import { Album } from '../../store/modules/album';
@@ -24,6 +24,9 @@ export default function useUpdateCover<T>(album: Album): {
         url = item.urls[0];
       }
       if (item.files) {
+        if (!item.files[0].type.startsWith('image')) {
+          return;
+        }
         url = item.files[0].path;
       }
       dispatch(getCoverFromUrlRequest(album, url));
