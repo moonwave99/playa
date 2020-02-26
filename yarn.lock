@@ -736,16 +736,17 @@
   integrity sha512-13gmo3M2qVvjQrWNseqM3+cR6S2Ss3grbR2NZltgMq94wOwqJYQdgn8qzwDshzgXqMlSUtyPZjysImmktu22ew==
 
 "@types/node-fetch@*":
-  version "2.5.4"
-  resolved "https://registry.yarnpkg.com/@types/node-fetch/-/node-fetch-2.5.4.tgz#5245b6d8841fc3a6208b82291119bc11c4e0ce44"
-  integrity sha512-Oz6id++2qAOFuOlE1j0ouk1dzl3mmI1+qINPNBhi9nt/gVOz0G+13Ao6qjhdF0Ys+eOkhu6JnFmt38bR3H0POQ==
+  version "2.5.5"
+  resolved "https://registry.yarnpkg.com/@types/node-fetch/-/node-fetch-2.5.5.tgz#cd264e20a81f4600a6c52864d38e7fef72485e92"
+  integrity sha512-IWwjsyYjGw+em3xTvWVQi5MgYKbRs0du57klfTaZkv/B24AEQ/p/IopNeqIYNy3EsfHOpg8ieQSDomPcsYMHpA==
   dependencies:
     "@types/node" "*"
+    form-data "^3.0.0"
 
 "@types/node@*":
-  version "13.7.2"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-13.7.2.tgz#50375b95b5845a34efda2ffb3a087c7becbc46c6"
-  integrity sha512-uvilvAQbdJvnSBFcKJ2td4016urcGvsiR+N4dHGU87ml8O2Vl6l+ErOi9w0kXSPiwJ1AYlIW+0pDXDWWMOiWbw==
+  version "13.7.6"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-13.7.6.tgz#cb734a7c191472ae6a2b3a502b4dfffcea974113"
+  integrity sha512-eyK7MWD0R1HqVTp+PtwRgFeIsemzuj4gBFSQxfPHY5iMjS7474e5wq+VFgTcdpyHeNxyKSaetYAjdMLJlKoWqA==
 
 "@types/node@^10.11.7":
   version "10.17.15"
@@ -842,7 +843,7 @@
     "@types/node-fetch" "*"
     "@types/pouchdb-find" "*"
 
-"@types/pouchdb-find@*", "@types/pouchdb-find@^6.3.4":
+"@types/pouchdb-find@*", "@types/pouchdb-find@^6.3.5":
   version "6.3.5"
   resolved "https://registry.yarnpkg.com/@types/pouchdb-find/-/pouchdb-find-6.3.5.tgz#439002c935b9f8cfab67a0faa044d098e566dfe5"
   integrity sha512-YvtUQyi1xmPcx/I7AAWVpaX2uIWCnY9c0MvNyCcHOtdgPj2iG8d4tEZHmD2LJ9wvKoz4f+KV9LPeo6/BnsF22Q==
@@ -2465,7 +2466,7 @@ color-name@~1.1.4:
   resolved "https://registry.yarnpkg.com/color-name/-/color-name-1.1.4.tgz#c2a09a87acbde69543de6f63fa3995c826c536a2"
   integrity sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==
 
-combined-stream@^1.0.6, combined-stream@~1.0.6:
+combined-stream@^1.0.6, combined-stream@^1.0.8, combined-stream@~1.0.6:
   version "1.0.8"
   resolved "https://registry.yarnpkg.com/combined-stream/-/combined-stream-1.0.8.tgz#c3d45a8b34fd730631a110a8a2520682b31d5a7f"
   integrity sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==
@@ -4178,6 +4179,15 @@ forever-agent@~0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/forever-agent/-/forever-agent-0.6.1.tgz#fbc71f0c41adeb37f96c577ad1ed42d8fdacca91"
   integrity sha1-+8cfDEGt6zf5bFd60e1C2P2sypE=
+
+form-data@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/form-data/-/form-data-3.0.0.tgz#31b7e39c85f1355b7139ee0c647cf0de7f83c682"
+  integrity sha512-CKMFDglpbMi6PyN+brwB9Q/GOw0eAnsrEZDgcsH5Krhz5Od/haKHAX0NmQfha2zPPz0JpWzA7GJHGSnvCRLWsg==
+  dependencies:
+    asynckit "^0.4.0"
+    combined-stream "^1.0.8"
+    mime-types "^2.1.12"
 
 form-data@~2.3.2:
   version "2.3.3"
@@ -6033,10 +6043,19 @@ level@6.0.0:
     leveldown "^5.4.0"
     opencollective-postinstall "^2.0.0"
 
-leveldown@5.4.1, leveldown@^5.4.0:
+leveldown@5.4.1:
   version "5.4.1"
   resolved "https://registry.yarnpkg.com/leveldown/-/leveldown-5.4.1.tgz#83a8fdd9bb52b1ed69be2ef59822b6cdfcdb51ec"
   integrity sha512-3lMPc7eU3yj5g+qF1qlALInzIYnkySIosR1AsUKFjL9D8fYbTLuENBAeDRZXIG4qeWOAyqRItOoLu2v2avWiMA==
+  dependencies:
+    abstract-leveldown "~6.2.1"
+    napi-macros "~2.0.0"
+    node-gyp-build "~4.1.0"
+
+leveldown@^5.4.0:
+  version "5.5.1"
+  resolved "https://registry.yarnpkg.com/leveldown/-/leveldown-5.5.1.tgz#ca9c479a6d17c92bb0855039e92b86330127a6cd"
+  integrity sha512-GoC455/ncfg4yLLItr192HuXpA+CcQ2q9GncXJhewvvlpsBBEegChn5tMPP+kGvJt7u2LuXAd8fY2moQxFD+sQ==
   dependencies:
     abstract-leveldown "~6.2.1"
     napi-macros "~2.0.0"
@@ -7580,7 +7599,7 @@ pouchdb-fetch@7.2.1:
     fetch-cookie "0.7.3"
     node-fetch "2.4.1"
 
-pouchdb-find@^7.1.1:
+pouchdb-find@^7.2.1:
   version "7.2.1"
   resolved "https://registry.yarnpkg.com/pouchdb-find/-/pouchdb-find-7.2.1.tgz#20604e7979bad74a0f423e5a30fc00d5aafed0e9"
   integrity sha512-cIgOJyjfHz4oKE/qpdTGODLLXcREWyAUWSBazB0YNkj4KSzZzEnKOR/L63cxEUAH09XvXd9M3a4NidNt9dVKAw==
@@ -7706,7 +7725,7 @@ pouchdb-utils@7.2.1:
     pouchdb-md5 "7.2.1"
     uuid "3.3.3"
 
-pouchdb@^7.1.1:
+pouchdb@^7.2.1:
   version "7.2.1"
   resolved "https://registry.yarnpkg.com/pouchdb/-/pouchdb-7.2.1.tgz#619e3d5c2463ddd94a4b1bf40d44408c46e9de79"
   integrity sha512-AoDPdr6tFqj3xs7oiD2oioYj5MMu87c3UemRHZ/p++BwU+ZsKn5jpnL09OvWTLvMvaICGAOufiaUzmM1/KKoKQ==
