@@ -78,3 +78,6 @@ log.txt
 
 # Sensible settings
 settings/**/*.json
+
+# Spectron user folder
+.spectron
