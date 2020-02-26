@@ -26,4 +26,13 @@ describe('Application launch', () => {
     // window + content webview + devtools webview
     expect(count).toBe(3);
   });
+
+  it('recalls last opened playlist', async () => {
+    await app.client.waitUntilWindowLoaded();
+    await app.client.click('.playlist-list .playlist-list-item');
+    await app.client.waitUntil(async() => await app.client.getText('h1') === 'New Playlist 1');
+    await app.restart();
+    await app.client.waitUntilWindowLoaded();
+    expect(await app.client.getText('h1')).toBe('New Playlist 1');
+  });
 });
