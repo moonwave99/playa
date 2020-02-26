@@ -12,7 +12,8 @@ describe('SearchResultList', () => {
         query="#!q"
         isSearching={false}
         onContextMenu={jest.fn()}
-        onResultDoubleClick={jest.fn()}/>
+        onResultDoubleClick={jest.fn()}
+        onResultEnter={jest.fn()}/>
     );
     expect(wrapper.is('.search-result-list')).toBe(true);
   });
@@ -24,7 +25,8 @@ describe('SearchResultList', () => {
         query="#!q"
         isSearching={false}
         onContextMenu={jest.fn()}
-        onResultDoubleClick={jest.fn()}/>
+        onResultDoubleClick={jest.fn()}
+        onResultEnter={jest.fn()}/>
     );
     expect(wrapper.is('.search-result-list-empty-component')).toBe(true);
   });
