@@ -4,6 +4,7 @@ import ReactModal from 'react-modal';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import cx from 'classnames';
 import { getLatestRequest } from '../../store/modules/library';
 import { AlbumGridView } from './AlbumGridView/AlbumGridView';
 import { ImportView } from './ImportView/ImportView';
@@ -15,6 +16,7 @@ import { addAlbumsToLibrary } from '../../store/modules/library';
 import { showDialog } from '../../store/modules/ui';
 import { openContextMenu } from '../../lib/contextMenu';
 import { selectFolderDialog } from '../../lib/dialog';
+import useNativeDrop, { NativeTypes } from '../../hooks/useNativeDrop/useNativeDrop';
 import {
   ALBUM_CONTEXT_ACTIONS,
   AlbumActionsGroups,
@@ -61,6 +63,50 @@ export const LibraryView = (): ReactElement => {
     latestAlbumID: library.latestAlbumID,
     playingAlbumID: player.currentAlbumId
   }));
+
+  async function showImportDialog(folder: string): Promise<void> {
+    const folderAlreadyImported = await ipc.invoke(IPC_ALBUM_EXISTS, folder);
+    console.log(folder, folderAlreadyImported)
+    if (folderAlreadyImported) {
+      dispatch(
+        showDialog(
+          t('library.dialogs.albumAlreadyExists.title'),
+          t('library.dialogs.albumAlreadyExists.message', { folder })
+        )
+      );
+      return;
+    }
+
+    const folderTracks = await ipc.invoke(IPC_ALBUM_CONTENT_RAW_REQUEST, folder);
+    if (folderTracks.length === 0) {
+      dispatch(
+        showDialog(
+          t('library.dialogs.tracksNotFound.title'),
+          t('library.dialogs.tracksNotFound.message')
+        )
+      );
+      return;
+    }
+
+    const processedTracks = await ipc.invoke(IPC_TRACK_GET_LIST_RAW_REQUEST, folderTracks);
+    setFolderToImport(folder);
+    setTracksToImport(processedTracks);
+    setShowImportModal(true);
+  }
+
+  function onDrop(folder: string): void {
+    showImportDialog(folder);
+  }
+
+  const {
+    isOver,
+    canDrop,
+    drop
+  } = useNativeDrop({
+    onDrop,
+    accept: [NativeTypes.FILE],
+    filter: (type: string) => type === ''
+  });
 
 	useEffect(() => {
 		dispatch(
@@ -113,33 +159,7 @@ export const LibraryView = (): ReactElement => {
     if (!folder) {
       return;
     }
-
-    const folderAlreadyImported = await ipc.invoke(IPC_ALBUM_EXISTS, folder);
-    if (folderAlreadyImported) {
-      dispatch(
-        showDialog(
-          t('library.dialogs.albumAlreadyExists.title'),
-          t('library.dialogs.albumAlreadyExists.message', { folder })
-        )
-      );
-      return;
-    }
-
-    const folderTracks = await ipc.invoke(IPC_ALBUM_CONTENT_RAW_REQUEST, folder);
-    if (folderTracks.length === 0) {
-      dispatch(
-        showDialog(
-          t('library.dialogs.tracksNotFound.title'),
-          t('library.dialogs.tracksNotFound.message')
-        )
-      );
-      return;
-    }
-
-    const processedTracks = await ipc.invoke(IPC_TRACK_GET_LIST_RAW_REQUEST, folderTracks);
-    setFolderToImport(folder);
-    setTracksToImport(processedTracks);
-    setShowImportModal(true);
+    showImportDialog(folder);
   }
 
   function onImportModalRequestClose(): void {
@@ -160,8 +180,13 @@ export const LibraryView = (): ReactElement => {
     setTracksToImport([]);
   }
 
+  const libraryClasses = cx('library', {
+    'drag-is-over': isOver,
+    'drag-can-drop': canDrop
+  });
+
 	return (
-		<section className="library">
+		<section className={libraryClasses} ref={drop}>
       <header>
         <h1>{t('library.title')}</h1>
         <button className="button button-add-album" onClick={onAddAlbumButtonClick}>

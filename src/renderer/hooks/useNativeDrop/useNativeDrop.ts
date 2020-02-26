@@ -16,7 +16,7 @@ type UseNativeDropParams = {
 export default function useNativeDrop<T>({
   onDrop,
   accept = [NativeTypes.FILE, NativeTypes.URL],
-  filter
+  filter = (): boolean => true
 }: UseNativeDropParams): {
   isOver: boolean;
   canDrop: boolean;
@@ -30,7 +30,7 @@ export default function useNativeDrop<T>({
         url = item.urls[0];
       }
       if (item.files) {
-        if (filter && !filter(item.files[0].type)) {
+        if (!filter(item.files[0].type)) {
           return;
         }
         url = item.files[0].path;
@@ -39,7 +39,7 @@ export default function useNativeDrop<T>({
     },
     collect: monitor => ({
       isOver: monitor.isOver(),
-      canDrop: monitor.canDrop(),
+      canDrop: monitor.canDrop()
     })
   });
   return { isOver, canDrop, drop };
