@@ -8,7 +8,7 @@ describe('Application launch', function() {
     app = new Application({
       path: electronPath,
       env: { RUNNING_IN_SPECTRON: '1' },
-      args: [path.join(__dirname, '../..')]
+      args: [path.join(__dirname, '..')]
     });
     return app.start();
   });
