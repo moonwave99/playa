@@ -5,10 +5,12 @@ import { useDrag } from 'react-dnd';
 import { useInView } from 'react-intersection-observer';
 import Vibro from 'node-vibrant';
 import cx from 'classnames';
+import useNativeDrop from '../../../hooks/useNativeDrop/useNativeDrop';
 import { CoverView } from './CoverView/CoverView';
 import { TracklistView } from './TracklistView/TracklistView';
 import { ApplicationState } from '../../../store/store';
 import { Album, getAlbumRequest, getAlbumContentById } from '../../../store/modules/album';
+import { getCoverFromUrlRequest } from '../../../store/modules/cover';
 import { Track } from '../../../store/modules/track';
 import { AlbumActionsView, ActionsConfig } from '../AlbumActionsView/AlbumActionsView';
 import {
@@ -17,7 +19,6 @@ import {
   showTrackArtists
 } from '../../../utils/albumUtils';
 import { SEARCH } from '../../../routes';
-import useUpdateCover from '../../../hooks/useUpdateCover/useUpdateCover';
 import './AlbumView.scss';
 
 type AlbumViewProps = {
@@ -76,11 +77,18 @@ export const AlbumView: FC<AlbumViewProps> = ({
     })
   });
 
+  function onDrop(url: string): void {
+    dispatch(getCoverFromUrlRequest(album, url));
+  }
+
   const {
     isOver,
     canDrop,
     drop
-  } = useUpdateCover(album);
+  } = useNativeDrop({
+    onDrop,
+    filter: (type: string) => type.startsWith('image')
+  });
 
   drag(drop(ref));
 

@@ -4,10 +4,14 @@ import { useDrag } from 'react-dnd';
 import cx from 'classnames';
 import { CoverView } from '../../../AlbumListView/AlbumView/CoverView/CoverView';
 import { Album } from '../../../../store/modules/album';
-import { getCoverRequest, selectors as coverSelectors } from '../../../../store/modules/cover';
+import {
+  getCoverRequest,
+  getCoverFromUrlRequest,
+  selectors as coverSelectors
+} from '../../../../store/modules/cover';
 import { ApplicationState } from '../../../../store/store';
 import { UIDragTypes } from '../../../../store/modules/ui';
-import useUpdateCover from '../../../../hooks/useUpdateCover/useUpdateCover';
+import useNativeDrop from '../../../../hooks/useNativeDrop/useNativeDrop';
 
 type AlbumGridTileViewProps = {
   album: Album;
@@ -26,11 +30,19 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
   const dispatch = useDispatch();
   const { _id } = album;
   const cover = useSelector((state: ApplicationState) => coverSelectors.findById(state, _id));
+
+  function onDrop(url: string): void {
+    dispatch(getCoverFromUrlRequest(album, url));
+  }
+
   const {
     canDrop,
     isOver,
     drop
-  } = useUpdateCover(album);
+  } = useNativeDrop({
+    onDrop,
+    filter: (type: string) => type.startsWith('image')
+  });
 
   const [{ opacity }, drag] = useDrag({
     item: {

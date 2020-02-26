@@ -1,35 +1,41 @@
-import { useDispatch } from 'react-redux';
 import { useDrop, DragObjectWithType, DragElementWrapper } from 'react-dnd';
 import { NativeTypes } from 'react-dnd-html5-backend';
+export { NativeTypes } from 'react-dnd-html5-backend';
 
-import { Album } from '../../store/modules/album';
-import { getCoverFromUrlRequest } from '../../store/modules/cover';
-
-interface DragItem extends DragObjectWithType{
+export interface NativeDragItem extends DragObjectWithType {
   urls?: string[];
   files?: File[];
 }
 
-export default function useUpdateCover<T>(album: Album): {
+type UseNativeDropParams = {
+  onDrop: Function;
+  accept?: string[];
+  filter?: Function;
+}
+
+export default function useNativeDrop<T>({
+  onDrop,
+  accept = [NativeTypes.FILE, NativeTypes.URL],
+  filter
+}: UseNativeDropParams): {
   isOver: boolean;
   canDrop: boolean;
   drop: DragElementWrapper<T>;
 } {
-  const dispatch = useDispatch();
   const [{ isOver, canDrop }, drop] = useDrop({
-    accept: [NativeTypes.FILE, NativeTypes.URL],
-    drop: (item: DragItem) => {
+    accept,
+    drop: (item: NativeDragItem) => {
       let url = '';
       if (item.urls) {
         url = item.urls[0];
       }
       if (item.files) {
-        if (!item.files[0].type.startsWith('image')) {
+        if (filter && !filter(item.files[0].type)) {
           return;
         }
         url = item.files[0].path;
       }
-      dispatch(getCoverFromUrlRequest(album, url));
+      onDrop(url);
     },
     collect: monitor => ({
       isOver: monitor.isOver(),
