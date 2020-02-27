@@ -3,6 +3,8 @@ const electronPath = require('electron');
 const path = require('path');
 const { populateTestDB } = require('./utils');
 
+const TEN_SECONDS = 10000;
+
 describe('Application launch', () => {
   let app;
   beforeEach(async () => {
@@ -34,5 +36,5 @@ describe('Application launch', () => {
     await app.restart();
     await app.client.waitUntilWindowLoaded();
     expect(await app.client.getText('h1')).toBe('New Playlist 1');
-  });
+  }, TEN_SECONDS);
 });
