@@ -1,0 +1,27 @@
+{
+  "name": "playa-website",
+  "version": "0.0.1",
+  "description": "Playa website",
+  "author": "Diego Caponera <diego.caponera@gmail.com>",
+  "homepage": "https://moonwave99.github.com/playa",
+  "scripts": {
+    "start": "brunch watch --server",
+    "build": "brunch b -p --env production",
+    "clean": "rm -rf public dist"
+  },
+  "dependencies": {
+    "assetsmanager-brunch": "^1.8.1",
+    "brunch": "^2.10.17",
+    "clean-css-brunch": "^2.0.0",
+    "coffee-script-brunch": "^2.1.0",
+    "css-brunch": "^2.6.1",
+    "javascript-brunch": "^2.0.0",
+    "lodash": "^3.8.0",
+    "stickybits": "^3.7.4",
+    "uglify-js-brunch": "^2.0.1",
+    "waffel": "^0.1.18"
+  },
+  "devDependencies": {
+    "auto-reload-brunch": "^2.7.1"
+  }
+}

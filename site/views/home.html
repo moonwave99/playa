@@ -1,0 +1,7 @@
+{% extends "layout.html" %}
+{% block title %}{{config.title}} - {{ t('meta.description') }}{% endblock %}
+{% block body %}
+  {% include '_includes/home/hero.html' %}
+  {% include '_includes/home/about.html' %}
+  {% include '_includes/home/blog.html' %}
+{% endblock %}

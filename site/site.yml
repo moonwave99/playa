@@ -1,0 +1,36 @@
+config:
+  title:                  Playa
+  google_analytics:       UA-XXXXXXX-Y
+  google_webmaster_tools: xyz
+  twitter:                '@moonwavelabs'
+  links:
+    author: https://www.diegocaponera.com
+    github: https://github.com/moonwave99/playa
+    waffel: http://moonwave99.github.io/waffel
+structure:
+  home:
+    template: home
+    url:      /
+  blog:
+    collection: blog
+    pages:
+      index:
+        template: blog/index
+        url:      /devblog
+        paginate: 75
+        priority: 0.5
+        filter:
+          published: true
+        sort:
+          field: date
+          order: desc
+      single:
+        template: blog/single
+        url:      /devblog/:date/:slug
+        priority: 0.8
+        filter:
+          published: true
+  404:
+    template: '404'
+    url:      '404'
+    sitemap:  false

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block meta %}
+  {% block meta_basic %}
+    <meta name="description" content="{{ t('meta.description') }}">
+    <meta name="keywords" content="{{ t('meta.keywords') }}">
+  {% endblock %}
+    <meta property="og:site_name" content="{{ t('meta.title') }}">
+    <meta property="og:url" content="{{ absoluteURL(page.path) }}">
+    <meta property="og:title" content="{{ title }} | {{ t('meta.title') }}">
+  {% block meta_og %}
+    <meta property="og:type" content="website">
+    <meta property="og:description" content="{{ t('meta.description') }}">
+  {% endblock %}
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="{{ absoluteURL('/') }}">
+    <meta name="twitter:creator" content="{{ config.twitter }}">
+    <meta name="twitter:url" content="{{ absoluteURL(page.path) }}">
+    <meta name="twitter:title" content="{{ title }} | {{ t('meta.title') }}">
+  {% block meta_twitter %}
+    <meta name="twitter:description" content="{{ t('meta.description') }}">
+  {% endblock %}
+{% endblock %}
+
+{% block layout %}
+  {% block navigation %}{% include '_includes/navigation.html' %}{% endblock %}
+  <main class="main">
+  {% block data %}{% endblock %}
+  {% block body %}{% endblock %}
+  </main>
+  {% block footer %}{% include '_includes/footer.html' %}{% endblock %}
+{% endblock %}

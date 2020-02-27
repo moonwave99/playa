@@ -1,0 +1,6 @@
+<nav class="navigation lh-copy v-mid h3 ph4 ttu tracked w-100 bg-gold">
+  <a class="link black underline-hover mr4" href="{{ url('home') }}">{{ t('nav.home') }}</a>
+  <a class="link black underline-hover mr4" href="{{ url('home') }}#about">{{ t('nav.about') }}</a>
+  <a class="link black underline-hover mr4 {% if page.name.split('.')[0] == 'blog' %} b{% endif %}" href="{{ url('blog.index', {}, { page: 1 }) }}">{{ t('nav.blog') }}</a>
+  <a class="link black underline-hover mr4" href="{{ config.links.github }}" target="_blank">{{ t('nav.github') }}</a>
+</nav>

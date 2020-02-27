@@ -1,0 +1,30 @@
+{
+  "meta": {
+    "title": "Playa",
+    "description": "The player that thinks in albums",
+    "keywords": "player, mp3, electron, react, redux"
+  },
+  "nav": {
+    "home"      : "Home",
+    "about"     : "About",
+    "blog"      : "Devblog",
+    "github"    : "Github"
+  },
+  "home": {
+    "hero": {
+      "title": "Playa",
+      "caption": "The music player that thinks in albums",
+      "download": "Download v0.3"
+    },
+    "blog": {
+      "title": "Latest from devblog"
+    }
+  },
+  "blog": {
+    "title": "Playa devblog"
+  },
+  "notFound" : {
+    "title" : "Not Found",
+    "text"  : "Life's hard, sometimes - Go back to Homepage."
+  }
+}

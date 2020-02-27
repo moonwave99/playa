@@ -1,0 +1,30 @@
+html {
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+html, body {
+  min-height: 100%;
+}
+
+.navigation {
+  line-height: 4rem;
+}
+
+.main {
+
+}
+
+.hero {
+  height: 80vmin;
+  background-image: url('../images/screenshots/playlist.png');
+  background-size: calc(65vh * 1.6) 65vh;
+  background-repeat: no-repeat;
+  background-position: left 50vw center;
+}
+
+.footer {
+
+}

@@ -1,0 +1,11 @@
+<section class="blog w-80-ns center pv3">
+  <h2 class="f2 lh-copy">{{ t('home.blog.title') }}</h2>
+  {% for post in data.blog | where({ published: true }) | toArray | sort(true, false, 'date') | limit(5) %}
+  <article>
+    <h3 class="f4 lh-copy">
+      <a class="link blue underline-hover" href="{{ url('blog.single', post) }}">{{ post.title }}</a>
+    </h3>
+    <p class="lh-copy">{{ post.__content | excerpt(150) }}</p>
+  </article>
+  {% endfor %}
+</section>
