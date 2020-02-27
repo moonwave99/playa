@@ -2,6 +2,8 @@ import * as React from 'react';
 import { renderInAll, mountInAll } from '../../../../test/testUtils';
 import { albums } from '../../../../test/testFixtures';
 import { toObj } from '../../utils/storeUtils';
+jest.mock('../../lib/contextMenu');
+const { openContextMenu } = require('../../lib/contextMenu'); // eslint-disable-line
 import { QueueView } from './QueueView';
 
 const defaultStore = {
@@ -61,5 +63,19 @@ describe('QueueView', () => {
       }
     });
     expect(document.title).toBe(`playback queue: ${albums.length} album(s)`);
+  });
+
+  it('should call the onAlbumContextMenu handler when an album is right clicked', () => {
+    const handler = jest.fn();
+    openContextMenu.mockImplementation(handler);
+    const wrapper = mountInAll(<QueueView/>, {
+      ...defaultStore,
+      player: {
+        queue: albums.map(({ _id }) => _id)
+      }
+    });
+    wrapper.find('.album-view').at(0).simulate('contextmenu');
+    expect(handler.mock.calls[0][0]).toHaveLength(1);
+    expect(handler.mock.calls[0][0][0].albums).toEqual([albums[0]]);
   });
 });
