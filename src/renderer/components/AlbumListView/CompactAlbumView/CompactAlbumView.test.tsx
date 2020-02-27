@@ -124,7 +124,7 @@ describe('CompactAlbumView', () => {
         onContextMenu={handler}
         onDoubleClick={jest.fn()}/>
       , defaultStore);
-    wrapper.simulate('contextmenu')
+    wrapper.simulate('contextmenu');
     expect(handler).toHaveBeenCalledWith(albums[0]);
   });
 
