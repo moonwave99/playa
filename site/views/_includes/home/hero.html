@@ -1,10 +1,15 @@
-<section class="hero bg-yellow">
+<section class="hero bg-yellow pv6 pv0-ns">
   <header class="h-100 flex items-center">
     <div class="mw9 w-80 center">
       <h1 class="f1 f-headline-ns lh-solid mv0 black">{{ t('home.hero.title') }}</h1>
-      <h2 class="f5 lh-copy ttu tracked mb5 black-80">{{ t('home.hero.caption') }}</h2>
-      <p>
-        <a href="{{ config.links.download }}" class="f5 br2 ph3 pv3 lh-copy white bg-black link underline-hover">{{ t('home.hero.download') }}</a>
+      <h2 class="f5 lh-copy ttu tracked mb4 black-80">{{ t('home.hero.caption') }}</h2>
+      <ul class="pl3 lh-copy">
+        <li>supports <code>.mp3</code>, <code>.flac</code>, <code>.ogg</code>, and <code>.mp4</code> files</li>
+        <li>displays album art from <a href="{{ config.links.discogs }}" target="_blank">Discogs</a></li>
+        <li>built on top of <a href="{{ config.links.electron }}" target="_blank">Electron.js</a></li>
+      </ul>
+      <p class="mt5">
+        <a href="{{ config.links.download }}" class="f5 br2 ph4 pv3 lh-copy white bg-black link underline-hover">{{ t('home.hero.download') }}</a>
       </p>
     </div>
   </header>

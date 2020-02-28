@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Playa",
-    "description": "The player that thinks in albums",
+    "description": "The music player that thinks in albums",
     "keywords": "player, mp3, electron, react, redux"
   },
   "nav": {
@@ -14,10 +14,10 @@
     "hero": {
       "title": "Playa",
       "caption": "The music player that thinks in albums",
-      "download": "Download v0.3"
+      "download": "Download v0.3 for Mac OS X"
     },
     "blog": {
-      "title": "Latest from devblog"
+      "title": "Latest news from devblog"
     }
   },
   "blog": {
