@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block title %}{{config.title}} - {{ t('meta.description') }}{% endblock %}
+{% block body %}
+<article class="about mw8-ns center ph3 pb5 pv6-ns">
+  <header class="page-header mb5">
+    <h1 class="f3 f1-ns lh-solid mt4 mb4 black">{{ data.pages.about.title }}</h1>
+  </header>
+  <section class="page-content">
+    {% markdown %}{{ data.pages.about.__content }}{% endmarkdown %}
+  </section>
+</article>
+{% endblock %}

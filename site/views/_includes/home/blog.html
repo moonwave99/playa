@@ -1,11 +1,13 @@
-<section class="blog w-80-ns center pv3">
-  <h2 class="f2 lh-copy">{{ t('home.blog.title') }}</h2>
+<section class="blog w-100 bg-yellow">
+  <div class="w-80-ns center ph3 ph0-ns pv4 pv5-ns">
+  <h2 class="f4 f2-ns mb5 lh-copy">{{ t('home.blog.title') }}</h2>
   {% for post in data.blog | where({ published: true }) | toArray | sort(true, false, 'date') | limit(5) %}
-  <article>
-    <h3 class="f4 lh-copy">
+  <article class="blog-post mb5">
+    <h3 class="f5 f4-ns lh-copy ttu tracked">
       <a class="link blue underline-hover" href="{{ url('blog.single', post) }}">{{ post.title }}</a>
     </h3>
-    <p class="lh-copy">{{ post.__content | excerpt(150) }}</p>
+    <p class="measure lh-copy">{{ post.__content | excerpt(500) }}</p>
   </article>
   {% endfor %}
+  </div>
 </section>

@@ -2,14 +2,14 @@
 {% block title %}{{ t('blog.title') }}{% endblock %}
 {% block data %}{% set posts = item %}{% endblock %}
 {% block body %}
-<section class="blog w-80 center pv6">
-  <h1 class="f1 lh-solid mt4 mb4 black">{{ t('blog.title') }}</h1>
+<section class="blog w-80-ns center ph3 ph0-ns pv6-ns">
+  <h1 class="f3 f1-ns lh-solid mt4 mb5 black">{{ t('blog.title') }}</h1>
 {% for post in posts %}
-  <article>
-    <h2 class="f4 lh-copy">
+  <article class="blog-post mb5">
+    <h2 class="f5 f4-ns lh-copy ttu tracked">
       <a class="link blue underline-hover" href="{{ url('blog.single', post) }}">{{ post.title }}</a>
     </h2>
-    <p class="lh-copy">{{ post.__content | excerpt(350) }}</p>
+    <p class="measure lh-copy">{{ post.__content | excerpt(500) }}</p>
   </article>
 {% endfor %}
 </section>

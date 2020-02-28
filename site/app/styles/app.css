@@ -11,10 +11,23 @@ html, body {
 
 .navigation {
   line-height: 4rem;
+  transition: background-color .2s ease-in-out;
+}
+
+.navigation.js-is-sticky--change {
+  background-color: #333;
+  color: white;
+  z-index: 1000;
+}
+
+.navigation.js-is-sticky--change a {
+  transition: color .2s ease-in-out;
+  color: white;
 }
 
 .main {
   margin-top: -4rem;
+  word-break: break-word;
 }
 
 .hero {
@@ -23,6 +36,43 @@ html, body {
   background-size: calc(65vh * 1.6) 65vh;
   background-repeat: no-repeat;
   background-position: left 50vw center;
+}
+
+.album-bar {
+  height: 12rem;
+}
+
+@media screen and (max-width: 30em) {
+  .navigation {
+    font-size: .9rem;
+    height: 3rem;
+    line-height: 3rem;
+    display: flex;
+    justify-content: space-between;
+  }
+  .main {
+    margin-top: 0;
+  }
+  .hero {
+    background-image: none;
+  }
+  .album-bar {
+    height: 6rem;
+  }
+}
+
+.album-bar .album img {
+  opacity: 0;
+  transition: opacity .3s ease-in-out;
+}
+
+.album-bar .album.loaded img {
+  opacity: 1;
+}
+
+.blog-post p,
+.page-content p {
+  line-height: 1.5;
 }
 
 .footer {

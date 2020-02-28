@@ -2,6 +2,7 @@
 {% block title %}{{config.title}} - {{ t('meta.description') }}{% endblock %}
 {% block body %}
   {% include '_includes/home/hero.html' %}
-  {% include '_includes/home/about.html' %}
+  {% include '_includes/home/caption.html' %}
+  <div class="album-bar relative overflow-hidden w-100 bg-dark-gray"></div>
   {% include '_includes/home/blog.html' %}
 {% endblock %}
