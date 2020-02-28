@@ -2,11 +2,18 @@
   <header class="h-100 flex items-center">
     <div class="mw9 w-80 center">
       <h1 class="f1 f-headline-ns lh-solid mv0 black">{{ t('home.hero.title') }}</h1>
-      <h2 class="f5 lh-copy ttu tracked mb4 black-80">{{ t('home.hero.caption') }}</h2>
+      <p class="f5 lh-copy ttu tracked mb4 black-80">{{ t('home.hero.caption') }}</p>
       <ul class="pl3 lh-copy">
-        <li>supports <code>.mp3</code>, <code>.flac</code>, <code>.ogg</code>, and <code>.mp4</code> files</li>
-        <li>displays album art from <a href="{{ config.links.discogs }}" target="_blank">Discogs</a></li>
-        <li>built on top of <a href="{{ config.links.electron }}" target="_blank">Electron.js</a></li>
+        <li>{{ t('home.hero.description.files') }}</li>
+        <li>{{ t('home.hero.description.artwork', { link: config.links.discogs }) }}</li>
+        <li>
+          {{ t('home.hero.description.stack.intro') }}
+          {% for tech, link in config.links.stack %}
+          <a class="link blue underline-hover" href="{{ link }}" target="_blank">{{tech}}</a>
+          {% if loop.last == false %},{% endif %}
+          {% endfor %}
+          {{ t('home.hero.description.stack.outro') }}
+        </li>
       </ul>
       <p class="mt5">
         <a href="{{ config.links.download }}" class="f5 br2 ph4 pv3 lh-copy white bg-black link underline-hover">{{ t('home.hero.download') }}</a>

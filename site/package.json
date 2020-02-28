@@ -19,7 +19,7 @@
     "lodash": "^3.8.0",
     "stickybits": "^3.7.4",
     "uglify-js-brunch": "^2.0.1",
-    "waffel": "^0.1.18"
+    "waffel": "^0.1.19"
   },
   "devDependencies": {
     "auto-reload-brunch": "^2.7.1"

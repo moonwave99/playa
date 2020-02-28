@@ -8,8 +8,13 @@ config:
     github: https://github.com/moonwave99/playa
     download: https://github.com/moonwave99/playa/releases/download/v0.2.3/Playa-darwin-x64_v0.2.3.zip
     waffel: http://moonwave99.github.io/waffel
-    electron: https://www.electronjs.org
     discogs: https://www.discogs.com
+    stack:
+      electron: https://www.electronjs.org
+      react: https://reactjs.org/
+      redux: https://redux.js.org/
+      pouchdb: https://pouchdb.com/
+
 structure:
   home:
     template: home
@@ -23,7 +28,7 @@ structure:
       index:
         template: blog/index
         url:      /devblog
-        paginate: 10
+        paginate: 5
         priority: 0.5
         filter:
           published: true

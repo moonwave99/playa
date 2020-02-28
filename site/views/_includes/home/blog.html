@@ -3,9 +3,12 @@
   <h2 class="f4 f2-ns mb5 lh-copy">{{ t('home.blog.title') }}</h2>
   {% for post in data.blog | where({ published: true }) | toArray | sort(true, false, 'date') | limit(5) %}
   <article class="blog-post mb5">
-    <h3 class="f5 f4-ns lh-copy ttu tracked">
-      <a class="link blue underline-hover" href="{{ url('blog.single', post) }}">{{ post.title }}</a>
-    </h3>
+    <header>
+      <time class="tracked ttu">{{ post.date | format('MMMM DD, YYYY') }}</time>
+      <h3 class="f5 f4-ns lh-copy">
+        <a class="link blue underline-hover" href="{{ url('blog.single', post) }}">{{ post.title }}</a>
+      </h3>
+    </header>
     <p class="measure lh-copy">{{ post.__content | excerpt(500) }}</p>
   </article>
   {% endfor %}

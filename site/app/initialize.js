@@ -17,8 +17,9 @@ function fillAlbumBar({
   const randomisedImages = shuffleArray(images);
   const { width, height } = element.getBoundingClientRect();
   const albumWidth = height;
-  const albumCount = Math.ceil(window.screen.width / albumWidth);
-  const offset = albumCount - window.screen.width / albumWidth;
+  const screenAlbumRatio = window.screen.width / albumWidth;
+  const albumCount = Math.ceil(screenAlbumRatio);
+  const offset = albumCount - screenAlbumRatio;
 
   for (let i = 0; i < albumCount; i++) {
     const album = document.createElement('div');
@@ -60,9 +61,9 @@ module.exports = function(options){
         images: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(i => `/images/albums/${i}.jpg`)
       }));
 
-      document
-        .querySelectorAll('a:not(.link)').forEach(
-          element => element.classList.add('link', 'blue', 'underline-hover')
-        );
+    document
+      .querySelectorAll('a:not(.link)').forEach(
+        element => element.classList.add('link', 'blue', 'underline-hover')
+      );
   });
 };

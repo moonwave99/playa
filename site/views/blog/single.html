@@ -20,6 +20,7 @@
 <article class="blog-post mw8-ns center ph3 pb5 pv6-ns">
   <header class="blog-post-header mb5">
     <h1 class="f3 f1-ns lh-solid mt4 mb4">{{ post.title }}</h1>
+    <time class="tracked ttu">{{ post.date | format('MMMM DD, YYYY') }}</time>
   </header>
   <section class="blog-post">
     {% markdown %}{{ post.__content }}{% endmarkdown %}
