@@ -4,9 +4,7 @@ slug: february-week-four
 date: 2020-02-29T00:00:00.000Z
 published: true
 ---
-This week I focused mostly on **end to end testing**, _e2e_ from now on. I am fairly new to e2e, as I usually limited myself to the domain of unit and integration. Electron is a fairly new technology and a lot of practices are yet to settle as mature.
-
-I had to choose between [testcafe][testcafe] and [spectron][spectron]. I gave the in-house solution a try first.
+This week I focused mostly on **end to end testing** (_e2e_ from now on). I am fairly new to e2e, as I usually never adventures myself outside of the green pastures of unit and integration. Electron is a fairly new technology and a lot of practices are yet to settle as mature. My research prompted me with the choice between [testcafe][testcafe] and [spectron][spectron]. I gave the in-house solution a try first.
 
 First I set up a `npm` command in `package.json` like this:
 
@@ -41,11 +39,11 @@ Test suite runs with `$ yarn/npm run test:e2e`.
 
 ## Run tests in isolation: the data problem
 
-In unit tests it is good practice to mock intermediate layers, as you have to just test the interface contract, e.g. if you are testing a library that makes calls to an external HTTP API, you want to ensure that you get some data back and your parse it properly.
+In unit tests it is good practice to mock intermediate layers, as you have to just test the [interface contract][design-by-contract], e.g. if you are testing a library that makes calls to an external HTTP API, you want to ensure that you get some data back and your parse it properly.
 
-Same applies for databases. But in an e2e environment, you want to test your app against a real database instance, to be certain that every part of the application works properly in the real life scenario.
+Same applies for databases. But in an e2e environment, you want to test your app against a **real database instance**, to be certain that every layer of the application harmoniously works in the real life scenario.
 
-The first problem I encountered, was to connect to a database at all in the Spectron environment. In order to provide you testing methods, Spectron runs your Electron app against a [WebDriver.IO][webdriver] instance, whose `userData` path is buried somewhere inside `/var`. Definitely not the one I expect to retrieve data from!
+The first problem I encountered, was to be able to connect to a database at all in the Spectron environment. In order to provide you testing methods, it runs your Electron app against a [WebDriver.IO][webdriver] instance, whose `userData` path is buried somewhere inside `/var`. Definitely not the one I expect to retrieve data from, usually `~/Library/Application Support/$AppName`.
 
 Luckily, there is an easy way to infere if the app is running in test mode, i.e. from an **environment variable**:
 
@@ -81,7 +79,7 @@ export default function getUserDataPath(): string {
 
 Now I can store all the temp data in the `.spectron` folder!
 
-This is how I populate the database before each test. I simply wipe out then the database folder, then add some fresh data to it afterwards.
+This is how I populate the database before each test: I simply wipe out then the database folder, then add some fresh data to it afterwards.
 
 ```javascript
 import * as Path from 'path';
@@ -119,7 +117,7 @@ export async function populateTestDB(): Promise<void> {
 
 ```
 
-## The Spectron API in detail
+## Dipping my feet into the Spectron API
 
 Let's peek at `application-launch.test.js`:
 
@@ -164,13 +162,11 @@ The `afterEach` callback is very important, because if you don't stop the app in
 
 ```bash
 Jest did not exit one second after the test run has completed.
-
 This usually means that there are asynchronous operations that were not stopped in your tests.
-
 Consider running Jest with `--detectOpenHandles` to troubleshoot this issue.
 ```
 
-The `recalls last opened playlist` test ensures that the app shows the last opened playlist on subsequent launches. I spent a bit of time figuring out how to run actions on `DOM` elements (i.e. the whole point of automated tests). Most important caveat is that Spectron uses the [legacy Webdriver v4 API][webdriver-v4-api], so `$(selection).click()` and similars won't work.
+The test ensures that the app shows the last opened playlist on subsequent launches. I spent a bit of time figuring out how to run actions on `DOM` elements (i.e. the whole point of automated tests). Most important caveat is that Spectron uses the [legacy Webdriver v4 API][webdriver-v4-api], so `$(selection).click()` and similars won't work.
 
 It took me a while to understand where Spectron exposed `browser` instance: it does in `app.client`. For some reason I could not destructure / assign it to a variable, so I always have to refer it as `app.client` for the moment.
 
@@ -199,5 +195,6 @@ Thinking and writing them is an ongoing process that just started now, and that 
 
 [testcafe]: https://github.com/DevExpress/testcafe-browser-provider-electron
 [spectron]: https://github.com/electron-userland/spectron
+[design-by-contract]: https://en.wikipedia.org/wiki/Design_by_contract
 [webdriver]: https://webdriver.io/
 [webdriver-v4-api]: http://v4.webdriver.io/api.html
