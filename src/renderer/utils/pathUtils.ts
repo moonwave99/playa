@@ -1,5 +1,14 @@
+const SYMBOLS_TO_REPLACE = {
+  '?' : '%3F',
+  '#' : '%23'
+}
+
 export function encodePath(path: string): string {
-  return path.replace('?', '%3F');
+  let output = path;
+  Object.entries(SYMBOLS_TO_REPLACE).forEach(
+    ([symbol, replacement]) => output = output.replace(symbol, replacement)
+  );
+  return output;
 }
 
 export function getYearFromPath(path: string): number {
