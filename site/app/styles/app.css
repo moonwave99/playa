@@ -116,6 +116,12 @@ html, body {
   .album-bar {
     height: 6rem;
   }
+  .home .main {
+    margin-top: -3rem;
+  }
+  .main {
+    margin-top: 0;
+  }
 }
 
 .album-bar .album img {
@@ -159,8 +165,4 @@ html, body {
 .page-content h2,
 .page-content h3 {
   margin-top: 4rem;
-}
-
-.hljs {
-  padding: 0;
 }
