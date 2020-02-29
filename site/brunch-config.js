@@ -48,17 +48,22 @@ module.exports = {
         public: 'production'
       },
       hooks: {
-        onCompile: function(generatedFiles) {
+        onCompile: async (generatedFiles) => {
           const wfl = new Waffel({
             domain: 'https://moonwave99.github.com/playa',
             destinationFolder: 'production',
             uglyUrls: true,
-            filters: filters,
-            helpers: helpers
+            prettyHTML: {
+              enable: true,
+              options: {
+                ocd: false
+              }
+            },
+            filters,
+            helpers
           });
-          return wfl.init().then(function() {
-            return wfl.generate();
-          });
+          await wfl.init()
+          return wfl.generate();
         }
       }
     }

@@ -61,9 +61,9 @@ After a very slow and at times painful process, my music collection now looks li
 
 ```
 Music
-  A
-  ...
-  Alice in Chains
+  A  
+    ...
+    Alice in Chains
       [Album]
         1990 - Facelift
         1992 - Dirt

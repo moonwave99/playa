@@ -1,7 +1,6 @@
 {% extends "layout.html" %}
 {% set title = item.title %}
 {% block title %}{{ title }} / {{ t('blog.title') }} / {{config.title}}{% endblock %}
-{% block data %}{% set post = item %}{% endblock %}
 {% block meta_basic %}
   <meta name="description" content="{{ item.__content | excerpt(150) }}">
 {% endblock %}
@@ -19,11 +18,11 @@
 {% block body %}
 <article class="blog-post mw8-ns center ph3 pb5 pv6-ns">
   <header class="blog-post-header mb5">
-    <h1 class="f3 f1-ns lh-solid mt4 mb4">{{ post.title }}</h1>
-    <time class="tracked ttu">{{ post.date | format('MMMM DD, YYYY') }}</time>
+    <h1 class="f3 f1-ns lh-solid mt4 mb4">{{ item.title }}</h1>
+    <time class="tracked ttu">{{ item.date | format('MMMM DD, YYYY') }}</time>
   </header>
   <section class="blog-post">
-    {% markdown %}{{ post.__content }}{% endmarkdown %}
+{% markdown %}{{ item.__content }}{% endmarkdown %}
   </section>
 </article>
 <div class="album-bar relative overflow-hidden w-100 bg-mid-gray"></div>

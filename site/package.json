@@ -17,8 +17,10 @@
     "css-brunch": "^2.6.1",
     "javascript-brunch": "^2.0.0",
     "lodash": "^3.8.0",
+    "marked": "^0.8.0",
+    "prismjs": "^1.19.0",
     "stickybits": "^3.7.4",
-    "uglify-js-brunch": "^2.0.1",
+    "uglify-es": "^3.3.9",
     "waffel": "^0.1.19"
   },
   "devDependencies": {

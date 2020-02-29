@@ -1,3 +1,4 @@
+const prismjs = require('prismjs');
 const stickybits = require('stickybits');
 
 function shuffleArray(array) {
@@ -58,7 +59,7 @@ module.exports = function(options){
       .forEach(element => fillAlbumBar({
         element,
         observer,
-        images: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(i => `/images/albums/${i}.jpg`)
+        images: [...Array(10).keys()].map(i => `/images/albums/${i}.jpg`)
       }));
 
     document
