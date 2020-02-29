@@ -1,4 +1,5 @@
 const Waffel = require('waffel');
+const renderer = require('./lib/renderer');
 const filters = require('./lib/filters');
 const helpers = require('./lib/helpers');
 
@@ -53,6 +54,9 @@ module.exports = {
             domain: 'https://moonwave99.github.com/playa',
             destinationFolder: 'production',
             uglyUrls: true,
+            markdownOptions: {
+              renderer: renderer()
+            },
             prettyHTML: {
               enable: true,
               options: {

@@ -1,4 +1,5 @@
 const Waffel = require('waffel');
+const renderer = require('./renderer');
 const filters = require('./filters');
 const helpers = require('./helpers');
 
@@ -7,6 +8,9 @@ module.exports.startServer = async function(port, path, callback) {
   const wfl = new Waffel({
     domain: `http://${domain}:${port}`,
     uglyUrls: true,
+    markdownOptions: {
+      renderer: renderer()
+    },
     prettyHTML: {
       enable: true,
       options: {
