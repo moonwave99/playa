@@ -9,10 +9,10 @@
     <meta name="version" content="{{ options.revision }}">
     {% endif %}
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    {% if config.google_webmaster_tools %}<meta name="google-site-verification" content="{{ config.google_webmaster_tools }}">{% endif %}
+    {% if config.google_webmaster_tools %}
+    <meta name="google-site-verification" content="{{ config.google_webmaster_tools }}">
+    {% endif %}
     {% block meta %}{% endblock %}
-    <link rel="stylesheet" href="https://unpkg.com/tachyons@4.10.0/css/tachyons.min.css"/>
-    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.19.0/themes/prism.css" rel="stylesheet"/>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
   </head>
   <body class="w-100 sans-serif {{ page.name | replace('.', '-') }}">

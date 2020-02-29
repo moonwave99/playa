@@ -39,6 +39,14 @@ module.exports = {
         css: true,
         assets: false
       }
+    },
+    sass: {
+      includePaths: ['node_modules/prismjs/themes']
+    },
+    postcss: {
+      processors: [
+        require('autoprefixer')(['last 8 versions'])
+      ]
     }
   },
   overrides: {
