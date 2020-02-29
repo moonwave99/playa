@@ -2,7 +2,7 @@
   <div class="w-80-ns center ph3 ph0-ns pv4 pv5-ns">
   <h2 class="f4 f2-ns mb5 lh-copy">{{ t('home.blog.title') }}</h2>
   {% for post in data.blog | where({ published: true }) | toArray | sort(true, false, 'date') | limit(5) %}
-  <article class="blog-post mb5">
+  <article class="blog-post-content mb5">
     <header>
       <time class="tracked ttu">{{ post.date | format('MMMM DD, YYYY') }}</time>
       <h3 class="f5 f4-ns lh-copy">

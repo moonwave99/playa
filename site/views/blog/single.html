@@ -21,7 +21,7 @@
     <h1 class="f3 f1-ns lh-solid mt4 mb4">{{ item.title }}</h1>
     <time class="tracked ttu">{{ item.date | format('MMMM DD, YYYY') }}</time>
   </header>
-  <section class="blog-post">
+  <section class="blog-post-content">
 {% markdown %}{{ item.__content }}{% endmarkdown %}
   </section>
 </article>
