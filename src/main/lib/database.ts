@@ -74,8 +74,7 @@ export default class Database {
     const { rows } = await this.db.search({
       query: query,
       fields,
-      include_docs: true, // eslint-disable-line
-      highlighting: true
+      include_docs: true // eslint-disable-line
     });
     return rows.map((row: Row<T>) => row.doc);
   }
