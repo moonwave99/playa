@@ -128,6 +128,18 @@ html, body {
 
 .blog-post,
 .page-content {
+  h2, h3 {
+    a > .link {
+      width: 1.2rem;
+      margin-left: -1.2rem;
+      float: left;
+      line-height: 1;
+      display: none;
+    }
+    &:hover a > .link {
+      display: inline;
+    }
+  }
   ul, ol {
     line-height: 1.5;
   }
