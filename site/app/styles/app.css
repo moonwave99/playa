@@ -128,12 +128,23 @@ html, body {
 }
 
 .blog-post p,
-.page-content p {
+.page-content p,
+.blog-post ul,
+.page-content ul,
+.blog-post ol,
+.page-content ol {
   line-height: 1.5;
 }
 
+.blog-post p > code,
+.blog-post li > code,
+.page-content p > code,
+.page-content li > code {
+  color: #D5008F;
+}
+
 .blog-post img,
-.page-content img,{
+.page-content img {
   padding: 2rem 0;
 }
 
@@ -144,7 +155,9 @@ html, body {
 }
 
 .blog-post h2,
-.page-content h2 {
+.blog-post h3,
+.page-content h2,
+.page-content h3 {
   margin-top: 4rem;
 }
 

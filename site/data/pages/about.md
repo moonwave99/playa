@@ -59,7 +59,7 @@ I took [rateyourmusic][rym] as a model. Every artist page there shows their rele
 
 After a very slow and at times painful process, my music collection now looks like:
 
-```
+```bash
 Music
   A  
     ...
