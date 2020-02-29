@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% set title = item.title %}
-{% block title %}{{ t('blog.title') }} - {{ title }}{% endblock %}
+{% block title %}{{ title }} / {{ t('blog.title') }} / {{config.title}}{% endblock %}
 {% block data %}{% set post = item %}{% endblock %}
 {% block meta_basic %}
   <meta name="description" content="{{ item.__content | excerpt(150) }}">
@@ -26,5 +26,5 @@
     {% markdown %}{{ post.__content }}{% endmarkdown %}
   </section>
 </article>
-<div class="album-bar relative overflow-hidden w-100 bg-dark-gray"></div>
+<div class="album-bar relative overflow-hidden w-100 bg-mid-gray"></div>
 {% endblock %}

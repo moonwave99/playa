@@ -8,6 +8,7 @@ config:
     github: https://github.com/moonwave99/playa
     download: https://github.com/moonwave99/playa/releases/download/v0.2.3/Playa-darwin-x64_v0.2.3.zip
     waffel: http://moonwave99.github.io/waffel
+    tachyons: http://tachyons.io
     discogs: https://www.discogs.com
     stack:
       electron: https://www.electronjs.org

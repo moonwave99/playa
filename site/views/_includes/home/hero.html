@@ -1,6 +1,6 @@
-<section class="hero bg-yellow pv6 pv0-ns">
-  <header class="h-100 flex items-center">
-    <div class="mw9 w-80 center">
+<section class="hero bg-yellow pv6 pv0-ns relative">
+  <div class="h-100 flex items-center">
+    <header class="mw9 w-80 center">
       <h1 class="f1 f-headline-ns lh-solid mv0 black">{{ t('home.hero.title') }}</h1>
       <p class="f5 lh-copy ttu tracked mb4 black-80">{{ t('home.hero.caption') }}</p>
       <ul class="pl3 lh-copy">
@@ -18,6 +18,11 @@
       <p class="mt5">
         <a href="{{ config.links.download }}" class="f5 br2 ph4 pv3 lh-copy white bg-black link underline-hover">{{ t('home.hero.download') }}</a>
       </p>
-    </div>
-  </header>
+    </header>
+  </div>
+  <div class="hero-screenshots absolute">
+    <img class="search" data-src="/images/screenshots/search.png"/>
+    <img class="playlist" data-src="/images/screenshots/playlist.png"/>
+    <img class="compact" data-src="/images/screenshots/compact.png"/>
+  </div>
 </section>

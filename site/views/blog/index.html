@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% block title %}{{ t('blog.title') }}{% endblock %}
+{% block title %}{{ t('blog.title') }} / {{config.title}}{% endblock %}
 {% block data %}{% set posts = item %}{% endblock %}
 {% block body %}
 <section class="blog w-80-ns center ph3 ph0-ns pv6-ns">
@@ -26,5 +26,5 @@
   </p>
 </section>
 
-<div class="album-bar relative overflow-hidden w-100 bg-dark-gray"></div>
+<div class="album-bar relative overflow-hidden w-100 bg-mid-gray"></div>
 {% endblock %}

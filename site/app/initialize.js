@@ -65,5 +65,10 @@ module.exports = function(options){
       .querySelectorAll('a:not(.link)').forEach(
         element => element.classList.add('link', 'blue', 'underline-hover')
       );
+
+    document.querySelectorAll('.hero-screenshots img').forEach(img => {
+      img.onload = () => img.classList.add('loaded');
+      img.src = img.dataset.src
+    });
   });
 };
