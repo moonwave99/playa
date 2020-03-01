@@ -3,11 +3,11 @@ title: About
 ---
 Playa is a **digital audio files player** for desktop, developed using web technologies inside the [Electron][electron] framework.
 
-It is my reconciliation with development after a long break, since I devoted my time to learn music. Why have I chosen such an anachronistic project, in this era of streamable eternal present?
+It is my reconciliation with development after a long break, since I decided to devote my life to music. Why have I chosen such an anachronistic project, in this streamable era of eternal present?
 
-Because I am an avid collector of digital music (as much as I am [of physical one][discogs]), and I spent a considerable amount of temporal and mental resources in order to organise it. I like to enjoy things I care for.
+Because I am an avid collector of digital music (as much as I am [of physical one][discogs]), and I spent a considerable amount of temporal and mental resources in order to organise it; I like to enjoy things I care for.
 
-On this website I want to share my train of thought and the solutions I found to the problems I am encountering, rather than merely promoting a piece of software that I do not intend to earn my living on. Unless somebody is willing to sponsor me of course.
+On this website I want to share my train of thought and the solutions I found to the problems I am encountering, rather than merely promoting a piece of software that I do not intend to earn my living on - unless somebody is willing to sponsor me of course.
 
 ## Life before Playa
 
@@ -19,7 +19,7 @@ Unlike most of the then competitors, one of the available mods showed the files 
 
 As I transitioned to Mac hardware, I realised there was no OS X port of foobar. How sad! I tried to emulate it through Wine, but the overhead and the frequent crashed made me desist and fallback to other solutions such as [Cog][cog]. All the available options were either too bloated or too minimal.
 
-Around 2009 I gave Spotify a chance. It looked like black magic to me back then, such a big catalog without having to rely on my external disk all the time. But there wasn't _everything_, and I didn't want to switch between many apps for such a vital task.
+Around 2009 I gave Spotify a chance. It looked like black magic to me back then, such a big catalog without having to rely on my external disk all the time. But there wasn't _everything_, and I didn't want to switch between many apps for such a vital need for me.
 
 My final pick was [Vox][vox], the best no-frills player. But guess what? No simple group-by-albums. Yes it has the Collections feature, but you need to import all the files manually, plus it is closed source and so not tweakable.
 
@@ -29,17 +29,17 @@ Tired of dragging folders from my NAS, I decided to do the dirty work. From scra
 
 I had the idea countless times before. Java, Java FX (...), Flash, Objective C. I was either missing the focus, the will, the knowledge. It was about 2015 when I've read of a runtime that allowed a **Chromium instance** and a **node.js backend** to be wrapped and shipped together. I could use the web technologies I already mastered to build a desktop app, finally with a decent UI (Swing, I am looking at you).
 
-I started fiddling with [Electron][electron] in no time, first implementing a CMS for static generated websites. I even did using an [electron based editor][atom]. I liked it. I felt it was the moment to start.
+I started fiddling with [Electron][electron] in no time, first implementing a CMS for static generated websites. I did using an [electron based editor][atom], how meta is that. I liked it. I felt it was the moment to start.
 
 Like many others I guess, I like to give silly names to my projects. The aforementioned CMS was called Vaneella, because it handle a set of plain (_vanilla_) text files. I wanted my player to be real badass, a true P L A Y A H. I took a step back, I noticed the joyful iberic wordplay and I sticked to that.
 
-It was a chance to learn this React thing everybody was talking about. The `JSX` syntax nailed it, as it allowed to write the UI in a familiar, declarative way.
+It was a chance to learn this React thing everybody was talking about. The `JSX` syntax definitely sold it to me, as it allowed to write the UI in a familiar, declarative way - `HTML` basically.
 
 ![Early Playa][playa]
 
 The waveform background in the playback bar! The artwork from Discogs! The last.fm scrobbles! The playlist tabs! Ah, THE TRACKS AUTOMAGICALLY GROUPED BY FREAKING ALBUM.
 
-## Vamos a la Playa ([oh, oh oh oh oh][righeira])
+## Vamos a la Playa ([oh, oh-oh oh-oh][righeira])
 
 I felt like the first iteration had lost momentum. The tech stack looked a bit old, like all stacks older than a couple of weeks nowadays I must say. Many design choices looked questionable. Almost no test coverage. And the biggest deal: I wanted to index my collection, but I had no vision how to include such feature in the application.
 
