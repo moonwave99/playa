@@ -45,6 +45,21 @@ function createSearchAction(
   }
 }
 
+function createSearchArtistAction(
+  searchURL: SEARCH_URLS,
+  siteName: string
+): ActionCreator<ActionParams> {
+  return ({ albums }): Action => {
+    const { artist } = albums[0];
+    const query = `${artist}`;
+    const fullTitle = `${artist}`;
+    return {
+      title: `Search '${fullTitle}' on ${siteName}`,
+      handler(): void { ipc.send(IPC_SYS_OPEN_URL, searchURL, query) }
+    };
+  }
+}
+
 export const playAlbumAction: ActionCreator<ActionParams> = ({
   albums,
   queue,
@@ -110,6 +125,8 @@ export const searchOnRYMAction = createSearchAction(SEARCH_URLS.RYM, 'rateyourmu
 export const searchOnDiscogsAction = createSearchAction(SEARCH_URLS.DISCOGS, 'Discogs');
 export const searchOnYoutubeAction = createSearchAction(SEARCH_URLS.YOUTUBE, 'Youtube');
 
+export const searchArtistOnRYMAction = createSearchArtistAction(SEARCH_URLS.RYM_ARTIST, 'rateyourmusic');
+
 export const ALBUM_CONTEXT_ACTIONS = 'playa/context-menu/album-actions';
 
 export enum AlbumActions {
@@ -121,7 +138,8 @@ export enum AlbumActions {
   RELOAD_ALBUM_CONTENT = 'RELOAD_ALBUM_CONTENT',
   SEARCH_ON_RYM = 'SEARCH_ON_RYM',
   SEARCH_ON_DISCOGS = 'SEARCH_ON_DISCOGS',
-  SEARCH_ON_YOUTUBE = 'SEARCH_ON_YOUTUBE'
+  SEARCH_ON_YOUTUBE = 'SEARCH_ON_YOUTUBE',
+  SEARCH_ARTIST_ON_RYM = 'SEARCH_ARTIST_ON_RYM'
 }
 
 export const AlbumActionsMap: { [key: string]: ActionCreator<ActionParams> } = {
@@ -133,7 +151,8 @@ export const AlbumActionsMap: { [key: string]: ActionCreator<ActionParams> } = {
   [AlbumActions.RELOAD_ALBUM_CONTENT]: reloadAlbumContentAction,
   [AlbumActions.SEARCH_ON_RYM]: searchOnRYMAction,
   [AlbumActions.SEARCH_ON_DISCOGS]: searchOnDiscogsAction,
-  [AlbumActions.SEARCH_ON_YOUTUBE]: searchOnYoutubeAction
+  [AlbumActions.SEARCH_ON_YOUTUBE]: searchOnYoutubeAction,
+  [AlbumActions.SEARCH_ARTIST_ON_RYM]: searchArtistOnRYMAction
 }
 
 export enum AlbumActionsGroups {
@@ -141,7 +160,8 @@ export enum AlbumActionsGroups {
   ENQUEUE,
   QUEUE,
   SYSTEM,
-  SEARCH_ONLINE
+  SEARCH_ONLINE,
+  ARTIST
 }
 
 export type GetAlbumContextMenuParams = {
@@ -171,6 +191,9 @@ const actionGroupsMap: { [key: string]: AlbumActions[] } = {
     AlbumActions.SEARCH_ON_RYM,
     AlbumActions.SEARCH_ON_DISCOGS,
     AlbumActions.SEARCH_ON_YOUTUBE
+  ],
+  [AlbumActionsGroups.ARTIST]: [
+    AlbumActions.SEARCH_ARTIST_ON_RYM
   ]
 };
 

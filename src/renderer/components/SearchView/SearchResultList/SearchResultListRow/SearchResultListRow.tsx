@@ -21,6 +21,7 @@ type SearchResultListRowProps = {
   isCurrent?: boolean;
   onClick?: Function;
   onContextMenu?: Function;
+  onArtistContextMenu?: Function;
   onCoverDoubleClick?: Function;
   selectedIDs?: string[];
   style: object;
@@ -34,6 +35,7 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
   isCurrent = false,
   onClick,
   onContextMenu,
+  onArtistContextMenu,
   onCoverDoubleClick,
   selectedIDs = [],
   style
@@ -57,15 +59,23 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
   }, [])
 
   function _onClick(event: MouseEvent): void {
-    onClick(event, index);
+    onClick && onClick(event, index);
   }
 
   function _onConTextMenu(): void {
-    onContextMenu(album);
+    onContextMenu && onContextMenu(album);
+  }
+
+  function _onArtistContextMenu(event: MouseEvent): void {
+    if (album.artist === VARIOUS_ARTISTS_ID) {
+      return;
+    }
+    event.stopPropagation()
+    onArtistContextMenu && onArtistContextMenu(album);
   }
 
   function _onCoverDoubleClick(): void {
-    onCoverDoubleClick(album);
+    onCoverDoubleClick && onCoverDoubleClick(album);
   }
 
   function renderCell(cell: Cell): ReactElement {
@@ -84,6 +94,7 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
       case 'artist':
         cellContent =
           <Link
+            onContextMenu={_onArtistContextMenu}
             to={`${generatePath(SEARCH)}?query=artist: ${encodeURIComponent(cell.value)}`}
             className="album-artist-link">
               {cell.value === VARIOUS_ARTISTS_ID ? 'V/A' : cell.value}

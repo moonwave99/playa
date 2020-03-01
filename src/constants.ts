@@ -14,6 +14,7 @@ export const MUSIC_FILE_EXTENSIONS = ['mp3', 'm4a', 'flac', 'ogg'];
 export enum SEARCH_URLS {
   DISCOGS = 'http://www.discogs.com/search?type=release&q=',
   RYM = 'https://rateyourmusic.com/search?searchtype=l&searchterm=',
+  RYM_ARTIST = 'https://rateyourmusic.com/search?searchtype=a&searchterm=',
   YOUTUBE = 'https://www.youtube.com/results?search_query='
 }
 

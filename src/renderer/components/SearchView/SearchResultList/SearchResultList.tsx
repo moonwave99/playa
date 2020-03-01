@@ -20,6 +20,7 @@ type SearchResultListProps = {
 	currentAlbumId?: Album['_id'];
 	onContextMenu: Function;
 	onResultDoubleClick: Function;
+	onArtistContextMenu: Function;
 	onResultEnter: Function;
 };
 
@@ -40,6 +41,7 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
 	isSearching,
 	currentAlbumId,
 	onContextMenu,
+	onArtistContextMenu,
 	onResultDoubleClick,
 	onResultEnter
 }) => {
@@ -118,7 +120,8 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
 		selection,
 		onResultClick,
 		onResultDoubleClick,
-		onResultContextMenu
+		onResultContextMenu,
+		onArtistContextMenu
 	}: {
 			style: object;
 			index: number;
@@ -129,6 +132,7 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
 			onResultClick: Function;
 			onResultDoubleClick: Function;
 			onResultContextMenu: Function;
+			onArtistContextMenu: Function;
 		}) => {
 		const album = row.original as Album;
 		const { _id } = album;
@@ -139,13 +143,14 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
 					left: `var(--section-gutter)`,
 					width: `calc(100% - 2 * var(--section-gutter))`
 				}}
-				selected={selection[index].selected}
+				selected={selection[index] && selection[index].selected}
 				key={_id}
 				row={row}
 				index={index}
 				album={album}
 				onClick={onResultClick}
 				onContextMenu={onResultContextMenu}
+				onArtistContextMenu={onArtistContextMenu}
 				onCoverDoubleClick={onResultDoubleClick}
 				isCurrent={_id === currentAlbumId}
 				selectedIDs={selectedIDs} />
@@ -159,6 +164,7 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
 			currentAlbumId,
 			onResultClick,
 			onResultContextMenu,
+			onArtistContextMenu,
 			onResultDoubleClick,
 			prepareRow
 		} = data;
@@ -173,6 +179,7 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
 				selection={selection}
 				onResultClick={onResultClick}
 				onResultContextMenu={onResultContextMenu}
+				onArtistContextMenu={onArtistContextMenu}
 				onResultDoubleClick={onResultDoubleClick}
 				currentAlbumId={currentAlbumId}
 				selectedIDs={selectedIDs} />
@@ -206,6 +213,7 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
 		currentAlbumId,
 		onResultClick,
 		onResultContextMenu,
+		onArtistContextMenu,
 		onResultDoubleClick,
 		prepareRow
 	) => ({
@@ -214,6 +222,7 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
 		currentAlbumId,
 		onResultClick,
 		onResultContextMenu,
+		onArtistContextMenu,
 		onResultDoubleClick,
 		prepareRow
 	}));
@@ -225,6 +234,7 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
 			currentAlbumId,
 			onResultClick,
 			onResultContextMenu,
+			onArtistContextMenu,
 			onResultDoubleClick,
 			prepareRow
 		);

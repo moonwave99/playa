@@ -27,7 +27,8 @@ import {
   reloadAlbumContentAction,
   searchOnRYMAction,
   searchOnDiscogsAction,
-  searchOnYoutubeAction
+  searchOnYoutubeAction,
+  searchArtistOnRYMAction
 } from './albumActions';
 
 describe('albumActions', () => {
@@ -270,6 +271,14 @@ describe('albumActions', () => {
     it('should return a title and a handler', async () => {
       const { title, handler } = searchOnYoutubeAction({ albums: [albums[0]] });
       expect(title).toBe(`Search '${albums[0].artist} - ${albums[0].title}' on Youtube`);
+      expect(typeof handler).toBe('function');
+    });
+  });
+
+  describe('searchArtistOnRYMAction', () => {
+    it('should return a title and a handler', async () => {
+      const { title, handler } = searchArtistOnRYMAction({ albums: [albums[0]] });
+      expect(title).toBe(`Search '${albums[0].artist}' on rateyourmusic`);
       expect(typeof handler).toBe('function');
     });
   });

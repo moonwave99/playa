@@ -81,6 +81,20 @@ export const SearchView = (): ReactElement => {
     }
   }
 
+  function onArtistContextMenu(album: Album): void {
+    openContextMenu([
+      {
+        type: ALBUM_CONTEXT_ACTIONS,
+        albums: [album],
+        queue: [],
+        dispatch,
+        actionGroups: [
+          AlbumActionsGroups.ARTIST
+        ]
+      }
+    ]);
+  }
+
   function onResultDoubleClick(album: Album): void {
     actionsMap(AlbumActions.PLAY_ALBUM)({
       albums: [album],
@@ -112,6 +126,7 @@ export const SearchView = (): ReactElement => {
             isSearching={isSearching}
             currentAlbumId={currentAlbumId}
             onContextMenu={onContextMenu}
+            onArtistContextMenu={onArtistContextMenu}
             onResultEnter={onResultEnter}
             onResultDoubleClick={onResultDoubleClick}/>
         </CSSTransition>
