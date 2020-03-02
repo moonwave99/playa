@@ -4,7 +4,9 @@ config:
   google_webmaster_tools: xyz
   twitter:                '@moonwavelabs'
   links:
-    author: https://www.diegocaponera.com
+    author:
+      site: https://www.diegocaponera.com
+      email: hello@diegocaponera.com
     github: https://github.com/moonwave99/playa
     download: https://github.com/moonwave99/playa/releases/download/v0.2.3/Playa-darwin-x64_v0.2.3.zip
     waffel: https://moonwave99.github.io/waffel
