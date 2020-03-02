@@ -81,7 +81,7 @@ Now I can store all the temp data in the `.spectron` folder!
 
 This is how I populate the database before each test: I simply wipe out then the database folder, then add some fresh data to it afterwards.
 
-```javascript
+```typescript
 import * as Path from 'path';
 import * as fs from 'fs-extra';
 import Database from '../src/main/lib/database';

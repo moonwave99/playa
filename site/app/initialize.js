@@ -1,5 +1,7 @@
-const prismjs = require('prismjs');
 const stickybits = require('stickybits');
+const prismjs = require('prismjs');
+require('prismjs/components/prism-typescript');
+require('prismjs/components/prism-yaml');
 
 function shuffleArray(array) {
   const copy = array.slice(0);

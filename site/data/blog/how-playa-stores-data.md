@@ -64,7 +64,7 @@ How to be sure that there will be no duplicate primary keys? I used a different 
 
 I wrapped all the PouchDB interactions inside a class that wraps a database instance:
 
-```javascript
+```typescript
 export default class Database {
   private db;
   constructor({
@@ -102,7 +102,7 @@ I am definitely _not_ happy with how I named things: `search` vs `find`, `delete
 
 Some usage examples:
 
-```javascript
+```typescript
 // get albums of a playlist
 const playlist = {
   ...
