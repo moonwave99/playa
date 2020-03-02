@@ -30,14 +30,14 @@ tracklist:
   - ...
 ```
 
-Not bad, but I wasn't storing any track metadata, as I extracted it from the music files everytime I loaded a playlist. For long playlists, the lag was noticeable: this convinced me to store such information in a database.
+Not bad, but I wasn't storing any track metadata, as I extracted it from the music files everytime I loaded a playlist. For long playlists, the lag was noticeable: this convinced me to cache this information in a database.
 
-I tried to use [SQLite][sqlite], but I had many issues bundling it inside the Electron app. Before starting to write code that I could not commit to ship, I looked for alternatives. LevelDB seemed a good choice, as it is embedded in browsers. [PouchDB][pouchdb] seemed the stablest wrapper that allowed:
+I tried to use [SQLite][sqlite], but I had many issues bundling it inside the Electron app. Before starting to write code that I could not commit to ship, I looked for alternatives. [LevelDB][leveldb] seemed a good choice, as it is embedded in browsers. [PouchDB][pouchdb] seemed the stablest wrapper that allowed:
 
 1. to access the database from a **specific path** (good for separating dev/prod/test environment);
 2. to perform an [indexed search][pouchdb-find].
 
-On the downsides I must mention that the API is inconsistent at times (`rev` vs. `_rev`, `id` vs. `_id`, I am looking at you two), and some operations that are trivial in the relational world, are a bit more cumbersome in the NoSQL wildness (e.g. auto-incrementing the primary key, pagination).
+On the downsides I must mention that the API is inconsistent at times (`rev` vs. `_rev`, `id` vs. `_id`, I am looking at you two), and some operations that are trivial in the relational world, are a bit more cumbersome in the NoSQL wildness (e.g. auto-incrementing the primary key or pagination).
 
 ## Data schema
 
@@ -56,7 +56,7 @@ In the relational mindset this would grant you an anathema, but here it is fine:
 
 How to be sure that there will be no duplicate primary keys? I used a different strategy for each entity:
 
-- playlists:, I used the **current timestamp**. It will be always different and ascendent, so documents will already be sorted;
+- playlists: I used the **current timestamp**. It will be always different and ascendent, so documents will already be sorted;
 - albums: I actually keep track of the highest value in the **redux store**, and I increment it on every album insertion;
 - tracks: I use the **track filename** itself.
 
@@ -98,7 +98,7 @@ export default class Database {
 }
 ```
 
-I am definitely _not_ happy with how I named things: `search` vs `find`, `delete` and `remove`...with all chance I am going to refactor similar methods into a single public one, with a parameter that chooses between them.
+I am definitely _not_ happy with how I named things: `search` vs `find`, `delete` and `remove`...with all chance I am going to refactor similar methods into a single public one, with a parameter that routes to the right internal implementation.
 
 Some usage examples:
 
@@ -140,15 +140,43 @@ It is good practice to keep the stores as normalised as possible, i.e. without n
 ```javascript
 const playlistState = {
   allById: {
-    '2020-02-03T12:56:50.342Z': { ... },
+    '2020-02-03T12:56:50.342Z': {
+      ...
+      albums: ['1', '2', ...]
+    },
     '2020-02-05T02:11:23.125Z': { ... },
+    ...
+  },
+  ...
+}
+
+const albumState = {
+  allById: {
+    '1': {
+      ...
+      tracks: ['/path/to/track_01', '/path/to/track_02', ...]
+    },
+    '2': { ... },
+    ...
+  },
+  ...
+}
+
+const trackState = {
+  allById: {
+    '/path/to/track_01': { ... },
+    '/path/to/track_02': { ... },
     ...
   },
   ...
 }
 ```
 
-This way I can access a playlist by `id` via `state.playlists.allById[id]`. Many-to-one relationships are easy to handle as well: just map over the array of IDs: `albums = playlist.albums.map(id => state.albums.allById[id])`.
+For instance, I can access a playlist by `id` via `state.playlists.allById[id]`.
+
+**Many-to-one relationships** are easy to handle as well: `albums = playlist.albums.map(id => state.albums.allById[id])`.
+
+More complex selectors for top-level React components are wrapped in a proper **reselect selector** of course.
 
 ## Session persistence
 
@@ -180,7 +208,7 @@ app.on('will-quit', () => {
 
 The values determined by user interaction, like the last opened playlist, the playback queue or the volume level are updated via `ipc`:
 
-```javascript
+```typescript
 // renderer
 ipc.send(IPC_UI_STATE_UPDATE, params);
 
@@ -192,6 +220,7 @@ While the Electron persistence strategies have still room for improvement in my 
 
 [rdbms]: https://en.wikipedia.org/wiki/Relational_database
 [sqlite]: https://github.com/mapbox/node-sqlite3/
+[leveldb]: https://github.com/google/leveldb
 [pouchdb]: https://github.com/pouchdb/pouchdb
 [pouchdb-find]: https://github.com/pouchdb/pouchdb/tree/master/packages/node_modules/pouchdb-find
 [referential-integrity]: https://en.wikipedia.org/wiki/Referential_integrity

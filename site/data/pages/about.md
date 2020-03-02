@@ -23,7 +23,7 @@ Around 2009 I gave Spotify a chance. It looked like black magic to me back then,
 
 My final pick was [Vox][vox], the best no-frills player. But guess what? No simple group-by-albums. Yes it has the Collections feature, but you need to import all the files manually, plus it is closed source and so not tweakable.
 
-Tired of dragging folders from my NAS, I decided to do the dirty work. From scratch.
+Tired of dragging folders from my external drive, I decided to do the dirty work. From scratch.
 
 ## Electron
 
@@ -85,6 +85,10 @@ Why am I sure? Because I checked with a script that every folder matches such st
 
 NOW I could import all my music, using the folder names as the single source of truth!
 
+## Where do we go from here
+
+Playa helped me to rediscover a lot of music I forgot I had already listened to, as well as to sharpen back my problem solving skills. There is room for improvement I hope to fill with further dedication and thanks to the [feedback I will get through this page][feedback].
+
 [electron]: https://www.electronjs.org
 [discogs]: https://www.discogs.com/user/Diego_C/collection
 [winamp]: https://en.wikipedia.org/wiki/Winamp
@@ -96,3 +100,4 @@ NOW I could import all my music, using the folder names as the single source of 
 [righeira]: https://www.youtube.com/watch?v=sTsVJ1PsnMs
 [rym]: https://rateyourmusic.com/artist/alice-in-chains
 [partition]: https://en.wikipedia.org/wiki/Partition_of_a_set
+[feedback]: mailto:hello@diegocaponera.com?subject=Playa
