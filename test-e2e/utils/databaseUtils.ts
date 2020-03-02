@@ -1,13 +1,12 @@
 import * as Path from 'path';
 import * as fs from 'fs-extra';
-import Database from '../src/main/lib/database';
+import Database from '../../src/main/lib/database';
 
 const SPECTRON_BASEPATH = Path.join(process.cwd(), '.spectron');
 const DB_PATH = Path.join(SPECTRON_BASEPATH, 'databases');
 
 async function prepareDir(): Promise<void> {
-  await fs.remove(SPECTRON_BASEPATH);
-  await fs.ensureDir(SPECTRON_BASEPATH);
+  await fs.ensureDir(DB_PATH);
   await fs.ensureDir(DB_PATH);
 }
 

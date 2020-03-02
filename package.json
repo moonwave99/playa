@@ -16,7 +16,7 @@
 		"clean": "rimraf build && rimraf _pack && rimraf dist",
 		"lint": "yarn eslint ./src --ext .js,.jsx,.ts,.tsx",
 		"test": "jest --config jest.config.js",
-		"test:e2e": "jest --config jest.config.e2e.js"
+		"test:e2e": "jest --runInBand --config jest.config.e2e.js"
 	},
 	"devDependencies": {
 		"@types/classnames": "^2.2.9",
@@ -49,6 +49,7 @@
 		"@types/webfontloader": "^1.6.29",
 		"@typescript-eslint/eslint-plugin": "^2.12.0",
 		"@typescript-eslint/parser": "^2.12.0",
+		"browser-id3-writer": "^4.4.0",
 		"copy-webpack-plugin": "^5.1.1",
 		"css-loader": "^3.4.0",
 		"devtron": "^1.4.0",

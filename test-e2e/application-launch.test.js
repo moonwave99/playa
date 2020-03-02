@@ -1,7 +1,7 @@
 const Application = require('spectron').Application;
 const electronPath = require('electron');
 const path = require('path');
-const { populateTestDB } = require('./utils');
+const { populateTestDB } = require('./utils/databaseUtils');
 
 const TEN_SECONDS = 10000;
 
