@@ -6,7 +6,7 @@ const SPECTRON_BASEPATH = Path.join(process.cwd(), '.spectron');
 const DB_PATH = Path.join(SPECTRON_BASEPATH, 'databases');
 
 async function prepareDir(): Promise<void> {
-  await fs.ensureDir(DB_PATH);
+  await fs.remove(DB_PATH);
   await fs.ensureDir(DB_PATH);
 }
 

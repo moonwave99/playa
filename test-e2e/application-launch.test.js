@@ -24,9 +24,9 @@ describe('Application launch', () => {
   });
 
   it('shows an initial window', async () => {
-    const count = await app.client.getWindowCount()
-    // window + content webview + devtools webview
-    expect(count).toBe(3);
+    const count = await app.client.getWindowCount();
+    // window + content webview
+    expect(count).toBe(2);
   });
 
   it('recalls last opened playlist', async () => {

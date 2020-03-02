@@ -5,7 +5,7 @@ import ID3Writer from 'browser-id3-writer';
 const SPECTRON_BASEPATH = Path.join(process.cwd(), '.spectron');
 const MUSIC_PATH = Path.join(SPECTRON_BASEPATH, 'music');
 
-const DEFAULT_MP3_FILE = Path.join(__dirname, 'default.mp3');
+const DEFAULT_MP3_FILE = Path.join(__dirname, '_default.mp3');
 
 type TestAlbum = {
   artist: string;
@@ -76,10 +76,10 @@ async function generateTrack({
   return Promise.resolve(destPath);
 }
 
-export async function generateAlbum(album: TestAlbum): Promise<string[]> {
+export async function generateAlbum(album: TestAlbum): Promise<string> {
   await prepareDir();
   const { artist, year, title } = album;
-  return Promise.all(
+  await Promise.all(
     album.tracks.map((track, index) =>
       generateTrack({
         artist,
@@ -90,4 +90,5 @@ export async function generateAlbum(album: TestAlbum): Promise<string[]> {
       })
     )
   );
+  return Path.join(MUSIC_PATH, title);
 }

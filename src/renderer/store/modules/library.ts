@@ -135,6 +135,9 @@ const INITIAL_STATE = {
 };
 
 function getLatestAlbumID(albums: Album[]): Album['_id'] {
+  if (!albums.length) {
+    return '0';
+  }
   return [...albums].sort((a: Album, b: Album) =>
     new Date(b.created).getTime() - new Date(a.created).getTime()
   )[0]._id;

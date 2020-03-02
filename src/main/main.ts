@@ -70,6 +70,9 @@ function createWindow({
 
   if (is.development) {
     mainWindow.maximize();
+  }
+
+  if (is.development && !process.env.RUNNING_IN_SPECTRON) {
     mainWindow.webContents.toggleDevTools();
   }
 }
