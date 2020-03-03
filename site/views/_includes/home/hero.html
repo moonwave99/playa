@@ -1,6 +1,6 @@
-<section class="hero bg-yellow pv6 pv0-ns relative">
-  <div class="h-100 flex items-center">
-    <header class="mw9 w-80 center">
+<section class="hero bg-yellow pt5 pb0 pb4-l">
+  <div class="h-100 cf">
+    <header class="fl w-100 w-50-xl h-100 pl3 pl5-ns pr4 flex flex-column justify-center">
       <h1 class="f1 f-headline-ns lh-solid mv0 black">{{ t('home.hero.title') }}</h1>
       <p class="f5 lh-copy ttu tracked mb4 black-80">{{ t('home.hero.caption') }}</p>
       <ul class="pl3 lh-copy">
@@ -15,14 +15,26 @@
           {{ t('home.hero.description.stack.outro') }}
         </li>
       </ul>
-      <p class="mt5">
-        <a href="{{ config.links.download }}" class="f5 br2 ph4 pv3 lh-copy white bg-black link underline-hover">{{ t('home.hero.download') }}</a>
+      <p class="mt5 mb4 mb0-l">
+        <a
+          href="{{ config.links.download }}"
+          class="f5 br2 ph4 pv3 lh-copy white bg-black link underline-hover">
+          {{ t('home.hero.download') }}
+        </a>
       </p>
     </header>
-  </div>
-  <div class="hero-screenshots absolute">
-    <img class="search" data-src="/images/screenshots/search.png"/>
-    <img class="playlist" data-src="/images/screenshots/playlist.png"/>
-    <img class="compact" data-src="/images/screenshots/compact.png"/>
+    <div class="hero-screenshots fl w-100 w-50-xl h-100 pa3 pa0-l flex flex-column justify-center">
+      <div class="screenshot-wrapper relative pv5-l h-100">
+        <div class="screenshot absolute">
+          <img class="search" data-src="/images/screenshots/search.png"/>
+        </div>
+        <div class="screenshot absolute">
+          <img class="playlist" data-src="/images/screenshots/playlist.png"/>
+        </div>
+        {# <div class="screenshot">
+          <img class="compact" data-src="/images/screenshots/compact.png"/>
+        </div> #}
+      </div>
+    </div>
   </div>
 </section>

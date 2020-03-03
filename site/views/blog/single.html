@@ -18,8 +18,8 @@
 {% block body %}
 <article class="blog-post mw8-ns center ph3 pb5 pv6-ns">
   <header class="blog-post-header mb5">
-    <h1 class="f3 f1-ns lh-solid mt4 mb4">{{ item.title }}</h1>
     <time class="tracked ttu">{{ item.date | format('MMMM DD, YYYY') }}</time>
+    <h1 class="f3 f1-ns lh-solid mt4 mb4">{{ item.title }}</h1>
   </header>
   <section class="blog-post-content">
 {% markdown %}{{ item.__content }}{% endmarkdown %}

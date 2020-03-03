@@ -41,8 +41,15 @@ function fillAlbumBar({
   }
 }
 
-module.exports = function(options){
+const defaultOptions = {
+  hero: {
+    interval: 5000
+  }
+};
+
+module.exports = function(_options){
   window.addEventListener('load', async () => {
+    const options = {...defaultOptions, ..._options};
     console.log('App started!', options);
 
     stickybits('.navigation', { useStickyClasses: true });
@@ -64,9 +71,16 @@ module.exports = function(options){
         images: [...Array(10).keys()].map(i => `/images/albums/${i}.jpg`)
       }));
 
-    document.querySelectorAll('.hero-screenshots img').forEach(img => {
+    const $screenshots = document.querySelectorAll('.hero-screenshots img');
+    $screenshots.forEach(img => {
       img.onload = () => img.classList.add('loaded');
       img.src = img.dataset.src
     });
+
+    let currentScreenshotIndex = 0;
+    setInterval(() => {
+      $screenshots.forEach((el, index) => el.classList.toggle('loaded', index === currentScreenshotIndex));
+      currentScreenshotIndex = (currentScreenshotIndex + 1) % $screenshots.length;
+    }, options.hero.interval);
   });
 };
