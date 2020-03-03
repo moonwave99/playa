@@ -66,7 +66,6 @@ export const LibraryView = (): ReactElement => {
 
   async function showImportDialog(folder: string): Promise<void> {
     const folderAlreadyImported = await ipc.invoke(IPC_ALBUM_EXISTS, folder);
-    console.log(folder, folderAlreadyImported)
     if (folderAlreadyImported) {
       dispatch(
         showDialog(
