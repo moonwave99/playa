@@ -181,6 +181,6 @@ It may look trivial, but not to have to think much to which tab I have to switch
 
 [terminal]: /images/screenshots/terminal_setup.png
 [xkcd]: https://xkcd.com/1205/
-[test]: /devblog/2020-02-8/testing
+[test]: /devblog/2020-02-08/testing
 [e2e]: /devblog/2020-02-29/end-to-end-testing
 [electron-builder]: https://github.com/electron-userland/electron-builder

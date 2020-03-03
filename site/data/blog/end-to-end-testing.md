@@ -183,6 +183,51 @@ Ok, now I can `restart` the app and check that I am in the `<PlaylistView>` and 
 
 One last gotcha: pass an increased timeout value to `it`, as some operations may last a bit longer on the first run. `TEN_SECONDS` is acceptable, your mileage may vary.
 
+### Edit: improvements now in place
+
+Test fixtures can be passed as parameters to `populateTestDB`. Samples are provided accordingly as `TestPlaylists`.
+
+```typescript
+// utils/databaseUtils.ts
+export const TestPlaylists: TestPlaylist[] = [
+  {
+    _id: '1',
+    _rev: null,
+    title: 'New Playlist 1',
+    created: null,
+    accessed: null,
+    albums: []
+  },
+  ...
+];
+
+export async function populateTestDB({
+  playlists = []
+}): Promise<void> {
+  await prepareDir();
+  ...
+  await Promise.all(playlists.map(async playlist => {
+    const now = new Date().toISOString();
+    return await db.playlist.save<TestPlaylist>({
+      ...playlist,
+      created: now,
+      accessed: now
+    });
+  }));
+  
+// testfile
+const { populateTestDB, TestPlaylists } = require('./utils/databaseUtils');
+
+await populateTestDB({
+  playlists: [TestPlaylists[0]],
+  albums: [],
+  tracks: []
+});
+...
+const { title } = TestPlaylists[0];
+await app.client.waitUntil(async() => await app.client.getText('h1') === title);
+```
+
 ## Final considerations
 
 E2e tests are immensely useful to test paths that are difficult to track for active developers, such as:
