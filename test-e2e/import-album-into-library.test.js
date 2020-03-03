@@ -10,7 +10,11 @@ function mock(app, options) {
 describe('Import album into library', () => {
   let app;
   beforeEach(async () => {
-    await populateTestDB();
+    await populateTestDB({
+      playlists: [],
+      albums: [],
+      tracks: [],
+    });
     app = getApp({
       args: ['-r', path.join(__dirname, '__mocks__/mock-dialog.js')]
     });
@@ -25,7 +29,7 @@ describe('Import album into library', () => {
 
   it('imports an album into database', async () => {
     const { artist, title, year } = FileAlbums[0];
-    const albumPath = await generateAlbum(FileAlbums[0]);
+    const { path: albumPath, tracks } = await generateAlbum(FileAlbums[0]);
     mock(app, [
       {
         method: 'showOpenDialog',

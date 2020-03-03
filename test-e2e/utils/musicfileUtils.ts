@@ -1,11 +1,13 @@
 import * as Path from 'path';
 import * as fs from 'fs-extra';
 import ID3Writer from 'browser-id3-writer';
+import { TestTrack } from './databaseUtils';
 
 const SPECTRON_BASEPATH = Path.join(process.cwd(), '.spectron');
 const MUSIC_PATH = Path.join(SPECTRON_BASEPATH, 'music');
 
 const DEFAULT_MP3_FILE = Path.join(__dirname, '_default.mp3');
+const DEFAULT_TRACK_DURATION = 15;
 
 type FileAlbum = {
   artist: string;
@@ -37,6 +39,24 @@ export const FileAlbums: FileAlbum[] = [
       "Brighter",
       "The Sadman",
       "Primal"
+    ]
+  },
+  {
+    artist: 'My Bloody Valentine',
+    title: 'Loveless',
+    year: 1991,
+    tracks: [
+      'Only Shallow',
+      'Loomer',
+      'Touched',
+      'To Here Knows When',
+      'When You Sleep',
+      'I Only Said',
+      'Come In Alone',
+      'Sometimes',
+      'Blown a Wish',
+      'What You Want',
+      'Soon'
     ]
   }
 ];
@@ -76,10 +96,15 @@ async function generateTrack({
   return Promise.resolve(destPath);
 }
 
-export async function generateAlbum(album: FileAlbum): Promise<string> {
+type GeneratedAlbumInfo = {
+  path: string;
+  tracks: TestTrack[];
+}
+
+export async function generateAlbum(album: FileAlbum): Promise<GeneratedAlbumInfo> {
   await prepareDir();
   const { artist, year, title } = album;
-  await Promise.all(
+  const tracks = await Promise.all(
     album.tracks.map((track, index) =>
       generateTrack({
         artist,
@@ -90,5 +115,18 @@ export async function generateAlbum(album: FileAlbum): Promise<string> {
       })
     )
   );
-  return Path.join(MUSIC_PATH, title);
+  return {
+    path: Path.join(MUSIC_PATH, title),
+    tracks: album.tracks.map((track, index) => ({
+      _id: tracks[index],
+      _rev: null,
+      path: tracks[index],
+      artist,
+      year,
+      title: track,
+      album: title,
+      number: index + 1,
+      duration: DEFAULT_TRACK_DURATION
+    }))
+  };
 }

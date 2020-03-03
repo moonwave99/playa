@@ -23,7 +23,7 @@ type TestAlbum = {
   tracks: TestTrack['_id'][];
 }
 
-type TestTrack = {
+export type TestTrack = {
   _id: string;
   _rev: string;
   path: string;
@@ -64,14 +64,17 @@ async function prepareDir(): Promise<void> {
 type PopulateTestDBParams = {
   playlists: TestPlaylist[];
   albums: TestAlbum[];
+  tracks: TestTrack[];
 }
 
 export async function populateTestDB({
   playlists,
-  albums
+  albums,
+  tracks
 }: PopulateTestDBParams = {
   playlists: [],
-  albums: []
+  albums: [],
+  tracks: []
 }): Promise<void> {
   await prepareDir();
   const entities = ['playlist', 'album', 'track'];
@@ -92,11 +95,15 @@ export async function populateTestDB({
 
   await Promise.all(albums.map(async album => {
     const now = new Date().toISOString();
-    return await db.playlist.save<TestAlbum>({
+    return await db.album.save<TestAlbum>({
       ...album,
       created: now
     });
   }));
+
+  await Promise.all(tracks.map(
+    async track => await db.track.save<TestTrack>(track))
+  );
 
   await db.playlist.close();
   await db.album.close();

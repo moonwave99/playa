@@ -6,7 +6,8 @@ describe('Application launch', () => {
   beforeEach(async () => {
     await populateTestDB({
       playlists: [TestPlaylists[0]],
-      albums: []
+      albums: [],
+      tracks: []
     });
     app = getApp();
     return app.start();
