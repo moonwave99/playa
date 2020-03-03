@@ -3,7 +3,7 @@ import { configure } from 'enzyme';
 import Adapter = require('enzyme-adapter-react-16');
 import initI18n from '../src/renderer/initializers/initI18n';
 
-React.useLayoutEffect = React.useEffect ;
+React.useLayoutEffect = React.useEffect;
 
 const globalAny: any = global;
 
