@@ -1,19 +1,14 @@
-const Application = require('spectron').Application;
-const electronPath = require('electron');
-const path = require('path');
-const { populateTestDB } = require('./utils/databaseUtils');
-
-const TEN_SECONDS = 10000;
+const { getApp, TEN_SECONDS } = require('./utils/appUtils');
+const { populateTestDB, TestPlaylists } = require('./utils/databaseUtils');
 
 describe('Application launch', () => {
   let app;
   beforeEach(async () => {
-    await populateTestDB();
-    app = new Application({
-      path: electronPath,
-      env: { RUNNING_IN_SPECTRON: '1' },
-      args: [path.join(__dirname, '..')]
+    await populateTestDB({
+      playlists: [TestPlaylists[0]],
+      albums: []
     });
+    app = getApp();
     return app.start();
   });
 
@@ -23,18 +18,21 @@ describe('Application launch', () => {
     }
   });
 
-  it('shows an initial window', async () => {
+  it.skip('shows an initial window', async () => {
     const count = await app.client.getWindowCount();
     // window + content webview
     expect(count).toBe(2);
   });
 
   it('recalls last opened playlist', async () => {
+    const title = TestPlaylists[0].title;
     await app.client.waitUntilWindowLoaded();
     await app.client.click('.playlist-list .playlist-list-item');
-    await app.client.waitUntil(async() => await app.client.getText('h1') === 'New Playlist 1');
+    await app.client.waitUntil(async() => await app.client.getText('h1') === title);
+    // console.log('before', await app.client.getText('h1'))
     await app.restart();
     await app.client.waitUntilWindowLoaded();
-    expect(await app.client.getText('h1')).toBe('New Playlist 1');
+    // console.log('after', await app.client.getText('h1'))
+    expect(await app.client.getText('h1')).toBe(title);
   }, TEN_SECONDS);
 });

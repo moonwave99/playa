@@ -1,23 +1,18 @@
-const Application = require('spectron').Application;
-const electronPath = require('electron');
 const path = require('path');
+const { getApp, TEN_SECONDS } = require('./utils/appUtils');
 const { populateTestDB } = require('./utils/databaseUtils');
-const { TestAlbums, generateAlbum } = require('./utils/musicfileUtils');
+const { FileAlbums, generateAlbum } = require('./utils/musicfileUtils');
 
 function mock(app, options) {
   app.electron.ipcRenderer.sendSync('SPECTRON_FAKE_DIALOG/SEND', options);
 }
 
-const TEN_SECONDS = 10000;
-
 describe('Import album into library', () => {
   let app;
   beforeEach(async () => {
     await populateTestDB();
-    app = new Application({
-      path: electronPath,
-      env: { RUNNING_IN_SPECTRON: '1' },
-      args: ['-r', path.join(__dirname, '__mocks__/mock-dialog.js'), path.join(__dirname, '..')]
+    app = getApp({
+      args: ['-r', path.join(__dirname, '__mocks__/mock-dialog.js')]
     });
     await app.start();
   });
@@ -29,8 +24,8 @@ describe('Import album into library', () => {
   });
 
   it('imports an album into database', async () => {
-    const { artist, title, year } = TestAlbums[0];
-    const albumPath = await generateAlbum(TestAlbums[0]);
+    const { artist, title, year } = FileAlbums[0];
+    const albumPath = await generateAlbum(FileAlbums[0]);
     mock(app, [
       {
         method: 'showOpenDialog',

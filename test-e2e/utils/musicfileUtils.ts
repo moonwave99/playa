@@ -7,7 +7,7 @@ const MUSIC_PATH = Path.join(SPECTRON_BASEPATH, 'music');
 
 const DEFAULT_MP3_FILE = Path.join(__dirname, '_default.mp3');
 
-type TestAlbum = {
+type FileAlbum = {
   artist: string;
   title: string;
   year: number;
@@ -22,7 +22,7 @@ type GenerateTrackParams = {
   number: number;
 }
 
-export const TestAlbums: TestAlbum[] = [
+export const FileAlbums: FileAlbum[] = [
   {
     artist: 'Slowdive',
     title: 'Just for a day',
@@ -76,7 +76,7 @@ async function generateTrack({
   return Promise.resolve(destPath);
 }
 
-export async function generateAlbum(album: TestAlbum): Promise<string> {
+export async function generateAlbum(album: FileAlbum): Promise<string> {
   await prepareDir();
   const { artist, year, title } = album;
   await Promise.all(

@@ -2,6 +2,57 @@ import * as Path from 'path';
 import * as fs from 'fs-extra';
 import Database from '../../src/main/lib/database';
 
+type TestPlaylist = {
+  _id: string;
+  _rev: string;
+  title: string;
+  created: string;
+  accessed: string;
+  albums: TestAlbum['_id'][];
+}
+
+type TestAlbum = {
+  _id: string;
+  _rev: string;
+  artist: string;
+  title: string;
+  year?: number;
+  type: string;
+  created: string;
+  path: string;
+  tracks: TestTrack['_id'][];
+}
+
+type TestTrack = {
+  _id: string;
+  _rev: string;
+  path: string;
+  found?: boolean;
+  artist: string;
+  title: string;
+  number: number;
+  duration: number;
+}
+
+export const TestPlaylists: TestPlaylist[] = [
+  {
+    _id: '1',
+    _rev: null,
+    title: 'New Playlist 1',
+    created: null,
+    accessed: null,
+    albums: []
+  },
+  {
+    _id: '2',
+    _rev: null,
+    title: 'New Playlist 2',
+    created: null,
+    accessed: null,
+    albums: []
+  }
+];
+
 const SPECTRON_BASEPATH = Path.join(process.cwd(), '.spectron');
 const DB_PATH = Path.join(SPECTRON_BASEPATH, 'databases');
 
@@ -10,7 +61,18 @@ async function prepareDir(): Promise<void> {
   await fs.ensureDir(DB_PATH);
 }
 
-export async function populateTestDB(): Promise<void> {
+type PopulateTestDBParams = {
+  playlists: TestPlaylist[];
+  albums: TestAlbum[];
+}
+
+export async function populateTestDB({
+  playlists,
+  albums
+}: PopulateTestDBParams = {
+  playlists: [],
+  albums: []
+}): Promise<void> {
   await prepareDir();
   const entities = ['playlist', 'album', 'track'];
 
@@ -19,15 +81,22 @@ export async function populateTestDB(): Promise<void> {
       ({ ...memo, [key]: new Database({ path: DB_PATH + Path.sep, name: key })})
     , {});
 
-  const now = new Date().toISOString();
-  await db.playlist.save({
-    _id: '1',
-    _rev: null,
-    title: 'New Playlist 1',
-    created: now,
-    accessed: now,
-    albums: [] as string[]
-  });
+  await Promise.all(playlists.map(async playlist => {
+    const now = new Date().toISOString();
+    return await db.playlist.save<TestPlaylist>({
+      ...playlist,
+      created: now,
+      accessed: now
+    });
+  }));
+
+  await Promise.all(albums.map(async album => {
+    const now = new Date().toISOString();
+    return await db.playlist.save<TestAlbum>({
+      ...album,
+      created: now
+    });
+  }));
 
   await db.playlist.close();
   await db.album.close();
