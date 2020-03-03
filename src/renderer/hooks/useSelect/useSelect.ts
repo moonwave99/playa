@@ -69,6 +69,13 @@ export default function useSelect<T>({
   const lastClickedIndex = useRef(-1);
   const direction = useRef(0);
 
+  useEffect(() => {
+    setSelection(items.map((_item, index) => ({
+      index,
+      selected: false
+    })));
+  }, [items])
+
   function onItemClick({ index, metaKey, shiftKey }: OnItemClickParams): void {
     const newSelection = select({
       selection,
