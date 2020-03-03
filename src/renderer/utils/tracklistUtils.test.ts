@@ -52,6 +52,14 @@ describe('getNextTrack', () => {
       trackId: null
     });
   });
+
+  it('should give the identity if composed with getPrevTrack', () => {
+    const { trackId } = getNextTrack('ta1', albums);
+    expect(getPrevTrack(trackId, albums)).toEqual({
+      albumId: 'a',
+      trackId: 'ta1'
+    });
+  });
 });
 
 describe('getPrevTrack', () => {
@@ -80,6 +88,14 @@ describe('getPrevTrack', () => {
     expect(getPrevTrack('ta1', albums)).toEqual({
       albumId: null,
       trackId: null
+    });
+  });
+
+  it('should give the identity if composed with getNextTrack', () => {
+    const { trackId } = getPrevTrack('ta2', albums);
+    expect(getNextTrack(trackId, albums)).toEqual({
+      albumId: 'a',
+      trackId: 'ta2'
     });
   });
 });
