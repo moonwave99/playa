@@ -124,10 +124,18 @@ export default function useSelect<T>({
       );
     }
 
+    function onAll(): void {
+      setSelection(selection.map(({ index }) => ({
+        index,
+        selected: true
+      })));
+    }
+
     mousetrap.bind('up', onUp);
     mousetrap.bind('down', onDown);
     mousetrap.bind('enter', _onEnter);
-    return (): void => { mousetrap.unbind(['up', 'down', 'enter']) };
+    mousetrap.bind('command+a', onAll);
+    return (): void => { mousetrap.unbind(['up', 'down', 'enter', 'command+a']) };
   }, [items.length, selection]);
 
   return {
