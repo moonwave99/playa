@@ -1,9 +1,9 @@
 import * as Path from 'path';
 import * as fs from 'fs-extra';
 import ID3Writer from 'browser-id3-writer';
+import { SPECTRON_BASEPATH } from './appUtils'
 import { TestTrack } from './databaseUtils';
 
-const SPECTRON_BASEPATH = Path.join(process.cwd(), '.spectron');
 const MUSIC_PATH = Path.join(SPECTRON_BASEPATH, 'music');
 
 const DEFAULT_MP3_FILE = Path.join(__dirname, '_default.mp3');
@@ -13,6 +13,7 @@ type FileAlbum = {
   artist: string;
   title: string;
   year: number;
+  type: string,
   tracks: string[];
 }
 
@@ -29,6 +30,7 @@ export const FileAlbums: FileAlbum[] = [
     artist: 'Slowdive',
     title: 'Just for a day',
     year: 1991,
+    type: 'album',
     tracks: [
       "Spanish Air",
       "Celia's Dream",
@@ -45,6 +47,7 @@ export const FileAlbums: FileAlbum[] = [
     artist: 'My Bloody Valentine',
     title: 'Loveless',
     year: 1991,
+    type: 'album',
     tracks: [
       'Only Shallow',
       'Loomer',

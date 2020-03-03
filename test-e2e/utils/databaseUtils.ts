@@ -1,6 +1,7 @@
 import * as Path from 'path';
 import * as fs from 'fs-extra';
 import Database from '../../src/main/lib/database';
+import { SPECTRON_BASEPATH } from './appUtils'
 
 type TestPlaylist = {
   _id: string;
@@ -53,7 +54,6 @@ export const TestPlaylists: TestPlaylist[] = [
   }
 ];
 
-const SPECTRON_BASEPATH = Path.join(process.cwd(), '.spectron');
 const DB_PATH = Path.join(SPECTRON_BASEPATH, 'databases');
 
 async function prepareDir(): Promise<void> {

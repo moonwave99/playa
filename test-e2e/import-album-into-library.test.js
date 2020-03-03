@@ -15,7 +15,7 @@ describe('Import album into library', () => {
       albums: [],
       tracks: [],
     });
-    app = getApp({
+    app = await getApp({
       args: ['-r', path.join(__dirname, '__mocks__/mock-dialog.js')]
     });
     await app.start();

@@ -9,7 +9,7 @@ describe('Application launch', () => {
       albums: [],
       tracks: []
     });
-    app = getApp();
+    app = await getApp();
     return app.start();
   });
 
