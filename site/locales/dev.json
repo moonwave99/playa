@@ -16,7 +16,7 @@
       "title": "Playa",
       "caption": "The music player that thinks in albums",
       "description": {
-        "files": "supports <code>.mp3</code>, <code>.flac</code>, <code>.ogg</code> and <code>.mp4</code> files",
+        "files": "supports <code>.mp3</code>, <code>.flac</code>, <code>.ogg</code> and <code>.m4a</code> files",
         "artwork": "displays album art from <a class='link blue underline-hover' href='{{link}}' target='_blank'>Discogs</a>",
         "stack": {
           "intro": "built on top of",
