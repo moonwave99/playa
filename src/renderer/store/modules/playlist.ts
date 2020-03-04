@@ -174,7 +174,7 @@ export const getPlaylistRequest = (id: Playlist['_id']): Function =>
     let playlist = playlists.allById[id];
 
     if (!playlist) {
-      const results = await ipc.invoke(IPC_PLAYLIST_GET_ALL_REQUEST, [id]);
+      const results = await ipc.invoke(IPC_PLAYLIST_GET_ALL_REQUEST);
       if (results.length === 0) {
         return;
       }
