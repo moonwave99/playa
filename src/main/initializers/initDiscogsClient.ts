@@ -27,7 +27,7 @@ export default function initDiscogsClient({
   disabled = false,
   debug = false
 }: initDiscogsClientParams): void {
-  const coversPath = Path.join(userDataPath, 'new_covers');
+  const coversPath = Path.join(userDataPath, 'covers');
   const discogsClient = new DiscogsClient({
     coversPath,
     userAgent: `${appName}/${appVersion}`,
