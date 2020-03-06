@@ -23,8 +23,8 @@ const mainConfig = {
     pouchdb: "require('pouchdb')",
   },
 	module: {
-		rules: [{
-				// All files with a '.ts' or '.tsx' extension will be handled by 'ts-loader'.
+		rules: [
+			{
 				test: /\.(ts)$/,
 				exclude: /node_modules/,
 				use: {
@@ -73,8 +73,8 @@ const rendererConfig = {
 		extensions: ['.js', '.json', '.ts', '.tsx'],
 	},
 	module: {
-		rules: [{
-				// All files with a '.ts' or '.tsx' extension will be handled by 'ts-loader'.
+		rules: [
+			{
 				test: /\.(ts|tsx)$/,
 				exclude: /node_modules/,
 				use: {
@@ -113,11 +113,71 @@ const rendererConfig = {
 		new HtmlWebpackPlugin({
 			filename: 'index.html',
 			template: path.resolve(__dirname, './src/renderer/index.html'),
-		}),
+		})
 	],
+};
+
+const aboutConfig = {
+	entry: './src/renderer/about.tsx',
+	target: 'electron-renderer',
+	output: {
+		filename: 'about.bundle.js',
+		path: __dirname + outputFolder,
+	},
+	node: {
+		__dirname: false,
+		__filename: false,
+	},
+	resolve: {
+		extensions: ['.js', '.json', '.ts', '.tsx'],
+	},
+	module: {
+		rules: [
+			{
+				test: /\.(ts|tsx)$/,
+				exclude: /node_modules/,
+				use: {
+					loader: 'ts-loader',
+				},
+			},
+			{
+				test: /\.(scss|css)$/,
+				use: [
+					'style-loader',
+					'css-loader?sourceMap',
+					'sass-loader?sourceMap',
+				],
+			},
+			{
+				test: /\.(gif|jpg|png|svg|ico|icns)$/,
+				loader: 'file-loader',
+				options: {
+					name: '[path][name].[ext]',
+				},
+			},
+			{
+				test: /\.(eot|ttf|woff|woff2)$/,
+				loader: 'file-loader',
+				options: {
+					name: '[path][name].[ext]',
+				},
+			},
+			{
+				test: /\.node$/,
+				use: 'native-ext-loader'
+			}
+		],
+	},
+	plugins: [
+		new HtmlWebpackPlugin({
+			filename: 'about.html',
+			template: path.resolve(__dirname, './src/renderer/about.html'),
+		})
+	]
 };
 
 module.exports = {
 	mainConfig,
-	rendererConfig
+	rendererConfig,
+	aboutConfig
 };

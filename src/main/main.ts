@@ -52,7 +52,7 @@ function createWindow({
     url.format({
       pathname: Path.join(__dirname, './index.html'),
       protocol: 'file:',
-      slashes: true,
+      slashes: true
     })
   );
 

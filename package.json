@@ -4,6 +4,7 @@
 	"description": "The OSX player that thinks in albums.",
 	"main": "./_pack/main.bundle.js",
 	"repository": "https://github.com/moonwave99/playa",
+	"homepage": "https://moonwave99.github.io/playa",
 	"author": "Diego Caponera <diego.caponera@gmail.com>",
 	"license": "MIT",
 	"private": false,

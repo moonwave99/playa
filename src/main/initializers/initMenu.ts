@@ -1,5 +1,6 @@
 import { app, Menu } from 'electron';
 import { generatePath } from 'react-router-dom';
+import openAboutWindow from '../lib/aboutWindow';
 import { IPC_MESSAGES } from '../../constants';
 const {
   IPC_UI_NAVIGATE_TO,
@@ -24,7 +25,10 @@ export default function initMenu(window: Electron.BrowserWindow): void {
     {
       label: app.name,
       submenu: [
-        { role: 'about' },
+        {
+          label: 'About Playa',
+          click: (): void => { openAboutWindow() }
+        },
         { type: 'separator' },
         { role: 'services' },
         { type: 'separator' },

@@ -7,6 +7,9 @@ export const DEFAULT_HEIGHT = 800;
 export const MIN_WIDTH = 350;
 export const MIN_HEIGHT = DEFAULT_HEIGHT / 2;
 
+export const ABOUT_WINDOW_WIDTH = 600;
+export const ABOUT_WINDOW_HEIGHT = 400;
+
 export const RECENT_PLAYLIST_COUNT = 10;
 
 export const MUSIC_FILE_EXTENSIONS = ['mp3', 'm4a', 'flac', 'ogg'];

@@ -12,6 +12,14 @@
         "queue": "Playback Queue"
       }
     },
+    "about": {
+      "version": "Version {{version}}",
+      "links": {
+        "homepage": "Homepage",
+        "repository": "Github",
+        "tos": "Terms of Use"
+      }
+    },
     "queue": {
       "title": "Playback Queue",
       "empty": "Queue is empty."
