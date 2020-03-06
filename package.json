@@ -1,7 +1,7 @@
 {
 	"name": "Playa",
 	"version": "0.3.0",
-	"description": "The OSX player that thinks in albums.",
+	"description": "The player that thinks in albums.",
 	"main": "./_pack/main.bundle.js",
 	"repository": "https://github.com/moonwave99/playa",
 	"homepage": "https://moonwave99.github.io/playa",
