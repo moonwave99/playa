@@ -1,6 +1,7 @@
 const SYMBOLS_TO_REPLACE = {
   '?' : '%3F',
-  '#' : '%23'
+  '#' : '%23',
+  '&' : '%26'
 }
 
 export function encodePath(path: string): string {
