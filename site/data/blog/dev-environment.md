@@ -5,7 +5,7 @@ date: 2020-02-15T00:00:00.000Z
 published: true
 ---
 
-In this post I give an overview of the app infrastructure and the development processes.
+In this post I give an overview of the app infrastructure and the tasks I run in the development environment, from watching to testing to the build step.
 
 1. [Typescript](#typescript)
 2. [Electron](#electron)
