@@ -1,9 +1,9 @@
 import { encodePath, getYearFromPath } from './pathUtils';
 
 describe('encodePath', () => {
-  it('should encode question marks', () => {
-    const path = "/path/to/What's the story? Morning glory #1";
-    expect(encodePath(path)).toEqual("/path/to/What's the story%3F Morning glory %231");
+  it('should encode symbols', () => {
+    const path = "/path/to/What's th& story? Morning glory #1";
+    expect(encodePath(path)).toEqual("/path/to/What's th%26 story%3F Morning glory %231");
   });
 });
 
