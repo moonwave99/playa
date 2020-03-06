@@ -1,13 +1,27 @@
-import { BrowserWindow } from 'electron';
+import { BrowserWindow, shell, ipcMain as ipc } from 'electron';
 import * as Path from 'path';
 import * as url from 'url';
 
 import {
   ABOUT_WINDOW_WIDTH,
-  ABOUT_WINDOW_HEIGHT
+  ABOUT_WINDOW_HEIGHT,
+  IPC_MESSAGES
 } from '../../constants';
 
+const {
+  IPC_ABOUT_CLOSE_WINDOW,
+  IPC_ABOUT_OPEN_LINK
+} = IPC_MESSAGES;
+
 let aboutWindow: BrowserWindow;
+
+ipc.on(IPC_ABOUT_OPEN_LINK, (_event, url: string): void => {
+  shell.openExternal(url);
+});
+
+ipc.on(IPC_ABOUT_CLOSE_WINDOW, (): void => {
+  aboutWindow && aboutWindow.close();
+});
 
 export default function openAboutWindow(): BrowserWindow {
   if (aboutWindow) {
