@@ -5,9 +5,7 @@ describe('Application launch', () => {
   let app;
   beforeEach(async () => {
     await populateTestDB({
-      playlists: [TestPlaylists[0]],
-      albums: [],
-      tracks: []
+      playlists: [TestPlaylists[0]]
     });
     app = await getApp();
     return app.start();
@@ -19,7 +17,7 @@ describe('Application launch', () => {
     }
   });
 
-  it.skip('shows an initial window', async () => {
+  it('shows an initial window', async () => {
     const count = await app.client.getWindowCount();
     // window + content webview
     expect(count).toBe(2);

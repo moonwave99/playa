@@ -10,11 +10,7 @@ function mock(app, options) {
 describe('Import album into library', () => {
   let app;
   beforeEach(async () => {
-    await populateTestDB({
-      playlists: [],
-      albums: [],
-      tracks: [],
-    });
+    await populateTestDB();
     app = await getApp({
       args: ['-r', path.join(__dirname, '__mocks__/mock-dialog.js')]
     });

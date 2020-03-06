@@ -68,9 +68,9 @@ type PopulateTestDBParams = {
 }
 
 export async function populateTestDB({
-  playlists,
-  albums,
-  tracks
+  playlists = [],
+  albums = [],
+  tracks = []
 }: PopulateTestDBParams = {
   playlists: [],
   albums: [],
