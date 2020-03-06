@@ -75,6 +75,7 @@
 		"rimraf": "^3.0.0",
 		"sass-loader": "^8.0.0",
 		"spectron": "^10.0.1",
+		"spectron-menu-addon": "^0.4.1",
 		"style-loader": "^1.1.1",
 		"ts-jest": "^24.2.0",
 		"ts-loader": "^6.2.1",

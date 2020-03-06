@@ -19,7 +19,7 @@ describe('Application launch', () => {
 
   it('shows an initial window', async () => {
     const count = await app.client.getWindowCount();
-    // window + content webview
+    // on OSX: main procss + app window
     expect(count).toBe(2);
   });
 
@@ -28,10 +28,8 @@ describe('Application launch', () => {
     await app.client.waitUntilWindowLoaded();
     await app.client.click('.playlist-list .playlist-list-item');
     await app.client.waitUntil(async() => await app.client.getText('h1') === title);
-    // console.log('before', await app.client.getText('h1'))
     await app.restart();
     await app.client.waitUntilWindowLoaded();
-    // console.log('after', await app.client.getText('h1'))
     expect(await app.client.getText('h1')).toBe(title);
   }, TEN_SECONDS);
 });

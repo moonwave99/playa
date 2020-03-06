@@ -9084,6 +9084,11 @@ spdx-license-ids@^3.0.0:
   resolved "https://registry.yarnpkg.com/spdx-license-ids/-/spdx-license-ids-3.0.5.tgz#3694b5804567a458d3c8045842a6358632f62654"
   integrity sha512-J+FWzZoynJEXGphVIS+XEh3kFSjZX/1i9gFBaWQcB+/tmpe2qUsSBABpcxqxnAxFdiUFEgAX1bjYGQvIZmoz9Q==
 
+spectron-menu-addon@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/spectron-menu-addon/-/spectron-menu-addon-0.4.1.tgz#df89fdbd5b969bd94358d73bf9ad0d1808877cce"
+  integrity sha512-svtOzWRfH5z6sxkO281v31gL1l52ZsVjco9ux4GVshujKeZXGk9luKjeHTkLVR9H+LIylxO6GtFsCQWxIasrvg==
+
 spectron@^10.0.1:
   version "10.0.1"
   resolved "https://registry.yarnpkg.com/spectron/-/spectron-10.0.1.tgz#d89fdd3c9625c7dbb5d1f047fda7cb922eda0125"

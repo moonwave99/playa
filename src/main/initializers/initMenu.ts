@@ -1,7 +1,14 @@
-import { app, Menu } from 'electron';
+import {
+  app,
+  Menu,
+  BrowserWindow,
+  MenuItemConstructorOptions
+} from 'electron';
+
 import { generatePath } from 'react-router-dom';
 import openAboutWindow from '../lib/aboutWindow';
 import { IPC_MESSAGES } from '../../constants';
+
 const {
   IPC_UI_NAVIGATE_TO,
   IPC_UI_FOCUS_SEARCH,
@@ -20,8 +27,8 @@ import {
 const compactView = 0 //UIAlbumView.Compact;
 const extendedView = 1 //UIAlbumView.Extended;
 
-export default function initMenu(window: Electron.BrowserWindow): void {
-  const template: Electron.MenuItemConstructorOptions[] = [
+export default function initMenu(window: BrowserWindow): void {
+  const template: MenuItemConstructorOptions[] = [
     {
       label: app.name,
       submenu: [
