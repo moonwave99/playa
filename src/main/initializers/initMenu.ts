@@ -114,7 +114,7 @@ export default function initMenu(window: BrowserWindow, debug = false): void {
         },
         {
           label: 'Show Playback Queue',
-          accelerator: 'cmd+0',
+          accelerator: 'cmd+shift+p',
           click: (): void => window.webContents.send(IPC_UI_NAVIGATE_TO, QUEUE)
         },
         { type: 'separator' },
