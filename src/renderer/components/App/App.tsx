@@ -1,5 +1,5 @@
 import React, { FC, ReactElement, useState, useEffect } from 'react';
-import { Switch, Route, useHistory } from 'react-router';
+import { Switch, Route, Redirect, useHistory } from 'react-router';
 import { generatePath } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
@@ -37,6 +37,7 @@ import {
   QUEUE,
   SEARCH,
   PLAYLIST_ALL,
+  PLAYLIST_CREATE,
   PLAYLIST_SHOW,
   LIBRARY
 } from '../../routes';
@@ -67,6 +68,16 @@ type AppProps = {
   lastOpenedPlaylistId: Playlist['_id'];
   waveformBasePath: string;
   queue: Album['_id'][];
+}
+
+const CreatePlaylist = (): ReactElement => {
+  const playlist = getDefaultPlaylist();
+  const dispatch = useDispatch();
+  dispatch({
+    type: PLAYLIST_GET_RESPONSE,
+    playlist
+  });
+  return <Redirect to={generatePath(PLAYLIST_SHOW, { _id: playlist._id })}/>;
 }
 
 export const App: FC<AppProps> = ({
@@ -173,6 +184,9 @@ export const App: FC<AppProps> = ({
             </Route>
             <Route path={SEARCH}>
               <SearchView/>
+            </Route>
+            <Route path={PLAYLIST_CREATE} exact>
+              <CreatePlaylist/>
             </Route>
             <Route path={PLAYLIST_ALL} exact>
               <AllPlaylistContainer playlists={playlists}/>
