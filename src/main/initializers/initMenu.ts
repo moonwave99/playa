@@ -1,9 +1,12 @@
 import {
   app,
+  ipcMain as ipc,
   Menu,
   BrowserWindow,
   MenuItemConstructorOptions
 } from 'electron';
+
+import { matchPath } from 'react-router';
 
 import openAboutWindow from '../lib/aboutWindow';
 import { IPC_MESSAGES } from '../../constants';
@@ -11,6 +14,7 @@ import { IPC_MESSAGES } from '../../constants';
 const {
   IPC_UI_NAVIGATE_TO,
   IPC_UI_FOCUS_SEARCH,
+  IPC_UI_LOCATION_UPDATE,
   IPC_PLAYBACK_PREV_TRACK,
   IPC_PLAYBACK_NEXT_TRACK,
   IPC_UI_TOGGLE_ALBUM_VIEW
@@ -20,7 +24,8 @@ import {
   LIBRARY,
   QUEUE,
   PLAYLIST_ALL,
-  PLAYLIST_CREATE
+  PLAYLIST_CREATE,
+  PLAYLIST_SHOW
 } from '../../renderer/routes';
 
 const compactView = 0 //UIAlbumView.Compact;
@@ -94,9 +99,10 @@ export default function initMenu(window: BrowserWindow): void {
     },
     {
       label: 'Playlist',
+      id: 'playlist',
       submenu: [
         {
-          label: 'New',
+          label: 'New Playlist',
           accelerator: 'cmd+n',
           click: (): void => window.webContents.send(IPC_UI_NAVIGATE_TO, PLAYLIST_CREATE)
         },
@@ -107,18 +113,20 @@ export default function initMenu(window: BrowserWindow): void {
           click: (): void => window.webContents.send(IPC_UI_NAVIGATE_TO, PLAYLIST_ALL)
         },
         {
-          label: 'Show Play Queue',
+          label: 'Show Playback Queue',
           accelerator: 'cmd+0',
           click: (): void => window.webContents.send(IPC_UI_NAVIGATE_TO, QUEUE)
         },
         { type: 'separator' },
         {
           label: 'Show Extended View',
+          id: 'show-extended',
           accelerator: 'cmd+1',
           click: (): void => window.webContents.send(IPC_UI_TOGGLE_ALBUM_VIEW, extendedView)
         },
         {
           label: 'Show Compact View',
+          id: 'show-compact',
           accelerator: 'cmd+2',
           click: (): void => window.webContents.send(IPC_UI_TOGGLE_ALBUM_VIEW, compactView)
         }
@@ -143,6 +151,19 @@ export default function initMenu(window: BrowserWindow): void {
       ]
     }
   ];
+
   const menu = Menu.buildFromTemplate(template);
+
+  ipc.on(IPC_UI_LOCATION_UPDATE, (_event, location: string) => {
+    const playlistToggleViewItems = ['show-extended', 'show-compact'].map(
+      id => menu.getMenuItemById('playlist').submenu.getMenuItemById(id)
+    );
+    if (matchPath(location, { path: PLAYLIST_SHOW })) {
+      playlistToggleViewItems.forEach(item => item.enabled = true);
+    } else {
+      playlistToggleViewItems.forEach(item => item.enabled = false);
+    }
+  });
+
   Menu.setApplicationMenu(menu);
 }

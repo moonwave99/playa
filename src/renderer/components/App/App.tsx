@@ -24,6 +24,8 @@ import {
   PLAYLIST_GET_RESPONSE
 } from '../../store/modules/playlist';
 
+import { updateLocation } from '../../store/modules/ui';
+
 import {
   updateQueue,
   enqueueAtEnd,
@@ -139,6 +141,10 @@ export const App: FC<AppProps> = ({
       dispatch(updateQueue(queue));
     }
   }, [queue]);
+
+  useEffect(() => {
+    updateLocation(history.location.pathname);
+  }, [history.location.pathname]);
 
   function onCreatePlaylist(albums: Album['_id'][] = []): void {
     const playlist = getDefaultPlaylist();

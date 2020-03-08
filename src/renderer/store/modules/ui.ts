@@ -3,7 +3,8 @@ import { confirmDialog } from '../../lib/dialog'
 
 import { IPC_MESSAGES } from '../../../constants';
 const {
-  IPC_UI_STATE_UPDATE
+  IPC_UI_STATE_UPDATE,
+  IPC_UI_LOCATION_UPDATE
 } = IPC_MESSAGES;
 
 const MAX_TITLE_LENGTH = 50;
@@ -89,6 +90,9 @@ export const updateTitle = (title: string): Function =>
       title
     });
   }
+
+export const updateLocation =
+  (location: string): void => ipc.send(IPC_UI_LOCATION_UPDATE, location);
 
 const INITIAL_STATE = {
   started: true
