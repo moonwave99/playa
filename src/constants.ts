@@ -65,6 +65,8 @@ export const IPC_MESSAGES = {
   IPC_ALBUM_CONTENT_RESPONSE : 'album:content:response',
   IPC_ALBUM_GET_LATEST_REQUEST : 'album:get-latest:request',
   IPC_ALBUM_GET_LATEST_RESPONSE : 'album:get-latest:response',
+  IPC_ALBUM_GET_STATS_REQUEST : 'album:get-stats:request',
+  IPC_ALBUM_GET_STATS_RESPONSE : 'album:get-stats:response',
   IPC_TRACK_GET_LIST_REQUEST : 'track:get-list:request',
   IPC_TRACK_GET_LIST_RESPONSE : 'track:get-list:response',
   IPC_SEARCH_REQUEST : 'search:request',

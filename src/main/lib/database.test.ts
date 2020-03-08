@@ -5,6 +5,9 @@ import { playlists, albums } from '../../../test/testFixtures';
 import { DatabaseError } from '../../errors';
 import PouchDB from 'pouchdb';
 
+declare function emit (val: string|number): void;
+declare function emit (key: string|number, value: string|number): void;
+
 describe('database', () => {
   describe('constructor', () => {
     it('should replicate db if debug === true', () => {
@@ -104,6 +107,35 @@ describe('database', () => {
         limit
       });
       expect(results.length).toBe(limit);
+    });
+  });
+
+  describe('groupCount', () => {
+    const db = new Database({
+      path: '/path/to/db',
+      name: 'album',
+      views: {
+        groupCountByYear: {
+          map: (doc: Album): void => emit(doc.year, 1),
+          reduce: '_sum'
+        },
+        groupCountByType: {
+          map: (doc: Album): void => emit(doc.type, 1),
+          reduce: '_sum'
+        },
+        groupCountByArtist: {
+          map: (doc: Album): void => emit(doc.artist, 1),
+          reduce: '_sum'
+        }
+      }
+    });
+    it('should count all documents grouped by key', async () => {
+      expect(await db.groupCount('type')).toEqual({ album: 2 });
+      expect(await db.groupCount('year')).toEqual({ '1991': 2 });
+      expect(await db.groupCount('artist')).toEqual({
+        'Slowdive': 1,
+        'My Bloody Valentine': 1
+      });
     });
   });
 

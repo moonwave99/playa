@@ -15,9 +15,18 @@ type FindParams = {
   limit: number;
 };
 
+class PouchError extends Error {
+  public name: string;
+  constructor(message: string, name: string) {
+    super(message);
+    this.name = name;
+  }
+}
+
 class LocalPouchDB {
   private name: string;
   private db: { [key: string]: any };
+  private views: any;
   constructor(name: string){
     this.name = name;
     this.db = {
@@ -25,6 +34,7 @@ class LocalPouchDB {
       album: toObj(albums) as EntityHashMap<Album>,
       track: toObj([tracks[0], tracks[1]]) as EntityHashMap<Track>
     };
+    this.views = {};
   }
   async allDocs({ keys }: { keys?: string[] }): Promise<{ rows: object[] }> {
     if (!keys) {
@@ -43,12 +53,16 @@ class LocalPouchDB {
   async get(_id: string): Promise<object> {
     const result = this.db[this.name][_id];
     if (!result || result._deleted) {
-      return Promise.resolve({});
+      throw new PouchError(`Record ${_id} not found`, 'not_found');
     }
     return Promise.resolve(result);
   }
   async createIndex() { true }
-  async put({ _id, _deleted }: { _id: string, _deleted?: boolean }) {
+  async put({ _id, _deleted, ...entity }: { _id: string, _deleted?: boolean, entity: object }) {
+    if (_id.startsWith('_design')) {
+      this.views[_id] = { _id, ...entity };
+      return;
+    }
     const newRev = `${+(this.db[this.name][_id]._rev)++}`;
     if (_deleted === true) {
       delete this.db[this.name][_id];
@@ -118,6 +132,25 @@ class LocalPouchDB {
   }
   async bulkDocs(docs: { _id: string }[]) {
     docs.forEach(doc => this.db[this.name][doc._id] = doc);
+  }
+  async query(queryName: string, _options: object) {
+    const [, view] = queryName.split('/');
+    const rows = toArray<A>(this.db[this.name])
+      .map(doc => ({
+        key: doc[view.replace('groupCountBy', '').toLowerCase()],
+        value: 1
+      }))
+      .reduce((
+        memo: { [key: string]: number},
+        { key, value } : { key: string; value: number }
+      ) => {
+        if (!memo[key]) {
+          memo[key] = 0;
+        }
+        memo[key] += value
+        return memo;
+      }, {});
+    return { rows };
   }
   async close() {
     return true;

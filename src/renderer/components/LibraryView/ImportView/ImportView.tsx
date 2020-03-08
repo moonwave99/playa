@@ -101,7 +101,7 @@ export const ImportView: FC<ImportViewProps> = ({
       ...getDefaultAlbum(),
       artist: isAlbumFromVA ? VARIOUS_ARTISTS_ID : artist,
       title,
-      year,
+      year: +year,
       type,
       path: folderToImport,
       tracks: tracks.map(({ _id }) => _id)

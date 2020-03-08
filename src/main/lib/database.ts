@@ -11,6 +11,10 @@ const DEFAULT_QUERY_ORDER = 'asc';
 PouchDB.plugin(PouchFind);
 PouchDB.plugin(search);
 
+function capitalizeFirstLetter(string: string): string {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 export interface Entity {
   _id: string;
   _rev: string;
@@ -35,21 +39,41 @@ type DatabaseParams = {
   path: string;
   name: string;
   debug?: boolean;
+  forceInitViews?: boolean;
+  views?: {
+    [key: string]: {
+      map: Function;
+      reduce: Function|string;
+    };
+  };
 }
 
 export default class Database {
   private db: any;  // eslint-disable-line
   private debug: boolean;
+  private forceInitViews: boolean;
+  private name: string;
+  private views: {
+    [key: string]: {
+      map: Function;
+      reduce: Function|string;
+    };
+  };
   constructor({
     path,
     name,
-    debug = false
+    debug = false,
+    forceInitViews = false,
+    views
   }: DatabaseParams) {
     const LocalPouchDB = PouchDB.defaults({
       prefix: path
     });
     this.db = new LocalPouchDB(name);
+    this.name = name;
+    this.views = views;
     this.debug = debug;
+    this.forceInitViews = forceInitViews;
     if (this.debug) {
       PouchDB.replicate(
         this.db,
@@ -131,6 +155,17 @@ export default class Database {
       .map((row: Row<T>) => row.doc);
   }
 
+  async groupCount(field: string): Promise<{ key: string; value: number }[]> {
+    const queryName = `groupCountBy${capitalizeFirstLetter(field)}`;
+    if (!this.views[queryName]) {
+      return [];
+    }
+    await this._initViews(this.forceInitViews);
+    const { rows }: { rows: { key: string; value: number }[]} =
+      await this.db.query(`${this.name}/${queryName}`, { reduce: true, group: true });
+    return rows;
+  }
+
   async save<T extends Entity>(entity: T): Promise<T> {
     const { _id, _rev, ...other } = entity;
     const doc: T = await this.get(_id);
@@ -194,5 +229,34 @@ export default class Database {
   async close(): Promise<boolean> {
     await this.db.close();
     return true;
+  }
+
+  async _initViews(force = false): Promise<void> {
+    const _id = `_design/${this.name}`;
+    const viewBody = {
+      _id,
+      views: Object.entries(this.views).reduce(
+        (memo, [key, { map, reduce }]) =>
+          ({ ...memo, [key]: {
+            map: map.toString(),
+            reduce: reduce.toString()
+          }
+        }), {}
+      )
+    };
+    let view: { _id: string; _rev: string };
+    try {
+      view = await this.db.get(_id);
+    } catch (error) {
+      if (error.name === 'not_found') {
+        await this.db.put(viewBody);
+      } else {
+        throw error;
+      }
+    }
+    if (force) {
+      await this.db.remove(view._id, view._rev);
+      await this.db.put(viewBody);
+    }
   }
 }
