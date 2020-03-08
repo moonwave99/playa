@@ -88,7 +88,9 @@ export const SidebarView: FC<SidebarViewProps> = ({
 				<NewPlaylistButton
 					onClick={onCreatePlaylist}
 					onDrop={onCreatePlaylist}/>
-				<PlaylistList playlists={recentPlaylists} currentPlaylistId={currentPlaylistId}/>
+				<PlaylistList
+					playlists={recentPlaylists}
+					currentPlaylistId={currentPlaylistId}/>
 				<div className="button-wrapper">
 					{renderLink(PLAYLIST_ALL, 'all-playlists')}
 				</div>
