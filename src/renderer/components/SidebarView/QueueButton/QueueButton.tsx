@@ -37,7 +37,7 @@ export const QueueButton: FC<QueueButtonProps> = ({
   });
 
   return (
-    <div ref={drop}>
+    <div ref={drop} className="button-drag-wrapper">
       <Link to={QUEUE} className={classNames}>
         <FontAwesomeIcon icon="play" className="button-icon"/>
         <span className="button-text">{t('sidebar.buttons.queue')}</span>

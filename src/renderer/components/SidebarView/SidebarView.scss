@@ -96,7 +96,8 @@
     height: auto;
     .sidebar-footer,
     .playlist-list,
-    .button-wrapper > .button {
+    .button-wrapper > .button,
+    .button-wrapper .button-drag-wrapper .button {
       display: none;
     }
     .searchbar-wrapper {
