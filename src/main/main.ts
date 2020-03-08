@@ -66,7 +66,7 @@ function createWindow({
     mainWindow.webContents.send(IPC_MESSAGES.IPC_UI_SWIPE, direction);
   });
 
-  initMenu(mainWindow);
+  initMenu(mainWindow, is.development);
 
   if (is.development) {
     mainWindow.maximize();

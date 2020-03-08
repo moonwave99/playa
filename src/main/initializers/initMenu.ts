@@ -31,7 +31,7 @@ import {
 const compactView = 0 //UIAlbumView.Compact;
 const extendedView = 1 //UIAlbumView.Extended;
 
-export default function initMenu(window: BrowserWindow): void {
+export default function initMenu(window: BrowserWindow, debug = false): void {
   const template: MenuItemConstructorOptions[] = [
     {
       label: app.name,
@@ -135,9 +135,13 @@ export default function initMenu(window: BrowserWindow): void {
     {
       label: 'View',
       submenu: [
-        { role: 'reload' },
-        { role: 'forceReload' },
-        { role: 'toggleDevTools' }
+        debug && { role: 'reload' },
+        debug && { role: 'forceReload' },
+        debug && { role: 'toggleDevTools' },
+        debug && { type: 'separator' },
+        { role : 'resetZoom' },
+        { role : 'zoomIn' },
+        { role : 'zoomOut' }
       ]
     },
     {
