@@ -64,4 +64,7 @@
       }
     }
   }
+  .all-playlists-empty-placeholder {
+    @include emptyComponent();
+  }
 }

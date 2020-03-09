@@ -26,4 +26,7 @@
       }
     }
   }
+  .album-grid-empty-placeholder {
+    @include emptyComponent();
+  }
 }

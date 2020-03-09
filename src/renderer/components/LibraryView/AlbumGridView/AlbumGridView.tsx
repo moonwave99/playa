@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AlbumGridTileView } from './AlbumGridTileView/AlbumGridTileView';
 import { Album } from '../../../store/modules/album';
 
@@ -17,16 +18,17 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
   onAlbumContextMenu,
   onAlbumDoubleClick
 }) => {
+  const { t } = useTranslation();
 	return (
     <section className="album-grid">
-      {albums.map(album =>
+      {albums.length > 0 ? albums.map(album =>
         <AlbumGridTileView
           key={album._id}
           album={album}
           isPlaying={album._id === currentAlbumId}
           onDoubleClick={onAlbumDoubleClick}
           onContextMenu={onAlbumContextMenu}/>
-      )}
+      ) : <p className="album-grid-empty-placeholder">{t('library.empty')}</p>}
     </section>
 	);
 }

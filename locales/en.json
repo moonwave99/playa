@@ -26,6 +26,7 @@
     },
     "library": {
       "title": "Your Music Library",
+      "empty": "Library is empty.",
       "buttons": {
         "addNewAlbum": "Add New Album"
       },
@@ -56,7 +57,10 @@
       }
     },
     "playlists": {
-      "title": "All Playlists",
+      "all": {
+        "title": "All Playlists",
+        "empty": "No playlists yet"
+      },
       "createdOn": "Created on {{date}}",
       "empty": "Playlist is empty.",
       "props": {
