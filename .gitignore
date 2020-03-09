@@ -81,3 +81,6 @@ settings/**/*.json
 
 # Spectron user folder
 .spectron
+
+# Data backup
+backup
