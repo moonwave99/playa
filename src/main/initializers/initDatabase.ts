@@ -1,5 +1,6 @@
 import { ipcMain as ipc } from 'electron';
 import * as Path from 'path';
+import * as fs from 'fs-extra';
 import Database from '../lib/database';
 import loadAlbum from '../lib/loadAlbum';
 import loadTracklist from '../lib/loadTracklist';
@@ -31,8 +32,13 @@ const DEFAULT_SEARCH_FIELDS = ['title', 'artist'];
 declare function emit (val: string|number): void;
 declare function emit (key: string|number, value: string|number): void;
 
-export default function initDatabase(userDataPath: string, debug = false): void {
+export default async function initDatabase(userDataPath: string, debug = false): Promise<void> {
   const path = userDataPath + Path.sep + 'databases' + Path.sep;
+
+  await fs.ensureDir(Path.join(path, 'playlist'));
+  await fs.ensureDir(Path.join(path, 'album'));
+  await fs.ensureDir(Path.join(path, 'track'));
+
   const db = {
     'playlist': new Database({ path, debug, name: 'playlist' }),
     'album': new Database({ path, debug, name: 'album', views: {

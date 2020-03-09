@@ -98,7 +98,7 @@ const disableDiscogsRequests = process.env.DISABLE_DISCOGS_REQUESTS === 'true';
 const debug = process.env.DEBUG === 'true';
 
 initDialog();
-initDatabase(userDataPath, debug);
+(async () => await initDatabase(userDataPath, debug))();
 initURLHandler();
 initDiscogsClient({
   userDataPath,
