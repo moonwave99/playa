@@ -9,9 +9,9 @@
 ## License
 The MIT license.
 
-Copyright (c) 2012 Paul Miller (http://paulmillr.com/) [brunch]
+Copyright (c) 2012 Paul Miller (https://paulmillr.com/) [brunch]
 
-Copyright (c) 2020 Diego Caponera (http://www.diegocaponera.com) [this skeleton]
+Copyright (c) 2020 Diego Caponera (https://www.diegocaponera.com) [this skeleton]
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
