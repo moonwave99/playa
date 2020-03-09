@@ -40,6 +40,31 @@ export default function initMenu({
   window,
   debug = false
 }: InitMenuParams): void {
+
+  const getViewMenu = (debug = false): MenuItemConstructorOptions => {
+    return debug
+      ? {
+          label: 'View',
+          submenu: [
+            { role: 'reload' },
+            { role: 'forceReload' },
+            { role: 'toggleDevTools' },
+            { type: 'separator' },
+            { role : 'resetZoom' },
+            { role : 'zoomIn' },
+            { role : 'zoomOut' }
+          ]
+        }
+      : {
+          label: 'View',
+          submenu: [
+            { role : 'resetZoom' },
+            { role : 'zoomIn' },
+            { role : 'zoomOut' }
+          ]
+        };
+  }
+
   const template: MenuItemConstructorOptions[] = [
     {
       label: app.name,
@@ -140,18 +165,7 @@ export default function initMenu({
         }
       ]
     },
-    {
-      label: 'View',
-      submenu: [
-        debug && { role: 'reload' },
-        debug && { role: 'forceReload' },
-        debug && { role: 'toggleDevTools' },
-        debug && { type: 'separator' },
-        { role : 'resetZoom' },
-        { role : 'zoomIn' },
-        { role : 'zoomOut' }
-      ]
-    },
+    getViewMenu(debug),
     {
       label: 'Window',
       submenu: [
