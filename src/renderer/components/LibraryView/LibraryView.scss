@@ -29,16 +29,19 @@
       }
     }
   }
+  header {
+    position: relative;
+  }
   h1 {
     margin: 0 0 $mainUnit 0;
     line-height: $mainUnit;
     color: $highlightColor;
   }
   .button-add-album {
-    position: fixed;
+    position: absolute;
     padding: 0 1rem;
-    top: var(--section-gutter);
-    right: var(--section-gutter);
+    top: 0;
+    right: 0;
     @media (max-width: $miniWindowThreshold) {
       display: none;
     }

@@ -5,7 +5,10 @@
   @include clearFix();
   .album-grid-tile {
     float: left;
-    width: calc(100% / 5);
+    width: calc(100% / 4);
+    @media (min-width: $wideWindowThreshold) {
+      width: calc(100% / 5);
+    }
     @media (max-width: $smallWindowThreshold) {
       width: calc(100% / 3);
     }

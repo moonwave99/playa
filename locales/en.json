@@ -25,7 +25,7 @@
       "empty": "Queue is empty."
     },
     "library": {
-      "title": "Your Music Library",
+      "title": "Latest additions",
       "empty": "Library is empty.",
       "buttons": {
         "addNewAlbum": "Add New Album"

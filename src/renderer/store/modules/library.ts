@@ -24,6 +24,8 @@ const {
   IPC_PLAYLIST_SAVE_LIST_REQUEST
 } = IPC_MESSAGES;
 
+const DEFAULT_LATEST_ALBUM_LIMIT = 20;
+
 export interface LibraryState {
   latestAlbumID: Album['_id'];
   latest: Album['_id'][];
@@ -52,7 +54,10 @@ export type LibraryActionTypes =
   | LibraryGetLatestResponseAction
   | AddAlbumsToLatestLibraryAction;
 
-export const getLatestRequest = (dateFrom = new Date().toISOString(), limit = 20): Function =>
+export const getLatestRequest = (
+  dateFrom = new Date().toISOString(),
+  limit = DEFAULT_LATEST_ALBUM_LIMIT
+): Function =>
   async (dispatch: Function): Promise<void> => {
     const results: Album[] = await ipc.invoke(IPC_ALBUM_GET_LATEST_REQUEST, dateFrom, limit);
     dispatch({
