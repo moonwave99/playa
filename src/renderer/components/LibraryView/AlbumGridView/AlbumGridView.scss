@@ -2,29 +2,27 @@
 @import "../../../styles/mixins";
 
 .album-grid {
-  .album-grid-row {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    .album-grid-tile {
-      flex: calc(100% / var(--library-columns));
-      @include droppable();
+  @include clearFix();
+  .album-grid-tile {
+    float: left;
+    width: calc(100% / 5);
+    @media (max-width: $smallWindowThreshold) {
+      width: calc(100% / 3);
+    }
+    @media (max-width: $miniWindowThreshold) {
+      width: calc(100% / 2);
+    }
+    @include droppable();
+    .album-cover {
+      @include squareCover($backgroundDarkColor);
+    }
+    &:not(.is-playing) {
+      @include playOverlay('../../../static/icons/album/play.svg', $mainUnit);
+    }
+    &.is-playing {
       .album-cover {
-        @include albumCover($libraryAlbumCoverWidth, $backgroundDarkColor);
-      }
-      &:not(.is-playing) {
-        @include playOverlay('../../../static/icons/album/play.svg', $mainUnit);
-      }
-      &.is-playing {
-        .album-cover {
-          box-shadow: 0 0 0 5px $mainColor;
-          z-index: 1000;
-          position: relative;
-          img {
-            position: relative;
-            z-index: -1;
-          }
-        }
+        box-shadow: 0 0 0 5px $mainColor;
+        z-index: 1000;
       }
     }
   }
