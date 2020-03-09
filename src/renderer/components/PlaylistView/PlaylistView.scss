@@ -27,10 +27,6 @@
         color: $highlightColor;
         font-weight: normal;
         letter-spacing: -.1rem;
-      }
-      h1 {
-        flex: 1;
-        margin-right: 5 * $mainUnit;
         transition: background-color .3s ease-in;
       }
       form {
