@@ -56,6 +56,17 @@ describe('AllPlaylistsView', () => {
     expect(wrapper.find('tbody tr')).toHaveLength(playlists.length);
   });
 
+  it('should render a .all-playlists-empty-placeholder if there are no playlists', () => {
+    const wrapper = renderInAll(
+      <AllPlaylistsView
+        playlists={[]}
+        onPlaylistDelete={jest.fn()}
+        onPlaylistContextMenu={jest.fn()}/>
+      , defaultStore);
+    expect(wrapper.find('tbody tr')).toHaveLength(0);
+    expect(wrapper.find('.all-playlists-empty-placeholder')).toHaveLength(1);
+  });
+
   it('should call the onPlaylistDelete handler when the delete link in a row is clicked', () => {
     const handler = jest.fn();
     const wrapper = mountInAll(
