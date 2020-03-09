@@ -28,8 +28,11 @@ In two separate tabs:
 //    2 = errors, warnings, and information.
 2b. $ LOG_LEVEL=1 yarn start
 
-// 2a and 2b can be combined of course:
-$ DEBUG=true LOG_LEVEL=1 yarn start
+// runs against a clean database
+2c. $ FRESH=true yarn start
+
+// everything can be combined of course:
+$ FRESH=true DEBUG=true LOG_LEVEL=2 yarn start
 ```
 
 ## Build

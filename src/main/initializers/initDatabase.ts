@@ -32,8 +32,23 @@ const DEFAULT_SEARCH_FIELDS = ['title', 'artist'];
 declare function emit (val: string|number): void;
 declare function emit (key: string|number, value: string|number): void;
 
-export default async function initDatabase(userDataPath: string, debug = false): Promise<void> {
-  const path = userDataPath + Path.sep + 'databases' + Path.sep;
+type InitDatabaseParams = {
+  userDataPath: string;
+  debug?: boolean;
+  fresh?: boolean;
+}
+
+export default async function initDatabase({
+  userDataPath,
+  debug = false,
+  fresh = false
+}: InitDatabaseParams): Promise<void> {
+  const databaseFolder = fresh ? 'databases_fresh' : 'databases';
+  const path = userDataPath + Path.sep + databaseFolder + Path.sep;
+
+  if (fresh) {
+    await fs.remove(path);
+  }
 
   await fs.ensureDir(Path.join(path, 'playlist'));
   await fs.ensureDir(Path.join(path, 'album'));

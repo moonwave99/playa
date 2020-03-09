@@ -31,7 +31,15 @@ import {
 const compactView = 0 //UIAlbumView.Compact;
 const extendedView = 1 //UIAlbumView.Extended;
 
-export default function initMenu(window: BrowserWindow, debug = false): void {
+type InitMenuParams = {
+  window: BrowserWindow;
+  debug?: boolean;
+}
+
+export default function initMenu({
+  window,
+  debug = false
+}: InitMenuParams): void {
   const template: MenuItemConstructorOptions[] = [
     {
       label: app.name,

@@ -30,7 +30,8 @@ let mainWindow: Electron.BrowserWindow;
 
 function createWindow({
   size = [DEFAULT_WIDTH, DEFAULT_HEIGHT],
-  position = [0,0]
+  position = [0,0],
+  isRunningInSpectron = false
 }): void {
   mainWindow = new BrowserWindow({
     width: size[0],
@@ -66,13 +67,16 @@ function createWindow({
     mainWindow.webContents.send(IPC_MESSAGES.IPC_UI_SWIPE, direction);
   });
 
-  initMenu(mainWindow, is.development);
+  initMenu({
+    window: mainWindow,
+    debug: is.development
+  });
 
   if (is.development) {
     mainWindow.maximize();
   }
 
-  if (is.development && !process.env.RUNNING_IN_SPECTRON) {
+  if (is.development && !isRunningInSpectron) {
     mainWindow.webContents.toggleDevTools();
   }
 }
@@ -96,9 +100,15 @@ async function installExtensions(): Promise<void> {
 const userDataPath = getUserDataPath();
 const disableDiscogsRequests = process.env.DISABLE_DISCOGS_REQUESTS === 'true';
 const debug = process.env.DEBUG === 'true';
+const fresh = process.env.FRESH === 'true';
+const isRunningInSpectron = !!process.env.RUNNING_IN_SPECTRON;
 
 initDialog();
-(async (): Promise<void> => await initDatabase(userDataPath, debug))();
+(async (): Promise<void> => await initDatabase({
+  userDataPath,
+  debug,
+  fresh
+}))();
 initURLHandler();
 initDiscogsClient({
   userDataPath,
@@ -112,14 +122,15 @@ initDiscogsClient({
 
 initWaveform(userDataPath);
 
-const appState = initAppState(userDataPath);
+const appState = initAppState({ userDataPath, fresh });
 const { lastWindowSize, lastWindowPosition } = appState.getState();
 
 app.on('ready', async () => {
   await installExtensions();
   createWindow({
     size: lastWindowSize,
-    position: lastWindowPosition
+    position: lastWindowPosition,
+    isRunningInSpectron
   });
 });
 
