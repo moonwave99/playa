@@ -162,7 +162,7 @@ export default function initMenu(window: BrowserWindow, debug = false): void {
     const playlistToggleViewItems = ['show-extended', 'show-compact'].map(
       id => menu.getMenuItemById('playlist').submenu.getMenuItemById(id)
     );
-    if (matchPath(location, { path: PLAYLIST_SHOW })) {
+    if (matchPath(location, { path: PLAYLIST_SHOW }) && !matchPath(location, { path: PLAYLIST_ALL })) {
       playlistToggleViewItems.forEach(item => item.enabled = true);
     } else {
       playlistToggleViewItems.forEach(item => item.enabled = false);
