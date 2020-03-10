@@ -5,7 +5,7 @@ import { playlists } from '../../../../../test/testFixtures';
 import { PlaylistViewTitle } from './PlaylistViewTitle';
 
 describe('PlaylistViewTitle', () => {
-  it('should render a title', () => {
+  it('should contain a title', () => {
     const wrapper = render(
 			<PlaylistViewTitle
 				playlist={playlists[0]}

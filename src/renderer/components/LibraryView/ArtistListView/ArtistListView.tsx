@@ -31,7 +31,7 @@ export const ArtistListView = (): ReactElement => {
       setSelectedLetter(letter);
     }
 
-    const classNames = cx({ 'selected' : letter === selectedLetter })
+    const classNames = cx(`letter-${letter}`, { 'selected' : letter === selectedLetter })
     return (
       <li key={letter} className={classNames}>
         <a href="#" onClick={onClick}>{letter}</a>

@@ -1,6 +1,7 @@
 import { Playlist } from '../src/renderer/store/modules/playlist';
 import { Album, AlbumTypes } from '../src/renderer/store/modules/album';
 import { Track } from '../src/renderer/store/modules/track';
+import { Artist } from '../src/renderer/store/modules/Library';
 
 const createDatesList = [1,2,3].map(x => new Date(`2020-01-0${x}`).toISOString());
 
@@ -82,5 +83,33 @@ export const tracks: Track[] = [
     title: "Loomer",
     number: 2,
     duration: 456
+  }
+];
+
+export const artists: Artist[] = [
+  {
+    _id: '883',
+    name: '883',
+    count: 1
+  },
+  {
+    _id: 'Adorable',
+    name: 'Adorable',
+    count: 1
+  },
+  {
+    _id: 'Slowdive',
+    name: 'Slowdive',
+    count: 1
+  },
+  {
+    _id: 'My Bloody Valentine',
+    name: 'My Bloody Valentine',
+    count: 1
+  },
+  {
+    _id: '_various-artists',
+    name: '_various-artists',
+    count: 10
   }
 ];

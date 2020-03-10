@@ -28,7 +28,7 @@ describe('AboutView', () => {
 		expect(wrapper.is('.about')).toBe(true);
   });
 
-  it('should render a title', () => {
+  it('should contain a title', () => {
 		const wrapper = renderInAll(
 			<AboutView
         name={props.name}

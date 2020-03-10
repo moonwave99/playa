@@ -33,7 +33,7 @@ describe('QueueView', () => {
     expect(wrapper.is('.queue')).toBe(true);
   });
 
-  it('should render a title', () => {
+  it('should contain a title', () => {
     const wrapper = renderInAll(<QueueView/>, defaultStore);
     expect(wrapper.find('h1')).toHaveLength(1);
   });
