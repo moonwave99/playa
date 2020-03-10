@@ -25,14 +25,14 @@ describe('AlbumGridTileView', () => {
     expect(wrapper.find('.album-cover')).toHaveLength(1);
   });
 
-  it('should call the onDoubleClick handler when doublw clicked', () => {
+  it('should call the onDoubleClick handler when double clicked', () => {
     const handler = jest.fn();
     const wrapper = mountInAll(
       <AlbumGridTileView
         onDoubleClick={handler}
         album={albums[0]}/>
     );
-    wrapper.simulate('doubleClick');
+    wrapper.find('figure').simulate('doubleClick');
     expect(handler).toHaveBeenCalledWith(albums[0]);
   });
 
@@ -43,7 +43,7 @@ describe('AlbumGridTileView', () => {
         onContextMenu={handler}
         album={albums[0]}/>
     );
-    wrapper.simulate('contextmenu');
+    wrapper.find('figure').simulate('contextmenu');
     expect(handler).toHaveBeenCalledWith(albums[0]);
   });
 });

@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { IconName } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import cx from 'classnames';
-import { SearchBar } from '../SearchBar/SearchBar';
+import { SearchBar } from './SearchBar/SearchBar';
 import { QueueButton } from './QueueButton/QueueButton';
 import { NewPlaylistButton } from './NewPlaylistButton/NewPlaylistButton';
 import { PlaylistList } from './PlaylistList/PlaylistList';
@@ -63,22 +63,16 @@ export const SidebarView: FC<SidebarViewProps> = ({
 		);
 	}
 
-	function renderSearchBar(): ReactElement {
-		return (
-			<div className="searchbar-wrapper">
-        <SearchBar
-					hasFocus={hasSearchFocus}
-					onFormSubmit={onSearchFormSubmit}
-					onBlur={onSearchBarBlur}/>
-      </div>
-		);
-	}
-
 	return (
 		<aside className="sidebar">
 			<section className="sidebar-header">
 				<div className="button-wrapper">
-					{renderSearchBar()}
+					<div className="searchbar-wrapper">
+						<SearchBar
+							hasFocus={hasSearchFocus}
+							onFormSubmit={onSearchFormSubmit}
+							onBlur={onSearchBarBlur}/>
+					</div>
 					{renderLink(LIBRARY, 'library')}
 					<QueueButton onDrop={onQueueButtonDrop}/>
 				</div>

@@ -8,6 +8,7 @@ import { toObj } from '../../utils/storeUtils';
 
 import reducer, {
   LibraryActionTypes,
+  Artist,
   getLatestRequest,
   removeAlbums,
   LIBRARY_GET_LATEST_REQUEST,
@@ -66,7 +67,8 @@ describe('library actions', () => {
 describe('library reducer', () => {
   const initialState = {
     latest: [] as Album['_id'][],
-    latestAlbumID: null as Album['_id']
+    latestAlbumId: null as Album['_id'],
+    artists: [] as Artist[]
   }
   it('should return the initial state', () => {
     expect(reducer(undefined, {} as LibraryActionTypes))
@@ -78,7 +80,8 @@ describe('library reducer', () => {
       type: LIBRARY_GET_LATEST_REQUEST
     })).toEqual({
       latest: [],
-      latestAlbumID: null
+      latestAlbumId: null,
+      artists: []
     });
   });
 
@@ -89,7 +92,8 @@ describe('library reducer', () => {
       results
     })).toEqual({
       latest: albums.map(({ _id }) => _id),
-      latestAlbumID: albums[1]._id
+      latestAlbumId: albums[1]._id,
+      artists: []
     });
   });
 });

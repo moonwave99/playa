@@ -27,7 +27,7 @@ export const COLORS = {
 };
 
 export const LIBRARY_GRID_COLUMN_COUNT = 5;
-export const LIBRARY_LATEST_ALBUM_LIMIT = 20;
+export const LIBRARY_LATEST_ALBUM_LIMIT = 10;
 export const LIBRARY_LATEST_DAY_COUNT = 90;
 
 export const FONTS = ['Fira Mono', 'Inter UI', 'Nunito'];

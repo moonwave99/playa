@@ -25,16 +25,4 @@ describe('AlbumGridView', () => {
     );
     expect(wrapper.find('.album-grid-tile')).toHaveLength(albums.length);
   });
-
-  it('should render an .album-grid-empty-placeholder if there are no albums', () => {
-    const wrapper = renderInAll(
-      <AlbumGridView
-        albums={[]}
-        currentAlbumId={null}
-        onAlbumContextMenu={jest.fn()}
-        onAlbumDoubleClick={jest.fn()}/>
-    );
-    expect(wrapper.find('.album-grid-tile')).toHaveLength(0);
-    expect(wrapper.find('.album-grid-empty-placeholder')).toHaveLength(1);
-  });
 });

@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import cx from 'classnames';
 import { getLatestRequest } from '../../store/modules/library';
-import { AlbumGridView } from './AlbumGridView/AlbumGridView';
+import { LatestAlbumsView } from './LatestAlbumsView/LatestAlbumsView';
 import { ImportView } from './ImportView/ImportView';
 import { ApplicationState } from '../../store/store';
 import { updateTitle } from '../../store/modules/ui';
@@ -56,12 +56,12 @@ export const LibraryView = (): ReactElement => {
 
 	const {
     latest,
-    latestAlbumID,
-    playingAlbumID
+    latestAlbumId,
+    currentAlbumId
   } = useSelector(({ albums, library, player }: ApplicationState) => ({
     latest: library.latest.map((_id: Album['_id']) => albums.allById[_id]),
-    latestAlbumID: library.latestAlbumID,
-    playingAlbumID: player.currentAlbumId
+    latestAlbumId: library.latestAlbumId,
+    currentAlbumId: player.currentAlbumId
   }));
 
   async function showImportDialog(folder: string): Promise<void> {
@@ -137,7 +137,7 @@ export const LibraryView = (): ReactElement => {
         type: LIBRARY_CONTENT_CONTEXT_ACTIONS,
         selection: [album],
         dispatch,
-        playingAlbumID,
+        currentAlbumId,
         actionGroups: [
           LibraryContentActionGroups.ALBUMS
         ]
@@ -166,7 +166,7 @@ export const LibraryView = (): ReactElement => {
   }
 
   function onImportFormSubmit(album: Album, tracklist: Track[]): void {
-    const updatedAlbum = { ...album, _id: `${+latestAlbumID + 1}`}
+    const updatedAlbum = { ...album, _id: `${+latestAlbumId + 1}`}
     dispatch(
       getTrackListRequest(
         tracklist.map(({ _id }) => _id )
@@ -186,17 +186,14 @@ export const LibraryView = (): ReactElement => {
 
 	return (
 		<section className={libraryClasses} ref={drop}>
-      <header>
-        <h1>{t('library.title')}</h1>
-        <button className="button button-add-album" onClick={onAddAlbumButtonClick}>
-          <FontAwesomeIcon className="button-icon" icon="plus"/> {t('library.buttons.addNewAlbum')}
-        </button>
-      </header>
-			<AlbumGridView
-				albums={latest}
-        currentAlbumId={playingAlbumID}
-				onAlbumContextMenu={onAlbumContextMenu}
-				onAlbumDoubleClick={onAlbumDoubleClick}/>
+      <button className="button button-add-album" onClick={onAddAlbumButtonClick}>
+        <FontAwesomeIcon className="button-icon" icon="plus"/> {t('library.buttons.addNewAlbum')}
+      </button>
+      <LatestAlbumsView
+        albums={latest}
+        currentAlbumId={currentAlbumId}
+        onAlbumContextMenu={onAlbumContextMenu}
+        onAlbumDoubleClick={onAlbumDoubleClick}/>
       <ReactModal
         className={{
           base: 'modal-content',

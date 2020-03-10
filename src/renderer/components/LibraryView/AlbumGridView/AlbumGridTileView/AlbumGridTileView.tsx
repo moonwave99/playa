@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDrag } from 'react-dnd';
+import { Link, generatePath } from 'react-router-dom';
 import cx from 'classnames';
 import { CoverView } from '../../../AlbumListView/AlbumView/CoverView/CoverView';
 import { Album } from '../../../../store/modules/album';
@@ -12,6 +13,8 @@ import {
 import { ApplicationState } from '../../../../store/store';
 import { UIDragTypes } from '../../../../store/modules/ui';
 import useNativeDrop from '../../../../hooks/useNativeDrop/useNativeDrop';
+
+import { ARTISTS_SHOW } from '../../../../routes';
 
 type AlbumGridTileViewProps = {
   album: Album;
@@ -69,6 +72,8 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
     onDoubleClick && onDoubleClick(album);
   }
 
+  const { artist, title } = album;
+
   const classNames = cx('album-grid-tile', {
     'is-playing': isPlaying,
     'drag-is-over': isOver,
@@ -78,13 +83,19 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
     <article
       ref={ref}
       style={{ opacity }}
-      className={classNames}
-      onDoubleClick={_onDoubleClick}
-      onContextMenu={_onContextMenu}>
+      className={classNames}>
       <CoverView
         className="album-cover"
         src={cover}
-        album={album}/>
+        album={album}
+        onDoubleClick={_onDoubleClick}
+        onContextMenu={_onContextMenu}/>
+      <Link
+        className="album-artist"
+        to={generatePath(ARTISTS_SHOW, { artist })}>
+        {artist}
+      </Link>
+      <span className="album-title">{title}</span>
     </article>
 	);
 }

@@ -25,7 +25,6 @@
       "empty": "Queue is empty."
     },
     "library": {
-      "title": "Latest additions",
       "empty": "Library is empty.",
       "buttons": {
         "addNewAlbum": "Add New Album"
@@ -39,6 +38,9 @@
           "title": "No tracks found",
           "message": "No tracks were found in selected directory. Supported files are 'mp3', 'm4a', 'flac', 'ogg'."
         }
+      },
+      "latest": {
+        "title": "Latest additions"
       },
       "import": {
         "title": "Import Album:",

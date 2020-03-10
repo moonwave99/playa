@@ -30,7 +30,7 @@ describe('libraryContentActions', () => {
     it('should return a title and a handler', async () => {
       const { title, handler } = removeAlbumsAction({
         selection: [albums[0]],
-        playingAlbumID: null
+        currentAlbumId: null
       });
       expect(typeof title).toBe('string');
       expect(typeof handler).toBe('function');
@@ -56,7 +56,7 @@ describe('libraryContentActions', () => {
       });
       const { handler } = removeAlbumsAction({
         selection: [albums[0]],
-        playingAlbumID: null,
+        currentAlbumId: null,
         dispatch: store.dispatch
       });
       await handler();

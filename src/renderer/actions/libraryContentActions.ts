@@ -11,19 +11,19 @@ import { Album } from '../store/modules/album';
 
 export type ActionParams = {
   selection: Album[];
-  playingAlbumID: Album['_id'];
+  currentAlbumId: Album['_id'];
   dispatch?: Function;
 }
 
 export const removeAlbumsAction: ActionCreator<ActionParams> = ({
   selection = [],
-  playingAlbumID,
+  currentAlbumId,
   dispatch
 }) => {
   return {
     title: `Remove selected album(s) from library`,
     async handler(): Promise<Function> {
-      if (selection.map(({ _id }) => _id).indexOf(playingAlbumID) > -1) {
+      if (selection.map(({ _id }) => _id).indexOf(currentAlbumId) > -1) {
         return dispatch(showDialog('Album in play', 'Album is currently in playback!'));
       }
       const confirmed = await confirmDialog({
@@ -55,7 +55,7 @@ export enum LibraryContentActionGroups {
 export type GetLibraryContentContextMenuParams = {
   type: typeof LIBRARY_CONTENT_CONTEXT_ACTIONS;
   actionGroups?: LibraryContentActionGroups[];
-  playingAlbumID?: Album['_id'];
+  currentAlbumId?: Album['_id'];
   selection?: Album[];
   dispatch?: Function;
 }
@@ -67,7 +67,7 @@ const actionGroupsMap = {
 export function getActionGroups({
   actionGroups = [LibraryContentActionGroups.ALBUMS],
   selection,
-  playingAlbumID,
+  currentAlbumId,
   dispatch
 }: GetLibraryContentContextMenuParams): MenuItemConstructorOptions[] {
   return actionGroups.reduce((memo, group, index, original) => [
@@ -75,7 +75,7 @@ export function getActionGroups({
     ...actionGroupsMap[group]
       .map(actionID => LibraryContentActionsMap[actionID])
       .map(action => {
-        const { title, handler } = action({ selection, playingAlbumID, dispatch });
+        const { title, handler } = action({ selection, currentAlbumId, dispatch });
         return { label: title, click: handler };
       }),
     ...index < original.length - 1 ? [{ type : 'separator'}] : []
