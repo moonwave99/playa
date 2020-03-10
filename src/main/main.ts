@@ -20,8 +20,8 @@ import { DISCOGS_KEY, DISCOGS_SECRET } from '../../settings/discogs.json';
 import {
   DEFAULT_WIDTH,
   DEFAULT_HEIGHT,
-  MIN_WIDTH,
-  MIN_HEIGHT,
+  MIN_WIDTH as minWidth,
+  MIN_HEIGHT as minHeight,
   IS_MACOS,
   IPC_MESSAGES
 } from '../constants';
@@ -30,32 +30,27 @@ let mainWindow: Electron.BrowserWindow;
 
 function createWindow({
   size = [DEFAULT_WIDTH, DEFAULT_HEIGHT],
-  position = [0,0],
+  position = [0, 0],
   isRunningInSpectron = false
 }): void {
+  const [width, height] = size;
+  const [x, y] = position;
   mainWindow = new BrowserWindow({
-    width: size[0],
-    height: size[1],
-    x: position[0],
-    y: position[1],
-    minWidth: MIN_WIDTH,
-    minHeight: MIN_HEIGHT,
+    width,
+    height,
+    x,
+    y,
+    minWidth,
+    minHeight,
     maximizable: false,
     focusable: true,
+    show: false,
     webPreferences: {
       allowRunningInsecureContent: false,
       nodeIntegration: true,
       nativeWindowOpen: true
     }
   });
-
-  mainWindow.loadURL(
-    url.format({
-      pathname: Path.join(__dirname, './index.html'),
-      protocol: 'file:',
-      slashes: true
-    })
-  );
 
   // Open external URLs in default OS browser
   mainWindow.webContents.on('new-window', (event: Event, url: string) => {
@@ -71,6 +66,16 @@ function createWindow({
     window: mainWindow,
     debug: is.development
   });
+
+  mainWindow.loadURL(
+    url.format({
+      pathname: Path.join(__dirname, './index.html'),
+      protocol: 'file:',
+      slashes: true
+    })
+  );
+
+  mainWindow.once('ready-to-show', () => mainWindow.show());
 
   if (is.development) {
     mainWindow.maximize();
