@@ -102,17 +102,36 @@ async function installExtensions(): Promise<void> {
   }
 }
 
+export enum Environment {
+  prod,
+  dev,
+  fresh
+}
+
+function getEnvironment(env = 'prod'): Environment {
+  switch (env) {
+    case 'prod':
+      return Environment.prod;
+    case 'dev':
+      return Environment.dev;
+    case 'fresh':
+      return Environment.fresh;
+    default:
+      throw new Error(`Environment not supported: ${env}`);
+  }
+}
+
 const userDataPath = getUserDataPath();
 const disableDiscogsRequests = process.env.DISABLE_DISCOGS_REQUESTS === 'true';
 const debug = process.env.DEBUG === 'true';
-const fresh = process.env.FRESH === 'true';
+const environment = getEnvironment(process.env.ENV);
 const isRunningInSpectron = !!process.env.RUNNING_IN_SPECTRON;
 
 initDialog();
 (async (): Promise<void> => await initDatabase({
   userDataPath,
   debug,
-  fresh
+  environment
 }))();
 initURLHandler();
 initDiscogsClient({
@@ -127,7 +146,7 @@ initDiscogsClient({
 
 initWaveform(userDataPath);
 
-const appState = initAppState({ userDataPath, fresh });
+const appState = initAppState({ userDataPath, environment });
 const { lastWindowSize, lastWindowPosition } = appState.getState();
 
 app.on('ready', async () => {

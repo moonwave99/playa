@@ -1,6 +1,7 @@
 import * as Path from 'path';
 import { ipcMain as ipc } from 'electron';
 import AppState from '../lib/appState';
+import { Environment } from '../main';
 
 import { IPC_MESSAGES } from '../../constants';
 
@@ -11,16 +12,27 @@ const {
 
 type InitAppStateParams = {
   userDataPath: string;
-  fresh?: boolean;
+  environment: Environment;
+}
+
+function getAppStateFileName(environment: Environment): string {
+  switch (environment) {
+    case Environment.prod:
+    default:
+      return 'appState.json';
+    case Environment.dev:
+      return 'appStateDev.json';
+    case Environment.fresh:
+      return 'appStateFresh.json';
+  }
 }
 
 export default function initAppState({
   userDataPath,
-  fresh = false
+  environment = Environment.prod
 }: InitAppStateParams): AppState {
-  const appStateFileName = fresh ? 'appStateFresh.json' : 'appState.json';
   const appState = new AppState(
-    Path.join(userDataPath, appStateFileName)
+    Path.join(userDataPath, getAppStateFileName(environment))
   );
   appState.load();
 

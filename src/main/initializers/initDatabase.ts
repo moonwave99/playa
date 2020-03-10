@@ -7,6 +7,7 @@ import loadTracklist from '../lib/loadTracklist';
 import { Album } from '../../renderer/store/modules/album';
 import { parseQuery } from '../../renderer/utils/searchUtils';
 import { IPC_MESSAGES } from '../../constants';
+import { Environment } from '../main';
 
 const {
   IPC_PLAYLIST_GET_ALL_REQUEST,
@@ -35,18 +36,29 @@ declare function emit (key: string|number, value: string|number): void;
 type InitDatabaseParams = {
   userDataPath: string;
   debug?: boolean;
-  fresh?: boolean;
+  environment: Environment;
+}
+
+function getDatabaseFolder(environment: Environment): string {
+  switch (environment) {
+    case Environment.prod:
+    default:
+      return 'databases';
+    case Environment.dev:
+      return 'databases_dev';
+    case Environment.fresh:
+      return 'databases_fresh';
+  }
 }
 
 export default async function initDatabase({
   userDataPath,
   debug = false,
-  fresh = false
+  environment = Environment.prod
 }: InitDatabaseParams): Promise<void> {
-  const databaseFolder = fresh ? 'databases_fresh' : 'databases';
-  const path = userDataPath + Path.sep + databaseFolder + Path.sep;
+  const path = userDataPath + Path.sep + getDatabaseFolder(environment) + Path.sep;
 
-  if (fresh) {
+  if (environment === Environment.fresh) {
     await fs.remove(path);
   }
 

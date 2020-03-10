@@ -28,12 +28,22 @@ In two separate tabs:
 //    2 = errors, warnings, and information.
 2b. $ LOG_LEVEL=1 yarn start
 
-// runs against a clean database
-2c. $ FRESH=true yarn start
+// runs in a specific environment
+2c. $ ENV=dev yarn start
 
 // everything can be combined of course:
-$ FRESH=true DEBUG=true LOG_LEVEL=2 yarn start
+$ ENV=dev DEBUG=true LOG_LEVEL=2 yarn start
 ```
+
+### Environments
+
+Environment affects database and session.
+
+- `ENV=prod` (default): runs against the production values;
+- `ENV=dev`: runs against the development values;
+- `ENV=fresh`: runs against an empty database and session.
+
+`prod` and `dev` have no specific meaning: it is just useful not to mess with one own's music collection when working on new features.
 
 ## Build
 
