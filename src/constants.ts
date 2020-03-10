@@ -23,7 +23,8 @@ export enum SEARCH_URLS {
 
 export const COLORS = {
   MAIN_COLOR: '#9b4dca',
-  SKELETON_COLOR: '#282828'
+  SKELETON_COLOR: '#282828',
+  BACKGROUND_COLOR: '#1F1F1F'
 };
 
 export const LIBRARY_GRID_COLUMN_COUNT = 5;
