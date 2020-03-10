@@ -38,6 +38,6 @@ describe('AllPlaylistContainer', () => {
     mountInAll(
       <AllPlaylistContainer playlists={playlists}/>
       , defaultStore);
-    expect(document.title).toBe('playlists: all');
+    expect(document.title).toBe('All Playlists');
   });
 });

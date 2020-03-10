@@ -62,7 +62,7 @@ describe('SearchView', () => {
       player: {}
     };
     mountInAll(<SearchView/>, store);
-    expect(document.title).toBe('searching...');
+    expect(document.title).toBe('Searching…');
   });
 
   it('should update page title with search info', () => {
@@ -73,6 +73,6 @@ describe('SearchView', () => {
       player: {}
     };
     mountInAll(<SearchView/>, store);
-    expect(document.title).toBe(`search: 0 results for slowdive`);
+    expect(document.title).toBe('0 results for slowdive');
   });
 });

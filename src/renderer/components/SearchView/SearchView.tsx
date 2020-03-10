@@ -2,6 +2,7 @@ import React, { ReactElement, useEffect } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { SearchResultList } from './SearchResultList/SearchResultList';
 import { ApplicationState } from '../../store/store';
 import { updateTitle } from '../../store/modules/ui';
@@ -18,6 +19,7 @@ import actionsMap from '../../actions/actions';
 import './SearchView.scss';
 
 export const SearchView = (): ReactElement => {
+  const { t } = useTranslation();
   const location = useLocation();
   const dispatch = useDispatch();
   const currentAlbumId = useSelector(({ player }: ApplicationState) => player.currentAlbumId);
@@ -31,12 +33,12 @@ export const SearchView = (): ReactElement => {
 
   useEffect(() => {
     if (isSearching) {
-      dispatch(updateTitle('searching...'));
+      dispatch(updateTitle(t('search.searching')));
       return;
     }
     const title = query
-      ? `search: ${results.length} results for ${query}`
-      : 'search';
+      ? t('search.results', { count: results.length, query })
+      : t('search.title');
     dispatch(updateTitle(title));
   }, [results, query]);
 
@@ -113,7 +115,7 @@ export const SearchView = (): ReactElement => {
 
 	return (
     <div className="search-view">
-      <h1>Results for: <span className="highlight">{query}</span></h1>
+      <h1>{t('search.resultsFor')} <span className="highlight">{query}</span></h1>
       <div className="results-wrapper">
         <CSSTransition
           in={!isSearching}

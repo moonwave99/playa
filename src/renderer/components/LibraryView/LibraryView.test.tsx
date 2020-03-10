@@ -65,6 +65,6 @@ describe('LibraryView', () => {
     mountInAll(
       <LibraryView/>
     , defaultStore);
-    expect(document.title).toBe('library');
+    expect(document.title).toBe('Library');
   });
 });

@@ -43,6 +43,9 @@
       "latest": {
         "title": "Latest additions"
       },
+      "artists": {
+        "title": "Browse by Artists"
+      },
       "import": {
         "title": "Import Album:",
         "form": {
@@ -80,7 +83,11 @@
       }
     },
     "search": {
+      "title": "Search",
+      "results": "{{count}} results for {{query}}",
+      "resultsFor": "Results for",
       "empty": "No results for",
+      "searching": "Searching…",
       "buttons": {
         "search": "Search…"
       },
