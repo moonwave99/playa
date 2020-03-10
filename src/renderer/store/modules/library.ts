@@ -1,6 +1,6 @@
 import { intersection, uniq, without } from 'lodash';
 import { ipcRenderer as ipc } from 'electron';
-import { toArray } from '../../utils/storeUtils';
+import { toArray, toObj, EntityHashMap } from '../../utils/storeUtils';
 
 import {
   Playlist,
@@ -28,6 +28,7 @@ const {
 const DEFAULT_LATEST_ALBUM_LIMIT = 10;
 
 export type Artist = {
+  _id: string;
   name: string;
   count: number;
 }
@@ -35,7 +36,7 @@ export type Artist = {
 export interface LibraryState {
   latestAlbumId: Album['_id'];
   latest: Album['_id'][];
-  artists: Artist[];
+  artistsById: EntityHashMap<Artist>;
 }
 
 export const LIBRARY_GET_LATEST_REQUEST   = 'playa/library/GET_LATEST_REQUEST';
@@ -158,7 +159,7 @@ export const removeAlbums = (albumsToRemove: Album[]): Function =>
 export const getArtists = (): Function =>
   async (dispatch: Function, getState: Function): Promise<void> => {
     const { library } = getState();
-    if (library.artists.length > 0) {
+    if (Object.keys(library.artistsById).length > 0) {
       return;
     }
     const results = await ipc.invoke(IPC_ALBUM_GET_STATS_REQUEST, 'artist');
@@ -166,7 +167,7 @@ export const getArtists = (): Function =>
       memo: Artist[],
       { key: name, value: count }: { key: string; value: number }
     ) => {
-      memo.push({ name, count });
+      memo.push({ _id: name, name, count });
       return memo;
     }, []);
     dispatch({
@@ -178,7 +179,7 @@ export const getArtists = (): Function =>
 const INITIAL_STATE = {
   latest: [] as Album['_id'][],
   latestAlbumId: null as Album['_id'],
-  artists: [] as Artist[]
+  artistsById: {}
 };
 
 function getLatestAlbumId(albums: Album[]): Album['_id'] {
@@ -210,7 +211,7 @@ export default function reducer(
     case LIBRARY_GET_ARTISTS_RESPONSE:
       return {
         ...state,
-        artists: action.artists
+        artistsById: toObj(action.artists)
       };
     case LIBRARY_GET_LATEST_REQUEST:
     case LIBRARY_GET_ARTISTS_REQUEST:

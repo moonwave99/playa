@@ -28,7 +28,7 @@ const defaultStore = {
   library: {
     latest: albums.map(({ _id }) => _id),
     latestAlbumID: albums[1]._id,
-    artists: [] as object[]
+    artistsById: {}
   }
 };
 

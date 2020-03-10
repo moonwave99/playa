@@ -8,6 +8,8 @@ import cx from 'classnames';
 import { getLatestRequest } from '../../store/modules/library';
 import { LatestAlbumsView } from './LatestAlbumsView/LatestAlbumsView';
 import { ImportView } from './ImportView/ImportView';
+import { ArtistListView } from './ArtistListView/ArtistListView';
+
 import { ApplicationState } from '../../store/store';
 import { updateTitle } from '../../store/modules/ui';
 import { Album, saveAlbumRequest } from '../../store/modules/album';
@@ -17,6 +19,7 @@ import { showDialog } from '../../store/modules/ui';
 import { openContextMenu } from '../../lib/contextMenu';
 import { selectFolderDialog } from '../../lib/dialog';
 import useNativeDrop, { NativeTypes } from '../../hooks/useNativeDrop/useNativeDrop';
+
 import {
   ALBUM_CONTEXT_ACTIONS,
   AlbumActionsGroups,
@@ -29,7 +32,6 @@ import {
 } from '../../actions/libraryContentActions';
 
 import actionsMap from '../../actions/actions';
-
 import { daysAgo } from '../../utils/datetimeUtils';
 
 import {
@@ -194,6 +196,7 @@ export const LibraryView = (): ReactElement => {
         currentAlbumId={currentAlbumId}
         onAlbumContextMenu={onAlbumContextMenu}
         onAlbumDoubleClick={onAlbumDoubleClick}/>
+      <ArtistListView/>
       <ReactModal
         className={{
           base: 'modal-content',
