@@ -13,10 +13,10 @@
     color: $highlightColor;
   }
   .letter-list {
+    @include monospace();
     list-style: none;
     margin: $mainUnit * 0.5 0 0 0;
     padding: 0;
-    font-family: 'Fira Mono', monospace;
     li {
       display: inline-block;
       line-height: $mainUnit;

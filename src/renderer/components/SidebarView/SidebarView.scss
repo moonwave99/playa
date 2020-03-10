@@ -1,4 +1,5 @@
 @import "../../styles/variables";
+@import "../../styles/mixins";
 
 .sidebar {
   background-color: $backgroundDarkColor;
@@ -44,11 +45,11 @@
   }
 
   .sidebar-title {
+    @include sans();
     height: $mainUnit;
     line-height: $mainUnit;
     padding: 0 $mainUnit;
     margin: 0;
-    font-family: 'Inter UI', sans-serif;
     font-size: 1rem;
     font-weight: 700;
     color: $highlightColor;

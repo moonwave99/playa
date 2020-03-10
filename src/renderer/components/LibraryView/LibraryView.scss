@@ -10,8 +10,8 @@
   &.drag-is-over {
     &.drag-can-drop {
       &:after {
+        @include monospace();
         content: 'Drop Folders';
-        font-family: 'Fira Mono', monospace;
         color: $mainColor;
         font-size: 8vw;
         line-height: 15vw;

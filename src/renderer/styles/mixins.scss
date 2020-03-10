@@ -1,5 +1,17 @@
 @import './variables';
 
+@mixin sans() {
+  font-family: 'Inter UI', sans-serif;
+}
+
+@mixin monospace() {
+  font-family: 'Fira Mono', monospace;
+}
+
+@mixin header() {
+  font-family: 'Nunito', sans-serif;
+}
+
 @mixin input() {
   color: $lightColor;
   transition: background-color .2s ease-in-out;

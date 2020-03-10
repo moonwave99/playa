@@ -22,10 +22,10 @@
     }
   }
   ol {
+    @include monospace();
     margin: 0;
     padding: 0;
     list-style: none;
-    font-family: 'Fira Mono', monospace;
     max-width: $tracklistMaxWidth;
     > li {
       margin: 1rem 0;
