@@ -33,7 +33,7 @@ export const QueueView = (): ReactElement => {
   } = useSelector(playerSelector);
 
   useEffect(() => {
-    dispatch(updateTitle(`playback queue: ${queue.length} album(s)`));
+    dispatch(updateTitle(t('queue.title', { length: queue.length })));
   }, [queue.length]);
 
   useEffect(() => {
@@ -99,7 +99,7 @@ export const QueueView = (): ReactElement => {
   ];
 	return (
 		<section className="queue" id="queue">
-      <h1>{t('queue.title')}</h1>
+      <h1>{t('queue.title', { length: queue.length })}</h1>
       { queue.length > 0
         ? <AlbumListView
             albumView={UIAlbumView.Extended}

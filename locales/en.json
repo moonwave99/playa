@@ -21,10 +21,11 @@
       }
     },
     "queue": {
-      "title": "Playback Queue",
+      "title": "Playback Queue: {{length}} album(s)",
       "empty": "Queue is empty."
     },
     "library": {
+      "title": "Library",
       "empty": "Library is empty.",
       "buttons": {
         "addNewAlbum": "Add New Album"
