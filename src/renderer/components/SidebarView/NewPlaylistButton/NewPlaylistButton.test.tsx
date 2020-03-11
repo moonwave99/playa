@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { renderInDnDProvider, mountInDnDProvider } from '../../../../../test/testUtils';
 
 import { NewPlaylistButton } from './NewPlaylistButton';

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { renderInAll, mockRouter } from '../../../../test/testUtils';
 import { playlists, albums, tracks } from '../../../../test/testFixtures';
 import { toObj } from '../../utils/storeUtils';

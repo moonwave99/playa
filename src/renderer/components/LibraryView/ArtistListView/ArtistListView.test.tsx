@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { renderInAll, mountInAll } from '../../../../../test/testUtils';
 import { artists } from '../../../../../test/testFixtures';
 import { Album } from '../../../store/modules/album';

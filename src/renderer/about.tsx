@@ -1,5 +1,5 @@
 import { ipcRenderer as ipc } from 'electron';
-import * as React from 'react';
+import React from 'react';
 import * as ReactDOM from 'react-dom';
 import WebFont from 'webfontloader';
 import initI18n from './initializers/initI18n';
