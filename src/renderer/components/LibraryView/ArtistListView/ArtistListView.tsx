@@ -12,11 +12,13 @@ import { ALPHABET } from '../../../utils/artistUtils';
 
 type ArtistListViewProps = {
   selectedLetter: string;
+  loading: boolean;
   onLetterClick: Function;
 }
 
 export const ArtistListView: FC<ArtistListViewProps> = ({
   selectedLetter,
+  loading = false,
   onLetterClick
 }) => {
   const artists = useSelector(
@@ -46,8 +48,10 @@ export const ArtistListView: FC<ArtistListViewProps> = ({
     );
   }
 
+  const classNames = cx('library-artists', { loading });
+
   return (
-    <section className="library-artists">
+    <section className={classNames}>
       <ul className="alphabet">
         {ALPHABET.map(renderLetter)}
       </ul>

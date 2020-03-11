@@ -1,4 +1,5 @@
 import React, { FC, ReactElement } from 'react';
+import { CSSTransition } from 'react-transition-group';
 import { useTranslation } from 'react-i18next';
 
 import { AlbumGridView } from '../AlbumGridView/AlbumGridView';
@@ -8,6 +9,7 @@ import { Album } from '../../../store/modules/album';
 type LatestAlbumsViewProps = {
   albums: Album[];
   currentAlbumId: Album['_id'];
+  loading: boolean;
   onAlbumContextMenu: Function;
   onAlbumDoubleClick: Function;
 };
@@ -15,6 +17,7 @@ type LatestAlbumsViewProps = {
 export const LatestAlbumsView: FC<LatestAlbumsViewProps> = ({
   albums = [],
   currentAlbumId,
+  loading = false,
   onAlbumContextMenu,
   onAlbumDoubleClick
 }) => {
@@ -30,13 +33,23 @@ export const LatestAlbumsView: FC<LatestAlbumsViewProps> = ({
     );
   }
 
+  function renderEmptyPlaceholder(): ReactElement {
+    return <p className="library-latest-albums-empty-placeholder">{t('library.empty')}</p>;
+  }
+
   return (
     <section className="library-latest-albums">
       <h1>{t('library.latest.title')}</h1>
-      { albums.length
-        ? renderAlbums()
-        : <p className="library-latest-albums-empty-placeholder">{t('library.empty')}</p>
-      }
+      <CSSTransition
+        in={!loading}
+        timeout={300}
+        classNames="album-grid"
+        unmountOnExit>
+        { albums.length
+          ? renderAlbums()
+          : renderEmptyPlaceholder()
+        }
+      </CSSTransition>
     </section>
   );
 }

@@ -1,5 +1,6 @@
 import { ipcRenderer as ipc } from 'electron';
 import React, { ReactElement, useState, useEffect } from 'react';
+import { findDOMNode } from 'react-dom';
 import ReactModal from 'react-modal';
 import { useLocation, useHistory } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
@@ -78,11 +79,15 @@ export const LibraryView = (): ReactElement => {
 	const {
     latest,
     latestAlbumId,
-    currentAlbumId
+    currentAlbumId,
+    loadingLatest,
+    loadingArtists
   } = useSelector(({ albums, library, player }: ApplicationState) => ({
     latest: library.latest.map((_id: Album['_id']) => albums.allById[_id]),
     latestAlbumId: library.latestAlbumId,
-    currentAlbumId: player.currentAlbumId
+    currentAlbumId: player.currentAlbumId,
+    loadingLatest: library.loadingLatest,
+    loadingArtists: library.loadingArtists
   }));
 
   async function showImportDialog(folder: string): Promise<void> {
@@ -209,6 +214,16 @@ export const LibraryView = (): ReactElement => {
     history.replace(
       `${LIBRARY}?letter=${letter}`
     );
+    const target = findDOMNode(document.querySelector('.alphabet')) as HTMLElement;
+    if (!target) {
+      return;
+    }
+    setImmediate(() => {
+      target.scrollIntoView({
+        block: 'start',
+        behavior: 'smooth'
+      });
+    });
   }
 
   const libraryClasses = cx('library', {
@@ -224,12 +239,14 @@ export const LibraryView = (): ReactElement => {
       <LatestAlbumsView
         albums={latest}
         currentAlbumId={currentAlbumId}
+        loading={loadingLatest}
         onAlbumContextMenu={onAlbumContextMenu}
         onAlbumDoubleClick={onAlbumDoubleClick}/>
       {
         latest.length > 0
         ? <ArtistListView
             selectedLetter={selectedLetter}
+            loading={loadingArtists}
             onLetterClick={onLetterClick}/>
         : null
       }

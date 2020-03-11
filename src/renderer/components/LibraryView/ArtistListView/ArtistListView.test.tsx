@@ -17,10 +17,11 @@ const defaultStore = {
 };
 
 describe('ArtistListView', () => {
-  it('should render an .library-artists', () => {
+  it('should render a .library-artists', () => {
     const wrapper = renderInAll(
       <ArtistListView
         selectedLetter="a"
+        loading={false}
         onLetterClick={jest.fn()}/>
     , defaultStore);
     expect(wrapper.is('.library-artists')).toBe(true);
@@ -30,6 +31,7 @@ describe('ArtistListView', () => {
     const wrapper = renderInAll(
       <ArtistListView
         selectedLetter="a"
+        loading={false}
         onLetterClick={jest.fn()}/>
     , defaultStore);
     expect(wrapper.find('.alphabet')).toHaveLength(1);
@@ -39,15 +41,27 @@ describe('ArtistListView', () => {
     const wrapper = renderInAll(
       <ArtistListView
         selectedLetter="a"
+        loading={false}
         onLetterClick={jest.fn()}/>
     , defaultStore);
     expect(wrapper.find('.artist-list')).toHaveLength(1);
+  });
+
+  it('should be .loading if loading', () => {
+    const wrapper = renderInAll(
+      <ArtistListView
+        selectedLetter="a"
+        loading={true}
+        onLetterClick={jest.fn()}/>
+    , defaultStore);
+    expect(wrapper.is('.loading')).toBe(true);
   });
 
   it('should select the A letter', () => {
     const wrapper = renderInAll(
       <ArtistListView
         selectedLetter="a"
+        loading={false}
         onLetterClick={jest.fn()}/>
     , defaultStore);
     expect(wrapper.find('.alphabet .letter-a').is('.selected')).toBe(true);
@@ -58,6 +72,7 @@ describe('ArtistListView', () => {
     const wrapper = renderInAll(
       <ArtistListView
         selectedLetter="a"
+        loading={false}
         onLetterClick={jest.fn()}/>
     , defaultStore);
     expect(wrapper.find('.artist-list .artist-name').text()).toBe('Adorable');
@@ -68,6 +83,7 @@ describe('ArtistListView', () => {
     const wrapper = mountInAll(
       <ArtistListView
         selectedLetter="a"
+        loading={false}
         onLetterClick={handler}/>
     , defaultStore);
     wrapper

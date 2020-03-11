@@ -29,6 +29,7 @@ describe('library actions', () => {
     it('should dispatch LIBRARY_GET_LATEST_REQUEST and LIBRARY_GET_LATEST_RESPONSE', async () => {
       const store = mockStore({});
       const expectedActions = [
+        { type: LIBRARY_GET_LATEST_REQUEST },
         { type: ALBUM_GET_LIST_RESPONSE },
         { type: LIBRARY_GET_LATEST_RESPONSE }
       ];
@@ -61,8 +62,11 @@ describe('library actions', () => {
       });
       const expectedActions = [
         {
+          type: LIBRARY_GET_ARTISTS_REQUEST
+        },
+        {
           type: LIBRARY_GET_ARTISTS_RESPONSE,
-          artists
+          artists: toObj(artists)
         }
       ];
       await getArtists()(store.dispatch, store.getState);
@@ -90,10 +94,10 @@ describe('library actions', () => {
       const expectedActions = [
         {
           type: LIBRARY_GET_ARTISTS_RESPONSE,
-          artists: [
+          artists: toObj([
             artists.find(({ name }) => name === 'Slowdive'),
             artists.find(({ name }) => name === 'My Bloody Valentine')
-          ]
+          ])
         },
         {
           type: ALBUM_GET_LIST_RESPONSE,
@@ -112,13 +116,14 @@ describe('library actions', () => {
   });
 
   describe('removeAlbums', () => {
-    it('should dispatch LIBRARY_GET_LATEST_RESPONSE', async () => {
+    it('should dispatch expected actions', async () => {
       const store = mockStore({
         playlists: {
           allById: toObj(playlists)
         },
         library: {
-          latest: albums.map(({ _id }) => _id)
+          latest: albums.map(({ _id }) => _id),
+          artistsById: toObj(artists)
         },
         albums: {
           allById: toObj(albums)
@@ -131,6 +136,17 @@ describe('library actions', () => {
         }
       });
       const expectedActions = [
+        {
+          type: LIBRARY_GET_ARTISTS_RESPONSE,
+          artists: {
+            ...toObj(artists),
+            'Slowdive': {
+              _id: 'Slowdive',
+              name: 'Slowdive',
+              count: 0
+            }
+          }
+        },
         {
           type: LIBRARY_GET_LATEST_RESPONSE,
           results: [albums[1]]
@@ -150,6 +166,8 @@ describe('library reducer', () => {
   const initialState = {
     latest: [] as Album['_id'][],
     latestAlbumId: null as Album['_id'],
+    loadingLatest: false,
+    loadingArtists: false,
     artistsById: {}
   }
   it('should return the initial state', () => {
@@ -163,6 +181,8 @@ describe('library reducer', () => {
     })).toEqual({
       latest: [],
       latestAlbumId: null,
+      loadingLatest: true,
+      loadingArtists: false,
       artistsById: {}
     });
   });
@@ -173,6 +193,8 @@ describe('library reducer', () => {
     })).toEqual({
       latest: [],
       latestAlbumId: null,
+      loadingLatest: false,
+      loadingArtists: true,
       artistsById: {}
     });
   });
@@ -185,6 +207,8 @@ describe('library reducer', () => {
     })).toEqual({
       latest: albums.map(({ _id }) => _id),
       latestAlbumId: albums[1]._id,
+      loadingLatest: false,
+      loadingArtists: false,
       artistsById: {}
     });
   });
@@ -192,10 +216,12 @@ describe('library reducer', () => {
   it('should handle LIBRARY_GET_ARTISTS_RESPONSE', () => {
     expect(reducer(initialState, {
       type: LIBRARY_GET_ARTISTS_RESPONSE,
-      artists
+      artists: toObj(artists)
     })).toEqual({
       latest: [],
       latestAlbumId: null,
+      loadingLatest: false,
+      loadingArtists: false,
       artistsById: toObj(artists)
     });
   });
@@ -207,6 +233,8 @@ describe('library reducer', () => {
     })).toEqual({
       latest: albums.map(({ _id }) => _id),
       latestAlbumId: `${Math.max(...albums.map(({ _id }) => +_id))}`,
+      loadingLatest: false,
+      loadingArtists: false,
       artistsById: {}
     });
   });

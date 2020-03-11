@@ -2,12 +2,10 @@
 @import "../../../styles/mixins";
 
 .library-artists {
-  h2 {
-    font-size: 2em;
-    color: $highlightColor;
-    line-height: $mainUnit;
-    margin-bottom: 2rem;
-    padding: 0 var(--section-gutter);
+  opacity: 1;
+  transition: opacity .3s ease-in-out;
+  &.loading {
+    opacity: 0;
   }
   .alphabet {
     @include monospace();
@@ -59,7 +57,7 @@
         padding: 1.5rem 1rem;
         margin: 0 1rem 1rem 0;
         background-color: rgba($backgroundDarkColor, .4);
-        border-radius: 1rem;
+        border-radius: .5rem;
         color: $lightColor;
         .artist-name {
           @include ellipsis(100%);

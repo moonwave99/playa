@@ -3,7 +3,7 @@ import thunk from 'redux-thunk';
 const mockStore = configureStore([thunk]);
 
 import { toObj } from '../utils/storeUtils';
-import { playlists, albums } from '../../../test/testFixtures';
+import { playlists, albums, artists } from '../../../test/testFixtures';
 
 import {
   PLAYLIST_GET_LIST_RESPONSE
@@ -51,7 +51,8 @@ describe('libraryContentActions', () => {
           allById: toObj(albums)
         },
         library: {
-          latest: albums.map(({ _id }) => _id)
+          latest: albums.map(({ _id }) => _id),
+          artistsById: toObj(artists)
         }
       });
       const { handler } = removeAlbumsAction({
