@@ -6,9 +6,9 @@ import './AlbumGridView.scss';
 
 type AlbumGridViewProps = {
   albums: Album[];
-  currentAlbumId: Album['_id'];
-  onAlbumContextMenu: Function;
-  onAlbumDoubleClick: Function;
+  currentAlbumId?: Album['_id'];
+  onAlbumContextMenu?: Function;
+  onAlbumDoubleClick?: Function;
 };
 
 export const AlbumGridView: FC<AlbumGridViewProps> = ({

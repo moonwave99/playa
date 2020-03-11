@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
 import Player from '../../lib/player';
 import { PlayerView } from '../PlayerView/PlayerView';
+import { ArtistView } from '../ArtistView/ArtistView';
 import { LibraryView } from '../LibraryView/LibraryView';
 import { QueueView } from '../QueueView/QueueView';
 import { SearchView } from '../SearchView/SearchView';
@@ -42,6 +43,7 @@ import {
   PLAYLIST_ALL,
   PLAYLIST_CREATE,
   PLAYLIST_SHOW,
+  ARTIST_SHOW,
   LIBRARY
 } from '../../routes';
 
@@ -184,6 +186,9 @@ export const App: FC<AppProps> = ({
         </div>
         <div className="main-wrapper">
           <Switch>
+            <Route path={ARTIST_SHOW}>
+              <ArtistView/>
+            </Route>
             <Route path={LIBRARY}>
               <LibraryView/>
             </Route>

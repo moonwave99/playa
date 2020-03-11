@@ -22,7 +22,8 @@ const {
   IPC_ALBUM_GET_LATEST_REQUEST,
   IPC_ALBUM_DELETE_LIST_REQUEST,
   IPC_PLAYLIST_SAVE_LIST_REQUEST,
-  IPC_ALBUM_GET_STATS_REQUEST
+  IPC_ALBUM_GET_STATS_REQUEST,
+  IPC_SEARCH_REQUEST
 } = IPC_MESSAGES;
 
 const DEFAULT_LATEST_ALBUM_LIMIT = 10;
@@ -33,11 +34,23 @@ export type Artist = {
   count: number;
 }
 
+export function getDefaultArtist(): Artist {
+  return {
+    _id: null,
+    name: '',
+    count: 0
+  };
+}
+
 export interface LibraryState {
   latestAlbumId: Album['_id'];
   latest: Album['_id'][];
   artistsById: EntityHashMap<Artist>;
 }
+
+export const selectors = {
+  findArtistById: ({ library }: { library: LibraryState }, id: Artist['_id']): Artist => library.artistsById[id],
+};
 
 export const LIBRARY_GET_LATEST_REQUEST   = 'playa/library/GET_LATEST_REQUEST';
 export const LIBRARY_GET_LATEST_RESPONSE  = 'playa/library/GET_LATEST_RESPONSE';
@@ -67,7 +80,6 @@ interface LibraryGetArtistsResponseAction {
   type: typeof LIBRARY_GET_ARTISTS_RESPONSE;
   artists: Artist[];
 }
-
 
 export type LibraryActionTypes =
     LibraryGetLatestRequestAction
@@ -173,6 +185,15 @@ export const getArtists = (): Function =>
     dispatch({
       type: LIBRARY_GET_ARTISTS_RESPONSE,
       artists
+    });
+  }
+
+export const getArtistReleases = ({ name }: Artist): Function =>
+  async (dispatch: Function): Promise<void> => {
+    const results = await ipc.invoke(IPC_SEARCH_REQUEST, `artist: ${name}`);
+    dispatch({
+      type: ALBUM_GET_LIST_RESPONSE,
+      results
     });
   }
 

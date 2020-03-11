@@ -22,33 +22,33 @@
   }
 }
 
-@mixin albumType($param) {
+@mixin albumType($param, $opacity: 1) {
   &-album {
-    #{$param}: $albumColor;
+    #{$param}: rgba($albumColor, $opacity);
   }
   &-ep {
-    #{$param}: $epColor;
+    #{$param}: rgba($epColor, $opacity);
   }
   &-single {
-    #{$param}: $singleColor;
+    #{$param}: rgba($singleColor, $opacity);
   }
   &-compilation {
-    #{$param}: $compilationColor;
+    #{$param}: rgba($compilationColor, $opacity);
   }
   &-remix {
-    #{$param}: $remixColor;
+    #{$param}: rgba($remixColor, $opacity);
   }
   &-bootleg {
-    #{$param}: $bootlegColor;
+    #{$param}: rgba($bootlegColor, $opacity);
   }
   &-various {
-    #{$param}: $variousColor;
+    #{$param}: rgba($variousColor, $opacity);
   }
   &-soundtrack {
-    #{$param}: $soundtrackColor;
+    #{$param}: rgba($soundtrackColor, $opacity);
   }
   &-tribute {
-    #{$param}: $tributeColor;
+    #{$param}: rgba($tributeColor, $opacity);
   }
 }
 
@@ -108,7 +108,8 @@
       display: none;
     }
   }
-  &.loaded > img{
+  &.loaded > img {
+    border: 1px solid rgba($lightColor, .1);
     opacity: 1;
   }
 }
@@ -145,8 +146,11 @@
       display: none;
     }
   }
-  &.loaded > img{
-    opacity: 1;
+  &.loaded {
+    > img {
+     opacity: 1;
+     border: 1px solid rgba($lightColor, .1);
+   }
   }
 }
 

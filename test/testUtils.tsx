@@ -101,6 +101,15 @@ export const mountInAll = wrap(
   Wrappers.DndProvider
 );
 
+type MockRouterParams = {
+  routeParams?: object;
+  routeMatch?: { url: string };
+  location?: {
+    pathname: string;
+    search: string;
+  }
+}
+
 export const mockRouter = function({
   routeParams = { _id: '1' },
   routeMatch = { url: '/'},
@@ -108,7 +117,7 @@ export const mockRouter = function({
     pathname: '/',
     search: ''
   }
-}) {
+}: MockRouterParams) {
   jest.mock('react-router', () => ({
     ...jest.requireActual('react-router'),
     useParams: () => routeParams,

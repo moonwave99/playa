@@ -196,7 +196,7 @@ export const LibraryView = (): ReactElement => {
         currentAlbumId={currentAlbumId}
         onAlbumContextMenu={onAlbumContextMenu}
         onAlbumDoubleClick={onAlbumDoubleClick}/>
-      <ArtistListView/>
+      { latest.length > 0 ? <ArtistListView/> : null }
       <ReactModal
         className={{
           base: 'modal-content',

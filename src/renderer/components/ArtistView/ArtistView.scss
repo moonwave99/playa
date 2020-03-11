@@ -1,0 +1,27 @@
+@import "../../styles/variables";
+@import "../../styles/common";
+
+.artist {
+	width: 100%;
+	padding: var(--section-gutter) 0;
+	h1 {
+		margin: 0
+			var(--section-gutter)
+			var(--section-gutter)
+			var(--section-gutter);
+    line-height: $mainUnit;
+    color: $highlightColor;
+	}
+	.artist-releases {
+		.artist-release-group	{
+			padding: calc(var(--section-gutter) / 2) var(--section-gutter);
+			@include albumType('background-color', .1);
+			.header {
+				@include albumType('color');
+				.release-count {
+
+				}
+			}
+		}
+	}
+}

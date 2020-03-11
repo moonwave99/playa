@@ -14,7 +14,7 @@ import { ApplicationState } from '../../../../store/store';
 import { UIDragTypes } from '../../../../store/modules/ui';
 import useNativeDrop from '../../../../hooks/useNativeDrop/useNativeDrop';
 
-import { ARTISTS_SHOW } from '../../../../routes';
+import { ARTIST_SHOW } from '../../../../routes';
 
 type AlbumGridTileViewProps = {
   album: Album;
@@ -92,7 +92,7 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
         onContextMenu={_onContextMenu}/>
       <Link
         className="album-artist"
-        to={generatePath(ARTISTS_SHOW, { artist })}>
+        to={generatePath(ARTIST_SHOW, { name: artist })}>
         {artist}
       </Link>
       <span className="album-title">{title}</span>

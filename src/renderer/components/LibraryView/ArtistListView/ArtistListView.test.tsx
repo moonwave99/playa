@@ -1,13 +1,17 @@
 import * as React from 'react';
 import { renderInAll, mountInAll } from '../../../../../test/testUtils';
 import { artists } from '../../../../../test/testFixtures';
+import { Album } from '../../../store/modules/album';
 import { toObj } from '../../../utils/storeUtils';
 import { ArtistListView } from './ArtistListView';
 
 const defaultStore = {
+  player: {
+    currentAlbumId: null as Album['_id']
+  },
   library: {
     latest: [] as object[],
-    latestAlbumID: null as string,
+    latestAlbumId: null as Album['_id'],
     artistsById: toObj(artists)
   }
 };

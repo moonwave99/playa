@@ -2,13 +2,14 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 const mockStore = configureStore([thunk]);
 
-import { albums, playlists } from '../../../../test/testFixtures';
+import { albums, artists, playlists } from '../../../../test/testFixtures';
 import { Album, ALBUM_GET_LIST_RESPONSE } from './album';
 import { toObj } from '../../utils/storeUtils';
 
 import reducer, {
   LibraryActionTypes,
   getLatestRequest,
+  getArtistReleases,
   removeAlbums,
   LIBRARY_GET_LATEST_REQUEST,
   LIBRARY_GET_LATEST_RESPONSE
@@ -31,6 +32,21 @@ describe('library actions', () => {
       expect(store.getActions()).toEqual(expectedActions);
     });
   });
+
+  describe('getArtistReleases', () => {
+    it('should dispatch ALBUM_GET_LIST_RESPONSE', async () => {
+      const store = mockStore({});
+      const expectedActions = [
+        {
+          type: ALBUM_GET_LIST_RESPONSE,
+          results: albums
+        }
+      ];
+      await getArtistReleases(artists[0])(store.dispatch);
+      expect(store.getActions()).toEqual(expectedActions);
+    });
+  });
+
   describe('removeAlbums', () => {
     it('should dispatch LIBRARY_GET_LATEST_RESPONSE', async () => {
       const store = mockStore({
