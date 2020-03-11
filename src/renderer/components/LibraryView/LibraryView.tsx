@@ -1,6 +1,7 @@
 import { ipcRenderer as ipc } from 'electron';
 import React, { ReactElement, useState, useEffect } from 'react';
 import ReactModal from 'react-modal';
+import { useLocation, useHistory } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -40,6 +41,10 @@ import {
   IPC_MESSAGES
 } from '../../../constants';
 
+import {
+  LIBRARY
+} from '../../routes';
+
 const {
   IPC_ALBUM_EXISTS,
   IPC_ALBUM_CONTENT_RAW_REQUEST,
@@ -48,13 +53,27 @@ const {
 
 import './LibraryView.scss';
 
+const DEFAULT_LETTER = 'a';
+
 export const LibraryView = (): ReactElement => {
   const { t } = useTranslation();
 	const dispatch = useDispatch();
+  const location = useLocation();
+	const history = useHistory();
 
   const [folderToImport, setFolderToImport] = useState(null);
   const [showImportModal, setShowImportModal] = useState(false);
   const [tracksToImport, setTracksToImport] = useState([]);
+  const [selectedLetter, setSelectedLetter] = useState(DEFAULT_LETTER);
+
+  const q = new URLSearchParams(location.search);
+  const letter = q.get('letter');
+
+  useEffect(() => {
+    if (letter) {
+      setSelectedLetter(letter);
+    }
+  }, [letter]);
 
 	const {
     latest,
@@ -185,6 +204,13 @@ export const LibraryView = (): ReactElement => {
     setTracksToImport([]);
   }
 
+  function onLetterClick(letter: string): void {
+    setSelectedLetter(letter);
+    history.replace(
+      `${LIBRARY}?letter=${letter}`
+    );
+  }
+
   const libraryClasses = cx('library', {
     'drag-is-over': isOver,
     'drag-can-drop': canDrop
@@ -200,7 +226,13 @@ export const LibraryView = (): ReactElement => {
         currentAlbumId={currentAlbumId}
         onAlbumContextMenu={onAlbumContextMenu}
         onAlbumDoubleClick={onAlbumDoubleClick}/>
-      { latest.length > 0 ? <ArtistListView/> : null }
+      {
+        latest.length > 0
+        ? <ArtistListView
+            selectedLetter={selectedLetter}
+            onLetterClick={onLetterClick}/>
+        : null
+      }
       <ReactModal
         className={{
           base: 'modal-content',

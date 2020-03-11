@@ -1,6 +1,7 @@
 import { intersection, uniq, without } from 'lodash';
 import { ipcRenderer as ipc } from 'electron';
 import { toArray, toObj, EntityHashMap } from '../../utils/storeUtils';
+import { VARIOUS_ARTIST_KEY, NUMERIC_KEY } from '../../utils/artistUtils';
 
 import {
   Playlist,
@@ -9,7 +10,8 @@ import {
 
 import {
   Album,
-  ALBUM_GET_LIST_RESPONSE
+  ALBUM_GET_LIST_RESPONSE,
+  VARIOUS_ARTISTS_ID
 } from './album';
 
 import {
@@ -55,6 +57,13 @@ export interface LibraryState {
 
 export const selectors = {
   findArtistById: ({ library }: { library: LibraryState }, id: Artist['_id']): Artist => library.artistsById[id],
+  findArtistsByLetter: ({ library }: { library: LibraryState }, letter: string): Artist[] => {
+    return Object.values(library.artistsById).filter(({ name }) => {
+      return (letter === VARIOUS_ARTIST_KEY && name === VARIOUS_ARTISTS_ID)
+        || (letter.match(/[a-z]/) && name.charAt(0).toLowerCase() === letter)
+        || (!name.charAt(0).toLowerCase().match(/[a-z]/) && name !== VARIOUS_ARTISTS_ID && letter === NUMERIC_KEY);
+    });
+  }
 };
 
 export const LIBRARY_GET_LATEST_REQUEST   = 'playa/library/GET_LATEST_REQUEST';

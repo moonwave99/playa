@@ -19,35 +19,45 @@ const defaultStore = {
 describe('ArtistListView', () => {
   it('should render an .library-artists', () => {
     const wrapper = renderInAll(
-      <ArtistListView/>
+      <ArtistListView
+        selectedLetter="a"
+        onLetterClick={jest.fn()}/>
     , defaultStore);
     expect(wrapper.is('.library-artists')).toBe(true);
   });
 
   it('should contain a title', () => {
     const wrapper = renderInAll(
-      <ArtistListView/>
+      <ArtistListView
+        selectedLetter="a"
+        onLetterClick={jest.fn()}/>
     , defaultStore);
     expect(wrapper.find('h2')).toHaveLength(1);
   });
 
   it('should contain an .alphabet', () => {
     const wrapper = renderInAll(
-      <ArtistListView/>
+      <ArtistListView
+        selectedLetter="a"
+        onLetterClick={jest.fn()}/>
     , defaultStore);
     expect(wrapper.find('.alphabet')).toHaveLength(1);
   });
 
   it('should contain an .artist-list', () => {
     const wrapper = renderInAll(
-      <ArtistListView/>
+      <ArtistListView
+        selectedLetter="a"
+        onLetterClick={jest.fn()}/>
     , defaultStore);
     expect(wrapper.find('.artist-list')).toHaveLength(1);
   });
 
   it('should select the A letter', () => {
     const wrapper = renderInAll(
-      <ArtistListView/>
+      <ArtistListView
+        selectedLetter="a"
+        onLetterClick={jest.fn()}/>
     , defaultStore);
     expect(wrapper.find('.alphabet .letter-a').is('.selected')).toBe(true);
   });
@@ -55,30 +65,23 @@ describe('ArtistListView', () => {
   // 1 artists starting with 'a' in the fixtures
   it('should contain 1 list item', () => {
     const wrapper = renderInAll(
-      <ArtistListView/>
+      <ArtistListView
+        selectedLetter="a"
+        onLetterClick={jest.fn()}/>
     , defaultStore);
     expect(wrapper.find('.artist-list .artist-name').text()).toBe('Adorable');
   });
 
   it('should select letter on letter click', () => {
+    const handler = jest.fn();
     const wrapper = mountInAll(
-      <ArtistListView/>
+      <ArtistListView
+        selectedLetter="a"
+        onLetterClick={handler}/>
     , defaultStore);
-    const letter = wrapper.find('.alphabet .letter-s');
-    letter.find('a').simulate('click');
-    expect(wrapper.find('.alphabet .letter-s').is('.selected')).toBe(true);
-  });
-
-  it('should display artists on letter click', () => {
-    const wrapper = mountInAll(
-      <ArtistListView/>
-    , defaultStore);
-    const letter = wrapper.find('.alphabet li').at(0);
-    letter.find('a').simulate('click');
-    expect(wrapper.find('.artist-list .artist-name').text()).toBe('883');
-
-    const vaLetter = wrapper.find('.alphabet li').last();
-    vaLetter.find('a').simulate('click');
-    expect(wrapper.find('.artist-list .artist-name').text()).toBe('_various-artists');
+    wrapper
+      .find('.alphabet .letter-s a')
+      .simulate('click');
+    expect(handler).toHaveBeenCalledWith('s');
   });
 });

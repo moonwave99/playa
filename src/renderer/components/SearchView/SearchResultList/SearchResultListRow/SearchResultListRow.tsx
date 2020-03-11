@@ -11,7 +11,9 @@ import { UIDragTypes } from '../../../../store/modules/ui';
 import { Album, VARIOUS_ARTISTS_ID } from '../../../../store/modules/album';
 import { selectors as coverSelectors } from '../../../../store/modules/cover';
 import { ApplicationState } from '../../../../store/store';
+import { VARIOUS_ARTIST_KEY } from '../../../../utils/artistUtils';
 import { ARTIST_SHOW } from '../../../../routes';
+
 
 type SearchResultListRowProps = {
   row: Row;
@@ -97,7 +99,7 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
             onContextMenu={_onArtistContextMenu}
             to={generatePath(ARTIST_SHOW, { name: cell.value })}
             className="album-artist-link">
-              {cell.value === VARIOUS_ARTISTS_ID ? 'V/A' : cell.value}
+              {cell.value === VARIOUS_ARTISTS_ID ? VARIOUS_ARTIST_KEY : cell.value}
           </Link>
         break;
       case 'title':

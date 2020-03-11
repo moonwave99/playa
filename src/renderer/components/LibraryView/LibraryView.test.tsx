@@ -58,7 +58,21 @@ describe('LibraryView', () => {
     const wrapper = mountInAll(
       <LibraryView/>
     , defaultStore);
-    expect(wrapper.find('.button-add-album')).toHaveLength(1);
+    expect(wrapper.find('.library-artists')).toHaveLength(1);
+  });
+
+  it('should not contain a .library-artists if there are no albums', () => {
+    const wrapper = mountInAll(
+      <LibraryView/>
+    , {
+        ...defaultStore,
+        library: {
+          latest: [],
+          latestAlbumId: null,
+          artistsById: {}
+        }
+      });
+    expect(wrapper.find('.library-artists')).toHaveLength(0);
   });
 
   it('should contain an .library-latest-albums', () => {
@@ -73,5 +87,16 @@ describe('LibraryView', () => {
       <LibraryView/>
     , defaultStore);
     expect(document.title).toBe('Library');
+  });
+
+  it('should update page title', () => {
+    const wrapper = mountInAll(
+      <LibraryView/>
+    , defaultStore);
+    wrapper
+      .find('.alphabet .letter-s a')
+      .simulate('click');
+
+    expect(wrapper.find('.alphabet .letter-s').is('.selected')).toBe(true);
   });
 });

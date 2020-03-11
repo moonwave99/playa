@@ -16,6 +16,7 @@ import {
 import { Album, getAlbumsByArtist } from '../../store/modules/album';
 import { updateTitle } from '../../store/modules/ui';
 import { ApplicationState } from '../../store/store';
+import { formatArtistName } from '../../utils/artistUtils';
 import { LIBRARY } from '../../routes';
 
 import {
@@ -114,7 +115,7 @@ export const ArtistView = (): ReactElement => {
     !_id
     ? <Redirect to={LIBRARY}/>
     : <section className="artist">
-        <h1>{name}</h1>
+        <h1>{formatArtistName(name)}</h1>
         {renderReleases()}
       </section>
   );
