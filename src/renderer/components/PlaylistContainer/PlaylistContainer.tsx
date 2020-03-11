@@ -47,7 +47,7 @@ export const PlaylistContainer = (): ReactElement => {
   } = useSelector((state: ApplicationState) => getPlaylistById(state, _id));
 
   useEffect(() => {
-    dispatch(updateTitle(`playlist: ${playlist.title}`));
+    dispatch(updateTitle(`Playlist: ${playlist.title}`));
   }, [playlist.title]);
 
   useEffect(() => {

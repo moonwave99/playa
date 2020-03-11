@@ -3,6 +3,7 @@ import createCachedSelector from 're-reselect';
 import {
   EntityHashMap,
   toObj,
+  toArray,
   ensureAll,
   updateId
 } from '../../utils/storeUtils';
@@ -82,6 +83,21 @@ type GetAlbumContentByIdSelection = {
   tracks: Track[];
   cover: string;
 }
+
+export const getAlbumsByArtist = createCachedSelector(
+  ({ library }: ApplicationState, id: string) => library.artistsById[id],
+  selectors.allById,
+  ({ _id }, albums): EntityHashMap<Album[]> =>
+    toArray(albums).filter(({ artist }) => artist === _id)
+    .reduce((memo: EntityHashMap<Album[]>, album) => {
+      const { type } = album;
+      if (!memo[type]) {
+        memo[type] = [];
+      }
+      memo[type].push(album);
+      return memo;
+    }, {})
+)((_state_: ApplicationState, id: string) => id);
 
 export const getAlbumContentById = createCachedSelector(
   selectors.findById,

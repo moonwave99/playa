@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { renderInAll, mountInAll } from '../../../../test/testUtils';
 import { albums } from '../../../../test/testFixtures';
 import { toObj } from '../../utils/storeUtils';
@@ -33,7 +33,7 @@ describe('QueueView', () => {
     expect(wrapper.is('.queue')).toBe(true);
   });
 
-  it('should render a title', () => {
+  it('should contain a title', () => {
     const wrapper = renderInAll(<QueueView/>, defaultStore);
     expect(wrapper.find('h1')).toHaveLength(1);
   });
@@ -62,7 +62,7 @@ describe('QueueView', () => {
         queue: albums.map(({ _id }) => _id)
       }
     });
-    expect(document.title).toBe(`playback queue: ${albums.length} album(s)`);
+    expect(document.title).toBe(`Playback Queue: ${albums.length} album(s)`);
   });
 
   it('should call the onAlbumContextMenu handler when an album is right clicked', () => {

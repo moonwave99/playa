@@ -13,7 +13,7 @@
 	}
 
 	.version {
-		font-family: 'Fira Mono', monospace;
+		@include monospace();
 	}
 
 	.links {

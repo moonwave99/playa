@@ -5,9 +5,11 @@
   @include clearFix();
   .album-grid-tile {
     float: left;
+    padding-right: 1.5rem;
+    padding-bottom: 1.5rem;
     width: calc(100% / 4);
     @media (min-width: $wideWindowThreshold) {
-      width: calc(100% / 5);
+      width: calc(100% / 7);
     }
     @media (max-width: $smallWindowThreshold) {
       width: calc(100% / 3);
@@ -15,18 +17,36 @@
     @media (max-width: $miniWindowThreshold) {
       width: calc(100% / 2);
     }
-    @include droppable();
-    .album-cover {
-      @include squareCover($backgroundDarkColor);
-    }
     &:not(.is-playing) {
-      @include playOverlay('../../../static/icons/album/play.svg', $mainUnit);
+      .album-cover {
+        @include playOverlay('../../../static/icons/album/play.svg', $mainUnit);
+      }
     }
     &.is-playing {
       .album-cover {
         box-shadow: 0 0 0 5px $mainColor;
         z-index: 1000;
       }
+    }
+    .album-cover {
+      @include squareCover($backgroundDarkColor);
+      @include droppable();
+      transform: scale(.9);
+    }
+    .album-artist,
+    .album-title {
+      text-align: center;
+      display: block;
+      line-height: 1.5rem;
+      @include ellipsis(100%);
+    }
+    .album-artist {
+      &:hover {
+        cursor: pointer;
+      }
+    }
+    .album-title {
+      font-size: .8rem;
     }
   }
   .album-grid-empty-placeholder {

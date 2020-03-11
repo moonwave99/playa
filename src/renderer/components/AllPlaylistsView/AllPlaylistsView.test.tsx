@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { renderInAll, mountInAll } from '../../../../test/testUtils';
 import { playlists } from '../../../../test/testFixtures';
 
@@ -36,7 +36,7 @@ describe('AllPlaylistsView', () => {
     expect(wrapper.is('.all-playlists-view')).toBe(true);
   });
 
-  it('should render a title', () => {
+  it('should contain a title', () => {
     const wrapper = renderInAll(
       <AllPlaylistsView
         playlists={playlists}

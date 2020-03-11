@@ -124,7 +124,7 @@ export const ImportView: FC<ImportViewProps> = ({
       case 'text':
       case 'number':
         return (
-          <p className={`form-field ${className || accessor}`} key={accessor}>
+          <p className={`form-field ${className || `input-${accessor}`}`} key={accessor}>
             <label htmlFor={accessor}>{title}</label>
             <input
               onChange={onChange}
@@ -139,7 +139,7 @@ export const ImportView: FC<ImportViewProps> = ({
         );
       case 'checkbox':
       return (
-        <p className={`form-field ${className || accessor}`} key={accessor}>
+        <p className={`form-field ${className || `input-${accessor}`}`} key={accessor}>
           <label htmlFor={accessor}>
             <input
               onChange={onChange}
@@ -156,7 +156,7 @@ export const ImportView: FC<ImportViewProps> = ({
       );
       case 'select':
         return (
-          <p className={`form-field ${className || accessor}`} key={accessor}>
+          <p className={`form-field ${className || `input-${accessor}`}`} key={accessor}>
             <label htmlFor={accessor}>{title}</label>
             <select
               onChange={onChange}

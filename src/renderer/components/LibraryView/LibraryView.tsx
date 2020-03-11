@@ -1,13 +1,17 @@
 import { ipcRenderer as ipc } from 'electron';
 import React, { ReactElement, useState, useEffect } from 'react';
+import { findDOMNode } from 'react-dom';
 import ReactModal from 'react-modal';
+import { useLocation, useHistory } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import cx from 'classnames';
 import { getLatestRequest } from '../../store/modules/library';
-import { AlbumGridView } from './AlbumGridView/AlbumGridView';
+import { LatestAlbumsView } from './LatestAlbumsView/LatestAlbumsView';
 import { ImportView } from './ImportView/ImportView';
+import { ArtistListView } from './ArtistListView/ArtistListView';
+
 import { ApplicationState } from '../../store/store';
 import { updateTitle } from '../../store/modules/ui';
 import { Album, saveAlbumRequest } from '../../store/modules/album';
@@ -17,6 +21,7 @@ import { showDialog } from '../../store/modules/ui';
 import { openContextMenu } from '../../lib/contextMenu';
 import { selectFolderDialog } from '../../lib/dialog';
 import useNativeDrop, { NativeTypes } from '../../hooks/useNativeDrop/useNativeDrop';
+
 import {
   ALBUM_CONTEXT_ACTIONS,
   AlbumActionsGroups,
@@ -29,7 +34,6 @@ import {
 } from '../../actions/libraryContentActions';
 
 import actionsMap from '../../actions/actions';
-
 import { daysAgo } from '../../utils/datetimeUtils';
 
 import {
@@ -37,6 +41,10 @@ import {
 	LIBRARY_LATEST_DAY_COUNT,
   IPC_MESSAGES
 } from '../../../constants';
+
+import {
+  LIBRARY
+} from '../../routes';
 
 const {
   IPC_ALBUM_EXISTS,
@@ -46,22 +54,40 @@ const {
 
 import './LibraryView.scss';
 
+const DEFAULT_LETTER = 'a';
+
 export const LibraryView = (): ReactElement => {
   const { t } = useTranslation();
 	const dispatch = useDispatch();
+  const location = useLocation();
+	const history = useHistory();
 
   const [folderToImport, setFolderToImport] = useState(null);
   const [showImportModal, setShowImportModal] = useState(false);
   const [tracksToImport, setTracksToImport] = useState([]);
+  const [selectedLetter, setSelectedLetter] = useState(DEFAULT_LETTER);
+
+  const q = new URLSearchParams(location.search);
+  const letter = q.get('letter');
+
+  useEffect(() => {
+    if (letter) {
+      setSelectedLetter(letter);
+    }
+  }, [letter]);
 
 	const {
     latest,
-    latestAlbumID,
-    playingAlbumID
+    latestAlbumId,
+    currentAlbumId,
+    loadingLatest,
+    loadingArtists
   } = useSelector(({ albums, library, player }: ApplicationState) => ({
     latest: library.latest.map((_id: Album['_id']) => albums.allById[_id]),
-    latestAlbumID: library.latestAlbumID,
-    playingAlbumID: player.currentAlbumId
+    latestAlbumId: library.latestAlbumId,
+    currentAlbumId: player.currentAlbumId,
+    loadingLatest: library.loadingLatest,
+    loadingArtists: library.loadingArtists
   }));
 
   async function showImportDialog(folder: string): Promise<void> {
@@ -77,6 +103,7 @@ export const LibraryView = (): ReactElement => {
     }
 
     const folderTracks = await ipc.invoke(IPC_ALBUM_CONTENT_RAW_REQUEST, folder);
+
     if (folderTracks.length === 0) {
       dispatch(
         showDialog(
@@ -88,6 +115,7 @@ export const LibraryView = (): ReactElement => {
     }
 
     const processedTracks = await ipc.invoke(IPC_TRACK_GET_LIST_RAW_REQUEST, folderTracks);
+
     setFolderToImport(folder);
     setTracksToImport(processedTracks);
     setShowImportModal(true);
@@ -117,7 +145,7 @@ export const LibraryView = (): ReactElement => {
 	}, []);
 
 	useEffect(() => {
-    dispatch(updateTitle('library'));
+    dispatch(updateTitle(t('library.title')));
   }, []);
 
 	function onAlbumContextMenu(album: Album): void {
@@ -137,7 +165,7 @@ export const LibraryView = (): ReactElement => {
         type: LIBRARY_CONTENT_CONTEXT_ACTIONS,
         selection: [album],
         dispatch,
-        playingAlbumID,
+        currentAlbumId,
         actionGroups: [
           LibraryContentActionGroups.ALBUMS
         ]
@@ -162,11 +190,13 @@ export const LibraryView = (): ReactElement => {
   }
 
   function onImportModalRequestClose(): void {
-    setShowImportModal(false)
+    setShowImportModal(false);
+    setFolderToImport(null);
+    setTracksToImport([]);
   }
 
   function onImportFormSubmit(album: Album, tracklist: Track[]): void {
-    const updatedAlbum = { ...album, _id: `${+latestAlbumID + 1}`}
+    const updatedAlbum = { ...album, _id: `${+latestAlbumId + 1}`}
     dispatch(
       getTrackListRequest(
         tracklist.map(({ _id }) => _id )
@@ -179,6 +209,23 @@ export const LibraryView = (): ReactElement => {
     setTracksToImport([]);
   }
 
+  function onLetterClick(letter: string): void {
+    setSelectedLetter(letter);
+    history.replace(
+      `${LIBRARY}?letter=${letter}`
+    );
+    const target = findDOMNode(document.querySelector('.alphabet')) as HTMLElement;
+    if (!target) {
+      return;
+    }
+    setImmediate(() => {
+      target.scrollIntoView({
+        block: 'start',
+        behavior: 'smooth'
+      });
+    });
+  }
+
   const libraryClasses = cx('library', {
     'drag-is-over': isOver,
     'drag-can-drop': canDrop
@@ -186,17 +233,23 @@ export const LibraryView = (): ReactElement => {
 
 	return (
 		<section className={libraryClasses} ref={drop}>
-      <header>
-        <h1>{t('library.title')}</h1>
-        <button className="button button-add-album" onClick={onAddAlbumButtonClick}>
-          <FontAwesomeIcon className="button-icon" icon="plus"/> {t('library.buttons.addNewAlbum')}
-        </button>
-      </header>
-			<AlbumGridView
-				albums={latest}
-        currentAlbumId={playingAlbumID}
-				onAlbumContextMenu={onAlbumContextMenu}
-				onAlbumDoubleClick={onAlbumDoubleClick}/>
+      <button className="button button-add-album" onClick={onAddAlbumButtonClick}>
+        <FontAwesomeIcon className="button-icon" icon="plus"/> {t('library.buttons.addNewAlbum')}
+      </button>
+      <LatestAlbumsView
+        albums={latest}
+        currentAlbumId={currentAlbumId}
+        loading={loadingLatest}
+        onAlbumContextMenu={onAlbumContextMenu}
+        onAlbumDoubleClick={onAlbumDoubleClick}/>
+      {
+        latest.length > 0
+        ? <ArtistListView
+            selectedLetter={selectedLetter}
+            loading={loadingArtists}
+            onLetterClick={onLetterClick}/>
+        : null
+      }
       <ReactModal
         className={{
           base: 'modal-content',

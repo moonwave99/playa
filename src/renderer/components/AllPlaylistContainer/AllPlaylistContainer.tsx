@@ -1,5 +1,6 @@
 import React, { FC, ReactElement, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { AllPlaylistsView } from '../AllPlaylistsView/AllPlaylistsView';
 import { Playlist } from '../../store/modules/playlist';
 import { updateTitle } from '../../store/modules/ui';
@@ -19,10 +20,11 @@ type AllPlaylistContainerProps = {
 export const AllPlaylistContainer: FC<AllPlaylistContainerProps> = ({
   playlists = []
 }): ReactElement => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(updateTitle('playlists: all'));
+    dispatch(updateTitle(t('playlists.all.title')));
   }, []);
 
   function onPlaylistContextMenu(playlist: Playlist): void {

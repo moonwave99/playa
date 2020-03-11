@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { renderInAll } from '../../../../../test/testUtils';
 
 import { CustomDragLayer } from './CustomDragLayer';

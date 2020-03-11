@@ -1,5 +1,5 @@
 import { flow } from 'lodash';
-import React, { ReactElement } from 'React';
+import React, { ReactElement } from 'react';
 import { Provider } from 'react-redux';
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
@@ -101,6 +101,15 @@ export const mountInAll = wrap(
   Wrappers.DndProvider
 );
 
+type MockRouterParams = {
+  routeParams?: object;
+  routeMatch?: { url: string };
+  location?: {
+    pathname: string;
+    search: string;
+  }
+}
+
 export const mockRouter = function({
   routeParams = { _id: '1' },
   routeMatch = { url: '/'},
@@ -108,7 +117,7 @@ export const mockRouter = function({
     pathname: '/',
     search: ''
   }
-}) {
+}: MockRouterParams) {
   jest.mock('react-router', () => ({
     ...jest.requireActual('react-router'),
     useParams: () => routeParams,

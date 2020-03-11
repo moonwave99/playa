@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { renderInAll, mountInAll } from '../../../../test/testUtils';
 
 import { AboutView } from './AboutView';
@@ -28,7 +28,7 @@ describe('AboutView', () => {
 		expect(wrapper.is('.about')).toBe(true);
   });
 
-  it('should render a title', () => {
+  it('should contain a title', () => {
 		const wrapper = renderInAll(
 			<AboutView
         name={props.name}

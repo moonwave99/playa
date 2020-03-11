@@ -14,14 +14,16 @@ $countBadgeOffset: 2rem;
   height: 100%;
 
   .search-results-drag-preview {
+    @include albumCover($searchResultsCoverWidth, $backgroundDarkColor);
     width: $searchResultsCoverWidth;
     height: $searchResultsCoverWidth;
     background-color: $backgroundLightColor;
-    @include albumCover($searchResultsCoverWidth, $backgroundDarkColor);
     position: relative;
     border: 1px solid darken($lightColor, 40%);
     box-shadow: 0px 0px 10px 0px rgba(white, 0.1);
+
     .count-badge {
+      @include monospace();
       background-color: red;
       width: $countBadgeSize;
       height: $countBadgeSize;
@@ -33,7 +35,6 @@ $countBadgeOffset: 2rem;
       text-align: center;
       line-height: $countBadgeSize;
       vertical-align: middle;
-      font-family: 'Fira Mono', monospace;
       font-size: 0.9rem;
     }
   }

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { renderInAll, mountInAll, mockRouter } from '../../../../test/testUtils';
 import { playlists, albums } from '../../../../test/testFixtures';
 import { toObj } from '../../utils/storeUtils';
@@ -45,6 +45,6 @@ describe('PlaylistContainer', () => {
 
   it('should update page title with playlist info', () => {
     mountInAll(<PlaylistContainer/>, defaultStore);
-    expect(document.title).toBe(`playlist: ${playlists[0].title}`);
+    expect(document.title).toBe(`Playlist: ${playlists[0].title}`);
   });
 });

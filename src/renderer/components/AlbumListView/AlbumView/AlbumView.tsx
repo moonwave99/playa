@@ -18,7 +18,7 @@ import {
   showTrackNumbers,
   showTrackArtists
 } from '../../../utils/albumUtils';
-import { SEARCH } from '../../../routes';
+import { ARTIST_SHOW } from '../../../routes';
 import './AlbumView.scss';
 
 type AlbumViewProps = {
@@ -127,7 +127,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
   function renderArtist(): ReactElement {
     return (
       <Link
-        to={`${generatePath(SEARCH)}?query=artist: ${encodeURIComponent(artist)}`}
+        to={generatePath(ARTIST_SHOW, { name: artist })}
         className="album-artist-link">
           {formatArtist(album)}
       </Link>

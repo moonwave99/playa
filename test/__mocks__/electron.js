@@ -14,6 +14,7 @@ const {
   IPC_ALBUM_CONTENT_REQUEST,
   IPC_ALBUM_GET_SINGLE_INFO,
   IPC_ALBUM_DELETE_LIST_REQUEST,
+  IPC_ALBUM_GET_STATS_REQUEST,
   IPC_TRACK_GET_LIST_REQUEST,
   IPC_DIALOG_SHOW_MESSAGE
 } = IPC_MESSAGES;
@@ -74,6 +75,13 @@ module.exports = {
         case IPC_TRACK_GET_LIST_REQUEST:
           const tracksMap = toObj(fixtures.tracks);
           return args[0].map(x => tracksMap[x]);
+        case IPC_ALBUM_GET_STATS_REQUEST:
+          if (args[0] === 'artist') {
+            return fixtures.artists.map(x => ({
+              key: x.name,
+              value: x.count
+            }));
+          }
         default:
           return;
       }

@@ -1,5 +1,5 @@
 import { ipcRenderer as ipc } from 'electron';
-import * as React from 'react';
+import React from 'react';
 import * as ReactDOM from 'react-dom';
 import { ConnectedRouter } from 'connected-react-router';
 import { Provider } from 'react-redux';

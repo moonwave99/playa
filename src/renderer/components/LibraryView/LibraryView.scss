@@ -2,7 +2,7 @@
 @import "../../styles/mixins";
 
 .library {
-  padding: var(--section-gutter);
+  padding: var(--section-gutter) 0;
   height: 100%;
   width: 100%;
   overflow: auto;
@@ -10,8 +10,8 @@
   &.drag-is-over {
     &.drag-can-drop {
       &:after {
+        @include monospace();
         content: 'Drop Folders';
-        font-family: 'Fira Mono', monospace;
         color: $mainColor;
         font-size: 8vw;
         line-height: 15vw;
@@ -29,24 +29,29 @@
       }
     }
   }
-  header {
-    position: relative;
+
+  .button-add-album {
+    position: absolute;
+    top: var(--section-gutter);
+    right: var(--section-gutter);
+    padding: 0 1rem;
+    @media (max-width: $miniWindowThreshold) {
+      display: none;
+    }
   }
+
   h1 {
     margin: 0 0 $mainUnit 0;
     line-height: $mainUnit;
     color: $highlightColor;
   }
-  .button-add-album {
-    position: absolute;
-    padding: 0 1rem;
-    top: 0;
-    right: 0;
-    @media (max-width: $miniWindowThreshold) {
-      display: none;
-    }
+
+  .library-latest-albums {
+    margin-bottom: $mainUnit;
+    padding: 0 var(--section-gutter);
   }
-  .library-empty-placeholder {
+
+  .library-latest-albums-empty-placeholder {
     @include emptyComponent();
   }
 }

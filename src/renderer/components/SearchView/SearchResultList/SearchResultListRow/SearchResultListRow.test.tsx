@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Row, Cell, ColumnInstance } from 'react-table';
 import { Album } from '../../../../store/modules/album';
 import { renderInAll, mountInAll } from '../../../../../../test/testUtils';

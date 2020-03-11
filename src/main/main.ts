@@ -23,7 +23,8 @@ import {
   MIN_WIDTH as minWidth,
   MIN_HEIGHT as minHeight,
   IS_MACOS,
-  IPC_MESSAGES
+  IPC_MESSAGES,
+  COLORS
 } from '../constants';
 
 let mainWindow: Electron.BrowserWindow;
@@ -31,7 +32,8 @@ let mainWindow: Electron.BrowserWindow;
 function createWindow({
   size = [DEFAULT_WIDTH, DEFAULT_HEIGHT],
   position = [0, 0],
-  isRunningInSpectron = false
+  isRunningInSpectron = false,
+  backgroundColor = COLORS.BACKGROUND_COLOR
 }): void {
   const [width, height] = size;
   const [x, y] = position;
@@ -42,6 +44,7 @@ function createWindow({
     y,
     minWidth,
     minHeight,
+    backgroundColor,
     maximizable: false,
     focusable: true,
     show: false,

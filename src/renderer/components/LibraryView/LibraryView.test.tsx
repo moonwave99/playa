@@ -1,6 +1,6 @@
-import * as React from 'react';
+import React from 'react';
 import { mountInAll } from '../../../../test/testUtils';
-import { albums } from '../../../../test/testFixtures';
+import { albums, artists } from '../../../../test/testFixtures';
 import { LibraryView } from './LibraryView';
 import { Album } from '../../store/modules/album';
 import { toObj } from '../../utils/storeUtils';
@@ -27,7 +27,8 @@ const defaultStore = {
   },
   library: {
     latest: albums.map(({ _id }) => _id),
-    latestAlbumID: albums[1]._id
+    latestAlbumId: albums[1]._id,
+    artistsById: toObj(artists)
   }
 };
 
@@ -53,7 +54,28 @@ describe('LibraryView', () => {
     expect(wrapper.find('.button-add-album')).toHaveLength(1);
   });
 
-  it('should contain an .album-grid', () => {
+  it('should contain a .library-artists', () => {
+    const wrapper = mountInAll(
+      <LibraryView/>
+    , defaultStore);
+    expect(wrapper.find('.library-artists')).toHaveLength(1);
+  });
+
+  it('should not contain a .library-artists if there are no albums', () => {
+    const wrapper = mountInAll(
+      <LibraryView/>
+    , {
+        ...defaultStore,
+        library: {
+          latest: [],
+          latestAlbumId: null,
+          artistsById: {}
+        }
+      });
+    expect(wrapper.find('.library-artists')).toHaveLength(0);
+  });
+
+  it('should contain an .library-latest-albums', () => {
     const wrapper = mountInAll(
       <LibraryView/>
     , defaultStore);
@@ -64,6 +86,17 @@ describe('LibraryView', () => {
     mountInAll(
       <LibraryView/>
     , defaultStore);
-    expect(document.title).toBe('library');
+    expect(document.title).toBe('Library');
+  });
+
+  it('should update page title', () => {
+    const wrapper = mountInAll(
+      <LibraryView/>
+    , defaultStore);
+    wrapper
+      .find('.alphabet .letter-s a')
+      .simulate('click');
+
+    expect(wrapper.find('.alphabet .letter-s').is('.selected')).toBe(true);
   });
 });

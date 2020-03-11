@@ -25,7 +25,8 @@ const {
   IPC_ALBUM_EXISTS,
   IPC_ALBUM_DELETE_LIST_REQUEST,
   IPC_ALBUM_CONTENT_RAW_REQUEST,
-  IPC_TRACK_GET_LIST_RAW_REQUEST
+  IPC_TRACK_GET_LIST_RAW_REQUEST,
+  IPC_TRACK_DELETE_LIST_REQUEST
 } = IPC_MESSAGES;
 
 const DEFAULT_SEARCH_FIELDS = ['title', 'artist'];
@@ -182,5 +183,9 @@ export default async function initDatabase({
 
   ipc.handle(IPC_TRACK_GET_LIST_RAW_REQUEST,
     async (_event, tracks: string[]) => await loadTracklist(tracks, db.track, true, false)
+  );
+
+  ipc.handle(IPC_TRACK_DELETE_LIST_REQUEST,
+    async (_event, tracks) => await db.track.removeBulk(tracks)
   );
 }

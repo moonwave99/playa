@@ -21,11 +21,11 @@
       }
     },
     "queue": {
-      "title": "Playback Queue",
+      "title": "Playback Queue: {{length}} album(s)",
       "empty": "Queue is empty."
     },
     "library": {
-      "title": "Latest additions",
+      "title": "Library",
       "empty": "Library is empty.",
       "buttons": {
         "addNewAlbum": "Add New Album"
@@ -39,6 +39,9 @@
           "title": "No tracks found",
           "message": "No tracks were found in selected directory. Supported files are 'mp3', 'm4a', 'flac', 'ogg'."
         }
+      },
+      "latest": {
+        "title": "Latest additions"
       },
       "import": {
         "title": "Import Album:",
@@ -77,7 +80,11 @@
       }
     },
     "search": {
+      "title": "Search",
+      "results": "{{count}} results for {{query}}",
+      "resultsFor": "Results for",
       "empty": "No results for",
+      "searching": "Searching…",
       "buttons": {
         "search": "Search…"
       },

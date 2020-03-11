@@ -3,7 +3,7 @@ import thunk from 'redux-thunk';
 const mockStore = configureStore([thunk]);
 
 import { toObj } from '../utils/storeUtils';
-import { playlists, albums } from '../../../test/testFixtures';
+import { playlists, albums, artists } from '../../../test/testFixtures';
 
 import {
   PLAYLIST_GET_LIST_RESPONSE
@@ -30,7 +30,7 @@ describe('libraryContentActions', () => {
     it('should return a title and a handler', async () => {
       const { title, handler } = removeAlbumsAction({
         selection: [albums[0]],
-        playingAlbumID: null
+        currentAlbumId: null
       });
       expect(typeof title).toBe('string');
       expect(typeof handler).toBe('function');
@@ -51,12 +51,13 @@ describe('libraryContentActions', () => {
           allById: toObj(albums)
         },
         library: {
-          latest: albums.map(({ _id }) => _id)
+          latest: albums.map(({ _id }) => _id),
+          artistsById: toObj(artists)
         }
       });
       const { handler } = removeAlbumsAction({
         selection: [albums[0]],
-        playingAlbumID: null,
+        currentAlbumId: null,
         dispatch: store.dispatch
       });
       await handler();

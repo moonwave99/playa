@@ -1,0 +1,79 @@
+@import "../../../styles/variables";
+@import "../../../styles/mixins";
+
+.library-artists {
+  opacity: 1;
+  transition: opacity .3s ease-in-out;
+  &.loading {
+    opacity: 0;
+  }
+  .alphabet {
+    @include monospace();
+    position: sticky;
+    top: calc(var(--section-gutter) * -1);
+    margin: 0 0 2rem 0;
+    padding: 0 var(--section-gutter);
+    list-style: none;
+    font-size: 1.5rem;
+    line-height: $mainUnit;
+    background-color: $backgroundDarkColor;
+    text-align: center;
+    li {
+      display: inline-block;
+      padding: 0 1rem;
+      text-transform: uppercase;
+      &.selected {
+        a, a:hover {
+          color: $mainColor;
+        }
+      }
+      a {
+        color: $lightColor;
+        &:hover {
+          color: $highlightColor;
+        }
+      }
+    }
+  }
+  .artist-list {
+    margin: 0;
+    padding: 0 var(--section-gutter);
+    list-style: none;
+    @include clearFix();
+    li {
+      float: left;
+      width: calc(100% / 3);
+      @media (min-width: $wideWindowThreshold) {
+        width: calc(100% / 4);
+      }
+      @media (max-width: $smallWindowThreshold) {
+        width: calc(100% / 2);
+      }
+      @media (max-width: $miniWindowThreshold) {
+        width: 100%;
+      }
+      .artist-list-item {
+        display: flex;
+        padding: 1.5rem 1rem;
+        margin: 0 1rem 1rem 0;
+        background-color: rgba($backgroundDarkColor, .4);
+        border-radius: .5rem;
+        color: $lightColor;
+        .artist-name {
+          @include ellipsis(100%);
+        }
+        &:hover {
+          transition: background-color .2s ease-in-out;
+          background-color: $backgroundDarkColor;
+          .artist-name {
+            text-decoration: underline;
+          }
+        }
+        .release-count {
+          margin-left: auto;
+          color: darken($lightColor, 30%);
+        }
+      }
+    }
+  }
+}
