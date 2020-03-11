@@ -1,6 +1,5 @@
 import React, { FC, ReactElement, SyntheticEvent } from 'react';
 import { useSelector } from 'react-redux';
-import { useTranslation } from 'react-i18next';
 import cx from 'classnames';
 import { ArtistListItemView} from './ArtistListItemView/ArtistListItemView';
 
@@ -20,8 +19,6 @@ export const ArtistListView: FC<ArtistListViewProps> = ({
   selectedLetter,
   onLetterClick
 }) => {
-  const { t } = useTranslation();
-
   const artists = useSelector(
     (state: ApplicationState) => librarySelectors.findArtistsByLetter(state, selectedLetter)
   );
@@ -51,7 +48,6 @@ export const ArtistListView: FC<ArtistListViewProps> = ({
 
   return (
     <section className="library-artists">
-      <h2>{t('library.artists.title')}</h2>
       <ul className="alphabet">
         {ALPHABET.map(renderLetter)}
       </ul>

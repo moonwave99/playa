@@ -26,15 +26,6 @@ describe('ArtistListView', () => {
     expect(wrapper.is('.library-artists')).toBe(true);
   });
 
-  it('should contain a title', () => {
-    const wrapper = renderInAll(
-      <ArtistListView
-        selectedLetter="a"
-        onLetterClick={jest.fn()}/>
-    , defaultStore);
-    expect(wrapper.find('h2')).toHaveLength(1);
-  });
-
   it('should contain an .alphabet', () => {
     const wrapper = renderInAll(
       <ArtistListView

@@ -2,7 +2,7 @@
 @import "../../styles/mixins";
 
 .library {
-  padding: var(--section-gutter);
+  padding: var(--section-gutter) 0;
   height: 100%;
   width: 100%;
   overflow: auto;
@@ -29,6 +29,7 @@
       }
     }
   }
+
   .button-add-album {
     position: absolute;
     top: var(--section-gutter);
@@ -47,6 +48,7 @@
 
   .library-latest-albums {
     margin-bottom: $mainUnit;
+    padding: 0 var(--section-gutter);
   }
 
   .library-latest-albums-empty-placeholder {

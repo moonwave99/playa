@@ -43,9 +43,6 @@
       "latest": {
         "title": "Latest additions"
       },
-      "artists": {
-        "title": "Browse by Artists"
-      },
       "import": {
         "title": "Import Album:",
         "form": {

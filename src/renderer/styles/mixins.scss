@@ -109,8 +109,9 @@
     }
   }
   &.loaded > img {
-    border: 1px solid rgba($lightColor, .1);
+    border: 1px solid rgba($darkColor, .1);
     opacity: 1;
+    background-color: transparent;
   }
 }
 
@@ -149,7 +150,8 @@
   &.loaded {
     > img {
      opacity: 1;
-     border: 1px solid rgba($lightColor, .1);
+     border: 1px solid rgba($darkColor, .1);
+     background-color: transparent;
    }
   }
 }
