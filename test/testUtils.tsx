@@ -1,5 +1,5 @@
 import { flow } from 'lodash';
-import React, { ReactElement } from 'React';
+import React, { ReactElement } from 'react';
 import { Provider } from 'react-redux';
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
