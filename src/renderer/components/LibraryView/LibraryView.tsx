@@ -79,6 +79,7 @@ export const LibraryView = (): ReactElement => {
     }
 
     const folderTracks = await ipc.invoke(IPC_ALBUM_CONTENT_RAW_REQUEST, folder);
+
     if (folderTracks.length === 0) {
       dispatch(
         showDialog(
@@ -90,6 +91,7 @@ export const LibraryView = (): ReactElement => {
     }
 
     const processedTracks = await ipc.invoke(IPC_TRACK_GET_LIST_RAW_REQUEST, folderTracks);
+
     setFolderToImport(folder);
     setTracksToImport(processedTracks);
     setShowImportModal(true);
@@ -164,7 +166,9 @@ export const LibraryView = (): ReactElement => {
   }
 
   function onImportModalRequestClose(): void {
-    setShowImportModal(false)
+    setShowImportModal(false);
+    setFolderToImport(null);
+    setTracksToImport([]);
   }
 
   function onImportFormSubmit(album: Album, tracklist: Track[]): void {

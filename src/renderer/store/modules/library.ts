@@ -16,6 +16,10 @@ import {
   PLAYER_UPDATE_QUEUE
 } from './player';
 
+import {
+  Track
+} from './track';
+
 import { IPC_MESSAGES } from '../../../constants';
 
 const {
@@ -23,6 +27,7 @@ const {
   IPC_ALBUM_DELETE_LIST_REQUEST,
   IPC_PLAYLIST_SAVE_LIST_REQUEST,
   IPC_ALBUM_GET_STATS_REQUEST,
+  IPC_TRACK_DELETE_LIST_REQUEST,
   IPC_SEARCH_REQUEST
 } = IPC_MESSAGES;
 
@@ -105,7 +110,27 @@ export const getLatestRequest = (
   }
 
 export const addAlbumsToLibrary = (albums: Album[]): Function =>
-  (dispatch: Function): void => {
+  (dispatch: Function, getState: Function): void => {
+    const { library } = getState();
+    const artistsById = library.artistsById;
+    albums.forEach(({ artist }) => {
+      if (artistsById[artist]) {
+        artistsById[artist] = {
+          ...artistsById[artist],
+          count: artistsById[artist].count + 1
+        }
+      } else {
+        artistsById[artist] = {
+          _id: artist,
+          name: artist,
+          count: 1
+        }
+      }
+    });
+    dispatch({
+      type: LIBRARY_GET_ARTISTS_RESPONSE,
+      artists: toArray(artistsById)
+    });
     dispatch({
       type: LIBRARY_ADD_TO_LATEST_ALBUMS,
       albums
@@ -122,7 +147,8 @@ export const removeAlbums = (albumsToRemove: Album[]): Function =>
       library,
       albums,
       player,
-      playlists
+      playlists,
+      tracks
     } = getState();
     const currentAlbums: Album[] = library.latest.map((_id: Album['_id']) => albums.allById[_id]);
     const queue: Album['_id'][] = player.queue;
@@ -132,6 +158,11 @@ export const removeAlbums = (albumsToRemove: Album[]): Function =>
     if (results.length === 0) {
       return;
     }
+
+    const tracksToRemove = albumsToRemove.reduce((memo: Track[], album: Album) => {
+      return [...memo, ...album.tracks.map(_id => tracks.allById[_id])];
+    }, []);
+    await ipc.invoke(IPC_TRACK_DELETE_LIST_REQUEST, tracksToRemove);
 
     dispatch({
       type: LIBRARY_GET_LATEST_RESPONSE,

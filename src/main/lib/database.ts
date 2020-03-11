@@ -212,9 +212,12 @@ export default class Database {
     );
   }
 
-  async removeBulk<T>(entities: T[]): Promise<Result[]> {
+  async removeBulk<T extends { _id: string }>(entities: T[]): Promise<Result[]> {
     return Promise.all(
-      entities.map(async entity => await this.db.remove(entity))
+      entities.map(async (entity) => {
+        const foundEntity = await this.get<T>(entity._id);
+        return this.db.remove(foundEntity);
+      })
     ).then((results) => {
       log({
         context: LogContext.Database,

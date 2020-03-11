@@ -45,11 +45,11 @@ $labelHeight: 2rem;
       input[type="checkbox"] {
         margin-right: $labelHeight * 0.25;
       }
-      &.artist {
+      &.input-artist {
         flex: 0 0 calc(100% / 3 * 2);
         padding-right: $labelHeight * 0.5;
       }
-      &.isVariousArtists {
+      &.input-isVariousArtists {
         flex: 0 0 calc(100% / 3);
         margin-top: $labelHeight;
         line-height: $mainUnit;
@@ -57,8 +57,8 @@ $labelHeight: 2rem;
           color: $lightColor;
         }
       }
-      &.year,
-      &.type {
+      &.input-year,
+      &.input-type {
         flex: 0 0 calc(100% / 3);
         padding-right: $labelHeight * 0.5;
         margin: 0;

@@ -70,6 +70,8 @@ export const IPC_MESSAGES = {
   IPC_ALBUM_GET_STATS_RESPONSE : 'album:get-stats:response',
   IPC_TRACK_GET_LIST_REQUEST : 'track:get-list:request',
   IPC_TRACK_GET_LIST_RESPONSE : 'track:get-list:response',
+  IPC_TRACK_DELETE_LIST_REQUEST : 'track:delete-list:request',
+  IPC_TRACK_DELETE_LIST_RESPONSE : 'track:delete-list:response',
   IPC_SEARCH_REQUEST : 'search:request',
   IPC_SEARCH_RESPONSE : 'search:response',
   IPC_COVER_GET_FROM_URL_REQUEST: 'cover:get-from-url:request',
