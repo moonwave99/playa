@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { IconName } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import cx from 'classnames';
-import { SearchBar } from './SearchBar/SearchBar';
 import { QueueButton } from './QueueButton/QueueButton';
 import { NewPlaylistButton } from './NewPlaylistButton/NewPlaylistButton';
 import { PlaylistList } from './PlaylistList/PlaylistList';
@@ -18,12 +17,9 @@ import {
 } from '../../routes';
 
 type SidebarViewProps = {
-	hasSearchFocus: boolean;
 	recentPlaylists: Playlist[];
 	currentPlaylistId: Playlist['_id'];
 	onCreatePlaylist: Function;
-	onSearchBarBlur: Function;
-	onSearchFormSubmit: Function;
 	onQueueButtonDrop: Function;
 };
 
@@ -40,12 +36,9 @@ const i18nkeys: { [key: string]: string } = {
 };
 
 export const SidebarView: FC<SidebarViewProps> = ({
-	hasSearchFocus,
 	recentPlaylists = [],
 	currentPlaylistId,
 	onCreatePlaylist,
-	onSearchBarBlur,
-	onSearchFormSubmit,
 	onQueueButtonDrop,
 }) => {
 	const { t } = useTranslation();
@@ -67,12 +60,6 @@ export const SidebarView: FC<SidebarViewProps> = ({
 		<aside className="sidebar">
 			<section className="sidebar-header">
 				<div className="button-wrapper">
-					<div className="searchbar-wrapper">
-						<SearchBar
-							hasFocus={hasSearchFocus}
-							onFormSubmit={onSearchFormSubmit}
-							onBlur={onSearchBarBlur}/>
-					</div>
 					{renderLink(LIBRARY, 'library')}
 					<QueueButton onDrop={onQueueButtonDrop}/>
 				</div>

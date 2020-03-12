@@ -28,7 +28,7 @@
       "title": "Library",
       "empty": "Library is empty.",
       "buttons": {
-        "addNewAlbum": "Add New Album"
+        "addNewAlbum": "Add Music"
       },
       "dialogs": {
         "albumAlreadyExists": {

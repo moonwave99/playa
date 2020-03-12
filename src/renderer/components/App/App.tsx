@@ -18,8 +18,9 @@ import { AllPlaylistContainer } from '../AllPlaylistContainer/AllPlaylistContain
 import { PlaylistContainer } from '../PlaylistContainer/PlaylistContainer';
 import { ImportView } from '../LibraryView/ImportView/ImportView';
 
-import initIpc from '../../initializers/initIpc';
+import './App.scss';
 
+import initIpc from '../../initializers/initIpc';
 import { ApplicationState } from '../../store/store';
 import { getArtists } from '../../store/modules/library';
 import { Album } from '../../store/modules/album';
@@ -40,8 +41,6 @@ import {
   togglePlayback,
   selectors as playerSelectors
 } from '../../store/modules/player';
-
-import './App.scss';
 
 import {
   QUEUE,
@@ -184,7 +183,7 @@ export const App: FC<AppProps> = ({
     dispatch(enqueueAtEnd(albums));
   }
 
-  function onSearchBarBlur(): void {
+  function onSearchFormBlur(): void {
     setSearchFocus(false);
   }
 
@@ -208,15 +207,15 @@ export const App: FC<AppProps> = ({
     <main className="app">
       <AppHeader
         title={title}
+        hasSearchFocus={hasSearchFocus}
+        onSearchFormSubmit={onSearchFormSubmit}
+        onSearchFormBlur={onSearchFormBlur}
         onAddAlbumButtonClick={onAddAlbumButtonClick}/>
       <div className="main-container">
         <div className="sidebar-wrapper">
           <SidebarView
-            hasSearchFocus={hasSearchFocus}
             currentPlaylistId={currentPlaylistId}
             recentPlaylists={recentPlaylists}
-            onSearchFormSubmit={onSearchFormSubmit}
-            onSearchBarBlur={onSearchBarBlur}
             onCreatePlaylist={onCreatePlaylist}
             onQueueButtonDrop={onQueueButtonDrop}/>
         </div>

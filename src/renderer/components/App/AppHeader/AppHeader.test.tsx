@@ -8,6 +8,9 @@ describe('AppHeader', () => {
 		const wrapper = render(
 			<AppHeader
 				title="Playa"
+        hasSearchFocus={false}
+      	onSearchFormSubmit={jest.fn()}
+      	onSearchFormBlur={jest.fn()}
         onAddAlbumButtonClick={jest.fn()}
 			/>
 		);
@@ -18,6 +21,9 @@ describe('AppHeader', () => {
 		const wrapper = render(
 			<AppHeader
 				title="Playa"
+        hasSearchFocus={false}
+      	onSearchFormSubmit={jest.fn()}
+      	onSearchFormBlur={jest.fn()}
         onAddAlbumButtonClick={jest.fn()}
 			/>
 		);
@@ -29,6 +35,9 @@ describe('AppHeader', () => {
 		const wrapper = mountInAll(
 			<AppHeader
 				title="Playa"
+        hasSearchFocus={false}
+      	onSearchFormSubmit={jest.fn()}
+      	onSearchFormBlur={jest.fn()}        
         onAddAlbumButtonClick={handler}
 			/>
 		);

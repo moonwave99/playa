@@ -28,20 +28,6 @@
   .sidebar-header {
     flex: 1;
   }
-  .searchbar-wrapper {
-    width: 100%;
-    flex: 1;
-    margin: 0 0 $mainUnit / 2 0;
-    .search-bar {
-      .button-search {
-        width: auto;
-        padding: 0 .5rem;
-        &:hover {
-          border-color: $mainColor;
-        }
-      }
-    }
-  }
 
   .sidebar-title {
     @include sans();
@@ -99,9 +85,6 @@
     .button-wrapper > .button,
     .button-wrapper .button-drag-wrapper .button {
       display: none;
-    }
-    .searchbar-wrapper {
-      margin: 0;
     }
   }
 }

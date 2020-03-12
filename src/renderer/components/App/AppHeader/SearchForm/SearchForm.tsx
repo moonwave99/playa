@@ -2,15 +2,15 @@ import React, { SyntheticEvent, FC, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import cx from 'classnames';
-import './SearchBar.scss';
+import './SearchForm.scss';
 
-type SearchBarProps = {
+type SearchFormProps = {
 	hasFocus?: boolean;
 	onFormSubmit: Function;
 	onBlur: Function;
 };
 
-export const SearchBar: FC<SearchBarProps> = ({
+export const SearchForm: FC<SearchFormProps> = ({
 	hasFocus = false,
 	onFormSubmit,
 	onBlur
@@ -34,7 +34,7 @@ export const SearchBar: FC<SearchBarProps> = ({
 		onBlur && onBlur();
 	}
 
-	const classNames = cx('search-bar', { 'has-focus' : hasFocus });
+	const classNames = cx('search-form', { 'has-focus' : hasFocus });
 	return (
 		<form className={classNames} onSubmit={_onFormSubmit}>
 			<input
@@ -44,9 +44,9 @@ export const SearchBar: FC<SearchBarProps> = ({
 				onBlur={_onBlur}
 				ref={inputRef}
 				placeholder={t('search.form.placeholder')}
-				className="search-input"
+				className="search-input mini"
 				data-key-catch="Space"/>
-			<button type="submit" className="button button-outline button-search">
+			<button type="submit" className="button button-mini button-outline button-search">
 				<FontAwesomeIcon icon="search" className="button-icon"/>
 			</button>
 		</form>
