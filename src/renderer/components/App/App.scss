@@ -3,12 +3,30 @@
 
 .app {
   height: 100vh;
+  .app-header {
+    height: $headerHeight;
+    line-height: $headerHeight;
+    border-bottom: 1px solid $darkColor;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    h1 {
+      color: $lightColor;
+      font-size: 1.2rem;
+      @include ellipsis(50vw);
+      text-align: center;
+    }
+    .button-add-album {
+      padding: 0 1rem;
+      margin-right: 1rem;
+    }
+  }
   .search-container,
   .main-container {
-    height: calc(100vh - #{$playerHeight});
+    height: calc(100vh - #{$headerHeight} - #{$playerHeight});
 		display: flex;
     @media (max-width: $miniWindowThreshold) {
-			height: calc(100vh - #{$miniPlayerHeight});
+			height: calc(100vh - #{$headerHeight} - #{$miniPlayerHeight});
 		}
   }
 

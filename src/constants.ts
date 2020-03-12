@@ -7,6 +7,11 @@ export const DEFAULT_HEIGHT = 800;
 export const MIN_WIDTH = 350;
 export const MIN_HEIGHT = DEFAULT_HEIGHT / 2;
 
+export const TRAFFIC_LIGHTS_POSITION = {
+  x: 15,
+  y: 45
+};
+
 export const ABOUT_WINDOW_WIDTH = 600;
 export const ABOUT_WINDOW_HEIGHT = 400;
 

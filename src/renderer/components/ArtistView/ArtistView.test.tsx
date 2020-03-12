@@ -31,17 +31,10 @@ describe('ArtistView', () => {
 		expect(wrapper.is('.artist')).toBe(true);
   });
 
-  it('should contain a title', () => {
-		const wrapper = renderInAll(
-			<ArtistView/>
-		, defaultStore);
-		expect(wrapper.find('h1')).toHaveLength(1);
-  });
-
   it('should update page title', () => {
     mountInAll(
       <ArtistView/>
     , defaultStore);
-    expect(document.title).toBe('Slowdive');
+    expect(document.title).toBe('Artist: Slowdive');
   });
 });

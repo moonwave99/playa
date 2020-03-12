@@ -1,25 +1,17 @@
-import { ipcRenderer as ipc } from 'electron';
-import React, { ReactElement, useState, useEffect } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import { findDOMNode } from 'react-dom';
-import ReactModal from 'react-modal';
 import { useLocation, useHistory } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import cx from 'classnames';
 import { getLatestRequest } from '../../store/modules/library';
 import { LatestAlbumsView } from './LatestAlbumsView/LatestAlbumsView';
-import { ImportView } from './ImportView/ImportView';
 import { ArtistListView } from './ArtistListView/ArtistListView';
 
 import { ApplicationState } from '../../store/store';
 import { updateTitle } from '../../store/modules/ui';
-import { Album, saveAlbumRequest } from '../../store/modules/album';
-import { Track, getTrackListRequest } from '../../store/modules/track';
-import { addAlbumsToLibrary } from '../../store/modules/library';
-import { showDialog } from '../../store/modules/ui';
+import { Album } from '../../store/modules/album';
 import { openContextMenu } from '../../lib/contextMenu';
-import { selectFolderDialog } from '../../lib/dialog';
 import useNativeDrop, { NativeTypes } from '../../hooks/useNativeDrop/useNativeDrop';
 
 import {
@@ -38,33 +30,28 @@ import { daysAgo } from '../../utils/datetimeUtils';
 
 import {
   LIBRARY_LATEST_ALBUM_LIMIT,
-	LIBRARY_LATEST_DAY_COUNT,
-  IPC_MESSAGES
+	LIBRARY_LATEST_DAY_COUNT
 } from '../../../constants';
 
 import {
   LIBRARY
 } from '../../routes';
 
-const {
-  IPC_ALBUM_EXISTS,
-  IPC_ALBUM_CONTENT_RAW_REQUEST,
-  IPC_TRACK_GET_LIST_RAW_REQUEST
-} = IPC_MESSAGES;
-
 import './LibraryView.scss';
 
 const DEFAULT_LETTER = 'a';
 
-export const LibraryView = (): ReactElement => {
+type LibraryViewProps = {
+	onDrop: Function;
+};
+
+export const LibraryView: FC<LibraryViewProps> = ({
+  onDrop
+}) => {
   const { t } = useTranslation();
 	const dispatch = useDispatch();
   const location = useLocation();
 	const history = useHistory();
-
-  const [folderToImport, setFolderToImport] = useState(null);
-  const [showImportModal, setShowImportModal] = useState(false);
-  const [tracksToImport, setTracksToImport] = useState([]);
   const [selectedLetter, setSelectedLetter] = useState(DEFAULT_LETTER);
 
   const q = new URLSearchParams(location.search);
@@ -78,51 +65,18 @@ export const LibraryView = (): ReactElement => {
 
 	const {
     latest,
-    latestAlbumId,
     currentAlbumId,
     loadingLatest,
     loadingArtists
   } = useSelector(({ albums, library, player }: ApplicationState) => ({
     latest: library.latest.map((_id: Album['_id']) => albums.allById[_id]),
-    latestAlbumId: library.latestAlbumId,
     currentAlbumId: player.currentAlbumId,
     loadingLatest: library.loadingLatest,
     loadingArtists: library.loadingArtists
   }));
 
-  async function showImportDialog(folder: string): Promise<void> {
-    const folderAlreadyImported = await ipc.invoke(IPC_ALBUM_EXISTS, folder);
-    if (folderAlreadyImported) {
-      dispatch(
-        showDialog(
-          t('library.dialogs.albumAlreadyExists.title'),
-          t('library.dialogs.albumAlreadyExists.message', { folder })
-        )
-      );
-      return;
-    }
-
-    const folderTracks = await ipc.invoke(IPC_ALBUM_CONTENT_RAW_REQUEST, folder);
-
-    if (folderTracks.length === 0) {
-      dispatch(
-        showDialog(
-          t('library.dialogs.tracksNotFound.title'),
-          t('library.dialogs.tracksNotFound.message')
-        )
-      );
-      return;
-    }
-
-    const processedTracks = await ipc.invoke(IPC_TRACK_GET_LIST_RAW_REQUEST, folderTracks);
-
-    setFolderToImport(folder);
-    setTracksToImport(processedTracks);
-    setShowImportModal(true);
-  }
-
-  function onDrop(folder: string): void {
-    showImportDialog(folder);
+  function _onDrop(folder: string): void {
+    onDrop(folder);
   }
 
   const {
@@ -130,7 +84,7 @@ export const LibraryView = (): ReactElement => {
     canDrop,
     drop
   } = useNativeDrop({
-    onDrop,
+    onDrop: _onDrop,
     accept: [NativeTypes.FILE],
     filter: (type: string) => type === ''
   });
@@ -181,34 +135,6 @@ export const LibraryView = (): ReactElement => {
     }).handler();
 	}
 
-  async function onAddAlbumButtonClick(): Promise<void> {
-    const folder = await selectFolderDialog();
-    if (!folder) {
-      return;
-    }
-    showImportDialog(folder);
-  }
-
-  function onImportModalRequestClose(): void {
-    setShowImportModal(false);
-    setFolderToImport(null);
-    setTracksToImport([]);
-  }
-
-  function onImportFormSubmit(album: Album, tracklist: Track[]): void {
-    const updatedAlbum = { ...album, _id: `${+latestAlbumId + 1}`}
-    dispatch(
-      getTrackListRequest(
-        tracklist.map(({ _id }) => _id )
-      )
-    );
-    dispatch(saveAlbumRequest(updatedAlbum));
-    dispatch(addAlbumsToLibrary([updatedAlbum]));
-    setShowImportModal(false);
-    setFolderToImport(null);
-    setTracksToImport([]);
-  }
-
   function onLetterClick(letter: string): void {
     setSelectedLetter(letter);
     history.replace(
@@ -233,9 +159,6 @@ export const LibraryView = (): ReactElement => {
 
 	return (
 		<section className={libraryClasses} ref={drop}>
-      <button className="button button-add-album" onClick={onAddAlbumButtonClick}>
-        <FontAwesomeIcon className="button-icon" icon="plus"/> {t('library.buttons.addNewAlbum')}
-      </button>
       <LatestAlbumsView
         albums={latest}
         currentAlbumId={currentAlbumId}
@@ -250,25 +173,6 @@ export const LibraryView = (): ReactElement => {
             onLetterClick={onLetterClick}/>
         : null
       }
-      <ReactModal
-        className={{
-          base: 'modal-content',
-          beforeClose: 'modal-content-before-close',
-          afterOpen: 'modal-content-after-open'
-        }}
-        overlayClassName={{
-          base: 'modal-overlay',
-          beforeClose: 'modal-overlay-before-close',
-          afterOpen: 'modal-overlay-after-open'
-        }}
-        shouldFocusAfterRender={true}
-        onRequestClose={onImportModalRequestClose}
-        isOpen={showImportModal}>
-        <ImportView
-          tracks={tracksToImport}
-          folderToImport={folderToImport}
-          onFormSubmit={onImportFormSubmit}/>
-      </ReactModal>
 		</section>
 	);
 }

@@ -36,8 +36,8 @@ describe('Import album into library', () => {
     ]);
     await app.client.waitUntilWindowLoaded();
     await app.client.click('.sidebar .button-library');
-    await app.client.waitUntil(async() => await app.client.getText('h1') === 'Latest additions');
-    await app.client.click('.library .button-add-album');
+    await app.client.waitUntil(async() => await app.client.getText('.app-header h1') === 'Library');
+    await app.client.click('.app-header .button-add-album');
     await app.client.waitUntil(async() =>
       await app.client.getText('.import-view .folder-name') === albumPath
     );

@@ -94,7 +94,6 @@ export const AllPlaylistsView: FC<AllPlaylistsViewProps> = ({
 
   return (
 		<div className="all-playlists-view">
-      <h1>{t('playlists.all.title')}</h1>
       { rows.length > 0 ?
       <table {...getTableProps()} className="all-playlists-table">
         <thead className="all-playlists-table-header">

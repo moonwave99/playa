@@ -22,6 +22,7 @@ import {
   DEFAULT_HEIGHT,
   MIN_WIDTH as minWidth,
   MIN_HEIGHT as minHeight,
+  TRAFFIC_LIGHTS_POSITION as trafficLightPosition,
   IS_MACOS,
   IPC_MESSAGES,
   COLORS
@@ -48,6 +49,8 @@ function createWindow({
     maximizable: false,
     focusable: true,
     show: false,
+    titleBarStyle: 'hidden',
+    trafficLightPosition,
     webPreferences: {
       allowRunningInsecureContent: false,
       nodeIntegration: true,

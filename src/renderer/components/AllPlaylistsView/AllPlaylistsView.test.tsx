@@ -36,16 +36,6 @@ describe('AllPlaylistsView', () => {
     expect(wrapper.is('.all-playlists-view')).toBe(true);
   });
 
-  it('should contain a title', () => {
-    const wrapper = renderInAll(
-      <AllPlaylistsView
-        playlists={playlists}
-        onPlaylistDelete={jest.fn()}
-        onPlaylistContextMenu={jest.fn()}/>
-      , defaultStore);
-    expect(wrapper.find('h1')).toHaveLength(1);
-  });
-
   it('should render n=playlists length rows', () => {
     const wrapper = renderInAll(
       <AllPlaylistsView

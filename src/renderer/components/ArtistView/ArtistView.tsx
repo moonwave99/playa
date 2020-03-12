@@ -51,7 +51,7 @@ export const ArtistView = (): ReactElement => {
   const { _id, name } = artist;
 
   useEffect(() => {
-    dispatch(updateTitle(name));
+    dispatch(updateTitle(`Artist: ${formatArtistName(name)}`));
     dispatch(getArtistReleases(artist));
   }, [name]);
 
@@ -115,7 +115,6 @@ export const ArtistView = (): ReactElement => {
     !_id
     ? <Redirect to={LIBRARY}/>
     : <section className="artist">
-        <h1>{formatArtistName(name)}</h1>
         {renderReleases()}
       </section>
   );

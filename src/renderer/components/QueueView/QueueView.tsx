@@ -99,7 +99,6 @@ export const QueueView = (): ReactElement => {
   ];
 	return (
 		<section className="queue" id="queue">
-      <h1>{t('queue.title', { length: queue.length })}</h1>
       { queue.length > 0
         ? <AlbumListView
             albumView={UIAlbumView.Extended}
