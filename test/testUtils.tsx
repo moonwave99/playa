@@ -7,6 +7,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { DndProvider } from 'react-dnd';
 import Backend from 'react-dnd-test-backend';
 import { shallow, render, mount } from 'enzyme';
+export { shallow, render, mount } from 'enzyme';
 
 const rendererMap: { [key: string] : Function} = {
   'shallow': shallow,
