@@ -18,6 +18,21 @@
 		text-align: center;
 		flex-basis: 50%;
 	}
+	.playlist-title-form {
+		flex-basis: 50%;
+		.header-like {
+			color: $lightColor;
+			padding: 0;
+			border-radius: 0;
+			border-top: none;
+			border-left: none;
+			border-right: none;
+			font-size: 1.2rem;
+			text-align: center;
+			border-bottom: 1px solid $mainColor;
+			background-color: $backgroundLightColor;
+		}
+	}
 
 	.app-header-left-wrapper {
 		display: flex;
@@ -88,14 +103,9 @@
 
 	.button-add-music {
 		padding: 0 1rem;
-		opacity: 0;
 		margin-right: 1rem;
-		transition: opacity .2s ease-in-out;
 		@media (max-width: $smallWindowThreshold) {
 			display: none;
-		}
-		&.visible {
-			opacity: 1;
 		}
 	}
 }

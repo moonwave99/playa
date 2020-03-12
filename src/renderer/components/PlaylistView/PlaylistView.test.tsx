@@ -36,30 +36,12 @@ describe('PlaylistView', () => {
         currentTrackId={null}
         currentAlbumId={null}
         albums={toObj(albums)}
-        onTitleChange={jest.fn()}
         onAlbumOrderChange={jest.fn()}
         onAlbumContextMenu={jest.fn()}
         onAlbumDoubleClick={jest.fn()}
         />
       , defaultStore);
     expect(wrapper.is('.playlist-view')).toBe(true);
-  });
-
-  it('should render a .playlist-title', () => {
-    const wrapper = renderInAll(
-      <PlaylistView
-        albumActions={[]}
-        playlist={playlists[0]}
-        currentTrackId={null}
-        currentAlbumId={null}
-        albums={toObj(albums)}
-        onTitleChange={jest.fn()}
-        onAlbumOrderChange={jest.fn()}
-        onAlbumContextMenu={jest.fn()}
-        onAlbumDoubleClick={jest.fn()}
-        />
-      , defaultStore);
-    expect(wrapper.find('.playlist-title')).toHaveLength(1);
   });
 
   it('should render the playlist creation date', () => {
@@ -70,7 +52,6 @@ describe('PlaylistView', () => {
         currentTrackId={null}
         currentAlbumId={null}
         albums={toObj(albums)}
-        onTitleChange={jest.fn()}
         onAlbumOrderChange={jest.fn()}
         onAlbumContextMenu={jest.fn()}
         onAlbumDoubleClick={jest.fn()}
@@ -91,7 +72,6 @@ describe('PlaylistView', () => {
         currentTrackId={null}
         currentAlbumId={null}
         albums={toObj(albums)}
-        onTitleChange={jest.fn()}
         onAlbumOrderChange={jest.fn()}
         onAlbumContextMenu={jest.fn()}
         onAlbumDoubleClick={jest.fn()}
@@ -111,7 +91,6 @@ describe('PlaylistView', () => {
         currentTrackId={null}
         currentAlbumId={null}
         albums={toObj(albums)}
-        onTitleChange={jest.fn()}
         onAlbumOrderChange={jest.fn()}
         onAlbumContextMenu={jest.fn()}
         onAlbumDoubleClick={jest.fn()}
@@ -132,7 +111,6 @@ describe('PlaylistView', () => {
         currentTrackId={null}
         currentAlbumId={null}
         albums={toObj(albums)}
-        onTitleChange={jest.fn()}
         onAlbumOrderChange={jest.fn()}
         onAlbumContextMenu={jest.fn()}
         onAlbumDoubleClick={jest.fn()}

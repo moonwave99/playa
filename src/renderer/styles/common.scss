@@ -90,6 +90,7 @@ a {
 	}
 	&-outline {
 		color: $mainColor;
+		border-color: $mainColor;
 		transition: border-color .3s ease-in-out, color .3s ease-in-out;
 		&:hover {
 			color: $hoverColor;
@@ -104,8 +105,11 @@ a {
 		transition: color .3s ease-in-out;
 		&:hover {
 			color: $hoverColor;
-			border-color: $hoverColor;
-			background-color: $backgroundDarkColor;
+			background-color: transparent;
+		}
+		&.selected, &.selected:hover {
+			background-color: transparent;
+			color: $highlightColor;
 		}
 	}
 	&-mini {

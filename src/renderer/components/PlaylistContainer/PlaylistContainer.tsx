@@ -69,13 +69,6 @@ export const PlaylistContainer = (): ReactElement => {
     }
   }
 
-  function onTitleChange(title: string ): void {
-    if (title === playlist.title && playlist._rev) {
-      return;
-    }
-    dispatch(savePlaylistRequest({ ...playlist, title }));
-  }
-
   function onAlbumContextMenu(album: Album): void {
     openContextMenu([
       {
@@ -148,7 +141,6 @@ export const PlaylistContainer = (): ReactElement => {
            currentTrackId={currentTrackId}
            albumActions={albumActions}
            onAlbumOrderChange={onAlbumOrderChange}
-           onTitleChange={onTitleChange}
            onAlbumContextMenu={onAlbumContextMenu}
            onAlbumDoubleClick={onAlbumDoubleClick}/>
        </CSSTransition>

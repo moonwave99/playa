@@ -4,7 +4,6 @@ import cx from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconName } from '@fortawesome/fontawesome-svg-core';
-import { PlaylistViewTitle } from './PlaylistViewTitle/PlaylistViewTitle';
 import { AlbumListView } from '../AlbumListView/AlbumListView';
 import { ActionsConfig } from '../AlbumListView/AlbumActionsView/AlbumActionsView';
 import { Playlist } from '../../store/modules/playlist';
@@ -25,7 +24,6 @@ type PlaylistViewProps = {
   currentAlbumId: Album['_id'];
   currentTrackId: Track['_id'];
   albumActions: ActionsConfig[];
-  onTitleChange: Function;
   onAlbumOrderChange: Function;
   onAlbumContextMenu: Function;
   onAlbumDoubleClick: Function;
@@ -39,7 +37,6 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
   currentTrackId,
   albumActions,
   onAlbumOrderChange,
-  onTitleChange,
   onAlbumContextMenu,
   onAlbumDoubleClick
 }) => {
@@ -88,11 +85,6 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
 	return (
 		<section className={playlistClasses}>
       <header className="playlist-header">
-        <div className="playlist-header-row">
-          <PlaylistViewTitle
-            playlist={playlist}
-            onTitleChange={onTitleChange}/>
-        </div>
         <p className="playlist-info header-like">
           <span className="playlist-info-created-on">
           {t('playlists.createdOn', { date })}

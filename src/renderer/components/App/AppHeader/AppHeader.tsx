@@ -1,18 +1,19 @@
 import React, { ReactElement, FC } from 'react';
-import { useLocation, matchPath } from 'react-router';
-import { Link } from 'react-router-dom';
+import { Switch, Route, } from 'react-router';
+import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconName } from '@fortawesome/fontawesome-svg-core';
-import cx from 'classnames';
 import { SearchForm } from './SearchForm/SearchForm';
 import { QueueButton } from './QueueButton/QueueButton';
+import { PlaylistTitle } from './PlaylistTitle/PlaylistTitle';
 
 import './AppHeader.scss';
 
 import {
 	LIBRARY,
-	PLAYLIST_ALL
+	PLAYLIST_ALL,
+	PLAYLIST_SHOW
 } from '../../../routes';
 
 const icons: { [key: string]: IconName } = {
@@ -38,27 +39,20 @@ export const AppHeader: FC<AppHeaderProps> = ({
 	onQueueButtonDrop
 }) => {
 	const { t } = useTranslation();
-	const location = useLocation();
 
 	function renderButtonLink(path: string, className: string): ReactElement {
-		const classNames = cx('button', 'button-frameless', 'button-mini', `button-${className}`, {
-			'selected': matchPath(location.pathname, { path })
-		});
+		const classNames = ['button', 'button-frameless', 'button-mini', `button-${className}`].join(' ');
 		return (
-			<Link to={path} className={classNames}>
+			<NavLink to={path} className={classNames} activeClassName="selected">
 				<FontAwesomeIcon icon={icons[path]} className="button-icon"/>
 				<span className="button-text">{t(`buttons.${className}`)}</span>
-			</Link>
+			</NavLink>
 		);
 	}
 
 	function _onAddAlbumButtonClick(): void {
 		onAddAlbumButtonClick();
 	}
-
-	const addButtonClassNames = cx('button', 'button-full', 'button-mini', 'button-add-music', {
-		visible: matchPath(location.pathname, { path: LIBRARY })
-	})
 
 	return (
 		<header className="app-header">
@@ -67,11 +61,27 @@ export const AppHeader: FC<AppHeaderProps> = ({
 				{renderButtonLink(LIBRARY, 'library')}
 				<QueueButton onDrop={onQueueButtonDrop}/>
 			</div>
-			<h1>{title}</h1>
+			<Switch>
+				<Route path={PLAYLIST_ALL} exact>
+					<h1>{title}</h1>
+				</Route>
+				<Route path={PLAYLIST_SHOW} exact>
+					<PlaylistTitle/>
+				</Route>
+				<Route>
+					<h1>{title}</h1>
+				</Route>
+			</Switch>
 			<div className="app-header-right-wrapper">
-				<button className={addButtonClassNames} onClick={_onAddAlbumButtonClick}>
-					<FontAwesomeIcon className="button-icon" icon="plus"/> {t('buttons.addMusic')}
-				</button>
+				<Switch>
+					<Route path={LIBRARY}>
+						<button
+							className="button button-outline button-mini button-add-music"
+							onClick={_onAddAlbumButtonClick}>
+							<FontAwesomeIcon className="button-icon" icon="plus"/> {t('buttons.addMusic')}
+						</button>
+					</Route>
+				</Switch>
 				<SearchForm
 					hasFocus={hasSearchFocus}
 					onFormSubmit={onSearchFormSubmit}

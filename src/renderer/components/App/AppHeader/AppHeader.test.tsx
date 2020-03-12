@@ -2,7 +2,7 @@ import React from 'react';
 import { renderInAll, mountInAll, mockRouter } from '../../../../../test/testUtils';
 
 mockRouter({
-  location: { pathname: '/library', search: '' }
+  routeMatch: { url: '/library' }
 });
 
 import { AppHeader } from './AppHeader';
