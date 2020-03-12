@@ -5,8 +5,8 @@ import { useDrop } from 'react-dnd';
 import { useTranslation } from 'react-i18next';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import cx from 'classnames';
-import { QUEUE } from '../../../routes';
-import { UIDragTypes, UIDropItem } from '../../../store/modules/ui';
+import { QUEUE } from '../../../../routes';
+import { UIDragTypes, UIDropItem } from '../../../../store/modules/ui';
 
 type QueueButtonProps = {
   onDrop: Function;
@@ -30,7 +30,7 @@ export const QueueButton: FC<QueueButtonProps> = ({
     }),
   });
 
-  const classNames = cx('button', 'button-queue', {
+  const classNames = cx('button', 'button-mini', 'button-queue', {
     'button-outline': !matchPath(location.pathname, { path: QUEUE }),
     'drag-is-over': isOver,
     'drag-can-drop': canDrop
@@ -40,7 +40,7 @@ export const QueueButton: FC<QueueButtonProps> = ({
     <div ref={drop} className="button-drag-wrapper">
       <Link to={QUEUE} className={classNames}>
         <FontAwesomeIcon icon="play" className="button-icon"/>
-        <span className="button-text">{t('sidebar.buttons.queue')}</span>
+        <span className="button-text">{t('buttons.queue')}</span>
       </Link>
     </div>
   );

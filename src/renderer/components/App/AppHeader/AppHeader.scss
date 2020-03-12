@@ -14,11 +14,9 @@
 		@include ellipsis(50vw);
 		text-align: center;
 	}
-	.button-add-album {
-		padding: 0 1rem;
-		margin-right: 1rem;
-	}
-	.search-form-wrapper {
+
+	.app-header-left-wrapper {
+		display: flex;
 		margin-left: 2 * $mainUnit;
     .search-form {
       .button-search {
@@ -29,5 +27,31 @@
         }
       }
     }
+		.button-library,
+		.button-queue {
+			padding: 0 1rem;
+			margin-left: 1rem;
+	    &.drag-is-over.drag-can-drop {
+	      transition: .3s background-color ease-in-out;
+	      background-color: $highlightColor;
+	      color: $mainColor;
+		  }
+		}
+		.button-drag-wrapper {
+			display: flex;
+		}
   }
+
+	.app-header-right-wrapper {
+		display: flex;
+		margin-right: 1rem;
+		.button-add-album {
+			padding: 0 1rem;
+			opacity: 0;
+			transition: opacity .2s ease-in-out;
+			&.visible {
+				opacity: 1;
+			}
+		}
+	}
 }

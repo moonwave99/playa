@@ -210,14 +210,14 @@ export const App: FC<AppProps> = ({
         hasSearchFocus={hasSearchFocus}
         onSearchFormSubmit={onSearchFormSubmit}
         onSearchFormBlur={onSearchFormBlur}
-        onAddAlbumButtonClick={onAddAlbumButtonClick}/>
+        onAddAlbumButtonClick={onAddAlbumButtonClick}
+        onQueueButtonDrop={onQueueButtonDrop}/>
       <div className="main-container">
         <div className="sidebar-wrapper">
           <SidebarView
             currentPlaylistId={currentPlaylistId}
             recentPlaylists={recentPlaylists}
-            onCreatePlaylist={onCreatePlaylist}
-            onQueueButtonDrop={onQueueButtonDrop}/>
+            onCreatePlaylist={onCreatePlaylist}/>
         </div>
         <div className="main-wrapper">
           <Switch>

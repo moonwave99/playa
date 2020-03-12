@@ -7,8 +7,9 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  .sidebar-header,
-  .sidebar-footer {
+  .sidebar-playlists {
+    flex: 1;
+    padding-top: var(--section-gutter);
     .button-wrapper {
       padding: var(--section-gutter);
       .button {
@@ -24,9 +25,6 @@
         }
       }
     }
-  }
-  .sidebar-header {
-    flex: 1;
   }
 
   .sidebar-title {
@@ -69,22 +67,7 @@
     }
   }
 
-  .button-queue {
-    &.drag-is-over.drag-can-drop {
-      transition: .3s background-color ease-in-out;
-      background-color: $highlightColor;
-      color: $mainColor;
-    }
-  }
-
   @media (max-width: $miniWindowThreshold) {
-    flex: 1;
-    height: auto;
-    .sidebar-footer,
-    .playlist-list,
-    .button-wrapper > .button,
-    .button-wrapper .button-drag-wrapper .button {
-      display: none;
-    }
+    display:none;
   }
 }

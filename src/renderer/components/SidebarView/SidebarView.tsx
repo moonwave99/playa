@@ -5,41 +5,30 @@ import { useTranslation } from 'react-i18next';
 import { IconName } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import cx from 'classnames';
-import { QueueButton } from './QueueButton/QueueButton';
 import { NewPlaylistButton } from './NewPlaylistButton/NewPlaylistButton';
 import { PlaylistList } from './PlaylistList/PlaylistList';
 import { Playlist } from '../../store/modules/playlist';
 import './SidebarView.scss';
-import {
-	SEARCH,
-	PLAYLIST_ALL,
-	LIBRARY
-} from '../../routes';
+import { PLAYLIST_ALL } from '../../routes';
 
 type SidebarViewProps = {
 	recentPlaylists: Playlist[];
 	currentPlaylistId: Playlist['_id'];
 	onCreatePlaylist: Function;
-	onQueueButtonDrop: Function;
 };
 
 const icons: { [key: string]: IconName } = {
-	[SEARCH]: 'search',
-	[PLAYLIST_ALL]: 'list',
-	[LIBRARY]: 'music'
+	[PLAYLIST_ALL]: 'list'
 };
 
 const i18nkeys: { [key: string]: string } = {
-	[SEARCH]: 'sidebar.buttons.search',
-	[PLAYLIST_ALL]: 'sidebar.buttons.playlist.all',
-	[LIBRARY]: 'sidebar.buttons.library'
+	[PLAYLIST_ALL]: 'sidebar.buttons.playlist.all'
 };
 
 export const SidebarView: FC<SidebarViewProps> = ({
 	recentPlaylists = [],
 	currentPlaylistId,
 	onCreatePlaylist,
-	onQueueButtonDrop,
 }) => {
 	const { t } = useTranslation();
 	const location = useLocation();
@@ -58,13 +47,7 @@ export const SidebarView: FC<SidebarViewProps> = ({
 
 	return (
 		<aside className="sidebar">
-			<section className="sidebar-header">
-				<div className="button-wrapper">
-					{renderLink(LIBRARY, 'library')}
-					<QueueButton onDrop={onQueueButtonDrop}/>
-				</div>
-			</section>
-			<section className="sidebar-footer">
+			<section className="sidebar-playlists">
 				<h2 className="sidebar-title">{t('sidebar.buttons.playlist.recent')}</h2>
 				<NewPlaylistButton
 					onClick={onCreatePlaylist}
