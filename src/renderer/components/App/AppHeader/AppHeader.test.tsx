@@ -45,7 +45,7 @@ describe('AppHeader', () => {
         onAddAlbumButtonClick={handler}
         onQueueButtonDrop={jest.fn()}/>
 		);
-		wrapper.find('.button-add-album').simulate('click');
+		wrapper.find('.button-add-music').simulate('click');
     expect(handler).toHaveBeenCalled();
   });
 

@@ -4,7 +4,7 @@ export const IS_MACOS = (os.platform() === "darwin");
 
 export const DEFAULT_WIDTH = 1200;
 export const DEFAULT_HEIGHT = 800;
-export const MIN_WIDTH = 350;
+export const MIN_WIDTH = 400;
 export const MIN_HEIGHT = DEFAULT_HEIGHT / 2;
 
 export const TRAFFIC_LIGHTS_POSITION = {

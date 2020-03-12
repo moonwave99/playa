@@ -30,8 +30,8 @@ export const QueueButton: FC<QueueButtonProps> = ({
     }),
   });
 
-  const classNames = cx('button', 'button-mini', 'button-queue', {
-    'button-outline': !matchPath(location.pathname, { path: QUEUE }),
+  const classNames = cx('button', 'button-frameless', 'button-mini', 'button-queue', {
+    'selected': matchPath(location.pathname, { path: QUEUE }),
     'drag-is-over': isOver,
     'drag-can-drop': canDrop
   });

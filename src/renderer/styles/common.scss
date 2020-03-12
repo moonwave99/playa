@@ -59,8 +59,7 @@ a {
 }
 
 .button {
-	background-color: $mainColor;
-  border: 0.1rem solid $mainColor;
+  border: 0.1rem solid transparent;
   border-radius: .4rem;
   color: $highlightColor;
 	padding: 0;
@@ -75,19 +74,38 @@ a {
   text-decoration: none;
   text-transform: uppercase;
   white-space: nowrap;
+	background-color: transparent;
 	transition: background-color .3s ease-in-out;
 	&:hover {
 		background-color: $hoverColor;
 		border-color: $hoverColor;
 	}
+	&.selected, &.selected:hover {
+		background-color: $mainColor;
+		color: $highlightColor;
+	}
+	&-full {
+		border-color: $mainColor;
+		background-color: $mainColor;
+	}
 	&-outline {
-		background-color: transparent;
 		color: $mainColor;
 		transition: border-color .3s ease-in-out, color .3s ease-in-out;
 		&:hover {
 			color: $hoverColor;
 			border-color: $hoverColor;
 			background-color: transparent;
+		}
+	}
+	&-frameless {
+		border: none;
+		background-color: transparent;
+		color: $mainColor;
+		transition: color .3s ease-in-out;
+		&:hover {
+			color: $hoverColor;
+			border-color: $hoverColor;
+			background-color: $backgroundDarkColor;
 		}
 	}
 	&-mini {

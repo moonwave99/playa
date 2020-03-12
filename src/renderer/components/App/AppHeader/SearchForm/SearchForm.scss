@@ -15,6 +15,10 @@
 		display: flex;
 		flex-grow: 1;
 		border-right: none;
+		min-width: calc(var(--section-gutter) * 4);
+		@media (max-width: $smallWindowThreshold) {
+			min-width: none;
+		}
 	}
 	.button {
 		transition: background-color .2s ease-in-out;

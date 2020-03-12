@@ -3,14 +3,14 @@
     "buttons": {
       "library": "Library",
       "queue": "Queue",
-      "addNewAlbum": "Add Music"
+      "playlists": "Playlists",
+      "addMusic": "Add Music"
     },
     "sidebar": {
       "buttons": {
         "playlist": {
           "recent": "Recent Playlists",
-          "new": "Create New Playlist",
-          "all": "All Playlists"
+          "new": "Create New Playlist"
         }
       }
     },
