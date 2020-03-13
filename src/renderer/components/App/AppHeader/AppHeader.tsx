@@ -39,7 +39,12 @@ export const AppHeader: FC<AppHeaderProps> = ({
 	const { t } = useTranslation();
 
 	function renderButtonLink(path: string, className: string): ReactElement {
-		const classNames = ['button', 'button-frameless', 'button-mini', `button-${className}`].join(' ');
+		const classNames = [
+			'button',
+			'button-frameless',
+			'button-vertical',
+			`button-${className}`
+		].join(' ');
 		return (
 			<NavLink to={path} className={classNames} activeClassName="selected">
 				<FontAwesomeIcon icon={icons[path]} className="button-icon"/>
@@ -53,7 +58,9 @@ export const AppHeader: FC<AppHeaderProps> = ({
 			<div className="app-header-left-wrapper">
 				{renderButtonLink(PLAYLIST_ALL, 'playlists')}
 				{renderButtonLink(LIBRARY, 'library')}
-				<QueueButton onDrop={onQueueButtonDrop}/>
+				<QueueButton
+					className="button-vertical"
+					onDrop={onQueueButtonDrop}/>
 			</div>
 			<Switch>
 				<Route path={PLAYLIST_ALL} exact>

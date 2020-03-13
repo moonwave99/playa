@@ -9,10 +9,12 @@ import { QUEUE } from '../../../../routes';
 import { UIDragTypes, UIDropItem } from '../../../../store/modules/ui';
 
 type QueueButtonProps = {
+  className?: string;
   onDrop: Function;
 }
 
 export const QueueButton: FC<QueueButtonProps> = ({
+  className,
   onDrop
 }) => {
 	const { t } = useTranslation();
@@ -30,11 +32,17 @@ export const QueueButton: FC<QueueButtonProps> = ({
     }),
   });
 
-  const classNames = cx('button', 'button-frameless', 'button-mini', 'button-queue', {
-    'selected': matchPath(location.pathname, { path: QUEUE }),
-    'drag-is-over': isOver,
-    'drag-can-drop': canDrop
-  });
+  const classNames = cx(
+    'button',
+    'button-frameless',
+    'button-queue',
+    className,
+    {
+      'selected': matchPath(location.pathname, { path: QUEUE }),
+      'drag-is-over': isOver,
+      'drag-can-drop': canDrop
+    }
+  );
 
   return (
     <div ref={drop} className="button-drag-wrapper">

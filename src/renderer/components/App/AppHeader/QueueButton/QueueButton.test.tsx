@@ -7,4 +7,9 @@ describe('QueueButton', () => {
     const wrapper = renderInAll(<QueueButton onDrop={jest.fn()}/>);
     expect(wrapper.find('.button-queue')).toHaveLength(1);
   });
+
+  it('should have className class', () => {
+    const wrapper = renderInAll(<QueueButton className="someClass" onDrop={jest.fn()}/>);
+    expect(wrapper.find('.button-queue').is('.someClass')).toBe(true);
+  });
 });
