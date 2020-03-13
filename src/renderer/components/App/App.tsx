@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import ReactModal from 'react-modal';
 import { createSelector } from 'reselect';
 import Player from '../../lib/player';
-import { selectFolderDialog } from '../../lib/dialog';
 import useImportAlbums from '../../hooks/useImportAlbums/useImportAlbums';
 import { AppHeader } from './AppHeader/AppHeader';
 import { PlayerView } from '../PlayerView/PlayerView';
@@ -191,14 +190,6 @@ export const App: FC<AppProps> = ({
 		history.push(`${SEARCH}?query=${encodeURIComponent(query)}`);
   }
 
-  async function onAddAlbumButtonClick(): Promise<void> {
-    const folder = await selectFolderDialog();
-    if (!folder) {
-      return;
-    }
-    showImportDialog(folder);
-  }
-
   function onLibraryDrop(folder: string): void {
     showImportDialog(folder);
   }
@@ -210,7 +201,6 @@ export const App: FC<AppProps> = ({
         hasSearchFocus={hasSearchFocus}
         onSearchFormSubmit={onSearchFormSubmit}
         onSearchFormBlur={onSearchFormBlur}
-        onAddAlbumButtonClick={onAddAlbumButtonClick}
         onQueueButtonDrop={onQueueButtonDrop}/>
       <div className="main-container">
         <div className="sidebar-wrapper">

@@ -26,7 +26,6 @@ type AppHeaderProps = {
 	hasSearchFocus: boolean;
 	onSearchFormSubmit: Function;
 	onSearchFormBlur: Function;
-	onAddAlbumButtonClick: Function;
 	onQueueButtonDrop: Function;
 };
 
@@ -35,7 +34,6 @@ export const AppHeader: FC<AppHeaderProps> = ({
 	hasSearchFocus,
 	onSearchFormSubmit,
 	onSearchFormBlur,
-	onAddAlbumButtonClick,
 	onQueueButtonDrop
 }) => {
 	const { t } = useTranslation();
@@ -48,10 +46,6 @@ export const AppHeader: FC<AppHeaderProps> = ({
 				<span className="button-text">{t(`buttons.${className}`)}</span>
 			</NavLink>
 		);
-	}
-
-	function _onAddAlbumButtonClick(): void {
-		onAddAlbumButtonClick();
 	}
 
 	return (
@@ -73,15 +67,6 @@ export const AppHeader: FC<AppHeaderProps> = ({
 				</Route>
 			</Switch>
 			<div className="app-header-right-wrapper">
-				<Switch>
-					<Route path={LIBRARY}>
-						<button
-							className="button button-outline button-mini button-add-music"
-							onClick={_onAddAlbumButtonClick}>
-							<FontAwesomeIcon className="button-icon" icon="plus"/> {t('buttons.addMusic')}
-						</button>
-					</Route>
-				</Switch>
 				<SearchForm
 					hasFocus={hasSearchFocus}
 					onFormSubmit={onSearchFormSubmit}
