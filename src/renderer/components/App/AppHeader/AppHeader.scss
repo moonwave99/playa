@@ -29,8 +29,10 @@
 		display: flex;
 		flex-basis: 25%;
 		margin-left: 2 * $mainUnit;
+		height: 100%;
 		.button {
 			margin-right: 1rem;
+			justify-content: center;
 			@media (max-width: $smallWindowThreshold) {
 				margin-right: .5rem;
 			}
@@ -95,7 +97,10 @@
 	.button-queue {
 		padding: 0 1rem;
 		text-align: center;
-		&.drag-is-over.drag-can-drop {
+		&.drag-is-over {
+			text-decoration: underline;
+		}
+		&.drag-can-drop {
 			transition: .3s background-color ease-in-out;
 			background-color: $highlightColor;
 			color: $mainColor;

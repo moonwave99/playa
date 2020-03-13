@@ -100,6 +100,7 @@ a {
 	}
 	&-frameless {
 		border: none;
+		border-radius: 0;
 		background-color: transparent;
 		color: $mainColor;
 		transition: color .3s ease-in-out;
