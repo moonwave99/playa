@@ -1,5 +1,6 @@
 const path = require('path');
-const { getApp, TEN_SECONDS } = require('./utils/appUtils');
+const { getAppWithMenuInteraction } = require('./utils/appUtils');
+const { TEN_SECONDS } = require('./utils/appUtils');
 const { populateTestDB } = require('./utils/databaseUtils');
 const { FileAlbums, generateAlbum } = require('./utils/musicfileUtils');
 
@@ -8,13 +9,15 @@ function mock(app, options) {
 }
 
 describe('Import album into library', () => {
-  let app;
+  let app, menuAddon;
   beforeEach(async () => {
     await populateTestDB();
-    app = await getApp({
+    const menuApp = await getAppWithMenuInteraction({
       args: ['-r', path.join(__dirname, '__mocks__/mock-dialog.js')]
     });
-    await app.start();
+    app = menuApp.app;
+    menuAddon = menuApp.menuAddon;
+    return app.start();
   });
 
   afterEach(() => {
@@ -37,8 +40,8 @@ describe('Import album into library', () => {
     await app.client.waitUntilWindowLoaded();
     await app.client.click('.app-header .button-library');
     await app.client.waitUntil(async() => await app.client.getText('.app-header h1') === 'Library');
-    await app.client.click('.app-header .app-header-action-dropdown .action-dropdown-trigger');
-    await app.client.click('.app-header .app-header-action-dropdown .library-add-music');
+    await menuAddon.clickMenu('Library', 'Import Music');
+
     await app.client.waitUntil(async() =>
       await app.client.getText('.import-view .folder-name') === albumPath
     );

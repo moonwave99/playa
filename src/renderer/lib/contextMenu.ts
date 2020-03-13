@@ -55,3 +55,10 @@ export function openContextMenu(params: ContextMenuParams[]): { items: object[] 
   menu.popup({ window: remote.getCurrentWindow() });
   return menu;
 }
+
+export function openSimpleContextMenu(actions: MenuItemConstructorOptions[]): { items: object[] } {
+  const menu = new Menu();
+  actions.forEach(action => menu.append(new MenuItem(action)));
+  menu.popup({ window: remote.getCurrentWindow() });
+  return menu;
+}

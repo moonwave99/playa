@@ -137,7 +137,7 @@ export const App: FC<AppProps> = ({
         break;
     }
   }
-  
+
   async function importMusicHandler(): Promise<void> {
     const folder = await selectFolderDialog();
     if (!folder) {
@@ -211,7 +211,7 @@ export const App: FC<AppProps> = ({
         hasSearchFocus={hasSearchFocus}
         onSearchFormSubmit={onSearchFormSubmit}
         onSearchFormBlur={onSearchFormBlur}
-        onAddAlbumButtonClick={importMusicHandler}
+        importMusicHandler={importMusicHandler}
         onQueueButtonDrop={onQueueButtonDrop}/>
       <div className="main-container">
         <div className="sidebar-wrapper">

@@ -7,7 +7,7 @@ import { IconName } from '@fortawesome/fontawesome-svg-core';
 import { SearchForm } from './SearchForm/SearchForm';
 import { QueueButton } from './QueueButton/QueueButton';
 import { PlaylistTitle } from './PlaylistTitle/PlaylistTitle';
-import { ActionDropdown, ActionDropdownAction } from '../../ActionDropdown/ActionDropdown';
+import { openSimpleContextMenu } from '../../../lib/contextMenu';
 
 import './AppHeader.scss';
 
@@ -27,7 +27,7 @@ type AppHeaderProps = {
 	hasSearchFocus: boolean;
 	onSearchFormSubmit: Function;
 	onSearchFormBlur: Function;
-	onAddAlbumButtonClick: Function;
+	importMusicHandler: Function;
 	onQueueButtonDrop: Function;
 };
 
@@ -36,7 +36,7 @@ export const AppHeader: FC<AppHeaderProps> = ({
 	hasSearchFocus,
 	onSearchFormSubmit,
 	onSearchFormBlur,
-	onAddAlbumButtonClick,
+	importMusicHandler,
 	onQueueButtonDrop
 }) => {
 	const { t } = useTranslation();
@@ -56,24 +56,13 @@ export const AppHeader: FC<AppHeaderProps> = ({
 		);
 	}
 
-	function renderDropDown(actions: ActionDropdownAction[]): ReactElement {
-		return (
-			<ActionDropdown
-				className="app-header-action-dropdown"
-				actions={actions}/>
-		);
+	function onLibraryActionsButtonClick(): void {
+		openSimpleContextMenu([{
+			id: 'library-add-music',
+			label: t('buttons.addMusic'),
+			click: (): void => importMusicHandler()
+		}]);
 	}
-
-	const actions: { [key: string]: ActionDropdownAction[]} = {
-		library: [
-			{
-				id: 'library-add-music',
-				label: t('buttons.addMusic'),
-				icon: 'plus',
-				handler: onAddAlbumButtonClick
-			}
-		]
-	};
 
 	return (
 		<header className="app-header">
@@ -92,17 +81,22 @@ export const AppHeader: FC<AppHeaderProps> = ({
 					<Route path={PLAYLIST_SHOW} exact>
 						<PlaylistTitle/>
 					</Route>
+					<Route path={LIBRARY}>
+						<h1>
+							{title}
+							<button
+								onClick={onLibraryActionsButtonClick}
+								className="button button-mini button-frameless button-header-actions">
+								<FontAwesomeIcon className="icon" icon="chevron-down"/>
+							</button>
+						</h1>
+					</Route>
 					<Route>
 						<h1>{title}</h1>
 					</Route>
 				</Switch>
 			</div>
 			<div className="app-header-right-wrapper">
-				<Switch>
-					<Route path={LIBRARY} exact>
-						{renderDropDown(actions.library)}
-					</Route>
-				</Switch>
 				<SearchForm
 					hasFocus={hasSearchFocus}
 					onFormSubmit={onSearchFormSubmit}

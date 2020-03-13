@@ -15,7 +15,7 @@ describe('AppHeader', () => {
         hasSearchFocus={false}
         onSearchFormSubmit={jest.fn()}
         onSearchFormBlur={jest.fn()}
-        onAddAlbumButtonClick={jest.fn()}
+        importMusicHandler={jest.fn()}
         onQueueButtonDrop={jest.fn()}/>
 		);
 		expect(wrapper.is('.app-header')).toBe(true);
@@ -28,7 +28,7 @@ describe('AppHeader', () => {
         hasSearchFocus={false}
         onSearchFormSubmit={jest.fn()}
         onSearchFormBlur={jest.fn()}
-        onAddAlbumButtonClick={jest.fn()}
+        importMusicHandler={jest.fn()}
         onQueueButtonDrop={jest.fn()}/>
 		);
 		expect(wrapper.find('h1')).toHaveLength(1);
@@ -41,7 +41,7 @@ describe('AppHeader', () => {
         hasSearchFocus={false}
         onSearchFormSubmit={jest.fn()}
         onSearchFormBlur={jest.fn()}
-        onAddAlbumButtonClick={jest.fn()}
+        importMusicHandler={jest.fn()}
         onQueueButtonDrop={jest.fn()}/>
 		);
     expect(wrapper.find('.button-library').is(':not(.button-outline)')).toBe(true);
