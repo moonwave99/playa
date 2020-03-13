@@ -1,7 +1,7 @@
-@import "../../../styles/variables";
-@import "../../../styles/mixins";
+@import "../../../../styles/variables";
+@import "../../../../styles/mixins";
 
-.search-bar {
+.search-form {
 	margin: 0;
 	padding: 0;
 	display: flex;
@@ -15,6 +15,10 @@
 		display: flex;
 		flex-grow: 1;
 		border-right: none;
+		min-width: calc(var(--section-gutter) * 4);
+		@media (max-width: $smallWindowThreshold) {
+			min-width: none;
+		}
 	}
 	.button {
 		transition: background-color .2s ease-in-out;

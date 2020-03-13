@@ -17,7 +17,8 @@ const {
   IPC_UI_LOCATION_UPDATE,
   IPC_PLAYBACK_PREV_TRACK,
   IPC_PLAYBACK_NEXT_TRACK,
-  IPC_UI_TOGGLE_ALBUM_VIEW
+  IPC_UI_TOGGLE_ALBUM_VIEW,
+  IPC_LIBRARY_IMPORT_MUSIC
 } = IPC_MESSAGES;
 
 import {
@@ -110,8 +111,13 @@ export default function initMenu({
       submenu: [
         {
           label: 'Show Library',
-          accelerator: 'cmd+l',
+          accelerator: 'cmd+2',
           click: (): void => window.webContents.send(IPC_UI_NAVIGATE_TO, LIBRARY)
+        },
+        {
+          label: 'Import Music',
+          accelerator: 'cmd+shift+i',
+          click: (): void => window.webContents.send(IPC_LIBRARY_IMPORT_MUSIC)
         }
       ]
     },
@@ -142,25 +148,25 @@ export default function initMenu({
         { type: 'separator' },
         {
           label: 'Show All',
-          accelerator: 'cmd+p',
+          accelerator: 'cmd+1',
           click: (): void => window.webContents.send(IPC_UI_NAVIGATE_TO, PLAYLIST_ALL)
         },
         {
           label: 'Show Playback Queue',
-          accelerator: 'cmd+shift+p',
+          accelerator: 'cmd+3',
           click: (): void => window.webContents.send(IPC_UI_NAVIGATE_TO, QUEUE)
         },
         { type: 'separator' },
         {
           label: 'Show Extended View',
           id: 'show-extended',
-          accelerator: 'cmd+1',
+          accelerator: 'cmd+shift+1',
           click: (): void => window.webContents.send(IPC_UI_TOGGLE_ALBUM_VIEW, extendedView)
         },
         {
           label: 'Show Compact View',
           id: 'show-compact',
-          accelerator: 'cmd+2',
+          accelerator: 'cmd+shift+2',
           click: (): void => window.webContents.send(IPC_UI_TOGGLE_ALBUM_VIEW, compactView)
         }
       ]

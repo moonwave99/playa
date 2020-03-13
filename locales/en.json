@@ -1,15 +1,17 @@
 {
   "translation": {
+    "buttons": {
+      "library": "Library",
+      "queue": "Queue",
+      "playlists": "Playlists",
+      "addMusic": "Add Music"
+    },
     "sidebar": {
       "buttons": {
-        "search": "Search",
-        "library": "Library",
         "playlist": {
           "recent": "Recent Playlists",
-          "new": "Create New Playlist",
-          "all": "All Playlists"
-        },
-        "queue": "Playback Queue"
+          "new": "Create New Playlist"
+        }
       }
     },
     "about": {
@@ -27,9 +29,6 @@
     "library": {
       "title": "Library",
       "empty": "Library is empty.",
-      "buttons": {
-        "addNewAlbum": "Add New Album"
-      },
       "dialogs": {
         "albumAlreadyExists": {
           "title": "Album already exists",

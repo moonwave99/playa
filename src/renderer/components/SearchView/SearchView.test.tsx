@@ -18,15 +18,6 @@ describe('SearchView', () => {
 		expect(wrapper.is('.search-view')).toBe(true);
   });
 
-  it('should contain a title', () => {
-    const store = {
-      search: {},
-      player: {}
-    };
-		const wrapper = renderInAll(<SearchView/>, store);
-		expect(wrapper.find('h1')).toHaveLength(1);
-  });
-
   it('should contain a .search-result-list', () => {
     const store = {
       search: {

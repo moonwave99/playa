@@ -4,8 +4,13 @@ export const IS_MACOS = (os.platform() === "darwin");
 
 export const DEFAULT_WIDTH = 1200;
 export const DEFAULT_HEIGHT = 800;
-export const MIN_WIDTH = 350;
+export const MIN_WIDTH = 400;
 export const MIN_HEIGHT = DEFAULT_HEIGHT / 2;
+
+export const TRAFFIC_LIGHTS_POSITION = {
+  x: 15,
+  y: 45
+};
 
 export const ABOUT_WINDOW_WIDTH = 600;
 export const ABOUT_WINDOW_HEIGHT = 400;
@@ -87,5 +92,6 @@ export const IPC_MESSAGES = {
   IPC_ALBUM_CONTENT_RAW_REQUEST: 'album:content:raw-request',
   IPC_TRACK_GET_LIST_RAW_REQUEST: 'track:get-list:raw-request',
   IPC_ABOUT_CLOSE_WINDOW: 'about:close-window',
-  IPC_ABOUT_OPEN_LINK: 'about:open-link'
+  IPC_ABOUT_OPEN_LINK: 'about:open-link',
+  IPC_LIBRARY_IMPORT_MUSIC: 'library:import-music'
 };

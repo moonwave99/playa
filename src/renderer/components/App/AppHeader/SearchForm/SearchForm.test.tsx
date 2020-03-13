@@ -1,26 +1,26 @@
 import React from 'react';
-import { render, mount } from 'enzyme';
+import { render, mount } from '../../../../../../test/testUtils';
 
-import { SearchBar } from './SearchBar';
+import { SearchForm } from './SearchForm';
 
-describe('SearchBar', () => {
-  it('should render a .search-bar', () => {
+describe('SearchForm', () => {
+  it('should render a .search-form', () => {
     const wrapper = render(
-      <SearchBar onFormSubmit={jest.fn()} onBlur={jest.fn()} />
+      <SearchForm onFormSubmit={jest.fn()} onBlur={jest.fn()} />
     );
-    expect(wrapper.is('.search-bar')).toBe(true);
+    expect(wrapper.is('.search-form')).toBe(true);
   });
 
 	it('should be .has-fous if hasFocus = true', () => {
 		const wrapper = render(
-      <SearchBar onFormSubmit={jest.fn()} onBlur={jest.fn()} hasFocus/>
+      <SearchForm onFormSubmit={jest.fn()} onBlur={jest.fn()} hasFocus/>
     );
     expect(wrapper.is('.has-focus')).toBe(true);
 	});
 
 	it('should set the focus to the input field if hasFocus = true', () => {
 		const wrapper = mount(
-			<SearchBar onFormSubmit={jest.fn()} onBlur={jest.fn()} hasFocus/>
+			<SearchForm onFormSubmit={jest.fn()} onBlur={jest.fn()} hasFocus/>
 		);
 		const input = wrapper.find('.search-input');
 		expect(input.instance()).toEqual(document.activeElement);
@@ -29,7 +29,7 @@ describe('SearchBar', () => {
 	it('should call the onFormSubmit handler when form is submit', () => {
 		const handler = jest.fn();
 		const wrapper = mount(
-      <SearchBar onFormSubmit={handler} onBlur={jest.fn()}/>
+      <SearchForm onFormSubmit={handler} onBlur={jest.fn()}/>
     );
 		wrapper.find('form').simulate('submit');
 		expect(handler).toHaveBeenCalled();
@@ -38,7 +38,7 @@ describe('SearchBar', () => {
 	it('should call the onBlur handler when the input loses focus', () => {
 		const handler = jest.fn();
 		const wrapper = mount(
-      <SearchBar onFormSubmit={jest.fn()} onBlur={handler}/>
+      <SearchForm onFormSubmit={jest.fn()} onBlur={handler}/>
     );
 		wrapper.find('.search-input').simulate('blur');
 		expect(handler).toHaveBeenCalled();

@@ -33,11 +33,6 @@ describe('QueueView', () => {
     expect(wrapper.is('.queue')).toBe(true);
   });
 
-  it('should contain a title', () => {
-    const wrapper = renderInAll(<QueueView/>, defaultStore);
-    expect(wrapper.find('h1')).toHaveLength(1);
-  });
-
   it('should render a .queue-empty-placeholder if queue is empty', () => {
     const wrapper = renderInAll(<QueueView/>, defaultStore);
     expect(wrapper.find('.queue-empty-placeholder')).toHaveLength(1);

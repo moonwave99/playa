@@ -5,10 +5,10 @@
   height: 100vh;
   .search-container,
   .main-container {
-    height: calc(100vh - #{$playerHeight});
+    height: calc(100vh - #{$headerHeight} - #{$playerHeight});
 		display: flex;
     @media (max-width: $miniWindowThreshold) {
-			height: calc(100vh - #{$miniPlayerHeight});
+			height: calc(100vh - #{$headerHeight} - #{$miniPlayerHeight});
 		}
   }
 

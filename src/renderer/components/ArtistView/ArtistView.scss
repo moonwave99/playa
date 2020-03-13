@@ -3,24 +3,18 @@
 
 .artist {
 	width: 100%;
-	padding: var(--section-gutter) 0;
-	h1 {
-		margin: 0
-			var(--section-gutter)
-			var(--section-gutter)
-			var(--section-gutter);
-    line-height: $mainUnit;
-    color: $highlightColor;
-	}
+	padding: 0;
 	.artist-releases {
 		.artist-release-group	{
-			padding: calc(var(--section-gutter) / 2) var(--section-gutter);
 			@include albumType('background-color', .1);
-			.header {
+			.artist-releases-header {
 				@include albumType('color');
-				.release-count {
-
-				}
+				font-size: 1rem;
+				line-height: $mainUnit;
+				margin: 0;
+			}
+			.album-grid {
+				
 			}
 		}
 	}

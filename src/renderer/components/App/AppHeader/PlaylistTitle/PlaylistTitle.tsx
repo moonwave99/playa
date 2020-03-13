@@ -1,22 +1,27 @@
-import React, { ReactElement, FC, useState, useEffect, useRef, KeyboardEvent } from 'react';
-import { Playlist } from '../../../store/modules/playlist';
+import React, { ReactElement, useState, useEffect, useRef, KeyboardEvent } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router';
+import { Playlist, savePlaylistRequest } from '../../../../store/modules/playlist';
+import { ApplicationState } from '../../../../store/store';
 
-type PlaylistViewTitleProps = {
-	playlist: Playlist;
-  onTitleChange: Function;
-};
-
-export const PlaylistViewTitle: FC<PlaylistViewTitleProps> = ({
-	playlist,
-	onTitleChange
-}) => {
+export const PlaylistTitle = (): ReactElement => {
+	const dispatch = useDispatch();
+	const { _id } = useParams();
+	const playlist = useSelector(({ playlists }: ApplicationState) => playlists.allById[_id] || {} as Playlist);
 	const [title, setTitle] = useState(playlist.title);
 	const [isTitleEditing, setTitleEditing] = useState(false);
 	const inputRef = useRef<HTMLInputElement>(null);
 
+	function onTitleChange(): void {
+		if (title === playlist.title && playlist._rev) {
+			return;
+		}
+		dispatch(savePlaylistRequest({ ...playlist, title: title.trim() }));
+	}
+
 	function onSubmit(): void {
 		setTitleEditing(false);
-		onTitleChange(title);
+		onTitleChange();
 	}
 
 	function onTitleClick(): void {
@@ -24,10 +29,8 @@ export const PlaylistViewTitle: FC<PlaylistViewTitleProps> = ({
 	}
 
 	useEffect(() => {
-		if (!playlist._rev) {
-			setTitleEditing(true);
-		}
-	}, [playlist._rev]);
+		setTitleEditing(!playlist._rev);
+	}, [playlist]);
 
 	useEffect(() => {
 		setTitle(playlist.title);
@@ -39,7 +42,7 @@ export const PlaylistViewTitle: FC<PlaylistViewTitleProps> = ({
 
 	function onBlur(): void {
 		setTitleEditing(false);
-		onTitleChange(title);
+		onTitleChange();
 	}
 
 	function onKeyDown(event: KeyboardEvent): void {
@@ -48,6 +51,7 @@ export const PlaylistViewTitle: FC<PlaylistViewTitleProps> = ({
 			case 'Escape':
 				event.preventDefault();
 				setTitleEditing(false);
+				setTitle(playlist.title);
 				break;
 		}
 	}

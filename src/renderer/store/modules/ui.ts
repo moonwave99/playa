@@ -36,6 +36,7 @@ export enum UIAlbumView {
 
 export type UIState = {
   started?: boolean;
+  title: string;
 };
 
 export const SHOW_DIALOG  = 'playa/ui/SHOW_DIALOG';
@@ -95,7 +96,8 @@ export const updateLocation =
   (location: string): void => ipc.send(IPC_UI_LOCATION_UPDATE, location);
 
 const INITIAL_STATE = {
-  started: true
+  started: true,
+  title: 'Playa'
 };
 
 export default function reducer(
@@ -103,9 +105,13 @@ export default function reducer(
   action: UIActionTypes
 ): UIState {
 	switch (action.type) {
+    case UPDATE_TITLE:
+      return {
+        ...state,
+        title: action.title
+      };
     case SHOW_DIALOG:
     case UPDATE_STATE:
-    case UPDATE_TITLE:
 		default:
 			return state;
 	}

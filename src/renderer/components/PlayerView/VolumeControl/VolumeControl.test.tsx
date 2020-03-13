@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, mount } from 'enzyme';
+import { render, mount } from '../../../../../test/testUtils';
 
 import { VolumeControl } from './VolumeControl';
 

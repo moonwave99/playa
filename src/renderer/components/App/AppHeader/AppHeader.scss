@@ -1,0 +1,116 @@
+@import "../../../styles/variables";
+@import "../../../styles/mixins";
+
+.app-header {
+	height: $headerHeight;
+	line-height: $headerHeight;
+	border-bottom: 1px solid $darkColor;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+
+	.playlist-title-form {
+		flex-basis: 50%;
+		.header-like {
+			color: $lightColor;
+			padding: 0;
+			border-radius: 0;
+			border-top: none;
+			border-left: none;
+			border-right: none;
+			font-size: 1.2rem;
+			text-align: center;
+			border-bottom: 1px solid $mainColor;
+			background-color: $backgroundLightColor;
+		}
+	}
+
+	.app-header-left-wrapper {
+		display: flex;
+		flex-basis: 25%;
+		margin-left: 2 * $mainUnit;
+		.button {
+			margin-right: 1rem;
+			@media (max-width: $smallWindowThreshold) {
+				margin-right: .5rem;
+			}
+			&:last-child {
+				margin-right: 0;
+			}
+		}
+  }
+
+	.app-header-right-wrapper {
+		display: flex;
+		flex-basis: 25%;
+		justify-content: flex-end;
+		margin-right: 1rem;
+	}
+
+	.app-header-middle-wrapper {
+		display: flex;
+		flex-basis: 50%;
+		h1 {
+			flex: 1;
+			@include ellipsis(50vw);
+			padding: 0 1rem;
+			margin: 0;
+			color: $lightColor;
+			font-size: 1.2rem;
+			text-align: center;
+		}
+		.playlist-title-form {
+			flex: 1;
+			padding-top: 2px;
+		}
+	}
+
+	.app-header-action-dropdown {
+		display: flex;
+	}
+
+	@media (max-width: $smallWindowThreshold) {
+		.app-header-middle-wrapper {
+			display: none;
+		}
+		.app-header-left-wrapper,
+		.app-header-right-wrapper {
+			flex-basis: 50%;
+		}
+	}
+
+	.search-form {
+		.button-search {
+			width: auto;
+			padding: 0 .5rem;
+			border-color: $mainColor;
+			&:hover {
+				border-color: $mainColor;
+			}
+		}
+	}
+
+	.button-playlists,
+	.button-library,
+	.button-queue {
+		padding: 0 1rem;
+		text-align: center;
+		&.drag-is-over.drag-can-drop {
+			transition: .3s background-color ease-in-out;
+			background-color: $highlightColor;
+			color: $mainColor;
+		}
+		@media (max-width: $smallWindowThreshold) {
+			.button-icon {
+				margin: 0;
+			}
+			.button-text {
+				display: none;
+			}
+		}
+	}
+
+	.button-drag-wrapper {
+		display: flex;
+	}
+}

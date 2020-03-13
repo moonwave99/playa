@@ -5,14 +5,16 @@ import { useDrop } from 'react-dnd';
 import { useTranslation } from 'react-i18next';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import cx from 'classnames';
-import { QUEUE } from '../../../routes';
-import { UIDragTypes, UIDropItem } from '../../../store/modules/ui';
+import { QUEUE } from '../../../../routes';
+import { UIDragTypes, UIDropItem } from '../../../../store/modules/ui';
 
 type QueueButtonProps = {
+  className?: string;
   onDrop: Function;
 }
 
 export const QueueButton: FC<QueueButtonProps> = ({
+  className,
   onDrop
 }) => {
 	const { t } = useTranslation();
@@ -30,17 +32,23 @@ export const QueueButton: FC<QueueButtonProps> = ({
     }),
   });
 
-  const classNames = cx('button', 'button-queue', {
-    'button-outline': !matchPath(location.pathname, { path: QUEUE }),
-    'drag-is-over': isOver,
-    'drag-can-drop': canDrop
-  });
+  const classNames = cx(
+    'button',
+    'button-frameless',
+    'button-queue',
+    className,
+    {
+      'selected': matchPath(location.pathname, { path: QUEUE }),
+      'drag-is-over': isOver,
+      'drag-can-drop': canDrop
+    }
+  );
 
   return (
     <div ref={drop} className="button-drag-wrapper">
       <Link to={QUEUE} className={classNames}>
         <FontAwesomeIcon icon="play" className="button-icon"/>
-        <span className="button-text">{t('sidebar.buttons.queue')}</span>
+        <span className="button-text">{t('buttons.queue')}</span>
       </Link>
     </div>
   );

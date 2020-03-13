@@ -3,18 +3,7 @@
 .search-view {
   height: 100%;
   width: 100%;
-  h1 {
-    margin: 0;
-    line-height: $mainUnit;
-    font-size: 2rem;
-    font-weight: normal;
-    letter-spacing: -.1rem;
-    margin:
-      var(--section-gutter)
-      var(--section-gutter)
-      calc(var(--section-gutter) * .5)
-      var(--section-gutter);
-  }
+  padding-top: 1rem;
   .results-wrapper {
     overflow: auto;
     padding: 0;

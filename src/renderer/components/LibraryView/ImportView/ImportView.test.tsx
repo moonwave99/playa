@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from 'enzyme';
+import { render } from '../../../../../test/testUtils';
 import { tracks } from '../../../../../test/testFixtures';
 import { ImportView } from './ImportView';
 

@@ -39,7 +39,6 @@ export const LatestAlbumsView: FC<LatestAlbumsViewProps> = ({
 
   return (
     <section className="library-latest-albums">
-      <h1>{t('library.latest.title')}</h1>
       <CSSTransition
         in={!loading}
         timeout={300}

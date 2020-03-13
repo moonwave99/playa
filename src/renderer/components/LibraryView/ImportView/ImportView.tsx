@@ -179,7 +179,9 @@ export const ImportView: FC<ImportViewProps> = ({
         onSubmit={_onFormSubmit}>
         {formFields.map(renderFormField)}
         <p className="button-wrapper">
-          <button type="submit" className="button">{t('library.import.form.submit')}</button>
+          <button type="submit" className="button button-full">
+            {t('library.import.form.submit')}
+          </button>
         </p>
       </form>
     );

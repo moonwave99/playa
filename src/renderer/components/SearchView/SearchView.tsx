@@ -115,7 +115,6 @@ export const SearchView = (): ReactElement => {
 
 	return (
     <div className="search-view">
-      <h1>{t('search.resultsFor')} <span className="highlight">{query}</span></h1>
       <div className="results-wrapper">
         <CSSTransition
           in={!isSearching}

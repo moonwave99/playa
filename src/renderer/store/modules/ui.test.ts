@@ -35,7 +35,10 @@ describe('ui actions', () => {
 
 describe('ui reducer', () => {
   it('should return the initial state', () => {
-    expect(reducer(undefined, {} as UIActionTypes)).toEqual({ started: true});
+    expect(reducer(undefined, {} as UIActionTypes)).toEqual({
+      started: true,
+      title: 'Playa'
+    });
   });
 
   it('should handle UPDATE_STATE', () => {
@@ -49,6 +52,8 @@ describe('ui reducer', () => {
     expect(reducer({} as UIState, {
       type: UPDATE_TITLE,
       title: 'title'
-    })).toEqual({});
+    })).toEqual({
+      title: 'title'
+    });
   });
 });

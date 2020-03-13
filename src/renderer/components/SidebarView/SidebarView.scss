@@ -5,11 +5,11 @@
   background-color: $backgroundDarkColor;
   height: 100%;
   width: 100%;
-  overflow: scroll;
   display: flex;
   flex-direction: column;
-  .sidebar-header,
-  .sidebar-footer {
+  .sidebar-playlists {
+    flex: 1;
+    padding-top: var(--section-gutter);
     .button-wrapper {
       padding: var(--section-gutter);
       .button {
@@ -21,23 +21,6 @@
         }
         &:not(.button-outline):hover {
           background-color: $mainColor;
-          border-color: $mainColor;
-        }
-      }
-    }
-  }
-  .sidebar-header {
-    flex: 1;
-  }
-  .searchbar-wrapper {
-    width: 100%;
-    flex: 1;
-    margin: 0 0 $mainUnit / 2 0;
-    .search-bar {
-      .button-search {
-        width: auto;
-        padding: 0 .5rem;
-        &:hover {
           border-color: $mainColor;
         }
       }
@@ -84,25 +67,7 @@
     }
   }
 
-  .button-queue {
-    &.drag-is-over.drag-can-drop {
-      transition: .3s background-color ease-in-out;
-      background-color: $highlightColor;
-      color: $mainColor;
-    }
-  }
-
   @media (max-width: $miniWindowThreshold) {
-    flex: 1;
-    height: auto;
-    .sidebar-footer,
-    .playlist-list,
-    .button-wrapper > .button,
-    .button-wrapper .button-drag-wrapper .button {
-      display: none;
-    }
-    .searchbar-wrapper {
-      margin: 0;
-    }
+    display:none;
   }
 }
