@@ -27,9 +27,9 @@ describe('Application launch', () => {
     const title = TestPlaylists[0].title;
     await app.client.waitUntilWindowLoaded();
     await app.client.click('.playlist-list .playlist-list-item');
-    await app.client.waitUntil(async() => await app.client.getText('.app-header h1') === `Playlist: ${title}`);
+    await app.client.waitUntil(async() => await app.client.getText('.app-header h1') === title);
     await app.restart();
     await app.client.waitUntilWindowLoaded();
-    expect(await app.client.getText('.app-header h1')).toBe(`Playlist: ${title}`);
+    expect(await app.client.getText('.app-header h1')).toBe(title);
   }, TEN_SECONDS);
 });
