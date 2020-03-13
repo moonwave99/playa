@@ -16,7 +16,7 @@ export const PlaylistTitle = (): ReactElement => {
 		if (title === playlist.title && playlist._rev) {
 			return;
 		}
-		dispatch(savePlaylistRequest({ ...playlist, title }));
+		dispatch(savePlaylistRequest({ ...playlist, title: title.trim() }));
 	}
 
 	function onSubmit(): void {
@@ -51,6 +51,7 @@ export const PlaylistTitle = (): ReactElement => {
 			case 'Escape':
 				event.preventDefault();
 				setTitleEditing(false);
+				setTitle(playlist.title);
 				break;
 		}
 	}
