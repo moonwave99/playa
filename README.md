@@ -1,5 +1,7 @@
 # Playa
 
+![CI](https://github.com/moonwave99/playa-new/workflows/CI/badge.svg)
+
 **Playa** is the audio player for those who enjoy thinking in playlist of beautiful albums, rather than shuffling over messed collections.
 
 ## Install
