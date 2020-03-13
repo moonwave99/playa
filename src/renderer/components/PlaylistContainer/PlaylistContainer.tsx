@@ -2,7 +2,6 @@ import React, { ReactElement, useEffect } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect, useParams } from 'react-router';
-import { IconName } from '@fortawesome/fontawesome-svg-core';
 import { PlaylistView } from '../PlaylistView/PlaylistView';
 
 import {
@@ -20,7 +19,6 @@ import { openContextMenu } from '../../lib/contextMenu';
 
 import {
   PLAYLIST_CONTENT_CONTEXT_ACTIONS,
-  PlaylistContentActions
 } from '../../actions/playlistContentActions';
 
 import {
@@ -101,30 +99,6 @@ export const PlaylistContainer = (): ReactElement => {
     }).handler();
   }
 
-  const albumActions = [
-    {
-      icon: 'minus-circle' as IconName,
-      handler: (album: Album): void => {
-        actionsMap(PlaylistContentActions.REMOVE_ALBUM)({
-          playlist,
-          selection: [album._id],
-          dispatch
-        }).handler();
-      },
-      title: 'Remove from playlist'
-    },
-    {
-      icon: 'folder-open' as IconName,
-      handler: (album: Album): void => {
-        actionsMap(AlbumActions.REVEAL_IN_FINDER)({
-          albums: [album],
-          dispatch
-        }).handler();
-      },
-      title: 'Reveal in Finder'
-    }
-  ];
-
 	return (
     !playlist._id
       ? <Redirect to={QUEUE}/>
@@ -139,7 +113,6 @@ export const PlaylistContainer = (): ReactElement => {
            isCurrent={currentPlaylistId === playlist._id}
            currentAlbumId={currentAlbumId}
            currentTrackId={currentTrackId}
-           albumActions={albumActions}
            onAlbumOrderChange={onAlbumOrderChange}
            onAlbumContextMenu={onAlbumContextMenu}
            onAlbumDoubleClick={onAlbumDoubleClick}/>

@@ -33,7 +33,6 @@ describe('AlbumView', () => {
         currentTrackId={null}
         album={albums[0]}
         dragType={''}
-        albumActions={[]}
         onContextMenu={jest.fn()}
         onDoubleClick={jest.fn()}/>
       , defaultStore);
@@ -47,7 +46,6 @@ describe('AlbumView', () => {
         currentTrackId={null}
         album={albums[0]}
         dragType={''}
-        albumActions={[]}
         onContextMenu={jest.fn()}
         onDoubleClick={jest.fn()}/>
       , defaultStore);
@@ -60,7 +58,6 @@ describe('AlbumView', () => {
         currentTrackId={null}
         album={albums[0]}
         dragType={''}
-        albumActions={[]}
         onContextMenu={jest.fn()}
         onDoubleClick={jest.fn()}/>
       , defaultStore);
@@ -73,7 +70,6 @@ describe('AlbumView', () => {
         currentTrackId={null}
         album={albums[0]}
         dragType={''}
-        albumActions={[]}
         onContextMenu={jest.fn()}
         onDoubleClick={jest.fn()}/>
       , defaultStore);
@@ -86,7 +82,6 @@ describe('AlbumView', () => {
         currentTrackId={null}
         album={albums[0]}
         dragType={''}
-        albumActions={[]}
         onContextMenu={jest.fn()}
         onDoubleClick={jest.fn()}/>
       , defaultStore);
@@ -100,7 +95,6 @@ describe('AlbumView', () => {
         currentTrackId={null}
         album={albums[0]}
         dragType={''}
-        albumActions={[]}
         onContextMenu={jest.fn()}
         onDoubleClick={jest.fn()}/>
       , defaultStore);
@@ -114,7 +108,6 @@ describe('AlbumView', () => {
         currentTrackId={null}
         album={albums[0]}
         dragType={''}
-        albumActions={[]}
         onContextMenu={jest.fn()}
         onDoubleClick={jest.fn()}/>
       , defaultStore);
@@ -128,7 +121,6 @@ describe('AlbumView', () => {
         currentTrackId={null}
         album={albums[0]}
         dragType={''}
-        albumActions={[]}
         onContextMenu={handler}
         onDoubleClick={jest.fn()}/>
       , defaultStore);
@@ -143,7 +135,6 @@ describe('AlbumView', () => {
         currentTrackId={null}
         album={albums[0]}
         dragType={''}
-        albumActions={[]}
         onContextMenu={jest.fn()}
         onDoubleClick={handler}/>
       , defaultStore);

@@ -33,6 +33,7 @@
 		.button {
 			margin-right: 1rem;
 			justify-content: center;
+			padding-top: .25rem;
 			@media (max-width: $smallWindowThreshold) {
 				margin-right: .5rem;
 			}

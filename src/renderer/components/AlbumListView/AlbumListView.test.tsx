@@ -33,7 +33,6 @@ describe('AlbumListView', () => {
         currentAlbumId={null}
         currentTrackId={null}
         originalOrder={albums.map(({ _id }) => _id)}
-        albumActions={[]}
         dragType=''
         albumView={UIAlbumView.Extended}
         albums={toObj(albums)}
@@ -49,7 +48,6 @@ describe('AlbumListView', () => {
         currentAlbumId={null}
         currentTrackId={null}
         originalOrder={albums.map(({ _id }) => _id)}
-        albumActions={[]}
         dragType=''
         albumView={UIAlbumView.Extended}
         albums={toObj(albums)}
@@ -65,7 +63,6 @@ describe('AlbumListView', () => {
         currentAlbumId={null}
         currentTrackId={null}
         originalOrder={albums.map(({ _id }) => _id)}
-        albumActions={[]}
         dragType=''
         albumView={UIAlbumView.Compact}
         albums={toObj(albums)}

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, generatePath } from 'react-router-dom';
 import { useDrag } from 'react-dnd';
 import { useInView } from 'react-intersection-observer';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Vibro from 'node-vibrant';
 import cx from 'classnames';
 import useNativeDrop from '../../../hooks/useNativeDrop/useNativeDrop';
@@ -12,7 +13,6 @@ import { ApplicationState } from '../../../store/store';
 import { Album, getAlbumRequest, getAlbumContentById } from '../../../store/modules/album';
 import { getCoverFromUrlRequest } from '../../../store/modules/cover';
 import { Track } from '../../../store/modules/track';
-import { AlbumActionsView, ActionsConfig } from '../AlbumActionsView/AlbumActionsView';
 import {
   formatArtist,
   showTrackNumbers,
@@ -26,7 +26,6 @@ type AlbumViewProps = {
   isCurrent?: boolean;
   currentTrackId: Track['_id'];
   dragType: string;
-  albumActions?: ActionsConfig[];
   onContextMenu: Function;
   onDoubleClick: Function;
 }
@@ -47,7 +46,6 @@ export const AlbumView: FC<AlbumViewProps> = ({
   isCurrent = false,
   currentTrackId,
   dragType,
-  albumActions,
   onContextMenu,
   onDoubleClick
 }) => {
@@ -102,6 +100,10 @@ export const AlbumView: FC<AlbumViewProps> = ({
 
   function _onContextMenu(): void {
     onContextMenu && onContextMenu(album);
+  }
+
+  function onActionsButtonClick(): void {
+    _onContextMenu();
   }
 
   async function onImageLoad(src: string): Promise<void> {
@@ -160,7 +162,9 @@ export const AlbumView: FC<AlbumViewProps> = ({
             {year ? `${year} - ` : null}<span className={tagClasses}>{type}</span>
           </p>
         </header>
-        { albumActions.length > 0 && <AlbumActionsView album={album} actions={albumActions}/>}
+        <button onClick={onActionsButtonClick} className="button-album-actions">
+          <FontAwesomeIcon className="icon" icon="ellipsis-h"/>
+        </button>
       </aside>
       <section className="album-content">
         <TracklistView

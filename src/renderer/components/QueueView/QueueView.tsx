@@ -2,7 +2,6 @@ import React, { ReactElement, useEffect } from 'react';
 import { findDOMNode } from 'react-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { IconName } from '@fortawesome/fontawesome-svg-core';
 import { playerSelector } from '../../store/modules/player';
 import { AlbumListView } from '../AlbumListView/AlbumListView';
 import { Album } from '../../store/modules/album';
@@ -13,11 +12,8 @@ import { toObj } from '../../utils/storeUtils';
 import { openContextMenu } from '../../lib/contextMenu';
 import {
   ALBUM_CONTEXT_ACTIONS,
-  AlbumActions,
   AlbumActionsGroups
 } from '../../actions/albumActions';
-
-import actionsMap from '../../actions/actions';
 
 import './QueueView.scss';
 
@@ -74,29 +70,6 @@ export const QueueView = (): ReactElement => {
     }));
   }
 
-  const albumActions = [
-    {
-      icon: 'minus-circle' as IconName,
-      handler: (album: Album): void => {
-        actionsMap(AlbumActions.REMOVE_FROM_QUEUE)({
-          albums: [album],
-          queue: queue.map(({ _id }) => _id),
-          dispatch
-        }).handler();
-      },
-      title: 'Remove from queue'
-    },
-    {
-      icon: 'folder-open' as IconName,
-      handler: (album: Album): void => {
-        actionsMap(AlbumActions.REVEAL_IN_FINDER)({
-          albums: [album],
-          dispatch
-        }).handler();
-      },
-      title: 'Reveal in Finder'
-    }
-  ];
 	return (
 		<section className="queue" id="queue">
       { queue.length > 0
@@ -107,7 +80,6 @@ export const QueueView = (): ReactElement => {
             originalOrder={queue.map(({ _id }) => _id)}
             currentAlbumId={currentAlbum ? currentAlbum._id : null}
             currentTrackId={currentTrack ? currentTrack._id : null}
-            albumActions={albumActions}
             dragType={UIDragTypes.QUEUE_ALBUMS}
             onAlbumContextMenu={onAlbumContextMenu}
             onAlbumDoubleClick={onAlbumDoubleClick}/>

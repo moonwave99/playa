@@ -5,7 +5,7 @@
 	padding: 1rem 2rem;
   position: relative;
   transition: background-color .3s ease-in-out;
-  border-radius: 1rem;
+  border-radius: .5rem;
   background-color: rgba($backgroundDarkColor, .4);
   margin: 0 var(--section-gutter) 1rem var(--section-gutter);
   max-width: 100%;
@@ -60,6 +60,7 @@
   .album-content {
     margin: 0 0 0 1.6rem;
     display: flex;
+		flex: 1;
     flex-direction: column;
     .title {
       font-weight: bold;
@@ -74,12 +75,7 @@
       @include albumType('color');
     }
   }
-  .album-actions {
-    flex: 0 0 25%;
-    margin-left: auto;
-    text-align: right;
-		.album-actions-button {
-			font-size: 1.2rem;
-		}
-  }
+	.button-album-actions {
+		width: 2rem;
+	}
 }

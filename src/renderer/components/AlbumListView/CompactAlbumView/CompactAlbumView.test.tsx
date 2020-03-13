@@ -32,7 +32,6 @@ describe('CompactAlbumView', () => {
       <CompactAlbumView
         index={0}
         album={albums[0]}
-        albumActions={[]}
         onAlbumMove={jest.fn()}
         onContextMenu={jest.fn()}
         onDoubleClick={jest.fn()}/>
@@ -46,7 +45,6 @@ describe('CompactAlbumView', () => {
         isCurrent
         index={0}
         album={albums[0]}
-        albumActions={[]}
         onAlbumMove={jest.fn()}
         onContextMenu={jest.fn()}
         onDoubleClick={jest.fn()}/>
@@ -60,7 +58,6 @@ describe('CompactAlbumView', () => {
         sortable
         index={0}
         album={albums[0]}
-        albumActions={[]}
         onAlbumMove={jest.fn()}
         onContextMenu={jest.fn()}
         onDoubleClick={jest.fn()}/>
@@ -74,7 +71,6 @@ describe('CompactAlbumView', () => {
         isCurrent
         index={0}
         album={albums[0]}
-        albumActions={[]}
         onAlbumMove={jest.fn()}
         onContextMenu={jest.fn()}
         onDoubleClick={jest.fn()}/>
@@ -88,7 +84,6 @@ describe('CompactAlbumView', () => {
         isCurrent
         index={0}
         album={albums[0]}
-        albumActions={[]}
         onAlbumMove={jest.fn()}
         onContextMenu={jest.fn()}
         onDoubleClick={jest.fn()}/>
@@ -103,7 +98,6 @@ describe('CompactAlbumView', () => {
         isCurrent
         index={0}
         album={albums[0]}
-        albumActions={[]}
         onAlbumMove={jest.fn()}
         onContextMenu={jest.fn()}
         onDoubleClick={jest.fn()}/>
@@ -119,7 +113,6 @@ describe('CompactAlbumView', () => {
         isCurrent
         index={0}
         album={albums[0]}
-        albumActions={[]}
         onAlbumMove={jest.fn()}
         onContextMenu={handler}
         onDoubleClick={jest.fn()}/>
@@ -135,7 +128,6 @@ describe('CompactAlbumView', () => {
         isCurrent
         index={0}
         album={albums[0]}
-        albumActions={[]}
         onAlbumMove={jest.fn()}
         onContextMenu={jest.fn()}
         onDoubleClick={handler}/>

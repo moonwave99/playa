@@ -97,15 +97,9 @@
         }
       }
     }
-    .album-actions {
-      margin: 1rem 0 0 0;
-      visibility: hidden;
-      .album-actions-button {
-        font-size: 1.2rem;
-        &:first-child {
-          padding-left: 0;
-        }
-      }
+    .button-album-actions {
+      margin-top: 1rem;
+      width: 2rem;
     }
   }
 

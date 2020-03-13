@@ -31,7 +31,6 @@ describe('PlaylistView', () => {
   it('should render a .playlist-view', () => {
     const wrapper = renderInAll(
       <PlaylistView
-        albumActions={[]}
         playlist={playlists[0]}
         currentTrackId={null}
         currentAlbumId={null}
@@ -47,7 +46,6 @@ describe('PlaylistView', () => {
   it('should render the playlist creation date', () => {
     const wrapper = renderInAll(
       <PlaylistView
-        albumActions={[]}
         playlist={playlists[0]}
         currentTrackId={null}
         currentAlbumId={null}
@@ -67,7 +65,6 @@ describe('PlaylistView', () => {
   it('should toggle album view mode when clicking the .toggle-view-button', async () => {
     const wrapper = mountInAll(
       <PlaylistView
-        albumActions={[]}
         playlist={playlists[0]}
         currentTrackId={null}
         currentAlbumId={null}
@@ -86,7 +83,6 @@ describe('PlaylistView', () => {
   it('should render a .playlist-empty-placeholder if playlist is empty', () => {
     const wrapper = renderInAll(
       <PlaylistView
-        albumActions={[]}
         playlist={playlists[0]}
         currentTrackId={null}
         currentAlbumId={null}
@@ -106,7 +102,6 @@ describe('PlaylistView', () => {
     }
     const wrapper = renderInAll(
       <PlaylistView
-        albumActions={[]}
         playlist={playlist}
         currentTrackId={null}
         currentAlbumId={null}

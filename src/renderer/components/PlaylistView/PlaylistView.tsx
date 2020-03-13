@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconName } from '@fortawesome/fontawesome-svg-core';
 import { AlbumListView } from '../AlbumListView/AlbumListView';
-import { ActionsConfig } from '../AlbumListView/AlbumActionsView/AlbumActionsView';
 import { Playlist } from '../../store/modules/playlist';
 import { Album } from '../../store/modules/album';
 import { Track } from '../../store/modules/track';
@@ -23,7 +22,6 @@ type PlaylistViewProps = {
   isCurrent?: boolean;
   currentAlbumId: Album['_id'];
   currentTrackId: Track['_id'];
-  albumActions: ActionsConfig[];
   onAlbumOrderChange: Function;
   onAlbumContextMenu: Function;
   onAlbumDoubleClick: Function;
@@ -35,7 +33,6 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
   isCurrent = false,
   currentAlbumId,
   currentTrackId,
-  albumActions,
   onAlbumOrderChange,
   onAlbumContextMenu,
   onAlbumDoubleClick
@@ -100,7 +97,6 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
             originalOrder={playlist.albums}
             currentAlbumId={currentAlbumId}
             currentTrackId={currentTrackId}
-            albumActions={albumActions}
             dragType={UIDragTypes.PLAYLIST_ALBUMS}
             onAlbumOrderChange={onAlbumOrderChange}
             onAlbumContextMenu={onAlbumContextMenu}
