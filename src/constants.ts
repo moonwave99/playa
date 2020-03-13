@@ -92,5 +92,6 @@ export const IPC_MESSAGES = {
   IPC_ALBUM_CONTENT_RAW_REQUEST: 'album:content:raw-request',
   IPC_TRACK_GET_LIST_RAW_REQUEST: 'track:get-list:raw-request',
   IPC_ABOUT_CLOSE_WINDOW: 'about:close-window',
-  IPC_ABOUT_OPEN_LINK: 'about:open-link'
+  IPC_ABOUT_OPEN_LINK: 'about:open-link',
+  IPC_LIBRARY_IMPORT_MUSIC: 'library:import-music'
 };

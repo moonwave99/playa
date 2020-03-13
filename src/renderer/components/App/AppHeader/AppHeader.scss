@@ -9,16 +9,6 @@
 	align-items: center;
 	justify-content: space-between;
 
-	h1 {
-		@include ellipsis(50vw);
-		padding: 0 1rem;
-		margin: 0;
-		color: $lightColor;
-		font-size: 1.2rem;
-		text-align: center;
-		flex-basis: 50%;
-	}
-	
 	.playlist-title-form {
 		flex-basis: 50%;
 		.header-like {
@@ -57,8 +47,26 @@
 		margin-right: 1rem;
 	}
 
-	@media (max-width: $smallWindowThreshold) {
+	.app-header-middle-wrapper {
+		display: flex;
+		flex-basis: 50%;
 		h1 {
+			flex: 1;
+			@include ellipsis(50vw);
+			padding: 0 1rem;
+			margin: 0;
+			color: $lightColor;
+			font-size: 1.2rem;
+			text-align: center;
+		}
+	}
+
+	.app-header-action-dropdown {
+		display: flex;
+	}
+
+	@media (max-width: $smallWindowThreshold) {
+		.app-header-middle-wrapper {
 			display: none;
 		}
 		.app-header-left-wrapper,
@@ -100,13 +108,5 @@
 
 	.button-drag-wrapper {
 		display: flex;
-	}
-
-	.button-add-music {
-		padding: 0 1rem;
-		margin-right: 1rem;
-		@media (max-width: $smallWindowThreshold) {
-			display: none;
-		}
 	}
 }

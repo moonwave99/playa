@@ -1,4 +1,5 @@
 import * as Path from 'path';
+import * as fs from 'fs-extra';
 import { ipcMain as ipc } from 'electron';
 import AppState from '../lib/appState';
 import { Environment } from '../main';
@@ -31,9 +32,13 @@ export default function initAppState({
   userDataPath,
   environment = Environment.prod
 }: InitAppStateParams): AppState {
-  const appState = new AppState(
-    Path.join(userDataPath, getAppStateFileName(environment))
-  );
+  const path = Path.join(userDataPath, getAppStateFileName(environment));
+
+  if (environment === Environment.fresh) {
+    fs.removeSync(path);
+  }
+
+  const appState = new AppState(path);
   appState.load();
 
   ipc.handle(IPC_UI_STATE_LOAD, async () => appState.getState() );

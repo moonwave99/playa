@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import ReactModal from 'react-modal';
 import { createSelector } from 'reselect';
 import Player from '../../lib/player';
+import { selectFolderDialog } from '../../lib/dialog';
 import useImportAlbums from '../../hooks/useImportAlbums/useImportAlbums';
 import { AppHeader } from './AppHeader/AppHeader';
 import { PlayerView } from '../PlayerView/PlayerView';
@@ -136,6 +137,14 @@ export const App: FC<AppProps> = ({
         break;
     }
   }
+  
+  async function importMusicHandler(): Promise<void> {
+    const folder = await selectFolderDialog();
+    if (!folder) {
+      return;
+    }
+    showImportDialog(folder);
+  }
 
   useEffect(() => {
     dispatch(getAllPlaylistsRequest());
@@ -143,6 +152,7 @@ export const App: FC<AppProps> = ({
     const unsubscribeIpc = initIpc({
       history,
       dispatch,
+      importMusicHandler,
       focusSearchHandler: onFocusSearch
     });
     document.addEventListener('keydown', onKeyDown);
@@ -201,6 +211,7 @@ export const App: FC<AppProps> = ({
         hasSearchFocus={hasSearchFocus}
         onSearchFormSubmit={onSearchFormSubmit}
         onSearchFormBlur={onSearchFormBlur}
+        onAddAlbumButtonClick={importMusicHandler}
         onQueueButtonDrop={onQueueButtonDrop}/>
       <div className="main-container">
         <div className="sidebar-wrapper">

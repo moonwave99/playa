@@ -17,7 +17,8 @@ const {
   IPC_UI_LOCATION_UPDATE,
   IPC_PLAYBACK_PREV_TRACK,
   IPC_PLAYBACK_NEXT_TRACK,
-  IPC_UI_TOGGLE_ALBUM_VIEW
+  IPC_UI_TOGGLE_ALBUM_VIEW,
+  IPC_LIBRARY_IMPORT_MUSIC
 } = IPC_MESSAGES;
 
 import {
@@ -112,6 +113,11 @@ export default function initMenu({
           label: 'Show Library',
           accelerator: 'cmd+2',
           click: (): void => window.webContents.send(IPC_UI_NAVIGATE_TO, LIBRARY)
+        },
+        {
+          label: 'Import Music',
+          accelerator: 'cmd+shift+i',
+          click: (): void => window.webContents.send(IPC_LIBRARY_IMPORT_MUSIC)
         }
       ]
     },

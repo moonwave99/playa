@@ -37,7 +37,8 @@ describe('Import album into library', () => {
     await app.client.waitUntilWindowLoaded();
     await app.client.click('.app-header .button-library');
     await app.client.waitUntil(async() => await app.client.getText('.app-header h1') === 'Library');
-    await app.client.click('.app-header .button-add-music');
+    await app.client.click('.app-header .app-header-action-dropdown .action-dropdown-trigger');
+    await app.client.click('.app-header .app-header-action-dropdown .library-add-music');
     await app.client.waitUntil(async() =>
       await app.client.getText('.import-view .folder-name') === albumPath
     );

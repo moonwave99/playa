@@ -17,7 +17,9 @@ import {
   faSearch,
   faFileImport,
   faMinusCircle,
-  faFolderOpen
+  faFolderOpen,
+  faEllipsisH,
+  faChevronDown
 } from '@fortawesome/free-solid-svg-icons';
 
 export default function initFontAwesome(): void {
@@ -39,6 +41,8 @@ export default function initFontAwesome(): void {
     faSearch,
     faFileImport,
     faMinusCircle,
-    faFolderOpen
+    faFolderOpen,
+    faEllipsisH,
+    faChevronDown
   );
 }
