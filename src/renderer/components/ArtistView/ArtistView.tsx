@@ -97,7 +97,6 @@ export const ArtistView = (): ReactElement => {
           const headerClassNames = cx('header', `header-${type}`);
           return (
             <section className={sectionClassNames} key={type}>
-              <h2 className={headerClassNames}>{type} <span className="release-count">({releases.length})</span></h2>
               <AlbumGridView
                 albums={releases}
                 currentAlbumId={currentAlbumId}

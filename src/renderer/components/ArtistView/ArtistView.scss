@@ -1,21 +1,20 @@
 @import "../../styles/variables";
-@import "../../styles/common";
+@import "../../styles/mixins";
 
 .artist {
 	width: 100%;
 	padding: 0;
 	.artist-releases {
 		.artist-release-group	{
-			@include albumType('background-color', .1);
-			.artist-releases-header {
-				@include albumType('color');
-				font-size: 1rem;
-				line-height: $mainUnit;
-				margin: 0;
-			}
-			.album-grid {
-				
-			}
+			padding:
+				var(--section-gutter)
+				var(--section-gutter)
+				calc(var(--section-gutter) / 2)
+				var(--section-gutter);
+			@include albumType('border-left-color');
+			border-left-width: calc(var(--section-gutter) / 3);
+			border-left-style: solid;
+			border-bottom: 1px solid darken($lightColor, 50%);
 		}
 	}
 }

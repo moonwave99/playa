@@ -18,6 +18,7 @@
     line-height: $mainUnit;
     background-color: $backgroundDarkColor;
     text-align: center;
+    border-left: 1px solid $backgroundColor;
     li {
       display: inline-block;
       padding: 0 1rem;
