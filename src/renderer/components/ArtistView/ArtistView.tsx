@@ -94,7 +94,6 @@ export const ArtistView = (): ReactElement => {
       {
         Object.entries(albums).map(([type, releases]) => {
           const sectionClassNames = cx('artist-release-group', `artist-release-group-${type}`);
-          const headerClassNames = cx('header', `header-${type}`);
           return (
             <section className={sectionClassNames} key={type}>
               <AlbumGridView
