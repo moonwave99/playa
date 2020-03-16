@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CoverView } from '../../../AlbumListView/AlbumView/CoverView/CoverView';
 import { UIDragTypes } from '../../../../store/modules/ui';
 import { Album, VARIOUS_ARTISTS_ID } from '../../../../store/modules/album';
+import { selectors as artistSelectors } from '../../../../store/modules/artist';
 import { selectors as coverSelectors } from '../../../../store/modules/cover';
 import { ApplicationState } from '../../../../store/store';
 import { VARIOUS_ARTIST_KEY } from '../../../../utils/artistUtils';
@@ -42,8 +43,9 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
   selectedIDs = [],
   style
 }) => {
-  const { _id } = album;
+  const { _id, artist: artistId } = album;
   const cover = useSelector((state: ApplicationState) => coverSelectors.findById(state, _id));
+  const artist = useSelector((state: ApplicationState) => artistSelectors.findById(state, artistId));
   const selection = selectedIDs.indexOf(_id) > -1 ? selectedIDs : [_id]
   const [{ isDragging }, drag, preview] = useDrag({
     item: {
@@ -97,9 +99,9 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
         cellContent =
           <Link
             onContextMenu={_onArtistContextMenu}
-            to={generatePath(ARTIST_SHOW, { name: cell.value })}
+            to={generatePath(ARTIST_SHOW, { _id: artistId })}
             className="album-artist-link">
-              {cell.value === VARIOUS_ARTISTS_ID ? VARIOUS_ARTIST_KEY : cell.value}
+              {cell.value === VARIOUS_ARTISTS_ID ? VARIOUS_ARTIST_KEY : artist.name}
           </Link>
         break;
       case 'title':

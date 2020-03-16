@@ -1,6 +1,6 @@
 import React from 'react';
 import { renderInAll, mountInAll } from '../../../../test/testUtils';
-import { playlists, albums } from '../../../../test/testFixtures';
+import { playlists, albums, artists } from '../../../../test/testFixtures';
 import { toObj } from '../../utils/storeUtils';
 import { formatDate } from '../../utils/datetimeUtils';
 
@@ -15,6 +15,9 @@ const defaultStore = {
   },
   albums: {
     allById: toObj(albums)
+  },
+  artists: {
+    allById: toObj(artists)
   },
   tracks: {
     allById: {}

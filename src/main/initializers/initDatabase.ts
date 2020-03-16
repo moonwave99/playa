@@ -20,11 +20,15 @@ const {
   IPC_ALBUM_CONTENT_REQUEST,
   IPC_ALBUM_GET_LATEST_REQUEST,
   IPC_ALBUM_GET_STATS_REQUEST,
+  IPC_ALBUM_FIND_REQUEST,
   IPC_TRACK_GET_LIST_REQUEST,
   IPC_ALBUM_GET_SINGLE_INFO,
   IPC_ALBUM_EXISTS,
   IPC_ALBUM_DELETE_LIST_REQUEST,
   IPC_ALBUM_CONTENT_RAW_REQUEST,
+  IPC_ARTIST_GET_ALL_REQUEST,
+  IPC_ARTIST_SAVE_REQUEST,
+  IPC_ARTIST_DELETE_REQUEST,
   IPC_TRACK_GET_LIST_RAW_REQUEST,
   IPC_TRACK_DELETE_LIST_REQUEST
 } = IPC_MESSAGES;
@@ -65,6 +69,7 @@ export default async function initDatabase({
 
   await fs.ensureDir(Path.join(path, 'playlist'));
   await fs.ensureDir(Path.join(path, 'album'));
+  await fs.ensureDir(Path.join(path, 'artist'));
   await fs.ensureDir(Path.join(path, 'track'));
 
   const db = {
@@ -83,6 +88,7 @@ export default async function initDatabase({
         reduce: '_sum'
       }
     } }),
+    'artist': new Database({ path, debug, name: 'artist' }),
     'track': new Database({ path, debug, name: 'track' }),
   };
 
@@ -125,6 +131,10 @@ export default async function initDatabase({
     );
   });
 
+  ipc.handle(IPC_ALBUM_FIND_REQUEST,
+    async (_event, selector) => await db.album.find(selector)
+  );
+
   ipc.handle(IPC_ALBUM_GET_LIST_REQUEST,
     async (_event, ids) => await db.album.getList(ids)
   );
@@ -144,6 +154,18 @@ export default async function initDatabase({
 
   ipc.handle(IPC_ALBUM_GET_LATEST_REQUEST,
     async (_event, dateFrom, limit) => await db.album.getLatest({ dateFrom, limit, order: 'desc' })
+  );
+
+  ipc.handle(IPC_ARTIST_GET_ALL_REQUEST,
+    async () => await db.artist.findAll()
+  );
+
+  ipc.handle(IPC_ARTIST_SAVE_REQUEST,
+    async (_event, artist) => await db.artist.save(artist)
+  );
+
+  ipc.handle(IPC_ARTIST_DELETE_REQUEST,
+    async (_event, artist) => await db.artist.delete(artist)
   );
 
   ipc.handle(IPC_TRACK_GET_LIST_REQUEST,

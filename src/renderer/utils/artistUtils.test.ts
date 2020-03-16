@@ -22,6 +22,7 @@ describe('updateArtistCount', () => {
       ...artistsHash,
       'Slowdive':   {
         _id: 'Slowdive',
+        _rev: null,
         name: 'Slowdive',
         count: 2
       }
@@ -42,6 +43,7 @@ describe('updateArtistCount', () => {
       ...artistsHash,
       'Slowdive':   {
         _id: 'Slowdive',
+        _rev: null,
         name: 'Slowdive',
         count: 0
       }

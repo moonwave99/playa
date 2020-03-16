@@ -3,12 +3,16 @@ import createCachedSelector from 're-reselect';
 import {
   EntityHashMap,
   toObj,
-  toArray,
   ensureAll,
   updateId
 } from '../../utils/storeUtils';
 
 import { ApplicationState } from '../store';
+
+import {
+  Artist,
+  selectors as artistSelectors,
+} from './artist';
 
 import {
   Track,
@@ -46,7 +50,9 @@ export enum AlbumTypes {
 
 export type Album = {
   _id: string;
-  artist: string;
+  _rev?: string;
+  isFromVA?: boolean;
+  artist: Artist['_id'];
   title: string;
   year?: number;
   type: AlbumTypes;
@@ -59,6 +65,7 @@ export function getDefaultAlbum(): Album {
   const now = new Date().toISOString();
   return {
     _id: null,
+    _rev: null,
     artist: '',
     title: '',
     type: AlbumTypes.Album,
@@ -80,30 +87,18 @@ export const selectors = {
 };
 
 type GetAlbumContentByIdSelection = {
+  artist: Artist;
   tracks: Track[];
   cover: string;
 }
 
-export const getAlbumsByArtist = createCachedSelector(
-  ({ library }: ApplicationState, id: string) => library.artistsById[id],
-  selectors.allById,
-  ({ _id }, albums): EntityHashMap<Album[]> =>
-    toArray(albums).filter(({ artist }) => artist === _id)
-    .reduce((memo: EntityHashMap<Album[]>, album) => {
-      const { type } = album;
-      if (!memo[type]) {
-        memo[type] = [];
-      }
-      memo[type].push(album);
-      return memo;
-    }, {})
-)((_state_: ApplicationState, id: string) => id);
-
 export const getAlbumContentById = createCachedSelector(
   selectors.findById,
+  artistSelectors.allById,
   trackSelectors.allById,
   coverSelectors.allById,
-  (album, tracks, covers): GetAlbumContentByIdSelection => ({
+  (album, artists, tracks, covers): GetAlbumContentByIdSelection => ({
+    artist: artists[album.artist],
     tracks: album.tracks.map(id => tracks[id]).filter(x => !!x),
     cover: covers[album._id]
   })

@@ -5,24 +5,22 @@ import { ArtistListItemView} from './ArtistListItemView/ArtistListItemView';
 
 import './ArtistListView.scss';
 
-import { Artist, selectors as librarySelectors } from '../../../store/modules/library';
+import { Artist, selectors as artistSelectors } from '../../../store/modules/artist';
 import { ApplicationState } from '../../../store/store';
 
 import { ALPHABET } from '../../../utils/artistUtils';
 
 type ArtistListViewProps = {
   selectedLetter: string;
-  loading: boolean;
   onLetterClick: Function;
 }
 
 export const ArtistListView: FC<ArtistListViewProps> = ({
   selectedLetter,
-  loading = false,
   onLetterClick
 }) => {
   const artists = useSelector(
-    (state: ApplicationState) => librarySelectors.findArtistsByLetter(state, selectedLetter)
+    (state: ApplicationState) => artistSelectors.findByLetter(state, selectedLetter)
   );
 
   function renderLetter(letter: string): ReactElement {
@@ -48,7 +46,7 @@ export const ArtistListView: FC<ArtistListViewProps> = ({
     );
   }
 
-  const classNames = cx('library-artists', { loading });
+  const classNames = cx('library-artists');
 
   return (
     <section className={classNames}>

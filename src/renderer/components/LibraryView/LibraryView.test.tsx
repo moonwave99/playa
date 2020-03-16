@@ -16,6 +16,9 @@ const defaultStore = {
   albums: {
     allById: toObj(albums)
   },
+  artists: {
+    allById: toObj(artists)
+  },
   tracks: {
     allById: {}
   },

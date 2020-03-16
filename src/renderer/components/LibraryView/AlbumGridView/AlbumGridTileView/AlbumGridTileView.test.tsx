@@ -1,27 +1,37 @@
 import React from 'react';
 import { renderInAll, mountInAll } from '../../../../../../test/testUtils';
-import { albums } from '../../../../../../test/testFixtures';
+import { albums, artists } from '../../../../../../test/testFixtures';
+import { toObj } from '../../../../utils/storeUtils';
 import { AlbumGridTileView } from './AlbumGridTileView';
+
+const defaultStore = {
+  artists: {
+    allById: toObj(artists)
+  },
+  covers: {
+    allById: {}
+  }
+};
 
 describe('AlbumGridTileView', () => {
   it('should render a .album-grid-tile', () => {
     const wrapper = renderInAll(
       <AlbumGridTileView album={albums[0]}/>
-    );
+    , defaultStore);
     expect(wrapper.is('.album-grid-tile')).toBe(true);
   });
 
   it('should be a .is-playing if isPlaying', () => {
     const wrapper = renderInAll(
       <AlbumGridTileView isPlaying album={albums[0]}/>
-    );
+    , defaultStore);
     expect(wrapper.is('.is-playing')).toBe(true);
   });
 
   it('should contain an .album-cover', () => {
     const wrapper = renderInAll(
       <AlbumGridTileView album={albums[0]}/>
-    );
+    , defaultStore);
     expect(wrapper.find('.album-cover')).toHaveLength(1);
   });
 
@@ -31,7 +41,7 @@ describe('AlbumGridTileView', () => {
       <AlbumGridTileView
         onDoubleClick={handler}
         album={albums[0]}/>
-    );
+    , defaultStore);
     wrapper.find('figure').simulate('doubleClick');
     expect(handler).toHaveBeenCalledWith(albums[0]);
   });
@@ -42,7 +52,7 @@ describe('AlbumGridTileView', () => {
       <AlbumGridTileView
         onContextMenu={handler}
         album={albums[0]}/>
-    );
+    , defaultStore);
     wrapper.find('figure').simulate('contextmenu');
     expect(handler).toHaveBeenCalledWith(albums[0]);
   });

@@ -66,13 +66,11 @@ export const LibraryView: FC<LibraryViewProps> = ({
 	const {
     latest,
     currentAlbumId,
-    loadingLatest,
-    loadingArtists
+    loadingLatest
   } = useSelector(({ albums, library, player }: ApplicationState) => ({
     latest: library.latest.map((_id: Album['_id']) => albums.allById[_id]),
     currentAlbumId: player.currentAlbumId,
-    loadingLatest: library.loadingLatest,
-    loadingArtists: library.loadingArtists
+    loadingLatest: library.loadingLatest
   }));
 
   function _onDrop(folder: string): void {
@@ -169,7 +167,6 @@ export const LibraryView: FC<LibraryViewProps> = ({
         latest.length > 0
         ? <ArtistListView
             selectedLetter={selectedLetter}
-            loading={loadingArtists}
             onLetterClick={onLetterClick}/>
         : null
       }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { renderInAll, mountInAll } from '../../../../test/testUtils';
-import { albums } from '../../../../test/testFixtures';
+import { albums, artists } from '../../../../test/testFixtures';
 import { toObj } from '../../utils/storeUtils';
 jest.mock('../../lib/contextMenu');
 const { openContextMenu } = require('../../lib/contextMenu'); // eslint-disable-line
@@ -15,6 +15,9 @@ const defaultStore = {
   },
   albums: {
     allById: toObj(albums)
+  },
+  artists: {
+    allById: toObj(artists)
   },
   tracks: {
     allById: {}

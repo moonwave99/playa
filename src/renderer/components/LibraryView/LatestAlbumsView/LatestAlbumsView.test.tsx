@@ -1,7 +1,32 @@
 import React from 'react';
 import { renderInAll } from '../../../../../test/testUtils';
-import { albums } from '../../../../../test/testFixtures';
+import { albums, artists } from '../../../../../test/testFixtures';
+import { toObj } from '../../../utils/storeUtils';
 import { LatestAlbumsView } from './LatestAlbumsView';
+
+const defaultStore = {
+  player: {
+    queue: [] as string[]
+  },
+  playlists: {
+    allById: {}
+  },
+  albums: {
+    allById: toObj(albums)
+  },
+  artists: {
+    allById: toObj(artists)
+  },
+  tracks: {
+    allById: {}
+  },
+  covers: {
+    allById: {}
+  },
+  waveforms: {
+    allById: {}
+  }
+};
 
 describe('LatestAlbumsView', () => {
   it('should render an .library-latest-albums', () => {
@@ -12,7 +37,7 @@ describe('LatestAlbumsView', () => {
         loading={false}
         onAlbumContextMenu={jest.fn()}
         onAlbumDoubleClick={jest.fn()}/>
-    );
+    , defaultStore);
     expect(wrapper.is('.library-latest-albums')).toBe(true);
   });
 
@@ -24,7 +49,7 @@ describe('LatestAlbumsView', () => {
         loading={false}
         onAlbumContextMenu={jest.fn()}
         onAlbumDoubleClick={jest.fn()}/>
-    );
+    , defaultStore);
     expect(wrapper.find('.album-grid')).toHaveLength(1);
   });
 
@@ -36,7 +61,7 @@ describe('LatestAlbumsView', () => {
         loading={false}
         onAlbumContextMenu={jest.fn()}
         onAlbumDoubleClick={jest.fn()}/>
-    );
+    , defaultStore);
     expect(wrapper.find('.album-grid')).toHaveLength(0);
     expect(wrapper.find('.library-latest-albums-empty-placeholder')).toHaveLength(1);
   });

@@ -5,6 +5,7 @@ import { Link, generatePath } from 'react-router-dom';
 import cx from 'classnames';
 import { CoverView } from '../../../AlbumListView/AlbumView/CoverView/CoverView';
 import { Album } from '../../../../store/modules/album';
+import { selectors as artistSelectors } from '../../../../store/modules/artist';
 import {
   getCoverRequest,
   getCoverFromUrlRequest,
@@ -32,7 +33,8 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
-  const { _id } = album;
+  const { _id, artist: artistId } = album;
+  const artist = useSelector((state: ApplicationState) => artistSelectors.findById(state, artistId));
   const cover = useSelector((state: ApplicationState) => coverSelectors.findById(state, _id));
 
   function onDrop(url: string): void {
@@ -73,7 +75,8 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
     onDoubleClick && onDoubleClick(album);
   }
 
-  const { artist, title } = album;
+  const { title } = album;
+  const { name: artistName } = artist;
 
   const classNames = cx('album-grid-tile', {
     'is-playing': isPlaying,
@@ -94,8 +97,8 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
       </div>
       <Link
         className="album-artist"
-        to={generatePath(ARTIST_SHOW, { name: artist })}>
-        {formatArtistName(artist)}
+        to={generatePath(ARTIST_SHOW, { _id: artistId })}>
+        {formatArtistName(artistName)}
       </Link>
       <span className="album-title">{title}</span>
     </article>

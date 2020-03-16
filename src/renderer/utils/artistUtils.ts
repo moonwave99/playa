@@ -1,7 +1,7 @@
 // duplicate from store/modules/album for tests
 import { EntityHashMap } from './storeUtils';
 import { Album } from '../store/modules/album';
-import { Artist } from '../store/modules/library';
+import { Artist } from '../store/modules/artist';
 const VARIOUS_ARTISTS_ID = '_various-artists';
 const VARIOUS_ARTISTS_LABEL = 'Various Artists';
 

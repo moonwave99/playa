@@ -2,9 +2,19 @@ import React from 'react';
 import { Row, Cell, ColumnInstance } from 'react-table';
 import { Album } from '../../../../store/modules/album';
 import { renderInAll, mountInAll } from '../../../../../../test/testUtils';
-import { albums } from '../../../../../../test/testFixtures';
+import { albums, artists } from '../../../../../../test/testFixtures';
+import { toObj } from '../../../../utils/storeUtils';
 
 import { SearchResultListRow } from './SearchResultListRow';
+
+const defaultStore = {
+  artists: {
+    allById: toObj(artists)
+  },
+  covers: {
+    allById: {}
+  }
+};
 
 function generateRow(album: Album, index = 0): Row {
   return {
@@ -48,11 +58,7 @@ describe('SearchResultListRow', () => {
         onContextMenu={jest.fn()}
         onCoverDoubleClick={jest.fn()}
         album={albums[0]}/>
-		, {
-      covers: {
-        allById: {}
-      }
-    });
+		, defaultStore);
 		expect(wrapper.is('.search-result-list-item')).toBe(true);
   });
 
@@ -67,11 +73,7 @@ describe('SearchResultListRow', () => {
         onContextMenu={jest.fn()}
         onCoverDoubleClick={jest.fn()}
         album={albums[0]}/>
-		, {
-      covers: {
-        allById: {}
-      }
-    });
+		, defaultStore);
 		expect(wrapper.is('.is-current')).toBe(true);
   });
 
@@ -86,11 +88,7 @@ describe('SearchResultListRow', () => {
         onContextMenu={jest.fn()}
         onCoverDoubleClick={jest.fn()}
         album={albums[0]}/>
-		, {
-      covers: {
-        allById: {}
-      }
-    });
+		, defaultStore);
 		expect(wrapper.is('.selected')).toBe(true);
   });
 
@@ -105,11 +103,7 @@ describe('SearchResultListRow', () => {
         onContextMenu={jest.fn()}
         onCoverDoubleClick={jest.fn()}
         album={albums[0]}/>
-		, {
-      covers: {
-        allById: {}
-      }
-    });
+		, defaultStore);
     wrapper.find('.search-result-list-item .cell-title').simulate('click');
     expect(handler).toHaveBeenCalled();
   });
@@ -125,11 +119,7 @@ describe('SearchResultListRow', () => {
         onContextMenu={handler}
         onCoverDoubleClick={jest.fn()}
         album={albums[0]}/>
-		, {
-      covers: {
-        allById: {}
-      }
-    });
+		, defaultStore);
     wrapper.find('.search-result-list-item').simulate('contextmenu');
     expect(handler).toHaveBeenCalledWith(albums[0]);
   });
@@ -144,11 +134,7 @@ describe('SearchResultListRow', () => {
         onContextMenu={jest.fn()}
         onCoverDoubleClick={jest.fn()}
         album={albums[0]}/>
-		, {
-      covers: {
-        allById: {}
-      }
-    });
+		, defaultStore);
     expect(wrapper.find('.cell-artist').text()).toBe(albums[0].artist);
     expect(wrapper.find('.cell-title').text()).toBe(albums[0].title);
     expect(wrapper.find('.cell-year').text()).toBe(`${albums[0].year}`);

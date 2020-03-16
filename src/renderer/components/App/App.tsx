@@ -22,8 +22,8 @@ import './App.scss';
 
 import initIpc from '../../initializers/initIpc';
 import { ApplicationState } from '../../store/store';
-import { getArtists } from '../../store/modules/library';
 import { Album } from '../../store/modules/album';
+import { getAllArtistsRequest } from '../../store/modules/artist';
 
 import {
   Playlist,
@@ -148,7 +148,7 @@ export const App: FC<AppProps> = ({
 
   useEffect(() => {
     dispatch(getAllPlaylistsRequest());
-    dispatch(getArtists());
+    dispatch(getAllArtistsRequest());
     const unsubscribeIpc = initIpc({
       history,
       dispatch,

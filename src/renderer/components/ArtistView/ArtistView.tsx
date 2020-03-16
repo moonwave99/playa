@@ -9,11 +9,11 @@ import { openContextMenu } from '../../lib/contextMenu';
 import actionsMap from '../../actions/actions';
 
 import {
-  getDefaultArtist,
-  getArtistReleases,
-  selectors as librarySelectors
-} from '../../store/modules/library';
-import { Album, getAlbumsByArtist } from '../../store/modules/album';
+  selectors as artistSelectors,
+  getAlbumsByArtist,
+  getArtistReleases
+} from '../../store/modules/artist';
+import { Album } from '../../store/modules/album';
 import { updateTitle } from '../../store/modules/ui';
 import { ApplicationState } from '../../store/store';
 import { formatArtistName } from '../../utils/artistUtils';
@@ -32,15 +32,14 @@ import {
 
 export const ArtistView = (): ReactElement => {
   const dispatch = useDispatch();
-  const { name: nameFromURL } = useParams();
+  const { _id } = useParams();
   const {
     artist,
     albums,
     currentAlbumId
   } = useSelector((state: ApplicationState) => {
-    const artist = librarySelectors.findArtistById(state, nameFromURL)
-      || getDefaultArtist();
-    const albums = artist._id ? getAlbumsByArtist(state, artist._id) : {};
+    const artist = artistSelectors.findById(state, _id);
+    const albums = getAlbumsByArtist(state, _id) || {};
     return {
       artist,
       albums,
@@ -48,11 +47,18 @@ export const ArtistView = (): ReactElement => {
     };
   });
 
-  const { _id, name } = artist;
+  const { name } = artist;
 
   useEffect(() => {
-    dispatch(updateTitle(`Artist: ${formatArtistName(name)}`));
-    dispatch(getArtistReleases(artist));
+    if (artist) {
+      dispatch(getArtistReleases(artist));
+    }
+  }, [artist]);
+
+  useEffect(() => {
+    if (name) {
+      dispatch(updateTitle(`Artist: ${formatArtistName(name)}`));
+    }
   }, [name]);
 
   function onAlbumContextMenu(album: Album): void {

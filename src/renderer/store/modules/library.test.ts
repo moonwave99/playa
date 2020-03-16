@@ -2,22 +2,18 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 const mockStore = configureStore([thunk]);
 
-import { albums, artists, playlists } from '../../../../test/testFixtures';
+import { albums, playlists } from '../../../../test/testFixtures';
 import { Album, ALBUM_GET_LIST_RESPONSE } from './album';
 import { toObj } from '../../utils/storeUtils';
 
 import reducer, {
   LibraryActionTypes,
   getLatestRequest,
-  getArtists,
-  getArtistReleases,
   addAlbumsToLibrary,
   removeAlbums,
   LIBRARY_GET_LATEST_REQUEST,
   LIBRARY_GET_LATEST_RESPONSE,
-  LIBRARY_ADD_TO_LATEST_ALBUMS,
-  LIBRARY_GET_ARTISTS_REQUEST,
-  LIBRARY_GET_ARTISTS_RESPONSE
+  LIBRARY_ADD_TO_LATEST_ALBUMS
 } from './library';
 
 import {
@@ -39,51 +35,6 @@ describe('library actions', () => {
     });
   });
 
-  describe('getArtistReleases', () => {
-    it('should dispatch ALBUM_GET_LIST_RESPONSE', async () => {
-      const store = mockStore({});
-      const expectedActions = [
-        {
-          type: ALBUM_GET_LIST_RESPONSE,
-          results: albums
-        }
-      ];
-      await getArtistReleases(artists[0])(store.dispatch);
-      expect(store.getActions()).toEqual(expectedActions);
-    });
-  });
-
-  describe('getArtists', () => {
-    it('should dispatch LIBRARY_GET_ARTISTS_RESPONSE', async () => {
-      const store = mockStore({
-        library: {
-          artistsById: {}
-        }
-      });
-      const expectedActions = [
-        {
-          type: LIBRARY_GET_ARTISTS_REQUEST
-        },
-        {
-          type: LIBRARY_GET_ARTISTS_RESPONSE,
-          artists: toObj(artists)
-        }
-      ];
-      await getArtists()(store.dispatch, store.getState);
-      expect(store.getActions()).toEqual(expectedActions);
-    });
-
-    it('should dispatch nothing if artists are already present', async () => {
-      const store = mockStore({
-        library: {
-          artistsById: toObj(artists)
-        }
-      });
-      await getArtists()(store.dispatch, store.getState);
-      expect(store.getActions()).toHaveLength(0);
-    });
-  });
-
   describe('addAlbumsToLibrary', () => {
     it('should dispatch expected actions', async () => {
       const store = mockStore({
@@ -92,13 +43,6 @@ describe('library actions', () => {
         }
       });
       const expectedActions = [
-        {
-          type: LIBRARY_GET_ARTISTS_RESPONSE,
-          artists: toObj([
-            artists.find(({ name }) => name === 'Slowdive'),
-            artists.find(({ name }) => name === 'My Bloody Valentine')
-          ])
-        },
         {
           type: ALBUM_GET_LIST_RESPONSE,
           results: albums
@@ -122,8 +66,7 @@ describe('library actions', () => {
           allById: toObj(playlists)
         },
         library: {
-          latest: albums.map(({ _id }) => _id),
-          artistsById: toObj(artists)
+          latest: albums.map(({ _id }) => _id)
         },
         albums: {
           allById: toObj(albums)
@@ -136,17 +79,6 @@ describe('library actions', () => {
         }
       });
       const expectedActions = [
-        {
-          type: LIBRARY_GET_ARTISTS_RESPONSE,
-          artists: {
-            ...toObj(artists),
-            'Slowdive': {
-              _id: 'Slowdive',
-              name: 'Slowdive',
-              count: 0
-            }
-          }
-        },
         {
           type: LIBRARY_GET_LATEST_RESPONSE,
           results: [albums[1]]
@@ -167,7 +99,6 @@ describe('library reducer', () => {
     latest: [] as Album['_id'][],
     latestAlbumId: null as Album['_id'],
     loadingLatest: false,
-    loadingArtists: false,
     artistsById: {}
   }
   it('should return the initial state', () => {
@@ -182,19 +113,6 @@ describe('library reducer', () => {
       latest: [],
       latestAlbumId: null,
       loadingLatest: true,
-      loadingArtists: false,
-      artistsById: {}
-    });
-  });
-
-  it('should handle LIBRARY_GET_ARTISTS_REQUEST', () => {
-    expect(reducer(initialState, {
-      type: LIBRARY_GET_ARTISTS_REQUEST
-    })).toEqual({
-      latest: [],
-      latestAlbumId: null,
-      loadingLatest: false,
-      loadingArtists: true,
       artistsById: {}
     });
   });
@@ -208,21 +126,7 @@ describe('library reducer', () => {
       latest: albums.map(({ _id }) => _id),
       latestAlbumId: albums[1]._id,
       loadingLatest: false,
-      loadingArtists: false,
       artistsById: {}
-    });
-  });
-
-  it('should handle LIBRARY_GET_ARTISTS_RESPONSE', () => {
-    expect(reducer(initialState, {
-      type: LIBRARY_GET_ARTISTS_RESPONSE,
-      artists: toObj(artists)
-    })).toEqual({
-      latest: [],
-      latestAlbumId: null,
-      loadingLatest: false,
-      loadingArtists: false,
-      artistsById: toObj(artists)
     });
   });
 
@@ -234,7 +138,6 @@ describe('library reducer', () => {
       latest: albums.map(({ _id }) => _id),
       latestAlbumId: `${Math.max(...albums.map(({ _id }) => +_id))}`,
       loadingLatest: false,
-      loadingArtists: false,
       artistsById: {}
     });
   });
