@@ -2,16 +2,22 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 const mockStore = configureStore([thunk]);
 
-import { artists } from '../../../../test/testFixtures';
+import { albums, artists } from '../../../../test/testFixtures';
+import { ApplicationState } from '../../store/store';
 import { toObj } from '../../utils/storeUtils';
+
+import { ALBUM_GET_LIST_RESPONSE } from './album';
 
 import reducer, {
   Artist,
   ArtistActionTypes,
   ArtistState,
+  getArtistReleases,
   getAllArtistsRequest,
   saveArtistRequest,
   deleteArtistRequest,
+  getAlbumsByArtist,
+  searchArtists,
   ARTIST_GET_ALL_REQUEST,
   ARTIST_GET_ALL_RESPONSE,
   ARTIST_SAVE_REQUEST,
@@ -21,6 +27,17 @@ import reducer, {
 } from './artist';
 
 describe('artist actions', () => {
+  describe('getArtistReleases', () => {
+    it('should dispatch ALBUM_GET_LIST_RESPONSE', async () => {
+      const store = mockStore({});
+      await getArtistReleases(artists[0])(store.dispatch);
+      expect(store.getActions()).toEqual([{
+        type: ALBUM_GET_LIST_RESPONSE,
+        results: albums[0]
+      }]);
+    });
+  });
+
   describe('getAllArtistsRequest', () => {
     it('should dispatch ARTIST_GET_ALL_RESPONSE', async () => {
       const store = mockStore({});
@@ -57,6 +74,42 @@ describe('artist actions', () => {
   });
 });
 
+describe('artist selectors', () => {
+  describe('getAlbumsByArtist', () => {
+    const store = mockStore({
+      albums: {
+        allById: toObj(albums)
+      },
+      artists: {
+        allById: toObj(artists)
+      }
+    });
+    const selection = getAlbumsByArtist(
+      store.getState() as ApplicationState,
+      artists[0]._id
+    );
+    expect(selection).toEqual({
+      album: [albums[0]]
+    });
+  });
+
+  describe('searchArtists', () => {
+    const store = mockStore({
+      albums: {
+        allById: toObj(albums)
+      },
+      artists: {
+        allById: toObj(artists)
+      }
+    });
+    const selection = searchArtists(
+      store.getState() as ApplicationState,
+      'my'
+    );
+    expect(selection).toEqual([artists[1]]);
+  });
+});
+
 describe('artist reducer', () => {
   it('should return the initial state', () => {
     expect(reducer(undefined, {} as ArtistActionTypes)).toEqual({
@@ -80,6 +133,15 @@ describe('artist reducer', () => {
       allById: toObj(artists),
       isLoading: false,
       latestArtistId: '4'
+    });
+
+    expect(reducer({} as ArtistState, {
+      type: ARTIST_GET_ALL_RESPONSE,
+      artists: []
+    })).toEqual({
+      allById: {},
+      isLoading: false,
+      latestArtistId: '0'
     });
   });
 
