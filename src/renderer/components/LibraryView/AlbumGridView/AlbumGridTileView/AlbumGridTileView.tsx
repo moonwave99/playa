@@ -16,7 +16,7 @@ import { UIDragTypes } from '../../../../store/modules/ui';
 import useNativeDrop from '../../../../hooks/useNativeDrop/useNativeDrop';
 
 import { ARTIST_SHOW } from '../../../../routes';
-import { formatArtistName } from '../../../../utils/artistUtils';
+import { formatArtist } from '../../../../utils/albumUtils';
 
 type AlbumGridTileViewProps = {
   album: Album;
@@ -76,7 +76,6 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
   }
 
   const { title } = album;
-  const { name: artistName } = artist;
 
   const classNames = cx('album-grid-tile', {
     'is-playing': isPlaying,
@@ -98,7 +97,7 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
       <Link
         className="album-artist"
         to={generatePath(ARTIST_SHOW, { _id: artistId })}>
-        {formatArtistName(artistName)}
+        {formatArtist({ album, artist })}
       </Link>
       <span className="album-title">{title}</span>
     </article>

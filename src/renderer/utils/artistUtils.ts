@@ -9,8 +9,7 @@ export const NUMERIC_KEY = '#';
 export const VARIOUS_ARTIST_KEY = 'V/A';
 export const ALPHABET = [
   NUMERIC_KEY,
-  ...'abcdefghijklmnopqrstuvwxyz'.split(''),
-  VARIOUS_ARTIST_KEY
+  ...'abcdefghijklmnopqrstuvwxyz'.split('')
 ];
 
 export function formatArtistName(name: string): string {

@@ -106,7 +106,7 @@ describe('CompactAlbumView', () => {
         onDoubleClick={jest.fn()}/>
       , defaultStore);
     expect(wrapper.find('.info').text())
-      .toBe(`${albums[0].artist}, ${albums[0].year} - ${albums[0].type}`);
+      .toBe(`${artists[0].name}, ${albums[0].year} - ${albums[0].type}`);
   });
 
   it('should call the onContextMenu handler when right clicked', () => {

@@ -135,7 +135,7 @@ describe('SearchResultListRow', () => {
         onCoverDoubleClick={jest.fn()}
         album={albums[0]}/>
 		, defaultStore);
-    expect(wrapper.find('.cell-artist').text()).toBe(albums[0].artist);
+    expect(wrapper.find('.cell-artist').text()).toBe(artists[0].name);
     expect(wrapper.find('.cell-title').text()).toBe(albums[0].title);
     expect(wrapper.find('.cell-year').text()).toBe(`${albums[0].year}`);
     expect(wrapper.find('.cell-type').text()).toBe(albums[0].type);

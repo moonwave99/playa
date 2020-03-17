@@ -8,11 +8,11 @@ import cx from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CoverView } from '../../../AlbumListView/AlbumView/CoverView/CoverView';
 import { UIDragTypes } from '../../../../store/modules/ui';
-import { Album, VARIOUS_ARTISTS_ID } from '../../../../store/modules/album';
+import { Album } from '../../../../store/modules/album';
 import { selectors as artistSelectors } from '../../../../store/modules/artist';
 import { selectors as coverSelectors } from '../../../../store/modules/cover';
 import { ApplicationState } from '../../../../store/store';
-import { VARIOUS_ARTIST_KEY } from '../../../../utils/artistUtils';
+import { formatArtist } from '../../../../utils/albumUtils';
 import { ARTIST_SHOW } from '../../../../routes';
 
 
@@ -71,7 +71,7 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
   }
 
   function _onArtistContextMenu(event: MouseEvent): void {
-    if (album.artist === VARIOUS_ARTISTS_ID) {
+    if (album.isAlbumFromVA) {
       return;
     }
     event.stopPropagation()
@@ -100,8 +100,7 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
           <Link
             onContextMenu={_onArtistContextMenu}
             to={generatePath(ARTIST_SHOW, { _id: artistId })}
-            className="album-artist-link">
-              {cell.value === VARIOUS_ARTISTS_ID ? VARIOUS_ARTIST_KEY : artist.name}
+            className="album-artist-link">{formatArtist({ album, artist })}
           </Link>
         break;
       case 'title':

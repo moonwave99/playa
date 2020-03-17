@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { Album, saveAlbumRequest } from '../../store/modules/album';
+import { Artist, saveArtistRequest } from '../../store/modules/artist';
 import { Track, getTrackListRequest } from '../../store/modules/track';
 import { addAlbumsToLibrary } from '../../store/modules/library';
 import { showDialog } from '../../store/modules/ui';
@@ -19,15 +20,25 @@ const {
 
 type UseImportAlbumsParams = {
   latestAlbumId: Album['_id'];
+  latestArtistId: Artist['_id'];
 }
 
-export default function useImportAlbums({ latestAlbumId }: UseImportAlbumsParams): {
+type OnImportFormSubmitParams = {
+  album: Album;
+  artist: Artist;
+  tracks: Track[];
+}
+
+export default function useImportAlbums({
+  latestAlbumId,
+  latestArtistId
+}: UseImportAlbumsParams): {
   folderToImport: string;
   tracksToImport: Track[];
   showImportModal: boolean;
   showImportDialog: (folder: string) => Promise<void>;
   onImportModalRequestClose: () => void;
-  onImportFormSubmit: (album: Album, tracklist: Track[]) => void;
+  onImportFormSubmit: (params: OnImportFormSubmitParams) => void;
 } {
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -72,11 +83,26 @@ export default function useImportAlbums({ latestAlbumId }: UseImportAlbumsParams
     setTracksToImport([]);
   }
 
-  function onImportFormSubmit(album: Album, tracklist: Track[]): void {
-    const updatedAlbum = { ...album, _id: `${+latestAlbumId + 1}`}
+  function onImportFormSubmit({
+    album,
+    artist,
+    tracks
+  }: OnImportFormSubmitParams): void {
+    if (!album.isAlbumFromVA) {
+      dispatch(saveArtistRequest({
+        ...artist,
+        count: artist.count + 1,
+        _id: artist._id || `${+latestArtistId + 1}`
+      }));
+    }
+    const updatedAlbum = {
+      ...album,
+      _id: `${+latestAlbumId + 1}`,
+      artist: artist._id || `${+latestArtistId + 1}`
+    };
     dispatch(
       getTrackListRequest(
-        tracklist.map(({ _id }) => _id )
+        tracks.map(({ _id }) => _id )
       )
     );
     dispatch(saveAlbumRequest(updatedAlbum));

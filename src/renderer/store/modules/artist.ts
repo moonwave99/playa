@@ -9,7 +9,7 @@ import {
   updateId
 } from '../../utils/storeUtils';
 import { VARIOUS_ARTIST_KEY, NUMERIC_KEY } from '../../utils/artistUtils';
-const VARIOUS_ARTISTS_ID = '_various-artists';
+export const VARIOUS_ARTISTS_ID = 'V/A';
 
 import { ApplicationState } from '../store';
 
@@ -125,6 +125,7 @@ export const deleteArtistRequest = (artist: Artist): Function =>
 
 export interface ArtistState {
   allById: EntityHashMap<Artist>;
+  latestArtistId: Artist['_id'];
   isLoading: boolean;
 }
 
@@ -157,9 +158,25 @@ export const getAlbumsByArtist = createCachedSelector(
     }, {})
 )((_state_: ApplicationState, id: string) => id);
 
+export const searchArtists = createCachedSelector(
+  selectors.allById,
+  (_state: ApplicationState, query: string) => query,
+  (artists, query) => toArray(artists).filter(
+    ({ name }) => name.match(new RegExp(`^${query}`, 'gi'))
+  )
+)((_state_: ApplicationState, query: string) => query);
+
 const INITIAL_STATE: ArtistState = {
 	allById: {},
+  latestArtistId: null as Artist['_id'],
   isLoading: false
+}
+
+function getLatestArtistId(artists: Artist[]): Artist['_id'] {
+  if (!artists.length) {
+    return '0';
+  }
+  return [...artists].sort((a: Artist, b: Artist) => +b._id - +a._id)[0]._id;
 }
 
 export default function reducer(
@@ -176,13 +193,15 @@ export default function reducer(
       return {
         ...state,
         allById: toObj(ensureAll<Artist>(action.artists, getDefaultArtist)),
+        latestArtistId: getLatestArtistId(action.artists),
         isLoading: false
       };
     case ARTIST_SAVE_RESPONSE:
       return {
         ...state,
         isLoading: false,
-        allById: updateId(state.allById, action.artist._id, action.artist)
+        allById: updateId(state.allById, action.artist._id, action.artist),
+        latestArtistId: !state.allById[action.artist._id] ? action.artist._id : state.latestArtistId
       };
     case ARTIST_DELETE_RESPONSE:
       return {

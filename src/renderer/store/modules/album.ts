@@ -34,8 +34,6 @@ const {
   IPC_TRACK_GET_LIST_REQUEST
 } = IPC_MESSAGES;
 
-export const VARIOUS_ARTISTS_ID = '_various-artists';
-
 export enum AlbumTypes {
   Album = 'album',
   Ep = 'ep',
@@ -51,7 +49,7 @@ export enum AlbumTypes {
 export type Album = {
   _id: string;
   _rev?: string;
-  isFromVA?: boolean;
+  isAlbumFromVA?: boolean;
   artist: Artist['_id'];
   title: string;
   year?: number;

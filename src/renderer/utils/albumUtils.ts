@@ -13,8 +13,8 @@ const ALBUM_TYPES_WITHOUT_TRACK_NUMBERS = [
   AlbumTypes.Various
 ];
 
-export function showTrackArtists({ isFromVA, type }: Album): boolean {
-  return isFromVA || type === AlbumTypes.Remix;
+export function showTrackArtists({ isAlbumFromVA, type }: Album): boolean {
+  return isAlbumFromVA || type === AlbumTypes.Remix;
 }
 
 export function showTrackNumbers({ type }: Album): boolean {
@@ -22,5 +22,5 @@ export function showTrackNumbers({ type }: Album): boolean {
 }
 
 export function formatArtist({ album, artist }: { album: Album; artist: Artist }): string {
-  return album.isFromVA ? VARIOUS_ARTISTS_LABEL : artist.name;
+  return album.isAlbumFromVA ? VARIOUS_ARTISTS_LABEL : artist.name;
 }

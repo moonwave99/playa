@@ -1,12 +1,13 @@
-import React, { ReactElement, ChangeEvent, FormEvent, FC, useState, useRef } from 'react';
+import React, { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { AlbumForm } from '../AlbumForm/AlbumForm';
 import { TracklistView } from '../../AlbumListView/AlbumView/TracklistView/TracklistView';
 import {
   Album,
   AlbumTypes,
-  getDefaultAlbum,
-  VARIOUS_ARTISTS_ID
+  getDefaultAlbum
 } from '../../../store/modules/album';
+import { Artist } from '../../../store/modules/artist';
 import { Track } from '../../../store/modules/track';
 import { showTrackNumbers } from '../../../utils/albumUtils';
 import { getYearFromPath } from '../../../utils/pathUtils';
@@ -18,174 +19,50 @@ type ImportViewProps = {
   onFormSubmit: Function;
 }
 
-type SelectOption = {
-  value: string;
-  label: string;
-}
-
-type FormFieldParams = {
-  accessor: string;
-  title: string;
-  value?: string | number;
-  type: 'text' | 'number' | 'select' | 'checkbox';
-  className?: string;
-  disabled?: boolean;
-  required?: boolean;
-  options?: SelectOption[];
-  onChange?: (event: ChangeEvent) => void;
-}
-
 export const ImportView: FC<ImportViewProps> = ({
   tracks = [],
   folderToImport,
   onFormSubmit
 }) => {
-  const [albumType, setAlbumType] = useState(AlbumTypes.Album);
-  const [isAlbumFromVA, setAlbumFromVA] = useState(false);
   const { t } = useTranslation();
-  const formRef = useRef(null);
+  const [isAlbumFromVA, setAlbumFromVA] = useState(false);
+  const [albumType, setAlbumType] = useState(AlbumTypes.Album);
 
-  const formFields: FormFieldParams[] = [
-    {
-      accessor: 'artist',
-      title: t('albums.props.artist'),
-      type: 'text',
-      value: tracks[0] && tracks[0].artist,
-      disabled: isAlbumFromVA
-    },
-    {
-      accessor: 'isVariousArtists',
-      title: t('library.import.form.isVariousArtists'),
-      type: 'checkbox',
-      required: false,
-      onChange: (): void => setAlbumFromVA(!isAlbumFromVA)
-    },
-    {
-      accessor: 'title',
-      title: t('albums.props.title'),
-      type: 'text'
-    },
-    {
-      accessor: 'year',
-      title: t('albums.props.year'),
-      type: 'number',
-      value: getYearFromPath(folderToImport)
-    },
-    {
-      accessor: 'type',
-      title: t('albums.props.type'),
-      type: 'select',
-      onChange: (event: ChangeEvent): void => {
-        const target = event.target as HTMLSelectElement;
-        setAlbumType(
-          target[target.selectedIndex].getAttribute('value') as AlbumTypes
-        );
-      },
-      options: Object.values(AlbumTypes).map(x => ({ value: x, label: x }))
-    }
-  ];
-
-  const _onFormSubmit = (event: FormEvent): void => {
-		event.preventDefault();
-    const formData = new FormData(formRef.current);
-    const {
-      artist,
-      title,
-      year,
-      type
-    } = formFields.reduce((memo, { accessor }) => ({
-      ...memo,
-      [accessor]: formData.get(accessor)
-    }), {}) as Album;
+  function _onFormSubmit({
+    title,
+    year,
+    artist
+  }: { title: string; year: number; artist: Artist }): void  {
     const album = {
       ...getDefaultAlbum(),
-      artist: isAlbumFromVA ? VARIOUS_ARTISTS_ID : artist,
       title,
-      year: +year,
-      type,
+      year,
+      isAlbumFromVA,
+      type: albumType,
+      artist: artist._id,
       path: folderToImport,
       tracks: tracks.map(({ _id }) => _id)
     };
-		onFormSubmit(album, tracks);
-	};
 
-  function renderFormField({
-    accessor,
-    title,
-    type,
-    className,
-    value,
-    required = true,
-    disabled = false,
-    options,
-    onChange
-  }: FormFieldParams): ReactElement {
-    switch (type) {
-      case 'text':
-      case 'number':
-        return (
-          <p className={`form-field ${className || `input-${accessor}`}`} key={accessor}>
-            <label htmlFor={accessor}>{title}</label>
-            <input
-              onChange={onChange}
-              required={required}
-              disabled={disabled}
-              defaultValue={value}
-              name={accessor}
-              type={type}
-              id={accessor}
-              data-key-catch="Space"/>
-          </p>
-        );
-      case 'checkbox':
-      return (
-        <p className={`form-field ${className || `input-${accessor}`}`} key={accessor}>
-          <label htmlFor={accessor}>
-            <input
-              onChange={onChange}
-              required={required}
-              disabled={disabled}
-              defaultValue={value}
-              name={accessor}
-              type={type}
-              id={accessor}
-              data-key-catch="Space"/>
-            {title}
-          </label>
-        </p>
-      );
-      case 'select':
-        return (
-          <p className={`form-field ${className || `input-${accessor}`}`} key={accessor}>
-            <label htmlFor={accessor}>{title}</label>
-            <select
-              onChange={onChange}
-              required={required}
-              name={accessor}
-              id={accessor}
-              data-key-catch="Space">
-              {options.map(({ value, label }) => <option value={value} key={value}>{label}</option>)}
-            </select>
-          </p>
-        );
-    }
+    onFormSubmit({
+      album,
+      artist,
+      tracks
+    });
+	}
+
+  function onAlbumTypeChange(albumType: AlbumTypes): void {
+    setAlbumType(albumType);
   }
 
-  function renderForm(): ReactElement {
-    return (
-      <form
-        className="import-form"
-        ref={formRef}
-        onSubmit={_onFormSubmit}>
-        {formFields.map(renderFormField)}
-        <p className="button-wrapper">
-          <button type="submit" className="button button-full">
-            {t('library.import.form.submit')}
-          </button>
-        </p>
-      </form>
-    );
+  function onAlbumFromVAChange(isAlbumFromVA: boolean): void {
+    setAlbumFromVA(isAlbumFromVA);
   }
+
+  const album = {
+    ...getDefaultAlbum(),
+    year: getYearFromPath(folderToImport)
+  };
 
   return (
 		<div className="import-view">
@@ -195,7 +72,13 @@ export const ImportView: FC<ImportViewProps> = ({
           <code>{folderToImport}</code>
         </pre>
       </h2>
-      {renderForm()}
+      <AlbumForm
+        albumType={albumType}
+        isAlbumFromVA={isAlbumFromVA}
+        onAlbumTypeChange={onAlbumTypeChange}
+        onAlbumFromVAChange={onAlbumFromVAChange}
+        album={album}
+        onFormSubmit={_onFormSubmit}/>
       <TracklistView
         className="not-playable"
         tracks={tracks}

@@ -89,7 +89,7 @@ describe('AlbumView', () => {
         onDoubleClick={jest.fn()}/>
       , defaultStore);
     expect(wrapper.find('.album-artist').text())
-      .toBe(albums[0].artist);
+      .toBe(artists[0].name);
   });
 
   it('should contain the album information', () => {

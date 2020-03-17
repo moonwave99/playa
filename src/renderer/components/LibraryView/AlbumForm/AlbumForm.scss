@@ -1,0 +1,89 @@
+@import "../../../styles/variables";
+@import "../../../styles/mixins";
+
+$labelHeight: 2rem;
+
+.album-form {
+  margin: calc(var(--section-gutter) * 0.5) 0 var(--section-gutter) 0;
+  display: flex;
+  flex-wrap: wrap;
+  @include horizontalSeparator($separatorWidth: 30%);
+  .form-field {
+    margin: 0 0 1rem 0;
+    flex: 0 0 100%;
+    label {
+      color: $mainColor;
+      line-height: $labelHeight;
+    }
+    select,
+    input {
+      @include input();
+    }
+    input[type="checkbox"] {
+      margin-right: $labelHeight * 0.25;
+    }
+    input[type="checkbox"]:focus + span{
+      text-decoration: underline;
+    }
+    &.input-artist {
+      flex: 0 0 calc(100% / 3 * 2);
+      padding-right: $labelHeight * 0.5;
+    }
+    &.input-isVariousArtists {
+      flex: 0 0 calc(100% / 3);
+      margin-top: $labelHeight;
+      line-height: $mainUnit;
+      label {
+        color: $lightColor;
+      }
+    }
+    &.input-year,
+    &.input-type {
+      flex: 0 0 calc(100% / 3);
+      padding-right: $labelHeight * 0.5;
+      margin: 0;
+    }
+  }
+  .button-wrapper {
+    flex: 0 0 calc(100% / 3);
+    margin: 0;
+    padding-top: $labelHeight;
+    .button {
+      width: 100%;
+      margin: 0;
+      padding: 0 1rem;
+    }
+  }
+
+  .react-autosuggest__container {
+    position: relative;
+
+    .react-autosuggest__suggestions-container {
+      position: absolute;
+      top: $mainUnit;
+      left: 0;
+      right: 0;
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        background-color: $backgroundColor;
+        border: 1px solid $mainColor;
+        border-bottom-left-radius: .5rem;
+        border-bottom-right-radius: .5rem;
+        max-height: 5 * $mainUnit;
+        overflow-y: scroll;
+        li {
+          line-height: $mainUnit;
+          padding: 0 1rem;
+          background-color: $darkColor;
+          color: $highlightColor;
+          &.react-autosuggest__suggestion--highlighted {
+            color: $mainColor;
+            background-color: $highlightColor;
+          }
+        }
+      }
+    }
+  }
+}

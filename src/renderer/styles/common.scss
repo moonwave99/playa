@@ -76,6 +76,9 @@ a {
   white-space: nowrap;
 	background-color: transparent;
 	transition: background-color .3s ease-in-out;
+	&:focus {
+		text-decoration: underline;
+	}
 	&:hover {
 		background-color: $hoverColor;
 		border-color: $hoverColor;
@@ -149,7 +152,7 @@ input[type=search] {
   border-radius: .4rem;
   box-shadow: none;
   box-sizing: inherit;
-  padding: 0 1.0rem;
+  padding: 0 1rem;
   width: 100%;
 	&[disabled] {
 		user-select: none;

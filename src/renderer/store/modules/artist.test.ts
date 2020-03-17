@@ -61,7 +61,8 @@ describe('artist reducer', () => {
   it('should return the initial state', () => {
     expect(reducer(undefined, {} as ArtistActionTypes)).toEqual({
       allById: {},
-      isLoading: false
+      isLoading: false,
+      latestArtistId: null as Artist['_id']
     });
   });
 
@@ -77,7 +78,8 @@ describe('artist reducer', () => {
       artists
     })).toEqual({
       allById: toObj(artists),
-      isLoading: false
+      isLoading: false,
+      latestArtistId: '4'
     });
   });
 
@@ -91,10 +93,11 @@ describe('artist reducer', () => {
   it('should handle ARTIST_SAVE_RESPONSE', () => {
     const initialState = {
       allById: {
-        "883": artists[0],
-        "Adorable": artists[1]
+        '1': artists[0],
+        '2': artists[1]
       },
-      isLoading: false
+      isLoading: false,
+      latestArtistId: '2'
     };
 
     const updatedArtist = { ...artists[0], name: 'Updated Name' };
@@ -103,10 +106,11 @@ describe('artist reducer', () => {
       artist: updatedArtist
     })).toEqual({
       allById: {
-        "883": updatedArtist,
-        "Adorable": artists[1]
+        '1': updatedArtist,
+        '2': artists[1]
       },
-      isLoading: false
+      isLoading: false,
+      latestArtistId: '2'
     });
   });
 
@@ -120,10 +124,11 @@ describe('artist reducer', () => {
   describe('should handle ARTIST_DELETE_RESPONSE', () => {
     const initialState = {
       allById: {
-        "883": artists[0],
-        "Adorable": artists[1]
+        '1': artists[0],
+        '2': artists[1]
       },
-      isLoading: false
+      isLoading: false,
+      latestArtistId: '2'
     };
 
     it('should remove artist by given id if found', () => {
@@ -133,7 +138,7 @@ describe('artist reducer', () => {
       })).toEqual({
         ...initialState,
         allById: {
-          "Adorable": artists[1]
+          '2': artists[1]
         }
       });
     });

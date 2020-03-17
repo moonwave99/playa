@@ -28,7 +28,7 @@ export const albums: Album[] = [
   {
     _id: '1',
     _rev: null,
-    artist: 'Slowdive',
+    artist: '1',
     title: 'Just For a Day',
     year: 1991,
     type: AlbumTypes.Album,
@@ -39,7 +39,7 @@ export const albums: Album[] = [
   {
     _id: '2',
     _rev: null,
-    artist: 'My Bloody Valentine',
+    artist: '2',
     title: 'Loveless',
     year: 1991,
     type: AlbumTypes.Album,
@@ -90,33 +90,27 @@ export const tracks: Track[] = [
 
 export const artists: Artist[] = [
   {
-    _id: '883',
-    _rev: null,
-    name: '883',
-    count: 1
-  },
-  {
-    _id: 'Adorable',
-    _rev: null,
-    name: 'Adorable',
-    count: 1
-  },
-  {
-    _id: 'Slowdive',
+    _id: '1',
     _rev: null,
     name: 'Slowdive',
     count: 1
   },
   {
-    _id: 'My Bloody Valentine',
+    _id: '2',
     _rev: null,
     name: 'My Bloody Valentine',
     count: 1
   },
   {
-    _id: '_various-artists',
+    _id: '3',
     _rev: null,
-    name: '_various-artists',
-    count: 10
+    name: 'Lush',
+    count: 0
+  },
+  {
+    _id: '4',
+    _rev: null,
+    name: 'Adorable',
+    count: 0
   }
 ];
