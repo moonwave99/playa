@@ -3,8 +3,10 @@ import thunk from 'redux-thunk';
 const mockStore = configureStore([thunk]);
 
 import { albums, playlists } from '../../../../test/testFixtures';
-import { Album, ALBUM_GET_LIST_RESPONSE } from './album';
 import { toObj } from '../../utils/storeUtils';
+import { PLAYLIST_GET_LIST_RESPONSE } from './playlist';
+
+import { Album, ALBUM_GET_LIST_RESPONSE } from './album';
 
 import reducer, {
   LibraryActionTypes,
@@ -91,6 +93,67 @@ describe('library actions', () => {
       await removeAlbums([albums[0]])(store.dispatch, store.getState);
       expect(store.getActions()).toEqual(expectedActions);
     });
+
+    it('should not dispatch anything if no album is found', async () => {
+      const store = mockStore({
+        playlists: {
+          allById: {}
+        },
+        library: {
+          latest: []
+        },
+        albums: {
+          allById: {}
+        },
+        player: {
+          queue: []
+        },
+        tracks: {
+          allById: {}
+        }
+      });
+      await removeAlbums([])(store.dispatch, store.getState);
+      expect(store.getActions()).toEqual([]);
+    });
+
+    it('should remove albums from playlists that contain them', async () => {
+      const store = mockStore({
+        playlists: {
+          allById: toObj([
+           {...playlists[0], albums: [albums[0]._id]},
+           playlists[1]
+          ])
+        },
+        library: {
+          latest: albums.map(({ _id }) => _id)
+        },
+        albums: {
+          allById: toObj(albums)
+        },
+        player: {
+          queue: albums.map(({ _id }) => _id)
+        },
+        tracks: {
+          allById: {}
+        }
+      });
+      const expectedActions = [
+        {
+          type: LIBRARY_GET_LATEST_RESPONSE,
+          results: [albums[1]]
+        },
+        {
+          type: PLAYER_UPDATE_QUEUE,
+          queue: [albums[1]._id]
+        },
+        {
+          type: PLAYLIST_GET_LIST_RESPONSE,
+          playlists: [playlists[0]]
+        }
+      ];
+      await removeAlbums([albums[0]])(store.dispatch, store.getState);
+      expect(store.getActions()).toEqual(expectedActions);
+    });
   });
 });
 
@@ -125,6 +188,16 @@ describe('library reducer', () => {
     })).toEqual({
       latest: albums.map(({ _id }) => _id),
       latestAlbumId: albums[1]._id,
+      loadingLatest: false,
+      artistsById: {}
+    });
+
+    expect(reducer(initialState, {
+      type: LIBRARY_GET_LATEST_RESPONSE,
+      results: []
+    })).toEqual({
+      latest: [],
+      latestAlbumId: '0',
       loadingLatest: false,
       artistsById: {}
     });

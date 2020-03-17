@@ -62,7 +62,9 @@ module.exports = {
         case IPC_SEARCH_REQUEST:
         case IPC_ALBUM_GET_LIST_REQUEST:
         case IPC_ALBUM_DELETE_LIST_REQUEST:
-          return fixtures.albums;
+          return args[0].length > 0
+            ? fixtures.albums
+            : [];
         case IPC_ALBUM_GET_SINGLE_INFO:
           return {
             album: {
