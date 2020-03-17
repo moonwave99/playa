@@ -1,4 +1,4 @@
-import Database, { Entity } from './database';
+import Database, { initDBs, Entity } from './database';
 import { Playlist } from '../../renderer/store/modules/playlist';
 import { Album } from '../../renderer/store/modules/album';
 import { playlists, albums } from '../../../test/testFixtures';
@@ -8,7 +8,7 @@ import PouchDB from 'pouchdb';
 declare function emit (val: string|number): void;
 declare function emit (key: string|number, value: string|number): void;
 
-describe('database', () => {
+describe('Database', () => {
   describe('constructor', () => {
     it('should replicate db if debug === true', () => {
       new Database({
@@ -51,8 +51,8 @@ describe('database', () => {
       name: 'album'
     });
     it('should return documents by given selector', async () => {
-      const results = await db.find<Album>({ artist: 'Slowdive' });
-      expect(results).toEqual([albums[0]]);
+      const results = await db.find<Album>({ title: 'Loveless' });
+      expect(results).toEqual([albums[1]]);
     });
   });
 
@@ -62,8 +62,8 @@ describe('database', () => {
       name: 'album'
     });
     it('should return documents by given query', async () => {
-      const results = await db.search<Album>('Valentine', ['artist']);
-      expect(results).toEqual([albums[1]]);
+      const results = await db.search<Album>('Day', ['title']);
+      expect(results).toEqual([albums[0]]);
     });
   });
 
@@ -133,8 +133,8 @@ describe('database', () => {
       expect(await db.groupCount('type')).toEqual({ album: 2 });
       expect(await db.groupCount('year')).toEqual({ '1991': 2 });
       expect(await db.groupCount('artist')).toEqual({
-        'Slowdive': 1,
-        'My Bloody Valentine': 1
+        '1': 1,
+        '2': 1
       });
     });
   });
@@ -267,3 +267,10 @@ describe('database', () => {
     });
   });
 });
+
+describe('initDBs', () => {
+  it('should return an hash of databases', () => {
+    const dbs = initDBs({ path: '/path/to/db' });
+    expect(Object.keys(dbs)).toEqual(['playlist', 'album', 'artist', 'track']);
+  });
+})

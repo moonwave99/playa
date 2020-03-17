@@ -1,7 +1,7 @@
 import { ipcMain as ipc } from 'electron';
 import * as Path from 'path';
 import * as fs from 'fs-extra';
-import Database from '../lib/database';
+import { initDBs } from '../lib/database';
 import loadAlbum from '../lib/loadAlbum';
 import loadTracklist from '../lib/loadTracklist';
 import { Album } from '../../renderer/store/modules/album';
@@ -34,9 +34,6 @@ const {
 } = IPC_MESSAGES;
 
 const DEFAULT_SEARCH_FIELDS = ['title', 'artist'];
-
-declare function emit (val: string|number): void;
-declare function emit (key: string|number, value: string|number): void;
 
 type InitDatabaseParams = {
   userDataPath: string;
@@ -72,25 +69,10 @@ export default async function initDatabase({
   await fs.ensureDir(Path.join(path, 'artist'));
   await fs.ensureDir(Path.join(path, 'track'));
 
-  const db = {
-    'playlist': new Database({ path, debug, name: 'playlist' }),
-    'album': new Database({ path, debug, name: 'album', views: {
-      groupCountByYear: {
-        map: (doc: Album): void => emit(doc.year, 1),
-        reduce: '_sum'
-      },
-      groupCountByType: {
-        map: (doc: Album): void => emit(doc.type, 1),
-        reduce: '_sum'
-      },
-      groupCountByArtist: {
-        map: (doc: Album): void => emit(doc.artist, 1),
-        reduce: '_sum'
-      }
-    } }),
-    'artist': new Database({ path, debug, name: 'artist' }),
-    'track': new Database({ path, debug, name: 'track' }),
-  };
+  const db = initDBs({
+    path,
+    debug
+  });
 
   ipc.handle(IPC_PLAYLIST_GET_ALL_REQUEST,
     async () => await db.playlist.findAll()
