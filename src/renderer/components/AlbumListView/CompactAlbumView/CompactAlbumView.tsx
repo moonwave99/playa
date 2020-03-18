@@ -98,11 +98,11 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
 
   function _onDoubleClick(event: SyntheticEvent): void {
     event.preventDefault();
-    onDoubleClick(album);
+    onDoubleClick(album, artist);
   }
 
   function _onContextMenu(): void {
-    onContextMenu && onContextMenu(album);
+    onContextMenu && onContextMenu(album, artist);
   }
 
   function onActionsButtonClick(): void {

@@ -121,7 +121,7 @@ describe('CompactAlbumView', () => {
         onDoubleClick={jest.fn()}/>
       , defaultStore);
     wrapper.simulate('contextmenu');
-    expect(handler).toHaveBeenCalledWith(albums[0]);
+    expect(handler).toHaveBeenCalledWith(albums[0], artists[0]);
   });
 
   it('should call the onDoubleClick handler when the cover is double clicked', () => {
@@ -136,6 +136,6 @@ describe('CompactAlbumView', () => {
         onDoubleClick={handler}/>
       , defaultStore);
     wrapper.simulate('doubleClick')
-    expect(handler).toHaveBeenCalledWith(albums[0]);
+    expect(handler).toHaveBeenCalledWith(albums[0], artists[0]);
   });
 });

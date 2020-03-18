@@ -63,7 +63,7 @@ export const QueueView = (): ReactElement => {
     ]);
   }
 
-  function onAlbumDoubleClick(album: Album, track: Track): void {
+  function onAlbumDoubleClick(album: Album, _artist: Artist, track: Track): void {
     dispatch(playTrack({
       playlistId: currentPlaylist ? currentPlaylist._id : null,
       albumId: album._id,
