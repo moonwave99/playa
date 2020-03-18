@@ -1,4 +1,5 @@
 import { ipcMain as ipc } from 'electron';
+import { uniqBy } from 'lodash';
 import * as Path from 'path';
 import * as fs from 'fs-extra';
 import { initDBs } from '../lib/database';
@@ -34,7 +35,7 @@ const {
   IPC_TRACK_DELETE_LIST_REQUEST
 } = IPC_MESSAGES;
 
-const DEFAULT_SEARCH_FIELDS = ['title', 'artist'];
+const ALBUM_DEFAULT_SEARCH_FIELDS = ['title'];
 
 type InitDatabaseParams = {
   userDataPath: string;
@@ -75,6 +76,33 @@ export default async function initDatabase({
     debug
   });
 
+  async function search(query: string): Promise<Album[]> {
+    const { selector = {}, query: originalQuery } = parseQuery(query);
+
+    if (!originalQuery) {
+      return await db.album.find(selector);
+    }
+
+    const foundArtists = await db.artist.search(originalQuery, ['name']);
+    const searchResults = await db.album.search(originalQuery, ALBUM_DEFAULT_SEARCH_FIELDS);
+    const artistResults = await Promise.all(
+      foundArtists.map(
+        async ({ _id }) => db.album.find({ artist: _id })
+      )
+    );
+    const flatArtistResults = artistResults.reduce((memo, x) => [...memo, ...x], []);
+    const results = uniqBy([...searchResults, ...flatArtistResults], '_id');
+
+    const filters = Object.keys(selector);
+    if (filters.length === 0) {
+      return results as Album[];
+    }
+
+    return results.filter((x: { [key: string]: string | number}) =>
+      filters.every((f: string) => x[f] === selector[f])
+    ) as Album[];
+  }
+
   ipc.handle(IPC_PLAYLIST_GET_ALL_REQUEST,
     async () => await db.playlist.findAll()
   );
@@ -95,24 +123,7 @@ export default async function initDatabase({
     async (_event, playlist) => await db.playlist.delete(playlist)
   );
 
-  ipc.handle(IPC_SEARCH_REQUEST, async (_event, query) => {
-    const { selector = {}, query: originalQuery } = parseQuery(query);
-
-    if (!originalQuery) {
-      return await db.album.find(selector);
-    }
-
-    const results = await db.album.search(originalQuery, DEFAULT_SEARCH_FIELDS);
-
-    const filters = Object.keys(selector);
-    if (filters.length === 0) {
-      return results;
-    }
-
-    return results.filter((x: { [key: string]: string | number}) =>
-      filters.every((f: string) => x[f] === selector[f])
-    );
-  });
+  ipc.handle(IPC_SEARCH_REQUEST, async (_event, query) => await search(query));
 
   ipc.handle(IPC_ALBUM_FIND_REQUEST,
     async (_event, selector) => await db.album.find(selector)
