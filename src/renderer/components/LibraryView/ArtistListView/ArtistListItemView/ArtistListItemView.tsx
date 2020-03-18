@@ -15,6 +15,7 @@ export const ArtistListItemView: FC<ArtistListItemViewProps> = ({
   const { _id, name, count } = artist;
 	return (
     <Link
+      id={`artist-${name}`}
       className="artist-list-item"
       to={generatePath(ARTIST_SHOW, { _id })}>
       <span className="artist-name">{formatArtistName(name)}</span>

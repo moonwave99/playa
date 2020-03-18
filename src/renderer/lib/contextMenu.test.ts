@@ -1,4 +1,4 @@
-import { openContextMenu } from './contextMenu';
+import { openContextMenu, openSimpleContextMenu } from './contextMenu';
 import { playlists, albums, artists } from '../../../test/testFixtures';
 
 import { ALBUM_CONTEXT_ACTIONS, AlbumActionsGroups } from '../actions/albumActions';
@@ -36,5 +36,17 @@ describe('openContextMenu', () => {
 
     expect(separatorCount).toBe(2);
     expect(actionsCount).toBe(5);
+  });
+});
+
+describe('openSimpleContextMenu', () => {
+  it('should return a menu with given actions', () => {
+    const action =       {
+      id: 'action-id',
+      label: 'action-label',
+      click: jest.fn()
+    };
+    const menu = openSimpleContextMenu([ action ]);
+    expect(menu.items[0]).toEqual(action);
   });
 });
