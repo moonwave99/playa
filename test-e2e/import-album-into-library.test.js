@@ -57,8 +57,15 @@ describe('Import album into library', () => {
       return renderedTitle === title
         && renderedArtist === artist
         && +renderedYear === year;
-    }
+    });
 
-    );
+    await app.client.click(`.library .alphabet .letter-${artist.toLowerCase().charAt(0)}`);
+    await app.client.waitUntil(async() => {
+      const isArtistRendered =
+        await app.client.getText('.artist-list .artist-list-item .artist-name') === artist;
+      const isReleaseCountRendered =
+        await app.client.getText('.artist-list .artist-list-item .release-count') === '1';
+      return isArtistRendered && isReleaseCountRendered;
+    });
   }, TEN_SECONDS);
 });
