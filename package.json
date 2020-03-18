@@ -5,7 +5,11 @@
 	"main": "./_pack/main.bundle.js",
 	"repository": "https://github.com/moonwave99/playa",
 	"homepage": "https://moonwave99.github.io/playa",
-	"author": "Diego Caponera <diego.caponera@gmail.com>",
+	"author": {
+		"name": "Diego Caponera",
+		"email": "hello@diegocaponera.com",
+		"url": "https://www.diegocaponera.com"
+	},
 	"license": "MIT",
 	"private": false,
 	"scripts": {

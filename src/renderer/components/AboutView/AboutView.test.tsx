@@ -7,6 +7,11 @@ const props = {
   name: 'Playa',
   description: 'The player that thinks in albums',
   version: '1.0',
+  author: {
+    name: "Author Name",
+		email: "hello@example.com",
+		url: "https://www.author.site"
+  },
   homepage: 'https://www.playa.com/',
   repository: 'https://www.playa.com/repo',
   tos: 'https://www.playa.com/tos',
@@ -19,6 +24,7 @@ describe('AboutView', () => {
         name={props.name}
         description={props.description}
         version={props.version}
+        author={props.author}
         homepage={props.homepage}
         repository={props.repository}
         tos={props.tos}
@@ -34,13 +40,14 @@ describe('AboutView', () => {
         name={props.name}
         description={props.description}
         version={props.version}
+        author={props.author}
         homepage={props.homepage}
         repository={props.repository}
         tos={props.tos}
 				onLinkClick={jest.fn()}
 			/>
 		);
-		expect(wrapper.find('h1').text()).toBe(props.name);
+		expect(wrapper.find('h1').text()).toBe(`${props.name}, ${props.description}`);
   });
 
   it('should render the version', () => {
@@ -49,6 +56,7 @@ describe('AboutView', () => {
         name={props.name}
         description={props.description}
         version={props.version}
+        author={props.author}
         homepage={props.homepage}
         repository={props.repository}
         tos={props.tos}
@@ -64,6 +72,7 @@ describe('AboutView', () => {
         name={props.name}
         description={props.description}
         version={props.version}
+        author={props.author}
         homepage={props.homepage}
         repository={props.repository}
         tos={props.tos}
@@ -86,6 +95,7 @@ describe('AboutView', () => {
         name={props.name}
         description={props.description}
         version={props.version}
+        author={props.author}
         homepage={props.homepage}
         repository={props.repository}
         tos={props.tos}

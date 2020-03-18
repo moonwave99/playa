@@ -15,7 +15,8 @@
       }
     },
     "about": {
-      "version": "Version {{version}}",
+      "version": "v{{version}}",
+      "copyright": "(c) 2020 {{author}}.",
       "links": {
         "homepage": "Homepage",
         "repository": "Github",

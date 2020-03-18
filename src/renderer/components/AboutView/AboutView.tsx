@@ -2,10 +2,17 @@ import React, { ReactElement, FC, SyntheticEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import './AboutView.scss';
 
+export type Author = {
+  name: string;
+  email: string;
+  url: string;
+};
+
 type AboutViewProps = {
   name: string;
   description: string;
   version: string;
+  author: Author;
   homepage: string;
   repository: string;
   tos: string;
@@ -16,6 +23,7 @@ export const AboutView: FC<AboutViewProps> = ({
   name,
   description,
   version,
+  author,
   homepage,
   repository,
   tos,
@@ -31,9 +39,13 @@ export const AboutView: FC<AboutViewProps> = ({
   return (
     <section className="about">
       <header>
-        <h1>{name}</h1>
-        <p>{description}</p>
-        <p className="version">{t('about.version', { version })}</p>
+        <h1>{name}, <span className="description">{description}</span></h1>
+        <p>
+          <span className="version">{t('about.version', { version })}</span>
+        </p>
+        <p className="copyright">
+          {t('about.copyright', { author: author.name })}
+        </p>
       </header>
       <ul className="links">
         <li>

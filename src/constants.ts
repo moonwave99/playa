@@ -13,7 +13,7 @@ export const TRAFFIC_LIGHTS_POSITION = {
 };
 
 export const ABOUT_WINDOW_WIDTH = 600;
-export const ABOUT_WINDOW_HEIGHT = 400;
+export const ABOUT_WINDOW_HEIGHT = 350;
 
 export const RECENT_PLAYLIST_COUNT = 10;
 

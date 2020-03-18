@@ -3,12 +3,13 @@ import React from 'react';
 import * as ReactDOM from 'react-dom';
 import WebFont from 'webfontloader';
 import initI18n from './initializers/initI18n';
-import { AboutView } from './components/AboutView/AboutView'
+import { AboutView, Author } from './components/AboutView/AboutView'
 
 import {
   name,
   description,
   version,
+  author,
   homepage,
   repository
 } from '../../package.json';
@@ -41,6 +42,7 @@ window.addEventListener('load', async () => {
       name={name}
       description={description}
       version={version}
+      author={author as unknown as Author}
       homepage={homepage}
       repository={repository}
       tos={`${homepage}/terms-of-service`}
