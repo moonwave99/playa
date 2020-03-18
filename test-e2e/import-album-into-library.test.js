@@ -45,14 +45,20 @@ describe('Import album into library', () => {
     await app.client.waitUntil(async() =>
       await app.client.getText('.import-view .folder-name') === albumPath
     );
+    await app.client.elements('.import-view #artist').setValue(artist);
     await app.client.elements('.import-view #title').setValue(title);
     await app.client.elements('.import-view #year').setValue(year);
     await app.client.click('.import-view button[type="submit"]');
 
-    await app.client.waitUntil(async() =>
-      await app.client
-        .elements('.album-grid-tile figure')
-        .getAttribute('title') === `[1] ${artist} - ${title}`
+    await app.client.waitUntil(async() => {
+      const renderedTitle = await app.client.getText('.album-grid-tile .album-title');
+      const renderedArtist = await app.client.getText('.album-grid-tile .album-artist');
+      const renderedYear = await app.client.getText('.album-grid-tile .album-year');
+      return renderedTitle === title
+        && renderedArtist === artist
+        && +renderedYear === year;
+    }
+
     );
   }, TEN_SECONDS);
 });
