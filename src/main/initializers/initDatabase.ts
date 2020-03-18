@@ -28,6 +28,7 @@ const {
   IPC_ALBUM_CONTENT_RAW_REQUEST,
   IPC_ARTIST_GET_ALL_REQUEST,
   IPC_ARTIST_SAVE_REQUEST,
+  IPC_ARTIST_SAVE_LIST_REQUEST,
   IPC_ARTIST_DELETE_REQUEST,
   IPC_TRACK_GET_LIST_RAW_REQUEST,
   IPC_TRACK_DELETE_LIST_REQUEST
@@ -144,6 +145,10 @@ export default async function initDatabase({
 
   ipc.handle(IPC_ARTIST_SAVE_REQUEST,
     async (_event, artist) => await db.artist.save(artist)
+  );
+
+  ipc.handle(IPC_ARTIST_SAVE_LIST_REQUEST,
+    async (_event, artists) => await db.artist.saveBulk(artists)
   );
 
   ipc.handle(IPC_ARTIST_DELETE_REQUEST,

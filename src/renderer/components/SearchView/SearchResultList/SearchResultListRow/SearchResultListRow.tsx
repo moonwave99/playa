@@ -24,7 +24,6 @@ type SearchResultListRowProps = {
   isCurrent?: boolean;
   onClick?: Function;
   onContextMenu?: Function;
-  onArtistContextMenu?: Function;
   onCoverDoubleClick?: Function;
   selectedIDs?: string[];
   style: object;
@@ -38,7 +37,6 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
   isCurrent = false,
   onClick,
   onContextMenu,
-  onArtistContextMenu,
   onCoverDoubleClick,
   selectedIDs = [],
   style
@@ -67,19 +65,11 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
   }
 
   function _onConTextMenu(): void {
-    onContextMenu && onContextMenu(album);
-  }
-
-  function _onArtistContextMenu(event: MouseEvent): void {
-    if (album.isAlbumFromVA) {
-      return;
-    }
-    event.stopPropagation()
-    onArtistContextMenu && onArtistContextMenu(album);
+    onContextMenu && onContextMenu(album, artist);
   }
 
   function _onCoverDoubleClick(): void {
-    onCoverDoubleClick && onCoverDoubleClick(album);
+    onCoverDoubleClick && onCoverDoubleClick(album, artist);
   }
 
   function renderCell(cell: Cell): ReactElement {
@@ -98,7 +88,6 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
       case 'artist':
         cellContent =
           <Link
-            onContextMenu={_onArtistContextMenu}
             to={generatePath(ARTIST_SHOW, { _id: artistId })}
             className="album-artist-link">{formatArtist({ album, artist })}
           </Link>

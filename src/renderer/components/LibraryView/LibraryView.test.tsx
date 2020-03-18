@@ -30,8 +30,7 @@ const defaultStore = {
   },
   library: {
     latest: albums.map(({ _id }) => _id),
-    latestAlbumId: albums[1]._id,
-    artistsById: toObj(artists)
+    latestAlbumId: albums[1]._id
   }
 };
 
@@ -57,8 +56,7 @@ describe('LibraryView', () => {
         ...defaultStore,
         library: {
           latest: [],
-          latestAlbumId: null,
-          artistsById: {}
+          latestAlbumId: null
         }
       });
     expect(wrapper.find('.library-artists')).toHaveLength(0);

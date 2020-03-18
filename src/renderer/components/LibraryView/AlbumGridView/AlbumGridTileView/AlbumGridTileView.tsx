@@ -20,6 +20,7 @@ import { formatArtist } from '../../../../utils/albumUtils';
 
 type AlbumGridTileViewProps = {
   album: Album;
+  showArtist?: boolean;
   isPlaying?: boolean;
   onContextMenu?: Function;
   onDoubleClick?: Function;
@@ -27,6 +28,7 @@ type AlbumGridTileViewProps = {
 
 export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
   album,
+  showArtist = true,
   isPlaying = false,
   onContextMenu,
   onDoubleClick
@@ -68,14 +70,14 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
   }, [album]);
 
   function _onContextMenu(): void {
-    onContextMenu && onContextMenu(album);
+    onContextMenu && onContextMenu(album, artist);
   }
 
   function _onDoubleClick(): void {
-    onDoubleClick && onDoubleClick(album);
+    onDoubleClick && onDoubleClick(album, artist);
   }
 
-  const { title } = album;
+  const { title, year } = album;
 
   const classNames = cx('album-grid-tile', {
     'is-playing': isPlaying,
@@ -94,12 +96,15 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
           onDoubleClick={_onDoubleClick}
           onContextMenu={_onContextMenu}/>
       </div>
-      <Link
-        className="album-artist"
-        to={generatePath(ARTIST_SHOW, { _id: artistId })}>
-        {formatArtist({ album, artist })}
-      </Link>
+      {showArtist &&
+        <Link
+          className="album-artist"
+          to={generatePath(ARTIST_SHOW, { _id: artistId })}>
+          {formatArtist({ album, artist })}
+        </Link>
+      }
       <span className="album-title">{title}</span>
+      <span className="album-year">{year}</span>
     </article>
 	);
 }

@@ -2,21 +2,35 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 const mockStore = configureStore([thunk]);
 
-import { albums, playlists } from '../../../../test/testFixtures';
+import { playlists, albums, artists, tracks } from '../../../../test/testFixtures';
 import { toObj } from '../../utils/storeUtils';
-import { PLAYLIST_GET_LIST_RESPONSE } from './playlist';
-
-import { Album, ALBUM_GET_LIST_RESPONSE } from './album';
 
 import reducer, {
   LibraryActionTypes,
   getLatestRequest,
-  addAlbumsToLibrary,
+  importAlbum,
   removeAlbums,
   LIBRARY_GET_LATEST_REQUEST,
   LIBRARY_GET_LATEST_RESPONSE,
   LIBRARY_ADD_TO_LATEST_ALBUMS
 } from './library';
+
+import { PLAYLIST_GET_LIST_RESPONSE } from './playlist';
+
+import {
+  Album,
+  ALBUM_SAVE_RESPONSE,
+  ALBUM_GET_LIST_RESPONSE
+} from './album';
+
+import {
+  ARTIST_GET_LIST_RESPONSE,
+  ARTIST_SAVE_RESPONSE
+} from './artist';
+
+import {
+  TRACK_GET_LIST_RESPONSE
+} from './track';
 
 import {
   PLAYER_UPDATE_QUEUE
@@ -37,24 +51,51 @@ describe('library actions', () => {
     });
   });
 
-  describe('addAlbumsToLibrary', () => {
+  describe('importAlbum', () => {
     it('should dispatch expected actions', async () => {
       const store = mockStore({
+        albums: {
+          allById: {}
+        },
+        artists: {
+          allById: {},
+          latestArtistId: '0'
+        },
+        tracks: {
+          allById: {}
+        },
         library: {
-          artistsById: {}
+          latest: [],
+          latestAlbumId: '0'
         }
       });
       const expectedActions = [
         {
-          type: ALBUM_GET_LIST_RESPONSE,
-          results: albums
+          type: ARTIST_SAVE_RESPONSE,
+          artist: { ...artists[0], _id: '1', count: 1 }
+        },
+        {
+          type: TRACK_GET_LIST_RESPONSE,
+          results: tracks
+        },
+        {
+          type: ALBUM_SAVE_RESPONSE,
+          album: { ...albums[0], _id: '1', artist: '1' }
         },
         {
           type: LIBRARY_ADD_TO_LATEST_ALBUMS,
-          albums
+          albums: [{ ...albums[0], _id: '1', artist: '1' }]
+        },
+        {
+          type: ALBUM_GET_LIST_RESPONSE,
+          results: [{ ...albums[0], _id: '1', artist: '1' }]
         }
       ];
-      await addAlbumsToLibrary(albums)(store.dispatch, store.getState);
+      await importAlbum({
+        album: { ...albums[0], _id: null },
+        artist: { ...artists[0], _id: null, count: 0 },
+        tracks: tracks
+      })(store.dispatch, store.getState);
       expectedActions.forEach(
         action => expect(store.getActions()).toContainEqual(action)
       );
@@ -73,6 +114,9 @@ describe('library actions', () => {
         albums: {
           allById: toObj(albums)
         },
+        artists: {
+          allById: toObj(artists)
+        },
         player: {
           queue: albums.map(({ _id }) => _id)
         },
@@ -81,6 +125,10 @@ describe('library actions', () => {
         }
       });
       const expectedActions = [
+        {
+          type: ARTIST_GET_LIST_RESPONSE,
+          artists: [{ ...artists[0], count: artists[0].count - 1}]
+        },
         {
           type: LIBRARY_GET_LATEST_RESPONSE,
           results: [albums[1]]
@@ -103,6 +151,9 @@ describe('library actions', () => {
           latest: []
         },
         albums: {
+          allById: {}
+        },
+        artists: {
           allById: {}
         },
         player: {
@@ -130,6 +181,9 @@ describe('library actions', () => {
         albums: {
           allById: toObj(albums)
         },
+        artists: {
+          allById: toObj(artists)
+        },
         player: {
           queue: albums.map(({ _id }) => _id)
         },
@@ -138,6 +192,10 @@ describe('library actions', () => {
         }
       });
       const expectedActions = [
+        {
+          type: ARTIST_GET_LIST_RESPONSE,
+          artists: [{ ...artists[0], count: artists[0].count - 1}]
+        },
         {
           type: LIBRARY_GET_LATEST_RESPONSE,
           results: [albums[1]]
@@ -161,8 +219,7 @@ describe('library reducer', () => {
   const initialState = {
     latest: [] as Album['_id'][],
     latestAlbumId: null as Album['_id'],
-    loadingLatest: false,
-    artistsById: {}
+    loadingLatest: false
   }
   it('should return the initial state', () => {
     expect(reducer(undefined, {} as LibraryActionTypes))
@@ -175,8 +232,7 @@ describe('library reducer', () => {
     })).toEqual({
       latest: [],
       latestAlbumId: null,
-      loadingLatest: true,
-      artistsById: {}
+      loadingLatest: true
     });
   });
 
@@ -188,8 +244,7 @@ describe('library reducer', () => {
     })).toEqual({
       latest: albums.map(({ _id }) => _id),
       latestAlbumId: albums[1]._id,
-      loadingLatest: false,
-      artistsById: {}
+      loadingLatest: false
     });
 
     expect(reducer(initialState, {
@@ -198,8 +253,7 @@ describe('library reducer', () => {
     })).toEqual({
       latest: [],
       latestAlbumId: '0',
-      loadingLatest: false,
-      artistsById: {}
+      loadingLatest: false
     });
   });
 
@@ -210,8 +264,7 @@ describe('library reducer', () => {
     })).toEqual({
       latest: albums.map(({ _id }) => _id),
       latestAlbumId: `${Math.max(...albums.map(({ _id }) => +_id))}`,
-      loadingLatest: false,
-      artistsById: {}
+      loadingLatest: false
     });
   });
 });

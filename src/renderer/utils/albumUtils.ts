@@ -1,3 +1,5 @@
+import { EntityHashMap } from './storeUtils';
+
 import {
   Album,
   AlbumTypes
@@ -23,4 +25,15 @@ export function showTrackNumbers({ type }: Album): boolean {
 
 export function formatArtist({ album, artist }: { album: Album; artist: Artist }): string {
   return album.isAlbumFromVA ? VARIOUS_ARTISTS_LABEL : artist.name;
+}
+
+export function groupAlbumsByType(albums: Album[] = []): EntityHashMap<Album[]> {
+  return albums.reduce((memo: EntityHashMap<Album[]>, album) => {
+    const { type } = album;
+    if (!memo[type]) {
+      memo[type] = [];
+    }
+    memo[type].push(album);
+    return memo;
+  }, {});
 }

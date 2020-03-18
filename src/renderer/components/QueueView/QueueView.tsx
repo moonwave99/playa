@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { playerSelector } from '../../store/modules/player';
 import { AlbumListView } from '../AlbumListView/AlbumListView';
 import { Album } from '../../store/modules/album';
+import { Artist } from '../../store/modules/artist';
 import { Track } from '../../store/modules/track';
 import { playTrack } from '../../store/modules/player';
 import { updateTitle, UIAlbumView, UIDragTypes } from '../../store/modules/ui';
@@ -45,11 +46,11 @@ export const QueueView = (): ReactElement => {
     });
   }, [currentAlbumId]);
 
-  function onAlbumContextMenu(album: Album): void {
+  function onAlbumContextMenu(album: Album, artist: Artist): void {
     openContextMenu([
       {
         type: ALBUM_CONTEXT_ACTIONS,
-        albums: [album],
+        albums: [{ album, artist }],
         queue: queue.map(({ _id }) => _id),
         dispatch,
         actionGroups: [

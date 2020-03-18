@@ -12,7 +12,6 @@ describe('SearchResultList', () => {
         query="#!q"
         isSearching={false}
         onContextMenu={jest.fn()}
-        onArtistContextMenu={jest.fn()}
         onResultDoubleClick={jest.fn()}
         onResultEnter={jest.fn()}/>
     );
@@ -26,7 +25,6 @@ describe('SearchResultList', () => {
         query="#!q"
         isSearching={false}
         onContextMenu={jest.fn()}
-        onArtistContextMenu={jest.fn()}
         onResultDoubleClick={jest.fn()}
         onResultEnter={jest.fn()}/>
     );

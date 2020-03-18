@@ -11,6 +11,7 @@ import { ArtistListView } from './ArtistListView/ArtistListView';
 import { ApplicationState } from '../../store/store';
 import { updateTitle } from '../../store/modules/ui';
 import { Album } from '../../store/modules/album';
+import { Artist } from '../../store/modules/artist';
 import { openContextMenu } from '../../lib/contextMenu';
 import useNativeDrop, { NativeTypes } from '../../hooks/useNativeDrop/useNativeDrop';
 
@@ -100,11 +101,11 @@ export const LibraryView: FC<LibraryViewProps> = ({
     dispatch(updateTitle(t('library.title')));
   }, []);
 
-	function onAlbumContextMenu(album: Album): void {
+	function onAlbumContextMenu(album: Album, artist: Artist): void {
 		openContextMenu([
       {
         type: ALBUM_CONTEXT_ACTIONS,
-        albums: [album],
+        albums: [{ album, artist }],
         dispatch,
         actionGroups: [
           AlbumActionsGroups.PLAYBACK,
@@ -125,9 +126,9 @@ export const LibraryView: FC<LibraryViewProps> = ({
     ]);
 	}
 
-	function onAlbumDoubleClick(album: Album): void {
+	function onAlbumDoubleClick(album: Album, artist: Artist): void {
     actionsMap(AlbumActions.PLAY_ALBUM)({
-      albums: [album],
+      albums: [{ album, artist }],
       queue: [album._id],
       dispatch
     }).handler();

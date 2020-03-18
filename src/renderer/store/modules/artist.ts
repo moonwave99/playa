@@ -43,8 +43,15 @@ export function getDefaultArtist(): Artist {
   };
 }
 
+export const VariousArtist = {
+  ...getDefaultArtist(),
+  _id: VARIOUS_ARTISTS_ID,
+  name: VARIOUS_ARTISTS_ID
+};
+
 export const ARTIST_GET_ALL_REQUEST   = 'playa/artists/GET_ALL_REQUEST';
 export const ARTIST_GET_ALL_RESPONSE  = 'playa/artists/GET_ALL_RESPONSE';
+export const ARTIST_GET_LIST_RESPONSE = 'playa/artists/GET_LIST_RESPONSE';
 export const ARTIST_SAVE_REQUEST      = 'playa/artists/SAVE_REQUEST';
 export const ARTIST_SAVE_RESPONSE     = 'playa/artists/SAVE_RESPONSE';
 export const ARTIST_DELETE_REQUEST    = 'playa/artists/DELETE_REQUEST';
@@ -56,6 +63,11 @@ interface GetAllArtistRequestAction {
 
 interface GetAllArtistResponseAction {
   type: typeof ARTIST_GET_ALL_RESPONSE;
+  artists: Artist[];
+}
+
+interface GetArtistListResponseAction {
+  type: typeof ARTIST_GET_LIST_RESPONSE;
   artists: Artist[];
 }
 
@@ -82,6 +94,7 @@ interface DeleteArtistResponseAction {
 export type ArtistActionTypes =
     GetAllArtistRequestAction
   | GetAllArtistResponseAction
+  | GetArtistListResponseAction
   | SaveArtistRequestAction
   | SaveArtistResponseAction
   | DeleteArtistRequestAction
@@ -148,14 +161,14 @@ export const getAlbumsByArtist = createCachedSelector(
   ({ albums }: ApplicationState) => albums.allById,
   ({ _id }, albums): EntityHashMap<Album[]> =>
     toArray(albums).filter(({ artist }) => artist === _id)
-    .reduce((memo: EntityHashMap<Album[]>, album) => {
-      const { type } = album;
-      if (!memo[type]) {
-        memo[type] = [];
-      }
-      memo[type].push(album);
-      return memo;
-    }, {})
+      .reduce((memo: EntityHashMap<Album[]>, album) => {
+        const { type } = album;
+        if (!memo[type]) {
+          memo[type] = [];
+        }
+        memo[type].push(album);
+        return memo;
+      }, {})
 )((_state_: ApplicationState, id: string) => id);
 
 export const searchArtists = createCachedSelector(
@@ -195,6 +208,14 @@ export default function reducer(
         allById: toObj(ensureAll<Artist>(action.artists, getDefaultArtist)),
         latestArtistId: getLatestArtistId(action.artists),
         isLoading: false
+      };
+    case ARTIST_GET_LIST_RESPONSE:
+      return {
+        ...state,
+        allById: {
+          ...state.allById,
+          ...toObj(ensureAll<Artist>(action.artists, getDefaultArtist))
+        }
       };
     case ARTIST_SAVE_RESPONSE:
       return {

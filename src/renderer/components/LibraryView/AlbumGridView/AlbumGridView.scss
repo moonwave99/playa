@@ -34,7 +34,8 @@
       transform: scale(.9);
     }
     .album-artist,
-    .album-title {
+    .album-title,
+    .album-year {
       text-align: center;
       display: block;
       line-height: 1.5rem;
@@ -45,8 +46,12 @@
         cursor: pointer;
       }
     }
-    .album-title {
-      font-size: .8rem;
+    .album-title,
+    .album-year {
+      font-size: .9rem;
+    }
+    .album-year {
+      color: darken($lightColor, 30%);
     }
   }
   .album-grid-empty-placeholder {

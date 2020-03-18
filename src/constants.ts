@@ -77,6 +77,7 @@ export const IPC_MESSAGES = {
   IPC_ALBUM_GET_STATS_RESPONSE : 'album:get-stats:response',
   IPC_ARTIST_GET_ALL_REQUEST : 'artist:get-all-request',
   IPC_ARTIST_SAVE_REQUEST : 'artist:save-request',
+  IPC_ARTIST_SAVE_LIST_REQUEST : 'artist:save-list-request',
   IPC_ARTIST_DELETE_REQUEST : 'artist:delete-request',
   IPC_TRACK_GET_LIST_REQUEST : 'track:get-list:request',
   IPC_TRACK_GET_LIST_RESPONSE : 'track:get-list:response',

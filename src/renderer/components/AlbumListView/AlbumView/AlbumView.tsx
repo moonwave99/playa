@@ -95,11 +95,11 @@ export const AlbumView: FC<AlbumViewProps> = ({
   }
 
   function onTrackDoubleClick(track: Track): void {
-    onDoubleClick(album, track);
+    onDoubleClick(album, artist, track);
   }
 
   function _onContextMenu(): void {
-    onContextMenu && onContextMenu(album);
+    onContextMenu && onContextMenu(album, artist);
   }
 
   function onActionsButtonClick(): void {

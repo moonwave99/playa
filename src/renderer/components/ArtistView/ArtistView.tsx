@@ -9,13 +9,17 @@ import { openContextMenu } from '../../lib/contextMenu';
 import actionsMap from '../../actions/actions';
 
 import {
+  Artist,
+  VariousArtist,
+  VARIOUS_ARTISTS_ID,
   selectors as artistSelectors,
   getAlbumsByArtist,
   getArtistReleases
 } from '../../store/modules/artist';
-import { Album } from '../../store/modules/album';
+import { Album, selectors as albumSelectors } from '../../store/modules/album';
 import { updateTitle } from '../../store/modules/ui';
 import { ApplicationState } from '../../store/store';
+import { groupAlbumsByType } from '../../utils/albumUtils';
 import { formatArtistName } from '../../utils/artistUtils';
 import { LIBRARY } from '../../routes';
 
@@ -38,8 +42,14 @@ export const ArtistView = (): ReactElement => {
     albums,
     currentAlbumId
   } = useSelector((state: ApplicationState) => {
-    const artist = artistSelectors.findById(state, _id);
-    const albums = getAlbumsByArtist(state, _id) || {};
+    const artist = _id === encodeURIComponent(VARIOUS_ARTISTS_ID)
+      ? VariousArtist
+      : artistSelectors.findById(state, _id);
+
+    const albums = _id === encodeURIComponent(VARIOUS_ARTISTS_ID)
+      ? groupAlbumsByType(albumSelectors.findByVariousArtists(state))
+      : getAlbumsByArtist(state, _id) || {};
+
     return {
       artist,
       albums,
@@ -47,13 +57,11 @@ export const ArtistView = (): ReactElement => {
     };
   });
 
-  const { name } = artist;
+  const { _id: artistId, name } = artist;
 
   useEffect(() => {
-    if (artist) {
-      dispatch(getArtistReleases(artist));
-    }
-  }, [artist]);
+    dispatch(getArtistReleases(artist));
+  }, [artistId]);
 
   useEffect(() => {
     if (name) {
@@ -61,11 +69,11 @@ export const ArtistView = (): ReactElement => {
     }
   }, [name]);
 
-  function onAlbumContextMenu(album: Album): void {
+  function onAlbumContextMenu(album: Album, artist: Artist): void {
 		openContextMenu([
       {
         type: ALBUM_CONTEXT_ACTIONS,
-        albums: [album],
+        albums: [{ album, artist }],
         dispatch,
         actionGroups: [
           AlbumActionsGroups.PLAYBACK,
@@ -86,9 +94,9 @@ export const ArtistView = (): ReactElement => {
     ]);
 	}
 
-  function onAlbumDoubleClick(album: Album): void {
+  function onAlbumDoubleClick(album: Album, artist: Artist): void {
     actionsMap(AlbumActions.PLAY_ALBUM)({
-      albums: [album],
+      albums: [{ album, artist }],
       queue: [album._id],
       dispatch
     }).handler();
@@ -103,6 +111,7 @@ export const ArtistView = (): ReactElement => {
           return (
             <section className={sectionClassNames} key={type}>
               <AlbumGridView
+                showArtists={false}
                 albums={releases}
                 currentAlbumId={currentAlbumId}
                 onAlbumContextMenu={onAlbumContextMenu}

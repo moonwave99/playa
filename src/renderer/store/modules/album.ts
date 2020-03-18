@@ -3,6 +3,7 @@ import createCachedSelector from 're-reselect';
 import {
   EntityHashMap,
   toObj,
+  toArray,
   ensureAll,
   updateId
 } from '../../utils/storeUtils';
@@ -11,7 +12,8 @@ import { ApplicationState } from '../store';
 
 import {
   Artist,
-  selectors as artistSelectors,
+  VariousArtist,
+  selectors as artistSelectors
 } from './artist';
 
 import {
@@ -81,7 +83,9 @@ export const selectors = {
   state: ({ albums }: { albums: AlbumState }): AlbumState => albums,
   allById: ({ albums }: { albums: AlbumState }): EntityHashMap<Album> => albums.allById,
   findById: ({ albums }: { albums: AlbumState }, id: Album['_id']): Album => albums.allById[id],
-  findByList: ({ albums }: { albums: AlbumState }, ids: Album['_id'][]): Album[] => ids.map(id => albums.allById[id])
+  findByList: ({ albums }: { albums: AlbumState }, ids: Album['_id'][]): Album[] => ids.map(id => albums.allById[id]),
+  findByVariousArtists: ({ albums }: { albums: AlbumState }): Album[] =>
+    toArray(albums.allById).filter(({ isAlbumFromVA }) => isAlbumFromVA)
 };
 
 type GetAlbumContentByIdSelection = {
@@ -96,7 +100,7 @@ export const getAlbumContentById = createCachedSelector(
   trackSelectors.allById,
   coverSelectors.allById,
   (album, artists, tracks, covers): GetAlbumContentByIdSelection => ({
-    artist: artists[album.artist],
+    artist: album.isAlbumFromVA ? VariousArtist : artists[album.artist],
     tracks: album.tracks.map(id => tracks[id]).filter(x => !!x),
     cover: covers[album._id]
   })

@@ -121,7 +121,7 @@ describe('SearchResultListRow', () => {
         album={albums[0]}/>
 		, defaultStore);
     wrapper.find('.search-result-list-item').simulate('contextmenu');
-    expect(handler).toHaveBeenCalledWith(albums[0]);
+    expect(handler).toHaveBeenCalledWith(albums[0], artists[0]);
   });
 
   it('should contain search result info', () => {

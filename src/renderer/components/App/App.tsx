@@ -23,7 +23,7 @@ import './App.scss';
 import initIpc from '../../initializers/initIpc';
 import { ApplicationState } from '../../store/store';
 import { Album } from '../../store/modules/album';
-import { getAllArtistsRequest, selectors as artistsSelectors } from '../../store/modules/artist';
+import { getAllArtistsRequest } from '../../store/modules/artist';
 
 import {
   Playlist,
@@ -59,10 +59,8 @@ import {
 const appSelector = createSelector(
   playlistSelectors.allById,
   playerSelectors.state,
-  artistsSelectors.state,
   ({ ui }: ApplicationState) => ui,
-  ({ library }: ApplicationState) => library,
-  (playlists, player, artists, ui, library) => {
+  (playlists, player, ui) => {
     const playlistArray = Object.keys(playlists).map(id => playlists[id]);
     const recentPlaylists = playlistArray
       .sort((a: Playlist, b: Playlist) =>
@@ -72,9 +70,7 @@ const appSelector = createSelector(
       playlists: playlistArray,
       recentPlaylists,
       currentPlaylistId: player.currentPlaylistId,
-      title: ui.title,
-      latestAlbumId: library.latestAlbumId,
-      latestArtistId: artists.latestArtistId
+      title: ui.title
     }
   }
 );
@@ -108,9 +104,7 @@ export const App: FC<AppProps> = ({
     playlists,
     recentPlaylists,
     currentPlaylistId,
-    title,
-    latestAlbumId,
-    latestArtistId
+    title
   } = useSelector(appSelector);
 
   const [hasSearchFocus, setSearchFocus] = useState(false);
@@ -122,7 +116,7 @@ export const App: FC<AppProps> = ({
     showImportDialog,
     onImportModalRequestClose,
     onImportFormSubmit
-  } = useImportAlbums({ latestAlbumId, latestArtistId });
+  } = useImportAlbums();
 
   function onFocusSearch(): void {
     setSearchFocus(true);

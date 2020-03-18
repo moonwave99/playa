@@ -2,10 +2,10 @@ import { ipcRenderer as ipc } from 'electron';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { Album, saveAlbumRequest } from '../../store/modules/album';
-import { Artist, saveArtistRequest } from '../../store/modules/artist';
-import { Track, getTrackListRequest } from '../../store/modules/track';
-import { addAlbumsToLibrary } from '../../store/modules/library';
+import { Album } from '../../store/modules/album';
+import { Artist } from '../../store/modules/artist';
+import { Track } from '../../store/modules/track';
+import { importAlbum } from '../../store/modules/library';
 import { showDialog } from '../../store/modules/ui';
 
 import {
@@ -18,21 +18,13 @@ const {
   IPC_TRACK_GET_LIST_RAW_REQUEST
 } = IPC_MESSAGES;
 
-type UseImportAlbumsParams = {
-  latestAlbumId: Album['_id'];
-  latestArtistId: Artist['_id'];
-}
-
 type OnImportFormSubmitParams = {
   album: Album;
   artist: Artist;
   tracks: Track[];
 }
 
-export default function useImportAlbums({
-  latestAlbumId,
-  latestArtistId
-}: UseImportAlbumsParams): {
+export default function useImportAlbums(): {
   folderToImport: string;
   tracksToImport: Track[];
   showImportModal: boolean;
@@ -59,7 +51,6 @@ export default function useImportAlbums({
     }
 
     const folderTracks = await ipc.invoke(IPC_ALBUM_CONTENT_RAW_REQUEST, folder);
-
     if (folderTracks.length === 0) {
       dispatch(
         showDialog(
@@ -71,7 +62,6 @@ export default function useImportAlbums({
     }
 
     const processedTracks = await ipc.invoke(IPC_TRACK_GET_LIST_RAW_REQUEST, folderTracks);
-
     setFolderToImport(folder);
     setTracksToImport(processedTracks);
     setShowImportModal(true);
@@ -88,25 +78,7 @@ export default function useImportAlbums({
     artist,
     tracks
   }: OnImportFormSubmitParams): void {
-    if (!album.isAlbumFromVA) {
-      dispatch(saveArtistRequest({
-        ...artist,
-        count: artist.count + 1,
-        _id: artist._id || `${+latestArtistId + 1}`
-      }));
-    }
-    const updatedAlbum = {
-      ...album,
-      _id: `${+latestAlbumId + 1}`,
-      artist: artist._id || `${+latestArtistId + 1}`
-    };
-    dispatch(
-      getTrackListRequest(
-        tracks.map(({ _id }) => _id )
-      )
-    );
-    dispatch(saveAlbumRequest(updatedAlbum));
-    dispatch(addAlbumsToLibrary([updatedAlbum]));
+    dispatch(importAlbum({ album, artist, tracks }));
     setShowImportModal(false);
     setFolderToImport(null);
     setTracksToImport([]);

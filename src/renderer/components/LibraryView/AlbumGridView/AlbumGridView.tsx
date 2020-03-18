@@ -6,6 +6,7 @@ import './AlbumGridView.scss';
 
 type AlbumGridViewProps = {
   albums: Album[];
+  showArtists?: boolean;
   currentAlbumId?: Album['_id'];
   onAlbumContextMenu?: Function;
   onAlbumDoubleClick?: Function;
@@ -13,6 +14,7 @@ type AlbumGridViewProps = {
 
 export const AlbumGridView: FC<AlbumGridViewProps> = ({
   albums = [],
+  showArtists = true,
   currentAlbumId,
   onAlbumContextMenu,
   onAlbumDoubleClick
@@ -21,6 +23,7 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
     <div className="album-grid">
       {albums.map(album =>
         <AlbumGridTileView
+          showArtist={showArtists}
           key={album._id}
           album={album}
           isPlaying={album._id === currentAlbumId}

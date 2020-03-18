@@ -74,6 +74,6 @@ describe('QueueView', () => {
     });
     wrapper.find('.album-view').at(0).simulate('contextmenu');
     expect(handler.mock.calls[0][0]).toHaveLength(1);
-    expect(handler.mock.calls[0][0][0].albums).toEqual([albums[0]]);
+    expect(handler.mock.calls[0][0][0].albums).toEqual([{ album: albums[0], artist: artists[0] }]);
   });
 });

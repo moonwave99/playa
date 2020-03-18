@@ -1,5 +1,5 @@
 import { openContextMenu } from './contextMenu';
-import { playlists, albums } from '../../../test/testFixtures';
+import { playlists, albums, artists } from '../../../test/testFixtures';
 
 import { ALBUM_CONTEXT_ACTIONS, AlbumActionsGroups } from '../actions/albumActions';
 import { PLAYLIST_LIST_CONTEXT_ACTIONS } from '../actions/playlistListActions';
@@ -10,7 +10,7 @@ describe('openContextMenu', () => {
     const menu = openContextMenu([
       {
         type: ALBUM_CONTEXT_ACTIONS,
-        albums: [albums[0]],
+        albums: [{ album: albums[0], artist: artists[0] }],
         dispatch,
         actionGroups: [
           AlbumActionsGroups.PLAYBACK,

@@ -9,16 +9,25 @@ import {
 
 import {
   Album,
-  ALBUM_GET_LIST_RESPONSE
+  ALBUM_GET_LIST_RESPONSE,
+  saveAlbumRequest
 } from './album';
+
+import {
+  Artist,
+  VARIOUS_ARTISTS_ID,
+  ARTIST_GET_LIST_RESPONSE,
+  saveArtistRequest
+} from './artist';
+
+import {
+  Track,
+  getTrackListRequest
+} from './track';
 
 import {
   PLAYER_UPDATE_QUEUE
 } from './player';
-
-import {
-  Track
-} from './track';
 
 import { IPC_MESSAGES } from '../../../constants';
 
@@ -26,7 +35,8 @@ const {
   IPC_ALBUM_GET_LATEST_REQUEST,
   IPC_ALBUM_DELETE_LIST_REQUEST,
   IPC_PLAYLIST_SAVE_LIST_REQUEST,
-  IPC_TRACK_DELETE_LIST_REQUEST
+  IPC_TRACK_DELETE_LIST_REQUEST,
+  IPC_ARTIST_SAVE_LIST_REQUEST,
 } = IPC_MESSAGES;
 
 const DEFAULT_LATEST_ALBUM_LIMIT = 10;
@@ -79,23 +89,58 @@ export const getLatestRequest = (
     });
   }
 
-export const addAlbumsToLibrary = (albums: Album[]): Function =>
-  (dispatch: Function): void => {
+type ImportAlbumParams = {
+  album: Album;
+  artist: Artist;
+  tracks: Track[];
+}
+
+export const importAlbum = ({
+  album,
+  artist,
+  tracks,
+}: ImportAlbumParams): Function =>
+  (dispatch: Function, getState: Function): void => {
+    const state = getState();
+    const { latestArtistId } = state.artists;
+    const { latestAlbumId } = state.library;
+    if (!album.isAlbumFromVA) {
+      dispatch(saveArtistRequest({
+        ...artist,
+        count: artist.count + 1,
+        _id: artist._id || `${+latestArtistId + 1}`
+      }));
+    }
+    const updatedAlbum = {
+      ...album,
+      _id: `${+latestAlbumId + 1}`,
+      artist: album.isAlbumFromVA
+        ? VARIOUS_ARTISTS_ID
+        : artist._id || `${+latestArtistId + 1}`
+    };
+    dispatch(
+      getTrackListRequest(
+        tracks.map(({ _id }) => _id )
+      )
+    );
+    dispatch(saveAlbumRequest(updatedAlbum));
     dispatch({
       type: LIBRARY_ADD_TO_LATEST_ALBUMS,
-      albums
+      albums: [updatedAlbum]
     });
     dispatch({
       type: ALBUM_GET_LIST_RESPONSE,
-      results: albums
+      results: [updatedAlbum]
     });
   }
+//
 
 export const removeAlbums = (albumsToRemove: Album[]): Function =>
   async (dispatch: Function, getState: Function): Promise<void> => {
     const {
       library,
       albums,
+      artists,
       player,
       playlists,
       tracks
@@ -108,6 +153,37 @@ export const removeAlbums = (albumsToRemove: Album[]): Function =>
     if (results.length === 0) {
       return;
     }
+
+    const artistsToUpdate = albumsToRemove.reduce((memo: Artist[], { isAlbumFromVA, artist: artistId }: Album) => {
+      if (isAlbumFromVA) {
+        return memo;
+      }
+      const artist = artists.allById[artistId];
+      let foundArtist = memo.find(({ _id }: Artist) => _id === artistId);
+      if (!foundArtist) {
+        memo.push({
+          ...artist,
+          count: Math.max(0, artist.count - 1)
+        });
+      } else {
+        foundArtist = {
+          ...foundArtist,
+          count: Math.max(0, artist.count - 1)
+        }
+      }
+      return memo;
+    }, []);
+
+    const updatedArtists: Array<{ id: string; rev: string; ok: boolean }>
+      = await ipc.invoke(IPC_ARTIST_SAVE_LIST_REQUEST, artistsToUpdate);
+
+    dispatch({
+      type: ARTIST_GET_LIST_RESPONSE,
+      artists: updatedArtists.map(({ id, rev: _rev }) => ({
+        ...artistsToUpdate.find(({ _id }) => _id === id),
+        _rev
+      }))
+    });
 
     const tracksToRemove = albumsToRemove.reduce((memo: Track[], album: Album) => {
       return [...memo, ...album.tracks.map(_id => tracks.allById[_id])];
@@ -153,8 +229,7 @@ export const removeAlbums = (albumsToRemove: Album[]): Function =>
 const INITIAL_STATE = {
   latest: [] as Album['_id'][],
   latestAlbumId: null as Album['_id'],
-  loadingLatest: false,
-  artistsById: {}
+  loadingLatest: false
 };
 
 function getLatestAlbumId(albums: Album[]): Album['_id'] {
