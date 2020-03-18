@@ -62,7 +62,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
   const dispatch = useDispatch();
   useEffect(() => {
     inView && dispatch(getAlbumRequest(_id));
-  }, [_id, inView]);
+  }, [_id, inView, artist]);
 
   const [{ opacity }, drag] = useDrag({
     item: {

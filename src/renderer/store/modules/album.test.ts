@@ -3,7 +3,7 @@ import thunk from 'redux-thunk';
 const mockStore = configureStore([thunk]);
 
 import { toObj } from '../../utils/storeUtils';
-import { albums, tracks } from '../../../../test/testFixtures';
+import { albums, artists, tracks } from '../../../../test/testFixtures';
 import reducer, {
   AlbumActionTypes,
   AlbumState,
@@ -28,6 +28,9 @@ describe('album actions', () => {
       const store = mockStore({
         albums: {
           allById: {}
+        },
+        artists: {
+          allById: toObj(artists)
         },
         tracks: {
           allById: {}

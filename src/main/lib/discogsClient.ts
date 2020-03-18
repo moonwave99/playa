@@ -6,6 +6,8 @@ import { EntityHashMap } from '../../renderer/utils/storeUtils';
 import log, { LogContext, LogLevel } from './logger';
 import { AlbumNotFoundError } from '../../errors';
 
+export const DISCOGS_VARIOUS_ARTISTS_ID = 'Various';
+
 type Credentials = {
   consumerKey: string;
   consumerSecret: string;
