@@ -18,10 +18,18 @@ type TestAlbum = {
   artist: string;
   title: string;
   year?: number;
+  isAlbumFromVA?: boolean;
   type: string;
   created: string;
   path: string;
   tracks: TestTrack['_id'][];
+}
+
+type TestArtist = {
+  _id: string;
+  _rev: string;
+  name: string;
+  count: number;
 }
 
 export type TestTrack = {
@@ -64,20 +72,23 @@ async function prepareDir(): Promise<void> {
 type PopulateTestDBParams = {
   playlists: TestPlaylist[];
   albums: TestAlbum[];
+  artists: TestArtist[];
   tracks: TestTrack[];
 }
 
 export async function populateTestDB({
-  playlists = [],
-  albums = [],
-  tracks = []
+  playlists,
+  albums,
+  artists,
+  tracks
 }: PopulateTestDBParams = {
   playlists: [],
   albums: [],
+  artists: [],
   tracks: []
 }): Promise<void> {
   await prepareDir();
-  const entities = ['playlist', 'album', 'track'];
+  const entities = ['playlist', 'album', 'artist', 'track'];
 
   const db: { [key: string]: Database }
     = entities.reduce((memo, key) =>
@@ -101,11 +112,16 @@ export async function populateTestDB({
     });
   }));
 
+  await Promise.all(artists.map(
+    async artist => await db.artist.save<TestArtist>(artist)
+  ));
+
   await Promise.all(tracks.map(
     async track => await db.track.save<TestTrack>(track))
   );
 
   await db.playlist.close();
   await db.album.close();
+  await db.artist.close();
   await db.track.close();
 }
