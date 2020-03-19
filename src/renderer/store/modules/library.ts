@@ -102,22 +102,35 @@ export const importAlbum = ({
 }: ImportAlbumParams): Function =>
   (dispatch: Function, getState: Function): void => {
     const state = getState();
-    const { latestArtistId } = state.artists;
+    const { latestArtistId, allById: artists } = state.artists;
+
+    let artistToSave = artist;
+    if (!artist._id) {
+      const existingArtist = toArray(artists).find(
+        ({ name }) => name.toLowerCase() === artist.name.toLowerCase()
+      ) as Artist;
+      if (existingArtist) {
+        artistToSave = existingArtist;
+      }
+    }
+
     const { latestAlbumId } = state.library;
     if (!album.isAlbumFromVA) {
       dispatch(saveArtistRequest({
-        ...artist,
-        count: artist.count + 1,
-        _id: artist._id || `${+latestArtistId + 1}`
+        ...artistToSave,
+        count: artistToSave.count + 1,
+        _id: artistToSave._id || `${+latestArtistId + 1}`
       }));
     }
+
     const updatedAlbum = {
       ...album,
       _id: `${+latestAlbumId + 1}`,
       artist: album.isAlbumFromVA
         ? VARIOUS_ARTISTS_ID
-        : artist._id || `${+latestArtistId + 1}`
+        : artistToSave._id || `${+latestArtistId + 1}`
     };
+    
     dispatch(
       getTrackListRequest(
         tracks.map(({ _id }) => _id )

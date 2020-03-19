@@ -100,6 +100,55 @@ describe('library actions', () => {
         action => expect(store.getActions()).toContainEqual(action)
       );
     });
+
+    it('should update existing artist if artist name from params exists', async () => {
+      const store = mockStore({
+        albums: {
+          allById: {}
+        },
+        artists: {
+          allById: toObj(artists),
+          latestArtistId: '4'
+        },
+        tracks: {
+          allById: {}
+        },
+        library: {
+          latest: [],
+          latestAlbumId: '0'
+        }
+      });
+      const expectedActions = [
+        {
+          type: ARTIST_SAVE_RESPONSE,
+          artist: { ...artists[0], _id: '1', count: 2 }
+        },
+        {
+          type: TRACK_GET_LIST_RESPONSE,
+          results: tracks
+        },
+        {
+          type: ALBUM_SAVE_RESPONSE,
+          album: { ...albums[0], _id: '1', artist: '1' }
+        },
+        {
+          type: LIBRARY_ADD_TO_LATEST_ALBUMS,
+          albums: [{ ...albums[0], _id: '1', artist: '1' }]
+        },
+        {
+          type: ALBUM_GET_LIST_RESPONSE,
+          results: [{ ...albums[0], _id: '1', artist: '1' }]
+        }
+      ];
+      await importAlbum({
+        album: { ...albums[0], _id: null },
+        artist: { ...artists[0], _id: null, count: 0 },
+        tracks: tracks
+      })(store.dispatch, store.getState);
+      expectedActions.forEach(
+        action => expect(store.getActions()).toContainEqual(action)
+      );
+    });
   });
 
   describe('removeAlbums', () => {

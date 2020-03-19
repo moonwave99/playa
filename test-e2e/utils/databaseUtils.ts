@@ -62,6 +62,21 @@ export const TestPlaylists: TestPlaylist[] = [
   }
 ];
 
+export const TestArtists: TestArtist[] = [
+  {
+    _id: '1',
+    _rev: null,
+    name: 'Slowdive',
+    count: 0
+  },
+  {
+    _id: '2',
+    _rev: null,
+    name: 'My Bloody Valentine',
+    count: 0
+  }
+];
+
 const DB_PATH = Path.join(SPECTRON_BASEPATH, 'databases');
 
 async function prepareDir(): Promise<void> {
