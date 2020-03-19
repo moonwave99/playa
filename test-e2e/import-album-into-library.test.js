@@ -121,7 +121,7 @@ describe('Import album into library', () => {
         && +renderedYear === year;
     });
 
-    // check that artist is now inside ArtistListView
+    // check that artist is now inside ArtistListView, and has count 2
     await app.client.click(`.library .alphabet .letter-${artist.toLowerCase().charAt(0)}`);
     await app.client.waitUntil(async () => {
       const isArtistRendered =
