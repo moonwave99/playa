@@ -1,5 +1,6 @@
 import { History } from "history";
 import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
+import { setEditPlaylistTitle } from '../store/modules/ui';
 import { playPreviousTrack, playNextTrack } from '../store/modules/player';
 
 import { IPC_MESSAGES } from '../../constants';
@@ -11,6 +12,7 @@ const {
   IPC_PLAYBACK_PREV_TRACK,
   IPC_PLAYBACK_NEXT_TRACK,
   IPC_UI_SWIPE,
+  IPC_UI_EDIT_PLAYLIST_TITLE,
   IPC_LIBRARY_IMPORT_MUSIC
 } = IPC_MESSAGES;
 
@@ -40,7 +42,8 @@ export default function initIpc({
         history.goForward();
       }
     },
-    [IPC_LIBRARY_IMPORT_MUSIC]: (): void => importMusicHandler()
+    [IPC_LIBRARY_IMPORT_MUSIC]: (): void => importMusicHandler(),
+    [IPC_UI_EDIT_PLAYLIST_TITLE]: (): void => dispatch(setEditPlaylistTitle(true))
   }
 
   const entries = Object.entries(handlerMap);

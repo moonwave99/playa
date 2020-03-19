@@ -2,14 +2,19 @@ import React, { ReactElement, useState, useEffect, useRef, KeyboardEvent } from 
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 import { Playlist, savePlaylistRequest } from '../../../../store/modules/playlist';
+import { setEditPlaylistTitle } from '../../../../store/modules/ui';
 import { ApplicationState } from '../../../../store/store';
 
 export const PlaylistTitle = (): ReactElement => {
 	const dispatch = useDispatch();
 	const { _id } = useParams();
-	const playlist = useSelector(({ playlists }: ApplicationState) => playlists.allById[_id] || {} as Playlist);
+	const { playlist, isTitleEditing } = useSelector(({ playlists, ui }: ApplicationState) => {
+		return {
+			playlist: playlists.allById[_id] || {} as Playlist,
+			isTitleEditing: ui.editPlaylistTitle
+		}
+	});
 	const [title, setTitle] = useState(playlist.title);
-	const [isTitleEditing, setTitleEditing] = useState(false);
 	const inputRef = useRef<HTMLInputElement>(null);
 
 	function onTitleChange(): void {
@@ -22,16 +27,16 @@ export const PlaylistTitle = (): ReactElement => {
 	}
 
 	function onSubmit(): void {
-		setTitleEditing(false);
+		dispatch(setEditPlaylistTitle(false));
 		onTitleChange();
 	}
 
 	function onTitleClick(): void {
-		setTitleEditing(true);
+		dispatch(setEditPlaylistTitle(true));
 	}
 
 	useEffect(() => {
-		setTitleEditing(!playlist._rev);
+		dispatch(setEditPlaylistTitle(!playlist._rev));
 	}, [playlist]);
 
 	useEffect(() => {
@@ -43,7 +48,7 @@ export const PlaylistTitle = (): ReactElement => {
 	}
 
 	function onBlur(): void {
-		setTitleEditing(false);
+		dispatch(setEditPlaylistTitle(false));
 		onTitleChange();
 	}
 
@@ -52,7 +57,7 @@ export const PlaylistTitle = (): ReactElement => {
 		switch (key) {
 			case 'Escape':
 				event.preventDefault();
-				setTitleEditing(false);
+				dispatch(setEditPlaylistTitle(false));
 				setTitle(playlist.title);
 				break;
 		}

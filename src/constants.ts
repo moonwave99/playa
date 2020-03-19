@@ -49,6 +49,7 @@ export const IPC_MESSAGES = {
   IPC_UI_TOGGLE_ALBUM_VIEW: 'ui:toggle-album-view',
   IPC_UI_SWIPE: 'ui:swipe',
   IPC_UI_LOCATION_UPDATE: 'ui:location-update',
+  IPC_UI_EDIT_PLAYLIST_TITLE: 'ui:edit-playlist-title',
   IPC_PLAYBACK_PREV_TRACK: 'ui:playback:prev-track',
   IPC_PLAYBACK_NEXT_TRACK: 'ui:playback:next-track',
   IPC_SYS_REVEAL_IN_FINDER: 'sys:reveal-in-finder',

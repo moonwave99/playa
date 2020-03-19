@@ -18,6 +18,7 @@ const {
   IPC_PLAYBACK_PREV_TRACK,
   IPC_PLAYBACK_NEXT_TRACK,
   IPC_UI_TOGGLE_ALBUM_VIEW,
+  IPC_UI_EDIT_PLAYLIST_TITLE,
   IPC_LIBRARY_IMPORT_MUSIC
 } = IPC_MESSAGES;
 
@@ -158,6 +159,12 @@ export default function initMenu({
         },
         { type: 'separator' },
         {
+          label: 'Edit Current Playlist Title',
+          id: 'edit-title',
+          click: (): void => window.webContents.send(IPC_UI_EDIT_PLAYLIST_TITLE)
+        },
+        { type: 'separator' },
+        {
           label: 'Show Extended View',
           id: 'show-extended',
           accelerator: 'cmd+shift+1',
@@ -187,7 +194,7 @@ export default function initMenu({
   const menu = Menu.buildFromTemplate(template);
 
   ipc.on(IPC_UI_LOCATION_UPDATE, (_event, location: string) => {
-    const playlistToggleViewItems = ['show-extended', 'show-compact'].map(
+    const playlistToggleViewItems = ['edit-title', 'show-extended', 'show-compact'].map(
       id => menu.getMenuItemById('playlist').submenu.getMenuItemById(id)
     );
     if (matchPath(location, { path: PLAYLIST_SHOW }) && !matchPath(location, { path: PLAYLIST_ALL })) {
