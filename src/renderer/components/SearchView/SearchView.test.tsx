@@ -64,6 +64,6 @@ describe('SearchView', () => {
       player: {}
     };
     mountInAll(<SearchView/>, store);
-    expect(document.title).toBe('0 results for slowdive');
+    expect(document.title).toBe('Search');
   });
 });

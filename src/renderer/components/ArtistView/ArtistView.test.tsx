@@ -35,6 +35,6 @@ describe('ArtistView', () => {
     mountInAll(
       <ArtistView/>
     , defaultStore);
-    expect(document.title).toBe('Artist: Slowdive');
+    expect(document.title).toBe('Slowdive');
   });
 });

@@ -65,7 +65,10 @@ export const ArtistView = (): ReactElement => {
 
   useEffect(() => {
     if (name) {
-      dispatch(updateTitle(`Artist: ${formatArtistName(name)}`));
+      dispatch(updateTitle({
+        main: formatArtistName(name),
+        sub: 'Artist'
+      }));
     }
   }, [name]);
 

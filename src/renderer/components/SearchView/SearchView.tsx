@@ -34,13 +34,21 @@ export const SearchView = (): ReactElement => {
 
   useEffect(() => {
     if (isSearching) {
-      dispatch(updateTitle(t('search.searching')));
+      dispatch(updateTitle({
+        main: t('search.searching')
+      }));
       return;
     }
-    const title = query
-      ? t('search.results', { count: results.length, query })
-      : t('search.title');
-    dispatch(updateTitle(title));
+    if (query) {
+      dispatch(updateTitle({
+        main: t('search.title'),
+        sub: t('search.results', { count: results.length, query })
+      }));
+    } else {
+      dispatch(updateTitle({
+        main: t('search.title')
+      }));
+    }
   }, [results, query]);
 
   useEffect(() => {

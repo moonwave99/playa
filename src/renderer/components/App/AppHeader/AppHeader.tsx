@@ -8,6 +8,7 @@ import { SearchForm } from './SearchForm/SearchForm';
 import { QueueButton } from './QueueButton/QueueButton';
 import { PlaylistTitle } from './PlaylistTitle/PlaylistTitle';
 import { openSimpleContextMenu } from '../../../lib/contextMenu';
+import { Title } from '../../../store/modules/ui';
 
 import './AppHeader.scss';
 
@@ -23,7 +24,7 @@ const icons: { [key: string]: IconName } = {
 };
 
 type AppHeaderProps = {
-	title: string;
+	title: Title;
 	hasSearchFocus: boolean;
 	onSearchFormSubmit: Function;
 	onSearchFormBlur: Function;
@@ -76,14 +77,14 @@ export const AppHeader: FC<AppHeaderProps> = ({
 			<div className="app-header-middle-wrapper">
 				<Switch>
 					<Route path={PLAYLIST_ALL} exact>
-						<h1>{title}</h1>
+						<h1 className="heading">{title.main}</h1>
 					</Route>
 					<Route path={PLAYLIST_SHOW} exact>
 						<PlaylistTitle/>
 					</Route>
 					<Route path={LIBRARY}>
-						<h1>
-							{title}
+						<h1 className="heading">
+							{title.main}
 							<button
 								onClick={onLibraryActionsButtonClick}
 								className="button button-mini button-frameless button-header-actions">
@@ -92,7 +93,13 @@ export const AppHeader: FC<AppHeaderProps> = ({
 						</h1>
 					</Route>
 					<Route>
-						<h1>{title}</h1>
+						{title.sub
+							? <h1 className="heading heading-has-sub">
+									<span className="heading-main">{title.main}</span>
+									<span className="heading-sub">{title.sub}</span>
+								</h1>
+							: <h1 className="heading">{title.main}</h1>
+						}
 					</Route>
 				</Switch>
 			</div>

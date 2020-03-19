@@ -7,6 +7,8 @@ import { setEditPlaylistTitle } from '../../../../store/modules/ui';
 import { ApplicationState } from '../../../../store/store';
 import { formatDate } from '../../../../utils/datetimeUtils';
 
+import './PlaylistTitle.scss';
+
 export const PlaylistTitle = (): ReactElement => {
 	const { t } = useTranslation();
 	const dispatch = useDispatch();
@@ -90,9 +92,9 @@ export const PlaylistTitle = (): ReactElement => {
 			options: { year: 'numeric', month: 'long', day: 'numeric' }
 		});
 		return (
-			<h1 className="playlist-title-header" onClick={onTitleClick}>
-				<span className="playlist-title">{title}</span>
-				<span className="playlist-date">
+			<h1 className="heading heading-has-sub playlist-header" onClick={onTitleClick}>
+				<span className="heading-main">{title}</span>
+				<span className="heading-sub">
 					{t('playlists.createdOn', { date })}
 				</span>
 			</h1>

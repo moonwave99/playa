@@ -24,8 +24,8 @@ describe('PlaylistTitle', () => {
     const wrapper = renderInAll(
 			<PlaylistTitle/>
 		, defaultStore);
-    expect(wrapper.is('h1.playlist-title-header')).toBe(true);
-    expect(wrapper.find('.playlist-title').text()).toEqual(playlists[0].title);
+    expect(wrapper.is('h1.playlist-header')).toBe(true);
+    expect(wrapper.find('.heading-main').text()).toEqual(playlists[0].title);
   });
 
   it('should contain the playlist date', () => {
@@ -40,7 +40,7 @@ describe('PlaylistTitle', () => {
     const wrapper = renderInAll(
 			<PlaylistTitle/>
 		, defaultStore);
-    expect(wrapper.find('.playlist-date').text())
+    expect(wrapper.find('.heading-sub').text())
       .toEqual(`Created on ${formatDate({
         date: playlists[0].created,
         options: { year: 'numeric', month: 'long', day: 'numeric' }

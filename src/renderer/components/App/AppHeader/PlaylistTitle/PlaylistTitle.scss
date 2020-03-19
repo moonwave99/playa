@@ -1,0 +1,20 @@
+@import "../../../../styles/variables";
+@import "../../../../styles/mixins";
+
+.playlist-title-form {
+  flex-basis: 50%;
+  flex: 1;
+  padding-top: 2px;
+  .header-like {
+    color: $lightColor;
+    padding: 0;
+    border-radius: 0;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    font-size: 1.2rem;
+    text-align: center;
+    border-bottom: 1px solid $mainColor;
+    background-color: $backgroundLightColor;
+  }
+}

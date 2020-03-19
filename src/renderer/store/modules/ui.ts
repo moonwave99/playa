@@ -34,9 +34,14 @@ export enum UIAlbumView {
   Extended
 }
 
+export type Title = {
+  main: string;
+  sub?: string;
+}
+
 export type UIState = {
   started?: boolean;
-  title: string;
+  title: Title;
   editPlaylistTitle: boolean;
 };
 
@@ -56,7 +61,7 @@ interface UpdateStateAction {
 
 interface UpdateTitleAction {
   type: typeof UPDATE_TITLE;
-  title: string;
+  title: Title;
 }
 
 interface SetEditPlaylistTitle {
@@ -91,12 +96,12 @@ export const updateState = (params: object): Function =>
     });
   }
 
-export const updateTitle = (title: string): Function =>
+export const updateTitle = ({ main, sub }: Title): Function =>
   (dispatch: Function): void => {
-    document.title = trimTitle(title);
+    document.title = trimTitle(main);
     dispatch({
       type: UPDATE_TITLE,
-      title
+      title: { main, sub }
     });
   }
 
@@ -113,7 +118,7 @@ export const updateLocation =
 
 const INITIAL_STATE = {
   started: true,
-  title: 'Playa',
+  title: { main: 'Playa' },
   editPlaylistTitle: false
 };
 

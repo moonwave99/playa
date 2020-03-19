@@ -11,7 +11,7 @@ describe('AppHeader', () => {
   it('should render a .app-header', () => {
 		const wrapper = renderInAll(
 			<AppHeader
-        title="Playa"
+        title={{ main: 'Playa' }}
         hasSearchFocus={false}
         onSearchFormSubmit={jest.fn()}
         onSearchFormBlur={jest.fn()}
@@ -24,7 +24,7 @@ describe('AppHeader', () => {
 	it('should contain a title', () => {
 		const wrapper = renderInAll(
 			<AppHeader
-        title="Playa"
+        title={{ main: 'Playa' }}
         hasSearchFocus={false}
         onSearchFormSubmit={jest.fn()}
         onSearchFormBlur={jest.fn()}
@@ -37,7 +37,7 @@ describe('AppHeader', () => {
   it('should highlight the library button when location = /library', () => {
     const wrapper = renderInAll(
 			<AppHeader
-        title="Playa"
+        title={{ main: 'Playa' }}
         hasSearchFocus={false}
         onSearchFormSubmit={jest.fn()}
         onSearchFormBlur={jest.fn()}

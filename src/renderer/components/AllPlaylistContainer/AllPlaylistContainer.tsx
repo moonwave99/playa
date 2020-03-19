@@ -24,7 +24,9 @@ export const AllPlaylistContainer: FC<AllPlaylistContainerProps> = ({
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(updateTitle(t('playlists.all.title')));
+    dispatch(updateTitle({
+      main: t('playlists.all.title')
+    }));
   }, []);
 
   function onPlaylistContextMenu(playlist: Playlist): void {

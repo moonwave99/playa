@@ -98,7 +98,9 @@ export const LibraryView: FC<LibraryViewProps> = ({
 	}, []);
 
 	useEffect(() => {
-    dispatch(updateTitle(t('library.title')));
+    dispatch(updateTitle({
+      main: t('library.title')
+    }));
   }, []);
 
 	function onAlbumContextMenu(album: Album, artist: Artist): void {

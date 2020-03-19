@@ -30,7 +30,10 @@ export const QueueView = (): ReactElement => {
   } = useSelector(playerSelector);
 
   useEffect(() => {
-    dispatch(updateTitle(t('queue.title', { length: queue.length })));
+    dispatch(updateTitle({
+      main: t('queue.title.main'),
+      sub: t('queue.title.sub', { length: queue.length })
+    }));
   }, [queue.length]);
 
   useEffect(() => {

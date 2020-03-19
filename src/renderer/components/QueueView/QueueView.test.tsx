@@ -60,7 +60,7 @@ describe('QueueView', () => {
         queue: albums.map(({ _id }) => _id)
       }
     });
-    expect(document.title).toBe(`Playback Queue: ${albums.length} album(s)`);
+    expect(document.title).toBe('Playback Queue');
   });
 
   it('should call the onAlbumContextMenu handler when an album is right clicked', () => {

@@ -9,22 +9,6 @@
 	align-items: center;
 	justify-content: space-between;
 
-	.playlist-title-form {
-		flex-basis: 50%;
-		.header-like {
-			color: $lightColor;
-			padding: 0;
-			border-radius: 0;
-			border-top: none;
-			border-left: none;
-			border-right: none;
-			font-size: 1.2rem;
-			text-align: center;
-			border-bottom: 1px solid $mainColor;
-			background-color: $backgroundLightColor;
-		}
-	}
-
 	.app-header-left-wrapper {
 		display: flex;
 		flex-basis: 25%;
@@ -53,9 +37,9 @@
 	.app-header-middle-wrapper {
 		display: flex;
 		flex-basis: 50%;
-		h1 {
-			flex: 1;
+		.heading {
 			@include ellipsis(50vw);
+			flex: 1;
 			padding: 0 1rem;
 			margin: 0;
 			color: $lightColor;
@@ -65,22 +49,18 @@
 				margin-left: .5rem;
 				color: $lightColor;
 			}
-		}
-		.playlist-title-form {
-			flex: 1;
-			padding-top: 2px;
-		}
-		.playlist-title-header {
-			display: flex;
-			flex-direction: column;
-			line-height: 1.5rem;
-			padding-top: .25rem;
-			.playlist-title {
-				font-size: 1.2rem;
-			}
-			.playlist-date {
-				font-size: .8rem;
-				color: darken($lightColor, 30%);
+			&-has-sub {
+				display: flex;
+				flex-direction: column;
+				line-height: 1.5rem;
+				padding-top: .5rem;
+				.heading-main {
+					font-size: 1.2rem;
+				}
+				.heading-sub {
+					font-size: .8rem;
+					color: darken($lightColor, 30%);
+				}
 			}
 		}
 	}

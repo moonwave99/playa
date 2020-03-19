@@ -25,7 +25,10 @@ describe('ui actions', () => {
   describe('updateTitle', () => {
     it('should dispatch a updateTitle request', () => {
       const dispatch = jest.fn();
-      const title = 'title';
+      const title = {
+        main: 'title',
+        sub: 'sub'
+      };
       updateTitle(title)(dispatch);
       expect(dispatch).toHaveBeenCalledWith({
         type: UPDATE_TITLE,
@@ -50,7 +53,9 @@ describe('ui reducer', () => {
   it('should return the initial state', () => {
     expect(reducer(undefined, {} as UIActionTypes)).toEqual({
       started: true,
-      title: 'Playa',
+      title: {
+        main: 'Playa'
+      },
       editPlaylistTitle: false
     });
   });
@@ -65,9 +70,15 @@ describe('ui reducer', () => {
   it('should handle UPDATE_TITLE', () => {
     expect(reducer({} as UIState, {
       type: UPDATE_TITLE,
-      title: 'title'
+      title: {
+        main: 'title',
+        sub: 'sub'
+      }
     })).toEqual({
-      title: 'title'
+      title: {
+        main: 'title',
+        sub: 'sub'
+      }
     });
   });
 

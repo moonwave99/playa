@@ -24,7 +24,10 @@
       }
     },
     "queue": {
-      "title": "Playback Queue: {{length}} album(s)",
+      "title": {
+        "main": "Playback Queue",
+        "sub": "{{length}} album(s)"
+      },
       "empty": "Queue is empty."
     },
     "library": {
