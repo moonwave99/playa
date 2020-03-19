@@ -51,6 +51,7 @@
       font-size: .9rem;
     }
     .album-year {
+      @include monospace();
       color: darken($lightColor, 30%);
     }
   }
