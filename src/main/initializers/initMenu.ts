@@ -108,39 +108,15 @@ export default function initMenu({
       ]
     },
     {
-      label: 'Library',
-      submenu: [
-        {
-          label: 'Show Library',
-          accelerator: 'cmd+2',
-          click: (): void => window.webContents.send(IPC_UI_NAVIGATE_TO, LIBRARY)
-        },
-        {
-          label: 'Import Music',
-          accelerator: 'cmd+shift+i',
-          click: (): void => window.webContents.send(IPC_LIBRARY_IMPORT_MUSIC)
-        }
-      ]
-    },
-    {
-      label: 'Controls',
-      submenu: [
-        {
-          label: 'Previous Track',
-          accelerator: 'cmd+left',
-          click: (): void => window.webContents.send(IPC_PLAYBACK_PREV_TRACK)
-        },
-        {
-          label: 'Next Track',
-          accelerator: 'cmd+right',
-          click: (): void => window.webContents.send(IPC_PLAYBACK_NEXT_TRACK)
-        }
-      ]
-    },
-    {
       label: 'Playlist',
       id: 'playlist',
       submenu: [
+        {
+          label: 'Show All',
+          accelerator: 'cmd+1',
+          click: (): void => window.webContents.send(IPC_UI_NAVIGATE_TO, PLAYLIST_ALL)
+        },
+        { type: 'separator' },
         {
           label: 'New Playlist',
           accelerator: 'cmd+n',
@@ -148,18 +124,7 @@ export default function initMenu({
         },
         { type: 'separator' },
         {
-          label: 'Show All',
-          accelerator: 'cmd+1',
-          click: (): void => window.webContents.send(IPC_UI_NAVIGATE_TO, PLAYLIST_ALL)
-        },
-        {
-          label: 'Show Playback Queue',
-          accelerator: 'cmd+3',
-          click: (): void => window.webContents.send(IPC_UI_NAVIGATE_TO, QUEUE)
-        },
-        { type: 'separator' },
-        {
-          label: 'Edit Current Playlist Title',
+          label: 'Rename Current Playlist',
           id: 'edit-title',
           click: (): void => window.webContents.send(IPC_UI_EDIT_PLAYLIST_TITLE)
         },
@@ -175,6 +140,43 @@ export default function initMenu({
           id: 'show-compact',
           accelerator: 'cmd+shift+2',
           click: (): void => window.webContents.send(IPC_UI_TOGGLE_ALBUM_VIEW, compactView)
+        }
+      ]
+    },    
+    {
+      label: 'Library',
+      submenu: [
+        {
+          label: 'Show Library',
+          accelerator: 'cmd+2',
+          click: (): void => window.webContents.send(IPC_UI_NAVIGATE_TO, LIBRARY)
+        },
+        { type: 'separator' },
+        {
+          label: 'Import Music',
+          accelerator: 'cmd+shift+i',
+          click: (): void => window.webContents.send(IPC_LIBRARY_IMPORT_MUSIC)
+        }
+      ]
+    },
+    {
+      label: 'Playback',
+      submenu: [
+        {
+          label: 'Show Playback Queue',
+          accelerator: 'cmd+3',
+          click: (): void => window.webContents.send(IPC_UI_NAVIGATE_TO, QUEUE)
+        },
+        { type: 'separator' },
+        {
+          label: 'Previous Track',
+          accelerator: 'cmd+left',
+          click: (): void => window.webContents.send(IPC_PLAYBACK_PREV_TRACK)
+        },
+        {
+          label: 'Next Track',
+          accelerator: 'cmd+right',
+          click: (): void => window.webContents.send(IPC_PLAYBACK_NEXT_TRACK)
         }
       ]
     },
