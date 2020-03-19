@@ -1,22 +1,15 @@
-import React, { FC, SyntheticEvent, useEffect, useRef } from 'react';
+import React, { FC, SyntheticEvent, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import cx from 'classnames';
-import { useDrag, useDrop, DropTargetMonitor } from 'react-dnd';
-import { XYCoord } from 'dnd-core';
 import { CoverView } from '../AlbumView/CoverView/CoverView';
-import { Album } from '../../../store/modules/album';
+import useReorder from '../../../hooks/useReorder/useReorder';
+import { Album, getAlbumContentById } from '../../../store/modules/album';
 import { UIDragTypes } from '../../../store/modules/ui';
-import { getCoverRequest, selectors as coverSelectors } from '../../../store/modules/cover';
+import { getCoverRequest } from '../../../store/modules/cover';
 import { ApplicationState } from '../../../store/store';
 import { formatArtist } from '../../../utils/albumUtils';
 import './CompactAlbumView.scss';
-
-interface DragItem {
-  index: number;
-  _id: string;
-  type: string;
-}
 
 type CompactAlbumViewProps = {
   album: Album;
@@ -40,69 +33,35 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
   sortable = false
 }) => {
   const { _id, type, year, title } = album;
-  const cover = useSelector((state: ApplicationState) => coverSelectors.findById(state, _id));
+  const { cover, artist } = useSelector((state: ApplicationState) => getAlbumContentById(state, _id));
 
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getCoverRequest(album));
   }, [album]);
 
-  const ref = useRef<HTMLDivElement>(null);
-  const [{ isOver, canDrop }, drop] = useDrop({
+  const {
+    isOver,
+    canDrop,
+    isDragging,
+    ref
+  } = useReorder({
+    _id,
+    index,
+    sortable,
     accept: UIDragTypes.COMPACT_ALBUMS,
-    collect: monitor => ({
-      isOver: monitor.isOver(),
-      canDrop: monitor.canDrop(),
-    }),
-    hover(item: DragItem, monitor: DropTargetMonitor) {
-      if (!ref.current) {
-        return;
-      }
-      const dragIndex = item.index;
-      const hoverIndex = index;
-
-      if (dragIndex === hoverIndex) {
-        return;
-      }
-
-      const hoverBoundingRect = ref.current.getBoundingClientRect();
-      const hoverMiddleY =
-        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
-      const clientOffset = monitor.getClientOffset();
-      const hoverClientY = (clientOffset as XYCoord).y - hoverBoundingRect.top;
-
-      const draggingDownwards = dragIndex < hoverIndex && hoverClientY < hoverMiddleY;
-      const draggingUpwards = dragIndex > hoverIndex && hoverClientY > hoverMiddleY;
-      if (draggingDownwards || draggingUpwards) {
-        return;
-      }
-      onAlbumMove(dragIndex, hoverIndex);
-      item.index = hoverIndex;
-    }
+    type: UIDragTypes.COMPACT_ALBUMS,
+    onMove: onAlbumMove,
+    onDragEnd
   });
-
-  const [{ isDragging }, drag] = useDrag({
-    item: { type: UIDragTypes.COMPACT_ALBUMS, _id, index },
-    collect: monitor => ({
-      isDragging: monitor.isDragging(),
-    }),
-    end: (_item, monitor) => {
-      if (monitor.didDrop()) {
-        onDragEnd();
-      }
-    }
-  });
-  if (sortable) {
-    drag(drop(ref));
-  }
 
   function _onDoubleClick(event: SyntheticEvent): void {
     event.preventDefault();
-    onDoubleClick(album);
+    onDoubleClick(album, artist);
   }
 
   function _onContextMenu(): void {
-    onContextMenu && onContextMenu(album);
+    onContextMenu && onContextMenu(album, artist);
   }
 
   function onActionsButtonClick(): void {
@@ -133,12 +92,12 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
             {title}{ isCurrent ? <FontAwesomeIcon className="icon" icon="volume-up"/> : null }
           </span>
           <span className="info">
-            {formatArtist(album)}{year ? `, ${year}` : null} - <span className={tagClasses}>{type}</span>
+            {formatArtist({ album, artist })}{year ? `, ${year}` : null} - <span className={tagClasses}>{type}</span>
           </span>
         </p>
         <button onClick={onActionsButtonClick} className="button-album-actions">
           <FontAwesomeIcon className="icon" icon="ellipsis-h"/>
-        </button>        
+        </button>
       </div>
     </article>
   );

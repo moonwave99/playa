@@ -1,15 +1,16 @@
 import React, { ReactElement, useEffect } from 'react';
-import { findDOMNode } from 'react-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { playerSelector } from '../../store/modules/player';
 import { AlbumListView } from '../AlbumListView/AlbumListView';
 import { Album } from '../../store/modules/album';
+import { Artist } from '../../store/modules/artist';
 import { Track } from '../../store/modules/track';
 import { playTrack } from '../../store/modules/player';
 import { updateTitle, UIAlbumView, UIDragTypes } from '../../store/modules/ui';
 import { toObj } from '../../utils/storeUtils';
 import { openContextMenu } from '../../lib/contextMenu';
+import scrollTo from '../../lib/scrollTo';
 import {
   ALBUM_CONTEXT_ACTIONS,
   AlbumActionsGroups
@@ -33,23 +34,18 @@ export const QueueView = (): ReactElement => {
   }, [queue.length]);
 
   useEffect(() => {
-    const target = findDOMNode(document.getElementById(currentAlbumId)) as HTMLElement;
-    if (!target) {
-      return;
-    }
-    setImmediate(() => {
-      target.scrollIntoView({
-        block: 'center',
-        behavior: 'smooth'
-      });
+    scrollTo({
+      selector: `#album-${currentAlbumId}`,
+      block: 'start',
+      behavior: 'smooth'
     });
   }, [currentAlbumId]);
 
-  function onAlbumContextMenu(album: Album): void {
+  function onAlbumContextMenu(album: Album, artist: Artist): void {
     openContextMenu([
       {
         type: ALBUM_CONTEXT_ACTIONS,
-        albums: [album],
+        albums: [{ album, artist }],
         queue: queue.map(({ _id }) => _id),
         dispatch,
         actionGroups: [
@@ -62,7 +58,7 @@ export const QueueView = (): ReactElement => {
     ]);
   }
 
-  function onAlbumDoubleClick(album: Album, track: Track): void {
+  function onAlbumDoubleClick(album: Album, _artist: Artist, track: Track): void {
     dispatch(playTrack({
       playlistId: currentPlaylist ? currentPlaylist._id : null,
       albumId: album._id,

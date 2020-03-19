@@ -18,10 +18,18 @@ type TestAlbum = {
   artist: string;
   title: string;
   year?: number;
+  isAlbumFromVA?: boolean;
   type: string;
   created: string;
   path: string;
   tracks: TestTrack['_id'][];
+}
+
+type TestArtist = {
+  _id: string;
+  _rev: string;
+  name: string;
+  count: number;
 }
 
 export type TestTrack = {
@@ -54,6 +62,21 @@ export const TestPlaylists: TestPlaylist[] = [
   }
 ];
 
+export const TestArtists: TestArtist[] = [
+  {
+    _id: '1',
+    _rev: null,
+    name: 'Slowdive',
+    count: 0
+  },
+  {
+    _id: '2',
+    _rev: null,
+    name: 'My Bloody Valentine',
+    count: 0
+  }
+];
+
 const DB_PATH = Path.join(SPECTRON_BASEPATH, 'databases');
 
 async function prepareDir(): Promise<void> {
@@ -64,20 +87,23 @@ async function prepareDir(): Promise<void> {
 type PopulateTestDBParams = {
   playlists: TestPlaylist[];
   albums: TestAlbum[];
+  artists: TestArtist[];
   tracks: TestTrack[];
 }
 
 export async function populateTestDB({
   playlists = [],
   albums = [],
+  artists = [],
   tracks = []
 }: PopulateTestDBParams = {
   playlists: [],
   albums: [],
+  artists: [],
   tracks: []
 }): Promise<void> {
   await prepareDir();
-  const entities = ['playlist', 'album', 'track'];
+  const entities = ['playlist', 'album', 'artist', 'track'];
 
   const db: { [key: string]: Database }
     = entities.reduce((memo, key) =>
@@ -101,11 +127,16 @@ export async function populateTestDB({
     });
   }));
 
+  await Promise.all(artists.map(
+    async artist => await db.artist.save<TestArtist>(artist)
+  ));
+
   await Promise.all(tracks.map(
     async track => await db.track.save<TestTrack>(track))
   );
 
   await db.playlist.close();
   await db.album.close();
+  await db.artist.close();
   await db.track.close();
 }

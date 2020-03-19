@@ -11,10 +11,16 @@ const {
   IPC_PLAYLIST_DELETE_REQUEST,
   IPC_PLAYLIST_SAVE_LIST_REQUEST,
   IPC_ALBUM_GET_LIST_REQUEST,
+  IPC_ALBUM_SAVE_REQUEST,
   IPC_ALBUM_CONTENT_REQUEST,
   IPC_ALBUM_GET_SINGLE_INFO,
   IPC_ALBUM_DELETE_LIST_REQUEST,
   IPC_ALBUM_GET_STATS_REQUEST,
+  IPC_ALBUM_FIND_REQUEST,
+  IPC_ARTIST_GET_ALL_REQUEST,
+  IPC_ARTIST_SAVE_REQUEST,
+  IPC_ARTIST_SAVE_LIST_REQUEST,
+  IPC_ARTIST_DELETE_REQUEST,
   IPC_TRACK_GET_LIST_REQUEST,
   IPC_DIALOG_SHOW_MESSAGE
 } = IPC_MESSAGES;
@@ -51,13 +57,19 @@ module.exports = {
           return '/path/to/cover';
         case IPC_PLAYLIST_SAVE_REQUEST:
         case IPC_PLAYLIST_DELETE_REQUEST:
+        case IPC_ALBUM_SAVE_REQUEST:
+        case IPC_ARTIST_SAVE_REQUEST:
+        case IPC_ARTIST_DELETE_REQUEST:
           return args[0];
         case IPC_PLAYLIST_SAVE_LIST_REQUEST:
+        case IPC_ARTIST_SAVE_LIST_REQUEST:
           return args[0].map(({ _id, _rev }) => ({ id: _id, rev: _rev }));
         case IPC_SEARCH_REQUEST:
         case IPC_ALBUM_GET_LIST_REQUEST:
         case IPC_ALBUM_DELETE_LIST_REQUEST:
-          return fixtures.albums;
+          return args[0].length > 0
+            ? fixtures.albums
+            : [];
         case IPC_ALBUM_GET_SINGLE_INFO:
           return {
             album: {
@@ -72,6 +84,10 @@ module.exports = {
             ? [fixtures.tracks[0], fixtures.tracks[1]]
             : [fixtures.tracks[2], fixtures.tracks[3]];
           return { ...album, tracks: tracks.map(x => x._id) };
+        case IPC_ALBUM_FIND_REQUEST:
+          return fixtures.albums.find(({ artist }) => artist === args[0].artist);
+        case IPC_ARTIST_GET_ALL_REQUEST:
+          return fixtures.artists;
         case IPC_TRACK_GET_LIST_REQUEST:
           const tracksMap = toObj(fixtures.tracks);
           return args[0].map(x => tracksMap[x]);

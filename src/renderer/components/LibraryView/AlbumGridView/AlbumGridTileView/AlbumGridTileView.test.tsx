@@ -1,28 +1,52 @@
 import React from 'react';
 import { renderInAll, mountInAll } from '../../../../../../test/testUtils';
-import { albums } from '../../../../../../test/testFixtures';
+import { albums, artists } from '../../../../../../test/testFixtures';
+import { toObj } from '../../../../utils/storeUtils';
 import { AlbumGridTileView } from './AlbumGridTileView';
+
+const defaultStore = {
+  artists: {
+    allById: toObj(artists)
+  },
+  covers: {
+    allById: {}
+  }
+};
 
 describe('AlbumGridTileView', () => {
   it('should render a .album-grid-tile', () => {
     const wrapper = renderInAll(
       <AlbumGridTileView album={albums[0]}/>
-    );
+    , defaultStore);
     expect(wrapper.is('.album-grid-tile')).toBe(true);
   });
 
   it('should be a .is-playing if isPlaying', () => {
     const wrapper = renderInAll(
       <AlbumGridTileView isPlaying album={albums[0]}/>
-    );
+    , defaultStore);
     expect(wrapper.is('.is-playing')).toBe(true);
   });
 
   it('should contain an .album-cover', () => {
     const wrapper = renderInAll(
       <AlbumGridTileView album={albums[0]}/>
-    );
+    , defaultStore);
     expect(wrapper.find('.album-cover')).toHaveLength(1);
+  });
+
+  it('should contain an .album-artist', () => {
+    const wrapper = renderInAll(
+      <AlbumGridTileView album={albums[0]}/>
+    , defaultStore);
+    expect(wrapper.find('.album-artist')).toHaveLength(1);
+  });
+
+  it('should not contain an .album-artist if !showArtist', () => {
+    const wrapper = renderInAll(
+      <AlbumGridTileView album={albums[0]} showArtist={false}/>
+    , defaultStore);
+    expect(wrapper.find('.album-artist')).toHaveLength(0);
   });
 
   it('should call the onDoubleClick handler when double clicked', () => {
@@ -31,9 +55,9 @@ describe('AlbumGridTileView', () => {
       <AlbumGridTileView
         onDoubleClick={handler}
         album={albums[0]}/>
-    );
+    , defaultStore);
     wrapper.find('figure').simulate('doubleClick');
-    expect(handler).toHaveBeenCalledWith(albums[0]);
+    expect(handler).toHaveBeenCalledWith(albums[0], artists[0]);
   });
 
   it('should call the onContextMenu handler when right clicked', () => {
@@ -42,8 +66,8 @@ describe('AlbumGridTileView', () => {
       <AlbumGridTileView
         onContextMenu={handler}
         album={albums[0]}/>
-    );
+    , defaultStore);
     wrapper.find('figure').simulate('contextmenu');
-    expect(handler).toHaveBeenCalledWith(albums[0]);
+    expect(handler).toHaveBeenCalledWith(albums[0], artists[0]);
   });
 });

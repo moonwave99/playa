@@ -50,9 +50,11 @@ describe('libraryContentActions', () => {
         albums: {
           allById: toObj(albums)
         },
+        artists: {
+          allById: toObj(artists)
+        },
         library: {
-          latest: albums.map(({ _id }) => _id),
-          artistsById: toObj(artists)
+          latest: albums.map(({ _id }) => _id)
         }
       });
       const { handler } = removeAlbumsAction({

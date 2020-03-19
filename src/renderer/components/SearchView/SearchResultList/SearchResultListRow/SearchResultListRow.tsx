@@ -8,10 +8,11 @@ import cx from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CoverView } from '../../../AlbumListView/AlbumView/CoverView/CoverView';
 import { UIDragTypes } from '../../../../store/modules/ui';
-import { Album, VARIOUS_ARTISTS_ID } from '../../../../store/modules/album';
+import { Album } from '../../../../store/modules/album';
+import { selectors as artistSelectors } from '../../../../store/modules/artist';
 import { selectors as coverSelectors } from '../../../../store/modules/cover';
 import { ApplicationState } from '../../../../store/store';
-import { VARIOUS_ARTIST_KEY } from '../../../../utils/artistUtils';
+import { formatArtist } from '../../../../utils/albumUtils';
 import { ARTIST_SHOW } from '../../../../routes';
 
 
@@ -23,7 +24,6 @@ type SearchResultListRowProps = {
   isCurrent?: boolean;
   onClick?: Function;
   onContextMenu?: Function;
-  onArtistContextMenu?: Function;
   onCoverDoubleClick?: Function;
   selectedIDs?: string[];
   style: object;
@@ -37,13 +37,13 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
   isCurrent = false,
   onClick,
   onContextMenu,
-  onArtistContextMenu,
   onCoverDoubleClick,
   selectedIDs = [],
   style
 }) => {
-  const { _id } = album;
+  const { _id, artist: artistId } = album;
   const cover = useSelector((state: ApplicationState) => coverSelectors.findById(state, _id));
+  const artist = useSelector((state: ApplicationState) => artistSelectors.findById(state, artistId));
   const selection = selectedIDs.indexOf(_id) > -1 ? selectedIDs : [_id]
   const [{ isDragging }, drag, preview] = useDrag({
     item: {
@@ -65,19 +65,11 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
   }
 
   function _onConTextMenu(): void {
-    onContextMenu && onContextMenu(album);
-  }
-
-  function _onArtistContextMenu(event: MouseEvent): void {
-    if (album.artist === VARIOUS_ARTISTS_ID) {
-      return;
-    }
-    event.stopPropagation()
-    onArtistContextMenu && onArtistContextMenu(album);
+    onContextMenu && onContextMenu(album, artist);
   }
 
   function _onCoverDoubleClick(): void {
-    onCoverDoubleClick && onCoverDoubleClick(album);
+    onCoverDoubleClick && onCoverDoubleClick(album, artist);
   }
 
   function renderCell(cell: Cell): ReactElement {
@@ -96,10 +88,8 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
       case 'artist':
         cellContent =
           <Link
-            onContextMenu={_onArtistContextMenu}
-            to={generatePath(ARTIST_SHOW, { name: cell.value })}
-            className="album-artist-link">
-              {cell.value === VARIOUS_ARTISTS_ID ? VARIOUS_ARTIST_KEY : cell.value}
+            to={generatePath(ARTIST_SHOW, { _id: artistId })}
+            className="album-artist-link">{formatArtist({ album, artist })}
           </Link>
         break;
       case 'title':

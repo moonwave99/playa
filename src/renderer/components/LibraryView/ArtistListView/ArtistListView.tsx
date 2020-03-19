@@ -1,28 +1,32 @@
 import React, { FC, ReactElement, SyntheticEvent } from 'react';
 import { useSelector } from 'react-redux';
+import { Link, generatePath } from 'react-router-dom';
 import cx from 'classnames';
-import { ArtistListItemView} from './ArtistListItemView/ArtistListItemView';
+import { ArtistListItemView } from './ArtistListItemView/ArtistListItemView';
 
 import './ArtistListView.scss';
 
-import { Artist, selectors as librarySelectors } from '../../../store/modules/library';
-import { ApplicationState } from '../../../store/store';
+import {
+  Artist,
+  selectors as artistSelectors,
+  VARIOUS_ARTISTS_ID
+} from '../../../store/modules/artist';
 
+import { ApplicationState } from '../../../store/store';
+import { ARTIST_SHOW } from '../../../routes';
 import { ALPHABET } from '../../../utils/artistUtils';
 
 type ArtistListViewProps = {
   selectedLetter: string;
-  loading: boolean;
   onLetterClick: Function;
 }
 
 export const ArtistListView: FC<ArtistListViewProps> = ({
   selectedLetter,
-  loading = false,
   onLetterClick
 }) => {
   const artists = useSelector(
-    (state: ApplicationState) => librarySelectors.findArtistsByLetter(state, selectedLetter)
+    (state: ApplicationState) => artistSelectors.findByLetter(state, selectedLetter)
   );
 
   function renderLetter(letter: string): ReactElement {
@@ -48,12 +52,18 @@ export const ArtistListView: FC<ArtistListViewProps> = ({
     );
   }
 
-  const classNames = cx('library-artists', { loading });
+  const classNames = cx('library-artists');
 
   return (
     <section className={classNames}>
       <ul className="alphabet">
         {ALPHABET.map(renderLetter)}
+        <li>
+          <Link
+            to={generatePath(ARTIST_SHOW, { _id: VARIOUS_ARTISTS_ID })}>
+            {VARIOUS_ARTISTS_ID}
+          </Link>
+        </li>
       </ul>
       <ul className="artist-list">
         {artists.map(renderArtist)}

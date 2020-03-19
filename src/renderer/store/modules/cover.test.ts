@@ -2,7 +2,8 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 const mockStore = configureStore([thunk]);
 
-import { albums } from '../../../../test/testFixtures';
+import { albums, artists } from '../../../../test/testFixtures';
+import { toObj } from '../../utils/storeUtils';
 import reducer, {
   CoverActionTypes,
   CoverState,
@@ -20,6 +21,9 @@ describe('cover actions', () => {
       const store = mockStore({
         covers: {
           allById: {}
+        },
+        artists: {
+          allById: toObj(artists)
         }
       });
       const album = albums[0];
@@ -34,6 +38,9 @@ describe('cover actions', () => {
           allById: {
             '1': '/path/to/cover'
           }
+        },
+        artists: {
+          allById: toObj(artists)
         }
       });
       const album = albums[0];
@@ -43,7 +50,10 @@ describe('cover actions', () => {
     it('should dispatch nothing if album should not display cover', async () => {
       const store = mockStore({
         covers: {
-          allById: {}
+          allById: {},
+        },
+        artists: {
+          allById: toObj(artists)
         }
       });
       const album = { ...albums[0], type: AlbumTypes.Remix };

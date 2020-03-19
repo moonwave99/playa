@@ -16,7 +16,9 @@ export const PlaylistTitle = (): ReactElement => {
 		if (title === playlist.title && playlist._rev) {
 			return;
 		}
-		dispatch(savePlaylistRequest({ ...playlist, title: title.trim() }));
+		if (title) {
+			dispatch(savePlaylistRequest({ ...playlist, title: title.trim() }));
+		}
 	}
 
 	function onSubmit(): void {

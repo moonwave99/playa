@@ -1,11 +1,11 @@
-const { getAppWithMenuInteraction } = require('./utils/appUtils');
+const { getApp } = require('./utils/appUtils');
 const { populateTestDB, TestPlaylists } = require('./utils/databaseUtils');
 
 describe('About window', () => {
   let app, menuAddon;
   beforeEach(async () => {
     await populateTestDB();
-    const menuApp = await getAppWithMenuInteraction();
+    const menuApp = await getApp();
     app = menuApp.app;
     menuAddon = menuApp.menuAddon;
     return app.start();

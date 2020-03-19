@@ -47,7 +47,7 @@
         "title": "Import Album:",
         "form": {
           "submit": "Looks fine!",
-          "isVariousArtists": "Album is from V/A"
+          "isVariousArtists": "Various Artists"
         }
       }
     },

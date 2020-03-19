@@ -1,6 +1,6 @@
 import React from 'react';
 import { renderInAll, mountInAll } from '../../../../../test/testUtils';
-import { playlists, albums } from '../../../../../test/testFixtures';
+import { playlists, albums, artists } from '../../../../../test/testFixtures';
 import { toObj } from '../../../utils/storeUtils';
 
 import { CompactAlbumView } from './CompactAlbumView';
@@ -14,6 +14,9 @@ const defaultStore = {
   },
   albums: {
     allById: toObj(albums)
+  },
+  artists: {
+    allById: toObj(artists)
   },
   tracks: {
     allById: {}
@@ -103,7 +106,7 @@ describe('CompactAlbumView', () => {
         onDoubleClick={jest.fn()}/>
       , defaultStore);
     expect(wrapper.find('.info').text())
-      .toBe(`${albums[0].artist}, ${albums[0].year} - ${albums[0].type}`);
+      .toBe(`${artists[0].name}, ${albums[0].year} - ${albums[0].type}`);
   });
 
   it('should call the onContextMenu handler when right clicked', () => {
@@ -118,7 +121,7 @@ describe('CompactAlbumView', () => {
         onDoubleClick={jest.fn()}/>
       , defaultStore);
     wrapper.simulate('contextmenu');
-    expect(handler).toHaveBeenCalledWith(albums[0]);
+    expect(handler).toHaveBeenCalledWith(albums[0], artists[0]);
   });
 
   it('should call the onDoubleClick handler when the cover is double clicked', () => {
@@ -133,6 +136,6 @@ describe('CompactAlbumView', () => {
         onDoubleClick={handler}/>
       , defaultStore);
     wrapper.simulate('doubleClick')
-    expect(handler).toHaveBeenCalledWith(albums[0]);
+    expect(handler).toHaveBeenCalledWith(albums[0], artists[0]);
   });
 });

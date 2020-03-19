@@ -84,7 +84,7 @@ export default class Database {
   }
 
   // uses pouchdb-find plugin, see: https://pouchdb.com/guides/mango-queries.html
-  async find<T>(selector: { [key: string]: string|number }): Promise<Array<T>> {
+  async find<T>(selector: { [key: string]: string|number|object }): Promise<Array<T>> {
     const fields = Object.keys(selector);
     await this.db.createIndex({
       index: { fields }
@@ -262,4 +262,36 @@ export default class Database {
       await this.db.put(viewBody);
     }
   }
+}
+
+type InitDBsParams = {
+  path: string;
+  debug?: boolean;
+  forceInitViews?: boolean;
+}
+
+export function initDBs({
+  path,
+  debug = false,
+  forceInitViews = false
+}: InitDBsParams): { [key: string]: Database } {
+  return {
+    'playlist': new Database({ path, debug, name: 'playlist' }),
+    'album': new Database({ path, debug, name: 'album', views: {
+      groupCountByYear: {
+        map: ({ year }: { year: number }): void => emit(year, 1),
+        reduce: '_sum'
+      },
+      groupCountByType: {
+        map: ({ type }: { type: string }): void => emit(type, 1),
+        reduce: '_sum'
+      },
+      groupCountByArtist: {
+        map: ({ artist }: { artist: string }): void => emit(artist, 1),
+        reduce: '_sum'
+      }
+    }, forceInitViews }),
+    'artist': new Database({ path, debug, name: 'artist' }),
+    'track': new Database({ path, debug, name: 'track' }),
+  };
 }

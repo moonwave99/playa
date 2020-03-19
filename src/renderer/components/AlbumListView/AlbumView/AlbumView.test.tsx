@@ -1,6 +1,6 @@
 import React from 'react';
 import { renderInAll, mountInAll } from '../../../../../test/testUtils';
-import { playlists, albums } from '../../../../../test/testFixtures';
+import { playlists, albums, artists } from '../../../../../test/testFixtures';
 import { toObj } from '../../../utils/storeUtils';
 
 import { AlbumView } from './AlbumView';
@@ -14,6 +14,9 @@ const defaultStore = {
   },
   albums: {
     allById: toObj(albums)
+  },
+  artists: {
+    allById: toObj(artists)
   },
   tracks: {
     allById: {}
@@ -86,7 +89,7 @@ describe('AlbumView', () => {
         onDoubleClick={jest.fn()}/>
       , defaultStore);
     expect(wrapper.find('.album-artist').text())
-      .toBe(albums[0].artist);
+      .toBe(artists[0].name);
   });
 
   it('should contain the album information', () => {
@@ -125,7 +128,7 @@ describe('AlbumView', () => {
         onDoubleClick={jest.fn()}/>
       , defaultStore);
     wrapper.simulate('contextmenu')
-    expect(handler).toHaveBeenCalledWith(albums[0]);
+    expect(handler).toHaveBeenCalledWith(albums[0], artists[0]);
   });
 
   it('should call the onDoubleClick handler when the cover is double clicked', () => {

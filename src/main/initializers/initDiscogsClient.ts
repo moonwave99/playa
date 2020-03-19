@@ -1,7 +1,9 @@
 import { ipcMain as ipc } from 'electron';
 import * as Path from 'path';
-import DiscogsClient from '../lib/discogsClient';
+import DiscogsClient, { DISCOGS_VARIOUS_ARTISTS_ID } from '../lib/discogsClient';
 import { IPC_MESSAGES } from '../../constants';
+import { Album } from '../../renderer/store/modules/album';
+import { Artist } from '../../renderer/store/modules/artist';
 
 const {
   IPC_COVER_GET_REQUEST,
@@ -39,8 +41,12 @@ export default function initDiscogsClient({
     debug
   });
 
-  ipc.handle(IPC_COVER_GET_REQUEST, async (_event, { artist, title, _id }) =>
-    await discogsClient.getAlbumCover(artist, title, _id)
+  ipc.handle(IPC_COVER_GET_REQUEST, async (
+    _event,
+    { title, _id, isAlbumFromVA }: Album,
+    { name }: Artist
+  ) =>
+    await discogsClient.getAlbumCover(isAlbumFromVA ? DISCOGS_VARIOUS_ARTISTS_ID : name, title, _id)
   );
 
   ipc.handle(IPC_COVER_GET_FROM_URL_REQUEST, async (_event, { _id }, url) =>

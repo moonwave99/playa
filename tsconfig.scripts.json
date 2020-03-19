@@ -1,0 +1,22 @@
+{
+	"compilerOptions": {
+		"jsx": "react",
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"allowSyntheticDefaultImports": true,
+		"noImplicitAny": true,
+		"noImplicitThis": true,
+		"sourceMap": true,
+		"esModuleInterop": true,
+		"allowJs": true,
+		"target": "es2017",
+		"types": ["node", "lodash", "express", "electron", "electron-settings", "pouchdb", "jest"]
+	},
+	"include": [
+		"typings.d.ts",
+		"src/**/*.ts",
+		"src/**/*.tsx"
+	],
+	"exclude": ["node_modules"]
+}

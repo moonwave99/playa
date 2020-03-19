@@ -22,8 +22,8 @@ import './App.scss';
 
 import initIpc from '../../initializers/initIpc';
 import { ApplicationState } from '../../store/store';
-import { getArtists } from '../../store/modules/library';
 import { Album } from '../../store/modules/album';
+import { getAllArtistsRequest } from '../../store/modules/artist';
 
 import {
   Playlist,
@@ -60,8 +60,7 @@ const appSelector = createSelector(
   playlistSelectors.allById,
   playerSelectors.state,
   ({ ui }: ApplicationState) => ui,
-  ({ library }: ApplicationState) => library,
-  (playlists, player, ui, library) => {
+  (playlists, player, ui) => {
     const playlistArray = Object.keys(playlists).map(id => playlists[id]);
     const recentPlaylists = playlistArray
       .sort((a: Playlist, b: Playlist) =>
@@ -71,8 +70,7 @@ const appSelector = createSelector(
       playlists: playlistArray,
       recentPlaylists,
       currentPlaylistId: player.currentPlaylistId,
-      title: ui.title,
-      latestAlbumId: library.latestAlbumId
+      title: ui.title
     }
   }
 );
@@ -106,8 +104,7 @@ export const App: FC<AppProps> = ({
     playlists,
     recentPlaylists,
     currentPlaylistId,
-    title,
-    latestAlbumId
+    title
   } = useSelector(appSelector);
 
   const [hasSearchFocus, setSearchFocus] = useState(false);
@@ -119,7 +116,7 @@ export const App: FC<AppProps> = ({
     showImportDialog,
     onImportModalRequestClose,
     onImportFormSubmit
-  } = useImportAlbums({ latestAlbumId });
+  } = useImportAlbums();
 
   function onFocusSearch(): void {
     setSearchFocus(true);
@@ -148,7 +145,7 @@ export const App: FC<AppProps> = ({
 
   useEffect(() => {
     dispatch(getAllPlaylistsRequest());
-    dispatch(getArtists());
+    dispatch(getAllArtistsRequest());
     const unsubscribeIpc = initIpc({
       history,
       dispatch,
@@ -249,25 +246,27 @@ export const App: FC<AppProps> = ({
       <div className="player-wrapper">
         <PlayerView player={player} waveformBasePath={waveformBasePath}/>
       </div>
-      <ReactModal
-        className={{
-          base: 'modal-content',
-          beforeClose: 'modal-content-before-close',
-          afterOpen: 'modal-content-after-open'
-        }}
-        overlayClassName={{
-          base: 'modal-overlay',
-          beforeClose: 'modal-overlay-before-close',
-          afterOpen: 'modal-overlay-after-open'
-        }}
-        shouldFocusAfterRender={true}
-        onRequestClose={onImportModalRequestClose}
-        isOpen={showImportModal}>
-        <ImportView
-          tracks={tracksToImport}
-          folderToImport={folderToImport}
-          onFormSubmit={onImportFormSubmit}/>
-      </ReactModal>
+      { showImportModal
+        ? <ReactModal
+            className={{
+              base: 'modal-content',
+              beforeClose: 'modal-content-before-close',
+              afterOpen: 'modal-content-after-open'
+            }}
+            overlayClassName={{
+              base: 'modal-overlay',
+              beforeClose: 'modal-overlay-before-close',
+              afterOpen: 'modal-overlay-after-open'
+            }}
+            shouldFocusAfterRender={true}
+            onRequestClose={onImportModalRequestClose}
+            isOpen={showImportModal}>
+            <ImportView
+              tracks={tracksToImport}
+              folderToImport={folderToImport}
+              onFormSubmit={onImportFormSubmit}/>
+          </ReactModal>
+        : null }
     </main>
   );
 }

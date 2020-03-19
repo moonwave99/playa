@@ -1,7 +1,6 @@
 import { intersection, uniq, without } from 'lodash';
 import { ipcRenderer as ipc } from 'electron';
-import { toArray, toObj, EntityHashMap } from '../../utils/storeUtils';
-import { updateArtistCount, VARIOUS_ARTIST_KEY, NUMERIC_KEY } from '../../utils/artistUtils';
+import { toArray } from '../../utils/storeUtils';
 
 import {
   Playlist,
@@ -11,16 +10,24 @@ import {
 import {
   Album,
   ALBUM_GET_LIST_RESPONSE,
-  VARIOUS_ARTISTS_ID
+  saveAlbumRequest
 } from './album';
+
+import {
+  Artist,
+  VARIOUS_ARTISTS_ID,
+  ARTIST_GET_LIST_RESPONSE,
+  saveArtistRequest
+} from './artist';
+
+import {
+  Track,
+  getTrackListRequest
+} from './track';
 
 import {
   PLAYER_UPDATE_QUEUE
 } from './player';
-
-import {
-  Track
-} from './track';
 
 import { IPC_MESSAGES } from '../../../constants';
 
@@ -28,51 +35,21 @@ const {
   IPC_ALBUM_GET_LATEST_REQUEST,
   IPC_ALBUM_DELETE_LIST_REQUEST,
   IPC_PLAYLIST_SAVE_LIST_REQUEST,
-  IPC_ALBUM_GET_STATS_REQUEST,
   IPC_TRACK_DELETE_LIST_REQUEST,
-  IPC_SEARCH_REQUEST
+  IPC_ARTIST_SAVE_LIST_REQUEST,
 } = IPC_MESSAGES;
 
 const DEFAULT_LATEST_ALBUM_LIMIT = 10;
-
-export type Artist = {
-  _id: string;
-  name: string;
-  count: number;
-}
-
-export function getDefaultArtist(): Artist {
-  return {
-    _id: null,
-    name: '',
-    count: 0
-  };
-}
 
 export interface LibraryState {
   latestAlbumId: Album['_id'];
   latest: Album['_id'][];
   loadingLatest: boolean;
-  loadingArtists: boolean;
-  artistsById: EntityHashMap<Artist>;
 }
-
-export const selectors = {
-  findArtistById: ({ library }: { library: LibraryState }, id: Artist['_id']): Artist => library.artistsById[id],
-  findArtistsByLetter: ({ library }: { library: LibraryState }, letter: string): Artist[] => {
-    return Object.values(library.artistsById).filter(({ name }) => {
-      return (letter === VARIOUS_ARTIST_KEY && name === VARIOUS_ARTISTS_ID)
-        || (letter.match(/[a-z]/) && name.charAt(0).toLowerCase() === letter)
-        || (!name.charAt(0).toLowerCase().match(/[a-z]/) && name !== VARIOUS_ARTISTS_ID && letter === NUMERIC_KEY);
-    });
-  }
-};
 
 export const LIBRARY_GET_LATEST_REQUEST   = 'playa/library/GET_LATEST_REQUEST';
 export const LIBRARY_GET_LATEST_RESPONSE  = 'playa/library/GET_LATEST_RESPONSE';
 export const LIBRARY_ADD_TO_LATEST_ALBUMS = 'playa/library/ADD_TO_LATEST_ALBUMS';
-export const LIBRARY_GET_ARTISTS_REQUEST  = 'playa/library/GET_ARTISTS_REQUEST';
-export const LIBRARY_GET_ARTISTS_RESPONSE = 'playa/library/GET_ARTISTS_RESPONSE';
 
 interface LibraryGetLatestRequestAction {
   type: typeof LIBRARY_GET_LATEST_REQUEST;
@@ -88,21 +65,10 @@ interface AddAlbumsToLatestLibraryAction {
   albums: Album[];
 }
 
-interface LibraryGetArtistsRequestAction {
-  type: typeof LIBRARY_GET_ARTISTS_REQUEST;
-}
-
-interface LibraryGetArtistsResponseAction {
-  type: typeof LIBRARY_GET_ARTISTS_RESPONSE;
-  artists: EntityHashMap<Artist>;
-}
-
 export type LibraryActionTypes =
     LibraryGetLatestRequestAction
   | LibraryGetLatestResponseAction
-  | AddAlbumsToLatestLibraryAction
-  | LibraryGetArtistsRequestAction
-  | LibraryGetArtistsResponseAction;
+  | AddAlbumsToLatestLibraryAction;
 
 export const getLatestRequest = (
   dateFrom = new Date().toISOString(),
@@ -123,32 +89,71 @@ export const getLatestRequest = (
     });
   }
 
-export const addAlbumsToLibrary = (albums: Album[]): Function =>
+type ImportAlbumParams = {
+  album: Album;
+  artist: Artist;
+  tracks: Track[];
+}
+
+export const importAlbum = ({
+  album,
+  artist,
+  tracks,
+}: ImportAlbumParams): Function =>
   (dispatch: Function, getState: Function): void => {
-    const { library } = getState();
-    dispatch({
-      type: LIBRARY_GET_ARTISTS_RESPONSE,
-      artists: updateArtistCount({
-        artists: library.artistsById,
-        albums,
-        action: 'add'
-      })
-    });
+    const state = getState();
+    const { latestArtistId, allById: artists } = state.artists;
+
+    let artistToSave = artist;
+    if (!artist._id) {
+      const existingArtist = toArray(artists).find(
+        ({ name }) => name.toLowerCase() === artist.name.toLowerCase()
+      ) as Artist;
+      if (existingArtist) {
+        artistToSave = existingArtist;
+      }
+    }
+
+    const { latestAlbumId } = state.library;
+    if (!album.isAlbumFromVA) {
+      dispatch(saveArtistRequest({
+        ...artistToSave,
+        count: artistToSave.count + 1,
+        _id: artistToSave._id || `${+latestArtistId + 1}`
+      }));
+    }
+
+    const updatedAlbum = {
+      ...album,
+      _id: `${+latestAlbumId + 1}`,
+      artist: album.isAlbumFromVA
+        ? VARIOUS_ARTISTS_ID
+        : artistToSave._id || `${+latestArtistId + 1}`
+    };
+    
+    dispatch(
+      getTrackListRequest(
+        tracks.map(({ _id }) => _id )
+      )
+    );
+    dispatch(saveAlbumRequest(updatedAlbum));
     dispatch({
       type: LIBRARY_ADD_TO_LATEST_ALBUMS,
-      albums
+      albums: [updatedAlbum]
     });
     dispatch({
       type: ALBUM_GET_LIST_RESPONSE,
-      results: albums
+      results: [updatedAlbum]
     });
   }
+//
 
 export const removeAlbums = (albumsToRemove: Album[]): Function =>
   async (dispatch: Function, getState: Function): Promise<void> => {
     const {
       library,
       albums,
+      artists,
       player,
       playlists,
       tracks
@@ -162,13 +167,35 @@ export const removeAlbums = (albumsToRemove: Album[]): Function =>
       return;
     }
 
+    const artistsToUpdate = albumsToRemove.reduce((memo: Artist[], { isAlbumFromVA, artist: artistId }: Album) => {
+      if (isAlbumFromVA) {
+        return memo;
+      }
+      const artist = artists.allById[artistId];
+      let foundArtist = memo.find(({ _id }: Artist) => _id === artistId);
+      if (!foundArtist) {
+        memo.push({
+          ...artist,
+          count: Math.max(0, artist.count - 1)
+        });
+      } else {
+        foundArtist = {
+          ...foundArtist,
+          count: Math.max(0, artist.count - 1)
+        }
+      }
+      return memo;
+    }, []);
+
+    const updatedArtists: Array<{ id: string; rev: string; ok: boolean }>
+      = await ipc.invoke(IPC_ARTIST_SAVE_LIST_REQUEST, artistsToUpdate);
+
     dispatch({
-      type: LIBRARY_GET_ARTISTS_RESPONSE,
-      artists: updateArtistCount({
-        artists: library.artistsById,
-        albums: albumsToRemove,
-        action: 'remove'
-      })
+      type: ARTIST_GET_LIST_RESPONSE,
+      artists: updatedArtists.map(({ id, rev: _rev }) => ({
+        ...artistsToUpdate.find(({ _id }) => _id === id),
+        _rev
+      }))
     });
 
     const tracksToRemove = albumsToRemove.reduce((memo: Track[], album: Album) => {
@@ -212,44 +239,10 @@ export const removeAlbums = (albumsToRemove: Album[]): Function =>
     });
   }
 
-export const getArtists = (): Function =>
-  async (dispatch: Function, getState: Function): Promise<void> => {
-    const { library } = getState();
-    if (Object.keys(library.artistsById).length > 0) {
-      return;
-    }
-    dispatch({
-      type: LIBRARY_GET_ARTISTS_REQUEST
-    });
-    const results = await ipc.invoke(IPC_ALBUM_GET_STATS_REQUEST, 'artist');
-    const artists = results.reduce((
-      memo: Artist[],
-      { key: name, value: count }: { key: string; value: number }
-    ) => {
-      memo.push({ _id: name, name, count });
-      return memo;
-    }, []);
-    dispatch({
-      type: LIBRARY_GET_ARTISTS_RESPONSE,
-      artists: toObj(artists)
-    });
-  }
-
-export const getArtistReleases = ({ name }: Artist): Function =>
-  async (dispatch: Function): Promise<void> => {
-    const results = await ipc.invoke(IPC_SEARCH_REQUEST, `artist: ${name}`);
-    dispatch({
-      type: ALBUM_GET_LIST_RESPONSE,
-      results
-    });
-  }
-
 const INITIAL_STATE = {
   latest: [] as Album['_id'][],
   latestAlbumId: null as Album['_id'],
-  loadingLatest: false,
-  loadingArtists: false,
-  artistsById: {}
+  loadingLatest: false
 };
 
 function getLatestAlbumId(albums: Album[]): Album['_id'] {
@@ -278,17 +271,6 @@ export default function reducer(
         ...state,
         latestAlbumId: getLatestAlbumId(action.albums),
         latest: uniq([...action.albums.map(({ _id }) => _id), ...state.latest])
-      };
-    case LIBRARY_GET_ARTISTS_REQUEST:
-      return {
-        ...state,
-        loadingArtists: true
-      };
-    case LIBRARY_GET_ARTISTS_RESPONSE:
-      return {
-        ...state,
-        loadingArtists: false,
-        artistsById: action.artists
       };
     case LIBRARY_GET_LATEST_REQUEST:
       return {

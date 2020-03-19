@@ -5,6 +5,7 @@ import { Link, generatePath } from 'react-router-dom';
 import cx from 'classnames';
 import { CoverView } from '../../../AlbumListView/AlbumView/CoverView/CoverView';
 import { Album } from '../../../../store/modules/album';
+import { selectors as artistSelectors } from '../../../../store/modules/artist';
 import {
   getCoverRequest,
   getCoverFromUrlRequest,
@@ -15,10 +16,11 @@ import { UIDragTypes } from '../../../../store/modules/ui';
 import useNativeDrop from '../../../../hooks/useNativeDrop/useNativeDrop';
 
 import { ARTIST_SHOW } from '../../../../routes';
-import { formatArtistName } from '../../../../utils/artistUtils';
+import { formatArtist } from '../../../../utils/albumUtils';
 
 type AlbumGridTileViewProps = {
   album: Album;
+  showArtist?: boolean;
   isPlaying?: boolean;
   onContextMenu?: Function;
   onDoubleClick?: Function;
@@ -26,13 +28,15 @@ type AlbumGridTileViewProps = {
 
 export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
   album,
+  showArtist = true,
   isPlaying = false,
   onContextMenu,
   onDoubleClick
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
-  const { _id } = album;
+  const { _id, artist: artistId } = album;
+  const artist = useSelector((state: ApplicationState) => artistSelectors.findById(state, artistId));
   const cover = useSelector((state: ApplicationState) => coverSelectors.findById(state, _id));
 
   function onDrop(url: string): void {
@@ -66,14 +70,14 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
   }, [album]);
 
   function _onContextMenu(): void {
-    onContextMenu && onContextMenu(album);
+    onContextMenu && onContextMenu(album, artist);
   }
 
   function _onDoubleClick(): void {
-    onDoubleClick && onDoubleClick(album);
+    onDoubleClick && onDoubleClick(album, artist);
   }
 
-  const { artist, title } = album;
+  const { title, year } = album;
 
   const classNames = cx('album-grid-tile', {
     'is-playing': isPlaying,
@@ -92,12 +96,15 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
           onDoubleClick={_onDoubleClick}
           onContextMenu={_onContextMenu}/>
       </div>
-      <Link
-        className="album-artist"
-        to={generatePath(ARTIST_SHOW, { name: artist })}>
-        {formatArtistName(artist)}
-      </Link>
+      {showArtist &&
+        <Link
+          className="album-artist"
+          to={generatePath(ARTIST_SHOW, { _id: artistId })}>
+          {formatArtist({ album, artist })}
+        </Link>
+      }
       <span className="album-title">{title}</span>
+      <span className="album-year">{year}</span>
     </article>
 	);
 }

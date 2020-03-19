@@ -14,6 +14,7 @@ import { ApplicationState } from '../../store/store';
 import { updateQueue } from '../../store/modules/player';
 import { updateState, updateTitle } from '../../store/modules/ui';
 import { Album } from '../../store/modules/album';
+import { Artist } from '../../store/modules/artist';
 import { Track } from '../../store/modules/track';
 import { openContextMenu } from '../../lib/contextMenu';
 
@@ -67,7 +68,7 @@ export const PlaylistContainer = (): ReactElement => {
     }
   }
 
-  function onAlbumContextMenu(album: Album): void {
+  function onAlbumContextMenu(album: Album, artist: Artist): void {
     openContextMenu([
       {
         type: PLAYLIST_CONTENT_CONTEXT_ACTIONS,
@@ -77,7 +78,7 @@ export const PlaylistContainer = (): ReactElement => {
       },
       {
         type: ALBUM_CONTEXT_ACTIONS,
-        albums: [album],
+        albums: [{ album, artist }],
         queue: playlist.albums,
         dispatch,
         actionGroups: [
@@ -89,11 +90,11 @@ export const PlaylistContainer = (): ReactElement => {
     ]);
   }
 
-  function onAlbumDoubleClick(album: Album, track: Track): void {
+  function onAlbumDoubleClick(album: Album, artist: Artist, track: Track): void {
     actionsMap(AlbumActions.PLAY_ALBUM)({
       queue: playlist.albums,
       playlistId: playlist._id,
-      albums: [album],
+      albums: [{ album, artist }],
       trackId: track ? track._id : null,
       dispatch
     }).handler();

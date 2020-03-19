@@ -3,7 +3,7 @@ import thunk from 'redux-thunk';
 const mockStore = configureStore([thunk]);
 
 import { toObj } from '../utils/storeUtils';
-import { albums, tracks } from '../../../test/testFixtures';
+import { albums, artists, tracks } from '../../../test/testFixtures';
 
 import {
   ALBUM_GET_CONTENT_RESPONSE
@@ -34,8 +34,10 @@ import {
 describe('albumActions', () => {
   describe('playAlbumAction', () => {
     it('should return a title and a handler', async () => {
-      const { title, handler } = playAlbumAction({ albums: [albums[0]] });
-      expect(title).toBe(`Play '${albums[0].artist} - ${albums[0].title}'`);
+      const { title, handler } = playAlbumAction({
+        albums: [{ album: albums[0], artist: artists[0] }]
+      });
+      expect(title).toBe('Play album');
       expect(typeof handler).toBe('function');
     });
 
@@ -59,7 +61,7 @@ describe('albumActions', () => {
         tracks: ['1', '2']
       }
       const { handler } = playAlbumAction({
-        albums: [album],
+        albums: [{ album: albums[0], artist: artists[0] }],
         queue: [album._id],
         trackId: '1',
         playlistId: '1',
@@ -84,7 +86,9 @@ describe('albumActions', () => {
 
   describe('enqueueAfterCurrentAction', () => {
     it('should return a title and a handler', async () => {
-      const { title, handler } = enqueueAfterCurrentAction({ albums: [albums[0]] });
+      const { title, handler } = enqueueAfterCurrentAction({
+        albums: [{ album: albums[0], artist: artists[0] }]
+      });
       expect(title).toBe(`Enqueue after current album`);
       expect(typeof handler).toBe('function');
     });
@@ -107,7 +111,7 @@ describe('albumActions', () => {
       });
       const album = albums[0];
       const { handler } = enqueueAfterCurrentAction({
-        albums: [album],
+        albums: [{ album: albums[0], artist: artists[0] }],
         dispatch: store.dispatch
       });
       await handler();
@@ -123,7 +127,9 @@ describe('albumActions', () => {
 
   describe('enqueueAtEndAction', () => {
     it('should return a title and a handler', async () => {
-      const { title, handler } = enqueueAtEndAction({ albums: [albums[0]] });
+      const { title, handler } = enqueueAtEndAction({
+        albums: [{ album: albums[0], artist: artists[0] }]
+      });
       expect(title).toBe(`Enqueue at the end`);
       expect(typeof handler).toBe('function');
     });
@@ -146,7 +152,7 @@ describe('albumActions', () => {
       });
       const album = albums[0];
       const { handler } = enqueueAtEndAction({
-        albums: [album],
+        albums: [{ album: albums[0], artist: artists[0] }],
         dispatch: store.dispatch
       });
       await handler();
@@ -162,7 +168,10 @@ describe('albumActions', () => {
 
   describe('removeFromQueueAction', () => {
     it('should return a title and a handler', async () => {
-      const { title, handler } = removeFromQueueAction({ albums: [albums[0]], queue: [] });
+      const { title, handler } = removeFromQueueAction({
+        albums: [{ album: albums[0], artist: artists[0] }],
+        queue: []
+      });
       expect(title).toBe(`Remove from queue`);
       expect(typeof handler).toBe('function');
     });
@@ -183,9 +192,9 @@ describe('albumActions', () => {
           allById: {}
         }
       });
-      const album = albums[0];
+
       const { handler } = removeFromQueueAction({
-        albums: [album],
+        albums: [{ album: albums[0], artist: artists[0] }],
         queue: ['1', '2', '3'],
         dispatch: store.dispatch
       });
@@ -202,16 +211,20 @@ describe('albumActions', () => {
 
   describe('revealInFinderAction', () => {
     it('should return a title and a handler', async () => {
-      const { title, handler } = revealInFinderAction({ albums: [albums[0]] });
-      expect(title).toBe(`Reveal '${albums[0].artist} - ${albums[0].title}' in Finder`);
+      const { title, handler } = revealInFinderAction({
+        albums: [{ album: albums[0], artist: artists[0] }]
+      });
+      expect(title).toBe('Reveal album in Finder');
       expect(typeof handler).toBe('function');
     });
   });
 
   describe('reloadAlbumContentAction', () => {
     it('should return a title and a handler', async () => {
-      const { title, handler } = reloadAlbumContentAction({ albums: [albums[0]] });
-      expect(title).toBe(`Reload '${albums[0].artist} - ${albums[0].title}' tracks`);
+      const { title, handler } = reloadAlbumContentAction({
+        albums: [{ album: albums[0], artist: artists[0] }]
+      });
+      expect(title).toBe('Reload album tracks');
       expect(typeof handler).toBe('function');
     });
 
@@ -233,7 +246,7 @@ describe('albumActions', () => {
       });
       const album = albums[0];
       const { handler } = reloadAlbumContentAction({
-        albums: [album],
+        albums: [{ album: albums[0], artist: artists[0] }],
         dispatch: store.dispatch
       });
       await handler();
@@ -253,32 +266,40 @@ describe('albumActions', () => {
 
   describe('searchOnRYMAction', () => {
     it('should return a title and a handler', async () => {
-      const { title, handler } = searchOnRYMAction({ albums: [albums[0]] });
-      expect(title).toBe(`Search '${albums[0].artist} - ${albums[0].title}' on rateyourmusic`);
+      const { title, handler } = searchOnRYMAction({
+        albums: [{ album: albums[0], artist: artists[0] }]
+      });
+      expect(title).toBe('Search album on rateyourmusic');
       expect(typeof handler).toBe('function');
     });
   });
 
   describe('searchOnDiscogsAction', () => {
     it('should return a title and a handler', async () => {
-      const { title, handler } = searchOnDiscogsAction({ albums: [albums[0]] });
-      expect(title).toBe(`Search '${albums[0].artist} - ${albums[0].title}' on Discogs`);
+      const { title, handler } = searchOnDiscogsAction({
+        albums: [{ album: albums[0], artist: artists[0] }]
+      });
+      expect(title).toBe('Search album on Discogs');
       expect(typeof handler).toBe('function');
     });
   });
 
   describe('searchOnYoutubeAction', () => {
     it('should return a title and a handler', async () => {
-      const { title, handler } = searchOnYoutubeAction({ albums: [albums[0]] });
-      expect(title).toBe(`Search '${albums[0].artist} - ${albums[0].title}' on Youtube`);
+      const { title, handler } = searchOnYoutubeAction({
+        albums: [{ album: albums[0], artist: artists[0] }]
+      });
+      expect(title).toBe('Search album on Youtube');
       expect(typeof handler).toBe('function');
     });
   });
 
   describe('searchArtistOnRYMAction', () => {
     it('should return a title and a handler', async () => {
-      const { title, handler } = searchArtistOnRYMAction({ albums: [albums[0]] });
-      expect(title).toBe(`Search '${albums[0].artist}' on rateyourmusic`);
+      const { title, handler } = searchArtistOnRYMAction({
+        albums: [{ album: albums[0], artist: artists[0] }]
+      });
+      expect(title).toBe('Search artist on rateyourmusic');
       expect(typeof handler).toBe('function');
     });
   });

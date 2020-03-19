@@ -1,7 +1,7 @@
 import { Playlist } from '../src/renderer/store/modules/playlist';
 import { Album, AlbumTypes } from '../src/renderer/store/modules/album';
 import { Track } from '../src/renderer/store/modules/track';
-import { Artist } from '../src/renderer/store/modules/Library';
+import { Artist } from '../src/renderer/store/modules/artist';
 
 const createDatesList = [1,2,3].map(x => new Date(`2020-01-0${x}`).toISOString());
 
@@ -27,7 +27,8 @@ export const playlists: Playlist[] = [
 export const albums: Album[] = [
   {
     _id: '1',
-    artist: 'Slowdive',
+    _rev: null,
+    artist: '1',
     title: 'Just For a Day',
     year: 1991,
     type: AlbumTypes.Album,
@@ -37,7 +38,8 @@ export const albums: Album[] = [
   },
   {
     _id: '2',
-    artist: 'My Bloody Valentine',
+    _rev: null,
+    artist: '2',
     title: 'Loveless',
     year: 1991,
     type: AlbumTypes.Album,
@@ -88,28 +90,27 @@ export const tracks: Track[] = [
 
 export const artists: Artist[] = [
   {
-    _id: '883',
-    name: '883',
-    count: 1
-  },
-  {
-    _id: 'Adorable',
-    name: 'Adorable',
-    count: 1
-  },
-  {
-    _id: 'Slowdive',
+    _id: '1',
+    _rev: null,
     name: 'Slowdive',
     count: 1
   },
   {
-    _id: 'My Bloody Valentine',
+    _id: '2',
+    _rev: null,
     name: 'My Bloody Valentine',
     count: 1
   },
   {
-    _id: '_various-artists',
-    name: '_various-artists',
-    count: 10
+    _id: '3',
+    _rev: null,
+    name: 'Lush',
+    count: 0
+  },
+  {
+    _id: '4',
+    _rev: null,
+    name: 'Adorable',
+    count: 0
   }
 ];

@@ -10,6 +10,7 @@ import { CustomDragLayer } from '../CustomDragLayer/CustomDragLayer';
 import { SearchResultListRow } from './SearchResultListRow/SearchResultListRow';
 import { getCoverRequest } from '../../../store/modules/cover';
 import { Album } from '../../../store/modules/album';
+import { Artist } from '../../../store/modules/artist';
 import { selectionBounds } from '../../../utils/selectionUtils';
 import './SearchResultList.scss';
 
@@ -20,7 +21,6 @@ type SearchResultListProps = {
 	currentAlbumId?: Album['_id'];
 	onContextMenu: Function;
 	onResultDoubleClick: Function;
-	onArtistContextMenu: Function;
 	onResultEnter: Function;
 };
 
@@ -41,7 +41,6 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
 	isSearching,
 	currentAlbumId,
 	onContextMenu,
-	onArtistContextMenu,
 	onResultDoubleClick,
 	onResultEnter
 }) => {
@@ -96,12 +95,12 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
 		data: results,
 	});
 
-	function onResultContextMenu({ _id }: Album): void {
+	function onResultContextMenu({ _id }: Album, artist: Artist): void {
 		const selectedIDs = getSelectedIDs(results, selection);
 		if (selectedIDs.indexOf(_id) > -1) {
 			onContextMenu(selectedIDs);
 		} else {
-			onContextMenu([_id]);
+			onContextMenu([_id], artist);
 		}
 	}
 
@@ -120,8 +119,7 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
 		selection,
 		onResultClick,
 		onResultDoubleClick,
-		onResultContextMenu,
-		onArtistContextMenu
+		onResultContextMenu
 	}: {
 			style: object;
 			index: number;
@@ -132,7 +130,6 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
 			onResultClick: Function;
 			onResultDoubleClick: Function;
 			onResultContextMenu: Function;
-			onArtistContextMenu: Function;
 		}) => {
 		const album = row.original as Album;
 		const { _id } = album;
@@ -150,7 +147,6 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
 				album={album}
 				onClick={onResultClick}
 				onContextMenu={onResultContextMenu}
-				onArtistContextMenu={onArtistContextMenu}
 				onCoverDoubleClick={onResultDoubleClick}
 				isCurrent={_id === currentAlbumId}
 				selectedIDs={selectedIDs} />
@@ -164,7 +160,6 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
 			currentAlbumId,
 			onResultClick,
 			onResultContextMenu,
-			onArtistContextMenu,
 			onResultDoubleClick,
 			prepareRow
 		} = data;
@@ -179,7 +174,6 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
 				selection={selection}
 				onResultClick={onResultClick}
 				onResultContextMenu={onResultContextMenu}
-				onArtistContextMenu={onArtistContextMenu}
 				onResultDoubleClick={onResultDoubleClick}
 				currentAlbumId={currentAlbumId}
 				selectedIDs={selectedIDs} />
@@ -213,7 +207,6 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
 		currentAlbumId,
 		onResultClick,
 		onResultContextMenu,
-		onArtistContextMenu,
 		onResultDoubleClick,
 		prepareRow
 	) => ({
@@ -222,7 +215,6 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
 		currentAlbumId,
 		onResultClick,
 		onResultContextMenu,
-		onArtistContextMenu,
 		onResultDoubleClick,
 		prepareRow
 	}));
@@ -234,7 +226,6 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
 			currentAlbumId,
 			onResultClick,
 			onResultContextMenu,
-			onArtistContextMenu,
 			onResultDoubleClick,
 			prepareRow
 		);

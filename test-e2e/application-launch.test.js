@@ -2,12 +2,14 @@ const { getApp, TEN_SECONDS } = require('./utils/appUtils');
 const { populateTestDB, TestPlaylists } = require('./utils/databaseUtils');
 
 describe('Application launch', () => {
-  let app;
+  let app, menuAddon;
   beforeEach(async () => {
     await populateTestDB({
       playlists: [TestPlaylists[0]]
     });
-    app = await getApp();
+    const menuApp = await getApp();
+    app = menuApp.app;
+    menuAddon = menuApp.menuAddon;
     return app.start();
   });
 

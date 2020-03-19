@@ -5,8 +5,8 @@ import { toObj } from '../../utils/storeUtils';
 import { Album } from '../../store/modules/album';
 
 mockRouter({
-  routeParams: { name: 'Slowdive' },
-  routeMatch: { url: '/artist/Slowdive' }
+  routeParams: { _id: '1' },
+  routeMatch: { url: '/artist/1' }
 });
 
 import { ArtistView } from './ArtistView';
@@ -18,8 +18,8 @@ const defaultStore = {
   albums: {
     allById: {}
   },
-  library: {
-    artistsById: toObj(artists)
+  artists: {
+    allById: toObj(artists)
   }
 };
 

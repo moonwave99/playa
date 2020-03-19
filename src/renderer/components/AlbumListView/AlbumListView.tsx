@@ -2,6 +2,7 @@ import React, { ReactElement, FC, useState, useEffect, useCallback } from 'react
 import { AlbumView } from './AlbumView/AlbumView';
 import { CompactAlbumView } from './CompactAlbumView/CompactAlbumView';
 import { Album } from '../../store/modules/album';
+import { Artist } from '../../store/modules/artist';
 import { Track } from '../../store/modules/track';
 import { UIAlbumView } from '../../store/modules/ui';
 import { EntityHashMap, immutableMove } from '../../utils/storeUtils';
@@ -54,8 +55,8 @@ export const AlbumListView: FC<AlbumListViewProps> = ({
     if (!album) {
       return null;
     }
-    function onDoubleClick(album: Album, track: Track): void {
-      onAlbumDoubleClick(album, track);
+    function onDoubleClick(album: Album, artist: Artist, track: Track): void {
+      onAlbumDoubleClick(album, artist, track);
     }
     switch (albumView) {
       case UIAlbumView.Extended:

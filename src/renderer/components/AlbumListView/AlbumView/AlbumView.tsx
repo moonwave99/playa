@@ -16,7 +16,6 @@ import { Track } from '../../../store/modules/track';
 import {
   formatArtist,
   showTrackNumbers,
-  showTrackArtists
 } from '../../../utils/albumUtils';
 import { ARTIST_SHOW } from '../../../routes';
 import './AlbumView.scss';
@@ -51,18 +50,19 @@ export const AlbumView: FC<AlbumViewProps> = ({
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [palette, setPalette] = useState({} as Palette);
-  const { _id, type, year, artist, title } = album;
+  const { _id, type, year, title } = album;
   const [viewRef, inView] = useInView({ triggerOnce: true });
 
   const {
     cover,
+    artist,
     tracks
   } = useSelector((state: ApplicationState) => getAlbumContentById(state, _id));
 
   const dispatch = useDispatch();
   useEffect(() => {
     inView && dispatch(getAlbumRequest(_id));
-  }, [_id, inView]);
+  }, [_id, inView, artist]);
 
   const [{ opacity }, drag] = useDrag({
     item: {
@@ -95,11 +95,11 @@ export const AlbumView: FC<AlbumViewProps> = ({
   }
 
   function onTrackDoubleClick(track: Track): void {
-    onDoubleClick(album, track);
+    onDoubleClick(album, artist, track);
   }
 
   function _onContextMenu(): void {
-    onContextMenu && onContextMenu(album);
+    onContextMenu && onContextMenu(album, artist);
   }
 
   function onActionsButtonClick(): void {
@@ -127,11 +127,15 @@ export const AlbumView: FC<AlbumViewProps> = ({
   }
 
   function renderArtist(): ReactElement {
+    if (!artist) {
+      return null;
+    }
+    const { _id } = artist;
     return (
       <Link
-        to={generatePath(ARTIST_SHOW, { name: artist })}
+        to={generatePath(ARTIST_SHOW, { _id })}
         className="album-artist-link">
-          {formatArtist(album)}
+          {formatArtist({ album, artist })}
       </Link>
     );
   }
@@ -145,7 +149,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
     'drag-can-drop': canDrop
   });
   return (
-    <article className={albumClasses} id={_id} onContextMenu={_onContextMenu} ref={viewRef}>
+    <article className={albumClasses} id={`album-${_id}`} onContextMenu={_onContextMenu} ref={viewRef}>
       <aside className="album-aside" style={{ backgroundColor: palette.DarkMuted }}>
         <div ref={ref} style={{ opacity }} className="album-cover-wrapper">
           <CoverView
@@ -171,7 +175,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
           tracklist={album.tracks}
           tracks={tracks}
           currentTrackId={currentTrackId}
-          showArtists={showTrackArtists(album)}
+          showArtists={false}
           showTrackNumbers={showTrackNumbers(album)}
           onTrackDoubleClick={onTrackDoubleClick}/>
       </section>

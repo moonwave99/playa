@@ -1,6 +1,6 @@
 import React from 'react';
 import { renderInAll, mountInAll } from '../../../../test/testUtils';
-import { albums } from '../../../../test/testFixtures';
+import { albums, artists } from '../../../../test/testFixtures';
 import { toObj } from '../../utils/storeUtils';
 jest.mock('../../lib/contextMenu');
 const { openContextMenu } = require('../../lib/contextMenu'); // eslint-disable-line
@@ -15,6 +15,9 @@ const defaultStore = {
   },
   albums: {
     allById: toObj(albums)
+  },
+  artists: {
+    allById: toObj(artists)
   },
   tracks: {
     allById: {}
@@ -71,6 +74,6 @@ describe('QueueView', () => {
     });
     wrapper.find('.album-view').at(0).simulate('contextmenu');
     expect(handler.mock.calls[0][0]).toHaveLength(1);
-    expect(handler.mock.calls[0][0][0].albums).toEqual([albums[0]]);
+    expect(handler.mock.calls[0][0][0].albums).toEqual([{ album: albums[0], artist: artists[0] }]);
   });
 });

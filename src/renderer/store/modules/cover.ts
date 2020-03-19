@@ -40,16 +40,17 @@ export type CoverActionTypes =
 
 export const getCoverRequest = (album: Album): Function =>
   async (dispatch: Function, getState: Function): Promise<void> => {
-    const { covers } = getState();
-    const { _id, type } = album;
+    const { covers, artists } = getState();
+    const { _id, artist: artistId, type } = album;
+    const artist = artists.allById[artistId];
     const albumTypeHasNoCover =
       type === AlbumTypes.Remix || type === AlbumTypes.Various;
-    if (covers.allById[_id] || albumTypeHasNoCover) {
+    if (covers.allById[_id] || albumTypeHasNoCover || !artist) {
       return;
     }
     dispatch({
       type: COVER_GET_RESPONSE,
-      path: await ipc.invoke(IPC_COVER_GET_REQUEST, album),
+      path: await ipc.invoke(IPC_COVER_GET_REQUEST, album, artist),
       album
     });
   }

@@ -47,6 +47,8 @@ Environment affects database and session.
 
 `prod` and `dev` have no specific meaning: it is just useful not to mess with one own's music collection when working on new features.
 
+**Note:** hitting `cmd+r` _does not_ refresh the database in `fresh` mode - rerun `yarn start` in order to do so.
+
 ## Build
 
 Builds app to `./dist`:

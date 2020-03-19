@@ -11,6 +11,12 @@ import {
 import { ApplicationState } from '../store';
 
 import {
+  Artist,
+  VariousArtist,
+  selectors as artistSelectors
+} from './artist';
+
+import {
   Track,
   selectors as trackSelectors,
   getTrackListResponse
@@ -30,8 +36,6 @@ const {
   IPC_TRACK_GET_LIST_REQUEST
 } = IPC_MESSAGES;
 
-export const VARIOUS_ARTISTS_ID = '_various-artists';
-
 export enum AlbumTypes {
   Album = 'album',
   Ep = 'ep',
@@ -46,7 +50,9 @@ export enum AlbumTypes {
 
 export type Album = {
   _id: string;
-  artist: string;
+  _rev?: string;
+  isAlbumFromVA?: boolean;
+  artist: Artist['_id'];
   title: string;
   year?: number;
   type: AlbumTypes;
@@ -59,6 +65,7 @@ export function getDefaultAlbum(): Album {
   const now = new Date().toISOString();
   return {
     _id: null,
+    _rev: null,
     artist: '',
     title: '',
     type: AlbumTypes.Album,
@@ -76,34 +83,24 @@ export const selectors = {
   state: ({ albums }: { albums: AlbumState }): AlbumState => albums,
   allById: ({ albums }: { albums: AlbumState }): EntityHashMap<Album> => albums.allById,
   findById: ({ albums }: { albums: AlbumState }, id: Album['_id']): Album => albums.allById[id],
-  findByList: ({ albums }: { albums: AlbumState }, ids: Album['_id'][]): Album[] => ids.map(id => albums.allById[id])
+  findByList: ({ albums }: { albums: AlbumState }, ids: Album['_id'][]): Album[] => ids.map(id => albums.allById[id]),
+  findByVariousArtists: ({ albums }: { albums: AlbumState }): Album[] =>
+    toArray(albums.allById).filter(({ isAlbumFromVA }) => isAlbumFromVA)
 };
 
 type GetAlbumContentByIdSelection = {
+  artist: Artist;
   tracks: Track[];
   cover: string;
 }
 
-export const getAlbumsByArtist = createCachedSelector(
-  ({ library }: ApplicationState, id: string) => library.artistsById[id],
-  selectors.allById,
-  ({ _id }, albums): EntityHashMap<Album[]> =>
-    toArray(albums).filter(({ artist }) => artist === _id)
-    .reduce((memo: EntityHashMap<Album[]>, album) => {
-      const { type } = album;
-      if (!memo[type]) {
-        memo[type] = [];
-      }
-      memo[type].push(album);
-      return memo;
-    }, {})
-)((_state_: ApplicationState, id: string) => id);
-
 export const getAlbumContentById = createCachedSelector(
   selectors.findById,
+  artistSelectors.allById,
   trackSelectors.allById,
   coverSelectors.allById,
-  (album, tracks, covers): GetAlbumContentByIdSelection => ({
+  (album, artists, tracks, covers): GetAlbumContentByIdSelection => ({
+    artist: album.isAlbumFromVA ? VariousArtist : artists[album.artist],
     tracks: album.tracks.map(id => tracks[id]).filter(x => !!x),
     cover: covers[album._id]
   })

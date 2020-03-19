@@ -1,7 +1,8 @@
 import { ipcMain as ipc } from 'electron';
+import { uniqBy } from 'lodash';
 import * as Path from 'path';
 import * as fs from 'fs-extra';
-import Database from '../lib/database';
+import { initDBs } from '../lib/database';
 import loadAlbum from '../lib/loadAlbum';
 import loadTracklist from '../lib/loadTracklist';
 import { Album } from '../../renderer/store/modules/album';
@@ -20,19 +21,21 @@ const {
   IPC_ALBUM_CONTENT_REQUEST,
   IPC_ALBUM_GET_LATEST_REQUEST,
   IPC_ALBUM_GET_STATS_REQUEST,
+  IPC_ALBUM_FIND_REQUEST,
   IPC_TRACK_GET_LIST_REQUEST,
   IPC_ALBUM_GET_SINGLE_INFO,
   IPC_ALBUM_EXISTS,
   IPC_ALBUM_DELETE_LIST_REQUEST,
   IPC_ALBUM_CONTENT_RAW_REQUEST,
+  IPC_ARTIST_GET_ALL_REQUEST,
+  IPC_ARTIST_SAVE_REQUEST,
+  IPC_ARTIST_SAVE_LIST_REQUEST,
+  IPC_ARTIST_DELETE_REQUEST,
   IPC_TRACK_GET_LIST_RAW_REQUEST,
   IPC_TRACK_DELETE_LIST_REQUEST
 } = IPC_MESSAGES;
 
-const DEFAULT_SEARCH_FIELDS = ['title', 'artist'];
-
-declare function emit (val: string|number): void;
-declare function emit (key: string|number, value: string|number): void;
+const ALBUM_DEFAULT_SEARCH_FIELDS = ['title'];
 
 type InitDatabaseParams = {
   userDataPath: string;
@@ -65,26 +68,40 @@ export default async function initDatabase({
 
   await fs.ensureDir(Path.join(path, 'playlist'));
   await fs.ensureDir(Path.join(path, 'album'));
+  await fs.ensureDir(Path.join(path, 'artist'));
   await fs.ensureDir(Path.join(path, 'track'));
 
-  const db = {
-    'playlist': new Database({ path, debug, name: 'playlist' }),
-    'album': new Database({ path, debug, name: 'album', views: {
-      groupCountByYear: {
-        map: (doc: Album): void => emit(doc.year, 1),
-        reduce: '_sum'
-      },
-      groupCountByType: {
-        map: (doc: Album): void => emit(doc.type, 1),
-        reduce: '_sum'
-      },
-      groupCountByArtist: {
-        map: (doc: Album): void => emit(doc.artist, 1),
-        reduce: '_sum'
-      }
-    } }),
-    'track': new Database({ path, debug, name: 'track' }),
-  };
+  const db = initDBs({
+    path,
+    debug
+  });
+
+  async function search(query: string): Promise<Album[]> {
+    const { selector = {}, query: originalQuery } = parseQuery(query);
+
+    if (!originalQuery) {
+      return await db.album.find(selector);
+    }
+
+    const foundArtists = await db.artist.search(originalQuery, ['name']);
+    const searchResults = await db.album.search(originalQuery, ALBUM_DEFAULT_SEARCH_FIELDS);
+    const artistResults = await Promise.all(
+      foundArtists.map(
+        async ({ _id }) => db.album.find({ artist: _id })
+      )
+    );
+    const flatArtistResults = artistResults.reduce((memo, x) => [...memo, ...x], []);
+    const results = uniqBy([...searchResults, ...flatArtistResults], '_id');
+
+    const filters = Object.keys(selector);
+    if (filters.length === 0) {
+      return results as Album[];
+    }
+
+    return results.filter((x: { [key: string]: string | number}) =>
+      filters.every((f: string) => x[f] === selector[f])
+    ) as Album[];
+  }
 
   ipc.handle(IPC_PLAYLIST_GET_ALL_REQUEST,
     async () => await db.playlist.findAll()
@@ -106,24 +123,11 @@ export default async function initDatabase({
     async (_event, playlist) => await db.playlist.delete(playlist)
   );
 
-  ipc.handle(IPC_SEARCH_REQUEST, async (_event, query) => {
-    const { selector = {}, query: originalQuery } = parseQuery(query);
+  ipc.handle(IPC_SEARCH_REQUEST, async (_event, query) => await search(query));
 
-    if (!originalQuery) {
-      return await db.album.find(selector);
-    }
-
-    const results = await db.album.search(originalQuery, DEFAULT_SEARCH_FIELDS);
-
-    const filters = Object.keys(selector);
-    if (filters.length === 0) {
-      return results;
-    }
-
-    return results.filter((x: { [key: string]: string | number}) =>
-      filters.every((f: string) => x[f] === selector[f])
-    );
-  });
+  ipc.handle(IPC_ALBUM_FIND_REQUEST,
+    async (_event, selector) => await db.album.find(selector)
+  );
 
   ipc.handle(IPC_ALBUM_GET_LIST_REQUEST,
     async (_event, ids) => await db.album.getList(ids)
@@ -144,6 +148,22 @@ export default async function initDatabase({
 
   ipc.handle(IPC_ALBUM_GET_LATEST_REQUEST,
     async (_event, dateFrom, limit) => await db.album.getLatest({ dateFrom, limit, order: 'desc' })
+  );
+
+  ipc.handle(IPC_ARTIST_GET_ALL_REQUEST,
+    async () => await db.artist.findAll()
+  );
+
+  ipc.handle(IPC_ARTIST_SAVE_REQUEST,
+    async (_event, artist) => await db.artist.save(artist)
+  );
+
+  ipc.handle(IPC_ARTIST_SAVE_LIST_REQUEST,
+    async (_event, artists) => await db.artist.saveBulk(artists)
+  );
+
+  ipc.handle(IPC_ARTIST_DELETE_REQUEST,
+    async (_event, artist) => await db.artist.delete(artist)
   );
 
   ipc.handle(IPC_TRACK_GET_LIST_REQUEST,
