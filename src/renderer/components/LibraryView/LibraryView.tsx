@@ -1,5 +1,4 @@
 import React, { FC, useState, useEffect } from 'react';
-import { findDOMNode } from 'react-dom';
 import { useLocation, useHistory } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -14,6 +13,7 @@ import { Album } from '../../store/modules/album';
 import { Artist } from '../../store/modules/artist';
 import { openContextMenu } from '../../lib/contextMenu';
 import useNativeDrop, { NativeTypes } from '../../hooks/useNativeDrop/useNativeDrop';
+import scrollTo from '../../lib/scrollTo';
 
 import {
   ALBUM_CONTEXT_ACTIONS,
@@ -139,15 +139,10 @@ export const LibraryView: FC<LibraryViewProps> = ({
     history.replace(
       `${LIBRARY}?letter=${letter}`
     );
-    const target = findDOMNode(document.querySelector('.alphabet')) as HTMLElement;
-    if (!target) {
-      return;
-    }
-    setImmediate(() => {
-      target.scrollIntoView({
-        block: 'start',
-        behavior: 'smooth'
-      });
+    scrollTo({
+      selector: '.alphabet',
+      block: 'start',
+      behavior: 'smooth'
     });
   }
 

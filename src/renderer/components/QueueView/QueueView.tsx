@@ -1,5 +1,4 @@
 import React, { ReactElement, useEffect } from 'react';
-import { findDOMNode } from 'react-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { playerSelector } from '../../store/modules/player';
@@ -11,6 +10,7 @@ import { playTrack } from '../../store/modules/player';
 import { updateTitle, UIAlbumView, UIDragTypes } from '../../store/modules/ui';
 import { toObj } from '../../utils/storeUtils';
 import { openContextMenu } from '../../lib/contextMenu';
+import scrollTo from '../../lib/scrollTo';
 import {
   ALBUM_CONTEXT_ACTIONS,
   AlbumActionsGroups
@@ -34,15 +34,10 @@ export const QueueView = (): ReactElement => {
   }, [queue.length]);
 
   useEffect(() => {
-    const target = findDOMNode(document.getElementById(currentAlbumId)) as HTMLElement;
-    if (!target) {
-      return;
-    }
-    setImmediate(() => {
-      target.scrollIntoView({
-        block: 'center',
-        behavior: 'smooth'
-      });
+    scrollTo({
+      selector: `#album-${currentAlbumId}`,
+      block: 'start',
+      behavior: 'smooth'
     });
   }, [currentAlbumId]);
 

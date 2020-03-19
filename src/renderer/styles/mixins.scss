@@ -22,63 +22,14 @@
   }
 }
 
-@mixin albumType($param, $opacity: 1) {
-  &-album {
-    #{$param}: rgba($albumColor, $opacity);
-  }
-  &-ep {
-    #{$param}: rgba($epColor, $opacity);
-  }
-  &-single {
-    #{$param}: rgba($singleColor, $opacity);
-  }
-  &-compilation {
-    #{$param}: rgba($compilationColor, $opacity);
-  }
-  &-remix {
-    #{$param}: rgba($remixColor, $opacity);
-  }
-  &-bootleg {
-    #{$param}: rgba($bootlegColor, $opacity);
-  }
-  &-various {
-    #{$param}: rgba($variousColor, $opacity);
-  }
-  &-soundtrack {
-    #{$param}: rgba($soundtrackColor, $opacity);
-  }
-  &-tribute {
-    #{$param}: rgba($tributeColor, $opacity);
-  }
-}
-
-@mixin albumTypeColor() {
-  &-album {
-    color: $albumColor;
-  }
-  &-ep {
-    color: $epColor;
-  }
-  &-single {
-    color: $singleColor;
-  }
-  &-compilation {
-    color: $compilationColor;
-  }
-  &-remix {
-    color: $remixColor;
-  }
-  &-bootleg {
-    color: $bootlegColor;
-  }
-  &-various {
-    color: $variousColor;
-  }
-  &-soundtrack {
-    color: $soundtrackColor;
-  }
-  &-tribute {
-    color: $tributeColor;
+@mixin albumType($param, $opacity: 1, $opacityHover: 1) {
+  @each $key, $color in $releaseColors {
+    &-#{$key} {
+      #{$param}: rgba($color, $opacity);
+      &:hover {
+        #{$param}: rgba($color, $opacityHover);
+      }
+    }
   }
 }
 

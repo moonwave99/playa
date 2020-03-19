@@ -8,15 +8,17 @@ $mainColor: #9b4dca;
 $hoverColor: #606c76;
 $albumSeparatorColor: darken($highlightColor, 70%);
 
-$albumColor: #F25774;
-$epColor: #0A6ABF;
-$singleColor: #038C73;
-$compilationColor: #BF4904;
-$bootlegColor: #BF8C2C;
-$remixColor: #A31D5F;
-$variousColor: #7F57FF;
-$soundtrackColor: #4371E8;
-$tributeColor: #A45E11;
+$releaseColors: (
+  "album": #F25774,
+  "ep": #0A6ABF,
+  "single": #038C73,
+  "compilation": #BF4904,
+  "bootleg": #BF8C2C,
+  "remix": #A31D5F,
+  "various": #7F57FF,
+  "soundtrack": #4371E8,
+  "tribute": #A45E11
+);
 
 $baseFontSize: 14px;
 $mainUnit: 3rem;

@@ -149,7 +149,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
     'drag-can-drop': canDrop
   });
   return (
-    <article className={albumClasses} id={_id} onContextMenu={_onContextMenu} ref={viewRef}>
+    <article className={albumClasses} id={`album-${_id}`} onContextMenu={_onContextMenu} ref={viewRef}>
       <aside className="album-aside" style={{ backgroundColor: palette.DarkMuted }}>
         <div ref={ref} style={{ opacity }} className="album-cover-wrapper">
           <CoverView
