@@ -1,16 +1,13 @@
 import { ipcRenderer as ipc, Event } from 'electron';
-import React, { ReactElement, FC, useState, useEffect } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import cx from 'classnames';
 import { useTranslation } from 'react-i18next';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { IconName } from '@fortawesome/fontawesome-svg-core';
 import { AlbumListView } from '../AlbumListView/AlbumListView';
 import { Playlist } from '../../store/modules/playlist';
 import { Album } from '../../store/modules/album';
 import { Track } from '../../store/modules/track';
 import { UIAlbumView, UIDragTypes } from '../../store/modules/ui';
 import { EntityHashMap } from '../../utils/storeUtils';
-import { formatDate } from '../../utils/datetimeUtils';
 import './PlaylistView.scss';
 
 import { IPC_MESSAGES } from '../../../constants';
@@ -49,46 +46,9 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
     return (): typeof ipc => ipc.removeListener(IPC_UI_TOGGLE_ALBUM_VIEW, handler);
   }, []);
 
-
-  function renderToggleViewButton(): ReactElement {
-    const { icon, i18nkey, otherView } = {
-      icon: albumView === UIAlbumView.Compact ? 'th-list' : 'list-alt',
-      i18nkey: `playlists.toggleView.show${albumView === UIAlbumView.Compact ? 'Extended' : 'Compact'}`,
-      otherView: albumView === UIAlbumView.Compact ? UIAlbumView.Extended : UIAlbumView.Compact
-    };
-    function onButtonClick(): void {
-      setAlbumView(otherView);
-    }
-    const buttonClasses = cx('playlist-toggle-view-button', {
-      compact: albumView === UIAlbumView.Compact,
-      extended: albumView === UIAlbumView.Extended
-    });
-    return (
-      <button
-        className={buttonClasses}
-        onClick={onButtonClick}>
-        <FontAwesomeIcon icon={icon as IconName} className="button-icon"/>
-        {t(i18nkey)}
-      </button>
-    );
-  }
-
-  const date = formatDate({
-    date: playlist.created,
-    options: { year: 'numeric', month: 'long', day: 'numeric' }
-  });
-
   const playlistClasses = cx('playlist-view', { 'is-current': isCurrent });
 	return (
 		<section className={playlistClasses}>
-      <header className="playlist-header">
-        <p className="playlist-info header-like">
-          <span className="playlist-info-created-on">
-          {t('playlists.createdOn', { date })}
-          </span>
-          { renderToggleViewButton() }
-        </p>
-      </header>
       { hasAlbums
         ? <AlbumListView
             sortable={true}

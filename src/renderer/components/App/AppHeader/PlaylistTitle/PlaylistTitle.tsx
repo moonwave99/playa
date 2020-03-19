@@ -1,11 +1,14 @@
 import React, { ReactElement, useState, useEffect, useRef, KeyboardEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
 import { Playlist, savePlaylistRequest } from '../../../../store/modules/playlist';
 import { setEditPlaylistTitle } from '../../../../store/modules/ui';
 import { ApplicationState } from '../../../../store/store';
+import { formatDate } from '../../../../utils/datetimeUtils';
 
 export const PlaylistTitle = (): ReactElement => {
+	const { t } = useTranslation();
 	const dispatch = useDispatch();
 	const { _id } = useParams();
 	const { playlist, isTitleEditing } = useSelector(({ playlists, ui }: ApplicationState) => {
@@ -81,9 +84,24 @@ export const PlaylistTitle = (): ReactElement => {
 		);
 	}
 
+	function renderTitle(): ReactElement {
+		const date = formatDate({
+			date: playlist.created,
+			options: { year: 'numeric', month: 'long', day: 'numeric' }
+		});
+		return (
+			<h1 className="playlist-title-header" onClick={onTitleClick}>
+				<span className="playlist-title">{title}</span>
+				<span className="playlist-date">
+					{t('playlists.createdOn', { date })}
+				</span>
+			</h1>
+		);
+	}
+
 	return (
 		isTitleEditing
 			? renderForm()
-			: <h1 className="playlist-title" onClick={onTitleClick}>{title}</h1>
+			: renderTitle()
 	);
 }

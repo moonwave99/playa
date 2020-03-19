@@ -2,6 +2,7 @@ import React from 'react';
 import { renderInAll, mockRouter } from '../../../../../../test/testUtils';
 import { toObj } from '../../../../utils/storeUtils';
 import { playlists } from '../../../../../../test/testFixtures';
+import { formatDate } from '../../../../utils/datetimeUtils';
 
 mockRouter({
   routeParams: { _id: '1' },
@@ -23,8 +24,27 @@ describe('PlaylistTitle', () => {
     const wrapper = renderInAll(
 			<PlaylistTitle/>
 		, defaultStore);
-    expect(wrapper.is('h1.playlist-title')).toBe(true);
-    expect(wrapper.text()).toEqual(playlists[0].title);
+    expect(wrapper.is('h1.playlist-title-header')).toBe(true);
+    expect(wrapper.find('.playlist-title').text()).toEqual(playlists[0].title);
+  });
+
+  it('should contain the playlist date', () => {
+    const defaultStore = {
+      playlists: {
+        allById: toObj(playlists)
+      },
+      ui: {
+        editPlaylistTitle: false
+      }
+    };
+    const wrapper = renderInAll(
+			<PlaylistTitle/>
+		, defaultStore);
+    expect(wrapper.find('.playlist-date').text())
+      .toEqual(`Created on ${formatDate({
+        date: playlists[0].created,
+        options: { year: 'numeric', month: 'long', day: 'numeric' }
+      })}`);
   });
 
 	it('should display a form when editPlaylistTitle in store = true', () => {

@@ -2,70 +2,11 @@
 @import "../../styles/mixins";
 
 .playlist-view {
-  padding: 0;
+  padding: var(--section-gutter) 0 0 0;
   overflow: auto;
   height: 100%;
   width: 100%;
   @include fadeInOut();
-  .playlist-header {
-    padding:
-      var(--section-gutter)
-      var(--section-gutter)
-      calc(var(--section-gutter) * .5)
-      var(--section-gutter);
-    @media (max-width: $miniWindowThreshold) {
-      @include horizontalSeparator($separatorWidth: calc(100vw - 2 * var(--section-gutter)));
-    }
-    .playlist-header-row {
-      display: flex;
-      flex-direction: row;
-      .header-like,
-      h1 {
-        margin: 0;
-        line-height: $mainUnit;
-        font-size: 2rem;
-        color: $highlightColor;
-        font-weight: normal;
-        letter-spacing: -.1rem;
-        transition: background-color .3s ease-in;
-      }
-      form {
-        flex: 1;
-        .header-like {
-          color: $lightColor;
-          flex: 1;
-          padding: 0;
-          border-radius: 0;
-          border-top: none;
-          border-left: none;
-          border-right: none;
-          border-bottom: 1px solid $mainColor;
-          background-color: $backgroundLightColor;
-        }
-      }
-    }
-    .playlist-info {
-      display: flex;
-      line-height: 2rem;
-      margin: 0;
-      .playlist-toggle-view-button {
-        background: none;
-        outline: none;
-        border: none;
-        color: $highlightColor;
-        margin-left: auto;
-        @media (max-width: $miniWindowThreshold) {
-          display: none;
-        }
-        &:hover {
-          text-decoration: underline;
-        }
-        .button-icon {
-          margin-right: .5rem;
-        }
-      }
-    }
-  }
   .album-list {
     list-style: none;
     padding: 0;

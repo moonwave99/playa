@@ -70,6 +70,19 @@
 			flex: 1;
 			padding-top: 2px;
 		}
+		.playlist-title-header {
+			display: flex;
+			flex-direction: column;
+			line-height: 1.5rem;
+			padding-top: .25rem;
+			.playlist-title {
+				font-size: 1.2rem;
+			}
+			.playlist-date {
+				font-size: .8rem;
+				color: darken($lightColor, 30%);
+			}
+		}
 	}
 
 	@media (max-width: $smallWindowThreshold) {
