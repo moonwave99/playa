@@ -101,7 +101,8 @@
   &.loaded {
     > img {
      opacity: 1;
-     border: 1px solid rgba($darkColor, .1);
+     border: 1px solid rgba($highlightColor, .1);
+     border-radius: .25rem;
      background-color: transparent;
    }
   }
