@@ -26,14 +26,14 @@ const defaultStore = {
 };
 
 describe('AllPlaylistsView', () => {
-  it('should render a .all-playlists-view', () => {
+  it('should render a .all-playlists', () => {
     const wrapper = renderInAll(
       <AllPlaylistsView
         playlists={playlists}
         onPlaylistDelete={jest.fn()}
         onPlaylistContextMenu={jest.fn()}/>
       , defaultStore);
-    expect(wrapper.is('.all-playlists-view')).toBe(true);
+    expect(wrapper.is('.all-playlists')).toBe(true);
   });
 
   it('should render n=playlists length rows', () => {

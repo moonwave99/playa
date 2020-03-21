@@ -5,7 +5,8 @@ import {
   toObj,
   toArray,
   ensureAll,
-  updateId
+  updateId,
+  removeIds
 } from '../../utils/storeUtils';
 
 import { ApplicationState } from '../store';
@@ -114,6 +115,12 @@ export const ALBUM_GET_LIST_REQUEST     = 'playa/album/GET_LIST_REQUEST';
 export const ALBUM_GET_LIST_RESPONSE    = 'playa/album/GET_LIST_RESPONSE';
 export const ALBUM_GET_CONTENT_REQUEST  = 'playa/album/GET_CONTENT_REQUEST';
 export const ALBUM_GET_CONTENT_RESPONSE = 'playa/album/GET_CONTENT_RESPONSE';
+export const ALBUM_DELETE_REQUEST       = 'playa/album/DELETE_REQUEST';
+export const ALBUM_DELETE_RESPONSE      = 'playa/album/DELETE_RESPONSE';
+export const ALBUM_DELETE_LIST_REQUEST  = 'playa/album/DELETE_LIST_REQUEST';
+export const ALBUM_DELETE_LIST_RESPONSE = 'playa/album/DELETE_LIST_RESPONSE';
+
+
 
 interface GetAlbumRequestAction {
   type: typeof ALBUM_GET_REQUEST;
@@ -150,6 +157,16 @@ interface GetAlbumContentResponseAction {
   album: Album;
 }
 
+interface DeleteAlbumResponseAction {
+  type: typeof ALBUM_DELETE_RESPONSE;
+  album: Album;
+}
+
+interface DeleteAlbumListResponseAction {
+  type: typeof ALBUM_DELETE_LIST_RESPONSE;
+  albums: Album[];
+}
+
 export type AlbumActionTypes =
     GetAlbumRequestAction
   | GetAlbumResponseAction
@@ -157,7 +174,9 @@ export type AlbumActionTypes =
   | GetAlbumListRequestAction
   | GetAlbumListResponseAction
   | GetAlbumContentRequestAction
-  | GetAlbumContentResponseAction;
+  | GetAlbumContentResponseAction
+  | DeleteAlbumResponseAction
+  | DeleteAlbumListResponseAction;
 
 export const getAlbumRequest = (id: Album['_id']): Function =>
   async (dispatch: Function, getState: Function): Promise<void> => {
@@ -256,6 +275,16 @@ export default function reducer(
       return {
         ...state,
         allById: updateId(state.allById, action.album._id, action.album)
+      };
+    case ALBUM_DELETE_RESPONSE:
+      return {
+        ...state,
+        allById: removeIds(state.allById, [action.album._id])
+      };
+    case ALBUM_DELETE_LIST_RESPONSE:
+      return {
+        ...state,
+        allById: removeIds(state.allById, action.albums.map(({ _id }) => _id))
       };
     case ALBUM_GET_CONTENT_REQUEST:
     case ALBUM_GET_LIST_REQUEST:

@@ -1,6 +1,7 @@
 import React, { ReactElement, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect, useParams } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import cx from 'classnames';
 import { AlbumGridView } from '../LibraryView/AlbumGridView/AlbumGridView';
 import './ArtistView.scss';
@@ -31,11 +32,13 @@ import {
 
 import {
   LIBRARY_CONTENT_CONTEXT_ACTIONS,
-  LibraryContentActionGroups
+  LibraryContentActionGroups,
+  LibraryContentActions
 } from '../../actions/libraryContentActions';
 
 export const ArtistView = (): ReactElement => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const { _id } = useParams();
   const {
     artist,
@@ -106,10 +109,40 @@ export const ArtistView = (): ReactElement => {
 	}
 
   function renderReleases(): ReactElement {
+    const groups = Object.entries(albums);
+    if (groups.length === 0) {
+      return (<p className="artist-empty-placeholder">{t('artist.empty')}</p>);
+    }
     return (
       <section className="artist-releases">
       {
-        Object.entries(albums).map(([type, releases]) => {
+        groups.map(([type, releases]) => {
+          function onAlbumEnter(selection: Album['_id'][]): void {
+            if (selection.length === 0) {
+              return;
+            }
+            const album = releases.find(({ _id }) => _id === selection[0]);
+            if (!album) {
+              return;
+            }
+            actionsMap(AlbumActions.PLAY_ALBUM)({
+              albums: [{ album, artist: {} as Artist }],
+              queue: [album._id],
+              dispatch
+            }).handler();
+          }
+
+          function onAlbumBackspace(selectionIDs: Album['_id'][]): void {
+            const selection: Album[] = releases.filter(
+              ({ _id }) => selectionIDs.indexOf(_id) > -1
+            );
+            actionsMap(LibraryContentActions.REMOVE_ALBUM)({
+              selection,
+              currentAlbumId,
+              dispatch
+            }).handler();
+          }
+
           const sectionClassNames = cx('artist-release-group', `artist-release-group-${type}`);
           return (
             <section className={sectionClassNames} key={type}>
@@ -117,6 +150,8 @@ export const ArtistView = (): ReactElement => {
                 showArtists={false}
                 albums={releases}
                 currentAlbumId={currentAlbumId}
+                onEnter={onAlbumEnter}
+                onBackspace={onAlbumBackspace}
                 onAlbumContextMenu={onAlbumContextMenu}
                 onAlbumDoubleClick={onAlbumDoubleClick}/>
             </section>

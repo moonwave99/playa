@@ -1,4 +1,4 @@
-import React, { FC, useRef } from 'react';
+import React, { FC, useRef, MouseEvent } from 'react';
 import cx from 'classnames';
 import { Album } from '../../../../store/modules/album';
 
@@ -35,8 +35,8 @@ export const CoverView: FC<CoverViewProps> = ({
     onImageLoad && onImageLoad(src);
   }
 
-  function onFigureClick(): void {
-    onClick && onClick(album);
+  function onFigureClick(event: MouseEvent): void {
+    onClick && onClick(event, album);
   }
 
   function onFigureDoubleClick(): void {

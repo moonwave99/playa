@@ -17,4 +17,7 @@
 			border-bottom: 1px solid darken($lightColor, 50%);
 		}
 	}
+	&-empty-placeholder {
+    @include emptyComponent();
+  }
 }

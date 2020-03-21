@@ -54,6 +54,9 @@
         }
       }
     },
+    "artist": {
+      "empty": "Artist has no releases."
+    },
     "albums": {
       "props": {
         "artist": "Artist",

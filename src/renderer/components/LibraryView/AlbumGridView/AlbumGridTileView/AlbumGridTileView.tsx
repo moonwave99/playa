@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef } from 'react';
+import React, { FC, useEffect, useRef, MouseEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDrag } from 'react-dnd';
 import { Link, generatePath } from 'react-router-dom';
@@ -21,17 +21,23 @@ import { formatArtist } from '../../../../utils/albumUtils';
 type AlbumGridTileViewProps = {
   album: Album;
   showArtist?: boolean;
+  selected?: boolean;
   isPlaying?: boolean;
-  onContextMenu?: Function;
+  style?: object;
+  onClick?: Function;
   onDoubleClick?: Function;
+  onContextMenu?: Function;
 };
 
 export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
   album,
   showArtist = true,
   isPlaying = false,
-  onContextMenu,
-  onDoubleClick
+  selected = false,
+  style,
+  onClick,
+  onDoubleClick,
+  onContextMenu
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
@@ -69,30 +75,37 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
     dispatch(getCoverRequest(album));
   }, [album]);
 
-  function _onContextMenu(): void {
-    onContextMenu && onContextMenu(album, artist);
+
+  function _onClick(event: MouseEvent): void {
+    onClick && onClick(event, album, artist);
   }
 
   function _onDoubleClick(): void {
     onDoubleClick && onDoubleClick(album, artist);
   }
 
+  function _onContextMenu(): void {
+    onContextMenu && onContextMenu(album, artist);
+  }
+
   const { title, year } = album;
 
   const classNames = cx('album-grid-tile', {
     'is-playing': isPlaying,
+    'selected': selected,
     'drag-is-over': isOver,
     'drag-can-drop': canDrop
   });
 	return (
     <article
-      style={{ opacity }}
+      style={{ ...style, opacity }}
       className={classNames}>
       <div ref={ref} className="album-grid-tile-drag-wrapper">
         <CoverView
           className="album-cover"
           src={cover}
           album={album}
+          onClick={_onClick}
           onDoubleClick={_onDoubleClick}
           onContextMenu={_onContextMenu}/>
       </div>

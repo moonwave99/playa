@@ -1,12 +1,12 @@
 @import "../../styles/variables";
 @import "../../styles/mixins";
 
-.all-playlists-view {
+.all-playlists {
   padding: var(--section-gutter);
   height: 100%;
   width: 100%;
   overflow: auto;
-  .all-playlists-table {
+  &-table {
     width: 100%;
     border-spacing: 0;
   	border-collapse: collapse;
@@ -59,7 +59,7 @@
       }
     }
   }
-  .all-playlists-empty-placeholder {
+  &-empty-placeholder {
     @include emptyComponent();
   }
 }

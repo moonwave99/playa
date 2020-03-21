@@ -10,6 +10,7 @@ import {
 import {
   Album,
   ALBUM_GET_LIST_RESPONSE,
+  ALBUM_DELETE_LIST_RESPONSE,
   saveAlbumRequest
 } from './album';
 
@@ -130,7 +131,7 @@ export const importAlbum = ({
         ? VARIOUS_ARTISTS_ID
         : artistToSave._id || `${+latestArtistId + 1}`
     };
-    
+
     dispatch(
       getTrackListRequest(
         tracks.map(({ _id }) => _id )
@@ -146,7 +147,6 @@ export const importAlbum = ({
       results: [updatedAlbum]
     });
   }
-//
 
 export const removeAlbums = (albumsToRemove: Album[]): Function =>
   async (dispatch: Function, getState: Function): Promise<void> => {
@@ -167,7 +167,13 @@ export const removeAlbums = (albumsToRemove: Album[]): Function =>
       return;
     }
 
-    const artistsToUpdate = albumsToRemove.reduce((memo: Artist[], { isAlbumFromVA, artist: artistId }: Album) => {
+    dispatch({
+      type: ALBUM_DELETE_LIST_RESPONSE,
+      albums: albumsToRemove
+    });
+
+    const artistsToUpdate = albumsToRemove
+      .reduce((memo: Artist[], { isAlbumFromVA, artist: artistId }: Album) => {
       if (isAlbumFromVA) {
         return memo;
       }

@@ -41,7 +41,7 @@ export const removeAlbumsAction: ActionCreator<ActionParams> = ({
 export const LIBRARY_CONTENT_CONTEXT_ACTIONS = 'playa/context-menu/library-content-actions';
 
 export enum LibraryContentActions {
-  REMOVE_ALBUM = 'REMOVE_ALBUM'
+  REMOVE_ALBUM = 'REMOVE_ALBUM_FROM_LIBRARY'
 }
 
 export const LibraryContentActionsMap: { [key: string]: ActionCreator<ActionParams> } = {

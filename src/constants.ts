@@ -32,9 +32,35 @@ export const COLORS = {
   BACKGROUND_COLOR: '#1F1F1F'
 };
 
-export const LIBRARY_GRID_COLUMN_COUNT = 5;
 export const LIBRARY_LATEST_ALBUM_LIMIT = 10;
 export const LIBRARY_LATEST_DAY_COUNT = 90;
+
+export const ALBUM_GRID_THRESHOLDS = [
+  {
+    width: 1400,
+    columns: 7
+  },
+  {
+    width: 1200,
+    columns: 6
+  },
+  {
+    width: 1000,
+    columns: 5
+  },
+  {
+    width: 800,
+    columns: 4
+  },
+  {
+    width: 600,
+    columns: 3
+  },
+  {
+    width: 400,
+    columns: 2
+  }
+];
 
 export const FONTS = ['Fira Mono', 'Inter UI', 'Nunito'];
 

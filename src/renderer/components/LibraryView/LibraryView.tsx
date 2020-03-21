@@ -23,7 +23,8 @@ import {
 
 import {
   LIBRARY_CONTENT_CONTEXT_ACTIONS,
-  LibraryContentActionGroups
+  LibraryContentActionGroups,
+  LibraryContentActions
 } from '../../actions/libraryContentActions';
 
 import actionsMap from '../../actions/actions';
@@ -136,6 +137,32 @@ export const LibraryView: FC<LibraryViewProps> = ({
     }).handler();
 	}
 
+  function onAlbumEnter(selection: Album['_id'][]): void {
+    if (selection.length === 0) {
+      return;
+    }
+    const album = latest.find(({ _id }) => _id === selection[0]);
+    if (!album) {
+      return;
+    }
+    actionsMap(AlbumActions.PLAY_ALBUM)({
+      albums: [{ album, artist: {} as Artist }],
+      queue: [album._id],
+      dispatch
+    }).handler();
+  }
+
+  function onAlbumBackspace(selectionIDs: Album['_id'][]): void {
+    const selection: Album[] = latest.filter(
+      ({ _id }) => selectionIDs.indexOf(_id) > -1
+    );
+    actionsMap(LibraryContentActions.REMOVE_ALBUM)({
+      selection,
+      currentAlbumId,
+      dispatch
+    }).handler();
+  }
+
   function onLetterClick(letter: string): void {
     setSelectedLetter(letter);
     history.replace(
@@ -159,6 +186,8 @@ export const LibraryView: FC<LibraryViewProps> = ({
         albums={latest}
         currentAlbumId={currentAlbumId}
         loading={loadingLatest}
+        onAlbumEnter={onAlbumEnter}
+        onAlbumBackspace={onAlbumBackspace}
         onAlbumContextMenu={onAlbumContextMenu}
         onAlbumDoubleClick={onAlbumDoubleClick}/>
       {

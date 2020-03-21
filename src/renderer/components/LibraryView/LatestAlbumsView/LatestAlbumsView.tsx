@@ -10,6 +10,8 @@ type LatestAlbumsViewProps = {
   albums: Album[];
   currentAlbumId: Album['_id'];
   loading: boolean;
+  onAlbumEnter: Function;
+  onAlbumBackspace: Function;
   onAlbumContextMenu: Function;
   onAlbumDoubleClick: Function;
 };
@@ -18,6 +20,8 @@ export const LatestAlbumsView: FC<LatestAlbumsViewProps> = ({
   albums = [],
   currentAlbumId,
   loading = false,
+  onAlbumEnter,
+  onAlbumBackspace,
   onAlbumContextMenu,
   onAlbumDoubleClick
 }) => {
@@ -28,6 +32,8 @@ export const LatestAlbumsView: FC<LatestAlbumsViewProps> = ({
       <AlbumGridView
         albums={albums}
         currentAlbumId={currentAlbumId}
+        onEnter={onAlbumEnter}
+        onBackspace={onAlbumBackspace}
         onAlbumContextMenu={onAlbumContextMenu}
         onAlbumDoubleClick={onAlbumDoubleClick}/>
     );

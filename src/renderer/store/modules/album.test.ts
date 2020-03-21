@@ -16,7 +16,9 @@ import reducer, {
   ALBUM_GET_LIST_REQUEST,
   ALBUM_GET_LIST_RESPONSE,
   ALBUM_GET_CONTENT_REQUEST,
-  ALBUM_GET_CONTENT_RESPONSE
+  ALBUM_GET_CONTENT_RESPONSE,
+  ALBUM_DELETE_RESPONSE,
+  ALBUM_DELETE_LIST_RESPONSE
 } from './album';
 
 import { TRACK_GET_LIST_RESPONSE } from './track';
@@ -157,6 +159,33 @@ describe('album reducer', () => {
       allById: {
         ...allById,
         '1': updatedAlbum
+      }
+    });
+  });
+
+  it('should handle ALBUM_DELETE_RESPONSE', () => {
+    const album = albums[0];
+    expect(reducer({
+      allById: toObj(albums)
+    } as AlbumState, {
+      type: ALBUM_DELETE_RESPONSE,
+      album
+    })).toEqual({
+      allById: {
+        [albums[1]._id]: albums[1]
+      }
+    });
+  });
+
+  it('should handle ALBUM_DELETE_LIST_RESPONSE', () => {
+    expect(reducer({
+      allById: toObj(albums)
+    } as AlbumState, {
+      type: ALBUM_DELETE_LIST_RESPONSE,
+      albums: [albums[0]]
+    })).toEqual({
+      allById: {
+        [albums[1]._id]: albums[1]
       }
     });
   });

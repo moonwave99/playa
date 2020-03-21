@@ -23,11 +23,11 @@ $releaseColors: (
 $baseFontSize: 14px;
 $mainUnit: 3rem;
 
-$wideWindowThreshold: 25 * $mainUnit;
-$smallWindowThreshold: 21 * $mainUnit;
-$miniWindowThreshold: 15 * $mainUnit;
+$wideWindowThreshold: 1200px;
+$smallWindowThreshold: 960px;
+$miniWindowThreshold: 640px;
 
-$sidebarWidth: 27rem;
+$sidebarWidth: 21rem;
 $smallSidebarWidth: 21rem;
 $searchResultsCoverWidth: 1.2 * $mainUnit;
 

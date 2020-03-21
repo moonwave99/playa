@@ -31,6 +31,13 @@ describe('ArtistView', () => {
 		expect(wrapper.is('.artist')).toBe(true);
   });
 
+  it('should render an .artist-empty-placeholder if artist has no releases', () => {
+    const wrapper = renderInAll(
+			<ArtistView/>
+		, defaultStore);
+    expect(wrapper.find('.artist-empty-placeholder')).toHaveLength(1);
+  });
+
   it('should update page title', () => {
     mountInAll(
       <ArtistView/>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { renderInAll } from '../../../../../test/testUtils';
+import { renderInAll, mountInAll } from '../../../../../test/testUtils';
 import { albums, artists } from '../../../../../test/testFixtures';
 import { toObj } from '../../../utils/storeUtils';
 import { AlbumGridView } from './AlbumGridView';
@@ -41,7 +41,7 @@ describe('AlbumGridView', () => {
   });
 
   it('should render n=albums.length .album-grid-tile', () => {
-    const wrapper = renderInAll(
+    const wrapper = mountInAll(
       <AlbumGridView
         albums={albums}
         currentAlbumId={null}

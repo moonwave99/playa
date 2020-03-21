@@ -20,7 +20,8 @@ import { PLAYLIST_GET_LIST_RESPONSE } from './playlist';
 import {
   Album,
   ALBUM_SAVE_RESPONSE,
-  ALBUM_GET_LIST_RESPONSE
+  ALBUM_GET_LIST_RESPONSE,
+  ALBUM_DELETE_LIST_RESPONSE,
 } from './album';
 
 import {
@@ -175,6 +176,10 @@ describe('library actions', () => {
       });
       const expectedActions = [
         {
+          type: ALBUM_DELETE_LIST_RESPONSE,
+          albums: [albums[0]]
+        },
+        {
           type: ARTIST_GET_LIST_RESPONSE,
           artists: [{ ...artists[0], count: artists[0].count - 1}]
         },
@@ -241,6 +246,10 @@ describe('library actions', () => {
         }
       });
       const expectedActions = [
+        {
+          type: ALBUM_DELETE_LIST_RESPONSE,
+          albums: [albums[0]]
+        },        
         {
           type: ARTIST_GET_LIST_RESPONSE,
           artists: [{ ...artists[0], count: artists[0].count - 1}]

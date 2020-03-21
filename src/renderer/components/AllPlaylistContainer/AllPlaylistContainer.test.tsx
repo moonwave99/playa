@@ -27,11 +27,11 @@ const defaultStore = {
 };
 
 describe('AllPlaylistContainer', () => {
-  it('should contain a .all-playlists-view', () => {
+  it('should contain a .all-playlists', () => {
     const wrapper = renderInAll(
       <AllPlaylistContainer playlists={playlists}/>
       , defaultStore);
-    expect(wrapper.is('.all-playlists-view')).toBe(true);
+    expect(wrapper.is('.all-playlists')).toBe(true);
   });
 
   it('should update page title', () => {

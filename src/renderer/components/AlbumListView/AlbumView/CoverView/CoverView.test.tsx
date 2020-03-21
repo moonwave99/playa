@@ -42,7 +42,7 @@ describe('CoverView', () => {
       <CoverView src='path/to/image.jpg' album={albums[0]} onClick={handler}/>
     );
     wrapper.simulate('click');
-    expect(handler).toHaveBeenCalledWith(albums[0]);
+    expect(handler).toHaveBeenCalled();
   });
 
   it('should call the onDoubleClick handler when clicked', () => {
