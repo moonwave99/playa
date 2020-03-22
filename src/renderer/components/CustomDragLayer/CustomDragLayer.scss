@@ -1,8 +1,5 @@
-@import "../../../styles/variables";
-@import "../../../styles/mixins";
-
-$countBadgeSize: 1.5rem;
-$countBadgeOffset: 2rem;
+@import "../../styles/variables";
+@import "../../styles/mixins";
 
 .custom-drag-layer {
   position: fixed;
@@ -13,10 +10,10 @@ $countBadgeOffset: 2rem;
   width: 100%;
   height: 100%;
 
-  .search-results-drag-preview {
-    @include albumCover($searchResultsCoverWidth, $backgroundDarkColor);
-    width: $searchResultsCoverWidth;
-    height: $searchResultsCoverWidth;
+  .album-drag-preview {
+    @include albumCover($dragPreviewCoverWidth, $backgroundDarkColor);
+    width: $dragPreviewCoverWidth;
+    height: $dragPreviewCoverWidth;
     background-color: $backgroundLightColor;
     position: relative;
     border: 1px solid darken($lightColor, 40%);
@@ -25,15 +22,15 @@ $countBadgeOffset: 2rem;
     .count-badge {
       @include monospace();
       background-color: red;
-      width: $countBadgeSize;
-      height: $countBadgeSize;
+      width: $dragPreviewCountBadgeSize;
+      height: $dragPreviewCountBadgeSize;
       border-radius: 50%;
       position: absolute;
-      left: $countBadgeOffset;
-      bottom: -$countBadgeOffset;
+      left: $dragPreviewCountBadgeOffset;
+      bottom: -$dragPreviewCountBadgeOffset;
       color: $highlightColor;
       text-align: center;
-      line-height: $countBadgeSize;
+      line-height: $dragPreviewCountBadgeSize;
       vertical-align: middle;
       font-size: 0.9rem;
     }

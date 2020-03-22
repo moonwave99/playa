@@ -9,7 +9,7 @@ const {
 
 const MAX_TITLE_LENGTH = 50;
 
-function trimTitle(title: string): string {
+function trimTitle(title = ''): string {
   return title.length > MAX_TITLE_LENGTH
     ? `${title.substr(0, MAX_TITLE_LENGTH)}…`
     : title;

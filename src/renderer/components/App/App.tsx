@@ -17,6 +17,7 @@ import { SidebarView } from '../SidebarView/SidebarView';
 import { AllPlaylistContainer } from '../AllPlaylistContainer/AllPlaylistContainer';
 import { PlaylistContainer } from '../PlaylistContainer/PlaylistContainer';
 import { ImportView } from '../LibraryView/ImportView/ImportView';
+import { CustomDragLayer } from '../CustomDragLayer/CustomDragLayer';
 
 import './App.scss';
 
@@ -246,6 +247,7 @@ export const App: FC<AppProps> = ({
       <div className="player-wrapper">
         <PlayerView player={player} waveformBasePath={waveformBasePath}/>
       </div>
+      <CustomDragLayer/>
       { showImportModal
         ? <ReactModal
             className={{

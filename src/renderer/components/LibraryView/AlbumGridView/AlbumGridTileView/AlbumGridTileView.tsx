@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useRef, MouseEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDrag } from 'react-dnd';
+import { getEmptyImage } from 'react-dnd-html5-backend';
 import { Link, generatePath } from 'react-router-dom';
 import cx from 'classnames';
 import { CoverView } from '../../../AlbumListView/AlbumView/CoverView/CoverView';
@@ -23,27 +24,36 @@ type AlbumGridTileViewProps = {
   showArtist?: boolean;
   selected?: boolean;
   isPlaying?: boolean;
+  isDragging?: boolean;
   style?: object;
+  selectedIDs?: string[];
   onClick?: Function;
   onDoubleClick?: Function;
   onContextMenu?: Function;
+  onDragBegin?: Function;
+  onDragEnd?: Function;
 };
 
 export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
   album,
   showArtist = true,
   isPlaying = false,
+  isDragging = false,
   selected = false,
   style,
+  selectedIDs = [],
   onClick,
   onDoubleClick,
-  onContextMenu
+  onContextMenu,
+  onDragBegin,
+  onDragEnd
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
   const { _id, artist: artistId } = album;
-  const artist = useSelector((state: ApplicationState) => artistSelectors.findById(state, artistId));
   const cover = useSelector((state: ApplicationState) => coverSelectors.findById(state, _id));
+  const artist = useSelector((state: ApplicationState) => artistSelectors.findById(state, artistId));
+  const selection = selectedIDs.indexOf(_id) > -1 ? selectedIDs : [_id];
 
   function onDrop(url: string): void {
     dispatch(getCoverFromUrlRequest(album, url));
@@ -58,16 +68,19 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
     filter: (type: string) => type.startsWith('image')
   });
 
-  const [{ opacity }, drag] = useDrag({
+  const [, drag, preview] = useDrag({
     item: {
       type: UIDragTypes.LIBRARY_ALBUMS,
       _id,
-      selection: [_id]
+      selection
     },
-    collect: monitor => ({
-      opacity: monitor.isDragging() ? 0.4 : 1,
-    })
+    begin: () => onDragBegin && onDragBegin(),
+    end: () => onDragEnd && onDragEnd()
   });
+
+  useEffect(() => {
+    preview(getEmptyImage(), { captureDraggingState: true })
+  }, [])
 
   drag(drop(ref));
 
@@ -94,12 +107,14 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
     'is-playing': isPlaying,
     'selected': selected,
     'drag-is-over': isOver,
-    'drag-can-drop': canDrop
+    'drag-can-drop': canDrop,
+    'is-dragging': isDragging && selected
   });
 	return (
     <article
-      style={{ ...style, opacity }}
-      className={classNames}>
+      style={style}
+      className={classNames}
+      id={`album-grid-tile-${_id}`}>
       <div ref={ref} className="album-grid-tile-drag-wrapper">
         <CoverView
           className="album-cover"

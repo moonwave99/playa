@@ -44,7 +44,7 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
   const { _id, artist: artistId } = album;
   const cover = useSelector((state: ApplicationState) => coverSelectors.findById(state, _id));
   const artist = useSelector((state: ApplicationState) => artistSelectors.findById(state, artistId));
-  const selection = selectedIDs.indexOf(_id) > -1 ? selectedIDs : [_id]
+  const selection = selectedIDs.indexOf(_id) > -1 ? selectedIDs : [_id];
   const [{ isDragging }, drag, preview] = useDrag({
     item: {
       type: UIDragTypes.SEARCH_RESULTS,

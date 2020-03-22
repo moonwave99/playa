@@ -54,9 +54,9 @@ describe('Import album into library', () => {
 
     // Check album is inside recent albums grid
     await app.client.waitUntil(async () => {
-      const renderedTitle = await app.client.getText('.album-grid-tile .album-title');
-      const renderedArtist = await app.client.getText('.album-grid-tile .album-artist');
-      const renderedYear = await app.client.getText('.album-grid-tile .album-year');
+      const renderedTitle = await app.client.getText('#album-grid-tile-1 .album-title');
+      const renderedArtist = await app.client.getText('#album-grid-tile-1 .album-artist');
+      const renderedYear = await app.client.getText('#album-grid-tile-1 .album-year');
       return renderedTitle === title
         && renderedArtist === artist
         && +renderedYear === year;
@@ -75,8 +75,8 @@ describe('Import album into library', () => {
     // check that single artist page contains album
     await app.client.click(`#artist-${artist}`);
     await app.client.waitUntil(async () => {
-      const renderedTitle = await app.client.getText('.album-grid-tile .album-title');
-      const renderedYear = await app.client.getText('.album-grid-tile .album-year');
+      const renderedTitle = await app.client.getText('#album-grid-tile-1 .album-title');
+      const renderedYear = await app.client.getText('#album-grid-tile-1 .album-year');
       return renderedTitle === title
         && +renderedYear === year;
     });
@@ -113,9 +113,9 @@ describe('Import album into library', () => {
 
     // Check album is inside recent albums grid
     await app.client.waitUntil(async () => {
-      const renderedTitle = await app.client.getText('.album-grid-tile .album-title');
-      const renderedArtist = await app.client.getText('.album-grid-tile .album-artist');
-      const renderedYear = await app.client.getText('.album-grid-tile .album-year');
+      const renderedTitle = await app.client.getText('#album-grid-tile-1 .album-title');
+      const renderedArtist = await app.client.getText('#album-grid-tile-1 .album-artist');
+      const renderedYear = await app.client.getText('#album-grid-tile-1 .album-year');
       return renderedTitle === title
         && renderedArtist === artist
         && +renderedYear === year;
@@ -134,8 +134,8 @@ describe('Import album into library', () => {
     // check that single artist page contains album
     await app.client.click(`#artist-${artist}`);
     await app.client.waitUntil(async () => {
-      const renderedTitle = await app.client.getText('.album-grid-tile .album-title');
-      const renderedYear = await app.client.getText('.album-grid-tile .album-year');
+      const renderedTitle = await app.client.getText('#album-grid-tile-1 .album-title');
+      const renderedYear = await app.client.getText('#album-grid-tile-1 .album-year');
       return renderedTitle === title
         && +renderedYear === year;
     });

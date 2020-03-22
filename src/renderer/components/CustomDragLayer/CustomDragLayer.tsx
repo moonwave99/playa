@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 import { XYCoord, useDragLayer } from 'react-dnd';
-import { UIDragTypes } from '../../../store/modules/ui';
+import { UIDragTypes } from '../../store/modules/ui';
 
 import './CustomDragLayer.scss';
 
@@ -47,9 +47,10 @@ export const CustomDragLayer = (): ReactElement => {
 
   function renderItem(): ReactElement {
     switch (itemType) {
+      case UIDragTypes.LIBRARY_ALBUMS:
       case UIDragTypes.SEARCH_RESULTS:
         return (
-          <div className="search-results-drag-preview">
+          <div className="album-drag-preview">
             { item.selection.length > 1
               ? <span className="count-badge">{item.selection.length}</span>
               : null }

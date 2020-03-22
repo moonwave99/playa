@@ -24,6 +24,11 @@
           z-index: 1000;
         }
       }
+      &.is-dragging {
+        .album-cover {
+          opacity: .4;
+        }
+      }
       .album-cover {
         @include squareCover($backgroundDarkColor);
         @include droppable();

@@ -7,7 +7,7 @@ import {
 } from 'react';
 
 import Mousetrap from 'mousetrap';
-import { chunk } from 'lodash';
+import { chunk, without } from 'lodash';
 
 type ListenerEvent = MouseEvent & {
   target: Element;
@@ -27,15 +27,6 @@ type OnItemClickParams = {
   metaKey: boolean;
   shiftKey: boolean;
 };
-
-type UseGridParams = {
-  items: HasId[];
-  thresholds: Threshold[];
-  onEnter?: Function;
-  onBackspace?: Function;
-  onTopOverflow?: Function;
-  onBottomOverflow?: Function;
-}
 
 type GetRowsParams = {
   items: HasId[];
@@ -89,9 +80,20 @@ function locateSelection({
   return [x, y];
 }
 
+type UseGridParams = {
+  items: HasId[];
+  thresholds: Threshold[];
+  excludeClass?: string;
+  onEnter?: Function;
+  onBackspace?: Function;
+  onTopOverflow?: Function;
+  onBottomOverflow?: Function;
+}
+
 export default function useGrid({
   items = [],
   thresholds,
+  excludeClass = '',
   onEnter,
   onBackspace,
   onTopOverflow,
@@ -111,11 +113,12 @@ export default function useGrid({
   const ref = useRef(null);
 
   const listener = (event: ListenerEvent): void => {
-    if (ref && ref.current) {
-      if (!ref.current.contains(event.target)) {
-        setFocus(false);
-        setSelection([]);
-      }
+    if (!ref || !ref.current) {
+      return;
+    }
+    if (!ref.current.contains(event.target) || !event.target.classList.contains(excludeClass)) {
+      setFocus(false);
+      setSelection([]);
     }
   };
 
@@ -123,11 +126,9 @@ export default function useGrid({
     if (ref.current) {
       document.removeEventListener('click', listener);
     }
-
     if (node) {
       document.addEventListener('click', listener);
     }
-
     ref.current = node
   }, [items, listener])
 
@@ -235,8 +236,16 @@ export default function useGrid({
     };
   }, [items, rows, selection]);
 
-  function onItemClick({ _id }: OnItemClickParams): void {
+  function onItemClick({ _id, metaKey }: OnItemClickParams): void {
     setFocus(true);
+    if (metaKey) {
+      if (selection.indexOf(_id) > -1){
+        setSelection(without(selection, _id));
+      } else {
+        setSelection([...selection, _id]);
+      }
+      return;
+    }
     setSelection([_id ]);
   }
 

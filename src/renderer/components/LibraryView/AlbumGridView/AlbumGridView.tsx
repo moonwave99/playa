@@ -1,4 +1,4 @@
-import React, { FC, ReactElement, MouseEvent } from 'react';
+import React, { FC, ReactElement, MouseEvent, useState } from 'react';
 import { AlbumGridTileView } from './AlbumGridTileView/AlbumGridTileView';
 import { Album } from '../../../store/modules/album';
 import useGrid from '../../../hooks/useGrid/useGrid';
@@ -26,6 +26,8 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
   onAlbumContextMenu,
   onAlbumDoubleClick
 }) => {
+  const [isDragging, setDragging] = useState(false);
+
   const {
     grid,
     rows,
@@ -35,11 +37,23 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
   } = useGrid({
     items: albums,
     thresholds: ALBUM_GRID_THRESHOLDS,
+    excludeClass: '.album-cover',
     onEnter,
     onBackspace
   });
 
+  function onDragBegin(): void {
+    setDragging(true);
+  }
+
+  function onDragEnd(): void {
+    setDragging(false);
+  }
+
   function renderTile(album: Album): ReactElement {
+    if (!album) {
+      return;
+    }
     function onClick(event: MouseEvent, { _id }: Album): void {
       onItemClick({
         _id,
@@ -54,15 +68,19 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
         key={_id}
         album={album}
         selected={selection.indexOf(_id) > -1}
+        selectedIDs={selection}
         isPlaying={_id === currentAlbumId}
+        isDragging={isDragging}
         onClick={onClick}
         onDoubleClick={onAlbumDoubleClick}
-        onContextMenu={onAlbumContextMenu}/>
+        onContextMenu={onAlbumContextMenu}
+        onDragBegin={onDragBegin}
+        onDragEnd={onDragEnd}/>
     );
   }
 
 	return (
-    <div className="album-grid" data-key-catch="useGrid" ref={grid} id={`ag-${albums.length}`}>
+    <div className="album-grid" data-key-catch="useGrid" ref={grid}>
       {
         rows.map((row, index) =>
           <div

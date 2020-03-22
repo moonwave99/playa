@@ -6,7 +6,6 @@ import AutoSizer from "react-virtualized-auto-sizer";
 import { useTranslation } from 'react-i18next';
 import memoize from 'memoize-one';
 import useSelect, { SelectionItem } from '../../../hooks/useSelect/useSelect';
-import { CustomDragLayer } from '../CustomDragLayer/CustomDragLayer';
 import { SearchResultListRow } from './SearchResultListRow/SearchResultListRow';
 import { getCoverRequest } from '../../../store/modules/cover';
 import { Album } from '../../../store/modules/album';
@@ -230,38 +229,35 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
 			prepareRow
 		);
 		return (
-			<>
-				<CustomDragLayer />
-				<div {...getTableProps()} className="search-result-list" ref={elementRef}>
-					<div className="thead search-result-list-header">
-						<div className="tr">
-							{headers.map(column => (
-								<div {...column.getHeaderProps()} className={`th header header-${column.id}`}>
-									{column.render('Header')}
-								</div>
-							))}
-						</div>
-					</div>
-					<div {...getTableBodyProps()} className="tbody">
-						<AutoSizer>
-							{({ height, width }): ReactElement => {
-								return (
-									<List
-										ref={listRef}
-										itemData={itemData}
-										itemCount={results.length}
-										itemSize={ITEM_SIZE}
-										onItemsRendered={onItemsRendered}
-										height={height}
-										width={width}>
-										{GenerateRow}
-									</List>
-								)
-							}}
-						</AutoSizer>
+			<div {...getTableProps()} className="search-result-list" ref={elementRef}>
+				<div className="thead search-result-list-header">
+					<div className="tr">
+						{headers.map(column => (
+							<div {...column.getHeaderProps()} className={`th header header-${column.id}`}>
+								{column.render('Header')}
+							</div>
+						))}
 					</div>
 				</div>
-			</>
+				<div {...getTableBodyProps()} className="tbody">
+					<AutoSizer>
+						{({ height, width }): ReactElement => {
+							return (
+								<List
+									ref={listRef}
+									itemData={itemData}
+									itemCount={results.length}
+									itemSize={ITEM_SIZE}
+									onItemsRendered={onItemsRendered}
+									height={height}
+									width={width}>
+									{GenerateRow}
+								</List>
+							)
+						}}
+					</AutoSizer>
+				</div>
+			</div>
 		);
 	}
 
