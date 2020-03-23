@@ -105,8 +105,24 @@ describe('CompactAlbumView', () => {
         onContextMenu={jest.fn()}
         onDoubleClick={jest.fn()}/>
       , defaultStore);
-    expect(wrapper.find('.info').text())
-      .toBe(`${artists[0].name}, ${albums[0].year} - ${albums[0].type}`);
+    expect(+wrapper.find('.album-year').text()).toBe(albums[0].year);
+    expect(wrapper.find('.album-artist').text()).toBe(artists[0].name);
+  });
+
+  it('should not render the year if album has it not', () => {
+    const wrapper = renderInAll(
+      <CompactAlbumView
+        isCurrent
+        index={0}
+        album={{
+          ...albums[0],
+          year: null
+        }}
+        onAlbumMove={jest.fn()}
+        onContextMenu={jest.fn()}
+        onDoubleClick={jest.fn()}/>
+      , defaultStore);
+    expect(wrapper.find('.album-year')).toHaveLength(0);
   });
 
   it('should call the onContextMenu handler when right clicked', () => {

@@ -101,8 +101,23 @@ describe('AlbumView', () => {
         onContextMenu={jest.fn()}
         onDoubleClick={jest.fn()}/>
       , defaultStore);
-    expect(wrapper.find('.album-info').text())
-      .toBe(`${albums[0].year} - ${albums[0].type}`);
+    expect(+wrapper.find('.album-year').text()).toBe(albums[0].year);
+    expect(wrapper.find('.album-type').text()).toBe(albums[0].type);
+  });
+
+  it('should not render the year if album has it not', () => {
+    const wrapper = renderInAll(
+      <AlbumView
+        currentTrackId={null}
+        album={{
+          ...albums[0],
+          year: null
+        }}
+        dragType={''}
+        onContextMenu={jest.fn()}
+        onDoubleClick={jest.fn()}/>
+      , defaultStore);
+    expect(wrapper.find('.album-year')).toHaveLength(0);
   });
 
   it('should contain the album tracklist', () => {

@@ -71,9 +71,15 @@
         margin-left: .5rem;
       }
     }
-    .album-type {
-      @include albumType('color');
-    }
+		.album-info {
+			a {
+				cursor: pointer;
+			}
+			.album-year {
+				@include monospace();
+				margin-right: .5rem;
+			}
+		}
   }
 	.button-album-actions {
 		width: 2rem;

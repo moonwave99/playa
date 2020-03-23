@@ -163,7 +163,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
           <h2 style={{ color: palette.LightVibrant }}>{title}</h2>
           <p className="album-artist">{renderArtist()}</p>
           <p className="album-info">
-            {year ? `${year} - ` : null}<span className={tagClasses}>{type}</span>
+            {year && <span className="album-year">{year}</span>}<span className={tagClasses}>{type}</span>
           </p>
         </header>
         <button onClick={onActionsButtonClick} className="button-album-actions">

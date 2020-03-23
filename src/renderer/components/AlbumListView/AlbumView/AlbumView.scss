@@ -92,6 +92,10 @@
             color: $highlightColor;
           }
         }
+        .album-year {
+          @include monospace();
+          margin-right: .5rem;
+        }
         .album-type {
           @include albumType('color');
         }

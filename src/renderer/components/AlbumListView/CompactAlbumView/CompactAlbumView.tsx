@@ -1,5 +1,6 @@
 import React, { FC, SyntheticEvent, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link, generatePath } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import cx from 'classnames';
 import { CoverView } from '../AlbumView/CoverView/CoverView';
@@ -9,6 +10,7 @@ import { UIDragTypes } from '../../../store/modules/ui';
 import { getCoverRequest } from '../../../store/modules/cover';
 import { ApplicationState } from '../../../store/store';
 import { formatArtist } from '../../../utils/albumUtils';
+import { ARTIST_SHOW } from '../../../routes';
 import './CompactAlbumView.scss';
 
 type CompactAlbumViewProps = {
@@ -32,7 +34,7 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
   onDoubleClick,
   sortable = false
 }) => {
-  const { _id, type, year, title } = album;
+  const { _id, year, title } = album;
   const { cover, artist } = useSelector((state: ApplicationState) => getAlbumContentById(state, _id));
 
   const dispatch = useDispatch();
@@ -75,7 +77,7 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
     'drag-can-drop': canDrop,
     'drag-is-dragging': isDragging
   });
-  const tagClasses = cx('album-type', `album-type-${type}`);
+
   return (
     <article
       className={classNames}
@@ -91,8 +93,11 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
           <span className="title">
             {title}{ isCurrent ? <FontAwesomeIcon className="icon" icon="volume-up"/> : null }
           </span>
-          <span className="info">
-            {formatArtist({ album, artist })}{year ? `, ${year}` : null} - <span className={tagClasses}>{type}</span>
+          <span className="album-info">
+            { year && <span className="album-year">{year}</span> }
+            <Link className="album-artist" to={generatePath(ARTIST_SHOW, { _id: artist._id })}>
+              {formatArtist({ album, artist })}
+            </Link>
           </span>
         </p>
         <button onClick={onActionsButtonClick} className="button-album-actions">
