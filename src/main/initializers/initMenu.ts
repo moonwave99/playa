@@ -17,6 +17,7 @@ const {
   IPC_UI_LOCATION_UPDATE,
   IPC_PLAYBACK_PREV_TRACK,
   IPC_PLAYBACK_NEXT_TRACK,
+  IPC_PLAYBACK_CLEAR_QUEUE,
   IPC_UI_TOGGLE_ALBUM_VIEW,
   IPC_UI_EDIT_PLAYLIST_TITLE,
   IPC_LIBRARY_IMPORT_MUSIC
@@ -142,7 +143,7 @@ export default function initMenu({
           click: (): void => window.webContents.send(IPC_UI_TOGGLE_ALBUM_VIEW, compactView)
         }
       ]
-    },    
+    },
     {
       label: 'Library',
       submenu: [
@@ -166,6 +167,10 @@ export default function initMenu({
           label: 'Show Playback Queue',
           accelerator: 'cmd+3',
           click: (): void => window.webContents.send(IPC_UI_NAVIGATE_TO, QUEUE)
+        },
+        {
+          label: 'Clear Playback Queue',
+          click: (): void => window.webContents.send(IPC_PLAYBACK_CLEAR_QUEUE)
         },
         { type: 'separator' },
         {

@@ -78,6 +78,7 @@ export const IPC_MESSAGES = {
   IPC_UI_EDIT_PLAYLIST_TITLE: 'ui:edit-playlist-title',
   IPC_PLAYBACK_PREV_TRACK: 'ui:playback:prev-track',
   IPC_PLAYBACK_NEXT_TRACK: 'ui:playback:next-track',
+  IPC_PLAYBACK_CLEAR_QUEUE: 'ui:playback:clear-queue',
   IPC_SYS_REVEAL_IN_FINDER: 'sys:reveal-in-finder',
   IPC_SYS_OPEN_URL: 'sys:open-url',
   IPC_PLAYLIST_GET_ALL_REQUEST : 'playlist:get-all:request',
