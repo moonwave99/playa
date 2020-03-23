@@ -7,7 +7,10 @@ $labelHeight: 2rem;
   margin: calc(var(--section-gutter) * 0.5) 0 var(--section-gutter) 0;
   display: flex;
   flex-wrap: wrap;
-  @include horizontalSeparator($separatorWidth: 30%);
+  &.line-after {
+    @include horizontalSeparator($separatorWidth: 30%);
+  }
+
   .form-field {
     margin: 0 0 1rem 0;
     flex: 0 0 100%;

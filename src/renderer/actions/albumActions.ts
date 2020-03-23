@@ -3,7 +3,8 @@ import { Action, ActionCreator } from './actions';
 
 import {
   Album,
-  reloadAlbumContent
+  reloadAlbumContent,
+  editAlbum
 } from '../store/modules/album';
 
 import { Artist } from '../store/modules/artist';
@@ -73,6 +74,18 @@ export const playAlbumAction: ActionCreator<ActionParams> = ({
   };
 }
 
+export const editAlbumAction: ActionCreator<ActionParams> = ({
+  albums,
+  dispatch
+}) => {
+  return {
+    title: 'Edit album',
+    handler(): void {
+      dispatch(editAlbum(albums[0].album));
+    }
+  };
+}
+
 export const enqueueAfterCurrentAction: ActionCreator<ActionParams> = ({
   albums,
   dispatch
@@ -133,6 +146,7 @@ export const ALBUM_CONTEXT_ACTIONS = 'playa/context-menu/album-actions';
 
 export enum AlbumActions {
   PLAY_ALBUM = 'PLAY_ALBUM',
+  EDIT_ALBUM = 'EDIT_ALBUM',
   ENQUEUE_AFTER_CURRENT = 'ENQUEUE_AFTER_CURRENT',
   ENQUEUE_AT_END = 'ENQUEUE_AT_END',
   REMOVE_FROM_QUEUE = 'REMOVE_FROM_QUEUE',
@@ -146,6 +160,7 @@ export enum AlbumActions {
 
 export const AlbumActionsMap: { [key: string]: ActionCreator<ActionParams> } = {
   [AlbumActions.PLAY_ALBUM]: playAlbumAction,
+  [AlbumActions.EDIT_ALBUM]: editAlbumAction,
   [AlbumActions.ENQUEUE_AFTER_CURRENT]: enqueueAfterCurrentAction,
   [AlbumActions.ENQUEUE_AT_END]: enqueueAtEndAction,
   [AlbumActions.REMOVE_FROM_QUEUE]: removeFromQueueAction,
@@ -159,6 +174,7 @@ export const AlbumActionsMap: { [key: string]: ActionCreator<ActionParams> } = {
 
 export enum AlbumActionsGroups {
   PLAYBACK,
+  EDIT,
   ENQUEUE,
   QUEUE,
   SYSTEM,
@@ -180,6 +196,9 @@ export type GetAlbumContextMenuParams = {
 const actionGroupsMap: { [key: string]: AlbumActions[] } = {
   [AlbumActionsGroups.PLAYBACK]: [
     AlbumActions.PLAY_ALBUM
+  ],
+  [AlbumActionsGroups.EDIT]: [
+    AlbumActions.EDIT_ALBUM
   ],
   [AlbumActionsGroups.ENQUEUE]: [
     AlbumActions.ENQUEUE_AFTER_CURRENT,

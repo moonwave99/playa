@@ -2,11 +2,11 @@ import React, { FC, ReactElement, useState, useEffect } from 'react';
 import { Switch, Route, Redirect, useHistory } from 'react-router';
 import { generatePath } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import ReactModal from 'react-modal';
 import { createSelector } from 'reselect';
 import Player from '../../lib/player';
 import { selectFolderDialog } from '../../lib/dialog';
 import useImportAlbums from '../../hooks/useImportAlbums/useImportAlbums';
+import useEditAlbum from '../../hooks/useEditAlbum/useEditAlbum';
 import { AppHeader } from './AppHeader/AppHeader';
 import { PlayerView } from '../PlayerView/PlayerView';
 import { ArtistView } from '../ArtistView/ArtistView';
@@ -16,14 +16,13 @@ import { SearchView } from '../SearchView/SearchView';
 import { SidebarView } from '../SidebarView/SidebarView';
 import { AllPlaylistContainer } from '../AllPlaylistContainer/AllPlaylistContainer';
 import { PlaylistContainer } from '../PlaylistContainer/PlaylistContainer';
-import { ImportView } from '../LibraryView/ImportView/ImportView';
 import { CustomDragLayer } from '../CustomDragLayer/CustomDragLayer';
 
 import './App.scss';
 
 import initIpc from '../../initializers/initIpc';
 import { ApplicationState } from '../../store/store';
-import { Album } from '../../store/modules/album';
+import { Album, selectors as albumSelectors } from '../../store/modules/album';
 import { getAllArtistsRequest } from '../../store/modules/artist';
 
 import {
@@ -60,8 +59,9 @@ import {
 const appSelector = createSelector(
   playlistSelectors.allById,
   playerSelectors.state,
+  albumSelectors.state,
   ({ ui }: ApplicationState) => ui,
-  (playlists, player, ui) => {
+  (playlists, player, { allById: albums, editingAlbumId }, ui) => {
     const playlistArray = Object.keys(playlists).map(id => playlists[id]);
     const recentPlaylists = playlistArray
       .sort((a: Playlist, b: Playlist) =>
@@ -71,6 +71,7 @@ const appSelector = createSelector(
       playlists: playlistArray,
       recentPlaylists,
       currentPlaylistId: player.currentPlaylistId,
+      editingAlbum: albums[editingAlbumId],
       title: ui.title
     }
   }
@@ -105,19 +106,21 @@ export const App: FC<AppProps> = ({
     playlists,
     recentPlaylists,
     currentPlaylistId,
+    editingAlbum,
     title
   } = useSelector(appSelector);
 
   const [hasSearchFocus, setSearchFocus] = useState(false);
 
   const {
-    folderToImport,
-    tracksToImport,
-    showImportModal,
-    showImportDialog,
-    onImportModalRequestClose,
-    onImportFormSubmit
+    show: showImportDialog,
+    render: renderImportModal
   } = useImportAlbums();
+
+  const {
+    show: showEditModal,
+    render: renderEditModal
+  } = useEditAlbum();
 
   function onFocusSearch(): void {
     setSearchFocus(true);
@@ -143,6 +146,12 @@ export const App: FC<AppProps> = ({
     }
     showImportDialog(folder);
   }
+
+  useEffect(() => {
+    if (editingAlbum) {
+      showEditModal(editingAlbum);
+    }
+  }, [editingAlbum]);
 
   useEffect(() => {
     dispatch(getAllPlaylistsRequest());
@@ -248,27 +257,8 @@ export const App: FC<AppProps> = ({
         <PlayerView player={player} waveformBasePath={waveformBasePath}/>
       </div>
       <CustomDragLayer/>
-      { showImportModal
-        ? <ReactModal
-            className={{
-              base: 'modal-content',
-              beforeClose: 'modal-content-before-close',
-              afterOpen: 'modal-content-after-open'
-            }}
-            overlayClassName={{
-              base: 'modal-overlay',
-              beforeClose: 'modal-overlay-before-close',
-              afterOpen: 'modal-overlay-after-open'
-            }}
-            shouldFocusAfterRender={true}
-            onRequestClose={onImportModalRequestClose}
-            isOpen={showImportModal}>
-            <ImportView
-              tracks={tracksToImport}
-              folderToImport={folderToImport}
-              onFormSubmit={onImportFormSubmit}/>
-          </ReactModal>
-        : null }
+      { renderImportModal() }
+      { renderEditModal() }
     </main>
   );
 }

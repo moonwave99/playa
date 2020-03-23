@@ -54,6 +54,7 @@ export const QueueView = (): ReactElement => {
         actionGroups: [
           AlbumActionsGroups.QUEUE,
           AlbumActionsGroups.PLAYBACK,
+          AlbumActionsGroups.EDIT,
           AlbumActionsGroups.SYSTEM,
           AlbumActionsGroups.SEARCH_ONLINE
         ]

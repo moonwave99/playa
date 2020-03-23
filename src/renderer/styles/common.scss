@@ -201,22 +201,19 @@ input[type=search] {
 	left: 0;
 	right: 0;
 	bottom: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	&-after-open{
 		opacity: 1;
 	}
-
 	&-before-close{
 		opacity: 0;
 	}
 }
 
 .modal-content {
-	position: absolute;
-	top: var(--section-gutter);
-	bottom: var(--section-gutter);
-	left: 50%;
 	width: calc(100vw - 2 * var(--section-gutter));
-	margin-left: calc(var(--section-gutter) - 50vw);
 	padding: var(--section-gutter);
 	border-radius: .5rem;
 	background-color: $backgroundColor;
@@ -226,6 +223,6 @@ input[type=search] {
 	z-index: 1010;
 	@media (min-width: $wideWindowThreshold) {
 		width: $modalMaxWidth;
-		margin-left: $modalMaxWidth * -0.5;
+		// margin-left: $modalMaxWidth * -0.5;
 	}
 }

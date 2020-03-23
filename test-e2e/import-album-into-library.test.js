@@ -67,9 +67,7 @@ describe('Import album into library', () => {
     await app.client.waitUntil(async () => {
       const isArtistRendered =
         await app.client.getText(`#artist-${artist} .artist-name`) === artist;
-      const isReleaseCountRendered =
-        await app.client.getText(`#artist-${artist} .release-count`) === '1';
-      return isArtistRendered && isReleaseCountRendered;
+      return isArtistRendered;
     });
 
     // check that single artist page contains album
@@ -84,7 +82,7 @@ describe('Import album into library', () => {
 
   it('imports an album of an existing artist', async () => {
     await populateTestDB({
-      artists: [{ ...TestArtists[0], count: 1 }]
+      artists: [TestArtists[0]]
     });
     await app.start();
     const { artist, title, year } = FileAlbums[0];
@@ -121,14 +119,12 @@ describe('Import album into library', () => {
         && +renderedYear === year;
     });
 
-    // check that artist is now inside ArtistListView, and has count 2
+    // check that artist is now inside ArtistListView
     await app.client.click(`.library .alphabet .letter-${artist.toLowerCase().charAt(0)}`);
     await app.client.waitUntil(async () => {
       const isArtistRendered =
         await app.client.getText(`#artist-${artist} .artist-name`) === artist;
-      const isReleaseCountRendered =
-        await app.client.getText(`#artist-${artist} .release-count`) === '2';
-      return isArtistRendered && isReleaseCountRendered;
+      return isArtistRendered;
     });
 
     // check that single artist page contains album

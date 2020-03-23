@@ -24,11 +24,4 @@ describe('ArtistListItemView', () => {
     , defaultStore);
     expect(wrapper.find('.artist-name').text()).toBe(artists[0].name);
   });
-
-  it('should contain the artist release count', () => {
-    const wrapper = renderInAll(
-      <ArtistListItemView artist={artists[0]}/>
-    , defaultStore);
-    expect(+wrapper.find('.release-count').text()).toBe(artists[0].count);
-  });
 });

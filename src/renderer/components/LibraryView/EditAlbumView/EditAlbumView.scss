@@ -1,7 +1,7 @@
 @import "../../../styles/variables";
 @import "../../../styles/mixins";
 
-.import-view {
+.edit-album {
   h2 {
     margin: 0;
     line-height: $mainUnit;
@@ -21,12 +21,6 @@
       code {
         user-select: text;
       }
-    }
-  }
-  .tracklist-view {
-    ol {
-      max-height: $tracklistMaxHeight;
-      overflow: auto;
     }
   }
 }

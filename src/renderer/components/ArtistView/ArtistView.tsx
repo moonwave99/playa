@@ -84,6 +84,7 @@ export const ArtistView = (): ReactElement => {
         actionGroups: [
           AlbumActionsGroups.PLAYBACK,
           AlbumActionsGroups.ENQUEUE,
+          AlbumActionsGroups.EDIT,
           AlbumActionsGroups.SYSTEM,
           AlbumActionsGroups.SEARCH_ONLINE
         ]

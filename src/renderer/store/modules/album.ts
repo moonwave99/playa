@@ -14,7 +14,8 @@ import { ApplicationState } from '../store';
 import {
   Artist,
   VariousArtist,
-  selectors as artistSelectors
+  selectors as artistSelectors,
+  saveArtistRequest
 } from './artist';
 
 import {
@@ -78,6 +79,7 @@ export function getDefaultAlbum(): Album {
 
 export interface AlbumState {
   allById: EntityHashMap<Album>;
+  editingAlbumId: Album['_id'];
 }
 
 export const selectors = {
@@ -119,8 +121,7 @@ export const ALBUM_DELETE_REQUEST       = 'playa/album/DELETE_REQUEST';
 export const ALBUM_DELETE_RESPONSE      = 'playa/album/DELETE_RESPONSE';
 export const ALBUM_DELETE_LIST_REQUEST  = 'playa/album/DELETE_LIST_REQUEST';
 export const ALBUM_DELETE_LIST_RESPONSE = 'playa/album/DELETE_LIST_RESPONSE';
-
-
+export const ALBUM_SET_EDITING          = 'playa/album/SET_EDITING';
 
 interface GetAlbumRequestAction {
   type: typeof ALBUM_GET_REQUEST;
@@ -167,6 +168,11 @@ interface DeleteAlbumListResponseAction {
   albums: Album[];
 }
 
+interface SetEditingAlbumAction {
+  type: typeof ALBUM_SET_EDITING;
+  editingAlbumId: Album['_id'];
+}
+
 export type AlbumActionTypes =
     GetAlbumRequestAction
   | GetAlbumResponseAction
@@ -176,7 +182,8 @@ export type AlbumActionTypes =
   | GetAlbumContentRequestAction
   | GetAlbumContentResponseAction
   | DeleteAlbumResponseAction
-  | DeleteAlbumListResponseAction;
+  | DeleteAlbumListResponseAction
+  | SetEditingAlbumAction;
 
 export const getAlbumRequest = (id: Album['_id']): Function =>
   async (dispatch: Function, getState: Function): Promise<void> => {
@@ -252,8 +259,31 @@ export const reloadAlbumContent = (album: Album): Function =>
     dispatch(getTrackListResponse(reloadedTracks));
   }
 
+export const editAlbum = ({ _id }: Album): Function =>
+  (dispatch: Function): void => {
+    dispatch({
+      type: ALBUM_SET_EDITING,
+      editingAlbumId: _id
+    });
+  }
+
+export const updateAlbum = (album: Album, artist: Artist): Function =>
+  (dispatch: Function, getState: Function): void => {
+    let artistId = artist._id;
+    if (!artistId) {
+      const { artists }: ApplicationState = getState();
+      artistId = `${+artists.latestArtistId + 1}`;
+      dispatch(saveArtistRequest({
+        ...artist,
+        _id: artistId
+      }));
+    }
+    dispatch(saveAlbumRequest({ ...album, artist: artistId }));
+  }
+
 const INITIAL_STATE = {
-  allById: {}
+  allById: {},
+  editingAlbumId: null as Album['_id']
 };
 
 export default function reducer(
@@ -285,6 +315,11 @@ export default function reducer(
       return {
         ...state,
         allById: removeIds(state.allById, action.albums.map(({ _id }) => _id))
+      };
+    case ALBUM_SET_EDITING:
+      return {
+        ...state,
+        editingAlbumId: action.editingAlbumId
       };
     case ALBUM_GET_CONTENT_REQUEST:
     case ALBUM_GET_LIST_REQUEST:

@@ -46,12 +46,15 @@
       "latest": {
         "title": "Latest additions"
       },
-      "import": {
+      "importAlbum": {
         "title": "Import Album:",
         "form": {
           "submit": "Looks fine!",
           "isVariousArtists": "Various Artists"
         }
+      },
+      "editAlbum": {
+        "title": "Edit Album:"
       }
     },
     "artist": {

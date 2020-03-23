@@ -5,22 +5,29 @@ const mockStore = configureStore([thunk]);
 import { toObj } from '../../utils/storeUtils';
 import { albums, artists, tracks } from '../../../../test/testFixtures';
 import reducer, {
+  Album,
   AlbumActionTypes,
   AlbumState,
   getAlbumRequest,
   getAlbumListRequest,
   getAlbumListResponse,
   getAlbumContentResponse,
+  saveAlbumRequest,
   reloadAlbumContent,
+  editAlbum,
+  updateAlbum,
   ALBUM_GET_RESPONSE,
   ALBUM_GET_LIST_REQUEST,
   ALBUM_GET_LIST_RESPONSE,
   ALBUM_GET_CONTENT_REQUEST,
   ALBUM_GET_CONTENT_RESPONSE,
+  ALBUM_SAVE_RESPONSE,
   ALBUM_DELETE_RESPONSE,
-  ALBUM_DELETE_LIST_RESPONSE
+  ALBUM_DELETE_LIST_RESPONSE,
+  ALBUM_SET_EDITING
 } from './album';
 
+import { Artist, ARTIST_SAVE_RESPONSE } from './artist';
 import { TRACK_GET_LIST_RESPONSE } from './track';
 import { COVER_GET_RESPONSE } from './cover';
 
@@ -108,11 +115,115 @@ describe('album actions', () => {
       expect(store.getActions()).toEqual(expectedActions);
     });
   });
+
+  describe('saveAlbumRequest', () => {
+    it('should dispatch expected actions', async () => {
+      const store = mockStore({
+        albums: {
+          allById: {}
+        }
+      });
+      const album = albums[0];
+      const expectedActions = [
+        {
+          type: ALBUM_SAVE_RESPONSE,
+          album: {
+            ...album,
+            title: 'updated title'
+          }
+        }
+      ];
+      await saveAlbumRequest({
+        ...album,
+        title: 'updated title'
+      })(store.dispatch);
+      expect(store.getActions()).toEqual(expectedActions);
+    });
+  });
+
+  describe('editAlbum', () => {
+    it('should dispatch ALBUM_SET_EDITING', () => {
+      const dispatch = jest.fn();
+      const album = albums[0];
+      editAlbum(album)(dispatch);
+      expect(dispatch).toHaveBeenCalledWith({
+        type: ALBUM_SET_EDITING,
+        editingAlbumId: albums[0]. _id
+      });
+    });
+  });
+
+  describe('updateAlbum', () => {
+    it('should dispatch expected actions', async () => {
+      const store = mockStore({
+        albums: {
+          allById: {}
+        },
+        artists: {
+          allById: {},
+          latestArtistId: null
+        }
+      });
+      const album = albums[0];
+      const artist = artists[0];
+      const expectedActions = [
+        {
+          type: ALBUM_SAVE_RESPONSE,
+          album: {
+            ...album,
+            title: 'updated title'
+          }
+        }
+      ];
+      await updateAlbum({
+        ...album,
+        title: 'updated title'
+      }, artist)(store.dispatch, store.getState);
+      expect(store.getActions()).toEqual(expectedActions);
+    });
+
+    it('should persist new artist', async () => {
+      const store = mockStore({
+        albums: {
+          allById: {}
+        },
+        artists: {
+          allById: {},
+          latestArtistId: '4'
+        }
+      });
+      const album = albums[0];
+      const artist: Artist =  {...artists[0], _id: null };
+      const expectedActions = [
+        {
+          type: ARTIST_SAVE_RESPONSE,
+          artist: {
+            ...artists[0],
+            _id: '5'
+          }
+        },
+        {
+          type: ALBUM_SAVE_RESPONSE,
+          album: {
+            ...album,
+            title: 'updated title',
+            artist: '5'
+          }
+        }
+      ];
+      await updateAlbum({
+        ...album,
+        title: 'updated title'
+      }, artist)(store.dispatch, store.getState);
+      expect(store.getActions()).toEqual(expectedActions);
+    });
+  });
 });
 
 describe('album reducer', () => {
   const initialState = {
-    allById: {}
+    allById: {},
+    editingAlbumId: null as Album['_id']
   }
   it('should return the initial state', () => {
     expect(reducer(undefined, {} as AlbumActionTypes))
@@ -187,6 +298,27 @@ describe('album reducer', () => {
       allById: {
         [albums[1]._id]: albums[1]
       }
+    });
+  });
+
+  it('should handle ALBUM_SET_EDITING', () => {
+    expect(reducer(initialState, {
+      type: ALBUM_SET_EDITING,
+      editingAlbumId: albums[0]._id
+    })).toEqual({
+      allById: {},
+      editingAlbumId: albums[0]._id
+    });
+
+    expect(reducer({
+      ...initialState,
+      editingAlbumId: '1'
+    }, {
+      type: ALBUM_SET_EDITING,
+      editingAlbumId: null
+    })).toEqual({
+      allById: {},
+      editingAlbumId: null
     });
   });
 });

@@ -29,7 +29,6 @@ type TestArtist = {
   _id: string;
   _rev: string;
   name: string;
-  count: number;
 }
 
 export type TestTrack = {
@@ -66,14 +65,12 @@ export const TestArtists: TestArtist[] = [
   {
     _id: '1',
     _rev: null,
-    name: 'Slowdive',
-    count: 0
+    name: 'Slowdive'
   },
   {
     _id: '2',
     _rev: null,
-    name: 'My Bloody Valentine',
-    count: 0
+    name: 'My Bloody Valentine'
   }
 ];
 

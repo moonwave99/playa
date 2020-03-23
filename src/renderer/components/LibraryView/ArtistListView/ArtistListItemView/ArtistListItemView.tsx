@@ -12,14 +12,13 @@ type ArtistListItemViewProps = {
 export const ArtistListItemView: FC<ArtistListItemViewProps> = ({
   artist
 }) => {
-  const { _id, name, count } = artist;
+  const { _id, name } = artist;
 	return (
     <Link
       id={`artist-${name}`}
       className="artist-list-item"
       to={generatePath(ARTIST_SHOW, { _id })}>
       <span className="artist-name">{formatArtistName(name)}</span>
-      <span className="release-count">{count}</span>
     </Link>
 	);
 }

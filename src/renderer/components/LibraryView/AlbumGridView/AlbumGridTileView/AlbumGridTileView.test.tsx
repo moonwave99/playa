@@ -21,11 +21,25 @@ describe('AlbumGridTileView', () => {
     expect(wrapper.is('.album-grid-tile')).toBe(true);
   });
 
-  it('should be a .is-playing if isPlaying', () => {
+  it('should be .is-playing if isPlaying', () => {
     const wrapper = renderInAll(
       <AlbumGridTileView isPlaying album={albums[0]}/>
     , defaultStore);
     expect(wrapper.is('.is-playing')).toBe(true);
+  });
+
+  it('should be .selected if selected', () => {
+    const wrapper = renderInAll(
+      <AlbumGridTileView selected album={albums[0]}/>
+    , defaultStore);
+    expect(wrapper.is('.selected')).toBe(true);
+  });
+
+  it('should be .is-dragging if isDragging ** selected', () => {
+    const wrapper = renderInAll(
+      <AlbumGridTileView selected isDragging album={albums[0]}/>
+    , defaultStore);
+    expect(wrapper.is('.is-dragging')).toBe(true);
   });
 
   it('should contain an .album-cover', () => {

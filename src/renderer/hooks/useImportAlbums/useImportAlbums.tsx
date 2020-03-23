@@ -1,7 +1,9 @@
 import { ipcRenderer as ipc } from 'electron';
-import { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import ReactModal from 'react-modal';
 import { useTranslation } from 'react-i18next';
+import { ImportView } from '../../components/LibraryView/ImportView/ImportView';
 import { Album } from '../../store/modules/album';
 import { Artist } from '../../store/modules/artist';
 import { Track } from '../../store/modules/track';
@@ -25,12 +27,8 @@ type OnImportFormSubmitParams = {
 }
 
 export default function useImportAlbums(): {
-  folderToImport: string;
-  tracksToImport: Track[];
-  showImportModal: boolean;
-  showImportDialog: (folder: string) => Promise<void>;
-  onImportModalRequestClose: () => void;
-  onImportFormSubmit: (params: OnImportFormSubmitParams) => void;
+  show: (folder: string) => Promise<void>;
+  render: () => ReactElement;
 } {
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -38,7 +36,7 @@ export default function useImportAlbums(): {
   const [tracksToImport, setTracksToImport] = useState([]);
   const [showImportModal, setShowImportModal] = useState(false);
 
-  async function showImportDialog(folder: string): Promise<void> {
+  async function show(folder: string): Promise<void> {
     const folderAlreadyImported = await ipc.invoke(IPC_ALBUM_EXISTS, folder);
     if (folderAlreadyImported) {
       dispatch(
@@ -84,12 +82,35 @@ export default function useImportAlbums(): {
     setTracksToImport([]);
   }
 
-  return {
-    folderToImport,
-    tracksToImport,
-    showImportModal,
-    showImportDialog,
-    onImportModalRequestClose,
-    onImportFormSubmit
+  function render(): ReactElement {
+    if (!showImportModal) {
+      return null;
+    }
+    return (
+      <ReactModal
+        className={{
+          base: 'modal-content',
+          beforeClose: 'modal-content-before-close',
+          afterOpen: 'modal-content-after-open'
+        }}
+        overlayClassName={{
+          base: 'modal-overlay',
+          beforeClose: 'modal-overlay-before-close',
+          afterOpen: 'modal-overlay-after-open'
+        }}
+        shouldFocusAfterRender={true}
+        onRequestClose={onImportModalRequestClose}
+        isOpen={showImportModal}>
+        <ImportView
+          tracks={tracksToImport}
+          folderToImport={folderToImport}
+          onFormSubmit={onImportFormSubmit}/>
+      </ReactModal>
+    );
   }
+
+  return {
+    show,
+    render
+  };
 }

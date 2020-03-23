@@ -31,15 +31,13 @@ export type Artist = {
   _id: string;
   _rev?: string;
   name: string;
-  count: number;
 }
 
 export function getDefaultArtist(): Artist {
   return {
     _id: null,
     _rev: null,
-    name: '',
-    count: 0
+    name: ''
   };
 }
 

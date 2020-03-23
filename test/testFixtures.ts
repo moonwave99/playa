@@ -92,25 +92,21 @@ export const artists: Artist[] = [
   {
     _id: '1',
     _rev: null,
-    name: 'Slowdive',
-    count: 1
+    name: 'Slowdive'
   },
   {
     _id: '2',
     _rev: null,
-    name: 'My Bloody Valentine',
-    count: 1
+    name: 'My Bloody Valentine'
   },
   {
     _id: '3',
     _rev: null,
-    name: 'Lush',
-    count: 0
+    name: 'Lush'
   },
   {
     _id: '4',
     _rev: null,
-    name: 'Adorable',
-    count: 0
+    name: 'Adorable'
   }
 ];

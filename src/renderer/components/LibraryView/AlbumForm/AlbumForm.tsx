@@ -1,4 +1,4 @@
-import React, { ReactElement, ChangeEvent, FormEvent, KeyboardEvent, FC, useState } from 'react';
+import React, { ReactElement, ChangeEvent, FormEvent, KeyboardEvent, FC, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import Autosuggest from 'react-autosuggest';
@@ -20,16 +20,20 @@ import './AlbumForm.scss';
 
 type AlbumFormProps = {
   album: Album;
+  artist?: Artist;
   albumType: AlbumTypes;
   isAlbumFromVA: boolean;
+  className?: string;
   onFormSubmit: Function;
-  onAlbumTypeChange: Function;
-  onAlbumFromVAChange: Function;
+  onAlbumTypeChange?: Function;
+  onAlbumFromVAChange?: Function;
 }
 
 export const AlbumForm: FC<AlbumFormProps> = ({
   album,
+  artist: propArtist,
   albumType,
+  className,
   onFormSubmit,
   isAlbumFromVA = false,
   onAlbumTypeChange,
@@ -38,10 +42,16 @@ export const AlbumForm: FC<AlbumFormProps> = ({
   const { t } = useTranslation();
   const [suggestionQuery, setSuggestionQuery] = useState('');
   const artistSuggestions = useSelector(
-    (state: ApplicationState) => searchArtists(state, suggestionQuery)
+    (state: ApplicationState) => suggestionQuery === '' ? [] : searchArtists(state, suggestionQuery)
   );
   const [artist, setArtist] = useState(getDefaultArtist());
-  const classNames = cx('form', 'album-form');
+  const classNames = cx('form', 'album-form', className);
+
+  useEffect(() => {
+    if (propArtist && propArtist._id) {
+      setArtist(propArtist);
+    }
+  }, [propArtist]);
 
   function _onFormSubmit({
     title,
@@ -55,18 +65,18 @@ export const AlbumForm: FC<AlbumFormProps> = ({
   }
 
   function onVariousArtistsChange(): void {
-    onAlbumFromVAChange(!isAlbumFromVA);
+    onAlbumFromVAChange && onAlbumFromVAChange(!isAlbumFromVA);
   }
 
   function onTypeChange(event: ChangeEvent): void {
     const target = event.target as HTMLSelectElement;
     const selectedAlbumType = target[target.selectedIndex].getAttribute('value') as AlbumTypes;
-    onAlbumTypeChange(selectedAlbumType);
+    onAlbumTypeChange && onAlbumTypeChange(selectedAlbumType);
   }
 
   function renderArtistField(): ReactElement {
     function onChange(event: ChangeEvent<HTMLInputElement>): void {
-      setArtist({ ...artist, name: event.target.value});
+      setArtist({ ...getDefaultArtist(), name: event.target.value});
     }
 
     function getSuggestionValue(artist: Artist): string {
@@ -95,8 +105,14 @@ export const AlbumForm: FC<AlbumFormProps> = ({
     function onKeyDown(event: KeyboardEvent): void {
       switch (event.key) {
         case 'Enter':
-        case 'Escape':
+          event.preventDefault();
           event.stopPropagation();
+          break;
+        case 'Escape':
+          if (artistSuggestions.length > 0) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
           break;
       }
     }
@@ -153,7 +169,7 @@ export const AlbumForm: FC<AlbumFormProps> = ({
                 defaultValue={album.isAlbumFromVA}
                 data-key-catch="Space"
                 checked={isAlbumFromVA}/>
-                <span>{t('library.import.form.isVariousArtists')}</span>
+                <span>{t('library.importAlbum.form.isVariousArtists')}</span>
             </label>
           </div>
           <div className="form-field input-title">
@@ -195,7 +211,7 @@ export const AlbumForm: FC<AlbumFormProps> = ({
           </div>
           <p className="button-wrapper">
             <button type="submit" className="button button-full">
-              {t('library.import.form.submit')}
+              {t('library.importAlbum.form.submit')}
             </button>
           </p>
         </form>

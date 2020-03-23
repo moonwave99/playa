@@ -113,6 +113,7 @@ export const LibraryView: FC<LibraryViewProps> = ({
         actionGroups: [
           AlbumActionsGroups.PLAYBACK,
           AlbumActionsGroups.ENQUEUE,
+          AlbumActionsGroups.EDIT,
           AlbumActionsGroups.SYSTEM,
           AlbumActionsGroups.SEARCH_ONLINE
         ]

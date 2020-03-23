@@ -17,7 +17,6 @@ import {
 import {
   Artist,
   VARIOUS_ARTISTS_ID,
-  ARTIST_GET_LIST_RESPONSE,
   saveArtistRequest
 } from './artist';
 
@@ -36,8 +35,7 @@ const {
   IPC_ALBUM_GET_LATEST_REQUEST,
   IPC_ALBUM_DELETE_LIST_REQUEST,
   IPC_PLAYLIST_SAVE_LIST_REQUEST,
-  IPC_TRACK_DELETE_LIST_REQUEST,
-  IPC_ARTIST_SAVE_LIST_REQUEST,
+  IPC_TRACK_DELETE_LIST_REQUEST
 } = IPC_MESSAGES;
 
 const DEFAULT_LATEST_ALBUM_LIMIT = 10;
@@ -119,7 +117,6 @@ export const importAlbum = ({
     if (!album.isAlbumFromVA) {
       dispatch(saveArtistRequest({
         ...artistToSave,
-        count: artistToSave.count + 1,
         _id: artistToSave._id || `${+latestArtistId + 1}`
       }));
     }
@@ -153,7 +150,6 @@ export const removeAlbums = (albumsToRemove: Album[]): Function =>
     const {
       library,
       albums,
-      artists,
       player,
       playlists,
       tracks
@@ -170,38 +166,6 @@ export const removeAlbums = (albumsToRemove: Album[]): Function =>
     dispatch({
       type: ALBUM_DELETE_LIST_RESPONSE,
       albums: albumsToRemove
-    });
-
-    const artistsToUpdate = albumsToRemove
-      .reduce((memo: Artist[], { isAlbumFromVA, artist: artistId }: Album) => {
-      if (isAlbumFromVA) {
-        return memo;
-      }
-      const artist = artists.allById[artistId];
-      let foundArtist = memo.find(({ _id }: Artist) => _id === artistId);
-      if (!foundArtist) {
-        memo.push({
-          ...artist,
-          count: Math.max(0, artist.count - 1)
-        });
-      } else {
-        foundArtist = {
-          ...foundArtist,
-          count: Math.max(0, artist.count - 1)
-        }
-      }
-      return memo;
-    }, []);
-
-    const updatedArtists: Array<{ id: string; rev: string; ok: boolean }>
-      = await ipc.invoke(IPC_ARTIST_SAVE_LIST_REQUEST, artistsToUpdate);
-
-    dispatch({
-      type: ARTIST_GET_LIST_RESPONSE,
-      artists: updatedArtists.map(({ id, rev: _rev }) => ({
-        ...artistsToUpdate.find(({ _id }) => _id === id),
-        _rev
-      }))
     });
 
     const tracksToRemove = albumsToRemove.reduce((memo: Track[], album: Album) => {

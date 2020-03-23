@@ -67,7 +67,7 @@ export const ImportView: FC<ImportViewProps> = ({
   return (
 		<div className="import-view">
       <h2>
-        <span>{t('library.import.title')}</span>
+        <span>{t('library.importAlbum.title')}</span>
         <pre className="folder-name">
           <code>{folderToImport}</code>
         </pre>
@@ -75,6 +75,7 @@ export const ImportView: FC<ImportViewProps> = ({
       <AlbumForm
         albumType={albumType}
         isAlbumFromVA={isAlbumFromVA}
+        className="line-after"
         onAlbumTypeChange={onAlbumTypeChange}
         onAlbumFromVAChange={onAlbumFromVAChange}
         album={album}

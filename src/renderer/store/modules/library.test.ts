@@ -25,7 +25,6 @@ import {
 } from './album';
 
 import {
-  ARTIST_GET_LIST_RESPONSE,
   ARTIST_SAVE_RESPONSE
 } from './artist';
 
@@ -72,10 +71,6 @@ describe('library actions', () => {
       });
       const expectedActions = [
         {
-          type: ARTIST_SAVE_RESPONSE,
-          artist: { ...artists[0], _id: '1', count: 1 }
-        },
-        {
           type: TRACK_GET_LIST_RESPONSE,
           results: tracks
         },
@@ -94,7 +89,7 @@ describe('library actions', () => {
       ];
       await importAlbum({
         album: { ...albums[0], _id: null },
-        artist: { ...artists[0], _id: null, count: 0 },
+        artist: artists[0],
         tracks: tracks
       })(store.dispatch, store.getState);
       expectedActions.forEach(
@@ -122,7 +117,7 @@ describe('library actions', () => {
       const expectedActions = [
         {
           type: ARTIST_SAVE_RESPONSE,
-          artist: { ...artists[0], _id: '1', count: 2 }
+          artist: artists[0]
         },
         {
           type: TRACK_GET_LIST_RESPONSE,
@@ -143,7 +138,7 @@ describe('library actions', () => {
       ];
       await importAlbum({
         album: { ...albums[0], _id: null },
-        artist: { ...artists[0], _id: null, count: 0 },
+        artist: artists[0],
         tracks: tracks
       })(store.dispatch, store.getState);
       expectedActions.forEach(
@@ -178,10 +173,6 @@ describe('library actions', () => {
         {
           type: ALBUM_DELETE_LIST_RESPONSE,
           albums: [albums[0]]
-        },
-        {
-          type: ARTIST_GET_LIST_RESPONSE,
-          artists: [{ ...artists[0], count: artists[0].count - 1}]
         },
         {
           type: LIBRARY_GET_LATEST_RESPONSE,
@@ -249,10 +240,6 @@ describe('library actions', () => {
         {
           type: ALBUM_DELETE_LIST_RESPONSE,
           albums: [albums[0]]
-        },        
-        {
-          type: ARTIST_GET_LIST_RESPONSE,
-          artists: [{ ...artists[0], count: artists[0].count - 1}]
         },
         {
           type: LIBRARY_GET_LATEST_RESPONSE,
