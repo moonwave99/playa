@@ -85,6 +85,7 @@ export const PlaylistContainer = (): ReactElement => {
         dispatch,
         actionGroups: [
           AlbumActionsGroups.PLAYBACK,
+          AlbumActionsGroups.EDIT,
           AlbumActionsGroups.SYSTEM,
           AlbumActionsGroups.SEARCH_ONLINE
         ]
