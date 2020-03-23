@@ -1,6 +1,7 @@
-import React, { FC, ReactElement, MouseEvent, useState } from 'react';
+import React, { FC, ReactElement, MouseEvent, useState, useEffect } from 'react';
 import { AlbumGridTileView } from './AlbumGridTileView/AlbumGridTileView';
 import { Album } from '../../../store/modules/album';
+import { updateAlbumSelection } from '../../../store/modules/ui';
 import useGrid from '../../../hooks/useGrid/useGrid';
 
 import './AlbumGridView.scss';
@@ -41,6 +42,10 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
     onEnter,
     onBackspace
   });
+
+  useEffect(() => {
+    updateAlbumSelection(selection);
+  }, [selection]);
 
   function onDragBegin(): void {
     setDragging(true);

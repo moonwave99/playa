@@ -1,6 +1,7 @@
 import { History } from "history";
 import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
 import { setEditPlaylistTitle } from '../store/modules/ui';
+import { Album, editAlbum } from '../store/modules/album';
 import {
   playPreviousTrack,
   playNextTrack,
@@ -18,7 +19,8 @@ const {
   IPC_PLAYBACK_CLEAR_QUEUE,
   IPC_UI_SWIPE,
   IPC_UI_EDIT_PLAYLIST_TITLE,
-  IPC_LIBRARY_IMPORT_MUSIC
+  IPC_LIBRARY_IMPORT_MUSIC,
+  IPC_LIBRARY_EDIT_ALBUM
 } = IPC_MESSAGES;
 
 type InitIpcParams = {
@@ -49,6 +51,8 @@ export default function initIpc({
       }
     },
     [IPC_LIBRARY_IMPORT_MUSIC]: (): void => importMusicHandler(),
+    [IPC_LIBRARY_EDIT_ALBUM]: (_event: IpcRendererEvent, albumId: Album['_id']): void =>
+      dispatch(editAlbum({ _id: albumId } as Album)),
     [IPC_UI_EDIT_PLAYLIST_TITLE]: (): void => dispatch(setEditPlaylistTitle(true))
   }
 

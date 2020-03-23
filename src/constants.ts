@@ -76,6 +76,7 @@ export const IPC_MESSAGES = {
   IPC_UI_SWIPE: 'ui:swipe',
   IPC_UI_LOCATION_UPDATE: 'ui:location-update',
   IPC_UI_EDIT_PLAYLIST_TITLE: 'ui:edit-playlist-title',
+  IPC_UI_ALBUM_SELECTION_UPDATE: 'ui:album-selection-update',
   IPC_PLAYBACK_PREV_TRACK: 'ui:playback:prev-track',
   IPC_PLAYBACK_NEXT_TRACK: 'ui:playback:next-track',
   IPC_PLAYBACK_CLEAR_QUEUE: 'ui:playback:clear-queue',
@@ -127,5 +128,6 @@ export const IPC_MESSAGES = {
   IPC_TRACK_GET_LIST_RAW_REQUEST: 'track:get-list:raw-request',
   IPC_ABOUT_CLOSE_WINDOW: 'about:close-window',
   IPC_ABOUT_OPEN_LINK: 'about:open-link',
-  IPC_LIBRARY_IMPORT_MUSIC: 'library:import-music'
+  IPC_LIBRARY_IMPORT_MUSIC: 'library:import-music',
+  IPC_LIBRARY_EDIT_ALBUM: 'library:edit-album'
 };

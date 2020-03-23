@@ -15,12 +15,14 @@ const {
   IPC_UI_NAVIGATE_TO,
   IPC_UI_FOCUS_SEARCH,
   IPC_UI_LOCATION_UPDATE,
+  IPC_UI_ALBUM_SELECTION_UPDATE,
   IPC_PLAYBACK_PREV_TRACK,
   IPC_PLAYBACK_NEXT_TRACK,
   IPC_PLAYBACK_CLEAR_QUEUE,
   IPC_UI_TOGGLE_ALBUM_VIEW,
   IPC_UI_EDIT_PLAYLIST_TITLE,
-  IPC_LIBRARY_IMPORT_MUSIC
+  IPC_LIBRARY_IMPORT_MUSIC,
+  IPC_LIBRARY_EDIT_ALBUM
 } = IPC_MESSAGES;
 
 import {
@@ -33,6 +35,8 @@ import {
 
 const compactView = 0 //UIAlbumView.Compact;
 const extendedView = 1 //UIAlbumView.Extended;
+
+let selectedAlbumId: string;
 
 type InitMenuParams = {
   window: BrowserWindow;
@@ -157,6 +161,14 @@ export default function initMenu({
           label: 'Import Music',
           accelerator: 'cmd+shift+i',
           click: (): void => window.webContents.send(IPC_LIBRARY_IMPORT_MUSIC)
+        },
+        { type: 'separator' },
+        {
+          label: 'Edit Album',
+          id: 'edit-album',
+          enabled: false,
+          accelerator: 'cmd+e',
+          click: (): void => window.webContents.send(IPC_LIBRARY_EDIT_ALBUM, selectedAlbumId)
         }
       ]
     },
@@ -208,6 +220,16 @@ export default function initMenu({
       playlistToggleViewItems.forEach(item => item.enabled = true);
     } else {
       playlistToggleViewItems.forEach(item => item.enabled = false);
+    }
+  });
+
+  ipc.on(IPC_UI_ALBUM_SELECTION_UPDATE, (_event, selection: string[]) => {
+    if (selection.length === 1) {
+      selectedAlbumId = selection[0];
+      menu.getMenuItemById('edit-album').enabled = true;
+    } else {
+      selectedAlbumId = null;
+      menu.getMenuItemById('edit-album').enabled = false;
     }
   });
 

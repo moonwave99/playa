@@ -4,7 +4,8 @@ import { confirmDialog } from '../../lib/dialog'
 import { IPC_MESSAGES } from '../../../constants';
 const {
   IPC_UI_STATE_UPDATE,
-  IPC_UI_LOCATION_UPDATE
+  IPC_UI_LOCATION_UPDATE,
+  IPC_UI_ALBUM_SELECTION_UPDATE
 } = IPC_MESSAGES;
 
 const MAX_TITLE_LENGTH = 50;
@@ -115,6 +116,9 @@ export const setEditPlaylistTitle = (editPlaylistTitle: boolean): Function =>
 
 export const updateLocation =
   (location: string): void => ipc.send(IPC_UI_LOCATION_UPDATE, location);
+
+export const updateAlbumSelection =
+  (selection: string[]): void => ipc.send(IPC_UI_ALBUM_SELECTION_UPDATE, selection);
 
 const INITIAL_STATE = {
   started: true,
