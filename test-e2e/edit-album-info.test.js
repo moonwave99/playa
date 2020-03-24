@@ -64,7 +64,7 @@ describe('Edit album information', () => {
 
     // select album
     await app.client.click('#album-grid-tile-1 .album-cover');
-    await menuAddon.clickMenu('Library', 'Edit Album');
+    await menuAddon.clickMenu('Library', 'Edit Selected Album');
 
     const newData = {
       title: 'Nowhere',
