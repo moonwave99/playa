@@ -126,3 +126,35 @@ export const mockRouter = function({
     useLocation: () => location
   }));
 }
+
+const keyMap: {
+  [key: string]: number
+} = {
+  Backspace: 8,
+  Enter: 13,
+  Escape: 27,
+  Left: 37,
+  Up: 38,
+  Right: 39,
+  Down: 40,
+  a: 65
+};
+
+export const simulateKey = function({
+  eventType = 'keydown',
+  key,
+  metaKey = false,
+  shiftKey = false
+}: {
+  eventType: 'keydown'|'keypress';
+  key: string;
+  metaKey?: boolean;
+  shiftKey?: boolean;
+}): void {
+  const event = new KeyboardEvent(eventType, {
+    which: keyMap[key],
+    metaKey,
+    shiftKey
+  } as KeyboardEventInit);
+  document.dispatchEvent(event);
+}
