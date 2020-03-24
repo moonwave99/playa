@@ -4,9 +4,11 @@ import reducer, {
   updateState,
   updateTitle,
   setEditPlaylistTitle,
+  setEditArtistTitle,
   UPDATE_STATE,
   UPDATE_TITLE,
-  SET_EDIT_PLAYLIST_TITLE
+  SET_EDIT_PLAYLIST_TITLE,
+  SET_EDIT_ARTIST_TITLE
 } from './ui';
 
 describe('ui actions', () => {
@@ -47,6 +49,17 @@ describe('ui actions', () => {
       });
     });
   });
+
+  describe('setEditArtistTitle', () => {
+    it('should dispatch a setEditArtistTitle request', () => {
+      const dispatch = jest.fn();
+      setEditArtistTitle(true)(dispatch);
+      expect(dispatch).toHaveBeenCalledWith({
+        type: SET_EDIT_ARTIST_TITLE,
+        editArtistTitle: true
+      });
+    });
+  });
 });
 
 describe('ui reducer', () => {
@@ -56,7 +69,8 @@ describe('ui reducer', () => {
       title: {
         main: 'Playa'
       },
-      editPlaylistTitle: false
+      editPlaylistTitle: false,
+      editArtistTitle: false
     });
   });
 
@@ -88,6 +102,15 @@ describe('ui reducer', () => {
       editPlaylistTitle: true
     })).toEqual({
       editPlaylistTitle: true
+    });
+  });
+
+  it('should handle SET_EDIT_ARTIST_TITLE', () => {
+    expect(reducer({} as UIState, {
+      type: SET_EDIT_ARTIST_TITLE,
+      editArtistTitle: true
+    })).toEqual({
+      editArtistTitle: true
     });
   });
 });

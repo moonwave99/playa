@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconName } from '@fortawesome/fontawesome-svg-core';
 import { SearchForm } from './SearchForm/SearchForm';
 import { QueueButton } from './QueueButton/QueueButton';
+import { ArtistTitleProvider } from './ArtistTitleProvider/ArtistTitleProvider';
 import { PlaylistTitleProvider } from './PlaylistTitleProvider/PlaylistTitleProvider';
 import { openSimpleContextMenu } from '../../../lib/contextMenu';
 import { Title } from '../../../store/modules/ui';
@@ -15,7 +16,8 @@ import './AppHeader.scss';
 import {
 	LIBRARY,
 	PLAYLIST_ALL,
-	PLAYLIST_SHOW
+	PLAYLIST_SHOW,
+	ARTIST_SHOW
 } from '../../../routes';
 
 const icons: { [key: string]: IconName } = {
@@ -82,6 +84,9 @@ export const AppHeader: FC<AppHeaderProps> = ({
 					<Route path={PLAYLIST_SHOW} exact>
 						<PlaylistTitleProvider/>
 					</Route>
+					<Route path={ARTIST_SHOW} exact>
+						<ArtistTitleProvider/>
+					</Route>					
 					<Route path={LIBRARY}>
 						<h1 className="heading">
 							{title.main}

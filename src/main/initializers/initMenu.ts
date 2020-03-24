@@ -21,6 +21,7 @@ const {
   IPC_PLAYBACK_CLEAR_QUEUE,
   IPC_UI_TOGGLE_ALBUM_VIEW,
   IPC_UI_EDIT_PLAYLIST_TITLE,
+  IPC_UI_EDIT_ARTIST_TITLE,
   IPC_LIBRARY_IMPORT_MUSIC,
   IPC_LIBRARY_EDIT_ALBUM,
   IPC_LIBRARY_REMOVE_ALBUMS
@@ -31,7 +32,8 @@ import {
   QUEUE,
   PLAYLIST_ALL,
   PLAYLIST_CREATE,
-  PLAYLIST_SHOW
+  PLAYLIST_SHOW,
+  ARTIST_SHOW
 } from '../../renderer/routes';
 
 const compactView = 0 //UIAlbumView.Compact;
@@ -176,7 +178,13 @@ export default function initMenu({
           id: 'remove-albums',
           enabled: false,
           click: (): void => window.webContents.send(IPC_LIBRARY_REMOVE_ALBUMS, selectedAlbumIDs)
-        }
+        },
+        { type: 'separator' },
+        {
+          label: 'Rename Current Artist',
+          id: 'rename-artist',
+          click: (): void => window.webContents.send(IPC_UI_EDIT_ARTIST_TITLE)
+        },
       ]
     },
     {
@@ -223,11 +231,14 @@ export default function initMenu({
     const playlistToggleViewItems = ['edit-title', 'show-extended', 'show-compact'].map(
       id => menu.getMenuItemById('playlist').submenu.getMenuItemById(id)
     );
+
     if (matchPath(location, { path: PLAYLIST_SHOW }) && !matchPath(location, { path: PLAYLIST_ALL })) {
       playlistToggleViewItems.forEach(item => item.enabled = true);
     } else {
       playlistToggleViewItems.forEach(item => item.enabled = false);
     }
+
+    menu.getMenuItemById('rename-artist').enabled = !!matchPath(location, { path: ARTIST_SHOW });
   });
 
   ipc.on(IPC_UI_ALBUM_SELECTION_UPDATE, (_event, selection: string[]) => {

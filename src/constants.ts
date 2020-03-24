@@ -76,6 +76,7 @@ export const IPC_MESSAGES = {
   IPC_UI_SWIPE: 'ui:swipe',
   IPC_UI_LOCATION_UPDATE: 'ui:location-update',
   IPC_UI_EDIT_PLAYLIST_TITLE: 'ui:edit-playlist-title',
+  IPC_UI_EDIT_ARTIST_TITLE: 'ui:edit-artist-title',
   IPC_UI_ALBUM_SELECTION_UPDATE: 'ui:album-selection-update',
   IPC_PLAYBACK_PREV_TRACK: 'ui:playback:prev-track',
   IPC_PLAYBACK_NEXT_TRACK: 'ui:playback:next-track',

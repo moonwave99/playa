@@ -2,7 +2,7 @@ import { History } from 'history';
 import { Store } from 'redux';
 import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
 import { getFromList } from '../utils/storeUtils';
-import { setEditPlaylistTitle } from '../store/modules/ui';
+import { setEditPlaylistTitle, setEditArtistTitle } from '../store/modules/ui';
 import { Album, editAlbum } from '../store/modules/album';
 import {
   playPreviousTrack,
@@ -23,6 +23,7 @@ const {
   IPC_PLAYBACK_CLEAR_QUEUE,
   IPC_UI_SWIPE,
   IPC_UI_EDIT_PLAYLIST_TITLE,
+  IPC_UI_EDIT_ARTIST_TITLE,
   IPC_LIBRARY_IMPORT_MUSIC,
   IPC_LIBRARY_EDIT_ALBUM,
   IPC_LIBRARY_REMOVE_ALBUMS
@@ -68,7 +69,8 @@ export default function initIpc({
         dispatch
       }).handler();
     },
-    [IPC_UI_EDIT_PLAYLIST_TITLE]: (): void => dispatch(setEditPlaylistTitle(true))
+    [IPC_UI_EDIT_PLAYLIST_TITLE]: (): void => dispatch(setEditPlaylistTitle(true)),
+    [IPC_UI_EDIT_ARTIST_TITLE]: (): void => dispatch(setEditArtistTitle(true))
   }
 
   const entries = Object.entries(handlerMap);

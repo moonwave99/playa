@@ -44,12 +44,14 @@ export type UIState = {
   started?: boolean;
   title: Title;
   editPlaylistTitle: boolean;
+  editArtistTitle: boolean;
 };
 
 export const SHOW_DIALOG              = 'playa/ui/SHOW_DIALOG';
 export const UPDATE_STATE             = 'playa/ui/UPDATE_STATE';
 export const UPDATE_TITLE             = 'playa/ui/UPDATE_TITLE';
 export const SET_EDIT_PLAYLIST_TITLE  = 'playa/ui/SET_EDIT_PLAYLIST_TITLE';
+export const SET_EDIT_ARTIST_TITLE    = 'playa/ui/SET_EDIT_ARTIST_TITLE';
 
 interface ShowDialogAction {
   type: typeof SHOW_DIALOG;
@@ -70,11 +72,17 @@ interface SetEditPlaylistTitle {
   editPlaylistTitle: boolean;
 }
 
+interface SetEditArtistTitle {
+  type: typeof SET_EDIT_ARTIST_TITLE;
+  editArtistTitle: boolean;
+}
+
 export type UIActionTypes =
     ShowDialogAction
   | UpdateStateAction
   | UpdateTitleAction
-  | SetEditPlaylistTitle;
+  | SetEditPlaylistTitle
+  | SetEditArtistTitle;
 
 export const showDialog = (
   title: string,
@@ -114,6 +122,14 @@ export const setEditPlaylistTitle = (editPlaylistTitle: boolean): Function =>
     });
   }
 
+export const setEditArtistTitle = (editArtistTitle: boolean): Function =>
+  (dispatch: Function): void => {
+    dispatch({
+      type: SET_EDIT_ARTIST_TITLE,
+      editArtistTitle
+    });
+  }
+
 export const updateLocation =
   (location: string): void => ipc.send(IPC_UI_LOCATION_UPDATE, location);
 
@@ -123,7 +139,8 @@ export const updateAlbumSelection =
 const INITIAL_STATE = {
   started: true,
   title: { main: 'Playa' },
-  editPlaylistTitle: false
+  editPlaylistTitle: false,
+  editArtistTitle: false
 };
 
 export default function reducer(
@@ -140,6 +157,11 @@ export default function reducer(
       return {
         ...state,
         editPlaylistTitle: action.editPlaylistTitle
+      };
+    case SET_EDIT_ARTIST_TITLE:
+      return {
+        ...state,
+        editArtistTitle: action.editArtistTitle
       };
     case SHOW_DIALOG:
     case UPDATE_STATE:
