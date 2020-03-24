@@ -1,10 +1,9 @@
 import React, { FC, ReactElement } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { useTranslation } from 'react-i18next';
-
 import { AlbumGridView } from '../AlbumGridView/AlbumGridView';
-
 import { Album } from '../../../store/modules/album';
+import { updateAlbumSelection } from '../../../store/modules/ui';
 
 type LatestAlbumsViewProps = {
   albums: Album[];
@@ -27,11 +26,17 @@ export const LatestAlbumsView: FC<LatestAlbumsViewProps> = ({
 }) => {
   const { t } = useTranslation();
 
+  function onSelectionChange(selection: Album['_id'][]): void {
+    updateAlbumSelection(selection);
+  }
+
   function renderAlbums(): ReactElement {
     return (
       <AlbumGridView
         albums={albums}
         currentAlbumId={currentAlbumId}
+        clearSelectionOnBlur
+        onSelectionChange={onSelectionChange}
         onEnter={onAlbumEnter}
         onBackspace={onAlbumBackspace}
         onAlbumContextMenu={onAlbumContextMenu}

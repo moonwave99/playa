@@ -1,5 +1,7 @@
-import { History } from "history";
+import { History } from 'history';
+import { Store } from 'redux';
 import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
+import { getFromList } from '../utils/storeUtils';
 import { setEditPlaylistTitle } from '../store/modules/ui';
 import { Album, editAlbum } from '../store/modules/album';
 import {
@@ -7,6 +9,8 @@ import {
   playNextTrack,
   updateQueue
 } from '../store/modules/player';
+
+import { removeAlbumsAction } from '../actions/libraryContentActions';
 
 import { IPC_MESSAGES } from '../../constants';
 
@@ -20,12 +24,14 @@ const {
   IPC_UI_SWIPE,
   IPC_UI_EDIT_PLAYLIST_TITLE,
   IPC_LIBRARY_IMPORT_MUSIC,
-  IPC_LIBRARY_EDIT_ALBUM
+  IPC_LIBRARY_EDIT_ALBUM,
+  IPC_LIBRARY_REMOVE_ALBUMS
 } = IPC_MESSAGES;
 
 type InitIpcParams = {
   history: History;
   dispatch: Function;
+  store: Store;
   focusSearchHandler: (_event: IpcRendererEvent) => void;
   importMusicHandler: Function;
 }
@@ -33,6 +39,7 @@ type InitIpcParams = {
 export default function initIpc({
   history,
   dispatch,
+  store,
   focusSearchHandler,
   importMusicHandler
 }: InitIpcParams): Function {
@@ -53,6 +60,14 @@ export default function initIpc({
     [IPC_LIBRARY_IMPORT_MUSIC]: (): void => importMusicHandler(),
     [IPC_LIBRARY_EDIT_ALBUM]: (_event: IpcRendererEvent, albumId: Album['_id']): void =>
       dispatch(editAlbum({ _id: albumId } as Album)),
+    [IPC_LIBRARY_REMOVE_ALBUMS]: (_event: IpcRendererEvent, selection: Album['_id'][]): void => {
+      const { player, albums } = store.getState();
+      removeAlbumsAction({
+        selection: getFromList(albums.allById, selection),
+        currentAlbumId: player.currentAlbumId,
+        dispatch
+      }).handler();
+    },
     [IPC_UI_EDIT_PLAYLIST_TITLE]: (): void => dispatch(setEditPlaylistTitle(true))
   }
 

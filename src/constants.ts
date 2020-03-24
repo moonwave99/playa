@@ -129,5 +129,6 @@ export const IPC_MESSAGES = {
   IPC_ABOUT_CLOSE_WINDOW: 'about:close-window',
   IPC_ABOUT_OPEN_LINK: 'about:open-link',
   IPC_LIBRARY_IMPORT_MUSIC: 'library:import-music',
-  IPC_LIBRARY_EDIT_ALBUM: 'library:edit-album'
+  IPC_LIBRARY_EDIT_ALBUM: 'library:edit-album',
+  IPC_LIBRARY_REMOVE_ALBUMS: 'library:remove-albums'
 };

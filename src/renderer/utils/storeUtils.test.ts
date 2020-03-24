@@ -3,6 +3,7 @@ import {
   toArray,
   updateId,
   removeIds,
+  getFromList,
   ensureAll,
   immutableMove,
   immutableInsertAtIndex,
@@ -55,6 +56,18 @@ describe('removeIds', () => {
   });
   it('should return the original EntityHashMap if no ids are found', () => {
     expect(removeIds(entitiesObject, ['6', '7', '8'])).toEqual(entitiesObject);
+  });
+});
+
+describe('getFromList', () => {
+  it('should return the elements of original EntityHashMap contained in id list', () => {
+    expect(getFromList(entitiesObject, ['1', '3'])).toEqual([entitiesObject['1'], entitiesObject['3']]);
+  });
+  it('should ignore ids that are not contained in original EntityHashMap', () => {
+    expect(getFromList(entitiesObject, ['1', '3', '666'])).toEqual([entitiesObject['1'], entitiesObject['3']]);
+  });
+  it('should return an empty array if id list is empty', () => {
+    expect(getFromList(entitiesObject, [])).toEqual([]);
   });
 });
 

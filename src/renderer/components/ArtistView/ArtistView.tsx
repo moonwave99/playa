@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect, useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
@@ -18,7 +18,7 @@ import {
   getArtistReleases
 } from '../../store/modules/artist';
 import { Album, selectors as albumSelectors } from '../../store/modules/album';
-import { updateTitle } from '../../store/modules/ui';
+import { updateTitle, updateAlbumSelection } from '../../store/modules/ui';
 import { ApplicationState } from '../../store/store';
 import { groupAlbumsByType } from '../../utils/albumUtils';
 import { formatArtistName } from '../../utils/artistUtils';
@@ -39,6 +39,7 @@ import {
 export const ArtistView = (): ReactElement => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const [selectionByType, setSelectionByType] = useState({});
   const { _id } = useParams();
   const {
     artist,
@@ -65,6 +66,12 @@ export const ArtistView = (): ReactElement => {
   useEffect(() => {
     dispatch(getArtistReleases(artist));
   }, [artistId]);
+
+  useEffect(() => {
+    const selectedIDs = Object.values(selectionByType)
+      .reduce((memo: string[], ids: string[]) => [...memo, ...ids], []);
+    updateAlbumSelection(selectedIDs as Album['_id'][]);
+  }, [selectionByType]);
 
   useEffect(() => {
     if (name) {
@@ -109,6 +116,13 @@ export const ArtistView = (): ReactElement => {
     }).handler();
 	}
 
+  function updateSelection(type: string, selection: Album['_id'][]): void {
+    setSelectionByType({
+      ...selectionByType,
+      [type]: selection
+    });
+  }
+
   function renderReleases(): ReactElement {
     const groups = Object.entries(albums);
     if (groups.length === 0) {
@@ -118,6 +132,11 @@ export const ArtistView = (): ReactElement => {
       <section className="artist-releases">
       {
         groups.map(([type, releases]) => {
+
+          function onSelectionChange(selection: Album['_id'][]): void {
+            updateSelection(type, selection);
+          }
+
           function onAlbumEnter(selection: Album['_id'][]): void {
             if (selection.length === 0) {
               return;
@@ -149,8 +168,10 @@ export const ArtistView = (): ReactElement => {
             <section className={sectionClassNames} key={type}>
               <AlbumGridView
                 showArtists={false}
+                clearSelectionOnBlur
                 albums={releases}
                 currentAlbumId={currentAlbumId}
+                onSelectionChange={onSelectionChange}
                 onEnter={onAlbumEnter}
                 onBackspace={onAlbumBackspace}
                 onAlbumContextMenu={onAlbumContextMenu}

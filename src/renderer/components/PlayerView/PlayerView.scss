@@ -45,20 +45,20 @@
       }
       &-prev,
       &-next {
-        font-size: 2.5rem;
+        font-size: $playbackPrevNextControlSize;
         flex: 2;
       }
       &-playback {
-        font-size: 3rem;
+        font-size: $playbackControlSize;
         flex: 0.5;
       }
       @media (max-width: $miniWindowThreshold) {
         &-prev,
         &-next {
-          font-size: 1.5rem;
+          font-size: $playbackControlSize / 2;
         }
         &-playback {
-          font-size: 1.5rem;
+          font-size: $playbackControlSize / 2;
         }
       }
     }

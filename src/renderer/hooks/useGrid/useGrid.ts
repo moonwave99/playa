@@ -84,6 +84,7 @@ type UseGridParams = {
   items: HasId[];
   thresholds: Threshold[];
   excludeClass?: string;
+  clearSelectionOnBlur?: boolean;
   onEnter?: Function;
   onBackspace?: Function;
   onTopOverflow?: Function;
@@ -94,6 +95,7 @@ export default function useGrid({
   items = [],
   thresholds,
   excludeClass = '',
+  clearSelectionOnBlur = false,
   onEnter,
   onBackspace,
   onTopOverflow,
@@ -118,7 +120,7 @@ export default function useGrid({
     }
     if (!ref.current.contains(event.target) || !event.target.classList.contains(excludeClass)) {
       setFocus(false);
-      setSelection([]);
+      clearSelectionOnBlur && setSelection([]);
     }
   };
 

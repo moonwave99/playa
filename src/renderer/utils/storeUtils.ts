@@ -40,6 +40,18 @@ export function removeIds<T extends Entity>(
     }, {});
 }
 
+export function getFromList<T extends Entity>(
+  hashMap: EntityHashMap<T>,
+  ids: Entity['_id'][]
+): T[] {
+  return ids.reduce((memo, id) => {
+    if (hashMap[id]) {
+      memo = [...memo, hashMap[id]];
+    }
+    return memo;
+  }, []);
+}
+
 export function ensureAll<T> (
   entities: object[],
   getDefault: Function

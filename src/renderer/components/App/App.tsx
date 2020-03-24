@@ -1,7 +1,7 @@
 import React, { FC, ReactElement, useState, useEffect } from 'react';
 import { Switch, Route, Redirect, useHistory } from 'react-router';
 import { generatePath } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, useStore } from 'react-redux';
 import { createSelector } from 'reselect';
 import Player from '../../lib/player';
 import { selectFolderDialog } from '../../lib/dialog';
@@ -71,6 +71,7 @@ const appSelector = createSelector(
       playlists: playlistArray,
       recentPlaylists,
       currentPlaylistId: player.currentPlaylistId,
+      currentAlbumId: player.currentAlbumId,
       editingAlbum: albums[editingAlbumId],
       title: ui.title
     }
@@ -101,6 +102,7 @@ export const App: FC<AppProps> = ({
   queue
 }): ReactElement => {
   const history = useHistory();
+  const store = useStore();
   const dispatch = useDispatch();
   const {
     playlists,
@@ -160,6 +162,7 @@ export const App: FC<AppProps> = ({
       history,
       dispatch,
       importMusicHandler,
+      store,
       focusSearchHandler: onFocusSearch
     });
     document.addEventListener('keydown', onKeyDown);

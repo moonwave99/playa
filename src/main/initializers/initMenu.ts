@@ -22,7 +22,8 @@ const {
   IPC_UI_TOGGLE_ALBUM_VIEW,
   IPC_UI_EDIT_PLAYLIST_TITLE,
   IPC_LIBRARY_IMPORT_MUSIC,
-  IPC_LIBRARY_EDIT_ALBUM
+  IPC_LIBRARY_EDIT_ALBUM,
+  IPC_LIBRARY_REMOVE_ALBUMS
 } = IPC_MESSAGES;
 
 import {
@@ -36,7 +37,7 @@ import {
 const compactView = 0 //UIAlbumView.Compact;
 const extendedView = 1 //UIAlbumView.Extended;
 
-let selectedAlbumId: string;
+let selectedAlbumIDs: string[];
 
 type InitMenuParams = {
   window: BrowserWindow;
@@ -164,11 +165,17 @@ export default function initMenu({
         },
         { type: 'separator' },
         {
-          label: 'Edit Album',
+          label: 'Edit Selected Album',
           id: 'edit-album',
           enabled: false,
           accelerator: 'cmd+e',
-          click: (): void => window.webContents.send(IPC_LIBRARY_EDIT_ALBUM, selectedAlbumId)
+          click: (): void => window.webContents.send(IPC_LIBRARY_EDIT_ALBUM, selectedAlbumIDs[0])
+        },
+        {
+          label: 'Remove Selected Albums from Library',
+          id: 'remove-albums',
+          enabled: false,
+          click: (): void => window.webContents.send(IPC_LIBRARY_REMOVE_ALBUMS, selectedAlbumIDs)
         }
       ]
     },
@@ -224,12 +231,16 @@ export default function initMenu({
   });
 
   ipc.on(IPC_UI_ALBUM_SELECTION_UPDATE, (_event, selection: string[]) => {
-    if (selection.length === 1) {
-      selectedAlbumId = selection[0];
-      menu.getMenuItemById('edit-album').enabled = true;
-    } else {
-      selectedAlbumId = null;
+    selectedAlbumIDs = selection;
+    if (selection.length === 0) {
       menu.getMenuItemById('edit-album').enabled = false;
+      menu.getMenuItemById('remove-albums').enabled = false
+    } else if (selection.length === 1) {
+      menu.getMenuItemById('edit-album').enabled = true;
+      menu.getMenuItemById('remove-albums').enabled = true;
+    } else {
+      menu.getMenuItemById('edit-album').enabled = false;
+      menu.getMenuItemById('remove-albums').enabled = true;
     }
   });
 

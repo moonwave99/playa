@@ -1,7 +1,6 @@
 import React, { FC, ReactElement, MouseEvent, useState, useEffect } from 'react';
 import { AlbumGridTileView } from './AlbumGridTileView/AlbumGridTileView';
 import { Album } from '../../../store/modules/album';
-import { updateAlbumSelection } from '../../../store/modules/ui';
 import useGrid from '../../../hooks/useGrid/useGrid';
 
 import './AlbumGridView.scss';
@@ -12,6 +11,8 @@ type AlbumGridViewProps = {
   albums: Album[];
   currentAlbumId?: Album['_id'];
   showArtists?: boolean;
+  clearSelectionOnBlur?: boolean;
+  onSelectionChange?: Function;
   onEnter?: Function;
   onBackspace?: Function;
   onAlbumContextMenu?: Function;
@@ -21,7 +22,9 @@ type AlbumGridViewProps = {
 export const AlbumGridView: FC<AlbumGridViewProps> = ({
   albums = [],
   currentAlbumId,
+  clearSelectionOnBlur = false,
   showArtists = true,
+  onSelectionChange,
   onEnter,
   onBackspace,
   onAlbumContextMenu,
@@ -39,12 +42,13 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
     items: albums,
     thresholds: ALBUM_GRID_THRESHOLDS,
     excludeClass: '.album-cover',
+    clearSelectionOnBlur,
     onEnter,
     onBackspace
   });
 
   useEffect(() => {
-    updateAlbumSelection(selection);
+    onSelectionChange && onSelectionChange(selection);
   }, [selection]);
 
   function onDragBegin(): void {
