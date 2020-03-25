@@ -26,7 +26,7 @@ type OnImportFormSubmitParams = {
   tracks: Track[];
 }
 
-export default function useImportAlbums(): {
+export default function useImportAlbums(appElement: HTMLElement): {
   show: (folder: string) => Promise<void>;
   render: () => ReactElement;
 } {
@@ -88,6 +88,7 @@ export default function useImportAlbums(): {
     }
     return (
       <ReactModal
+        appElement={appElement}
         className={{
           base: 'modal-content',
           beforeClose: 'modal-content-before-close',

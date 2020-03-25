@@ -1,4 +1,4 @@
-import React, { FC, ReactElement, useState, useEffect } from 'react';
+import React, { FC, ReactElement, useState, useEffect, useRef } from 'react';
 import { Switch, Route, Redirect, useHistory } from 'react-router';
 import { generatePath } from 'react-router-dom';
 import { useDispatch, useSelector, useStore } from 'react-redux';
@@ -101,6 +101,7 @@ export const App: FC<AppProps> = ({
   waveformBasePath,
   queue
 }): ReactElement => {
+  const mainElementRef = useRef(null);
   const history = useHistory();
   const store = useStore();
   const dispatch = useDispatch();
@@ -117,12 +118,12 @@ export const App: FC<AppProps> = ({
   const {
     show: showImportDialog,
     render: renderImportModal
-  } = useImportAlbums();
+  } = useImportAlbums(mainElementRef.current);
 
   const {
     show: showEditModal,
     render: renderEditModal
-  } = useEditAlbum();
+  } = useEditAlbum(mainElementRef.current);
 
   function onFocusSearch(): void {
     setSearchFocus(true);
@@ -215,7 +216,7 @@ export const App: FC<AppProps> = ({
   }
 
   return (
-    <main className="app">
+    <main className="app" ref={mainElementRef}>
       <AppHeader
         title={title}
         hasSearchFocus={hasSearchFocus}

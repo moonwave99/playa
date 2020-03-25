@@ -5,7 +5,7 @@ import { EditAlbumView } from '../../components/LibraryView/EditAlbumView/EditAl
 import { Album, editAlbum, updateAlbum } from '../../store/modules/album';
 import { Artist } from '../../store/modules/artist';
 
-export default function useEditAlbum(): {
+export default function useEditAlbum(appElement: HTMLElement): {
   show: (album: Album) => void;
   render: () => ReactElement;
 } {
@@ -38,6 +38,7 @@ export default function useEditAlbum(): {
     }
     return (
       <ReactModal
+        appElement={appElement}
         className={{
           base: 'modal-content',
           beforeClose: 'modal-content-before-close',

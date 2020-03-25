@@ -140,7 +140,7 @@ const keyMap: {
   a: 65
 };
 
-export const simulateKey = function({
+export const simulateKey = ({
   eventType = 'keydown',
   key,
   metaKey = false,
@@ -150,11 +150,21 @@ export const simulateKey = function({
   key: string;
   metaKey?: boolean;
   shiftKey?: boolean;
-}): void {
+}): void => {
   const event = new KeyboardEvent(eventType, {
     which: keyMap[key],
     metaKey,
-    shiftKey
+    shiftKey,
+    target: document.querySelector('.ReactModalPortal')
   } as KeyboardEventInit);
   document.dispatchEvent(event);
+}
+
+export const simulateClick = (selector: string) => {
+  const clickEvent = document.createEvent('MouseEvents');
+  clickEvent.initMouseEvent('click', true, true, window, 1, 0, 0, 0, 0,
+      false, false, false, false, 0, null);
+
+  const element = document.querySelector(selector);
+  element && element.dispatchEvent(clickEvent);
 }
