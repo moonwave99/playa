@@ -76,15 +76,15 @@ describe('Edit album information', () => {
     await app.client.waitUntil(async () =>
       await app.client.getText('.edit-album .folder-name') === albumPath
     );
-    await app.client.elements('#artist')
+    await app.client.elements('.edit-album #artist')
       .setValue(new Array(artist.length).fill('Backspace'))
     await app.client.elements('.edit-album #artist').setValue(newData.artist);
 
-    await app.client.elements('#title')
+    await app.client.elements('.edit-album #title')
       .setValue(new Array(title.length).fill('Backspace'))
     await app.client.elements('.edit-album #title').setValue(newData.title);
 
-    await app.client.elements('#year')
+    await app.client.elements('.edit-album #year')
       .setValue(new Array(4).fill('Backspace'))
     await app.client.elements('.edit-album #year').setValue(newData.year);
 

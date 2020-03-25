@@ -61,6 +61,32 @@ export const TestPlaylists: TestPlaylist[] = [
   }
 ];
 
+
+export const TestAlbums: TestAlbum[] = [
+  {
+    _id: '1',
+    _rev: null,
+    path: '/path/to/album/1',
+    title: 'Just for a day',
+    year: 1991,
+    type: 'album',
+    artist: '1',
+    created: null,
+    tracks: []
+  },
+  {
+    _id: '2',
+    _rev: null,
+    path: '/path/to/album/2',
+    title: 'Loveless',
+    year: 1991,
+    type: 'album',
+    artist: '2',
+    created: null,
+    tracks: []
+  }
+];
+
 export const TestArtists: TestArtist[] = [
   {
     _id: '1',
