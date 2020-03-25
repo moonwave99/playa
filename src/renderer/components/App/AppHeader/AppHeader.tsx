@@ -63,7 +63,7 @@ export const AppHeader: FC<AppHeaderProps> = ({
 	function onLibraryActionsButtonClick(): void {
 		openSimpleContextMenu([{
 			id: 'library-add-music',
-			label: t('buttons.addMusic'),
+			label: t('buttons.importMusic'),
 			click: (): void => importMusicHandler()
 		}]);
 	}

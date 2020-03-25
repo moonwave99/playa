@@ -4,7 +4,7 @@
       "library": "Library",
       "queue": "Queue",
       "playlists": "Playlists",
-      "addMusic": "Add Music"
+      "importMusic": "Import Music"
     },
     "sidebar": {
       "buttons": {
