@@ -1,6 +1,6 @@
 import React, { ReactElement, FC } from 'react';
 import { Switch, Route, } from 'react-router';
-import { NavLink } from 'react-router-dom';
+import { NavLink, generatePath } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconName } from '@fortawesome/fontawesome-svg-core';
@@ -9,6 +9,7 @@ import { QueueButton } from './QueueButton/QueueButton';
 import { ArtistTitleProvider } from './ArtistTitleProvider/ArtistTitleProvider';
 import { PlaylistTitleProvider } from './PlaylistTitleProvider/PlaylistTitleProvider';
 import { openSimpleContextMenu } from '../../../lib/contextMenu';
+import { VARIOUS_ARTISTS_ID } from '../../../store/modules/artist';
 import { Title } from '../../../store/modules/ui';
 
 import './AppHeader.scss';
@@ -84,9 +85,15 @@ export const AppHeader: FC<AppHeaderProps> = ({
 					<Route path={PLAYLIST_SHOW} exact>
 						<PlaylistTitleProvider/>
 					</Route>
+					<Route path={generatePath(ARTIST_SHOW, { _id: VARIOUS_ARTISTS_ID })} exact>
+						<h1 className="heading heading-has-sub">
+							<span className="heading-main">{title.main}</span>
+							<span className="heading-sub">{title.sub}</span>
+						</h1>
+					</Route>
 					<Route path={ARTIST_SHOW} exact>
 						<ArtistTitleProvider/>
-					</Route>					
+					</Route>
 					<Route path={LIBRARY}>
 						<h1 className="heading">
 							{title.main}
