@@ -46,6 +46,7 @@ module.exports = {
   ipcRenderer: {
     on: jest.fn(),
     send: jest.fn(),
+    removeEventListener: jest.fn(),
     invoke: (message, ...args) => {
       switch (message) {
         case IPC_DIALOG_SHOW_MESSAGE:
