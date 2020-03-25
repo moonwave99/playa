@@ -61,7 +61,8 @@ export const CustomDragLayer = (): ReactElement => {
     }
   }
 
-  if (!isDragging) {
+  const renderedItem = renderItem();
+  if (!isDragging || ! renderedItem) {
     return null;
   }
 
@@ -72,10 +73,8 @@ export const CustomDragLayer = (): ReactElement => {
   );
 
 	return (
-    <div className="custom-drag-layer">
-      <div style={itemStyle}>
-        {renderItem()}
-      </div>
+    <div className="custom-drag-layer" style={itemStyle}>
+      {renderedItem}
     </div>
 	);
 }
