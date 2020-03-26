@@ -25,5 +25,11 @@
 		border-radius: 0 .4rem .4rem 0;
 		border-left: none;
 		width: calc(var(--section-gutter) * 11/3);
+		&:hover {
+			color: $mainColor;
+		}
+	}
+	.search-input:focus + button {
+		background-color: lighten($backgroundColor, 5%);
 	}
 }
