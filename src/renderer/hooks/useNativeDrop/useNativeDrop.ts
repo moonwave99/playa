@@ -10,7 +10,7 @@ export interface NativeDragItem extends DragObjectWithType {
 export function getURLfromItem(
   item: NativeDragItem,
   filter: Function = (): boolean => true
-) {
+): string {
   let url = null;
   if (item.urls) {
     url = item.urls[0];
