@@ -64,6 +64,10 @@ export const ImportView: FC<ImportViewProps> = ({
     year: getYearFromPath(folderToImport)
   };
 
+  const proposedArtist = tracks[0].artist ? {
+    name: tracks[0].artist
+  } as Artist : null;
+
   return (
 		<div className="import-view">
       <h2>
@@ -73,6 +77,7 @@ export const ImportView: FC<ImportViewProps> = ({
         </pre>
       </h2>
       <AlbumForm
+        artist={proposedArtist}
         albumType={albumType}
         isAlbumFromVA={isAlbumFromVA}
         className="line-after"

@@ -48,7 +48,7 @@ export const AlbumForm: FC<AlbumFormProps> = ({
   const classNames = cx('form', 'album-form', className);
 
   useEffect(() => {
-    if (propArtist && propArtist._id) {
+    if (propArtist && propArtist.name) {
       setArtist(propArtist);
     }
   }, [propArtist]);

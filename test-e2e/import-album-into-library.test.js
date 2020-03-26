@@ -47,7 +47,8 @@ describe('Import album into library', () => {
     await app.client.waitUntil(async () =>
       await app.client.getText('.import-view .folder-name') === albumPath
     );
-    await app.client.elements('.import-view #artist').setValue(artist);
+
+    // no need to fill artist value, since inferred from ID3 tags
     await app.client.elements('.import-view #title').setValue(title);
     await app.client.elements('.import-view #year').setValue(year);
     await app.client.click('.import-view button[type="submit"]');
@@ -104,7 +105,6 @@ describe('Import album into library', () => {
     await app.client.waitUntil(async () =>
       await app.client.getText('.import-view .folder-name') === albumPath
     );
-    await app.client.elements('.import-view #artist').setValue(artist);
     await app.client.elements('.import-view #title').setValue(title);
     await app.client.elements('.import-view #year').setValue(year);
     await app.client.click('.import-view button[type="submit"]');
