@@ -24,7 +24,8 @@ const {
   IPC_UI_EDIT_ARTIST_TITLE,
   IPC_LIBRARY_IMPORT_MUSIC,
   IPC_LIBRARY_EDIT_ALBUM,
-  IPC_LIBRARY_REMOVE_ALBUMS
+  IPC_LIBRARY_REMOVE_ALBUMS,
+  IPC_LIBRARY_REVEAL_ALBUM
 } = IPC_MESSAGES;
 
 import {
@@ -57,7 +58,6 @@ export default function initMenu({
           label: 'View',
           submenu: [
             { role: 'reload' },
-            { role: 'forceReload' },
             { role: 'toggleDevTools' },
             { type: 'separator' },
             { role : 'resetZoom' },
@@ -179,6 +179,13 @@ export default function initMenu({
           enabled: false,
           click: (): void => window.webContents.send(IPC_LIBRARY_REMOVE_ALBUMS, selectedAlbumIDs)
         },
+        {
+          label: 'Reveal Selected Album in Finder',
+          id: 'reveal-album',
+          enabled: false,
+          accelerator: 'cmd+shift+r',
+          click: (): void => window.webContents.send(IPC_LIBRARY_REVEAL_ALBUM, selectedAlbumIDs)
+        },
         { type: 'separator' },
         {
           label: 'Rename Current Artist',
@@ -241,17 +248,33 @@ export default function initMenu({
     menu.getMenuItemById('rename-artist').enabled = !!matchPath(location, { path: ARTIST_SHOW });
   });
 
+  const albumSelectionEntries = [
+    {
+      entry: menu.getMenuItemById('edit-album'),
+      multiple: false
+    },
+    {
+      entry: menu.getMenuItemById('reveal-album'),
+      multiple: false
+    },
+    {
+      entry: menu.getMenuItemById('remove-albums'),
+      multiple: true
+    },
+  ];
+
   ipc.on(IPC_UI_ALBUM_SELECTION_UPDATE, (_event, selection: string[]) => {
     selectedAlbumIDs = selection;
-    if (selection.length === 0) {
-      menu.getMenuItemById('edit-album').enabled = false;
-      menu.getMenuItemById('remove-albums').enabled = false
-    } else if (selection.length === 1) {
-      menu.getMenuItemById('edit-album').enabled = true;
-      menu.getMenuItemById('remove-albums').enabled = true;
+    if (selection.length <= 1) {
+      albumSelectionEntries
+        .map(({ entry }) => entry.enabled = !!selection.length);
     } else {
-      menu.getMenuItemById('edit-album').enabled = false;
-      menu.getMenuItemById('remove-albums').enabled = true;
+      albumSelectionEntries
+        .filter(({ multiple }) => multiple)
+        .map(({ entry }) => entry.enabled = true);
+      albumSelectionEntries
+        .filter(({ multiple }) => !multiple)
+        .map(({ entry }) => entry.enabled = false);
     }
   });
 

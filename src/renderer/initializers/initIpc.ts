@@ -4,12 +4,14 @@ import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
 import { getFromList } from '../utils/storeUtils';
 import { setEditPlaylistTitle, setEditArtistTitle } from '../store/modules/ui';
 import { Album, editAlbum } from '../store/modules/album';
+import { Artist } from '../store/modules/artist';
 import {
   playPreviousTrack,
   playNextTrack,
   updateQueue
 } from '../store/modules/player';
 
+import { revealInFinderAction } from '../actions/albumActions';
 import { removeAlbumsAction } from '../actions/libraryContentActions';
 
 import { IPC_MESSAGES } from '../../constants';
@@ -26,7 +28,8 @@ const {
   IPC_UI_EDIT_ARTIST_TITLE,
   IPC_LIBRARY_IMPORT_MUSIC,
   IPC_LIBRARY_EDIT_ALBUM,
-  IPC_LIBRARY_REMOVE_ALBUMS
+  IPC_LIBRARY_REMOVE_ALBUMS,
+  IPC_LIBRARY_REVEAL_ALBUM
 } = IPC_MESSAGES;
 
 type InitIpcParams = {
@@ -66,6 +69,16 @@ export default function initIpc({
       removeAlbumsAction({
         selection: getFromList(albums.allById, selection),
         currentAlbumId: player.currentAlbumId,
+        dispatch
+      }).handler();
+    },
+    [IPC_LIBRARY_REVEAL_ALBUM]: (_event: IpcRendererEvent, selection: Album['_id'][]): void => {
+      const { albums } = store.getState();
+      revealInFinderAction({
+        albums: [{
+          album: getFromList(albums.allById, [selection[0]])[0] as Album,
+          artist: {} as Artist
+        }],
         dispatch
       }).handler();
     },
