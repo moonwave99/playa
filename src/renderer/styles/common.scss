@@ -223,6 +223,5 @@ input[type=search] {
 	z-index: 1010;
 	@media (min-width: $wideWindowThreshold) {
 		width: $modalMaxWidth;
-		// margin-left: $modalMaxWidth * -0.5;
 	}
 }
