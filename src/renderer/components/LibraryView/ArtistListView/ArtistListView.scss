@@ -60,6 +60,7 @@
         margin: 0 1rem 1rem 0;
         background-color: rgba($backgroundDarkColor, .4);
         border-radius: .5rem;
+        border: 1px solid rgba($highlightColor, .1);
         color: $lightColor;
         font-size: .9rem;
         .img-wrapper {

@@ -38,7 +38,7 @@ const {
   IPC_TRACK_DELETE_LIST_REQUEST
 } = IPC_MESSAGES;
 
-const DEFAULT_LATEST_ALBUM_LIMIT = 10;
+const DEFAULT_LATEST_ALBUM_LIMIT = 14;
 
 export interface LibraryState {
   latestAlbumId: Album['_id'];

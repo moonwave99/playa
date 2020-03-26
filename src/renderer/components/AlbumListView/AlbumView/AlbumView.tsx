@@ -128,7 +128,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
 
   function renderArtist(): ReactElement {
     if (!artist) {
-      return null;
+      return <span className="album-artist-link loading"></span>;
     }
     const { _id } = artist;
     return (

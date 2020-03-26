@@ -32,7 +32,7 @@ export const COLORS = {
   BACKGROUND_COLOR: '#1F1F1F'
 };
 
-export const LIBRARY_LATEST_ALBUM_LIMIT = 10;
+export const LIBRARY_LATEST_ALBUM_LIMIT = 14;
 export const LIBRARY_LATEST_DAY_COUNT = 90;
 
 export const ALBUM_GRID_THRESHOLDS = [

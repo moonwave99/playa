@@ -91,6 +91,12 @@
           &:hover {
             color: $highlightColor;
           }
+          &.loading {
+            text-decoration: none;
+            &:after {
+              content: '…';
+            }
+          }
         }
         .album-year {
           @include monospace();

@@ -43,13 +43,14 @@
         @include ellipsis(100%);
       }
       .album-artist {
+        font-size: .9rem;
         &:hover {
           cursor: pointer;
         }
       }
       .album-title,
       .album-year {
-        font-size: .9rem;
+        font-size: .8rem;
       }
       .album-year {
         @include monospace();

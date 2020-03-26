@@ -2,7 +2,6 @@
 @import "../../styles/mixins";
 
 .playlist-view {
-  padding: var(--section-gutter) 0 0 0;
   overflow: auto;
   height: 100%;
   width: 100%;
@@ -13,9 +12,6 @@
     margin: 0;
     > li {
       margin: 0;
-      &:last-child{
-        margin-bottom: var(--section-gutter);
-      }
     }
   }
   .playlist-empty-placeholder {

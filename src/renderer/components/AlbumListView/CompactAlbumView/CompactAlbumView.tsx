@@ -1,4 +1,4 @@
-import React, { FC, SyntheticEvent, useEffect } from 'react';
+import React, { FC, ReactElement, SyntheticEvent, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, generatePath } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -70,6 +70,18 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
     _onContextMenu();
   }
 
+  function renderArtist(): ReactElement {
+    if (!artist) {
+      return <span className="album-artist-link loading"></span>;
+    }
+    const { _id } = artist;
+    return (
+      <Link className="album-artist" to={generatePath(ARTIST_SHOW, { _id })}>
+        {formatArtist({ album, artist })}
+      </Link>
+    );
+  }
+
   const classNames = cx('compact-album-view', {
     'sortable': sortable,
     'is-current': isCurrent,
@@ -95,9 +107,7 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
           </span>
           <span className="album-info">
             { year && <span className="album-year">{year}</span> }
-            <Link className="album-artist" to={generatePath(ARTIST_SHOW, { _id: artist._id })}>
-              {formatArtist({ album, artist })}
-            </Link>
+            { renderArtist() }
           </span>
         </p>
         <button onClick={onActionsButtonClick} className="button-album-actions">
