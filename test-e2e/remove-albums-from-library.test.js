@@ -53,7 +53,6 @@ describe('Remove album into library', () => {
     await app.client.waitUntil(async () =>
       await app.client.getText('.import-view .folder-name') === albumPath
     );
-    await app.client.elements('.import-view #artist').setValue(artist);
     await app.client.elements('.import-view #title').setValue(title);
     await app.client.elements('.import-view #year').setValue(year);
     await app.client.click('.import-view button[type="submit"]');
