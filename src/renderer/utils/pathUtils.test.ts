@@ -2,8 +2,8 @@ import { encodePath, getYearFromPath } from './pathUtils';
 
 describe('encodePath', () => {
   it('should encode symbols', () => {
-    const path = "/path/to/What's th& story? Morning glory #1";
-    expect(encodePath(path)).toEqual("/path/to/What's th%26 story%3F Morning glory %231");
+    const path = "/path/to/What's th& story? Morning glory: #1";
+    expect(encodePath(path)).toEqual("/path/to/What's th%26 story%3F Morning glory%3A %231");
   });
 });
 
