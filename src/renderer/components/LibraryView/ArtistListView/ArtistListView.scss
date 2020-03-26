@@ -4,6 +4,7 @@
 .library-artists {
   opacity: 1;
   transition: opacity .3s ease-in-out;
+  min-height: 100vh;
   &.loading {
     opacity: 0;
   }
@@ -43,36 +44,41 @@
     @include clearFix();
     li {
       float: left;
-      width: calc(100% / 3);
+      width: calc(100% / 5);
       @media (min-width: $wideWindowThreshold) {
-        width: calc(100% / 4);
+        width: calc(100% / 7);
       }
       @media (max-width: $smallWindowThreshold) {
-        width: calc(100% / 2);
+        width: calc(100% / 3);
       }
       @media (max-width: $miniWindowThreshold) {
-        width: 100%;
+        width: calc(100% / 2);
       }
       .artist-list-item {
         display: flex;
-        padding: 1.5rem 1rem;
+        flex-direction: column;
         margin: 0 1rem 1rem 0;
         background-color: rgba($backgroundDarkColor, .4);
         border-radius: .5rem;
         color: $lightColor;
+        font-size: .9rem;
+        .img-wrapper {
+          width: 100%;
+          height: 0;
+          padding-bottom: 100%;
+          border-top-left-radius: .25rem;
+          border-top-right-radius: .25rem;
+          background-color: $backgroundDarkColor;
+        }
         .artist-name {
           @include ellipsis(100%);
+          width: 100%;
+          padding: 1rem;
+          letter-spacing: .01rem;
         }
         &:hover {
           transition: background-color .2s ease-in-out;
           background-color: $backgroundDarkColor;
-          .artist-name {
-            text-decoration: underline;
-          }
-        }
-        .release-count {
-          margin-left: auto;
-          color: darken($lightColor, 30%);
         }
       }
     }

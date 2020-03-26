@@ -56,6 +56,7 @@ export const ArtistListView: FC<ArtistListViewProps> = ({
 
   return (
     <section className={classNames}>
+      <div className="artists-start"></div>
       <ul className="alphabet">
         {ALPHABET.map(renderLetter)}
         <li>

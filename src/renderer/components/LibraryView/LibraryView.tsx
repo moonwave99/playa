@@ -170,7 +170,7 @@ export const LibraryView: FC<LibraryViewProps> = ({
       `${LIBRARY}?letter=${letter}`
     );
     scrollTo({
-      selector: '.alphabet',
+      selector: '.artists-start',
       block: 'start',
       behavior: 'smooth'
     });
