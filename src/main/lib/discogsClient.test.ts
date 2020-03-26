@@ -23,13 +23,31 @@ describe('DiscogsClient', () => {
   });
   describe('getAlbumCover', () => {
     it('should retrieve album cover from discogs', async () => {
-      const cover = await client.getAlbumCover('Slowdive', 'Just For a Day', '1');
-      expect(cover).toBe('/path/to/covers/1.jpg');
+      expect(
+        await client.getAlbumCover('Slowdive', 'Just For a Day', '1')
+      ).toBe('/path/to/covers/1.jpg');
+      // second time hits the cache
+      expect(
+        await client.getAlbumCover('Slowdive', 'Just For a Day', '1')
+      ).toBe('/path/to/covers/1.jpg');
     });
 
     it('should return null if cover is not found', async () => {
-      const cover = await client.getAlbumCover('Non Existing', 'Album', '666');
-      expect(cover).toBe(null);
+      expect(
+        await client.getAlbumCover('Non Existing', 'Album', '666')
+      ).toBe(null);
+      // second time hits the cache
+      expect(
+        await client.getAlbumCover('Non Existing', 'Album', '666')
+      ).toBe(null);
+    });
+  });
+
+  describe('getAlbumCoverFromURL', () => {
+    it('should persist image from url', async () => {
+      expect(
+        await client.getAlbumCoverFromURL('1', 'https://path/to/covers/1.jpg')
+      ).toBe('/path/to/covers/1.jpg');
     });
   });
 });

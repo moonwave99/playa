@@ -12,6 +12,8 @@ class Client {
       getImage: (url) => {
         if (url === 'https://url/to/slowdive-album.jpg') {
           return 'data';
+        } else if (url === 'https://path/to/covers/1.jpg') {
+          return '/path/to/covers/1.jpg';
         }
         return null;
       }
