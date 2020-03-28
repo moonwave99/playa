@@ -66,7 +66,7 @@ export const CompactAlbumListView: FC<CompactAlbumListViewProps> = ({
     const { _id } = album;
     return (
       <CompactAlbumView
-        key={index}
+        key={_id}
         album={album}
         index={index}
         isCurrent={_id === currentAlbumId}
