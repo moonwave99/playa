@@ -68,6 +68,7 @@ export default function useReorder({
 
   const [{ isDragging }, drag] = useDrag({
     item: { type, _id, index },
+    isDragging: (monitor) => _id === monitor.getItem()._id,
     collect: monitor => ({
       isDragging: monitor.isDragging(),
     }),

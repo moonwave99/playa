@@ -102,7 +102,6 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
 
   return (
     <article
-      id={album.title}
       className={classNames}
       ref={ref}
       onDoubleClick={_onDoubleClick}

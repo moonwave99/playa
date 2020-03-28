@@ -1,4 +1,4 @@
-import React, { FC, useState, useCallback } from 'react';
+import React, { FC, useState, useEffect, useCallback } from 'react';
 import cx from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { AlbumDetailView } from './AlbumDetailView/AlbumDetailView';
@@ -51,6 +51,11 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
     }
     , [albumOrder]
   );
+
+  useEffect(() => {
+    setAlbumOrder(playlist.albums);
+    setSelectedAlbumId(playlist.albums[0]);
+  }, [playlist.albums])
 
   function onSelectionChange(_ids: Album['_id'][]): void {
     if (_ids.length > 1) {
