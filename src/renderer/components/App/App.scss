@@ -22,9 +22,8 @@
     width: var(--sidebar-width);
 		display: flex;
 		height: 100%;
-    @media (max-width: $miniWindowThreshold) {
-      height: auto;
-      width: 100%;
+    @media (max-width: $smallWindowThreshold) {
+      display:none;
     }
   }
 

@@ -72,7 +72,6 @@ export const IPC_MESSAGES = {
   IPC_UI_STATE_UPDATE: 'ui:state:update',
   IPC_UI_NAVIGATE_TO: 'ui:navigate-to',
   IPC_UI_FOCUS_SEARCH: 'ui:focus-search',
-  IPC_UI_TOGGLE_ALBUM_VIEW: 'ui:toggle-album-view',
   IPC_UI_SWIPE: 'ui:swipe',
   IPC_UI_LOCATION_UPDATE: 'ui:location-update',
   IPC_UI_EDIT_PLAYLIST_TITLE: 'ui:edit-playlist-title',

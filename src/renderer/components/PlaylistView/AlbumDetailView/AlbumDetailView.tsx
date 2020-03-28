@@ -8,7 +8,7 @@ import Vibro from 'node-vibrant';
 import cx from 'classnames';
 import useNativeDrop from '../../../hooks/useNativeDrop/useNativeDrop';
 import { CoverView } from '../../CoverView/CoverView';
-import { TracklistView } from './TracklistView/TracklistView';
+import { TracklistView } from '../../AlbumListView/AlbumView/TracklistView/TracklistView';
 import { ApplicationState } from '../../../store/store';
 import { Album, getAlbumRequest, getAlbumContentById } from '../../../store/modules/album';
 import { getCoverFromUrlRequest } from '../../../store/modules/cover';
@@ -18,9 +18,9 @@ import {
   showTrackNumbers,
 } from '../../../utils/albumUtils';
 import { ARTIST_SHOW } from '../../../routes';
-import './AlbumView.scss';
+import './AlbumDetailView.scss';
 
-type AlbumViewProps = {
+type AlbumDetailViewProps = {
   album: Album;
   isCurrent?: boolean;
   currentTrackId: Track['_id'];
@@ -40,7 +40,7 @@ type Palette = {
 }
 
 // #TODO push notFoundAction
-export const AlbumView: FC<AlbumViewProps> = ({
+export const AlbumDetailView: FC<AlbumDetailViewProps> = ({
   album,
   isCurrent = false,
   currentTrackId,
@@ -140,7 +140,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
     );
   }
 
-  const albumClasses = cx('album-view', { 'is-current': isCurrent });
+  const albumClasses = cx('album-detail-view', { 'is-current': isCurrent });
   const tagClasses = cx('album-type', `album-type-${type}`);
 
   const coverClasses = cx('album-cover', {
@@ -166,7 +166,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
             {year && <span className="album-year">{year}</span>}<span className={tagClasses}>{type}</span>
           </p>
         </header>
-        <button onClick={onActionsButtonClick} className="button-album-actions">
+        <button onClick={onActionsButtonClick} className="button button-frameless button-album-actions">
           <FontAwesomeIcon className="icon" icon="ellipsis-h"/>
         </button>
       </aside>

@@ -2,16 +2,11 @@
 @import "../../../styles/mixins";
 
 .compact-album-view {
+	@include albumType('border-left-color');
 	padding: 1rem 2rem;
   position: relative;
-  transition: background-color .3s ease-in-out;
-  border-radius: .5rem;
   background-color: rgba($backgroundDarkColor, .4);
-  margin: 0 var(--section-gutter) 1rem var(--section-gutter);
-  max-width: 100%;
-  @media (min-width: $wideWindowThreshold) {
-		width: $albumCompactMaxWidth;
-	}
+	border-left: .5rem solid;
 
   .album-inner-wrapper {
     display: flex;
@@ -39,33 +34,40 @@
   }
 
   &:not(.is-current):hover {
+		transition: background-color .3s ease-in-out;
     background-color: $backgroundLightColor;
     .album-cover {
       @include albumCover($albumCoverCompactWidth, $backgroundColor);
       @include playOverlay('../../../static/icons/album/play.svg');
     }
   }
-  &.drag-is-dragging {
+  &.drag-is-dragging,
+	&.drag-is-dragging:hover {
     background-color: rgba($mainColor, .3);
     .album-inner-wrapper {
       opacity: 0;
     }
   }
   &.is-current {
+		transition: background-color .3s ease-in-out;
     background-color: rgba($mainColor, .3);
+  }
+  &.selected {
+    background-color: $backgroundLightColor;
   }
   .album-cover {
     @include albumCover($albumCoverCompactWidth);
   }
   .album-content {
+		@include ellipsis(100%);
     margin: 0 0 0 1.6rem;
     display: flex;
 		flex: 1;
     flex-direction: column;
-    .title {
+    .album-title {
       font-weight: bold;
       color: $highlightColor;
-      font-size: 1.2rem;
+      font-size: 1rem;
       line-height: 2rem;
       .icon {
         margin-left: .5rem;

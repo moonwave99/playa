@@ -7,6 +7,7 @@
   width: 100%;
   display: flex;
   flex-direction: column;
+
   .sidebar-playlists {
     flex: 1;
     padding-top: var(--section-gutter);
@@ -68,9 +69,5 @@
       color: $mainColor;
       transition: color .3s ease-in-out;
     }
-  }
-
-  @media (max-width: $miniWindowThreshold) {
-    display:none;
   }
 }

@@ -90,14 +90,12 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
 
 	return (
     <div className="album-grid" data-key-catch="useGrid" ref={grid}>
-      {
-        rows.map((row, index) =>
-          <div
-            className="album-grid-row"
-            key={index}>{row.map(renderTile)}
-          </div>
-        )
-      }
+      {rows.map((row, index) =>
+        <div
+          className="album-grid-row"
+          key={index}>{row.map(renderTile)}
+        </div>
+      )}
     </div>
 	);
 }

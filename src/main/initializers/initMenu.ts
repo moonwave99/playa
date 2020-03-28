@@ -19,7 +19,6 @@ const {
   IPC_PLAYBACK_PREV_TRACK,
   IPC_PLAYBACK_NEXT_TRACK,
   IPC_PLAYBACK_CLEAR_QUEUE,
-  IPC_UI_TOGGLE_ALBUM_VIEW,
   IPC_UI_EDIT_PLAYLIST_TITLE,
   IPC_UI_EDIT_ARTIST_TITLE,
   IPC_LIBRARY_IMPORT_MUSIC,
@@ -37,9 +36,6 @@ import {
   ARTIST_SHOW
 } from '../../renderer/routes';
 
-const compactView = 0 //UIAlbumView.Compact;
-const extendedView = 1 //UIAlbumView.Extended;
-
 let selectedAlbumIDs: string[];
 
 type InitMenuParams = {
@@ -53,7 +49,7 @@ export default function initMenu({
 }: InitMenuParams): void {
 
   const getViewMenu = (debug = false): MenuItemConstructorOptions => {
-    return debug
+    return !debug
       ? {
           label: 'View',
           submenu: [
@@ -135,19 +131,6 @@ export default function initMenu({
           label: 'Rename Current Playlist',
           id: 'edit-title',
           click: (): void => window.webContents.send(IPC_UI_EDIT_PLAYLIST_TITLE)
-        },
-        { type: 'separator' },
-        {
-          label: 'Show Extended View',
-          id: 'show-extended',
-          accelerator: 'cmd+shift+1',
-          click: (): void => window.webContents.send(IPC_UI_TOGGLE_ALBUM_VIEW, extendedView)
-        },
-        {
-          label: 'Show Compact View',
-          id: 'show-compact',
-          accelerator: 'cmd+shift+2',
-          click: (): void => window.webContents.send(IPC_UI_TOGGLE_ALBUM_VIEW, compactView)
         }
       ]
     },
@@ -235,7 +218,7 @@ export default function initMenu({
   const menu = Menu.buildFromTemplate(template);
 
   ipc.on(IPC_UI_LOCATION_UPDATE, (_event, location: string) => {
-    const playlistToggleViewItems = ['edit-title', 'show-extended', 'show-compact'].map(
+    const playlistToggleViewItems = ['edit-title'].map(
       id => menu.getMenuItemById('playlist').submenu.getMenuItemById(id)
     );
 

@@ -1,8 +1,8 @@
 import React from 'react';
-import { render, mount } from '../../../../../../test/testUtils';
+import { render, mount } from '../../../../test/testUtils';
 
 import { CoverView } from './CoverView';
-import { albums } from '../../../../../../test/testFixtures';
+import { albums } from '../../../../test/testFixtures';
 
 describe('CoverView', () => {
   it('should render a <figure> with a title attribute', () => {

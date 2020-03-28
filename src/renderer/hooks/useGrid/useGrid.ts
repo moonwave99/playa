@@ -50,7 +50,7 @@ function getRows({
     }
   }
   return {
-    rows: chunk(items, threshold.columns),
+    rows: [...chunk(items, threshold.columns)],
     threshold
   };
 }
@@ -82,9 +82,11 @@ function locateSelection({
 
 type UseGridParams = {
   items: HasId[];
-  thresholds: Threshold[];
+  thresholds?: Threshold[];
+  direction?: 'both'|'vertical'|'horizontal';
   excludeClass?: string;
   clearSelectionOnBlur?: boolean;
+  initialSelection?: string[];
   onEnter?: Function;
   onBackspace?: Function;
   onTopOverflow?: Function;
@@ -93,9 +95,14 @@ type UseGridParams = {
 
 export default function useGrid({
   items = [],
-  thresholds,
+  thresholds = [{
+    width: 0,
+    columns: 1
+  }],
+  direction = 'both',
   excludeClass = '',
   clearSelectionOnBlur = false,
+  initialSelection = [],
   onEnter,
   onBackspace,
   onTopOverflow,
@@ -108,7 +115,7 @@ export default function useGrid({
   grid: (node?: Element | null) => void;
 } {
   const [hasFocus, setFocus] = useState(false);
-  const [selection, setSelection] = useState([]);
+  const [selection, setSelection] = useState(initialSelection);
   const [rows, setRows] = useState([] as HasId[][]);
   const [threshold, setThreshold] = useState(thresholds[0]);
 
@@ -132,22 +139,26 @@ export default function useGrid({
       document.addEventListener('click', listener);
     }
     ref.current = node
-  }, [items, listener])
+  }, [items, listener]);
+
+  function recompute(): void {
+    const { rows: computedRows, threshold } = getRows({
+      items,
+      thresholds,
+      windowWidth: window.innerWidth
+    });
+    setRows(computedRows);
+    setThreshold(threshold);
+  }
+
+  useEffect(() => {
+    recompute();
+  }, [items]);
 
   useLayoutEffect(() => {
-    function updateSize(): void {
-      const { rows: computedRows, threshold } = getRows({
-        items,
-        thresholds,
-        windowWidth: window.innerWidth
-      });
-      setRows(computedRows);
-      setThreshold(threshold);
-    }
-    window.addEventListener('resize', updateSize);
-    updateSize();
-    return (): void => window.removeEventListener('resize', updateSize);
-  }, [items]);
+    window.addEventListener('resize', recompute);
+    return (): void => window.removeEventListener('resize', recompute);
+  }, []);
 
   useEffect(() => {
     function onUp(event: KeyboardEvent): void {
@@ -225,10 +236,15 @@ export default function useGrid({
 
     const mousetrap = new Mousetrap();
 
-    mousetrap.bind('up', onUp);
-    mousetrap.bind('down', onDown);
-    mousetrap.bind('left', onLeft);
-    mousetrap.bind('right', onRight);
+    if (direction === 'both' || direction === 'vertical') {
+      mousetrap.bind('up', onUp);
+      mousetrap.bind('down', onDown);
+    }
+
+    if (direction === 'both' || direction === 'horizontal') {
+      mousetrap.bind('left', onLeft);
+      mousetrap.bind('right', onRight);
+    }
     mousetrap.bind('enter', _onEnter);
     mousetrap.bind('backspace', _onBackspace);
     mousetrap.bind('command+a', onAll);

@@ -1,0 +1,130 @@
+@import "../../../styles/variables";
+@import "../../../styles/mixins";
+
+.album-detail-view {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  height: 100%;
+  @media (max-width: $miniWindowThreshold) {
+    background-color: transparent;
+    padding: 0;
+    margin-top: 0;
+    margin-left: 0;
+    margin-right: 0;
+    @include horizontalSeparator($separatorWidth: calc(100vw - 2 * var(--section-gutter)));
+  }
+  &:hover {
+    .album-aside {
+      .album-actions {
+        visibility: visible;
+      }
+    }
+  }
+  &:not(.is-current) {
+    .album-cover {
+      @include playOverlay(
+        $iconUrl: '../../../static/icons/album/play.svg',
+        $bgSize: 33%
+      );
+    }
+  }
+  .album-aside {
+    padding: calc(var(--section-gutter) * .5);
+    background-color: rgba($backgroundDarkColor, .4);
+    display: flex;
+    transition: background-color .3s ease-in-out;
+    .album-cover-wrapper {
+      width: $albumDetailCoverWidth;
+      margin-right: calc(var(--section-gutter) * .5);
+      .album-cover {
+        @include albumCover($albumDetailCoverWidth);
+        @include droppable();
+      }
+    }
+    @media (max-width: $smallWindowThreshold) {
+      width: 100%;
+      padding-bottom: calc(var(--section-gutter) * .5);
+    }
+    @media (max-width: $miniWindowThreshold) {
+      background-color: transparent!important;
+    }
+    header {
+      @media (max-width: $miniWindowThreshold) {
+        width: 100%;
+        margin-bottom: var(--section-gutter);
+      }
+      h2 {
+        margin: calc(var(--section-gutter) * 0.5) 0 0 0;
+        font-size: 1.8rem;
+        line-height: 2.5rem;
+        color: $highlightColor;
+        font-weight: bold;
+        letter-spacing: .01em;
+        transition: color .3s ease-in-out;
+        @media (max-width: $miniWindowThreshold) {
+          font-size: 1.2rem;
+          line-height: 2rem;
+        }
+      }
+      .album-artist,
+      .album-info {
+        margin: 0;
+        font-size: 1rem;
+        letter-spacing: 0;
+        line-height: 2rem;
+        font-weight: normal;
+        .album-artist-link {
+          text-decoration: underline;
+          color: $lightColor;
+          &:hover {
+            color: $highlightColor;
+          }
+          &.loading {
+            text-decoration: none;
+            &:after {
+              content: '…';
+            }
+          }
+        }
+        .album-year {
+          @include monospace();
+          margin-right: .5rem;
+        }
+        .album-type {
+          @include albumType('color');
+        }
+      }
+    }
+    .button-album-actions {
+      margin-top: 1rem;
+      width: 2rem;
+    }
+  }
+
+  &.is-current {
+    @media (min-width: $miniWindowThreshold + 1) {
+      background-color: rgba($mainColor, .2);
+      transition: background-color .3s ease-in-out;
+    }
+  }
+
+  .album-content {
+    flex: 1;
+    padding:
+      var(--section-gutter)
+      var(--section-gutter)
+      var(--section-gutter)
+      calc(var(--section-gutter) * 0.5);
+    background-color: rgba($backgroundDarkColor, .7);
+    @media (max-width: $smallWindowThreshold) {
+      padding-top: calc(var(--section-gutter) * .5);
+      padding-left: var(--section-gutter);
+      border-top-right-radius: 0;
+      border-bottom-left-radius: 1rem;
+    }
+    @media (max-width: $miniWindowThreshold) {
+      background-color: transparent;
+    }
+  }
+}

@@ -6,7 +6,7 @@ import cx from 'classnames';
 import sha1 from 'sha1';
 import { PlaybackBar } from './PlaybackBar/PlaybackBar';
 import { VolumeControl } from './VolumeControl/VolumeControl';
-import { CoverView } from '../AlbumListView/AlbumView/CoverView/CoverView';
+import { CoverView } from '../CoverView/CoverView';
 import {
 	playerSelector,
 	togglePlayback,

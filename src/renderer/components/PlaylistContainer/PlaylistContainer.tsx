@@ -20,6 +20,7 @@ import { openContextMenu } from '../../lib/contextMenu';
 
 import {
   PLAYLIST_CONTENT_CONTEXT_ACTIONS,
+  PlaylistContentActions,
 } from '../../actions/playlistContentActions';
 
 import {
@@ -103,6 +104,28 @@ export const PlaylistContainer = (): ReactElement => {
     }).handler();
   }
 
+  function onAlbumEnter(selection: Album['_id'][]): void {
+    if (selection.length === 0) {
+      return;
+    }
+    actionsMap(AlbumActions.PLAY_ALBUM)({
+      queue: playlist.albums,
+      playlistId: playlist._id,
+      albums: [{
+        album: albums[selection[0]],
+        artist: {} as Artist }],
+      dispatch
+    }).handler();
+  }
+
+  function onAlbumBackspace(selection: Album['_id'][]): void {
+    actionsMap(PlaylistContentActions.REMOVE_ALBUM)({
+      selection,
+      playlist,
+      dispatch
+    }).handler();
+  }
+
 	return (
     !playlist._id
       ? <Redirect to={QUEUE}/>
@@ -112,14 +135,16 @@ export const PlaylistContainer = (): ReactElement => {
           classNames="playlist-view"
           unmountOnExit>
           <PlaylistView
-           albums={albums}
-           playlist={playlist}
-           isCurrent={currentPlaylistId === playlist._id}
-           currentAlbumId={currentAlbumId}
-           currentTrackId={currentTrackId}
-           onAlbumOrderChange={onAlbumOrderChange}
-           onAlbumContextMenu={onAlbumContextMenu}
-           onAlbumDoubleClick={onAlbumDoubleClick}/>
+            albums={albums}
+            playlist={playlist}
+            isCurrent={currentPlaylistId === playlist._id}
+            currentAlbumId={currentAlbumId}
+            currentTrackId={currentTrackId}
+            onAlbumOrderChange={onAlbumOrderChange}
+            onAlbumEnter={onAlbumEnter}
+            onAlbumBackspace={onAlbumBackspace}
+            onAlbumContextMenu={onAlbumContextMenu}
+            onAlbumDoubleClick={onAlbumDoubleClick}/>
        </CSSTransition>
 	);
 };

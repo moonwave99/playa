@@ -1,11 +1,9 @@
-import React, { ReactElement, FC, useState, useEffect, useCallback } from 'react';
+import React, { ReactElement, FC, useState, useEffect } from 'react';
 import { AlbumView } from './AlbumView/AlbumView';
-import { CompactAlbumView } from './CompactAlbumView/CompactAlbumView';
 import { Album } from '../../store/modules/album';
 import { Artist } from '../../store/modules/artist';
 import { Track } from '../../store/modules/track';
-import { UIAlbumView } from '../../store/modules/ui';
-import { EntityHashMap, immutableMove } from '../../utils/storeUtils';
+import { EntityHashMap } from '../../utils/storeUtils';
 
 import './AlbumListView.scss';
 
@@ -14,12 +12,10 @@ type AlbumListViewProps = {
   originalOrder: string[];
   currentAlbumId: Album['_id'];
   currentTrackId: Track['_id'];
-  albumView: UIAlbumView;
   dragType: string;
   onAlbumOrderChange?: Function;
   onAlbumContextMenu: Function;
   onAlbumDoubleClick: Function;
-  sortable?: boolean;
 };
 
 export const AlbumListView: FC<AlbumListViewProps> = ({
@@ -27,12 +23,9 @@ export const AlbumListView: FC<AlbumListViewProps> = ({
   originalOrder,
   currentAlbumId,
   currentTrackId,
-  albumView,
   dragType,
-  onAlbumOrderChange,
   onAlbumContextMenu,
-  onAlbumDoubleClick,
-  sortable = false
+  onAlbumDoubleClick
 }) => {
   const [albumOrder, setAlbumOrder] = useState(originalOrder);
 
@@ -41,56 +34,29 @@ export const AlbumListView: FC<AlbumListViewProps> = ({
     , [originalOrder]
   );
 
-  const onAlbumMove = useCallback(
-    (dragIndex: number, hoverIndex: number): void =>
-      setAlbumOrder(immutableMove<Album['_id']>(albumOrder, dragIndex, hoverIndex))
-    , [albumOrder]
-  );
-
-  function onDragEnd(): void {
-    onAlbumOrderChange && onAlbumOrderChange(albumOrder);
-  }
-
-  function renderAlbum(album: Album, index: number): ReactElement {
+  function renderAlbum(album: Album): ReactElement {
     if (!album) {
       return null;
     }
     function onDoubleClick(album: Album, artist: Artist, track: Track): void {
       onAlbumDoubleClick(album, artist, track);
     }
-    switch (albumView) {
-      case UIAlbumView.Extended:
-        return (
-          <li key={`${album._id}`}>
-            <AlbumView
-              isCurrent={album._id === currentAlbumId}
-              currentTrackId={currentTrackId}
-              dragType={dragType}
-              album={album}
-              onContextMenu={onAlbumContextMenu}
-              onDoubleClick={onDoubleClick}/>
-          </li>
-        );
-      case UIAlbumView.Compact:
-        return (
-          <li key={`${album._id}`}>
-            <CompactAlbumView
-              album={album}
-              index={index}
-              isCurrent={album._id === currentAlbumId}
-              sortable={sortable}
-              onDragEnd={onDragEnd}
-              onAlbumMove={onAlbumMove}
-              onContextMenu={onAlbumContextMenu}
-              onDoubleClick={onDoubleClick}/>
-          </li>
-        );
-    }
+    return (
+      <li key={`${album._id}`}>
+        <AlbumView
+          isCurrent={album._id === currentAlbumId}
+          currentTrackId={currentTrackId}
+          dragType={dragType}
+          album={album}
+          onContextMenu={onAlbumContextMenu}
+          onDoubleClick={onDoubleClick}/>
+      </li>
+    );
   }
 
 	return (
     <ol className="album-list">
-      {albumOrder.map((_id, index) => renderAlbum(albums[_id], index))}
+      {albumOrder.map(_id => renderAlbum(albums[_id]))}
     </ol>
 	);
 }
