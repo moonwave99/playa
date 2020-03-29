@@ -73,10 +73,17 @@
         font-weight: bold;
         letter-spacing: .01em;
         transition: color .3s ease-in-out;
+        display: flex;
         @media (max-width: $miniWindowThreshold) {
           font-size: 1.2rem;
           line-height: 2rem;
         }
+      }
+      .button-album-actions {
+        display: flex;
+        width: 2rem;
+        height: 2.5rem;
+        margin-left: .5rem;
       }
       .album-artist,
       .album-info {
@@ -86,10 +93,9 @@
         line-height: 2rem;
         font-weight: normal;
         .album-artist-link {
-          text-decoration: underline;
           color: $lightColor;
           &:hover {
-            color: $highlightColor;
+            text-decoration: underline;
           }
           &.loading {
             text-decoration: none;
@@ -100,16 +106,16 @@
         }
         .album-year {
           @include monospace();
-          margin-right: .5rem;
+          margin-right: .25rem;
+          &:after {
+  					content: '·';
+  					padding-left: .25rem;
+  				}
         }
         .album-type {
           @include albumType('color');
         }
       }
-    }
-    .button-album-actions {
-      margin-top: 1rem;
-      width: 2rem;
     }
   }
 

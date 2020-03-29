@@ -50,7 +50,7 @@ export const AlbumDetailView: FC<AlbumDetailViewProps> = ({
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [palette, setPalette] = useState({} as Palette);
-  const { _id, type, year, title } = album;
+  const { _id, year, title } = album;
   const [viewRef, inView] = useInView({ triggerOnce: true });
 
   const {
@@ -128,20 +128,19 @@ export const AlbumDetailView: FC<AlbumDetailViewProps> = ({
 
   function renderArtist(): ReactElement {
     if (!artist) {
-      return <span className="album-artist-link loading"></span>;
+      return <span className="album-artist loading"></span>;
     }
     const { _id } = artist;
     return (
       <Link
         to={generatePath(ARTIST_SHOW, { _id })}
-        className="album-artist-link">
+        className="album-artist">
           {formatArtist({ album, artist })}
       </Link>
     );
   }
 
   const albumClasses = cx('album-detail-view', { 'is-current': isCurrent });
-  const tagClasses = cx('album-type', `album-type-${type}`);
 
   const coverClasses = cx('album-cover', {
     'loaded': palette.loaded,
@@ -160,15 +159,19 @@ export const AlbumDetailView: FC<AlbumDetailViewProps> = ({
             onDoubleClick={onCoverDoubleClick}/>
           </div>
         <header>
-          <h2 style={{ color: palette.LightVibrant }}>{title}</h2>
-          <p className="album-artist">{renderArtist()}</p>
+          <h2 style={{ color: palette.LightVibrant }}>
+            {title}
+            <button
+              onClick={onActionsButtonClick}
+              className="button button-frameless button-album-actions"
+              style={{ color: palette.LightVibrant }}>
+              <FontAwesomeIcon className="icon" icon="ellipsis-h"/>
+            </button>            
+          </h2>
           <p className="album-info">
-            {year && <span className="album-year">{year}</span>}<span className={tagClasses}>{type}</span>
+            {year && <span className="album-year">{year}</span>}{renderArtist()}
           </p>
         </header>
-        <button onClick={onActionsButtonClick} className="button button-frameless button-album-actions">
-          <FontAwesomeIcon className="icon" icon="ellipsis-h"/>
-        </button>
       </aside>
       <section className="album-content">
         <TracklistView

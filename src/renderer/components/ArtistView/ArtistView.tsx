@@ -17,8 +17,9 @@ import {
   getAlbumsByArtist,
   getArtistReleases
 } from '../../store/modules/artist';
-import { Album, selectors as albumSelectors } from '../../store/modules/album';
-import { updateTitle, updateAlbumSelection } from '../../store/modules/ui';
+
+import { Album, AlbumTypes, selectors as albumSelectors } from '../../store/modules/album';
+import { updateTitle, updateLibraryAlbumSelection } from '../../store/modules/ui';
 import { ApplicationState } from '../../store/store';
 import { groupAlbumsByType } from '../../utils/albumUtils';
 import { formatArtistName } from '../../utils/artistUtils';
@@ -70,7 +71,7 @@ export const ArtistView = (): ReactElement => {
   useEffect(() => {
     const selectedIDs = Object.values(selectionByType)
       .reduce((memo: string[], ids: string[]) => [...memo, ...ids], []);
-    updateAlbumSelection(selectedIDs as Album['_id'][]);
+    updateLibraryAlbumSelection(selectedIDs as Album['_id'][]);
   }, [selectionByType]);
 
   useEffect(() => {
@@ -167,6 +168,7 @@ export const ArtistView = (): ReactElement => {
           return (
             <section className={sectionClassNames} key={type}>
               <AlbumGridView
+                autoFocus={type === AlbumTypes.Album}
                 showArtists={false}
                 clearSelectionOnBlur
                 albums={releases}

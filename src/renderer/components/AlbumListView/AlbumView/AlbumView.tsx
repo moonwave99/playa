@@ -160,15 +160,20 @@ export const AlbumView: FC<AlbumViewProps> = ({
             onDoubleClick={onCoverDoubleClick}/>
           </div>
         <header>
-          <h2 style={{ color: palette.LightVibrant }}>{title}</h2>
+          <h2 style={{ color: palette.LightVibrant }}>
+            {title}
+            <button
+              onClick={onActionsButtonClick}
+              className="button button-frameless button-album-actions"
+              style={{ color: palette.LightVibrant }}>
+              <FontAwesomeIcon className="icon" icon="ellipsis-h"/>
+            </button>
+          </h2>
           <p className="album-artist">{renderArtist()}</p>
           <p className="album-info">
             {year && <span className="album-year">{year}</span>}<span className={tagClasses}>{type}</span>
           </p>
         </header>
-        <button onClick={onActionsButtonClick} className="button-album-actions">
-          <FontAwesomeIcon className="icon" icon="ellipsis-h"/>
-        </button>
       </aside>
       <section className="album-content">
         <TracklistView

@@ -50,6 +50,7 @@
       background-color: transparent!important;
     }
     header {
+      flex: 1;
       @media (max-width: $miniWindowThreshold) {
         width: 100%;
         margin-bottom: var(--section-gutter);
@@ -67,19 +68,26 @@
           line-height: 2rem;
         }
       }
-      .album-artist,
+      .button-album-actions {
+        width: 2rem;
+        font-size: 1rem;
+      }
       .album-info {
         margin: 0;
-        font-size: 1rem;
+        font-size: 1.5rem;
+        line-height: 2.5rem;
         letter-spacing: 0;
-        line-height: 2rem;
         font-weight: normal;
-        .album-artist-link {
-          text-decoration: underline;
-          color: $lightColor;
-          &:hover {
-            color: $highlightColor;
+        .album-year {
+          @include monospace();
+          margin-right: .25rem;
+          &:after {
+            content: '·';
+            padding-left: .25rem;
           }
+        }
+        .album-artist {
+          cursor: pointer;
           &.loading {
             text-decoration: none;
             &:after {
@@ -87,18 +95,7 @@
             }
           }
         }
-        .album-year {
-          @include monospace();
-          margin-right: .5rem;
-        }
-        .album-type {
-          @include albumType('color');
-        }
       }
-    }
-    .button-album-actions {
-      margin-top: 1rem;
-      width: 2rem;
     }
   }
 
@@ -111,11 +108,9 @@
 
   .album-content {
     flex: 1;
-    padding:
-      var(--section-gutter)
-      var(--section-gutter)
-      var(--section-gutter)
-      calc(var(--section-gutter) * 0.5);
+    display: flex;
+    overflow: auto;
+    padding: calc(var(--section-gutter) / 3 * 2);
     background-color: rgba($backgroundDarkColor, .7);
     @media (max-width: $smallWindowThreshold) {
       padding-top: calc(var(--section-gutter) * .5);
@@ -125,6 +120,14 @@
     }
     @media (max-width: $miniWindowThreshold) {
       background-color: transparent;
+    }
+    .tracklist-view {
+      flex: 1;
+      display: flex;
+      min-height: min-content;
+      ol {
+        flex: 1;
+      }
     }
   }
 }

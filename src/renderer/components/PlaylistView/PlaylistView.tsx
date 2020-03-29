@@ -19,6 +19,7 @@ type PlaylistViewProps = {
   isCurrent?: boolean;
   currentAlbumId: Album['_id'];
   currentTrackId: Track['_id'];
+  onSelectionChange: Function;
   onAlbumOrderChange: Function;
   onAlbumEnter: Function;
   onAlbumBackspace: Function;
@@ -32,6 +33,7 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
   isCurrent = false,
   currentAlbumId,
   currentTrackId,
+  onSelectionChange,
   onAlbumOrderChange,
   onAlbumEnter,
   onAlbumBackspace,
@@ -47,7 +49,9 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
 
   const onAlbumMove = useCallback(
     (dragIndex: number, hoverIndex: number): void => {
-      setAlbumOrder(immutableMove<Album['_id']>(albumOrder, dragIndex, hoverIndex))
+      const newOrder = immutableMove<Album['_id']>(albumOrder, dragIndex, hoverIndex);
+      setAlbumOrder(newOrder);
+      onAlbumOrderChange(newOrder);
     }
     , [albumOrder]
   );
@@ -57,7 +61,8 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
     setSelectedAlbumId(playlist.albums[0]);
   }, [playlist.albums])
 
-  function onSelectionChange(_ids: Album['_id'][]): void {
+  function _onSelectionChange(_ids: Album['_id'][]): void {
+    onSelectionChange(_ids);
     if (_ids.length > 1) {
       return;
     }
@@ -74,10 +79,6 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
     );
   }
 
-  function onDragEnd(): void {
-    onAlbumOrderChange && onAlbumOrderChange(albumOrder);
-  }
-
 	return (
 		<section className={playlistClasses}>
       <div className="album-list-wrapper">
@@ -85,9 +86,8 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
           albums={albumOrder.map(_id => albums[_id])}
           currentAlbumId={currentAlbumId}
           sortable={true}
-          onSelectionChange={onSelectionChange}
+          onSelectionChange={_onSelectionChange}
           onAlbumMove={onAlbumMove}
-          onDragEnd={onDragEnd}
           onEnter={onAlbumEnter}
           onBackspace={onAlbumBackspace}
           onAlbumContextMenu={onAlbumContextMenu}

@@ -5,6 +5,9 @@
   list-style: none;
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: min-content;
   .playlist-list-item {
     height: $mainUnit;
     line-height: $mainUnit;

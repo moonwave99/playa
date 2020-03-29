@@ -3,7 +3,7 @@
 
 .compact-album-view {
 	@include albumType('border-left-color');
-	padding: 1rem 2rem;
+	padding: .75rem 1rem .75rem 2rem;
   position: relative;
   background-color: rgba($backgroundDarkColor, .4);
 	border-left: .5rem solid;
@@ -17,7 +17,7 @@
     content: '⋮';
     cursor: move;
     position: absolute;
-    top: 1rem;
+    top: .75rem;
     left: .5rem;
     line-height: $albumCoverCompactWidth;
     height: $albumCoverCompactWidth;
@@ -35,7 +35,6 @@
 
   &:not(.is-current):hover {
 		transition: background-color .3s ease-in-out;
-    background-color: $backgroundLightColor;
     .album-cover {
       @include albumCover($albumCoverCompactWidth, $backgroundColor);
       @include playOverlay('../../../static/icons/album/play.svg');
@@ -79,7 +78,11 @@
 			}
 			.album-year {
 				@include monospace();
-				margin-right: .5rem;
+				margin-right: .25rem;
+				&:after {
+					content: '·';
+					padding-left: .25rem;
+				}
 			}
 		}
   }

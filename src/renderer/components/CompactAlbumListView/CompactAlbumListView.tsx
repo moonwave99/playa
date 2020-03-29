@@ -4,6 +4,7 @@ import { Album } from '../../store/modules/album';
 import { Artist } from '../../store/modules/artist';
 import { Track } from '../../store/modules/track';
 import useGrid from '../../hooks/useGrid/useGrid';
+import scrollTo from '../../lib/scrollTo';
 
 import './CompactAlbumListView.scss';
 
@@ -12,7 +13,6 @@ type CompactAlbumListViewProps = {
   currentAlbumId: Album['_id'];
   onSelectionChange: Function;
   onAlbumMove?: Function;
-  onDragEnd?: Function;
   onEnter?: Function;
   onBackspace?: Function;
   onAlbumContextMenu: Function;
@@ -25,7 +25,6 @@ export const CompactAlbumListView: FC<CompactAlbumListViewProps> = ({
   currentAlbumId,
   onSelectionChange,
   onAlbumMove,
-  onDragEnd,
   onEnter,
   onBackspace,
   onAlbumContextMenu,
@@ -36,10 +35,10 @@ export const CompactAlbumListView: FC<CompactAlbumListViewProps> = ({
     grid,
     rows,
     selection,
-    onItemClick
+    onItemClick,
+    requestFocus
   } = useGrid({
     items: albums,
-    initialSelection: [albums[0] && albums[0]._id],
     direction: 'vertical',
     clearSelectionOnBlur: false,
     onEnter,
@@ -48,7 +47,18 @@ export const CompactAlbumListView: FC<CompactAlbumListViewProps> = ({
 
   useEffect(() => {
     onSelectionChange && onSelectionChange(selection);
+    if (selection.length === 1) {
+      scrollTo({
+        selector: `#album-${selection[0]}`,
+        block: 'nearest',
+        behavior: 'smooth'
+      });
+    }
   }, [selection]);
+
+  useEffect(() => {
+    requestFocus();
+  }, []);
 
   function renderAlbum(album: Album, index: number): ReactElement {
     if (!album) {
@@ -73,7 +83,6 @@ export const CompactAlbumListView: FC<CompactAlbumListViewProps> = ({
         selected={selection.indexOf(_id) > -1}
         sortable={sortable}
         onClick={onClick}
-        onDragEnd={onDragEnd}
         onAlbumMove={onAlbumMove}
         onContextMenu={onAlbumContextMenu}
         onDoubleClick={onDoubleClick}/>

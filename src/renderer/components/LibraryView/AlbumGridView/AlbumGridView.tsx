@@ -2,6 +2,7 @@ import React, { FC, ReactElement, MouseEvent, useState, useEffect } from 'react'
 import { AlbumGridTileView } from './AlbumGridTileView/AlbumGridTileView';
 import { Album } from '../../../store/modules/album';
 import useGrid from '../../../hooks/useGrid/useGrid';
+import scrollTo from '../../../lib/scrollTo';
 
 import './AlbumGridView.scss';
 
@@ -11,6 +12,7 @@ type AlbumGridViewProps = {
   albums: Album[];
   currentAlbumId?: Album['_id'];
   showArtists?: boolean;
+  autoFocus?: boolean;
   clearSelectionOnBlur?: boolean;
   onSelectionChange?: Function;
   onEnter?: Function;
@@ -24,6 +26,7 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
   currentAlbumId,
   clearSelectionOnBlur = false,
   showArtists = true,
+  autoFocus = false,
   onSelectionChange,
   onEnter,
   onBackspace,
@@ -37,7 +40,8 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
     rows,
     selection,
     threshold,
-    onItemClick
+    onItemClick,
+    requestFocus
   } = useGrid({
     items: albums,
     thresholds: ALBUM_GRID_THRESHOLDS,
@@ -49,7 +53,20 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
 
   useEffect(() => {
     onSelectionChange && onSelectionChange(selection);
+    if (selection.length === 1) {
+      scrollTo({
+        selector: `#album-grid-tile-${selection[0]}`,
+        block: 'nearest',
+        behavior: 'smooth'
+      });
+    }
   }, [selection]);
+
+  useEffect(() => {
+    if (autoFocus) {
+      requestFocus();
+    }
+  }, [autoFocus]);
 
   function onDragBegin(): void {
     setDragging(true);

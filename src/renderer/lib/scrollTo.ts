@@ -6,7 +6,7 @@ type ScrollToParams = {
   behavior?: ScrollBehavior;
 }
 
-export default function ScrollToParams({
+export default function scrollTo({
   selector,
   block,
   behavior

@@ -18,7 +18,6 @@ type CompactAlbumViewProps = {
   index: number;
   selected?: boolean;
   isCurrent?: boolean;
-  onDragEnd?: Function;
   onAlbumMove: Function;
   onContextMenu: Function;
   onClick: Function;
@@ -31,7 +30,6 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
   index,
   isCurrent = false,
   selected = false,
-  onDragEnd,
   onAlbumMove,
   onContextMenu,
   onClick,
@@ -57,8 +55,7 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
     sortable,
     accept: UIDragTypes.COMPACT_ALBUMS,
     type: UIDragTypes.COMPACT_ALBUMS,
-    onMove: onAlbumMove,
-    onDragEnd
+    onMove: onAlbumMove
   });
 
   function _onDoubleClick(event: SyntheticEvent): void {
@@ -102,6 +99,7 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
 
   return (
     <article
+      id={`album-${_id}`}
       className={classNames}
       ref={ref}
       onDoubleClick={_onDoubleClick}

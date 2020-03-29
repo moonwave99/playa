@@ -5,7 +5,8 @@ import { IPC_MESSAGES } from '../../../constants';
 const {
   IPC_UI_STATE_UPDATE,
   IPC_UI_LOCATION_UPDATE,
-  IPC_UI_ALBUM_SELECTION_UPDATE
+  IPC_UI_LIBRARY_ALBUM_SELECTION_UPDATE,
+  IPC_UI_PLAYLIST_ALBUM_SELECTION_UPDATE
 } = IPC_MESSAGES;
 
 const MAX_TITLE_LENGTH = 50;
@@ -133,8 +134,11 @@ export const setEditArtistTitle = (editArtistTitle: boolean): Function =>
 export const updateLocation =
   (location: string): void => ipc.send(IPC_UI_LOCATION_UPDATE, location);
 
-export const updateAlbumSelection =
-  (selection: string[]): void => ipc.send(IPC_UI_ALBUM_SELECTION_UPDATE, selection);
+export const updateLibraryAlbumSelection =
+  (selection: string[]): void => ipc.send(IPC_UI_LIBRARY_ALBUM_SELECTION_UPDATE, selection);
+
+export const updatePlaylistAlbumSelection =
+  (playlistId: string, selection: string[]): void => ipc.send(IPC_UI_PLAYLIST_ALBUM_SELECTION_UPDATE, playlistId, selection);
 
 const INITIAL_STATE = {
   started: true,

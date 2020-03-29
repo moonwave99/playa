@@ -35,6 +35,7 @@ export default function useReorder({
   const ref = useRef<HTMLDivElement>(null);
   const [{ isOver, canDrop }, drop] = useDrop({
     accept,
+
     collect: monitor => ({
       isOver: monitor.isOver(),
       canDrop: monitor.canDrop(),
@@ -74,7 +75,7 @@ export default function useReorder({
     }),
     end: (_item, monitor) => {
       if (monitor.didDrop()) {
-        onDragEnd();
+        onDragEnd && onDragEnd();
       }
     }
   });

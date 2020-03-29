@@ -112,6 +112,7 @@ export default function useGrid({
   selection: string[];
   threshold: Threshold;
   onItemClick: Function;
+  requestFocus: Function;
   grid: (node?: Element | null) => void;
 } {
   const [hasFocus, setFocus] = useState(false);
@@ -158,7 +159,7 @@ export default function useGrid({
   useLayoutEffect(() => {
     window.addEventListener('resize', recompute);
     return (): void => window.removeEventListener('resize', recompute);
-  }, []);
+  }, [items]);
 
   useEffect(() => {
     function onUp(event: KeyboardEvent): void {
@@ -267,11 +268,19 @@ export default function useGrid({
     setSelection([_id ]);
   }
 
+  function requestFocus(): void {
+    setFocus(true);
+    if (items[0] && items[0]._id) {
+      setSelection([items[0]._id]);
+    }
+  }
+
   return {
     rows,
     selection,
     threshold,
     onItemClick,
+    requestFocus,
     grid: setRef
   };
 }

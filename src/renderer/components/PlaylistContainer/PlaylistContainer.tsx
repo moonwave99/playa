@@ -12,7 +12,11 @@ import {
 
 import { ApplicationState } from '../../store/store';
 import { updateQueue } from '../../store/modules/player';
-import { updateState, updateTitle } from '../../store/modules/ui';
+import {
+  updateState,
+  updateTitle,
+  updatePlaylistAlbumSelection
+} from '../../store/modules/ui';
 import { Album } from '../../store/modules/album';
 import { Artist } from '../../store/modules/artist';
 import { Track } from '../../store/modules/track';
@@ -64,7 +68,11 @@ export const PlaylistContainer = (): ReactElement => {
     }
   }, [playlist]);
 
-  function onAlbumOrderChange(newOrder: string[]): void {
+  function onSelectionChange(selection: Album['_id'][]): void {
+    updatePlaylistAlbumSelection(playlist._id, selection);
+  }
+
+  function onAlbumOrderChange(newOrder: Album['_id'][]): void {
     dispatch(savePlaylistRequest({ ...playlist, albums: newOrder }));
     if (playlist._id === currentPlaylistId) {
       dispatch(updateQueue(newOrder.map(x => albums[x]._id)));
@@ -140,6 +148,7 @@ export const PlaylistContainer = (): ReactElement => {
             isCurrent={currentPlaylistId === playlist._id}
             currentAlbumId={currentAlbumId}
             currentTrackId={currentTrackId}
+            onSelectionChange={onSelectionChange}
             onAlbumOrderChange={onAlbumOrderChange}
             onAlbumEnter={onAlbumEnter}
             onAlbumBackspace={onAlbumBackspace}

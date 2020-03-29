@@ -10,6 +10,9 @@
 
   .sidebar-playlists {
     flex: 1;
+    flex-direction: column;
+    display: flex;
+    overflow: auto;
     padding-top: var(--section-gutter);
     .button-wrapper {
       padding: var(--section-gutter);
