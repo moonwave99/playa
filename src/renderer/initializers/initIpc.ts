@@ -13,8 +13,12 @@ import {
 } from '../store/modules/player';
 
 import { revealInFinderAction } from '../actions/albumActions';
-import { removeAlbumsAction as removeLibraryAlbumsAction } from '../actions/libraryContentActions';
-import { removeAlbumsAction as removePlaylistAlbumsAction } from '../actions/playlistContentActions';
+import {
+  removeAlbumsAction as removeLibraryAlbumsAction
+} from '../actions/libraryContentActions';
+import {
+  removeAlbumsAction as removePlaylistAlbumsAction
+} from '../actions/playlistContentActions';
 
 import { IPC_MESSAGES } from '../../constants';
 
