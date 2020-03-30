@@ -10,8 +10,6 @@ import { UIDragTypes } from '../../store/modules/ui';
 import { EntityHashMap, immutableMove } from '../../utils/storeUtils';
 
 import './PlaylistView.scss';
-import '../CompactAlbumListView/CompactAlbumListView.scss';
-import '../CompactAlbumListView/CompactAlbumView/CompactAlbumView.scss';
 
 type PlaylistViewProps = {
   albums: EntityHashMap<Album>;
@@ -55,7 +53,7 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
     }
     , [albumOrder]
   );
-
+  
   useEffect(() => {
     setAlbumOrder(playlist.albums);
     setSelectedAlbumId(playlist.albums[0]);
