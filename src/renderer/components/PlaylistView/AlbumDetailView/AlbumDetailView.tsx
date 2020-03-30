@@ -8,7 +8,7 @@ import Vibro from 'node-vibrant';
 import cx from 'classnames';
 import useNativeDrop from '../../../hooks/useNativeDrop/useNativeDrop';
 import { CoverView } from '../../CoverView/CoverView';
-import { TracklistView } from './TracklistView/TracklistView';
+import { TracklistView } from '../../AlbumListView/AlbumView/TracklistView/TracklistView';
 import { ApplicationState } from '../../../store/store';
 import { Album, getAlbumRequest, getAlbumContentById } from '../../../store/modules/album';
 import { getCoverFromUrlRequest } from '../../../store/modules/cover';
@@ -18,9 +18,9 @@ import {
   showTrackNumbers,
 } from '../../../utils/albumUtils';
 import { ARTIST_SHOW } from '../../../routes';
-import './AlbumView.scss';
+import './AlbumDetailView.scss';
 
-type AlbumViewProps = {
+type AlbumDetailViewProps = {
   album: Album;
   isCurrent?: boolean;
   currentTrackId: Track['_id'];
@@ -40,7 +40,7 @@ type Palette = {
 }
 
 // #TODO push notFoundAction
-export const AlbumView: FC<AlbumViewProps> = ({
+export const AlbumDetailView: FC<AlbumDetailViewProps> = ({
   album,
   isCurrent = false,
   currentTrackId,
@@ -50,7 +50,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [palette, setPalette] = useState({} as Palette);
-  const { _id, type, year, title } = album;
+  const { _id, year, title } = album;
   const [viewRef, inView] = useInView({ triggerOnce: true });
 
   const {
@@ -128,20 +128,19 @@ export const AlbumView: FC<AlbumViewProps> = ({
 
   function renderArtist(): ReactElement {
     if (!artist) {
-      return <span className="album-artist-link loading"></span>;
+      return <span className="album-artist loading"></span>;
     }
     const { _id } = artist;
     return (
       <Link
         to={generatePath(ARTIST_SHOW, { _id })}
-        className="album-artist-link">
+        className="album-artist">
           {formatArtist({ album, artist })}
       </Link>
     );
   }
 
-  const albumClasses = cx('album-view', { 'is-current': isCurrent });
-  const tagClasses = cx('album-type', `album-type-${type}`);
+  const albumClasses = cx('album-detail-view', { 'is-current': isCurrent });
 
   const coverClasses = cx('album-cover', {
     'loaded': palette.loaded,
@@ -167,11 +166,10 @@ export const AlbumView: FC<AlbumViewProps> = ({
               className="button button-frameless button-album-actions"
               style={{ color: palette.LightVibrant }}>
               <FontAwesomeIcon className="icon" icon="ellipsis-h"/>
-            </button>
+            </button>            
           </h2>
-          <p className="album-artist">{renderArtist()}</p>
           <p className="album-info">
-            {year && <span className="album-year">{year}</span>}<span className={tagClasses}>{type}</span>
+            {year && <span className="album-year">{year}</span>}{renderArtist()}
           </p>
         </header>
       </aside>

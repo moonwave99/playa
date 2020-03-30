@@ -4,7 +4,7 @@ import { useDrag } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import { Link, generatePath } from 'react-router-dom';
 import cx from 'classnames';
-import { CoverView } from '../../../AlbumListView/AlbumView/CoverView/CoverView';
+import { CoverView } from '../../../CoverView/CoverView';
 import { Album } from '../../../../store/modules/album';
 import { selectors as artistSelectors } from '../../../../store/modules/artist';
 import {

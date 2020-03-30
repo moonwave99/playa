@@ -37,7 +37,10 @@ describe('PlaylistView', () => {
         currentTrackId={null}
         currentAlbumId={null}
         albums={toObj(albums)}
+        onSelectionChange={jest.fn()}
         onAlbumOrderChange={jest.fn()}
+        onAlbumEnter={jest.fn()}
+        onAlbumBackspace={jest.fn()}
         onAlbumContextMenu={jest.fn()}
         onAlbumDoubleClick={jest.fn()}
         />
@@ -52,7 +55,10 @@ describe('PlaylistView', () => {
         currentTrackId={null}
         currentAlbumId={null}
         albums={toObj(albums)}
+        onSelectionChange={jest.fn()}
         onAlbumOrderChange={jest.fn()}
+        onAlbumEnter={jest.fn()}
+        onAlbumBackspace={jest.fn()}
         onAlbumContextMenu={jest.fn()}
         onAlbumDoubleClick={jest.fn()}
         />
@@ -71,11 +77,14 @@ describe('PlaylistView', () => {
         currentTrackId={null}
         currentAlbumId={null}
         albums={toObj(albums)}
+        onSelectionChange={jest.fn()}
         onAlbumOrderChange={jest.fn()}
+        onAlbumEnter={jest.fn()}
+        onAlbumBackspace={jest.fn()}
         onAlbumContextMenu={jest.fn()}
         onAlbumDoubleClick={jest.fn()}
         />
       , defaultStore);
-    expect(wrapper.find('.album-list')).toHaveLength(1);
+    expect(wrapper.find('.compact-album-list')).toHaveLength(1);
   });
 });

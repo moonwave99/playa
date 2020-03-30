@@ -1,9 +1,9 @@
-import React, { FC, ReactElement, SyntheticEvent, useEffect } from 'react';
+import React, { FC, ReactElement, SyntheticEvent, MouseEvent, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, generatePath } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import cx from 'classnames';
-import { CoverView } from '../AlbumView/CoverView/CoverView';
+import { CoverView } from '../../CoverView/CoverView';
 import useReorder from '../../../hooks/useReorder/useReorder';
 import { Album, getAlbumContentById } from '../../../store/modules/album';
 import { UIDragTypes } from '../../../store/modules/ui';
@@ -16,10 +16,11 @@ import './CompactAlbumView.scss';
 type CompactAlbumViewProps = {
   album: Album;
   index: number;
+  selected?: boolean;
   isCurrent?: boolean;
-  onDragEnd?: Function;
   onAlbumMove: Function;
   onContextMenu: Function;
+  onClick: Function;
   onDoubleClick: Function;
   sortable?: boolean;
 }
@@ -28,13 +29,14 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
   album,
   index,
   isCurrent = false,
-  onDragEnd,
+  selected = false,
   onAlbumMove,
   onContextMenu,
+  onClick,
   onDoubleClick,
   sortable = false
 }) => {
-  const { _id, year, title } = album;
+  const { _id, year, title, type } = album;
   const { cover, artist } = useSelector((state: ApplicationState) => getAlbumContentById(state, _id));
 
   const dispatch = useDispatch();
@@ -53,8 +55,7 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
     sortable,
     accept: UIDragTypes.COMPACT_ALBUMS,
     type: UIDragTypes.COMPACT_ALBUMS,
-    onMove: onAlbumMove,
-    onDragEnd
+    onMove: onAlbumMove
   });
 
   function _onDoubleClick(event: SyntheticEvent): void {
@@ -66,7 +67,8 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
     onContextMenu && onContextMenu(album, artist);
   }
 
-  function onActionsButtonClick(): void {
+  function onActionsButtonClick(event: MouseEvent): void {
+    event.stopPropagation();
     _onContextMenu();
   }
 
@@ -82,8 +84,13 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
     );
   }
 
-  const classNames = cx('compact-album-view', {
+  function _onClick(event: MouseEvent): void {
+    onClick && onClick(event, album);
+  }
+
+  const classNames = cx('compact-album-view', `compact-album-view-${type}`, {
     'sortable': sortable,
+    'selected': selected,
     'is-current': isCurrent,
     'drag-is-over': isOver,
     'drag-can-drop': canDrop,
@@ -92,17 +99,19 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
 
   return (
     <article
+      id={`album-${_id}`}
       className={classNames}
       ref={ref}
       onDoubleClick={_onDoubleClick}
-      onContextMenu={_onContextMenu}>
+      onContextMenu={_onContextMenu}
+      onClick={_onClick}>
       <div className="album-inner-wrapper">
         <CoverView
           className="album-cover"
           src={cover}
           album={album}/>
         <p className="album-content header-like">
-          <span className="title">
+          <span className="album-title">
             {title}{ isCurrent ? <FontAwesomeIcon className="icon" icon="volume-up"/> : null }
           </span>
           <span className="album-info">
@@ -110,7 +119,7 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
             { renderArtist() }
           </span>
         </p>
-        <button onClick={onActionsButtonClick} className="button-album-actions">
+        <button onClick={onActionsButtonClick} className="button button-frameless button-album-actions">
           <FontAwesomeIcon className="icon" icon="ellipsis-h"/>
         </button>
       </div>

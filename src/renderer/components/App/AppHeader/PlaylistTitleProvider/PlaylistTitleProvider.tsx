@@ -21,6 +21,17 @@ export const PlaylistTitleProvider = (): ReactElement => {
 	});
 	const [isEditing, setEditing] = useState(false);
 
+	useEffect(() => {
+		setEditing(isTitleEditing);
+	}, [isTitleEditing]);
+
+	useEffect(() => {
+		if (!playlist._id) {
+			return;
+		}
+		dispatch(setEditPlaylistTitle(!playlist._rev));
+	}, [playlist]);
+
 	function onTitleChange(title?: string): void {
 		if (title === playlist.title && playlist._rev) {
 			return;
@@ -42,14 +53,6 @@ export const PlaylistTitleProvider = (): ReactElement => {
 	function onTitleClick(): void {
 		dispatch(setEditPlaylistTitle(true));
 	}
-
-	useEffect(() => {
-		setEditing(isTitleEditing);
-	}, [isTitleEditing]);
-
-	useEffect(() => {
-		dispatch(setEditPlaylistTitle(!playlist._rev));
-	}, [playlist]);
 
 	const date = formatDate({
 		date: playlist.created,

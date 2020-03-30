@@ -7,7 +7,7 @@ import { Album } from '../../store/modules/album';
 import { Artist } from '../../store/modules/artist';
 import { Track } from '../../store/modules/track';
 import { playTrack } from '../../store/modules/player';
-import { updateTitle, UIAlbumView, UIDragTypes } from '../../store/modules/ui';
+import { updateTitle, UIDragTypes } from '../../store/modules/ui';
 import { toObj } from '../../utils/storeUtils';
 import { openContextMenu } from '../../lib/contextMenu';
 import scrollTo from '../../lib/scrollTo';
@@ -74,8 +74,6 @@ export const QueueView = (): ReactElement => {
 		<section className="queue" id="queue">
       { queue.length > 0
         ? <AlbumListView
-            albumView={UIAlbumView.Extended}
-            sortable={false}
             albums={toObj(queue)}
             originalOrder={queue.map(({ _id }) => _id)}
             currentAlbumId={currentAlbum ? currentAlbum._id : null}

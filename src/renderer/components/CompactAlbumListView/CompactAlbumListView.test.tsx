@@ -2,7 +2,7 @@ import React from 'react';
 import { renderInAll } from '../../../../test/testUtils';
 import { albums, artists } from '../../../../test/testFixtures';
 import { toObj } from '../../utils/storeUtils';
-import { AlbumListView } from './AlbumListView';
+import { CompactAlbumListView } from './CompactAlbumListView';
 
 const defaultStore = {
   player: {
@@ -28,18 +28,16 @@ const defaultStore = {
   }
 };
 
-describe('AlbumListView', () => {
-  it('should render an .album-list', () => {
+describe('CompactAlbumListView', () => {
+  it('should render a .compact-album-list', () => {
     const wrapper = renderInAll(
-      <AlbumListView
+      <CompactAlbumListView
         currentAlbumId={null}
-        currentTrackId={null}
-        originalOrder={albums.map(({ _id }) => _id)}
-        dragType=''
-        albums={toObj(albums)}
+        albums={albums}
+        onSelectionChange={jest.fn()}
         onAlbumContextMenu={jest.fn()}
         onAlbumDoubleClick={jest.fn()}/>
       , defaultStore);
-    expect(wrapper.is('.album-list')).toBe(true);
+    expect(wrapper.is('.compact-album-list')).toBe(true);
   });
 });

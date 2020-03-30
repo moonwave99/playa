@@ -2,19 +2,25 @@
 @import "../../styles/mixins";
 
 .playlist-view {
+  @include fadeInOut();
   overflow: auto;
   height: 100%;
   width: 100%;
-  @include fadeInOut();
-  .album-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    > li {
-      margin: 0;
-    }
+  display: flex;
+  .album-list-wrapper {
+    flex: calc(100% / 3);
+    height: 100%;
+    overflow: auto;
+    border-right: 1px solid rgba($lightColor, .1);
+    @media (max-width: $smallWindowThreshold) {
+  		max-width: 100%;
+  	}
+  }
+  .album-detail-wrapper {
+    flex: calc(100% / 1.5);
   }
   .playlist-empty-placeholder {
     @include emptyComponent();
+    flex: 1;
   }
 }

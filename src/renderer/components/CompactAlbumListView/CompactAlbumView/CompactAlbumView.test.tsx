@@ -37,6 +37,7 @@ describe('CompactAlbumView', () => {
         album={albums[0]}
         onAlbumMove={jest.fn()}
         onContextMenu={jest.fn()}
+        onClick={jest.fn()}
         onDoubleClick={jest.fn()}/>
       , defaultStore);
     expect(wrapper.is('.compact-album-view')).toBe(true);
@@ -50,6 +51,7 @@ describe('CompactAlbumView', () => {
         album={albums[0]}
         onAlbumMove={jest.fn()}
         onContextMenu={jest.fn()}
+        onClick={jest.fn()}
         onDoubleClick={jest.fn()}/>
       , defaultStore);
     expect(wrapper.is('.is-current')).toBe(true);
@@ -63,6 +65,7 @@ describe('CompactAlbumView', () => {
         album={albums[0]}
         onAlbumMove={jest.fn()}
         onContextMenu={jest.fn()}
+        onClick={jest.fn()}
         onDoubleClick={jest.fn()}/>
       , defaultStore);
     expect(wrapper.is('.sortable')).toBe(true);
@@ -76,6 +79,7 @@ describe('CompactAlbumView', () => {
         album={albums[0]}
         onAlbumMove={jest.fn()}
         onContextMenu={jest.fn()}
+        onClick={jest.fn()}
         onDoubleClick={jest.fn()}/>
       , defaultStore);
     expect(wrapper.find('.album-cover')).toHaveLength(1);
@@ -89,9 +93,10 @@ describe('CompactAlbumView', () => {
         album={albums[0]}
         onAlbumMove={jest.fn()}
         onContextMenu={jest.fn()}
+        onClick={jest.fn()}
         onDoubleClick={jest.fn()}/>
       , defaultStore);
-    expect(wrapper.find('.title').text())
+    expect(wrapper.find('.album-title').text())
       .toBe(albums[0].title);
   });
 
@@ -103,6 +108,7 @@ describe('CompactAlbumView', () => {
         album={albums[0]}
         onAlbumMove={jest.fn()}
         onContextMenu={jest.fn()}
+        onClick={jest.fn()}
         onDoubleClick={jest.fn()}/>
       , defaultStore);
     expect(+wrapper.find('.album-year').text()).toBe(albums[0].year);
@@ -120,6 +126,7 @@ describe('CompactAlbumView', () => {
         }}
         onAlbumMove={jest.fn()}
         onContextMenu={jest.fn()}
+        onClick={jest.fn()}
         onDoubleClick={jest.fn()}/>
       , defaultStore);
     expect(wrapper.find('.album-year')).toHaveLength(0);
@@ -134,6 +141,7 @@ describe('CompactAlbumView', () => {
         album={albums[0]}
         onAlbumMove={jest.fn()}
         onContextMenu={handler}
+        onClick={jest.fn()}
         onDoubleClick={jest.fn()}/>
       , defaultStore);
     wrapper.simulate('contextmenu');
@@ -149,9 +157,26 @@ describe('CompactAlbumView', () => {
         album={albums[0]}
         onAlbumMove={jest.fn()}
         onContextMenu={jest.fn()}
+        onClick={jest.fn()}
         onDoubleClick={handler}/>
       , defaultStore);
     wrapper.simulate('doubleClick')
     expect(handler).toHaveBeenCalledWith(albums[0], artists[0]);
+  });
+
+  it('should call the onClick handler when clicked', () => {
+    const handler = jest.fn();
+    const wrapper = mountInAll(
+      <CompactAlbumView
+        isCurrent
+        index={0}
+        album={albums[0]}
+        onAlbumMove={jest.fn()}
+        onContextMenu={jest.fn()}
+        onClick={handler}
+        onDoubleClick={jest.fn()}/>
+      , defaultStore);
+    wrapper.simulate('click');
+    expect(handler).toHaveBeenCalled();
   });
 });

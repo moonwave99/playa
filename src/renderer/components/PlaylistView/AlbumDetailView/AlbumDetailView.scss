@@ -1,12 +1,11 @@
 @import "../../../styles/variables";
 @import "../../../styles/mixins";
 
-.album-view {
+.album-detail-view {
   display: flex;
-  margin: 0 var(--section-gutter) var(--section-gutter) var(--section-gutter);
-  @media (max-width: $smallWindowThreshold) {
-    flex-direction: column;
-  }
+  flex: 1;
+  flex-direction: column;
+  height: 100%;
   @media (max-width: $miniWindowThreshold) {
     background-color: transparent;
     padding: 0;
@@ -31,36 +30,27 @@
     }
   }
   .album-aside {
-    width: calc(#{$albumCoverWidth} + 2 * var(--section-gutter));
-    padding:
-      var(--section-gutter)
-      calc(var(--section-gutter) * 1)
-      var(--section-gutter)
-      var(--section-gutter);
-    border-top-left-radius: 1rem;
-    border-bottom-left-radius: 1rem;
+    padding: calc(var(--section-gutter) * .5);
     background-color: rgba($backgroundDarkColor, .4);
     display: flex;
-    flex-direction: column;
     transition: background-color .3s ease-in-out;
     .album-cover-wrapper {
-      width: $albumCoverWidth;
+      width: $albumDetailCoverWidth;
+      margin-right: calc(var(--section-gutter) * .5);
       .album-cover {
-        @include albumCover($albumCoverWidth);
+        @include albumCover($albumDetailCoverWidth);
         @include droppable();
       }
     }
     @media (max-width: $smallWindowThreshold) {
       width: 100%;
-      border-top-right-radius: 1rem;
-      border-bottom-left-radius: 0;
       padding-bottom: calc(var(--section-gutter) * .5);
     }
     @media (max-width: $miniWindowThreshold) {
       background-color: transparent!important;
-      border-radius: 0;
     }
     header {
+      flex: 1;
       @media (max-width: $miniWindowThreshold) {
         width: 100%;
         margin-bottom: var(--section-gutter);
@@ -73,30 +63,32 @@
         font-weight: bold;
         letter-spacing: .01em;
         transition: color .3s ease-in-out;
-        display: flex;
         @media (max-width: $miniWindowThreshold) {
           font-size: 1.2rem;
           line-height: 2rem;
         }
       }
       .button-album-actions {
-        display: flex;
         width: 2rem;
-        height: 2.5rem;
-        margin-left: .5rem;
+        font-size: 1rem;
       }
-      .album-artist,
       .album-info {
         margin: 0;
-        font-size: 1rem;
+        font-size: 1.5rem;
+        line-height: 2.5rem;
         letter-spacing: 0;
-        line-height: 2rem;
         font-weight: normal;
-        .album-artist-link {
-          color: $lightColor;
-          &:hover {
-            text-decoration: underline;
+        .album-year {
+          @include monospace();
+          margin-right: .25rem;
+          &:after {
+            content: '·';
+            padding-left: .25rem;
           }
+        }
+        .album-artist {
+          cursor: pointer;
+          color: $lightColor;
           &.loading {
             text-decoration: none;
             &:after {
@@ -104,24 +96,12 @@
             }
           }
         }
-        .album-year {
-          @include monospace();
-          margin-right: .25rem;
-          &:after {
-  					content: '·';
-  					padding-left: .25rem;
-  				}
-        }
-        .album-type {
-          @include albumType('color');
-        }
       }
     }
   }
 
   &.is-current {
     @media (min-width: $miniWindowThreshold + 1) {
-      border-radius: 1rem;
       background-color: rgba($mainColor, .2);
       transition: background-color .3s ease-in-out;
     }
@@ -129,13 +109,9 @@
 
   .album-content {
     flex: 1;
-    padding:
-      var(--section-gutter)
-      var(--section-gutter)
-      var(--section-gutter)
-      calc(var(--section-gutter) * 0.5);
-    border-top-right-radius: 1rem;
-    border-bottom-right-radius: 1rem;
+    display: flex;
+    overflow: auto;
+    padding: calc(var(--section-gutter) / 3 * 2);
     background-color: rgba($backgroundDarkColor, .7);
     @media (max-width: $smallWindowThreshold) {
       padding-top: calc(var(--section-gutter) * .5);
@@ -145,6 +121,14 @@
     }
     @media (max-width: $miniWindowThreshold) {
       background-color: transparent;
+    }
+    .tracklist-view {
+      flex: 1;
+      display: flex;
+      min-height: min-content;
+      ol {
+        flex: 1;
+      }
     }
   }
 }

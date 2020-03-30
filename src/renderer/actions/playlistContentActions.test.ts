@@ -10,13 +10,13 @@ import {
 } from '../store/modules/playlist';
 
 import {
-  removeAlbumAction
+  removeAlbumsAction
 } from './playlistContentActions';
 
 describe('playlistContentActions', () => {
-  describe('removeAlbumAction', () => {
+  describe('removeAlbumsAction', () => {
     it('should return a title and a handler', async () => {
-      const { title, handler } = removeAlbumAction({
+      const { title, handler } = removeAlbumsAction({
         selection: [albums[0]._id],
         playlist: playlists[0]
       });
@@ -41,7 +41,7 @@ describe('playlistContentActions', () => {
         allById: toObj(albums)
       }
     });
-    const { handler } = removeAlbumAction({
+    const { handler } = removeAlbumsAction({
       selection: [albums[0]._id],
       playlist: playlistWithAlbums,
       dispatch: store.dispatch

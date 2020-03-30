@@ -14,7 +14,7 @@ export type ActionParams = {
   dispatch?: Function;
 }
 
-export const removeAlbumAction: ActionCreator<ActionParams> = ({
+export const removeAlbumsAction: ActionCreator<ActionParams> = ({
   playlist,
   selection = [],
   dispatch
@@ -35,7 +35,7 @@ export enum PlaylistContentActions {
 }
 
 export const PlaylistContentActionsMap = {
-  [PlaylistContentActions.REMOVE_ALBUM]: removeAlbumAction
+  [PlaylistContentActions.REMOVE_ALBUM]: removeAlbumsAction
 }
 
 export enum PlaylistContentActionGroups {

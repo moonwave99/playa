@@ -70,7 +70,7 @@ export const LibraryView: FC<LibraryViewProps> = ({
     currentAlbumId,
     loadingLatest
   } = useSelector(({ albums, library, player }: ApplicationState) => ({
-    latest: library.latest.map((_id: Album['_id']) => albums.allById[_id]),
+    latest: library.latest.map((_id: Album['_id']) => albums.allById[_id]).filter(a => !!a),
     currentAlbumId: player.currentAlbumId,
     loadingLatest: library.loadingLatest
   }));

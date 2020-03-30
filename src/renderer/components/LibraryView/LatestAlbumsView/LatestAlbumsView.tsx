@@ -3,7 +3,7 @@ import { CSSTransition } from 'react-transition-group';
 import { useTranslation } from 'react-i18next';
 import { AlbumGridView } from '../AlbumGridView/AlbumGridView';
 import { Album } from '../../../store/modules/album';
-import { updateAlbumSelection } from '../../../store/modules/ui';
+import { updateLibraryAlbumSelection } from '../../../store/modules/ui';
 
 type LatestAlbumsViewProps = {
   albums: Album[];
@@ -27,12 +27,13 @@ export const LatestAlbumsView: FC<LatestAlbumsViewProps> = ({
   const { t } = useTranslation();
 
   function onSelectionChange(selection: Album['_id'][]): void {
-    updateAlbumSelection(selection);
+    updateLibraryAlbumSelection(selection);
   }
 
   function renderAlbums(): ReactElement {
     return (
       <AlbumGridView
+        autoFocus
         albums={albums}
         currentAlbumId={currentAlbumId}
         clearSelectionOnBlur

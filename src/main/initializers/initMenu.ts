@@ -2,6 +2,7 @@ import {
   app,
   ipcMain as ipc,
   Menu,
+  MenuItem,
   BrowserWindow,
   MenuItemConstructorOptions
 } from 'electron';
@@ -10,22 +11,25 @@ import { matchPath } from 'react-router';
 
 import openAboutWindow from '../lib/aboutWindow';
 import { IPC_MESSAGES } from '../../constants';
+import { Playlist } from '../../renderer/store/modules/playlist';
+import { Album } from '../../renderer/store/modules/album';
 
 const {
   IPC_UI_NAVIGATE_TO,
   IPC_UI_FOCUS_SEARCH,
   IPC_UI_LOCATION_UPDATE,
-  IPC_UI_ALBUM_SELECTION_UPDATE,
+  IPC_UI_LIBRARY_ALBUM_SELECTION_UPDATE,
+  IPC_UI_PLAYLIST_ALBUM_SELECTION_UPDATE,
   IPC_PLAYBACK_PREV_TRACK,
   IPC_PLAYBACK_NEXT_TRACK,
   IPC_PLAYBACK_CLEAR_QUEUE,
-  IPC_UI_TOGGLE_ALBUM_VIEW,
   IPC_UI_EDIT_PLAYLIST_TITLE,
   IPC_UI_EDIT_ARTIST_TITLE,
   IPC_LIBRARY_IMPORT_MUSIC,
   IPC_LIBRARY_EDIT_ALBUM,
   IPC_LIBRARY_REMOVE_ALBUMS,
-  IPC_LIBRARY_REVEAL_ALBUM
+  IPC_LIBRARY_REVEAL_ALBUM,
+  IPC_PLAYLIST_REMOVE_ALBUMS
 } = IPC_MESSAGES;
 
 import {
@@ -37,14 +41,33 @@ import {
   ARTIST_SHOW
 } from '../../renderer/routes';
 
-const compactView = 0 //UIAlbumView.Compact;
-const extendedView = 1 //UIAlbumView.Extended;
-
-let selectedAlbumIDs: string[];
+let gridAlbumSelection: Album['_id'][];
+let currentPlaylistId: Playlist['_id'];
+let playlistAlbumSelection: Album['_id'][];
 
 type InitMenuParams = {
   window: BrowserWindow;
   debug?: boolean;
+}
+
+function enableMenuEntriesFromSelection(
+  menuEntries: {
+    entry: MenuItem;
+    multiple: boolean;
+  }[],
+  selection: Album['_id'][]
+): void {
+  if (selection.length <= 1) {
+    menuEntries
+      .map(({ entry }) => entry.enabled = !!selection.length);
+  } else {
+    menuEntries
+      .filter(({ multiple }) => multiple)
+      .map(({ entry }) => entry.enabled = true);
+    menuEntries
+      .filter(({ multiple }) => !multiple)
+      .map(({ entry }) => entry.enabled = false);
+  }
 }
 
 export default function initMenu({
@@ -138,17 +161,10 @@ export default function initMenu({
         },
         { type: 'separator' },
         {
-          label: 'Show Extended View',
-          id: 'show-extended',
-          accelerator: 'cmd+shift+1',
-          click: (): void => window.webContents.send(IPC_UI_TOGGLE_ALBUM_VIEW, extendedView)
+          label: 'Remove Selected Albums from Playlist',
+          id: 'remove-from-playlist',
+          click: (): void => window.webContents.send(IPC_PLAYLIST_REMOVE_ALBUMS, currentPlaylistId, playlistAlbumSelection)
         },
-        {
-          label: 'Show Compact View',
-          id: 'show-compact',
-          accelerator: 'cmd+shift+2',
-          click: (): void => window.webContents.send(IPC_UI_TOGGLE_ALBUM_VIEW, compactView)
-        }
       ]
     },
     {
@@ -171,20 +187,20 @@ export default function initMenu({
           id: 'edit-album',
           enabled: false,
           accelerator: 'cmd+e',
-          click: (): void => window.webContents.send(IPC_LIBRARY_EDIT_ALBUM, selectedAlbumIDs[0])
+          click: (): void => window.webContents.send(IPC_LIBRARY_EDIT_ALBUM, gridAlbumSelection[0])
         },
         {
           label: 'Remove Selected Albums from Library',
           id: 'remove-albums',
           enabled: false,
-          click: (): void => window.webContents.send(IPC_LIBRARY_REMOVE_ALBUMS, selectedAlbumIDs)
+          click: (): void => window.webContents.send(IPC_LIBRARY_REMOVE_ALBUMS, gridAlbumSelection)
         },
         {
           label: 'Reveal Selected Album in Finder',
           id: 'reveal-album',
           enabled: false,
           accelerator: 'cmd+shift+r',
-          click: (): void => window.webContents.send(IPC_LIBRARY_REVEAL_ALBUM, selectedAlbumIDs)
+          click: (): void => window.webContents.send(IPC_LIBRARY_REVEAL_ALBUM, gridAlbumSelection)
         },
         { type: 'separator' },
         {
@@ -234,21 +250,7 @@ export default function initMenu({
 
   const menu = Menu.buildFromTemplate(template);
 
-  ipc.on(IPC_UI_LOCATION_UPDATE, (_event, location: string) => {
-    const playlistToggleViewItems = ['edit-title', 'show-extended', 'show-compact'].map(
-      id => menu.getMenuItemById('playlist').submenu.getMenuItemById(id)
-    );
-
-    if (matchPath(location, { path: PLAYLIST_SHOW }) && !matchPath(location, { path: PLAYLIST_ALL })) {
-      playlistToggleViewItems.forEach(item => item.enabled = true);
-    } else {
-      playlistToggleViewItems.forEach(item => item.enabled = false);
-    }
-
-    menu.getMenuItemById('rename-artist').enabled = !!matchPath(location, { path: ARTIST_SHOW });
-  });
-
-  const albumSelectionEntries = [
+  const libraryAlbumSelectionEntries = [
     {
       entry: menu.getMenuItemById('edit-album'),
       multiple: false
@@ -263,19 +265,40 @@ export default function initMenu({
     },
   ];
 
-  ipc.on(IPC_UI_ALBUM_SELECTION_UPDATE, (_event, selection: string[]) => {
-    selectedAlbumIDs = selection;
-    if (selection.length <= 1) {
-      albumSelectionEntries
-        .map(({ entry }) => entry.enabled = !!selection.length);
-    } else {
-      albumSelectionEntries
-        .filter(({ multiple }) => multiple)
-        .map(({ entry }) => entry.enabled = true);
-      albumSelectionEntries
-        .filter(({ multiple }) => !multiple)
-        .map(({ entry }) => entry.enabled = false);
+  const playlistAlbumSelectionEntries = [
+    {
+      entry: menu.getMenuItemById('remove-from-playlist'),
+      multiple: true
     }
+  ];
+
+  ipc.on(IPC_UI_LIBRARY_ALBUM_SELECTION_UPDATE, (_event, selection: Album['_id'][]) => {
+    gridAlbumSelection = selection;
+    enableMenuEntriesFromSelection(libraryAlbumSelectionEntries, selection);
+  });
+
+  ipc.on(IPC_UI_PLAYLIST_ALBUM_SELECTION_UPDATE, (
+    _event,
+    playlistId: Playlist['_id'],
+    selection: Album['_id'][]
+  ) => {
+    currentPlaylistId = playlistId;
+    playlistAlbumSelection = selection;
+    enableMenuEntriesFromSelection(playlistAlbumSelectionEntries, selection);
+  });
+
+  ipc.on(IPC_UI_LOCATION_UPDATE, (_event, location: string) => {
+    const playlistToggleViewItems = ['edit-title'].map(
+      id => menu.getMenuItemById('playlist').submenu.getMenuItemById(id)
+    );
+
+    if (matchPath(location, { path: PLAYLIST_SHOW }) && !matchPath(location, { path: PLAYLIST_ALL })) {
+      playlistToggleViewItems.forEach(item => item.enabled = true);
+    } else {
+      playlistToggleViewItems.forEach(item => item.enabled = false);
+    }
+
+    menu.getMenuItemById('rename-artist').enabled = !!matchPath(location, { path: ARTIST_SHOW });
   });
 
   Menu.setApplicationMenu(menu);

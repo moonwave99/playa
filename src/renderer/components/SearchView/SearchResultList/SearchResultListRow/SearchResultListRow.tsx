@@ -6,7 +6,7 @@ import { useDrag } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import cx from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { CoverView } from '../../../AlbumListView/AlbumView/CoverView/CoverView';
+import { CoverView } from '../../../CoverView/CoverView';
 import { UIDragTypes } from '../../../../store/modules/ui';
 import { Album } from '../../../../store/modules/album';
 import { selectors as artistSelectors } from '../../../../store/modules/artist';

@@ -12,7 +12,11 @@ import {
 
 import { ApplicationState } from '../../store/store';
 import { updateQueue } from '../../store/modules/player';
-import { updateState, updateTitle } from '../../store/modules/ui';
+import {
+  updateState,
+  updateTitle,
+  updatePlaylistAlbumSelection
+} from '../../store/modules/ui';
 import { Album } from '../../store/modules/album';
 import { Artist } from '../../store/modules/artist';
 import { Track } from '../../store/modules/track';
@@ -20,6 +24,7 @@ import { openContextMenu } from '../../lib/contextMenu';
 
 import {
   PLAYLIST_CONTENT_CONTEXT_ACTIONS,
+  PlaylistContentActions,
 } from '../../actions/playlistContentActions';
 
 import {
@@ -63,7 +68,11 @@ export const PlaylistContainer = (): ReactElement => {
     }
   }, [playlist]);
 
-  function onAlbumOrderChange(newOrder: string[]): void {
+  function onSelectionChange(selection: Album['_id'][]): void {
+    updatePlaylistAlbumSelection(playlist._id, selection);
+  }
+
+  function onAlbumOrderChange(newOrder: Album['_id'][]): void {
     dispatch(savePlaylistRequest({ ...playlist, albums: newOrder }));
     if (playlist._id === currentPlaylistId) {
       dispatch(updateQueue(newOrder.map(x => albums[x]._id)));
@@ -103,6 +112,33 @@ export const PlaylistContainer = (): ReactElement => {
     }).handler();
   }
 
+  function onAlbumEnter(selection: Album['_id'][]): void {
+    if (selection.length === 0) {
+      return;
+    }
+    actionsMap(AlbumActions.PLAY_ALBUM)({
+      queue: playlist.albums,
+      playlistId: playlist._id,
+      albums: [{
+        album: albums[selection[0]],
+        artist: {} as Artist }],
+      dispatch
+    }).handler();
+  }
+
+  function onAlbumBackspace(selection: Album['_id'][]): void {
+    actionsMap(PlaylistContentActions.REMOVE_ALBUM)({
+      selection,
+      playlist,
+      dispatch
+    }).handler();
+  }
+
+  const shouldShowPlaylist = !isLoading && playlist.albums.length === Object.keys(albums).length;
+  if (!shouldShowPlaylist) {
+    return null;
+  }
+
 	return (
     !playlist._id
       ? <Redirect to={QUEUE}/>
@@ -112,14 +148,17 @@ export const PlaylistContainer = (): ReactElement => {
           classNames="playlist-view"
           unmountOnExit>
           <PlaylistView
-           albums={albums}
-           playlist={playlist}
-           isCurrent={currentPlaylistId === playlist._id}
-           currentAlbumId={currentAlbumId}
-           currentTrackId={currentTrackId}
-           onAlbumOrderChange={onAlbumOrderChange}
-           onAlbumContextMenu={onAlbumContextMenu}
-           onAlbumDoubleClick={onAlbumDoubleClick}/>
+            albums={albums}
+            playlist={playlist}
+            isCurrent={currentPlaylistId === playlist._id}
+            currentAlbumId={currentAlbumId}
+            currentTrackId={currentTrackId}
+            onSelectionChange={onSelectionChange}
+            onAlbumOrderChange={onAlbumOrderChange}
+            onAlbumEnter={onAlbumEnter}
+            onAlbumBackspace={onAlbumBackspace}
+            onAlbumContextMenu={onAlbumContextMenu}
+            onAlbumDoubleClick={onAlbumDoubleClick}/>
        </CSSTransition>
 	);
 };

@@ -88,9 +88,7 @@ describe('artist selectors', () => {
       store.getState() as ApplicationState,
       artists[0]._id
     );
-    expect(selection).toEqual({
-      album: [albums[0]]
-    });
+    expect(selection).toEqual([albums[0]]);
   });
 
   describe('searchArtists', () => {
