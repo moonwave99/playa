@@ -88,6 +88,7 @@
         }
         .album-artist {
           cursor: pointer;
+          color: $lightColor;
           &.loading {
             text-decoration: none;
             &:after {

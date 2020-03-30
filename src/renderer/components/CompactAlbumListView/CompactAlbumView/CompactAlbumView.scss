@@ -64,6 +64,7 @@
 		flex: 1;
     flex-direction: column;
     .album-title {
+			@include ellipsis(100%);
       font-weight: bold;
       color: $highlightColor;
       font-size: 1rem;
@@ -73,6 +74,7 @@
       }
     }
 		.album-info {
+			@include ellipsis(100%);
 			a {
 				cursor: pointer;
 			}
