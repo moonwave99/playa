@@ -134,6 +134,11 @@ export const PlaylistContainer = (): ReactElement => {
     }).handler();
   }
 
+  const shouldShowPlaylist = !isLoading && playlist.albums.length === Object.keys(albums).length;
+  if (!shouldShowPlaylist) {
+    return null;
+  }
+
 	return (
     !playlist._id
       ? <Redirect to={QUEUE}/>

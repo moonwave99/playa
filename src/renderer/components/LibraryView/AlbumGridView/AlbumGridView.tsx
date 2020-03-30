@@ -41,7 +41,8 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
     selection,
     threshold,
     onItemClick,
-    requestFocus
+    requestFocus,
+    selectItem
   } = useGrid({
     items: albums,
     thresholds: ALBUM_GRID_THRESHOLDS,
@@ -67,6 +68,13 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
       requestFocus();
     }
   }, [autoFocus]);
+
+  useEffect(() => {
+    if (!albums.length || !autoFocus) {
+      return;
+    }
+    selectItem(albums[0]._id);
+  }, [albums]);
 
   function onDragBegin(): void {
     setDragging(true);

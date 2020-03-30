@@ -36,7 +36,8 @@ export const CompactAlbumListView: FC<CompactAlbumListViewProps> = ({
     rows,
     selection,
     onItemClick,
-    requestFocus
+    requestFocus,
+    selectItem
   } = useGrid({
     items: albums,
     direction: 'vertical',
@@ -59,6 +60,13 @@ export const CompactAlbumListView: FC<CompactAlbumListViewProps> = ({
   useEffect(() => {
     requestFocus();
   }, []);
+
+  useEffect(() => {
+    if (!albums.length) {
+      return;
+    }
+    selectItem(albums[0]._id);
+  }, [albums.length]);
 
   function renderAlbum(album: Album, index: number): ReactElement {
     if (!album) {

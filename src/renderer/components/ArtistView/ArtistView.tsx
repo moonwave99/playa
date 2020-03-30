@@ -23,6 +23,7 @@ import { updateTitle, updateLibraryAlbumSelection } from '../../store/modules/ui
 import { ApplicationState } from '../../store/store';
 import { groupAlbumsByType } from '../../utils/albumUtils';
 import { formatArtistName } from '../../utils/artistUtils';
+import { EntityHashMap } from '../../utils/storeUtils';
 import { LIBRARY } from '../../routes';
 
 import {
@@ -40,6 +41,7 @@ import {
 export const ArtistView = (): ReactElement => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const [albumsByType, setAlbumsByType] = useState({} as EntityHashMap<Album[]>);
   const [selectionByType, setSelectionByType] = useState({});
   const { _id } = useParams();
   const {
@@ -52,8 +54,8 @@ export const ArtistView = (): ReactElement => {
       : artistSelectors.findById(state, _id);
 
     const albums = _id === encodeURIComponent(VARIOUS_ARTISTS_ID)
-      ? groupAlbumsByType(albumSelectors.findByVariousArtists(state))
-      : getAlbumsByArtist(state, _id) || {};
+      ? albumSelectors.findByVariousArtists(state)
+      : getAlbumsByArtist(state, _id) || {} as Album[];
 
     return {
       artist,
@@ -67,6 +69,11 @@ export const ArtistView = (): ReactElement => {
   useEffect(() => {
     dispatch(getArtistReleases(artist));
   }, [artistId]);
+
+  useEffect(() => {
+    const groupedAlbums = groupAlbumsByType(albums);
+    setAlbumsByType(groupedAlbums);
+  }, [albums]);
 
   useEffect(() => {
     const selectedIDs = Object.values(selectionByType)
@@ -125,7 +132,7 @@ export const ArtistView = (): ReactElement => {
   }
 
   function renderReleases(): ReactElement {
-    const groups = Object.entries(albums);
+    const groups = Object.entries(albumsByType);
     if (groups.length === 0) {
       return (<p className="artist-empty-placeholder">{t('artist.empty')}</p>);
     }
@@ -133,7 +140,6 @@ export const ArtistView = (): ReactElement => {
       <section className="artist-releases">
       {
         groups.map(([type, releases]) => {
-
           function onSelectionChange(selection: Album['_id'][]): void {
             updateSelection(type, selection);
           }

@@ -113,6 +113,7 @@ export default function useGrid({
   threshold: Threshold;
   onItemClick: Function;
   requestFocus: Function;
+  selectItem: Function;
   grid: (node?: Element | null) => void;
 } {
   const [hasFocus, setFocus] = useState(false);
@@ -270,8 +271,11 @@ export default function useGrid({
 
   function requestFocus(): void {
     setFocus(true);
-    if (items[0] && items[0]._id) {
-      setSelection([items[0]._id]);
+  }
+
+  function selectItem(selectedID: HasId['_id']): void {
+    if (items.find(({ _id }) => _id === selectedID)) {
+      setSelection([selectedID]);
     }
   }
 
@@ -281,6 +285,7 @@ export default function useGrid({
     threshold,
     onItemClick,
     requestFocus,
+    selectItem,
     grid: setRef
   };
 }

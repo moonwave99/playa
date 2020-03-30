@@ -84,7 +84,7 @@ export const PlaylistListItem: FC<PlaylistListItemProps> = ({
     <li ref={drop} className={classNames} onContextMenu={_onContextMenu}>
       <Link
         onClick={onClick}
-        title={_id}
+        id={`playlist-list-item-${_id}`}
         to={generatePath(PLAYLIST_SHOW, { _id })}
         className="playlist-list-item-link">
           <FontAwesomeIcon
