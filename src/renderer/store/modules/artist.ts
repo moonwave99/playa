@@ -157,16 +157,7 @@ export const selectors = {
 export const getAlbumsByArtist = createCachedSelector(
   selectors.findById,
   ({ albums }: ApplicationState) => albums.allById,
-  ({ _id }, albums): EntityHashMap<Album[]> =>
-    toArray(albums).filter(({ artist }) => artist === _id)
-      .reduce((memo: EntityHashMap<Album[]>, album) => {
-        const { type } = album;
-        if (!memo[type]) {
-          memo[type] = [];
-        }
-        memo[type].push(album);
-        return memo;
-      }, {})
+  ({ _id }, albums): Album[] => toArray(albums).filter(({ artist }) => artist === _id)
 )((_state_: ApplicationState, id: string) => id);
 
 export const searchArtists = createCachedSelector(
