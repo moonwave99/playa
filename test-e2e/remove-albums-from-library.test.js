@@ -8,7 +8,7 @@ function mock(app, options) {
   app.electron.ipcRenderer.sendSync('SPECTRON_FAKE_DIALOG/SEND', options);
 }
 
-describe('Remove album into library', () => {
+describe('Remove albums from library', () => {
   let app, menuAddon, contextMenuAddon;
   beforeEach(async () => {
     const menuApp = await getApp({
