@@ -20,7 +20,7 @@ class IpcMock {
     }
     handler(ipcEvent, ...args);
   }
-  invoke(): void { return; }
+  invoke(): object { return {}; }
   send(): void { return; }
 }
 
