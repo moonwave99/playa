@@ -22,6 +22,10 @@ import {
 } from '../store/modules/player';
 
 import {
+  SHOW_DIALOG
+} from '../store/modules/ui';
+
+import {
   removeAlbumsAction
 } from './libraryContentActions';
 
@@ -79,6 +83,40 @@ describe('libraryContentActions', () => {
       expectedActions.forEach(
         action => expect(store.getActions()).toContainEqual(action)
       );
+    });
+
+    it('should dispatch SHOW_DIALOG if album is in play', async () => {
+      const store = mockStore({
+        playlists: {
+          allById: toObj([
+            playlists[0],
+            { ...playlists[1], albums: ['1'] }
+          ])
+        },
+        player: {
+          currentAlbumId: '1',
+          queue: []
+        },
+        albums: {
+          allById: toObj(albums)
+        },
+        artists: {
+          allById: toObj(artists)
+        },
+        library: {
+          latest: albums.map(({ _id }) => _id)
+        }
+      });
+      const { handler } = removeAlbumsAction({
+        selection: [albums[0]],
+        currentAlbumId: '1',
+        dispatch: store.dispatch
+      });
+      await handler();
+
+      expect(store.getActions()).toEqual([{
+        type: SHOW_DIALOG
+      }]);
     });
   });
 });

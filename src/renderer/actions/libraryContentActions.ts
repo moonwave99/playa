@@ -33,7 +33,7 @@ export const removeAlbumsAction: ActionCreator<ActionParams> = ({
       if (confirmed) {
         return dispatch(removeAlbums(selection));
       }
-      return function(): void { true };
+      return function(): void { return; };
     }
   };
 }
