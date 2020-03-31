@@ -1,5 +1,5 @@
 import React from 'react';
-import { renderInAll } from '../../../../test/testUtils';
+import { mountInAll } from '../../../../test/testUtils';
 import { albums, artists } from '../../../../test/testFixtures';
 import { toObj } from '../../utils/storeUtils';
 import { CompactAlbumListView } from './CompactAlbumListView';
@@ -30,7 +30,7 @@ const defaultStore = {
 
 describe('CompactAlbumListView', () => {
   it('should render a .compact-album-list', () => {
-    const wrapper = renderInAll(
+    const wrapper = mountInAll(
       <CompactAlbumListView
         currentAlbumId={null}
         albums={albums}
@@ -38,6 +38,29 @@ describe('CompactAlbumListView', () => {
         onAlbumContextMenu={jest.fn()}
         onAlbumDoubleClick={jest.fn()}/>
       , defaultStore);
-    expect(wrapper.is('.compact-album-list')).toBe(true);
+    expect(wrapper.find('.compact-album-list')).toHaveLength(1);
+  });
+
+  it('should render n=albums.length <li>s', () => {
+    let wrapper = mountInAll(
+      <CompactAlbumListView
+        currentAlbumId={null}
+        albums={albums}
+        onSelectionChange={jest.fn()}
+        onAlbumContextMenu={jest.fn()}
+        onAlbumDoubleClick={jest.fn()}/>
+      , defaultStore);
+    expect(wrapper.find('li')).toHaveLength(albums.length);
+    wrapper.unmount();
+
+    wrapper = mountInAll(
+      <CompactAlbumListView
+        currentAlbumId={null}
+        albums={[]}
+        onSelectionChange={jest.fn()}
+        onAlbumContextMenu={jest.fn()}
+        onAlbumDoubleClick={jest.fn()}/>
+      , defaultStore);
+    expect(wrapper.find('li')).toHaveLength(0);
   });
 });

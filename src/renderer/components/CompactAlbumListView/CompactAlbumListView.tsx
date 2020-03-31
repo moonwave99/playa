@@ -69,9 +69,6 @@ export const CompactAlbumListView: FC<CompactAlbumListViewProps> = ({
   }, [albums.length]);
 
   function renderAlbum(album: Album, index: number): ReactElement {
-    if (!album) {
-      return;
-    }
     function onClick(event: MouseEvent, { _id }: Album): void {
       onItemClick({
         _id,

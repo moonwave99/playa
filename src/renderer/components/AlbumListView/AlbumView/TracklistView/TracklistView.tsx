@@ -19,7 +19,7 @@ type TracklistViewProps = {
 export const TracklistView: FC<TracklistViewProps> = ({
   className,
   currentTrackId,
-  tracklist = [],
+  tracklist,
   tracks,
   showTrackNumbers = true,
   showArtists = false,
