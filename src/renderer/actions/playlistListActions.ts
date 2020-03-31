@@ -1,5 +1,5 @@
 import { MenuItemConstructorOptions } from 'electron';
-import { ActionCreator } from './actions';
+import { ActionCreator, ActionGroupsMap, ActionMap, grouper } from './actions';
 import { confirmDialog } from '../lib/dialog';
 
 import {
@@ -59,14 +59,21 @@ export enum PlaylistListActions {
   DELETE_PLAYLIST = 'DELETE_PLAYLIST'
 }
 
-export const PlaylistListActionsMap = {
+export const PlaylistListActionsMap: ActionMap<ActionParams> = {
   [PlaylistListActions.PLAY_PLAYLIST]: playPlaylistAction,
   [PlaylistListActions.DELETE_PLAYLIST]: deletePlaylistAction
 }
 
 export enum PlaylistListActionGroups {
-  PLAYLIST,
+  PLAYLIST = 'PLAYLIST'
 }
+
+const actionGroupsMap: ActionGroupsMap = {
+  [PlaylistListActionGroups.PLAYLIST]: [
+    PlaylistListActions.PLAY_PLAYLIST,
+    PlaylistListActions.DELETE_PLAYLIST
+  ]
+};
 
 export type GetPlaylistListContextMenuParams = {
   type: typeof PLAYLIST_LIST_CONTEXT_ACTIONS;
@@ -75,13 +82,6 @@ export type GetPlaylistListContextMenuParams = {
   dispatch?: Function;
 }
 
-const actionGroupsMap = {
-  [PlaylistListActionGroups.PLAYLIST]: [
-    PlaylistListActions.PLAY_PLAYLIST,
-    PlaylistListActions.DELETE_PLAYLIST
-  ]
-};
-
 export function getActionGroups({
   actionGroups = [
     PlaylistListActionGroups.PLAYLIST
@@ -89,14 +89,13 @@ export function getActionGroups({
   playlist,
   dispatch
 }: GetPlaylistListContextMenuParams): MenuItemConstructorOptions[] {
-  return actionGroups.reduce((memo, group, index, original) => [
-    ...memo,
-    ...actionGroupsMap[group]
-      .map(actionID => PlaylistListActionsMap[actionID])
-      .map(action => {
-        const { title, handler } = action({ playlist, dispatch });
-        return { label: title, click: handler };
-      }),
-    ...index < original.length - 1 ? [{ type : 'separator'}] : []
-  ], []);
+  return grouper<ActionParams>({
+    actionGroups,
+    actionGroupsMap,
+    actionParams: {
+      playlist,
+      dispatch
+    },
+    actionsMap: PlaylistListActionsMap
+  });
 }

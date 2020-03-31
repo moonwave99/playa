@@ -1,5 +1,5 @@
 import { ipcRenderer as ipc, MenuItemConstructorOptions } from 'electron';
-import { Action, ActionCreator } from './actions';
+import { Action, ActionCreator, ActionGroupsMap, ActionMap, grouper } from './actions';
 
 import {
   Album,
@@ -36,7 +36,10 @@ export type ActionParams = {
   dispatch?: Function;
 }
 
-function createSearchAction(searchURL: SEARCH_URLS, siteName: string): ActionCreator<ActionParams> {
+function createSearchAction(
+  searchURL: SEARCH_URLS,
+  siteName: string
+): ActionCreator<ActionParams> {
   return ({ albums }): Action => {
     const { title: albumTitle } = albums[0].album;
     const query = `${albums[0].artist.name} ${albumTitle}`;
@@ -47,7 +50,10 @@ function createSearchAction(searchURL: SEARCH_URLS, siteName: string): ActionCre
   }
 }
 
-function createSearchArtistAction(searchURL: SEARCH_URLS, siteName: string): ActionCreator<ActionParams> {
+function createSearchArtistAction(
+  searchURL: SEARCH_URLS,
+  siteName: string
+): ActionCreator<ActionParams> {
   return ({ albums }): Action => {
     const query = `${albums[0].artist.name}`;
     return {
@@ -158,7 +164,7 @@ export enum AlbumActions {
   SEARCH_ARTIST_ON_RYM = 'SEARCH_ARTIST_ON_RYM'
 }
 
-export const AlbumActionsMap: { [key: string]: ActionCreator<ActionParams> } = {
+export const AlbumActionsMap: ActionMap<ActionParams> = {
   [AlbumActions.PLAY_ALBUM]: playAlbumAction,
   [AlbumActions.EDIT_ALBUM]: editAlbumAction,
   [AlbumActions.ENQUEUE_AFTER_CURRENT]: enqueueAfterCurrentAction,
@@ -173,27 +179,16 @@ export const AlbumActionsMap: { [key: string]: ActionCreator<ActionParams> } = {
 }
 
 export enum AlbumActionsGroups {
-  PLAYBACK,
-  EDIT,
-  ENQUEUE,
-  QUEUE,
-  SYSTEM,
-  SEARCH_ONLINE,
-  ARTIST
+  PLAYBACK = 'PLAYBACK',
+  EDIT = 'EDIT',
+  ENQUEUE = 'ENQUEUE',
+  QUEUE = 'QUEUE',
+  SYSTEM = 'SYSTEM',
+  SEARCH_ONLINE = 'SEARCH_ONLINE',
+  ARTIST = 'ARTIST'
 }
 
-export type GetAlbumContextMenuParams = {
-  type: typeof ALBUM_CONTEXT_ACTIONS;
-  queue?: Album['_id'][];
-  actionGroups: AlbumActionsGroups[];
-  albums: {
-    album: Album;
-    artist: Artist;
-  }[];
-  dispatch?: Function;
-}
-
-const actionGroupsMap: { [key: string]: AlbumActions[] } = {
+const actionGroupsMap: ActionGroupsMap = {
   [AlbumActionsGroups.PLAYBACK]: [
     AlbumActions.PLAY_ALBUM
   ],
@@ -221,18 +216,25 @@ const actionGroupsMap: { [key: string]: AlbumActions[] } = {
   ]
 };
 
+export type GetAlbumContextMenuParams = {
+  type: typeof ALBUM_CONTEXT_ACTIONS;
+  queue?: Album['_id'][];
+  actionGroups: AlbumActionsGroups[];
+  albums: {
+    album: Album;
+    artist: Artist;
+  }[];
+  dispatch?: Function;
+}
+
 export function getActionGroups({
   actionGroups = [],
   ...args
 }: GetAlbumContextMenuParams): MenuItemConstructorOptions[] {
-  return actionGroups.reduce((memo, group, index, original) => [
-    ...memo,
-    ...actionGroupsMap[group]
-      .map(actionID => AlbumActionsMap[actionID])
-      .map(action => {
-        const { title, handler } = action(args);
-        return { label: title, click: handler };
-      }),
-    ...index < original.length - 1 ? [{ type : 'separator'}] : []
-  ], []);
+  return grouper<ActionParams>({
+    actionGroups,
+    actionGroupsMap,
+    actionParams: args,
+    actionsMap: AlbumActionsMap
+  });
 }

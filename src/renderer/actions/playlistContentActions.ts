@@ -1,5 +1,5 @@
 import { MenuItemConstructorOptions } from 'electron';
-import { ActionCreator } from './actions';
+import { ActionCreator, ActionGroupsMap, ActionMap, grouper } from './actions';
 
 import {
   Playlist,
@@ -34,13 +34,17 @@ export enum PlaylistContentActions {
   REMOVE_ALBUM = 'REMOVE_ALBUM'
 }
 
-export const PlaylistContentActionsMap = {
+export const PlaylistContentActionsMap: ActionMap<ActionParams> = {
   [PlaylistContentActions.REMOVE_ALBUM]: removeAlbumsAction
 }
 
 export enum PlaylistContentActionGroups {
-  ALBUMS
+  ALBUMS = 'ALBUMS'
 }
+
+const actionGroupsMap: ActionGroupsMap = {
+  [PlaylistContentActionGroups.ALBUMS]: [PlaylistContentActions.REMOVE_ALBUM],
+};
 
 export type GetPlaylistContentContextMenuParams = {
   type: typeof PLAYLIST_CONTENT_CONTEXT_ACTIONS;
@@ -50,24 +54,20 @@ export type GetPlaylistContentContextMenuParams = {
   dispatch?: Function;
 }
 
-const actionGroupsMap = {
-  [PlaylistContentActionGroups.ALBUMS]: [PlaylistContentActions.REMOVE_ALBUM],
-};
-
 export function getActionGroups({
   actionGroups = [PlaylistContentActionGroups.ALBUMS],
   playlist,
   selection,
   dispatch
 }: GetPlaylistContentContextMenuParams): MenuItemConstructorOptions[] {
-  return actionGroups.reduce((memo, group, index, original) => [
-    ...memo,
-    ...actionGroupsMap[group]
-      .map(actionID => PlaylistContentActionsMap[actionID])
-      .map(action => {
-        const { title, handler } = action({ playlist, selection, dispatch });
-        return { label: title, click: handler };
-      }),
-    ...index < original.length - 1 ? [{ type : 'separator'}] : []
-  ], []);
+  return grouper<ActionParams>({
+    actionGroups,
+    actionGroupsMap,
+    actionParams: {
+      playlist,
+      selection,
+      dispatch
+    },
+    actionsMap: PlaylistContentActionsMap
+  });
 }
