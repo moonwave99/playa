@@ -1,5 +1,5 @@
 import { MenuItemConstructorOptions } from 'electron';
-import { ActionCreator, ActionGroupsMap, ActionMap, grouper } from './actions';
+import { ActionCreator, ActionGroupsMap, ActionMap, grouper } from './actionUtils';
 import { confirmDialog } from '../lib/dialog';
 
 import {

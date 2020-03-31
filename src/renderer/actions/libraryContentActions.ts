@@ -1,6 +1,6 @@
 import { MenuItemConstructorOptions } from 'electron';
 import { confirmDialog } from '../lib/dialog'
-import { ActionCreator, ActionMap, ActionGroupsMap, grouper } from './actions';
+import { ActionCreator, ActionGroupsMap, ActionMap, grouper } from './actionUtils';
 
 import {
   removeAlbums,

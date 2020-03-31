@@ -1,5 +1,5 @@
 import { ipcRenderer as ipc, MenuItemConstructorOptions } from 'electron';
-import { Action, ActionCreator, ActionGroupsMap, ActionMap, grouper } from './actions';
+import { Action, ActionCreator, ActionGroupsMap, ActionMap, grouper } from './actionUtils';
 
 import {
   Album,
