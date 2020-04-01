@@ -3,6 +3,7 @@ import createCachedSelector from 're-reselect';
 import { sample } from 'lodash';
 import {
   EntityHashMap,
+  toArray,
   toObj,
   removeIds,
   ensureAll,
@@ -18,7 +19,7 @@ import {
 } from './album';
 import { Track } from './track';
 
-import { IPC_MESSAGES } from '../../../constants';
+import { IPC_MESSAGES, RECENT_PLAYLIST_COUNT } from '../../../constants';
 
 const {
   IPC_PLAYLIST_GET_ALL_REQUEST,
@@ -43,7 +44,18 @@ export interface PlaylistState {
 export const selectors = {
   state: ({ playlists }: ApplicationState): PlaylistState => playlists,
   allById: ({ playlists }: ApplicationState): EntityHashMap<Playlist> => playlists.allById,
-  findById: ({ playlists }: ApplicationState, id: Playlist['_id']): Playlist => playlists.allById[id]
+  findById: (
+    { playlists }: ApplicationState,
+    id: Playlist['_id']
+  ): Playlist => playlists.allById[id],
+  recent: (
+    { playlists }: ApplicationState,
+    limit = RECENT_PLAYLIST_COUNT
+  ): Playlist[] => toArray(playlists.allById)
+    .sort((a: Playlist, b: Playlist) =>
+      new Date(b.accessed).getTime() - new Date(a.accessed).getTime()
+    ).slice(0, limit)
+    .sort((a: Playlist, b: Playlist) => a.title.localeCompare(b.title))
 };
 
 type GetPlaylistByIdSelection = {

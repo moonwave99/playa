@@ -42,6 +42,8 @@ import {
   selectors as playerSelectors
 } from '../../store/modules/player';
 
+import { toArray } from '../../utils/storeUtils';
+
 import {
   QUEUE,
   SEARCH,
@@ -52,21 +54,14 @@ import {
   LIBRARY
 } from '../../routes';
 
-import {
-  RECENT_PLAYLIST_COUNT
-} from '../../../constants';
-
 const appSelector = createSelector(
   playlistSelectors.allById,
+  playlistSelectors.recent,
   playerSelectors.state,
   albumSelectors.state,
   ({ ui }: ApplicationState) => ui,
-  (playlists, player, { allById: albums, editingAlbumId }, ui) => {
-    const playlistArray = Object.keys(playlists).map(id => playlists[id]);
-    const recentPlaylists = playlistArray
-      .sort((a: Playlist, b: Playlist) =>
-        new Date(b.accessed).getTime() - new Date(a.accessed).getTime()
-      ).slice(0, RECENT_PLAYLIST_COUNT);
+  (playlists, recentPlaylists, player, { allById: albums, editingAlbumId }, ui) => {
+    const playlistArray = toArray(playlists);
     return {
       playlists: playlistArray,
       recentPlaylists,
