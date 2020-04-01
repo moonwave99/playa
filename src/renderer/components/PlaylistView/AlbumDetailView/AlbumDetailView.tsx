@@ -149,7 +149,7 @@ export const AlbumDetailView: FC<AlbumDetailViewProps> = ({
   });
   return (
     <article className={albumClasses} id={`album-${_id}`} onContextMenu={_onContextMenu} ref={viewRef}>
-      <aside className="album-aside" style={{ backgroundColor: palette.DarkMuted }}>
+      <header className="album-header" style={{ backgroundColor: palette.DarkMuted }}>
         <div ref={ref} style={{ opacity }} className="album-cover-wrapper">
           <CoverView
             className={coverClasses}
@@ -158,7 +158,7 @@ export const AlbumDetailView: FC<AlbumDetailViewProps> = ({
             onImageLoad={onImageLoad}
             onDoubleClick={onCoverDoubleClick}/>
           </div>
-        <header>
+        <div className="album-info-wrapper">
           <h2 style={{ color: palette.LightVibrant }}>
             {title}
             <button
@@ -166,13 +166,13 @@ export const AlbumDetailView: FC<AlbumDetailViewProps> = ({
               className="button button-frameless button-album-actions"
               style={{ color: palette.LightVibrant }}>
               <FontAwesomeIcon className="icon" icon="ellipsis-h"/>
-            </button>            
+            </button>
           </h2>
           <p className="album-info">
             {year && <span className="album-year">{year}</span>}{renderArtist()}
           </p>
-        </header>
-      </aside>
+        </div>
+      </header>
       <section className="album-content">
         <TracklistView
           tracklist={album.tracks}
