@@ -9,11 +9,8 @@
   flex-direction: column;
 
   .sidebar-playlists {
-    flex: 1;
-    flex-direction: column;
-    display: flex;
-    overflow: auto;
-    padding-top: var(--section-gutter);
+    height: 100%;
+    padding-top: 2rem;
     .button-wrapper {
       padding: var(--section-gutter);
       .button {
@@ -29,13 +26,17 @@
         }
       }
     }
+    .playlist-list-wrapper {
+      overflow: auto;
+      max-height: calc(100% - #{2 * $mainUnit} - #{2 * $mainUnit});
+    }
   }
 
   .sidebar-title {
     @include sans();
     height: $mainUnit;
     line-height: $mainUnit;
-    padding: 0 $mainUnit;
+    padding: 0 2rem;
     margin: 0;
     font-size: 1rem;
     font-weight: 700;
@@ -49,7 +50,7 @@
     line-height: $mainUnit;
     vertical-align: middle;
     margin: 0;
-    padding: 0 0 0 $mainUnit;
+    padding: 0 0 0 2rem;
     outline: none;
     background: none;
     border: none;

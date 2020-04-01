@@ -2,13 +2,12 @@
 @import "../../../styles/mixins";
 
 .playlist-list {
+  @include ellipsis(100%);
   list-style: none;
   padding: 0;
   margin: 0;
-  display: flex;
-  flex-direction: column;
-  min-height: min-content;
   .playlist-list-item {
+    @include ellipsis(100%);
     height: $mainUnit;
     line-height: $mainUnit;
     vertical-align: middle;
@@ -42,12 +41,12 @@
       }
     }
     .playlist-list-item-link {
+      @include ellipsis(100%);
       display: block;
       flex: 1;
-      padding: 0 0 0 $mainUnit;
+      padding: 0 0 0 2rem;
       color: $lightColor;
       transition: color .3s ease-in-out;
-      @include ellipsis();
       &:hover {
         text-decoration: underline;
       }
