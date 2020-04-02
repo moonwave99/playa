@@ -19,6 +19,9 @@ export const RECENT_PLAYLIST_COUNT = 20;
 
 export const MUSIC_FILE_EXTENSIONS = ['mp3', 'm4a', 'flac', 'ogg'];
 
+export const COVER_WIDTH = 200;
+export const COVER_JPEG_QUALITY = 80;
+
 export enum SEARCH_URLS {
   DISCOGS = 'http://www.discogs.com/search?type=release&q=',
   RYM = 'https://rateyourmusic.com/search?searchtype=l&searchterm=',

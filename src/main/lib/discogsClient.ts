@@ -1,12 +1,23 @@
 import { Client } from 'disconnect';
-import * as fs from 'fs';
+import * as fs from 'fs-extra';
 import * as Path from 'path';
 import { saveData } from './saveData';
 import { EntityHashMap } from '../../renderer/utils/storeUtils';
 import log, { LogContext, LogLevel } from './logger';
 import { AlbumNotFoundError } from '../../errors';
+import jimp from 'jimp';
+
+import { COVER_WIDTH, COVER_JPEG_QUALITY } from '../../constants';
 
 export const DISCOGS_VARIOUS_ARTISTS_ID = 'Various';
+
+async function saveImage(imageData: string, imagePath: string): Promise<void> {
+  await saveData(imageData, imagePath, 'binary');
+  const image = await jimp.read(imagePath);
+  image.resize(COVER_WIDTH, jimp.AUTO)
+    .quality(COVER_JPEG_QUALITY);
+  await image.writeAsync(imagePath);
+}
 
 type Credentials = {
   consumerKey: string;
@@ -85,28 +96,20 @@ export default class DiscogsClient {
         return null;
       }
     }
-    const result = await saveData(imageData, imagePath, 'binary');
-    return this._updateCache(result, _id, imagePath);
+    await saveImage(imageData, imagePath);
+    return this._updateCache(true, _id, imagePath);
   }
 
   async getAlbumCoverFromURL(_id: string, url = ''): Promise<string> {
     const imagePath = Path.join(this.coversPath, `${_id}.jpg`);
-    let result: boolean = null;
     if (url.startsWith('http')) {
       const db = this.discogs.database();
       const imageData = await db.getImage(url);
-      result = await saveData(imageData, imagePath, 'binary');
+      await saveImage(imageData, imagePath);
     } else {
-      result = await new Promise((resolve, reject) => {
-        fs.copyFile(url, imagePath, (err) => {
-          if (err) {
-            reject(err);
-          }
-          resolve(true);
-        });
-      });
+      await fs.copyFile(url, imagePath);
     }
-    return this._updateCache(result, _id, imagePath);
+    return this._updateCache(true, _id, imagePath);
   }
 
   async _getAlbumCoverFromDiscogs(artist: string, title: string, _id: string): Promise<string> {

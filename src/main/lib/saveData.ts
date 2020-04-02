@@ -1,20 +1,13 @@
-import * as fs from 'fs';
+import * as fs from 'fs-extra';
 import { FileSystemError } from '../../errors';
 
 export async function saveData(
   data: string,
   path: string,
   format: 'binary' | 'utf8'
-): Promise<boolean> {
+): Promise<void> {
   try {
-    return new Promise((resolve, reject) => {
-      fs.writeFile(path, data, format, (error) => {
-        if (error) {
-          reject(error);
-        }
-        resolve(true);
-      })
-    });
+    await fs.writeFile(path, data, format);
   } catch (error) {
     throw new FileSystemError(`Error writing to ${path}`);
   }

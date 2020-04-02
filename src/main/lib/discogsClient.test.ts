@@ -1,15 +1,29 @@
 jest.mock('./saveData');
+jest.mock('jimp', () => {
+  return {
+    ...jest.requireActual('jimp'),
+    read: (): object => ({
+      resize: (): object => ({
+        quality: jest.fn()
+      }),
+      writeAsync: async (): Promise<void> => {
+        return;
+      }
+    })
+  }
+});
 import DiscogsClient from './discogsClient';
 import { saveData } from './saveData';
+import { FileSystemError } from '../../errors';
 
 (saveData as unknown as { mockImplementation: Function }).mockImplementation((
   _data: string,
   path: string
-) => {
+): Promise<void> => {
   if (path === '/path/to/covers/1.jpg') {
-    return true;
+    return;
   }
-  return null;
+  throw new FileSystemError(`Error writing to ${path}`);
 });
 
 describe('DiscogsClient', () => {
