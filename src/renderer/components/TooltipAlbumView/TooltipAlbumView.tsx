@@ -1,11 +1,15 @@
 import React, { ReactElement, FC, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { TooltipArg } from 'react-popper-tooltip';
 import cx from 'classnames';
 import { TracklistView } from '../AlbumListView/AlbumView/TracklistView/TracklistView'
 import { Album, getAlbumRequest, getAlbumContentById } from '../../store/modules/album';
 import { Track } from '../../store/modules/track';
 import { ApplicationState } from '../../store/store';
-import { TooltipArg } from 'react-popper-tooltip';
+
+import {
+  showTrackNumbers,
+} from '../../utils/albumUtils';
 
 import './TooltipAlbumView.scss';
 
@@ -45,6 +49,7 @@ export const TooltipAlbumView: FC<TooltipAlbumViewProps> = ({
     return (
       <TracklistView
         showArtists={false}
+        showTrackNumbers={showTrackNumbers(album)}
         onTrackDoubleClick={onTrackDoubleClick}
         tracklist={album.tracks}
         tracks={tracks}

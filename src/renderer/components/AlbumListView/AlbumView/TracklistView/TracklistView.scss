@@ -6,8 +6,9 @@
     ol {
       > li {
         &:hover {
-          background-color: $backgroundLightColor;
-          transition: background-color .1s ease-in-out;
+          .track-title {
+            text-decoration: underline;
+          }
         }
         &.is-current,
         &.ready:hover {
@@ -68,10 +69,24 @@
           visibility: hidden;
         }
       }
+      .track-title {
+        @include ellipsis();
+        flex: 1;
+      }
       .track-artist {
         color: $highlightColor;
+        &:after {
+          content: '·';
+          padding: 0 .5rem;
+          @media (max-width: $miniWindowThreshold) {
+            padding: 0 .25rem;
+          }
+        }
         &:hover {
           text-decoration: underline;
+          &:after {
+            text-decoration: none;
+          }
         }
       }
       .track-duration {

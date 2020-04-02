@@ -16,6 +16,7 @@ import { Track } from '../../../store/modules/track';
 import {
   formatArtist,
   showTrackNumbers,
+  showTrackArtists
 } from '../../../utils/albumUtils';
 import { ARTIST_SHOW } from '../../../routes';
 import './AlbumDetailView.scss';
@@ -178,7 +179,7 @@ export const AlbumDetailView: FC<AlbumDetailViewProps> = ({
           tracklist={album.tracks}
           tracks={tracks}
           currentTrackId={currentTrackId}
-          showArtists={false}
+          showArtists={showTrackArtists(album)}
           showTrackNumbers={showTrackNumbers(album)}
           onTrackDoubleClick={onTrackDoubleClick}/>
       </section>

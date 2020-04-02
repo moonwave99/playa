@@ -27,8 +27,13 @@ export const TracklistViewItem: FC<TracklistViewItemProps> = ({
 
   function renderArtist(artist: string): ReactElement {
     return showArtists
-      ? <><Link className="track-artist" to={`${SEARCH}?query=artist: ${encodeURIComponent(artist)}`}>{artist}</Link>&nbsp;-&nbsp;</>
-      : null;
+      ? (
+        <Link
+          className="track-artist"
+          to={`${SEARCH}?query=artist: ${encodeURIComponent(artist)}`}>
+          {artist}
+        </Link>
+      ) : null;
   }
 
   function renderTrackNumber(number: number): ReactElement {

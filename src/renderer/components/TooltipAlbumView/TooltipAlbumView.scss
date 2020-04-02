@@ -37,6 +37,13 @@
         padding-bottom: 1.5rem;
         > li {
           line-height: 1;
+          &:hover {
+            background-color: transparent;
+            transition: none;
+            .track-title {
+              text-decoration: underline;
+            }
+          }
           .playback-info,
           .track-number {
             margin-right: .5rem;
