@@ -6,6 +6,9 @@
   height: 100%;
   width: 100%;
   overflow: auto;
+  @media (max-width: $miniWindowThreshold) {
+    padding: 0;
+  }
   .album-list {
     list-style: none;
     padding: 0;

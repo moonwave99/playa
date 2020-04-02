@@ -39,7 +39,7 @@ export const QueueView = (): ReactElement => {
   useEffect(() => {
     scrollTo({
       selector: `#album-${currentAlbumId}`,
-      block: 'start',
+      block: 'nearest',
       behavior: 'smooth'
     });
   }, [currentAlbumId]);

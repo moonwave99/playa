@@ -13,7 +13,6 @@
     margin-top: 0;
     margin-left: 0;
     margin-right: 0;
-    @include horizontalSeparator($separatorWidth: calc(100vw - 2 * var(--section-gutter)));
   }
   &:hover {
     .album-aside {
@@ -54,16 +53,23 @@
       width: 100%;
       border-top-right-radius: 1rem;
       border-bottom-left-radius: 0;
-      padding-bottom: calc(var(--section-gutter) * .5);
+      padding: calc(var(--section-gutter) * .5);
+      flex-direction: row;
+      .album-cover-wrapper {
+        width: $albumCoverWidth * .5;
+        margin-right: calc(var(--section-gutter) * .5);
+        .album-cover {
+          @include albumCover($albumCoverWidth * .5);
+        }
+      }
     }
     @media (max-width: $miniWindowThreshold) {
-      background-color: transparent!important;
       border-radius: 0;
     }
+
     header {
       @media (max-width: $miniWindowThreshold) {
         width: 100%;
-        margin-bottom: var(--section-gutter);
       }
       h2 {
         margin: calc(var(--section-gutter) * 0.5) 0 0 0;
@@ -74,7 +80,8 @@
         letter-spacing: .01em;
         transition: color .3s ease-in-out;
         display: flex;
-        @media (max-width: $miniWindowThreshold) {
+        @media (max-width: $smallWindowThreshold) {
+          margin-top: .5rem;
           font-size: 1.2rem;
           line-height: 2rem;
         }
@@ -84,6 +91,10 @@
         width: 2rem;
         height: 2.5rem;
         margin-left: .5rem;
+        @media (max-width: $smallWindowThreshold) {
+          height: auto;
+          line-height: 1;
+        }
       }
       .album-artist,
       .album-info {
