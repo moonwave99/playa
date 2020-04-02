@@ -24,6 +24,7 @@ const {
   IPC_PLAYBACK_NEXT_TRACK,
   IPC_PLAYBACK_CLEAR_QUEUE,
   IPC_UI_EDIT_PLAYLIST_TITLE,
+  IPC_UI_REMOVE_PLAYLIST,
   IPC_UI_EDIT_ARTIST_TITLE,
   IPC_LIBRARY_IMPORT_MUSIC,
   IPC_LIBRARY_EDIT_ALBUM,
@@ -156,8 +157,13 @@ export default function initMenu({
         { type: 'separator' },
         {
           label: 'Rename Current Playlist',
-          id: 'edit-title',
+          id: 'edit-playlist-title',
           click: (): void => window.webContents.send(IPC_UI_EDIT_PLAYLIST_TITLE)
+        },
+        {
+          label: 'Remove Current Playlist',
+          id: 'remove-playlist',
+          click: (): void => window.webContents.send(IPC_UI_REMOVE_PLAYLIST, currentPlaylistId)
         },
         { type: 'separator' },
         {
@@ -288,7 +294,7 @@ export default function initMenu({
   });
 
   ipc.on(IPC_UI_LOCATION_UPDATE, (_event, location: string) => {
-    const playlistToggleViewItems = ['edit-title'].map(
+    const playlistToggleViewItems = ['edit-playlist-title', 'remove-playlist'].map(
       id => menu.getMenuItemById('playlist').submenu.getMenuItemById(id)
     );
 

@@ -13,12 +13,18 @@ import {
 } from '../store/modules/player';
 
 import { revealInFinderAction } from '../actions/albumActions';
+
 import {
   removeAlbumsAction as removeLibraryAlbumsAction
 } from '../actions/libraryContentActions';
+
 import {
   removeAlbumsAction as removePlaylistAlbumsAction
 } from '../actions/playlistContentActions';
+
+import {
+  deletePlaylistAction
+} from '../actions/playlistListActions';
 
 import { IPC_MESSAGES } from '../../constants';
 
@@ -32,6 +38,7 @@ const {
   IPC_UI_SWIPE,
   IPC_UI_EDIT_PLAYLIST_TITLE,
   IPC_UI_EDIT_ARTIST_TITLE,
+  IPC_UI_REMOVE_PLAYLIST,
   IPC_LIBRARY_IMPORT_MUSIC,
   IPC_LIBRARY_EDIT_ALBUM,
   IPC_LIBRARY_REMOVE_ALBUMS,
@@ -108,7 +115,20 @@ export default function initIpc({
       }).handler();
     },
     [IPC_UI_EDIT_PLAYLIST_TITLE]: (): void => dispatch(setEditPlaylistTitle(true)),
-    [IPC_UI_EDIT_ARTIST_TITLE]: (): void => dispatch(setEditArtistTitle(true))
+    [IPC_UI_EDIT_ARTIST_TITLE]: (): void => dispatch(setEditArtistTitle(true)),
+    [IPC_UI_REMOVE_PLAYLIST]: (_event: IpcRendererEvent, playlistId: Playlist['_id']): void => {
+      const { playlists } = store.getState();
+      const playlist = playlists.allById[playlistId];
+
+      if (!playlist) {
+        return;
+      }
+      
+      deletePlaylistAction({
+        playlist,
+        dispatch
+      }).handler();
+    }
   }
 
   const entries = Object.entries(handlerMap);

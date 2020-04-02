@@ -49,7 +49,8 @@ const {
   IPC_PLAYLIST_REMOVE_ALBUMS,
   IPC_LIBRARY_REVEAL_ALBUM,
   IPC_UI_EDIT_PLAYLIST_TITLE,
-  IPC_UI_EDIT_ARTIST_TITLE
+  IPC_UI_EDIT_ARTIST_TITLE,
+  IPC_UI_REMOVE_PLAYLIST
 } = IPC_MESSAGES;
 
 describe('initIpc', () => {
@@ -172,6 +173,12 @@ describe('initIpc', () => {
   it('should handle IPC_UI_EDIT_ARTIST_TITLE', () => {
     const handler = ipcRenderer.handlers[IPC_UI_EDIT_ARTIST_TITLE];
     ipcRenderer.trigger(IPC_UI_EDIT_ARTIST_TITLE, '1');
+    expect(handler).toHaveBeenCalledWith(ipcEvent, '1');
+  });
+
+  it('should handle IPC_UI_REMOVE_PLAYLIST', () => {
+    const handler = ipcRenderer.handlers[IPC_UI_REMOVE_PLAYLIST];
+    ipcRenderer.trigger(IPC_UI_REMOVE_PLAYLIST, '1');
     expect(handler).toHaveBeenCalledWith(ipcEvent, '1');
   });
 });

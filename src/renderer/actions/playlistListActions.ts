@@ -39,10 +39,10 @@ export const deletePlaylistAction: ActionCreator<ActionParams> = ({
   dispatch
 }) => {
   return {
-    title: `Delete playlist`,
+    title: `Remove playlist`,
     handler: async (): Promise<void> => {
       const confirmed = await confirmDialog({
-        title: 'Playlist Delete',
+        title: 'Remove playlist',
         message: `You are about to delete playlist '${playlist.title}', are you sure?`
       });
       if (confirmed) {

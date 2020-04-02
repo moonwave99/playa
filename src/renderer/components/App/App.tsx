@@ -170,10 +170,10 @@ export const App: FC<AppProps> = ({
 
   // reopen last opened playlist on app restart
   useEffect(() => {
-    if (lastOpenedPlaylistId) {
+    if (lastOpenedPlaylistId && playlists.length > 0 ) {
       history.replace(generatePath(PLAYLIST_SHOW, { _id: lastOpenedPlaylistId }));
     }
-  }, [lastOpenedPlaylistId]);
+  }, [lastOpenedPlaylistId, playlists.length]);
 
   useEffect(() => {
     if (queue.length) {
@@ -247,7 +247,10 @@ export const App: FC<AppProps> = ({
               <AllPlaylistContainer playlists={playlists}/>
             </Route>
             <Route path={PLAYLIST_SHOW}>
-              { playlists.length > 0 && <PlaylistContainer/> }
+              { playlists.length > 0
+                ? <PlaylistContainer/>
+                : <Redirect to={QUEUE}/>
+              }
             </Route>
           </Switch>
         </div>

@@ -78,6 +78,7 @@ export const IPC_MESSAGES = {
   IPC_UI_EDIT_ARTIST_TITLE: 'ui:edit-artist-title',
   IPC_UI_LIBRARY_ALBUM_SELECTION_UPDATE: 'ui:library-album-selection-update',
   IPC_UI_PLAYLIST_ALBUM_SELECTION_UPDATE: 'ui:playlist-album-selection-update',
+  IPC_UI_REMOVE_PLAYLIST: 'ui:remove-playlist',
   IPC_PLAYBACK_PREV_TRACK: 'ui:playback:prev-track',
   IPC_PLAYBACK_NEXT_TRACK: 'ui:playback:next-track',
   IPC_PLAYBACK_CLEAR_QUEUE: 'ui:playback:clear-queue',

@@ -27,9 +27,11 @@ describe('Remove albums from library', () => {
 
   it('removes selected album from library', async () => {
     await populateTestDB();
-    await app.start();
     const { artist, title, year } = FileAlbums[0];
     const { path: albumPath, tracks } = await generateAlbum(FileAlbums[0]);
+
+    await app.start();
+    
     mock(app, [
       {
         method: 'showOpenDialog',
@@ -44,7 +46,9 @@ describe('Remove albums from library', () => {
         }
       }
     ]);
+
     await app.client.waitUntilWindowLoaded();
+
     await app.client.click('.app-header .button-library');
     await app.client.waitUntil(async () => await app.client.getText('.app-header h1') === 'Library');
     await menuAddon.clickMenu('Library', 'Import Music');

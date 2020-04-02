@@ -134,31 +134,32 @@ export const PlaylistContainer = (): ReactElement => {
     }).handler();
   }
 
+  if (!playlist._id) {
+    return <Redirect to={QUEUE}/>;
+  }
+
   const shouldShowPlaylist = !isLoading && playlist.albums.length === Object.keys(albums).length;
   if (!shouldShowPlaylist) {
     return null;
   }
-
 	return (
-    !playlist._id
-      ? <Redirect to={QUEUE}/>
-      : <CSSTransition
-          in={!isLoading}
-          timeout={300}
-          classNames="playlist-view"
-          unmountOnExit>
-          <PlaylistView
-            albums={albums}
-            playlist={playlist}
-            isCurrent={currentPlaylistId === playlist._id}
-            currentAlbumId={currentAlbumId}
-            currentTrackId={currentTrackId}
-            onSelectionChange={onSelectionChange}
-            onAlbumOrderChange={onAlbumOrderChange}
-            onAlbumEnter={onAlbumEnter}
-            onAlbumBackspace={onAlbumBackspace}
-            onAlbumContextMenu={onAlbumContextMenu}
-            onAlbumDoubleClick={onAlbumDoubleClick}/>
-       </CSSTransition>
+    <CSSTransition
+      in={!isLoading}
+      timeout={300}
+      classNames="playlist-view"
+      unmountOnExit>
+      <PlaylistView
+        albums={albums}
+        playlist={playlist}
+        isCurrent={currentPlaylistId === playlist._id}
+        currentAlbumId={currentAlbumId}
+        currentTrackId={currentTrackId}
+        onSelectionChange={onSelectionChange}
+        onAlbumOrderChange={onAlbumOrderChange}
+        onAlbumEnter={onAlbumEnter}
+        onAlbumBackspace={onAlbumBackspace}
+        onAlbumContextMenu={onAlbumContextMenu}
+        onAlbumDoubleClick={onAlbumDoubleClick}/>
+     </CSSTransition>
 	);
 };

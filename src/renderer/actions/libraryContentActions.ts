@@ -27,7 +27,7 @@ export const removeAlbumsAction: ActionCreator<ActionParams> = ({
         return dispatch(showDialog('Album in play', 'Album is currently in playback!'));
       }
       const confirmed = await confirmDialog({
-        title: 'Playlist Delete',
+        title: 'Remove selected album(s) from library',
         message: `You are about to delete ${selection.length} album(s) from your library, are you sure?`
       });
       if (confirmed) {
