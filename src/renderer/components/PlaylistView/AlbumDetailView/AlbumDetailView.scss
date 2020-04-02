@@ -12,7 +12,6 @@
     margin-top: 0;
     margin-left: 0;
     margin-right: 0;
-    @include horizontalSeparator($separatorWidth: calc(100vw - 2 * var(--section-gutter)));
   }
   &:hover {
     .album-header {
@@ -37,17 +36,20 @@
     .album-cover-wrapper {
       width: $albumDetailCoverWidth;
       margin-right: calc(var(--section-gutter) * .5);
+      @media (max-width: $miniWindowThreshold) {
+        width: $albumDetailCoverWidth * .5;
+      }
       .album-cover {
         @include albumCover($albumDetailCoverWidth);
         @include droppable();
+        @media (max-width: $miniWindowThreshold) {
+          @include albumCover($albumDetailCoverWidth * .5);
+        }
       }
     }
     @media (max-width: $smallWindowThreshold) {
       width: 100%;
       padding-bottom: calc(var(--section-gutter) * .5);
-    }
-    @media (max-width: $miniWindowThreshold) {
-      background-color: transparent!important;
     }
     .album-info-wrapper {
       flex: 1;
@@ -61,7 +63,11 @@
         transition: color .3s ease-in-out;
         @media (max-width: $miniWindowThreshold) {
           font-size: 1.2rem;
-          line-height: 2rem;
+          line-height: 1.5rem;
+          .button-album-actions {
+            height: auto;
+            line-height: 1;
+          }
         }
       }
       .button-album-actions {
@@ -74,6 +80,10 @@
         line-height: 2.5rem;
         letter-spacing: 0;
         font-weight: normal;
+        @media (max-width: $miniWindowThreshold) {
+          font-size: 1rem;
+          line-height: 1.5rem;
+        }
         .album-year {
           @include monospace();
           margin-right: .25rem;
@@ -112,8 +122,6 @@
     @media (max-width: $smallWindowThreshold) {
       padding-top: calc(var(--section-gutter) * .5);
       padding-left: var(--section-gutter);
-      border-top-right-radius: 0;
-      border-bottom-left-radius: 1rem;
     }
     @media (max-width: $miniWindowThreshold) {
       background-color: transparent;

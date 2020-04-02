@@ -7,6 +7,9 @@
   height: 100%;
   width: 100%;
   display: flex;
+  @media (max-width: $miniWindowThreshold) {
+    flex-direction: column-reverse;
+  }
   .album-list-wrapper {
     flex: calc(100% / 3);
     height: 100%;
@@ -14,10 +17,21 @@
     border-right: 1px solid rgba($lightColor, .1);
     @media (max-width: $smallWindowThreshold) {
   		max-width: 100%;
+      flex: calc(100% / 2);
   	}
+    @media (max-width: $miniWindowThreshold) {
+      max-height: 50%;
+    }
   }
   .album-detail-wrapper {
     flex: calc(100% / 1.5);
+    @media (max-width: $smallWindowThreshold) {
+      flex: calc(100% / 2);
+    }
+    @media (max-width: $miniWindowThreshold) {
+      max-height: 50%;
+      border-bottom: 1px solid rgba($lightColor, .1);
+    }
   }
   .playlist-empty-placeholder {
     @include emptyComponent();
