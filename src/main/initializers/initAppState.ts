@@ -2,7 +2,7 @@ import * as Path from 'path';
 import * as fs from 'fs-extra';
 import { ipcMain as ipc } from 'electron';
 import AppState from '../lib/appState';
-import { Environment } from '../main';
+import { Environment } from '../lib/environment';
 
 import { IPC_MESSAGES } from '../../constants';
 

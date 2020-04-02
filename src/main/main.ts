@@ -1,10 +1,16 @@
-import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import { app, BrowserWindow, shell, Event } from 'electron';
 import { is } from 'electron-util';
 import * as Path from 'path';
 import * as url from 'url';
-import log, { LogContext, LogLevel } from './lib/logger';
-import getUserDataPath from './lib/getUserDataPath';
+
+import {
+  runAsync,
+  backupProductionData,
+  getUserDataPath,
+  installExtensions
+} from './lib/utils';
+import { parseEnvironment } from './lib/environment';
+import log, { LogLevel } from './lib/logger';
 
 import initMenu from './initializers/initMenu';
 import initDatabase from './initializers/initDatabase';
@@ -14,7 +20,11 @@ import initURLHandler from './initializers/initURLHandler';
 import initAppState from './initializers/initAppState';
 import initDialog from './initializers/initDialog';
 
-import { name as APP_NAME, version as APP_VERSION } from '../../package.json';
+import {
+  name as APP_NAME,
+  version as APP_VERSION
+} from '../../package.json';
+
 import { DISCOGS_KEY, DISCOGS_SECRET } from '../../settings/discogs.json';
 
 import {
@@ -35,10 +45,10 @@ function createWindow({
   position = [0, 0],
   isRunningInSpectron = false,
   backgroundColor = COLORS.BACKGROUND_COLOR
-}): void {
+}): BrowserWindow {
   const [width, height] = size;
   const [x, y] = position;
-  mainWindow = new BrowserWindow({
+  const mainWindow = new BrowserWindow({
     width,
     height,
     x,
@@ -90,55 +100,37 @@ function createWindow({
   if (is.development && !isRunningInSpectron) {
     mainWindow.webContents.toggleDevTools();
   }
+
+  return mainWindow;
 }
 
-async function installExtensions(): Promise<void> {
-  try {
-    await installExtension(REACT_DEVELOPER_TOOLS);
-    log({
-      context: LogContext.Global,
-      message: 'Installed React DevTools'
-    });
-  } catch(error) {
-    log({
-      context: LogContext.Global,
-      level: LogLevel.Error,
-      message: 'Error installing React DevTools'
-    }, error);
-  }
-}
+const {
+  disableDiscogsRequests,
+  debug,
+  backupProduction,
+  environment,
+  isRunningInSpectron
+} = parseEnvironment(process.env);
 
-export enum Environment {
-  prod,
-  dev,
-  fresh
-}
+const userDataPath = getUserDataPath({
+  isRunningInSpectron,
+  appName: APP_NAME
+});
 
-function getEnvironment(env = 'prod'): Environment {
-  switch (env) {
-    case 'prod':
-      return Environment.prod;
-    case 'dev':
-      return Environment.dev;
-    case 'fresh':
-      return Environment.fresh;
-    default:
-      throw new Error(`Environment not supported: ${env}`);
-  }
+if (backupProduction) {
+  runAsync(
+    backupProductionData,
+    userDataPath,
+    Path.join(process.cwd(), 'backup', APP_NAME)
+  );
 }
-
-const userDataPath = getUserDataPath();
-const disableDiscogsRequests = process.env.DISABLE_DISCOGS_REQUESTS === 'true';
-const debug = process.env.DEBUG === 'true';
-const environment = getEnvironment(process.env.ENV);
-const isRunningInSpectron = !!process.env.RUNNING_IN_SPECTRON;
 
 initDialog();
-(async (): Promise<void> => await initDatabase({
+runAsync(initDatabase, {
   userDataPath,
   debug,
   environment
-}))();
+});
 initURLHandler();
 initDiscogsClient({
   userDataPath,
@@ -155,9 +147,22 @@ initWaveform(userDataPath);
 const appState = initAppState({ userDataPath, environment });
 const { lastWindowSize, lastWindowPosition } = appState.getState();
 
+log({
+  level: LogLevel.Force,
+  message: 'App started'
+}, {
+  environment,
+  debug,
+  backupProduction,
+  disableDiscogsRequests,
+  ...appState.getState()
+});
+
 app.on('ready', async () => {
-  await installExtensions();
-  createWindow({
+  if (is.development) {
+    await installExtensions();
+  }
+  mainWindow = createWindow({
     size: lastWindowSize,
     position: lastWindowPosition,
     isRunningInSpectron
@@ -166,7 +171,7 @@ app.on('ready', async () => {
 
 app.on('activate', () => {
   if (IS_MACOS && mainWindow === null) {
-    createWindow({
+    mainWindow = createWindow({
       size: lastWindowSize,
       position: lastWindowPosition
     });

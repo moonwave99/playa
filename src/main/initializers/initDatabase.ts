@@ -8,7 +8,7 @@ import loadTracklist from '../lib/loadTracklist';
 import { Album } from '../../renderer/store/modules/album';
 import { parseQuery } from '../../renderer/utils/searchUtils';
 import { IPC_MESSAGES } from '../../constants';
-import { Environment } from '../main';
+import { Environment } from '../lib/environment';
 
 const {
   IPC_PLAYLIST_GET_ALL_REQUEST,

@@ -3,9 +3,10 @@ import chalk from 'chalk';
 const LOG_LEVEL = +process.env.LOG_LEVEL;
 
 export enum LogLevel {
-  Error,
-  Warning,
-  Info
+  Force = -1,
+  Error = 0,
+  Warning = 1,
+  Info = 2
 }
 
 export enum LogContext {
@@ -31,6 +32,7 @@ const CONTEXT_COLOR_MAP: { [key: string]: Function } = {
 };
 
 const LEVEL_COLOR_MAP: { [key: string]: Function } = {
+  [LogLevel.Force]: chalk.blue,
   [LogLevel.Info]: chalk.blue,
   [LogLevel.Warning]: chalk.yellow,
   [LogLevel.Error]: chalk.red,

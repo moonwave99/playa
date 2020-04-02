@@ -1,6 +1,6 @@
 import * as os from 'os'
 
-export const IS_MACOS = (os.platform() === "darwin");
+export const IS_MACOS = (os.platform() === 'darwin');
 
 export const DEFAULT_WIDTH = 1200;
 export const DEFAULT_HEIGHT = 800;
