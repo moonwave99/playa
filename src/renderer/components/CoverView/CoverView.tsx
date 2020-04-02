@@ -26,8 +26,8 @@ export const CoverView: FC<CoverViewProps> = ({
     if (!album) {
       return '';
     }
-    const { _id, artist, title } = album;
-    return `[${_id}] ${artist} - ${title}`;
+    const { _id, title } = album;
+    return `[${_id}] ${title}`;
   }
 
   function _onImageLoad(): void {

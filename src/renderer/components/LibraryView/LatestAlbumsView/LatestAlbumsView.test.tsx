@@ -34,7 +34,6 @@ describe('LatestAlbumsView', () => {
       <LatestAlbumsView
         albums={albums}
         currentAlbumId={null}
-        loading={false}
         onAlbumEnter={jest.fn()}
         onAlbumBackspace={jest.fn()}
         onAlbumContextMenu={jest.fn()}
@@ -48,7 +47,6 @@ describe('LatestAlbumsView', () => {
       <LatestAlbumsView
         albums={albums}
         currentAlbumId={null}
-        loading={false}
         onAlbumEnter={jest.fn()}
         onAlbumBackspace={jest.fn()}
         onAlbumContextMenu={jest.fn()}
@@ -62,9 +60,8 @@ describe('LatestAlbumsView', () => {
       <LatestAlbumsView
         albums={[]}
         currentAlbumId={null}
-        loading={false}
         onAlbumEnter={jest.fn()}
-        onAlbumBackspace={jest.fn()}        
+        onAlbumBackspace={jest.fn()}
         onAlbumContextMenu={jest.fn()}
         onAlbumDoubleClick={jest.fn()}/>
     , defaultStore);

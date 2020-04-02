@@ -210,7 +210,7 @@ export const removeAlbums = (albumsToRemove: Album[]): Function =>
   }
 
 const INITIAL_STATE = {
-  latest: [] as Album['_id'][],
+  latest: null as Album['_id'][],
   latestAlbumId: null as Album['_id'],
   loadingLatest: false
 };
@@ -240,7 +240,7 @@ export default function reducer(
       return {
         ...state,
         latestAlbumId: getLatestAlbumId(action.albums),
-        latest: uniq([...action.albums.map(({ _id }) => _id), ...state.latest])
+        latest: uniq([...action.albums.map(({ _id }) => _id), ...(state.latest || [])])
       };
     case LIBRARY_GET_LATEST_REQUEST:
       return {

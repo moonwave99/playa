@@ -1,12 +1,14 @@
 import React, { FC, ReactElement, MouseEvent, useState, useEffect } from 'react';
+import TooltipTrigger, { ChildrenArg, TooltipArg } from 'react-popper-tooltip';
 import { AlbumGridTileView } from './AlbumGridTileView/AlbumGridTileView';
+import { TooltipAlbumView } from '../../TooltipAlbumView/TooltipAlbumView';
 import { Album } from '../../../store/modules/album';
 import useGrid from '../../../hooks/useGrid/useGrid';
 import scrollTo from '../../../lib/scrollTo';
 
 import './AlbumGridView.scss';
 
-import { ALBUM_GRID_THRESHOLDS } from '../../../../constants';
+import { ALBUM_GRID_THRESHOLDS, ALBUM_GRID_TOOLTIP_DELAY } from '../../../../constants';
 
 type AlbumGridViewProps = {
   albums: Album[];
@@ -88,28 +90,61 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
     if (!album) {
       return;
     }
-    function onClick(event: MouseEvent, { _id }: Album): void {
-      onItemClick({
-        _id,
-        ...event
-      });
-    }
     const { _id } = album;
+
+    function renderTooltip(tooltipArgs: TooltipArg): ReactElement {
+      return (
+        <TooltipAlbumView
+          onDoubleClick={onAlbumDoubleClick}
+          album={album} {...tooltipArgs}/>
+      );
+    }
+
+    function renderTrigger({
+      getTriggerProps,
+      triggerRef: ref
+    }: ChildrenArg): ReactElement {
+      const {
+        onMouseEnter,
+        onMouseLeave,
+      } = getTriggerProps({ ref });
+
+      function onClick(event: MouseEvent, { _id }: Album): void {
+        onItemClick({
+          _id,
+          ...event
+        });
+      }
+
+      return (
+        <AlbumGridTileView
+          style={{ width: `${(100 / threshold.columns)}%` }}
+          showArtist={showArtists}
+          album={album}
+          selected={selection.indexOf(_id) > -1}
+          selectedIDs={selection}
+          isPlaying={_id === currentAlbumId}
+          isDragging={isDragging}
+          onClick={onClick}
+          onDoubleClick={onAlbumDoubleClick}
+          onContextMenu={onAlbumContextMenu}
+          onDragBegin={onDragBegin}
+          onDragEnd={onDragEnd}
+          onMouseEnter={onMouseEnter}
+          onMouseLeave={onMouseLeave}
+          tooltipTriggerRef={ref}/>
+      );
+    }
+
     return (
-      <AlbumGridTileView
-        style={{ width: `${(100 / threshold.columns)}%` }}
-        showArtist={showArtists}
+      <TooltipTrigger
         key={_id}
-        album={album}
-        selected={selection.indexOf(_id) > -1}
-        selectedIDs={selection}
-        isPlaying={_id === currentAlbumId}
-        isDragging={isDragging}
-        onClick={onClick}
-        onDoubleClick={onAlbumDoubleClick}
-        onContextMenu={onAlbumContextMenu}
-        onDragBegin={onDragBegin}
-        onDragEnd={onDragEnd}/>
+        placement="bottom"
+        trigger="hover"
+        delayShow={ALBUM_GRID_TOOLTIP_DELAY}
+        tooltip={renderTooltip}>
+        {renderTrigger}
+      </TooltipTrigger>
     );
   }
 

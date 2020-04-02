@@ -1,8 +1,9 @@
-import React, { FC, useEffect, useRef, MouseEvent } from 'react';
+import React, { FC, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link, generatePath } from 'react-router-dom';
 import { useDrag } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
-import { Link, generatePath } from 'react-router-dom';
+import { Ref } from 'react-popper-tooltip';
 import cx from 'classnames';
 import { CoverView } from '../../../CoverView/CoverView';
 import { Album } from '../../../../store/modules/album';
@@ -32,6 +33,9 @@ type AlbumGridTileViewProps = {
   onContextMenu?: Function;
   onDragBegin?: Function;
   onDragEnd?: Function;
+  onMouseEnter?: (event: React.MouseEvent<HTMLElement, MouseEvent>) => void;
+  onMouseLeave?: (event: React.MouseEvent<HTMLElement, MouseEvent>) => void;
+  tooltipTriggerRef?: Ref;
 };
 
 export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
@@ -46,7 +50,10 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
   onDoubleClick,
   onContextMenu,
   onDragBegin,
-  onDragEnd
+  onDragEnd,
+  onMouseEnter,
+  onMouseLeave,
+  tooltipTriggerRef
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
@@ -89,7 +96,7 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
   }, [album]);
 
 
-  function _onClick(event: MouseEvent): void {
+  function _onClick(event: React.MouseEvent): void {
     onClick && onClick(event, album, artist);
   }
 
@@ -114,7 +121,10 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
     <article
       style={style}
       className={classNames}
-      id={`album-grid-tile-${_id}`}>
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      id={`album-grid-tile-${_id}`}
+      ref={tooltipTriggerRef}>
       <div ref={ref} className="album-grid-tile-drag-wrapper">
         <CoverView
           className="album-cover"

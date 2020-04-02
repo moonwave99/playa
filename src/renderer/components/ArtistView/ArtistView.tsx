@@ -19,6 +19,7 @@ import {
 } from '../../store/modules/artist';
 
 import { Album, AlbumTypes, selectors as albumSelectors } from '../../store/modules/album';
+import { Track } from '../../store/modules/track';
 import { updateTitle, updateLibraryAlbumSelection } from '../../store/modules/ui';
 import { ApplicationState } from '../../store/store';
 import { groupAlbumsByType } from '../../utils/albumUtils';
@@ -116,10 +117,11 @@ export const ArtistView = (): ReactElement => {
     ]);
 	}
 
-  function onAlbumDoubleClick(album: Album, artist: Artist): void {
+  function onAlbumDoubleClick(album: Album, artist: Artist, track: Track): void {
     actionsMap(AlbumActions.PLAY_ALBUM)({
       albums: [{ album, artist }],
       queue: [album._id],
+      trackId: track ? track._id : null,
       dispatch
     }).handler();
 	}

@@ -8,7 +8,6 @@ import { updateLibraryAlbumSelection } from '../../../store/modules/ui';
 type LatestAlbumsViewProps = {
   albums: Album[];
   currentAlbumId: Album['_id'];
-  loading: boolean;
   onAlbumEnter: Function;
   onAlbumBackspace: Function;
   onAlbumContextMenu: Function;
@@ -16,9 +15,8 @@ type LatestAlbumsViewProps = {
 };
 
 export const LatestAlbumsView: FC<LatestAlbumsViewProps> = ({
-  albums = [],
+  albums,
   currentAlbumId,
-  loading = false,
   onAlbumEnter,
   onAlbumBackspace,
   onAlbumContextMenu,
@@ -49,10 +47,14 @@ export const LatestAlbumsView: FC<LatestAlbumsViewProps> = ({
     return <p className="library-latest-albums-empty-placeholder">{t('library.empty')}</p>;
   }
 
+  if (!albums) {
+    return null;
+  }
+
   return (
     <section className="library-latest-albums">
       <CSSTransition
-        in={!loading}
+        in={!!albums}
         timeout={300}
         classNames="album-grid"
         unmountOnExit>

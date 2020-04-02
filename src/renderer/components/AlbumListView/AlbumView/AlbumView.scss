@@ -36,8 +36,8 @@
       calc(var(--section-gutter) * 1)
       var(--section-gutter)
       var(--section-gutter);
-    border-top-left-radius: 1rem;
-    border-bottom-left-radius: 1rem;
+    border-top-left-radius: .5rem;
+    border-bottom-left-radius: .5rem;
     background-color: rgba($backgroundDarkColor, .4);
     display: flex;
     flex-direction: column;
@@ -51,7 +51,7 @@
     }
     @media (max-width: $smallWindowThreshold) {
       width: 100%;
-      border-top-right-radius: 1rem;
+      border-top-right-radius: .5rem;
       border-bottom-left-radius: 0;
       padding: calc(var(--section-gutter) * .5);
       flex-direction: row;
@@ -73,8 +73,8 @@
       }
       h2 {
         margin: calc(var(--section-gutter) * 0.5) 0 0 0;
-        font-size: 1.8rem;
-        line-height: 2.5rem;
+        font-size: 1.5rem;
+        line-height: 2rem;
         color: $highlightColor;
         font-weight: bold;
         letter-spacing: .01em;
@@ -89,7 +89,7 @@
       .button-album-actions {
         display: flex;
         width: 2rem;
-        height: 2.5rem;
+        height: 2rem;
         margin-left: .5rem;
         @media (max-width: $smallWindowThreshold) {
           height: auto;
@@ -132,7 +132,7 @@
 
   &.is-current {
     @media (min-width: $miniWindowThreshold + 1) {
-      border-radius: 1rem;
+      border-radius: .5rem;
       background-color: rgba($mainColor, .2);
       transition: background-color .3s ease-in-out;
     }
@@ -145,14 +145,14 @@
       var(--section-gutter)
       var(--section-gutter)
       calc(var(--section-gutter) * 0.5);
-    border-top-right-radius: 1rem;
-    border-bottom-right-radius: 1rem;
+    border-top-right-radius: .5rem;
+    border-bottom-right-radius: .5rem;
     background-color: rgba($backgroundDarkColor, .7);
     @media (max-width: $smallWindowThreshold) {
       padding-top: calc(var(--section-gutter) * .5);
       padding-left: var(--section-gutter);
       border-top-right-radius: 0;
-      border-bottom-left-radius: 1rem;
+      border-bottom-left-radius: .5rem;
     }
     @media (max-width: $miniWindowThreshold) {
       background-color: transparent;

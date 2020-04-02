@@ -11,6 +11,7 @@ import { ApplicationState } from '../../store/store';
 import { updateTitle } from '../../store/modules/ui';
 import { Album } from '../../store/modules/album';
 import { Artist } from '../../store/modules/artist';
+import { Track } from '../../store/modules/track';
 import { openContextMenu } from '../../lib/contextMenu';
 import useNativeDrop, { NativeTypes } from '../../hooks/useNativeDrop/useNativeDrop';
 import scrollTo from '../../lib/scrollTo';
@@ -54,6 +55,7 @@ export const LibraryView: FC<LibraryViewProps> = ({
 	const dispatch = useDispatch();
   const location = useLocation();
 	const history = useHistory();
+
   const [selectedLetter, setSelectedLetter] = useState(DEFAULT_LETTER);
 
   const q = new URLSearchParams(location.search);
@@ -67,12 +69,10 @@ export const LibraryView: FC<LibraryViewProps> = ({
 
 	const {
     latest,
-    currentAlbumId,
-    loadingLatest
+    currentAlbumId
   } = useSelector(({ albums, library, player }: ApplicationState) => ({
-    latest: library.latest.map((_id: Album['_id']) => albums.allById[_id]).filter(a => !!a),
-    currentAlbumId: player.currentAlbumId,
-    loadingLatest: library.loadingLatest
+    latest: library.latest ? library.latest.map((_id: Album['_id']) => albums.allById[_id]).filter(a => !!a) : null,
+    currentAlbumId: player.currentAlbumId
   }));
 
   function _onDrop(folder: string): void {
@@ -130,10 +130,11 @@ export const LibraryView: FC<LibraryViewProps> = ({
     ]);
 	}
 
-	function onAlbumDoubleClick(album: Album, artist: Artist): void {
+	function onAlbumDoubleClick(album: Album, artist: Artist, track: Track): void {
     actionsMap(AlbumActions.PLAY_ALBUM)({
       albums: [{ album, artist }],
       queue: [album._id],
+      trackId: track ? track._id : null,
       dispatch
     }).handler();
 	}
@@ -186,13 +187,12 @@ export const LibraryView: FC<LibraryViewProps> = ({
       <LatestAlbumsView
         albums={latest}
         currentAlbumId={currentAlbumId}
-        loading={loadingLatest}
         onAlbumEnter={onAlbumEnter}
         onAlbumBackspace={onAlbumBackspace}
         onAlbumContextMenu={onAlbumContextMenu}
         onAlbumDoubleClick={onAlbumDoubleClick}/>
       {
-        latest.length > 0
+        latest && latest.length > 0
         ? <ArtistListView
             selectedLetter={selectedLetter}
             onLetterClick={onLetterClick}/>

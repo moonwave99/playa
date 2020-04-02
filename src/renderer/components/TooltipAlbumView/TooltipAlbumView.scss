@@ -1,0 +1,55 @@
+@import "../../styles/variables";
+@import "../../styles/mixins";
+
+.tooltip-container {
+  &.tooltip-album-view {
+    background-color: $backgroundDarkColor;
+    border-color: rgba($lightColor, .1);
+    visibility: hidden;
+    padding: 0;
+    .tooltip-arrow {
+      &[data-placement*='top']::before {
+        border-top-color: rgba($lightColor, .1);
+      }
+      &[data-placement*='top']::after {
+        border-top-color: $backgroundDarkColor;
+      }
+      &[data-placement*='bottom']::before {
+        border-bottom-color: rgba($lightColor, .1);
+      }
+      &[data-placement*='bottom']::after {
+        border-bottom-color: $backgroundDarkColor;
+      }
+    }
+  }
+
+  &.loaded {
+    visibility: visible;
+  }
+
+  .tooltip-body {
+    padding: 1.5rem 1.5rem 0 1.5rem;
+    overflow: auto;
+    .tracklist-view {
+      font-size: .8rem;
+      max-height: $tooltipMaxHeight;
+      ol {
+        padding-bottom: 1.5rem;
+        > li {
+          line-height: 1;
+          .playback-info,
+          .track-number {
+            margin-right: .5rem;
+            color: rgba($lightColor, .5);
+          }
+          .track-title {
+            margin-right: 2rem;
+          }
+          .track-duration {
+            color: rgba($lightColor, .5);
+          }
+        }
+      }
+    }
+  }
+}

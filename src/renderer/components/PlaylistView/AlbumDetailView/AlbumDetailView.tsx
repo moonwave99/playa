@@ -48,6 +48,7 @@ export const AlbumDetailView: FC<AlbumDetailViewProps> = ({
   onContextMenu,
   onDoubleClick
 }) => {
+  const dispatch = useDispatch();
   const ref = useRef<HTMLDivElement>(null);
   const [palette, setPalette] = useState({} as Palette);
   const { _id, year, title } = album;
@@ -59,7 +60,6 @@ export const AlbumDetailView: FC<AlbumDetailViewProps> = ({
     tracks
   } = useSelector((state: ApplicationState) => getAlbumContentById(state, _id));
 
-  const dispatch = useDispatch();
   useEffect(() => {
     inView && dispatch(getAlbumRequest(_id));
   }, [_id, inView, artist]);

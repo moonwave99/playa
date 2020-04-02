@@ -62,6 +62,8 @@ export const ALBUM_GRID_THRESHOLDS = [
   }
 ];
 
+export const ALBUM_GRID_TOOLTIP_DELAY = 500;
+
 export const FONTS = ['Fira Mono', 'Inter UI', 'Nunito'];
 
 export const WAVEFORM_PEAKS_COUNT = 1000;
