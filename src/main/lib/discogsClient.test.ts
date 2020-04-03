@@ -29,6 +29,7 @@ import { FileSystemError } from '../../errors';
 describe('DiscogsClient', () => {
   const client = new DiscogsClient({
     coversPath: '/path/to/covers',
+    artistPicturesPath: '/path/to/artistPictures',
     userAgent: 'playa/test',
     credentials: {
       consumerKey: 'DISCOGS_TEST_KEY',

@@ -12,6 +12,9 @@ const defaultStore = {
   artists: {
     allById: toObj(artists)
   },
+  artistPictures: {
+    allById: {}
+  },  
   library: {
     latest: [] as object[],
     latestAlbumId: null as Album['_id']

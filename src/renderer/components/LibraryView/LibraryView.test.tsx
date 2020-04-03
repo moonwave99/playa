@@ -25,6 +25,9 @@ const defaultStore = {
   covers: {
     allById: {}
   },
+  artistPictures: {
+    allById: {}
+  },
   waveforms: {
     allById: {}
   },

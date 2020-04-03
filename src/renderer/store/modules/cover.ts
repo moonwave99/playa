@@ -22,7 +22,6 @@ export const selectors = {
 export const COVER_GET_REQUEST  = 'playa/cover/COVER_GET_REQUEST';
 export const COVER_GET_RESPONSE = 'playa/cover/COVER_GET_RESPONSE';
 
-
 interface GetCoverRequestAction {
   type: typeof COVER_GET_REQUEST;
   album: Album;
