@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useEffect, useRef } from 'react';
+import React, { FC, useMemo, useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link, generatePath } from 'react-router-dom';
 import { useInView } from 'react-intersection-observer';
@@ -22,8 +22,9 @@ export const ArtistListItemView: FC<ArtistListItemViewProps> = ({
 }) => {
   const dispatch = useDispatch();
   const ref = useRef<HTMLDivElement>(null);
-  const { _id, name, picture } = artist;
+  const { _id, _rev, name, picture } = artist;
   const [viewRef, inView] = useInView({ triggerOnce: true });
+  const [seed, setSeed] = useState(0);
 
   function onDrop(url: string): void {
     dispatch(getArtistPictureFromUrlRequest(artist, url));
@@ -46,8 +47,12 @@ export const ArtistListItemView: FC<ArtistListItemViewProps> = ({
     }
   }, [picture, inView]);
 
+  useEffect(() => {
+    setSeed(seed + 1);
+  }, [_rev]);
+
   const backgroundColor = useMemo(() => intToHSL(getHashCode(name)), [name]);
-  const backgroundImage = picture ? `url('file://${encodeURI(picture)}')` : null;
+
   const classNames = cx('artist-list-item', {
     loaded: !! picture,
     'drag-is-over': isOver,
@@ -64,7 +69,9 @@ export const ArtistListItemView: FC<ArtistListItemViewProps> = ({
           style={{ backgroundColor }} ref={ref}>
           <span
             className="artist-picture"
-            style={{ backgroundImage }}></span>
+            style={{
+              backgroundImage: picture ? `url('file://${encodeURI(picture)}?seed=${seed}')` : null
+            }}></span>
         </span>
         <span className="artist-name">{formatArtistName(name)}</span>
       </Link>

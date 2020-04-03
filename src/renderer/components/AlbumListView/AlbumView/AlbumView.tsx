@@ -56,8 +56,9 @@ export const AlbumView: FC<AlbumViewProps> = ({
 }) => {
   const dispatch = useDispatch();
   const ref = useRef<HTMLDivElement>(null);
+  const [seed, setSeed] = useState(0);
   const [palette, setPalette] = useState({} as Palette);
-  const { _id, type, year, title, cover } = album;
+  const { _id, type, year, title, cover, _rev } = album;
   const [viewRef, inView] = useInView({ triggerOnce: true });
 
   const { artist, tracks } = useSelector(
@@ -84,6 +85,10 @@ export const AlbumView: FC<AlbumViewProps> = ({
       dispatch(getAlbumCoverRequest(album));
     }
   }, [inView, cover]);
+
+  useEffect(() => {
+    setSeed(seed + 1);
+  }, [_rev]);
 
   function onDrop(url: string): void {
     dispatch(getAlbumCoverFromUrlRequest(album, url));
@@ -164,7 +169,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
         <div ref={ref} style={{ opacity }} className="album-cover-wrapper">
           <CoverView
             className={coverClasses}
-            src={cover}
+            src={`${cover}?seed=${seed}`}
             album={album}
             onImageLoad={onImageLoad}
             onDoubleClick={onCoverDoubleClick}/>

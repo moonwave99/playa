@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef } from 'react';
+import React, { FC, useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, generatePath } from 'react-router-dom';
 import { useDrag } from 'react-dnd';
@@ -56,7 +56,9 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
-  const { _id, artist: artistId, cover } = album;
+  const [seed, setSeed] = useState(0);
+
+  const { _id, artist: artistId, cover, _rev } = album;
   const artist = useSelector((state: ApplicationState) => artistSelectors.findById(state, artistId));
   const selection = selectedIDs.indexOf(_id) > -1 ? selectedIDs : [_id];
 
@@ -95,6 +97,9 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
     }
   }, [cover]);
 
+  useEffect(() => {
+    setSeed(seed + 1);
+  }, [_rev]);
 
   function _onClick(event: React.MouseEvent): void {
     onClick && onClick(event, album, artist);
@@ -128,7 +133,7 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
       <div ref={ref} className="album-grid-tile-drag-wrapper">
         <CoverView
           className="album-cover"
-          src={cover}
+          src={`${cover}?seed=${seed}`}
           album={album}
           onClick={_onClick}
           onDoubleClick={_onDoubleClick}
