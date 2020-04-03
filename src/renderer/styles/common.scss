@@ -40,6 +40,8 @@ html {
 	width: 100vw;
 	margin: 0;
 	font-size: $baseFontSize;
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
 }
 
 h1, h2, h3, .header-like {

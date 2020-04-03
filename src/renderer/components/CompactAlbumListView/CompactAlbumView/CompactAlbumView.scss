@@ -37,7 +37,7 @@
 		transition: background-color .3s ease-in-out;
     .album-cover {
       @include albumCover($albumCoverCompactWidth, $backgroundColor);
-      @include playOverlay('../../../static/icons/album/play.svg');
+      @include playOverlay('../../../static/icons/album/play.svg', 40%);
     }
   }
   &.drag-is-dragging,
