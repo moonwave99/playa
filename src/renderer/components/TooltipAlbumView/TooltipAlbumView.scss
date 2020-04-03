@@ -44,10 +44,23 @@
               text-decoration: underline;
             }
           }
+          &.is-current {
+            &:hover {
+              .track-title {
+                text-decoration: none;
+              }
+            }
+            .playback-info {
+              color: $mainColor;
+            }
+          }
           .playback-info,
           .track-number {
             margin-right: .5rem;
             color: rgba($lightColor, .5);
+          }
+          .track-icon {
+            font-size: .75rem;
           }
           .track-title {
             margin-right: 2rem;

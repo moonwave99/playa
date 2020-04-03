@@ -3,16 +3,22 @@ import TooltipTrigger, { ChildrenArg, TooltipArg } from 'react-popper-tooltip';
 import { AlbumGridTileView } from './AlbumGridTileView/AlbumGridTileView';
 import { TooltipAlbumView } from '../../TooltipAlbumView/TooltipAlbumView';
 import { Album } from '../../../store/modules/album';
+import { Track } from '../../../store/modules/track';
 import useGrid from '../../../hooks/useGrid/useGrid';
 import scrollTo from '../../../lib/scrollTo';
 
 import './AlbumGridView.scss';
 
-import { ALBUM_GRID_THRESHOLDS, ALBUM_GRID_TOOLTIP_DELAY } from '../../../../constants';
+import {
+  ALBUM_GRID_THRESHOLDS,
+  ALBUM_GRID_TOOLTIP_DELAY_SHOW,
+  ALBUM_GRID_TOOLTIP_DELAY_HIDE
+} from '../../../../constants';
 
 type AlbumGridViewProps = {
   albums: Album[];
   currentAlbumId?: Album['_id'];
+  currentTrackId?: Track['_id'];
   showArtists?: boolean;
   autoFocus?: boolean;
   clearSelectionOnBlur?: boolean;
@@ -26,6 +32,7 @@ type AlbumGridViewProps = {
 export const AlbumGridView: FC<AlbumGridViewProps> = ({
   albums = [],
   currentAlbumId,
+  currentTrackId,
   clearSelectionOnBlur = false,
   showArtists = true,
   autoFocus = false,
@@ -96,6 +103,7 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
       return (
         <TooltipAlbumView
           onDoubleClick={onAlbumDoubleClick}
+          currentTrackId={currentTrackId}
           album={album} {...tooltipArgs}/>
       );
     }
@@ -141,7 +149,8 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
         key={_id}
         placement="bottom"
         trigger="hover"
-        delayShow={ALBUM_GRID_TOOLTIP_DELAY}
+        delayShow={ALBUM_GRID_TOOLTIP_DELAY_SHOW}
+        delayHide={ALBUM_GRID_TOOLTIP_DELAY_HIDE}
         tooltip={renderTooltip}>
         {renderTrigger}
       </TooltipTrigger>

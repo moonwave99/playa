@@ -6,20 +6,19 @@ import { TracklistView } from '../AlbumListView/AlbumView/TracklistView/Tracklis
 import { Album, getAlbumRequest, getAlbumContentById } from '../../store/modules/album';
 import { Track } from '../../store/modules/track';
 import { ApplicationState } from '../../store/store';
-
-import {
-  showTrackNumbers,
-} from '../../utils/albumUtils';
+import { showTrackNumbers } from '../../utils/albumUtils';
 
 import './TooltipAlbumView.scss';
 
 type TooltipAlbumViewProps = TooltipArg & {
   album: Album;
+  currentTrackId: Track['_id'];
   onDoubleClick: Function;
 }
 
 export const TooltipAlbumView: FC<TooltipAlbumViewProps> = ({
   album,
+  currentTrackId,
   onDoubleClick,
   getTooltipProps,
   getArrowProps,
@@ -48,6 +47,7 @@ export const TooltipAlbumView: FC<TooltipAlbumViewProps> = ({
   function renderTracklist(): ReactElement {
     return (
       <TracklistView
+        currentTrackId={currentTrackId}
         showArtists={false}
         showTrackNumbers={showTrackNumbers(album)}
         onTrackDoubleClick={onTrackDoubleClick}

@@ -65,7 +65,8 @@ export const ALBUM_GRID_THRESHOLDS = [
   }
 ];
 
-export const ALBUM_GRID_TOOLTIP_DELAY = 500;
+export const ALBUM_GRID_TOOLTIP_DELAY_SHOW = 500;
+export const ALBUM_GRID_TOOLTIP_DELAY_HIDE = 200;
 
 export const FONTS = ['Fira Mono', 'Inter UI', 'Nunito'];
 

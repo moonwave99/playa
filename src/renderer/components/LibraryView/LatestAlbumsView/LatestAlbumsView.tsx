@@ -3,11 +3,13 @@ import { CSSTransition } from 'react-transition-group';
 import { useTranslation } from 'react-i18next';
 import { AlbumGridView } from '../AlbumGridView/AlbumGridView';
 import { Album } from '../../../store/modules/album';
+import { Track } from '../../../store/modules/track';
 import { updateLibraryAlbumSelection } from '../../../store/modules/ui';
 
 type LatestAlbumsViewProps = {
   albums: Album[];
   currentAlbumId: Album['_id'];
+  currentTrackId: Track['_id'];
   onAlbumEnter: Function;
   onAlbumBackspace: Function;
   onAlbumContextMenu: Function;
@@ -17,6 +19,7 @@ type LatestAlbumsViewProps = {
 export const LatestAlbumsView: FC<LatestAlbumsViewProps> = ({
   albums,
   currentAlbumId,
+  currentTrackId,
   onAlbumEnter,
   onAlbumBackspace,
   onAlbumContextMenu,
@@ -34,6 +37,7 @@ export const LatestAlbumsView: FC<LatestAlbumsViewProps> = ({
         autoFocus
         albums={albums}
         currentAlbumId={currentAlbumId}
+        currentTrackId={currentTrackId}
         clearSelectionOnBlur
         onSelectionChange={onSelectionChange}
         onEnter={onAlbumEnter}

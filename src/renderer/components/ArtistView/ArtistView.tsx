@@ -30,7 +30,8 @@ import { LIBRARY } from '../../routes';
 import {
   ALBUM_CONTEXT_ACTIONS,
   AlbumActionsGroups,
-  AlbumActions
+  AlbumActions,
+  playAlbumAction
 } from '../../actions/albumActions';
 
 import {
@@ -48,7 +49,8 @@ export const ArtistView = (): ReactElement => {
   const {
     artist,
     albums,
-    currentAlbumId
+    currentAlbumId,
+    currentTrackId
   } = useSelector((state: ApplicationState) => {
     const artist = _id === encodeURIComponent(VARIOUS_ARTISTS_ID)
       ? VariousArtist
@@ -61,7 +63,7 @@ export const ArtistView = (): ReactElement => {
     return {
       artist,
       albums,
-      currentAlbumId: state.player.currentAlbumId
+      ...state.player
     };
   });
 
@@ -118,7 +120,7 @@ export const ArtistView = (): ReactElement => {
 	}
 
   function onAlbumDoubleClick(album: Album, artist: Artist, track: Track): void {
-    actionsMap(AlbumActions.PLAY_ALBUM)({
+    playAlbumAction({
       albums: [{ album, artist }],
       queue: [album._id],
       trackId: track ? track._id : null,
@@ -181,6 +183,7 @@ export const ArtistView = (): ReactElement => {
                 clearSelectionOnBlur
                 albums={releases}
                 currentAlbumId={currentAlbumId}
+                currentTrackId={currentTrackId}
                 onSelectionChange={onSelectionChange}
                 onEnter={onAlbumEnter}
                 onBackspace={onAlbumBackspace}

@@ -34,6 +34,7 @@ describe('LatestAlbumsView', () => {
       <LatestAlbumsView
         albums={albums}
         currentAlbumId={null}
+        currentTrackId={null}
         onAlbumEnter={jest.fn()}
         onAlbumBackspace={jest.fn()}
         onAlbumContextMenu={jest.fn()}
@@ -47,6 +48,7 @@ describe('LatestAlbumsView', () => {
       <LatestAlbumsView
         albums={albums}
         currentAlbumId={null}
+        currentTrackId={null}
         onAlbumEnter={jest.fn()}
         onAlbumBackspace={jest.fn()}
         onAlbumContextMenu={jest.fn()}
@@ -60,6 +62,7 @@ describe('LatestAlbumsView', () => {
       <LatestAlbumsView
         albums={[]}
         currentAlbumId={null}
+        currentTrackId={null}
         onAlbumEnter={jest.fn()}
         onAlbumBackspace={jest.fn()}
         onAlbumContextMenu={jest.fn()}

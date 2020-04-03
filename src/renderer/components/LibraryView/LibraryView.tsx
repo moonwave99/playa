@@ -69,10 +69,11 @@ export const LibraryView: FC<LibraryViewProps> = ({
 
 	const {
     latest,
-    currentAlbumId
+    currentAlbumId,
+    currentTrackId
   } = useSelector(({ albums, library, player }: ApplicationState) => ({
     latest: library.latest ? library.latest.map((_id: Album['_id']) => albums.allById[_id]).filter(a => !!a) : null,
-    currentAlbumId: player.currentAlbumId
+    ...player
   }));
 
   function _onDrop(folder: string): void {
@@ -187,6 +188,7 @@ export const LibraryView: FC<LibraryViewProps> = ({
       <LatestAlbumsView
         albums={latest}
         currentAlbumId={currentAlbumId}
+        currentTrackId={currentTrackId}
         onAlbumEnter={onAlbumEnter}
         onAlbumBackspace={onAlbumBackspace}
         onAlbumContextMenu={onAlbumContextMenu}

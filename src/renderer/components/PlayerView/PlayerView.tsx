@@ -4,6 +4,8 @@ import { useHistory } from 'react-router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import cx from 'classnames';
 import sha1 from 'sha1';
+import TooltipTrigger, { ChildrenArg, TooltipArg } from 'react-popper-tooltip';
+import { TooltipAlbumView } from '../TooltipAlbumView/TooltipAlbumView';
 import { PlaybackBar } from './PlaybackBar/PlaybackBar';
 import { VolumeControl } from './VolumeControl/VolumeControl';
 import { CoverView } from '../CoverView/CoverView';
@@ -12,16 +14,26 @@ import {
 	togglePlayback,
 	playPreviousTrack,
 	playNextTrack,
+	playTrack,
 	seekTo,
 	setVolume,
 	unloadTrack
 } from '../../store/modules/player';
 import { getWaveformRequest } from '../../store/modules/waveform';
 import { showDialog } from '../../store/modules/ui';
+import { Album } from '../../store/modules/album';
+import { Artist } from '../../store/modules/artist';
+import { Track } from '../../store/modules/track';
 
 import Player, { PlaybackInfo, PLAYER_EVENTS } from '../../lib/player';
 
 import { QUEUE } from '../../routes';
+
+import {
+  ALBUM_GRID_TOOLTIP_DELAY_SHOW,
+	ALBUM_GRID_TOOLTIP_DELAY_HIDE
+} from '../../../constants';
+
 import './PlayerView.scss';
 
 type PlayerViewProps = {
@@ -103,6 +115,18 @@ export const PlayerView: FC<PlayerViewProps> = ({
 		history.replace(QUEUE);
 	}
 
+	function onTracklistDoubleClick(
+		album: Album,
+		_artist: Artist,
+		track: Track
+	): void {
+		dispatch(playTrack({
+			albumId: album._id,
+			trackId: track._id,
+			playlistId: currentPlaylist._id,
+		}));
+	}
+
 	function onVolumeChange(volume: number): void {
 		dispatch(setVolume(volume));
 	}
@@ -143,6 +167,58 @@ export const PlayerView: FC<PlayerViewProps> = ({
 		);
 	}
 
+	function renderCover(): ReactElement {
+		if (!currentAlbum) {
+			return (
+				<CoverView
+					className="player-album-cover"
+					src={cover}
+					album={currentAlbum}
+					onClick={onCoverClick}/>
+			);
+		}
+
+		function renderTooltip(tooltipArgs: TooltipArg): ReactElement {
+			return (
+				<TooltipAlbumView
+					onDoubleClick={onTracklistDoubleClick}
+					album={currentAlbum}
+					currentTrackId={currentTrack._id}
+					{...tooltipArgs}/>
+			);
+		}
+
+		function renderTrigger({
+			getTriggerProps,
+			triggerRef: ref
+		}: ChildrenArg): ReactElement {
+			const {
+				onMouseEnter,
+				onMouseLeave,
+			} = getTriggerProps({ ref });
+
+			return (
+				<article ref={ref} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+					<CoverView
+						className="player-album-cover"
+						src={cover}
+						album={currentAlbum}
+						onClick={onCoverClick}/>
+				</article>
+			);
+		}
+		return (
+			<TooltipTrigger
+				placement="top"
+				trigger="hover"
+				delayShow={ALBUM_GRID_TOOLTIP_DELAY_SHOW}
+				delayHide={ALBUM_GRID_TOOLTIP_DELAY_HIDE}
+				tooltip={renderTooltip}>
+				{renderTrigger}
+			</TooltipTrigger>
+		);
+	}
+
 	const shouldRenderPlaybackBar = currentTrack && currentAlbum;
 	const shouldRenderVolumeControl = currentTrack && currentAlbum;
 
@@ -152,11 +228,7 @@ export const PlayerView: FC<PlayerViewProps> = ({
 				{renderPlayerControls()}
 			</div>
 			<section className="player-album-cover-wrapper">
-				<CoverView
-					className="player-album-cover"
-					src={cover}
-					album={currentAlbum}
-					onClick={onCoverClick}/>
+				{renderCover()}
 			</section>
 			{ shouldRenderPlaybackBar &&
 				<PlaybackBar

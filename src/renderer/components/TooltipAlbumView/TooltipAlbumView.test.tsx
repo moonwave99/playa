@@ -38,6 +38,7 @@ describe('TooltipAlbumView', () => {
 		const wrapper = renderInAll(
 			<TooltipAlbumView
         album={albums[0]}
+        currentTrackId={null}
         onDoubleClick={jest.fn()}
         arrowRef={null}
         tooltipRef={null}
@@ -58,6 +59,7 @@ describe('TooltipAlbumView', () => {
 		const wrapper = mountInAll(
 			<TooltipAlbumView
         album={album}
+        currentTrackId={null}
         onDoubleClick={handler}
         arrowRef={null}
         tooltipRef={null}
