@@ -23,9 +23,6 @@ describe('SearchView', () => {
       search: {
         results: albums
       },
-      covers: {
-        allById: {}
-      },
       player: {}
     };
 		const wrapper = renderInAll(<SearchView/>, store);

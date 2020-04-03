@@ -7,8 +7,7 @@ import { useTranslation } from 'react-i18next';
 import memoize from 'memoize-one';
 import useSelect, { SelectionItem } from '../../../hooks/useSelect/useSelect';
 import { SearchResultListRow } from './SearchResultListRow/SearchResultListRow';
-import { getCoverRequest } from '../../../store/modules/cover';
-import { Album } from '../../../store/modules/album';
+import { Album, getAlbumCoverRequest } from '../../../store/modules/album';
 import { Artist } from '../../../store/modules/artist';
 import { selectionBounds } from '../../../utils/selectionUtils';
 import './SearchResultList.scss';
@@ -196,7 +195,9 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
 				continue;
 			}
 			renderedItems.push(i);
-			dispatch(getCoverRequest(results[i]));
+			if (!results[i].cover || results[i].noDiscogsResults) {
+				dispatch(getAlbumCoverRequest(results[i]));
+			}
 		}
 	}
 

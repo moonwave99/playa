@@ -67,9 +67,6 @@ describe('initIpc', () => {
     tracks: {
       allById: {}
     },
-    covers: {
-      allById: {}
-    },
     waveforms: {
       allById: {}
     },

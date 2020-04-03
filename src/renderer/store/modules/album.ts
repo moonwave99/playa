@@ -24,18 +24,15 @@ import {
   getTrackListResponse
 } from './track';
 
-import {
-  selectors as coverSelectors,
-  getCoverRequest
-} from './cover';
-
 import { IPC_MESSAGES } from '../../../constants';
 
 const {
   IPC_ALBUM_SAVE_REQUEST,
   IPC_ALBUM_GET_LIST_REQUEST,
   IPC_ALBUM_CONTENT_REQUEST,
-  IPC_TRACK_GET_LIST_REQUEST
+  IPC_TRACK_GET_LIST_REQUEST,
+  IPC_COVER_GET_REQUEST,
+  IPC_COVER_GET_FROM_URL_REQUEST
 } = IPC_MESSAGES;
 
 export enum AlbumTypes {
@@ -61,6 +58,8 @@ export type Album = {
   created: string;
   path: string;
   tracks: Track['_id'][];
+  cover?: string;
+  noDiscogsResults?: boolean;
 }
 
 export function getDefaultAlbum(): Album {
@@ -73,7 +72,9 @@ export function getDefaultAlbum(): Album {
     type: AlbumTypes.Album,
     created: now,
     path: '',
-    tracks: []
+    tracks: [],
+    cover: null,
+    noDiscogsResults: false
   };
 }
 
@@ -94,18 +95,15 @@ export const selectors = {
 type GetAlbumContentByIdSelection = {
   artist: Artist;
   tracks: Track[];
-  cover: string;
 }
 
 export const getAlbumContentById = createCachedSelector(
   selectors.findById,
   artistSelectors.allById,
   trackSelectors.allById,
-  coverSelectors.allById,
-  (album, artists, tracks, covers): GetAlbumContentByIdSelection => ({
+  (album, artists, tracks): GetAlbumContentByIdSelection => ({
     artist: album.isAlbumFromVA ? VariousArtist : artists[album.artist],
-    tracks: album.tracks.map(id => tracks[id]).filter(x => !!x),
-    cover: covers[album._id]
+    tracks: album.tracks.map(id => tracks[id]).filter(x => !!x)
   })
 )((_state_: ApplicationState, id: Album['_id']) => id);
 
@@ -213,8 +211,6 @@ export const getAlbumRequest = (id: Album['_id']): Function =>
       const albumTracks = await ipc.invoke(IPC_TRACK_GET_LIST_REQUEST, notFoundTracks);
       dispatch(getTrackListResponse(albumTracks));
     }
-
-    dispatch(getCoverRequest(album));
   }
 
 export const getAlbumListResponse = (results: Album[]): Function =>
@@ -279,6 +275,54 @@ export const updateAlbum = (album: Album, artist: Artist): Function =>
       }));
     }
     dispatch(saveAlbumRequest({ ...album, artist: artistId }));
+  }
+
+export const getAlbumCoverRequest = (album: Album): Function =>
+  async (dispatch: Function, getState: Function): Promise<void> => {
+    const { artists } = getState();
+    const { artist: artistId, type } = album;
+    const artist = artists.allById[artistId];
+    const albumTypeHasNoCover =
+      type === AlbumTypes.Remix || type === AlbumTypes.Various;
+    if (album.cover || album.noDiscogsResults || albumTypeHasNoCover || !artist) {
+      return;
+    }
+
+    const cover = await ipc.invoke(IPC_COVER_GET_REQUEST, album, artist);
+    const savedAlbum = await ipc.invoke(IPC_ALBUM_SAVE_REQUEST, {
+      ...album,
+      cover,
+      noDiscogsResults: !cover
+    });
+
+    dispatch({
+      type: ALBUM_SAVE_RESPONSE,
+      album: savedAlbum
+    });
+  }
+
+export const getAlbumCoverFromUrlRequest = (
+  album: Album,
+  url: string
+): Function =>
+  async (dispatch: Function): Promise<void> => {
+    const { type } = album;
+    const albumTypeHasNoCover =
+      type === AlbumTypes.Remix || type === AlbumTypes.Various;
+    if (albumTypeHasNoCover) {
+      return;
+    }
+    const cover = await ipc.invoke(IPC_COVER_GET_FROM_URL_REQUEST, album, url);
+    const savedAlbum = await ipc.invoke(IPC_ALBUM_SAVE_REQUEST, {
+      ...album,
+      cover,
+      noDiscogsResults: !cover
+    });
+
+    dispatch({
+      type: ALBUM_SAVE_RESPONSE,
+      album: savedAlbum
+    });
   }
 
 const INITIAL_STATE = {

@@ -22,9 +22,6 @@ const defaultStore = {
   tracks: {
     allById: {}
   },
-  covers: {
-    allById: {}
-  },
   artistPictures: {
     allById: {}
   },

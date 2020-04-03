@@ -27,13 +27,7 @@ export enum Wrappers {
   DndProvider = 'DndProvider'
 }
 
-// increment based on test fails
-const defaultStore = {
-  covers: {
-    allById: {}
-  }
-};
-
+const defaultStore = {};
 
 const routerWrapper = function(element: ReactElement) {
   return <MemoryRouter>{element}</MemoryRouter>;

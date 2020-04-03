@@ -5,9 +5,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import cx from 'classnames';
 import { CoverView } from '../../CoverView/CoverView';
 import useReorder from '../../../hooks/useReorder/useReorder';
-import { Album, getAlbumContentById } from '../../../store/modules/album';
+import {
+  Album,
+  getAlbumContentById,
+  getAlbumCoverRequest
+} from '../../../store/modules/album';
 import { UIDragTypes } from '../../../store/modules/ui';
-import { getCoverRequest } from '../../../store/modules/cover';
+
 import { ApplicationState } from '../../../store/store';
 import { formatArtist } from '../../../utils/albumUtils';
 import { ARTIST_SHOW } from '../../../routes';
@@ -36,13 +40,9 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
   onDoubleClick,
   sortable = false
 }) => {
-  const { _id, year, title, type } = album;
-  const { cover, artist } = useSelector((state: ApplicationState) => getAlbumContentById(state, _id));
-
   const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(getCoverRequest(album));
-  }, [album]);
+  const { _id, year, title, type, cover, noDiscogsResults } = album;
+  const { artist } = useSelector((state: ApplicationState) => getAlbumContentById(state, _id));
 
   const {
     isOver,
@@ -57,6 +57,12 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
     type: UIDragTypes.COMPACT_ALBUMS,
     onMove: onAlbumMove
   });
+
+  useEffect(() => {
+    if (!cover && !noDiscogsResults) {
+      dispatch(getAlbumCoverRequest(album));
+    }
+  }, [cover, noDiscogsResults]);
 
   function _onDoubleClick(event: SyntheticEvent): void {
     event.preventDefault();

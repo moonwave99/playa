@@ -10,7 +10,6 @@ import {
   selectors as albumSelectors
 } from './album';
 import { Track, getTrackListResponse, selectors as trackSelectors } from './track';
-import { selectors as coverSelectors } from './cover';
 import { selectors as waveformSelectors } from './waveform';
 import { updateState } from './ui';
 import { immutableInsertArrayAtIndex } from '../../utils/storeUtils';
@@ -41,7 +40,6 @@ type GetPlayerInfoSelection = {
   currentAlbumId: Album['_id'];
   currentTrack: Track;
   queue: Album[];
-  cover: string;
   waveform: string;
 }
 
@@ -50,9 +48,8 @@ export const playerSelector = createSelector(
   playlistSelectors.allById,
   albumSelectors.allById,
   trackSelectors.allById,
-  coverSelectors.allById,
   waveformSelectors.allById,
-  (player, playlists, albums, tracks, covers, waveforms): GetPlayerInfoSelection => {
+  (player, playlists, albums, tracks, waveforms): GetPlayerInfoSelection => {
     const {
       currentPlaylistId,
       currentAlbumId,
@@ -64,7 +61,6 @@ export const playerSelector = createSelector(
       currentAlbum: albums[currentAlbumId],
       currentAlbumId,
       currentTrack: tracks[currentTrackId],
-      cover: covers[currentAlbumId],
       waveform: waveforms[currentTrackId],
       queue: queue.map(x => albums[x])
     };

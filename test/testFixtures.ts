@@ -34,7 +34,9 @@ export const albums: Album[] = [
     type: AlbumTypes.Album,
     created: createDatesList[0],
     path: '/path/to/album_1',
-    tracks: []
+    tracks: [],
+    cover: null,
+    noDiscogsResults: false
   },
   {
     _id: '2',
@@ -45,7 +47,9 @@ export const albums: Album[] = [
     type: AlbumTypes.Album,
     created: createDatesList[1],
     path: '/path/to/album_2',
-    tracks: []
+    tracks: [],
+    cover: null,
+    noDiscogsResults: false
   }
 ];
 
@@ -92,21 +96,29 @@ export const artists: Artist[] = [
   {
     _id: '1',
     _rev: null,
-    name: 'Slowdive'
+    name: 'Slowdive',
+    picture: null,
+    noDiscogsResults: false
   },
   {
     _id: '2',
     _rev: null,
-    name: 'My Bloody Valentine'
+    name: 'My Bloody Valentine',
+    picture: null,
+    noDiscogsResults: false
   },
   {
     _id: '3',
     _rev: null,
-    name: 'Lush'
+    name: 'Lush',
+    picture: null,
+    noDiscogsResults: false
   },
   {
     _id: '4',
     _rev: null,
-    name: 'Adorable'
+    name: 'Adorable',
+    picture: null,
+    noDiscogsResults: false
   }
 ];

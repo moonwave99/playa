@@ -10,8 +10,13 @@ import useNativeDrop from '../../../hooks/useNativeDrop/useNativeDrop';
 import { CoverView } from '../../CoverView/CoverView';
 import { TracklistView } from './TracklistView/TracklistView';
 import { ApplicationState } from '../../../store/store';
-import { Album, getAlbumRequest, getAlbumContentById } from '../../../store/modules/album';
-import { getCoverFromUrlRequest } from '../../../store/modules/cover';
+import {
+  Album,
+  getAlbumRequest,
+  getAlbumContentById,
+  getAlbumCoverRequest,
+  getAlbumCoverFromUrlRequest
+} from '../../../store/modules/album';
 import { Track } from '../../../store/modules/track';
 import {
   formatArtist,
@@ -49,21 +54,15 @@ export const AlbumView: FC<AlbumViewProps> = ({
   onContextMenu,
   onDoubleClick
 }) => {
+  const dispatch = useDispatch();
   const ref = useRef<HTMLDivElement>(null);
   const [palette, setPalette] = useState({} as Palette);
-  const { _id, type, year, title } = album;
+  const { _id, type, year, title, cover, noDiscogsResults } = album;
   const [viewRef, inView] = useInView({ triggerOnce: true });
 
-  const {
-    cover,
-    artist,
-    tracks
-  } = useSelector((state: ApplicationState) => getAlbumContentById(state, _id));
-
-  const dispatch = useDispatch();
-  useEffect(() => {
-    inView && dispatch(getAlbumRequest(_id));
-  }, [_id, inView, artist]);
+  const { artist, tracks } = useSelector(
+    (state: ApplicationState) => getAlbumContentById(state, _id)
+  );
 
   const [{ opacity }, drag] = useDrag({
     item: {
@@ -76,8 +75,18 @@ export const AlbumView: FC<AlbumViewProps> = ({
     })
   });
 
+  useEffect(() => {
+    inView && dispatch(getAlbumRequest(_id));
+  }, [_id, inView, artist]);
+
+  useEffect(() => {
+    if (inView && !cover && !noDiscogsResults) {
+      dispatch(getAlbumCoverRequest(album));
+    }
+  }, [inView, cover, noDiscogsResults]);
+
   function onDrop(url: string): void {
-    dispatch(getCoverFromUrlRequest(album, url));
+    dispatch(getAlbumCoverFromUrlRequest(album, url));
   }
 
   const {

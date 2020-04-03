@@ -17,9 +17,6 @@ const defaultStore = {
   tracks: {
     allById: {}
   },
-  covers: {
-    allById: {}
-  },
   waveforms: {
     allById: {}
   }

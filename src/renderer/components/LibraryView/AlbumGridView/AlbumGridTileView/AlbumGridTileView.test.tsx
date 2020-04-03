@@ -7,9 +7,6 @@ import { AlbumGridTileView } from './AlbumGridTileView';
 const defaultStore = {
   artists: {
     allById: toObj(artists)
-  },
-  covers: {
-    allById: {}
   }
 };
 
@@ -35,7 +32,7 @@ describe('AlbumGridTileView', () => {
     expect(wrapper.is('.selected')).toBe(true);
   });
 
-  it('should be .is-dragging if isDragging ** selected', () => {
+  it('should be .is-dragging if isDragging && selected', () => {
     const wrapper = renderInAll(
       <AlbumGridTileView selected isDragging album={albums[0]}/>
     , defaultStore);

@@ -121,9 +121,6 @@ describe('player actions', () => {
           currentTrackId: tracks[2]._id,
           currentPlaylistId: '1'
         },
-        covers: {
-          allById: {}
-        },
         waveforms: {
           allById: {}
         }
@@ -169,9 +166,6 @@ describe('player actions', () => {
           currentAlbumId: '1',
           currentTrackId: tracks[1]._id,
           currentPlaylistId: '1'
-        },
-        covers: {
-          allById: {}
         },
         waveforms: {
           allById: {}

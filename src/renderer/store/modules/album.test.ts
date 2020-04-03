@@ -29,7 +29,6 @@ import reducer, {
 
 import { Artist, ARTIST_SAVE_RESPONSE } from './artist';
 import { TRACK_GET_LIST_RESPONSE } from './track';
-import { COVER_GET_RESPONSE } from './cover';
 
 describe('album actions', () => {
   describe('getAlbumRequest', () => {
@@ -43,16 +42,12 @@ describe('album actions', () => {
         },
         tracks: {
           allById: {}
-        },
-        covers: {
-          allById: {}
         }
       });
       const albumWithTracks = {...albums[0], tracks: [tracks[0]._id, tracks[1]._id]};
       const expectedActions = [
         { type: ALBUM_GET_RESPONSE, album: albumWithTracks },
-        { type: TRACK_GET_LIST_RESPONSE, results: [tracks[0], tracks[1]] },
-        { type: COVER_GET_RESPONSE, album: albumWithTracks, path: '/path/to/cover' }
+        { type: TRACK_GET_LIST_RESPONSE, results: [tracks[0], tracks[1]] }
       ];
       await getAlbumRequest('1')(store.dispatch, store.getState);
       expect(store.getActions()).toEqual(expectedActions);

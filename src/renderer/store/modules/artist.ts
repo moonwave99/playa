@@ -24,20 +24,26 @@ const {
   IPC_ARTIST_GET_ALL_REQUEST,
   IPC_ARTIST_SAVE_REQUEST,
   IPC_ARTIST_DELETE_REQUEST,
-  IPC_ALBUM_FIND_REQUEST
+  IPC_ALBUM_FIND_REQUEST,
+  IPC_ARTIST_PICTURE_GET_REQUEST,
+  IPC_ARTIST_PICTURE_GET_FROM_URL_REQUEST
 } = IPC_MESSAGES;
 
 export type Artist = {
   _id: string;
   _rev?: string;
   name: string;
+  picture?: string;
+  noDiscogsResults?: boolean;
 }
 
 export function getDefaultArtist(): Artist {
   return {
     _id: null,
     _rev: null,
-    name: ''
+    name: '',
+    picture: null,
+    noDiscogsResults: false
   };
 }
 
@@ -131,6 +137,40 @@ export const deleteArtistRequest = (artist: Artist): Function =>
     dispatch({
       type: ARTIST_DELETE_RESPONSE,
       artist: deletedArtist
+    });
+  }
+
+export const getArtistPictureRequest = (artist: Artist): Function =>
+  async (dispatch: Function): Promise<void> => {
+    if (artist.picture || artist.noDiscogsResults) {
+      return;
+    }
+    const picture = await ipc.invoke(IPC_ARTIST_PICTURE_GET_REQUEST, artist);
+    const savedArtist = await ipc.invoke(IPC_ARTIST_SAVE_REQUEST, {
+      ...artist,
+      picture,
+      noDiscogsResults: !picture
+    });
+    dispatch({
+      type: ARTIST_SAVE_RESPONSE,
+      artist: savedArtist
+    });
+  }
+
+export const getArtistPictureFromUrlRequest = (
+  artist: Artist,
+  url: string
+): Function =>
+  async (dispatch: Function): Promise<void> => {
+    const picture = await ipc.invoke(IPC_ARTIST_PICTURE_GET_FROM_URL_REQUEST, artist, url);
+    const savedArtist = await ipc.invoke(IPC_ARTIST_SAVE_REQUEST, {
+      ...artist,
+      picture,
+      noDiscogsResults: !picture
+    });
+    dispatch({
+      type: ARTIST_SAVE_RESPONSE,
+      artist: savedArtist
     });
   }
 

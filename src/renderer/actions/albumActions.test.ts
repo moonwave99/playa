@@ -51,9 +51,6 @@ describe('albumActions', () => {
         },
         tracks: {
           allById: toObj(tracks)
-        },
-        covers: {
-          allById: {}
         }
       });
       const album = {
@@ -104,9 +101,6 @@ describe('albumActions', () => {
         },
         tracks: {
           allById: toObj(tracks)
-        },
-        covers: {
-          allById: {}
         }
       });
       const album = albums[0];
@@ -145,9 +139,6 @@ describe('albumActions', () => {
         },
         tracks: {
           allById: toObj(tracks)
-        },
-        covers: {
-          allById: {}
         }
       });
       const album = albums[0];
@@ -187,9 +178,6 @@ describe('albumActions', () => {
         },
         tracks: {
           allById: toObj(tracks)
-        },
-        covers: {
-          allById: {}
         }
       });
 
@@ -239,9 +227,6 @@ describe('albumActions', () => {
         },
         tracks: {
           allById: toObj(tracks)
-        },
-        covers: {
-          allById: {}
         }
       });
       const album = albums[0];
