@@ -56,7 +56,7 @@ export const AlbumDetailView: FC<AlbumDetailViewProps> = ({
   const dispatch = useDispatch();
   const ref = useRef<HTMLDivElement>(null);
   const [palette, setPalette] = useState({} as Palette);
-  const { _id, year, title, cover, noDiscogsResults } = album;
+  const { _id, year, title, cover } = album;
   const [viewRef, inView] = useInView({ triggerOnce: true });
 
   const {
@@ -69,10 +69,10 @@ export const AlbumDetailView: FC<AlbumDetailViewProps> = ({
   }, [_id, inView, artist]);
 
   useEffect(() => {
-    if (!cover && !noDiscogsResults) {
+    if (!cover) {
       dispatch(getAlbumCoverRequest(album));
     }
-  }, [cover, noDiscogsResults]);
+  }, [cover]);
 
   const [{ opacity }, drag] = useDrag({
     item: {

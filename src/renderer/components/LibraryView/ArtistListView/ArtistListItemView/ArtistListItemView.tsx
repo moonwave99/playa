@@ -22,7 +22,7 @@ export const ArtistListItemView: FC<ArtistListItemViewProps> = ({
 }) => {
   const dispatch = useDispatch();
   const ref = useRef<HTMLDivElement>(null);
-  const { _id, name, picture, noDiscogsResults } = artist;
+  const { _id, name, picture } = artist;
   const [viewRef, inView] = useInView({ triggerOnce: true });
 
   function onDrop(url: string): void {
@@ -41,10 +41,10 @@ export const ArtistListItemView: FC<ArtistListItemViewProps> = ({
   drop(ref);
 
   useEffect(() => {
-    if (inView && !picture && !noDiscogsResults) {
+    if (inView && !picture) {
       dispatch(getArtistPictureRequest(artist));
     }
-  }, [picture, noDiscogsResults, inView]);
+  }, [picture, inView]);
 
   const backgroundColor = useMemo(() => intToHSL(getHashCode(name)), [name]);
   const backgroundImage = picture ? `url('file://${encodeURI(picture)}')` : null;

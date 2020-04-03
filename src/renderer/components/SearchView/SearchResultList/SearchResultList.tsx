@@ -195,7 +195,7 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
 				continue;
 			}
 			renderedItems.push(i);
-			if (!results[i].cover || results[i].noDiscogsResults) {
+			if (!results[i].cover) {
 				dispatch(getAlbumCoverRequest(results[i]));
 			}
 		}

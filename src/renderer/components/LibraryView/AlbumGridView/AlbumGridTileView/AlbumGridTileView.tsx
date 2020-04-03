@@ -56,7 +56,7 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
-  const { _id, artist: artistId, cover, noDiscogsResults } = album;
+  const { _id, artist: artistId, cover } = album;
   const artist = useSelector((state: ApplicationState) => artistSelectors.findById(state, artistId));
   const selection = selectedIDs.indexOf(_id) > -1 ? selectedIDs : [_id];
 
@@ -90,10 +90,10 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
   drag(drop(ref));
 
   useEffect(() => {
-    if (!cover && !noDiscogsResults) {
+    if (!cover) {
       dispatch(getAlbumCoverRequest(album));
     }
-  }, [cover, noDiscogsResults]);
+  }, [cover]);
 
 
   function _onClick(event: React.MouseEvent): void {

@@ -57,7 +57,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
   const dispatch = useDispatch();
   const ref = useRef<HTMLDivElement>(null);
   const [palette, setPalette] = useState({} as Palette);
-  const { _id, type, year, title, cover, noDiscogsResults } = album;
+  const { _id, type, year, title, cover } = album;
   const [viewRef, inView] = useInView({ triggerOnce: true });
 
   const { artist, tracks } = useSelector(
@@ -80,10 +80,10 @@ export const AlbumView: FC<AlbumViewProps> = ({
   }, [_id, inView, artist]);
 
   useEffect(() => {
-    if (inView && !cover && !noDiscogsResults) {
+    if (inView && !cover) {
       dispatch(getAlbumCoverRequest(album));
     }
-  }, [inView, cover, noDiscogsResults]);
+  }, [inView, cover]);
 
   function onDrop(url: string): void {
     dispatch(getAlbumCoverFromUrlRequest(album, url));

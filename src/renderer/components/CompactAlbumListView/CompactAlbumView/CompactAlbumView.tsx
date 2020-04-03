@@ -41,7 +41,7 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
   sortable = false
 }) => {
   const dispatch = useDispatch();
-  const { _id, year, title, type, cover, noDiscogsResults } = album;
+  const { _id, year, title, type, cover } = album;
   const { artist } = useSelector((state: ApplicationState) => getAlbumContentById(state, _id));
 
   const {
@@ -59,10 +59,10 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
   });
 
   useEffect(() => {
-    if (!cover && !noDiscogsResults) {
+    if (!cover) {
       dispatch(getAlbumCoverRequest(album));
     }
-  }, [cover, noDiscogsResults]);
+  }, [cover]);
 
   function _onDoubleClick(event: SyntheticEvent): void {
     event.preventDefault();
