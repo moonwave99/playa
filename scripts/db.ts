@@ -10,6 +10,6 @@ const db = initDBs({
 
 // this is just an example scripting playground
 (async () => {
-  const results = await db.album.groupCount('year');
+  const results = await db.album.find({ _id: '18182'});
   console.log(results);
 })();

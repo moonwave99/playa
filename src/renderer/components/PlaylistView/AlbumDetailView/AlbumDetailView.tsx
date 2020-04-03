@@ -10,8 +10,13 @@ import useNativeDrop from '../../../hooks/useNativeDrop/useNativeDrop';
 import { CoverView } from '../../CoverView/CoverView';
 import { TracklistView } from '../../AlbumListView/AlbumView/TracklistView/TracklistView';
 import { ApplicationState } from '../../../store/store';
-import { Album, getAlbumRequest, getAlbumContentById } from '../../../store/modules/album';
-import { getCoverFromUrlRequest } from '../../../store/modules/cover';
+import {
+  Album,
+  getAlbumRequest,
+  getAlbumContentById,
+  getAlbumCoverRequest,
+  getAlbumCoverFromUrlRequest
+} from '../../../store/modules/album';
 import { Track } from '../../../store/modules/track';
 import {
   formatArtist,
@@ -40,7 +45,6 @@ type Palette = {
   LightVibrant: string;
 }
 
-// #TODO push notFoundAction
 export const AlbumDetailView: FC<AlbumDetailViewProps> = ({
   album,
   isCurrent = false,
@@ -51,12 +55,12 @@ export const AlbumDetailView: FC<AlbumDetailViewProps> = ({
 }) => {
   const dispatch = useDispatch();
   const ref = useRef<HTMLDivElement>(null);
+  const [seed, setSeed] = useState(0);
   const [palette, setPalette] = useState({} as Palette);
-  const { _id, year, title } = album;
+  const { _id, _rev, year, title, cover } = album;
   const [viewRef, inView] = useInView({ triggerOnce: true });
 
   const {
-    cover,
     artist,
     tracks
   } = useSelector((state: ApplicationState) => getAlbumContentById(state, _id));
@@ -64,6 +68,16 @@ export const AlbumDetailView: FC<AlbumDetailViewProps> = ({
   useEffect(() => {
     inView && dispatch(getAlbumRequest(_id));
   }, [_id, inView, artist]);
+
+  useEffect(() => {
+    if (!cover) {
+      dispatch(getAlbumCoverRequest(album));
+    }
+  }, [cover]);
+
+  useEffect(() => {
+    setSeed(seed + 1);
+  }, [_rev]);
 
   const [{ opacity }, drag] = useDrag({
     item: {
@@ -77,7 +91,7 @@ export const AlbumDetailView: FC<AlbumDetailViewProps> = ({
   });
 
   function onDrop(url: string): void {
-    dispatch(getCoverFromUrlRequest(album, url));
+    dispatch(getAlbumCoverFromUrlRequest(album, url));
   }
 
   const {
@@ -154,7 +168,7 @@ export const AlbumDetailView: FC<AlbumDetailViewProps> = ({
         <div ref={ref} style={{ opacity }} className="album-cover-wrapper">
           <CoverView
             className={coverClasses}
-            src={cover}
+            src={`${cover}?seed=${seed}`}
             album={album}
             onImageLoad={onImageLoad}
             onDoubleClick={onCoverDoubleClick}/>

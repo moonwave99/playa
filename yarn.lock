@@ -8454,6 +8454,13 @@ react-autowhatever@^10.1.2:
     react-themeable "^1.1.0"
     section-iterator "^2.0.0"
 
+react-delta@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/react-delta/-/react-delta-1.0.2.tgz#5a9bab543bc380a68acce795ce7096da68bf11e4"
+  integrity sha512-xYPLa68BZY2GDsoEghJ04w/wlLiAIjKzIPogogCck+g1vNzfADa3yOAXjtgHLsLaTa2ohqo9zhw+qhwHianLvA==
+  dependencies:
+    lodash.isequal "^4.5.0"
+
 react-dnd-html5-backend@^10.0.2:
   version "10.0.2"
   resolved "https://registry.yarnpkg.com/react-dnd-html5-backend/-/react-dnd-html5-backend-10.0.2.tgz#15cb9d2b923f43576a136df854e288cb5969784c"

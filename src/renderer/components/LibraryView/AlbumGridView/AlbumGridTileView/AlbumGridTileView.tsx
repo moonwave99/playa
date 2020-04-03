@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef } from 'react';
+import React, { FC, useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, generatePath } from 'react-router-dom';
 import { useDrag } from 'react-dnd';
@@ -6,13 +6,12 @@ import { getEmptyImage } from 'react-dnd-html5-backend';
 import { Ref } from 'react-popper-tooltip';
 import cx from 'classnames';
 import { CoverView } from '../../../CoverView/CoverView';
-import { Album } from '../../../../store/modules/album';
-import { selectors as artistSelectors } from '../../../../store/modules/artist';
 import {
-  getCoverRequest,
-  getCoverFromUrlRequest,
-  selectors as coverSelectors
-} from '../../../../store/modules/cover';
+  Album,
+  getAlbumCoverRequest,
+  getAlbumCoverFromUrlRequest
+} from '../../../../store/modules/album';
+import { selectors as artistSelectors } from '../../../../store/modules/artist';
 import { ApplicationState } from '../../../../store/store';
 import { UIDragTypes } from '../../../../store/modules/ui';
 import useNativeDrop from '../../../../hooks/useNativeDrop/useNativeDrop';
@@ -57,13 +56,14 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
-  const { _id, artist: artistId } = album;
-  const cover = useSelector((state: ApplicationState) => coverSelectors.findById(state, _id));
+  const [seed, setSeed] = useState(0);
+
+  const { _id, artist: artistId, cover, _rev } = album;
   const artist = useSelector((state: ApplicationState) => artistSelectors.findById(state, artistId));
   const selection = selectedIDs.indexOf(_id) > -1 ? selectedIDs : [_id];
 
   function onDrop(url: string): void {
-    dispatch(getCoverFromUrlRequest(album, url));
+    dispatch(getAlbumCoverFromUrlRequest(album, url));
   }
 
   const {
@@ -92,9 +92,14 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
   drag(drop(ref));
 
   useEffect(() => {
-    dispatch(getCoverRequest(album));
-  }, [album]);
+    if (!cover) {
+      dispatch(getAlbumCoverRequest(album));
+    }
+  }, [cover]);
 
+  useEffect(() => {
+    setSeed(seed + 1);
+  }, [_rev]);
 
   function _onClick(event: React.MouseEvent): void {
     onClick && onClick(event, album, artist);
@@ -128,7 +133,7 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
       <div ref={ref} className="album-grid-tile-drag-wrapper">
         <CoverView
           className="album-cover"
-          src={cover}
+          src={`${cover}?seed=${seed}`}
           album={album}
           onClick={_onClick}
           onDoubleClick={_onDoubleClick}

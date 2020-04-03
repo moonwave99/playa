@@ -7,7 +7,10 @@ import { ArtistListItemView } from './ArtistListItemView';
 const defaultStore = {
   artists: {
     allById: toObj(artists)
-  }
+  },
+  artistPictures: {
+    allById: {}
+  },
 };
 
 describe('ArtistListItemView', () => {
@@ -15,7 +18,7 @@ describe('ArtistListItemView', () => {
     const wrapper = renderInAll(
       <ArtistListItemView artist={artists[0]}/>
     , defaultStore);
-    expect(wrapper.is('.artist-list-item')).toBe(true);
+    expect(wrapper.find('.artist-list-item')).toHaveLength(1);
   });
 
   it('should contain the artist name', () => {

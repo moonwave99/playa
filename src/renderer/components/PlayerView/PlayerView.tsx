@@ -54,7 +54,6 @@ export const PlayerView: FC<PlayerViewProps> = ({
     currentAlbum,
     currentTrack,
 		queue,
-		cover,
 		waveform
   } = useSelector(playerSelector);
 
@@ -172,7 +171,7 @@ export const PlayerView: FC<PlayerViewProps> = ({
 			return (
 				<CoverView
 					className="player-album-cover"
-					src={cover}
+					src={null}
 					album={currentAlbum}
 					onClick={onCoverClick}/>
 			);
@@ -201,7 +200,7 @@ export const PlayerView: FC<PlayerViewProps> = ({
 				<article ref={ref} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
 					<CoverView
 						className="player-album-cover"
-						src={cover}
+						src={currentAlbum.cover}
 						album={currentAlbum}
 						onClick={onCoverClick}/>
 				</article>

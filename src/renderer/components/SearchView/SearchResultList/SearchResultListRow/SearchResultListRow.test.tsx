@@ -10,9 +10,6 @@ import { SearchResultListRow } from './SearchResultListRow';
 const defaultStore = {
   artists: {
     allById: toObj(artists)
-  },
-  covers: {
-    allById: {}
   }
 };
 

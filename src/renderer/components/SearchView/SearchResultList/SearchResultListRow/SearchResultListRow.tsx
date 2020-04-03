@@ -10,11 +10,9 @@ import { CoverView } from '../../../CoverView/CoverView';
 import { UIDragTypes } from '../../../../store/modules/ui';
 import { Album } from '../../../../store/modules/album';
 import { selectors as artistSelectors } from '../../../../store/modules/artist';
-import { selectors as coverSelectors } from '../../../../store/modules/cover';
 import { ApplicationState } from '../../../../store/store';
 import { formatArtist } from '../../../../utils/albumUtils';
 import { ARTIST_SHOW } from '../../../../routes';
-
 
 type SearchResultListRowProps = {
   row: Row;
@@ -41,8 +39,7 @@ export const SearchResultListRow: React.FC<SearchResultListRowProps> = ({
   selectedIDs = [],
   style
 }) => {
-  const { _id, artist: artistId } = album;
-  const cover = useSelector((state: ApplicationState) => coverSelectors.findById(state, _id));
+  const { _id, artist: artistId, cover } = album;
   const artist = useSelector((state: ApplicationState) => artistSelectors.findById(state, artistId));
   const selection = selectedIDs.indexOf(_id) > -1 ? selectedIDs : [_id];
   const [{ isDragging }, drag, preview] = useDrag({

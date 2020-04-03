@@ -20,9 +20,6 @@ const defaultStore = {
   tracks: {
     allById: toObj(tracks)
   },
-  covers: {
-    allById: {}
-  },
   waveforms: {
     allById: {}
   }

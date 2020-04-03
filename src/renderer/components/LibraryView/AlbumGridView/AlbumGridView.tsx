@@ -1,5 +1,7 @@
+import { isEqual } from 'lodash';
 import React, { FC, ReactElement, MouseEvent, useState, useEffect } from 'react';
 import TooltipTrigger, { ChildrenArg, TooltipArg } from 'react-popper-tooltip';
+import { usePrevious } from 'react-delta';
 import { AlbumGridTileView } from './AlbumGridTileView/AlbumGridTileView';
 import { TooltipAlbumView } from '../../TooltipAlbumView/TooltipAlbumView';
 import { Album } from '../../../store/modules/album';
@@ -61,7 +63,12 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
     onBackspace
   });
 
+  const previousSelection = usePrevious(selection);
+
   useEffect(() => {
+    if (isEqual(previousSelection, selection)) {
+      return;
+    }
     onSelectionChange && onSelectionChange(selection);
     if (selection.length === 1) {
       scrollTo({
@@ -70,7 +77,7 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
         behavior: 'smooth'
       });
     }
-  }, [selection]);
+  });
 
   useEffect(() => {
     if (autoFocus) {

@@ -22,7 +22,7 @@ const defaultStore = {
   tracks: {
     allById: {}
   },
-  covers: {
+  artistPictures: {
     allById: {}
   },
   waveforms: {
