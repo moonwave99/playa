@@ -1,5 +1,5 @@
 import React from 'react';
-import { renderInAll } from '../../../../../../test/testUtils';
+import { renderInAll, mountInAll } from '../../../../../../test/testUtils';
 import { artists } from '../../../../../../test/testFixtures';
 import { toObj } from '../../../../utils/storeUtils';
 import { ArtistListItemView } from './ArtistListItemView';
@@ -26,5 +26,14 @@ describe('ArtistListItemView', () => {
       <ArtistListItemView artist={artists[0]} onContextMenu={jest.fn()}/>
     , defaultStore);
     expect(wrapper.find('.artist-name').text()).toBe(artists[0].name);
+  });
+
+  it('should call the onContextMenu handler when right clicked', () => {
+    const handler = jest.fn();
+    const wrapper = mountInAll(
+      <ArtistListItemView artist={artists[0]} onContextMenu={handler}/>
+    , defaultStore);
+    wrapper.simulate('contextmenu');
+    expect(handler).toHaveBeenCalledWith(artists[0]);
   });
 });
