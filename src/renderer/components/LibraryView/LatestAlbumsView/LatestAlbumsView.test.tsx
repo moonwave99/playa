@@ -35,7 +35,8 @@ describe('LatestAlbumsView', () => {
         onAlbumEnter={jest.fn()}
         onAlbumBackspace={jest.fn()}
         onAlbumContextMenu={jest.fn()}
-        onAlbumDoubleClick={jest.fn()}/>
+        onAlbumDoubleClick={jest.fn()}
+        onDrop={jest.fn()}/>
     , defaultStore);
     expect(wrapper.is('.library-latest-albums')).toBe(true);
   });
@@ -49,7 +50,8 @@ describe('LatestAlbumsView', () => {
         onAlbumEnter={jest.fn()}
         onAlbumBackspace={jest.fn()}
         onAlbumContextMenu={jest.fn()}
-        onAlbumDoubleClick={jest.fn()}/>
+        onAlbumDoubleClick={jest.fn()}
+        onDrop={jest.fn()}/>
     , defaultStore);
     expect(wrapper.find('.album-grid')).toHaveLength(1);
   });
@@ -63,7 +65,8 @@ describe('LatestAlbumsView', () => {
         onAlbumEnter={jest.fn()}
         onAlbumBackspace={jest.fn()}
         onAlbumContextMenu={jest.fn()}
-        onAlbumDoubleClick={jest.fn()}/>
+        onAlbumDoubleClick={jest.fn()}
+        onDrop={jest.fn()}/>
     , defaultStore);
     expect(wrapper.find('.album-grid')).toHaveLength(0);
     expect(wrapper.find('.library-latest-albums-empty-placeholder')).toHaveLength(1);

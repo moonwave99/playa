@@ -2,7 +2,6 @@ import React, { FC, useState, useEffect } from 'react';
 import { useLocation, useHistory } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import cx from 'classnames';
 import { getLatestRequest } from '../../store/modules/library';
 import { LatestAlbumsView } from './LatestAlbumsView/LatestAlbumsView';
 import { ArtistListView } from './ArtistListView/ArtistListView';
@@ -13,7 +12,6 @@ import { Album } from '../../store/modules/album';
 import { Artist } from '../../store/modules/artist';
 import { Track } from '../../store/modules/track';
 import { openContextMenu } from '../../lib/contextMenu';
-import useNativeDrop, { NativeTypes } from '../../hooks/useNativeDrop/useNativeDrop';
 import scrollTo from '../../lib/scrollTo';
 
 import {
@@ -80,20 +78,6 @@ export const LibraryView: FC<LibraryViewProps> = ({
     latest: library.latest ? library.latest.map((_id: Album['_id']) => albums.allById[_id]).filter(a => !!a) : null,
     ...player
   }));
-
-  function _onDrop(folder: string): void {
-    onDrop(folder);
-  }
-
-  const {
-    isOver,
-    canDrop,
-    drop
-  } = useNativeDrop({
-    onDrop: _onDrop,
-    accept: [NativeTypes.FILE],
-    filter: (type: string) => type === ''
-  });
 
 	useEffect(() => {
 		dispatch(
@@ -195,13 +179,8 @@ export const LibraryView: FC<LibraryViewProps> = ({
     });
   }
 
-  const libraryClasses = cx('library', {
-    'drag-is-over': isOver,
-    'drag-can-drop': canDrop
-  });
-
 	return (
-		<section className={libraryClasses} ref={drop}>
+		<section className="library">
       <LatestAlbumsView
         albums={latest}
         currentAlbumId={currentAlbumId}
@@ -209,7 +188,8 @@ export const LibraryView: FC<LibraryViewProps> = ({
         onAlbumEnter={onAlbumEnter}
         onAlbumBackspace={onAlbumBackspace}
         onAlbumContextMenu={onAlbumContextMenu}
-        onAlbumDoubleClick={onAlbumDoubleClick}/>
+        onAlbumDoubleClick={onAlbumDoubleClick}
+        onDrop={onDrop}/>
       {
         latest && latest.length > 0
         ? <ArtistListView

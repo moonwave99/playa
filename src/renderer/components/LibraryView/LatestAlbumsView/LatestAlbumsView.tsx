@@ -1,10 +1,12 @@
 import React, { FC, ReactElement } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { useTranslation } from 'react-i18next';
+import cx from 'classnames';
 import { AlbumGridView } from '../AlbumGridView/AlbumGridView';
 import { Album } from '../../../store/modules/album';
 import { Track } from '../../../store/modules/track';
 import { updateLibraryAlbumSelection } from '../../../store/modules/ui';
+import useNativeDrop, { NativeTypes } from '../../../hooks/useNativeDrop/useNativeDrop';
 
 type LatestAlbumsViewProps = {
   albums: Album[];
@@ -14,6 +16,7 @@ type LatestAlbumsViewProps = {
   onAlbumBackspace: Function;
   onAlbumContextMenu: Function;
   onAlbumDoubleClick: Function;
+  onDrop: Function;
 };
 
 export const LatestAlbumsView: FC<LatestAlbumsViewProps> = ({
@@ -23,9 +26,24 @@ export const LatestAlbumsView: FC<LatestAlbumsViewProps> = ({
   onAlbumEnter,
   onAlbumBackspace,
   onAlbumContextMenu,
-  onAlbumDoubleClick
+  onAlbumDoubleClick,
+  onDrop
 }) => {
   const { t } = useTranslation();
+
+  function _onDrop(folder: string): void {
+    onDrop(folder);
+  }
+
+  const {
+    isOver,
+    canDrop,
+    drop
+  } = useNativeDrop({
+    onDrop: _onDrop,
+    accept: [NativeTypes.FILE],
+    filter: (type: string) => type === ''
+  });
 
   function onSelectionChange(selection: Album['_id'][]): void {
     updateLibraryAlbumSelection(selection);
@@ -55,8 +73,13 @@ export const LatestAlbumsView: FC<LatestAlbumsViewProps> = ({
     return null;
   }
 
+  const classNames = cx('library-latest-albums', {
+    'drag-is-over': isOver,
+    'drag-can-drop': canDrop
+  });
+
   return (
-    <section className="library-latest-albums">
+    <section className={classNames} ref={drop}>
       <CSSTransition
         in={!!albums}
         timeout={300}
