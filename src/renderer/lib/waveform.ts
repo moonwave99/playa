@@ -3,29 +3,33 @@ import { encodePath } from '../utils/pathUtils';
 // #SEE: https://github.com/antonkalinin/audio-waveform-svg-path
 type WaveformParams = {
 	path: string;
-	peaksCount: number;
+	resolution: number;
+	precision: number;
 }
 
 export class Waveform {
 	path: string;
 	context: AudioContext;
 	audioBuffer: AudioBuffer;
-	peaksCount: number;
+	resolution: number;
+	precision: number;
 	constructor({
 		path,
-		peaksCount
+		resolution,
+		precision
 	}: WaveformParams) {
 		this.path = encodePath(path);
-		this.peaksCount = peaksCount;
+		this.resolution = resolution;
+		this.precision = precision;
 		this.context = new AudioContext();
 	}
 
 	_getPeaks(channelData: Float32Array, peaks: number[], channelNumber: number | number[]): number[] {
-		const sampleSize = this.audioBuffer.length / this.peaksCount;
+		const sampleSize = this.audioBuffer.length / this.resolution;
 		const sampleStep = ~~(sampleSize / 10) || 1;
 		const mergedPeaks = Array.isArray(peaks) ? peaks : [];
 
-		for (let peakNumber = 0; peakNumber < this.peaksCount; peakNumber++) {
+		for (let peakNumber = 0; peakNumber < this.resolution; peakNumber++) {
 			const start = ~~(peakNumber * sampleSize);
 			const end = ~~(start + sampleSize);
 			let min = channelData[0];
@@ -60,9 +64,9 @@ export class Waveform {
 		let d = '';
 		for (let peakNumber = 0; peakNumber < totalPeaks; peakNumber++) {
 			if (peakNumber % 2 === 0) {
-				d += ` M${~~(peakNumber / 2)}, ${peaks.shift()}`;
+				d += ` M${~~(peakNumber / 2)}, ${peaks.shift().toFixed(this.precision)}`;
 			} else {
-				d += ` L${~~(peakNumber / 2)}, ${peaks.shift()}`;
+				d += ` L${~~(peakNumber / 2)}, ${peaks.shift().toFixed(this.precision)}`;
 			}
 		}
 		return d;

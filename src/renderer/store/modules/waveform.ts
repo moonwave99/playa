@@ -3,7 +3,7 @@ import { EntityHashMap } from '../../utils/storeUtils';
 import { ApplicationState } from '../store';
 import { Track } from './track';
 import { Waveform } from '../../lib/waveform';
-import { IPC_MESSAGES, WAVEFORM_PEAKS_COUNT } from '../../../constants';
+import { IPC_MESSAGES, WAVEFORM_RESOLUTION, WAVEFORM_PRECISION } from '../../../constants';
 
 const {
   IPC_WAVEFORM_SAVE_REQUEST
@@ -42,7 +42,8 @@ export const getWaveformRequest = (track: Track): Function =>
   async (dispatch: Function): Promise<void> => {
     const waveform = new Waveform({
       path: track.path,
-      peaksCount: WAVEFORM_PEAKS_COUNT
+      resolution: WAVEFORM_RESOLUTION,
+      precision: WAVEFORM_PRECISION
     });
     await waveform.load();
     const waveformContent = waveform.getSVGPath();

@@ -5,7 +5,7 @@ import { saveData } from '../lib/saveData';
 import log, { LogContext, LogLevel } from '../lib/logger';
 import { FileSystemError } from '../../errors';
 
-import { WAVEFORM_PEAKS_COUNT, IPC_MESSAGES, COLORS } from '../../constants';
+import { WAVEFORM_RESOLUTION, IPC_MESSAGES, COLORS } from '../../constants';
 
 const {
   IPC_WAVEFORM_SAVE_REQUEST,
@@ -15,7 +15,7 @@ const {
 function renderWaveformSVG(pathContent: string): string {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="waveform" viewBox="0 -1 ${WAVEFORM_PEAKS_COUNT} 2" preserveAspectRatio="none">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="waveform" viewBox="0 -1 ${WAVEFORM_RESOLUTION} 2" preserveAspectRatio="none">
   <g>
     <path stroke="${COLORS.MAIN_COLOR}" d="${pathContent}"/>
   </g>
