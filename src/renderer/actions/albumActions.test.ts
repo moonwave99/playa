@@ -27,8 +27,7 @@ import {
   reloadAlbumContentAction,
   searchOnRYMAction,
   searchOnDiscogsAction,
-  searchOnYoutubeAction,
-  searchArtistOnRYMAction
+  searchOnYoutubeAction
 } from './albumActions';
 
 describe('albumActions', () => {
@@ -275,16 +274,6 @@ describe('albumActions', () => {
         albums: [{ album: albums[0], artist: artists[0] }]
       });
       expect(title).toBe('Search album on Youtube');
-      expect(typeof handler).toBe('function');
-    });
-  });
-
-  describe('searchArtistOnRYMAction', () => {
-    it('should return a title and a handler', async () => {
-      const { title, handler } = searchArtistOnRYMAction({
-        albums: [{ album: albums[0], artist: artists[0] }]
-      });
-      expect(title).toBe('Search artist on rateyourmusic');
       expect(typeof handler).toBe('function');
     });
   });

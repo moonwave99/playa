@@ -15,10 +15,12 @@ import { ARTIST_SHOW } from '../../../../routes';
 
 type ArtistListItemViewProps = {
   artist: Artist;
+  onContextMenu: Function;
 };
 
 export const ArtistListItemView: FC<ArtistListItemViewProps> = ({
-  artist
+  artist,
+  onContextMenu
 }) => {
   const dispatch = useDispatch();
   const ref = useRef<HTMLDivElement>(null);
@@ -51,6 +53,10 @@ export const ArtistListItemView: FC<ArtistListItemViewProps> = ({
     setSeed(seed + 1);
   }, [_rev]);
 
+  function _onContextMenu(): void {
+    onContextMenu && onContextMenu(artist);
+  }
+
   const backgroundColor = useMemo(() => intToHSL(getHashCode(name)), [name]);
 
   const classNames = cx('artist-list-item', {
@@ -59,7 +65,7 @@ export const ArtistListItemView: FC<ArtistListItemViewProps> = ({
     'drag-can-drop': canDrop
   });
 	return (
-    <article ref={viewRef}>
+    <article ref={viewRef} onContextMenu={_onContextMenu}>
       <Link
         id={`artist-${name}`}
         className={classNames}

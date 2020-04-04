@@ -19,11 +19,13 @@ import { ALPHABET } from '../../../utils/artistUtils';
 type ArtistListViewProps = {
   selectedLetter: string;
   onLetterClick: Function;
+  onContextMenu: Function;
 }
 
 export const ArtistListView: FC<ArtistListViewProps> = ({
   selectedLetter,
-  onLetterClick
+  onLetterClick,
+  onContextMenu
 }) => {
   const artists = useSelector(
     (state: ApplicationState) => artistSelectors.findByLetter(state, selectedLetter)
@@ -47,7 +49,7 @@ export const ArtistListView: FC<ArtistListViewProps> = ({
     const { _id } = artist;
     return (
       <li key={_id}>
-        <ArtistListItemView artist={artist}/>
+        <ArtistListItemView artist={artist} onContextMenu={onContextMenu}/>
       </li>
     );
   }

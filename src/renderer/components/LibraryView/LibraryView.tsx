@@ -23,6 +23,11 @@ import {
 } from '../../actions/albumActions';
 
 import {
+  ARTIST_CONTEXT_ACTIONS,
+  ArtistActionsGroups
+} from '../../actions/artistActions';
+
+import {
   LIBRARY_CONTENT_CONTEXT_ACTIONS,
   LibraryContentActionGroups,
   LibraryContentActions
@@ -166,6 +171,18 @@ export const LibraryView: FC<LibraryViewProps> = ({
     }).handler();
   }
 
+  function onArtistContextMenu(artist: Artist): void {
+    openContextMenu([
+      {
+        type: ARTIST_CONTEXT_ACTIONS,
+        artist,
+        actionGroups: [
+          ArtistActionsGroups.SEARCH_ONLINE
+        ]
+      }
+    ]);
+  }
+
   function onLetterClick(letter: string): void {
     setSelectedLetter(letter);
     history.replace(
@@ -197,6 +214,7 @@ export const LibraryView: FC<LibraryViewProps> = ({
         latest && latest.length > 0
         ? <ArtistListView
             selectedLetter={selectedLetter}
+            onContextMenu={onArtistContextMenu}
             onLetterClick={onLetterClick}/>
         : null
       }

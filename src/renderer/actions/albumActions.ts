@@ -160,8 +160,7 @@ export enum AlbumActions {
   RELOAD_ALBUM_CONTENT = 'RELOAD_ALBUM_CONTENT',
   SEARCH_ON_RYM = 'SEARCH_ON_RYM',
   SEARCH_ON_DISCOGS = 'SEARCH_ON_DISCOGS',
-  SEARCH_ON_YOUTUBE = 'SEARCH_ON_YOUTUBE',
-  SEARCH_ARTIST_ON_RYM = 'SEARCH_ARTIST_ON_RYM'
+  SEARCH_ON_YOUTUBE = 'SEARCH_ON_YOUTUBE'
 }
 
 export const AlbumActionsMap: ActionMap<ActionParams> = {
@@ -174,8 +173,7 @@ export const AlbumActionsMap: ActionMap<ActionParams> = {
   [AlbumActions.RELOAD_ALBUM_CONTENT]: reloadAlbumContentAction,
   [AlbumActions.SEARCH_ON_RYM]: searchOnRYMAction,
   [AlbumActions.SEARCH_ON_DISCOGS]: searchOnDiscogsAction,
-  [AlbumActions.SEARCH_ON_YOUTUBE]: searchOnYoutubeAction,
-  [AlbumActions.SEARCH_ARTIST_ON_RYM]: searchArtistOnRYMAction
+  [AlbumActions.SEARCH_ON_YOUTUBE]: searchOnYoutubeAction
 }
 
 export enum AlbumActionsGroups {
@@ -210,9 +208,6 @@ const actionGroupsMap: ActionGroupsMap = {
     AlbumActions.SEARCH_ON_RYM,
     AlbumActions.SEARCH_ON_DISCOGS,
     AlbumActions.SEARCH_ON_YOUTUBE
-  ],
-  [AlbumActionsGroups.ARTIST]: [
-    AlbumActions.SEARCH_ARTIST_ON_RYM
   ]
 };
 

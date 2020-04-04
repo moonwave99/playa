@@ -14,7 +14,7 @@ const defaultStore = {
   },
   artistPictures: {
     allById: {}
-  },  
+  },
   library: {
     latest: [] as object[],
     latestAlbumId: null as Album['_id']
@@ -26,7 +26,8 @@ describe('ArtistListView', () => {
     const wrapper = renderInAll(
       <ArtistListView
         selectedLetter="a"
-        onLetterClick={jest.fn()}/>
+        onLetterClick={jest.fn()}
+        onContextMenu={jest.fn()}/>
     , defaultStore);
     expect(wrapper.is('.library-artists')).toBe(true);
   });
@@ -35,7 +36,8 @@ describe('ArtistListView', () => {
     const wrapper = renderInAll(
       <ArtistListView
         selectedLetter="a"
-        onLetterClick={jest.fn()}/>
+        onLetterClick={jest.fn()}
+        onContextMenu={jest.fn()}/>
     , defaultStore);
     expect(wrapper.find('.alphabet')).toHaveLength(1);
   });
@@ -44,7 +46,8 @@ describe('ArtistListView', () => {
     const wrapper = renderInAll(
       <ArtistListView
         selectedLetter="a"
-        onLetterClick={jest.fn()}/>
+        onLetterClick={jest.fn()}
+        onContextMenu={jest.fn()}/>
     , defaultStore);
     expect(wrapper.find('.artist-list')).toHaveLength(1);
   });
@@ -53,7 +56,8 @@ describe('ArtistListView', () => {
     const wrapper = renderInAll(
       <ArtistListView
         selectedLetter="a"
-        onLetterClick={jest.fn()}/>
+        onLetterClick={jest.fn()}
+        onContextMenu={jest.fn()}/>
     , defaultStore);
     expect(wrapper.find('.alphabet .letter-a').is('.selected')).toBe(true);
   });
@@ -63,7 +67,8 @@ describe('ArtistListView', () => {
     const wrapper = renderInAll(
       <ArtistListView
         selectedLetter="a"
-        onLetterClick={jest.fn()}/>
+        onLetterClick={jest.fn()}
+        onContextMenu={jest.fn()}/>
     , defaultStore);
     expect(wrapper.find('.artist-list .artist-name').text()).toBe('Adorable');
   });
@@ -73,7 +78,8 @@ describe('ArtistListView', () => {
     const wrapper = mountInAll(
       <ArtistListView
         selectedLetter="a"
-        onLetterClick={handler}/>
+        onLetterClick={handler}
+        onContextMenu={jest.fn()}/>
     , defaultStore);
     wrapper
       .find('.alphabet .letter-s a')

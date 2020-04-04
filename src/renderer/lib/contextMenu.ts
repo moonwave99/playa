@@ -8,6 +8,12 @@ import {
 } from '../actions/albumActions';
 
 import {
+  ARTIST_CONTEXT_ACTIONS,
+  GetArtistContextMenuParams,
+  getActionGroups as getArtistActionGroups
+} from '../actions/artistActions';
+
+import {
   PLAYLIST_LIST_CONTEXT_ACTIONS,
   GetPlaylistListContextMenuParams,
   getActionGroups as getPlaylistListActionGroups
@@ -29,6 +35,7 @@ type ContextMenuParams =
     GetPlaylistListContextMenuParams
   | GetPlaylistContentContextMenuParams
   | GetAlbumContextMenuParams
+  | GetArtistContextMenuParams
   | GetLibraryContentContextMenuParams;
 
 export function openContextMenu(params: ContextMenuParams[]): { items: object[] } {
@@ -41,6 +48,8 @@ export function openContextMenu(params: ContextMenuParams[]): { items: object[] 
         return getPlaylistContextActionGroups(param);
       case ALBUM_CONTEXT_ACTIONS:
         return getAlbumActionGroups(param);
+      case ARTIST_CONTEXT_ACTIONS:
+        return getArtistActionGroups(param);
       case LIBRARY_CONTENT_CONTEXT_ACTIONS:
         return getLibraryContextActionGroups(param);
     }

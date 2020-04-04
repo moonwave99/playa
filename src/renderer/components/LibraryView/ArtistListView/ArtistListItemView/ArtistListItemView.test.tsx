@@ -16,14 +16,14 @@ const defaultStore = {
 describe('ArtistListItemView', () => {
   it('should render an .artist-list-item', () => {
     const wrapper = renderInAll(
-      <ArtistListItemView artist={artists[0]}/>
+      <ArtistListItemView artist={artists[0]} onContextMenu={jest.fn()}/>
     , defaultStore);
     expect(wrapper.find('.artist-list-item')).toHaveLength(1);
   });
 
   it('should contain the artist name', () => {
     const wrapper = renderInAll(
-      <ArtistListItemView artist={artists[0]}/>
+      <ArtistListItemView artist={artists[0]} onContextMenu={jest.fn()}/>
     , defaultStore);
     expect(wrapper.find('.artist-name').text()).toBe(artists[0].name);
   });

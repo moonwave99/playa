@@ -2,27 +2,7 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 const mockStore = configureStore([thunk]);
 import { History } from 'history';
-
-const ipcEvent = {} as object;
-
-class IpcMock {
-  handlers: { [key:string] : (...args: any[]) => unknown }; // eslint-disable-line
-  constructor() {
-    this.handlers = {};
-  }
-  on(event: string, handler: (...args: any[]) => unknown) { // eslint-disable-line
-    this.handlers[event] = jest.fn(handler);
-  }
-  trigger(event: string, ...args: any[]) { // eslint-disable-line
-    const handler = this.handlers[event];
-    if (!handler) {
-      return false;
-    }
-    handler(ipcEvent, ...args);
-  }
-  invoke(): object { return {}; }
-  send(): void { return; }
-}
+import { IpcMock, ipcEvent } from '../../../test/mockIpc';
 
 const ipcRenderer = new IpcMock();
 
@@ -30,7 +10,7 @@ jest.mock('electron', () => ({
   ipcRenderer
 }));
 
-import { albums } from '../../../test/testFixtures';
+import { playlists, albums } from '../../../test/testFixtures';
 import { toObj } from '../utils/storeUtils';
 import initIpc from './initIpc';
 import { IPC_MESSAGES } from '../../constants';
@@ -56,7 +36,7 @@ const {
 describe('initIpc', () => {
   const store = mockStore({
     playlists: {
-      allById: {}
+      allById: toObj(playlists)
     },
     albums: {
       allById: toObj(albums)

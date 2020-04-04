@@ -7,6 +7,12 @@ import {
 } from './albumActions';
 
 import {
+  ArtistActions,
+  ArtistActionsMap,
+  ActionParams as ArtistActionParams
+} from './artistActions';
+
+import {
   LibraryContentActions,
   LibraryContentActionsMap,
   ActionParams as LibraryActionParams
@@ -26,12 +32,14 @@ import {
 
 export type AllActions =
     AlbumActions
+  | ArtistActions
   | LibraryContentActions
   | PlaylistContentActions
   | PlaylistListActions;
 
 type AllParams =
     AlbumActionParams
+  | ArtistActionParams
   | LibraryActionParams
   | PlaylistContentActionParams
   | PlaylistListActionParams;
@@ -39,6 +47,7 @@ type AllParams =
 const megaMap: { [key: string]: ActionCreator<AllParams> } =
   [
     AlbumActionsMap,
+    ArtistActionsMap,
     LibraryContentActionsMap,
     PlaylistContentActionsMap,
     PlaylistListActionsMap
