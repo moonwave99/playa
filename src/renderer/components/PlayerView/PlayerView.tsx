@@ -122,7 +122,7 @@ export const PlayerView: FC<PlayerViewProps> = ({
 		dispatch(playTrack({
 			albumId: album._id,
 			trackId: track._id,
-			playlistId: currentPlaylist._id,
+			playlistId: currentPlaylist ? currentPlaylist._id : null
 		}));
 	}
 
