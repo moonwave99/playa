@@ -68,6 +68,12 @@ export const PlaylistContainer = (): ReactElement => {
     }
   }, [playlist]);
 
+  useEffect(() => {
+    return (): void => {
+      updatePlaylistAlbumSelection(null, []);
+    }
+  }, []);
+
   function onSelectionChange(selection: Album['_id'][]): void {
     updatePlaylistAlbumSelection(playlist._id, selection);
   }

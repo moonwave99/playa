@@ -1,4 +1,4 @@
-import React, { FC, ReactElement } from 'react';
+import React, { FC, ReactElement, useEffect } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { useTranslation } from 'react-i18next';
 import cx from 'classnames';
@@ -44,6 +44,12 @@ export const LatestAlbumsView: FC<LatestAlbumsViewProps> = ({
     accept: [NativeTypes.FILE],
     filter: (type: string) => type === ''
   });
+
+  useEffect(() => {
+    return (): void => {
+      updateLibraryAlbumSelection([]);
+    }
+  }, []);
 
   function onSelectionChange(selection: Album['_id'][]): void {
     updateLibraryAlbumSelection(selection);

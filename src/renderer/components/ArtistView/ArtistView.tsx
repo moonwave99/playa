@@ -77,6 +77,12 @@ export const ArtistView = (): ReactElement => {
     }
   }, [name]);
 
+  useEffect(() => {
+    return (): void => {
+      updateLibraryAlbumSelection([]);
+    }
+  }, []);
+
   function onAlbumContextMenu(album: Album, artist: Artist): void {
 		openContextMenu([
       {
