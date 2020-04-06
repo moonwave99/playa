@@ -14,7 +14,7 @@
 				var(--section-gutter)
 				var(--section-gutter)
 				0
-				var(--section-gutter);
+				calc(var(--section-gutter) * 2 / 3);
 		}
 	}
 	&-empty-placeholder {
