@@ -2,11 +2,12 @@ import { isEqual } from 'lodash';
 import React, { FC, ReactElement, MouseEvent, useState, useEffect } from 'react';
 import TooltipTrigger, { ChildrenArg, TooltipArg } from 'react-popper-tooltip';
 import { usePrevious } from 'react-delta';
+import cx from 'classnames';
 import { AlbumGridTileView } from './AlbumGridTileView/AlbumGridTileView';
 import { TooltipAlbumView } from '../../TooltipAlbumView/TooltipAlbumView';
 import { Album } from '../../../store/modules/album';
 import { Track } from '../../../store/modules/track';
-import useGrid from '../../../hooks/useGrid/useGrid';
+import useGrid, { EMPTY_CELL } from '../../../hooks/useGrid/useGrid';
 import scrollTo from '../../../lib/scrollTo';
 
 import './AlbumGridView.scss';
@@ -23,6 +24,7 @@ type AlbumGridViewProps = {
   currentTrackId?: Track['_id'];
   showArtists?: boolean;
   autoFocus?: boolean;
+  groupBy?: string;
   clearSelectionOnBlur?: boolean;
   onSelectionChange?: Function;
   onEnter?: Function;
@@ -38,6 +40,7 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
   clearSelectionOnBlur = false,
   showArtists = true,
   autoFocus = false,
+  groupBy,
   onSelectionChange,
   onEnter,
   onBackspace,
@@ -52,13 +55,14 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
     selection,
     threshold,
     onItemClick,
-    requestFocus,
-    selectItem
+    requestFocus
   } = useGrid({
     items: albums,
     thresholds: ALBUM_GRID_THRESHOLDS,
+    initialSelection: [albums[0]._id],
     excludeClass: '.album-cover',
     clearSelectionOnBlur,
+    groupBy,
     onEnter,
     onBackspace
   });
@@ -77,20 +81,13 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
         behavior: 'smooth'
       });
     }
-  });
+  }, [selection, previousSelection]);
 
   useEffect(() => {
     if (autoFocus) {
       requestFocus();
     }
-  }, [autoFocus]);
-
-  useEffect(() => {
-    if (!albums.length || !autoFocus) {
-      return;
-    }
-    selectItem(albums[0]._id);
-  }, [albums]);
+  }, []);
 
   function onDragBegin(): void {
     setDragging(true);
@@ -105,6 +102,10 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
       return;
     }
     const { _id } = album;
+
+    if (_id === EMPTY_CELL) {
+      return (null);
+    }
 
     function renderTooltip(tooltipArgs: TooltipArg): ReactElement {
       return (
@@ -164,14 +165,21 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
     );
   }
 
+  function renderRow(row: Album[], rowIndex: number): ReactElement {
+    const classNames = cx('album-grid-row', {
+      [`album-grid-row-${row[0].type}`]: !!groupBy
+    });
+    return (
+      <div
+        className={classNames}
+        key={rowIndex}>{row.map(renderTile)}
+      </div>
+    );
+  }
+
 	return (
     <div className="album-grid" data-key-catch="useGrid" ref={grid}>
-      {rows.map((row, index) =>
-        <div
-          className="album-grid-row"
-          key={index}>{row.map(renderTile)}
-        </div>
-      )}
+      {rows.map(renderRow)}
     </div>
 	);
 }

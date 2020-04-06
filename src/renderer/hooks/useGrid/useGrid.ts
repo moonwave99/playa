@@ -7,17 +7,25 @@ import {
 } from 'react';
 
 import Mousetrap from 'mousetrap';
-import { chunk, without } from 'lodash';
+import { chunk, without, groupBy as groupItemsBy } from 'lodash';
+
+export const EMPTY_CELL = 'USE_GRID_EMPTY_CELL';
+export enum Directions {
+  Up,
+  Down,
+  Left,
+  Right
+}
 
 type ListenerEvent = MouseEvent & {
   target: Element;
 };
 
-type HasId = {
+export type HasId = {
   _id: string;
 };
 
-type Threshold = {
+export type Threshold = {
   width: number;
   columns: number;
 };
@@ -28,17 +36,19 @@ type OnItemClickParams = {
   shiftKey: boolean;
 };
 
-type GetRowsParams = {
+type GenerateRowsParams = {
   items: HasId[];
   thresholds: Threshold[];
+  groupBy?: string;
   windowWidth: number;
 }
 
-function getRows({
+export function generateRows({
   items,
   thresholds,
+  groupBy,
   windowWidth
-}: GetRowsParams): {
+}: GenerateRowsParams): {
   rows: HasId[][];
   threshold: Threshold;
 } {
@@ -49,35 +59,87 @@ function getRows({
       break;
     }
   }
+
+  if (groupBy) {
+    const groupedItems = groupItemsBy(items, groupBy);
+    const rows = Object.entries(groupedItems).reduce((memo, [, value]) => {
+      const rows = [...chunk(value, threshold.columns)];
+      const lastRow = rows[rows.length - 1];
+      const padding = threshold.columns - lastRow.length;
+      for (let i = 0; i < padding; i++) {
+        lastRow.push({ _id: EMPTY_CELL });
+      }
+      return [...memo, ...rows];
+    }, []);
+    return {
+      rows,
+      threshold
+    };
+  }
+
   return {
     rows: [...chunk(items, threshold.columns)],
     threshold
   };
 }
 
-function locateSelection({
+export function moveSelection({
   items,
   selection,
-  rows
+  rows,
+  direction
 }: {
   items: HasId[];
   selection: string[];
   rows: HasId[][];
-}): [number, number] {
+  direction: Directions;
+}): number {
   if (selection.length === 0 && items.length > 0) {
-    return [0, 0];
+    return 0;
   }
-  let y = 0;
-  let x = 0;
-  for (let i = 0; i < rows.length; i++) {
-    const found = rows[i].map(({ _id }) => _id).indexOf(selection[0]);
-    if (found >= 0) {
-      x = found;
-      y = i;
-      break;
+
+  function changeRow(direction: Directions.Down|Directions.Up): number {
+    const [limit, increment] = direction === Directions.Up
+      ? [0, -1] : [rows.length - 1, 1];
+    const rowIndex = rows.findIndex(
+      row => row.find(({ _id }) => _id === selection[0])
+    );
+    if (rowIndex === limit) {
+      return items.findIndex(({ _id }) => _id === selection[0]);
+    }
+    const colIndex = rows[rowIndex].findIndex(({ _id }) => _id === selection[0]);
+    const targetRow = rows[rowIndex + increment];
+    const { _id: targetCellId } = targetRow[colIndex];
+    if (targetCellId === EMPTY_CELL) {
+      let currentColIndex = colIndex;
+      while (targetRow[currentColIndex]._id === EMPTY_CELL) {
+        currentColIndex--;
+      }
+      return items.findIndex(({ _id }) => _id === targetRow[currentColIndex]._id);
+    } else {
+      return items.findIndex(({ _id }) => _id === targetCellId);
     }
   }
-  return [x, y];
+
+  switch (direction) {
+    case Directions.Up:
+    case Directions.Down:
+      return changeRow(direction);
+    case Directions.Right:
+      return Math.min(
+        items.findIndex(
+          ({ _id }) => _id === selection[0]
+        ) + 1,
+        items.length - 1
+      );
+    case Directions.Left:
+      return Math.max(
+        items.findIndex(
+          ({ _id }) => _id === selection[0]
+        ) - 1,
+        0
+      );
+  }
 }
 
 type UseGridParams = {
@@ -87,10 +149,9 @@ type UseGridParams = {
   excludeClass?: string;
   clearSelectionOnBlur?: boolean;
   initialSelection?: string[];
+  groupBy?: string;
   onEnter?: Function;
   onBackspace?: Function;
-  onTopOverflow?: Function;
-  onBottomOverflow?: Function;
 }
 
 export default function useGrid({
@@ -103,10 +164,9 @@ export default function useGrid({
   excludeClass = '',
   clearSelectionOnBlur = false,
   initialSelection = [],
+  groupBy,
   onEnter,
-  onBackspace,
-  onTopOverflow,
-  onBottomOverflow
+  onBackspace
 }: UseGridParams): {
   rows: HasId[][];
   selection: string[];
@@ -144,9 +204,10 @@ export default function useGrid({
   }, [items, listener]);
 
   function recompute(): void {
-    const { rows: computedRows, threshold } = getRows({
+    const { rows: computedRows, threshold } = generateRows({
       items,
       thresholds,
+      groupBy,
       windowWidth: window.innerWidth
     });
     setRows(computedRows);
@@ -169,13 +230,13 @@ export default function useGrid({
       if (!hasFocus) {
         return;
       }
-      const [x, y] = locateSelection({ items, rows, selection });
-      const newY = Math.max(0, y - 1);
-      if (y === newY) {
-        onTopOverflow && onTopOverflow(x);
-      }
-      const index = threshold.columns * newY + x;
-      setSelection([items[index]._id]);
+      const newIndex = moveSelection({
+        items,
+        selection,
+        rows,
+        direction: Directions.Up
+      });
+      setSelection([items[newIndex]._id]);
     }
 
     function onDown(event: KeyboardEvent): void {
@@ -184,35 +245,39 @@ export default function useGrid({
       if (!hasFocus) {
         return;
       }
-      const [x, y] = locateSelection({ items, rows, selection });
-      const newY = Math.min(rows.length - 1, y + 1);
-      if (y === newY) {
-        onBottomOverflow && onBottomOverflow(x);
-      }
-      const index = Math.min(items.length - 1, threshold.columns * newY + x);
-      setSelection([items[index]._id]);
+      const newIndex = moveSelection({
+        items,
+        selection,
+        rows,
+        direction: Directions.Down
+      });
+      setSelection([items[newIndex]._id]);
     }
 
     function onLeft(): void {
       if (!hasFocus) {
         return;
       }
-      const [x, y] = locateSelection({ items, rows, selection });
-      const newX = (x - 1) % threshold.columns;
-      const newY = newX === threshold.columns - 1 ? y - 1 : y;
-      const index = Math.max(0, threshold.columns * newY + newX);
-      setSelection([items[index]._id]);
+      const newIndex = moveSelection({
+        items,
+        selection,
+        rows,
+        direction: Directions.Left
+      });
+      setSelection([items[newIndex]._id]);
     }
 
     function onRight(): void {
       if (!hasFocus) {
         return;
       }
-      const [x, y] = locateSelection({ items, rows, selection });
-      const newX = (x + 1) % threshold.columns;
-      const newY = newX === 0 ? y + 1 : y;
-      const index = Math.min(items.length - 1, threshold.columns * newY + newX);
-      setSelection([items[index]._id]);
+      const newIndex = moveSelection({
+        items,
+        selection,
+        rows,
+        direction: Directions.Right
+      });
+      setSelection([items[newIndex]._id]);
     }
 
     function _onEnter(): void {

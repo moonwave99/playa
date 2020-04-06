@@ -4,17 +4,17 @@
 .artist {
 	width: 100%;
 	padding: 0;
-	.artist-releases {
-		.artist-release-group	{
-			padding:
-				var(--section-gutter)
-				var(--section-gutter)
-				calc(var(--section-gutter) / 2)
-				var(--section-gutter);
+	.album-grid {
+		.album-grid-row	{
 			@include albumType('border-left-color');
 			border-left-width: calc(var(--section-gutter) / 3);
 			border-left-style: solid;
 			border-bottom: 1px solid darken($lightColor, 50%);
+			padding:
+				var(--section-gutter)
+				var(--section-gutter)
+				0
+				var(--section-gutter);
 		}
 	}
 	&-empty-placeholder {
