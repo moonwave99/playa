@@ -5,9 +5,16 @@ import { CoverView } from './CoverView';
 import { albums } from '../../../../test/testFixtures';
 
 describe('CoverView', () => {
-  it('should render a <figure> with a title attribute', () => {
+  it('should render a figure', () => {
     const wrapper = render(
       <CoverView src='path/to/image.jpg' album={albums[0]} />
+    );
+    expect(wrapper.is('figure')).toBe(true);
+  });
+
+  it('should have title attribute if showTitle is true', () => {
+    const wrapper = render(
+      <CoverView src='path/to/image.jpg' album={albums[0]} showTitle/>
     );
     expect(wrapper.attr('title')).toBeDefined();
     expect(wrapper.is('figure')).toBe(true);

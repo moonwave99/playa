@@ -6,6 +6,7 @@ type CoverViewProps = {
   className?: string;
   src: string;
   album: Album;
+  showTitle?: boolean;
   onClick?: Function;
   onDoubleClick?: Function;
   onContextMenu?: Function;
@@ -16,6 +17,7 @@ export const CoverView: FC<CoverViewProps> = ({
   className,
   src,
   album,
+  showTitle = false,
   onClick,
   onDoubleClick,
   onContextMenu,
@@ -53,7 +55,7 @@ export const CoverView: FC<CoverViewProps> = ({
     <figure
       ref={ref}
       className={className}
-      title={title}
+      title={showTitle ? title : null}
       onClick={onFigureClick}
       onDoubleClick={onFigureDoubleClick}
       onContextMenu={onFigureContextMenu}>
