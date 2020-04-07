@@ -104,10 +104,16 @@ export default class Database {
   }
 
   async findAll<T>(): Promise<Array<T>> {
-    const { rows } = await this.db.allDocs({
-      include_docs: true, // eslint-disable-line
-    });
-    return rows.map((row: Row<T>) => row.doc);
+    try {
+      const { rows } = await this.db.allDocs({
+        include_docs: true, // eslint-disable-line
+      });
+      return rows.map((row: Row<T>) => row.doc);
+    } catch (error) {
+      if (error.name === 'OpenError') {
+        throw new DatabaseError('Database unreachable or locked by another process');
+      }
+    }
   }
 
   async get<T>(_id: string): Promise<T> {
@@ -146,13 +152,19 @@ export default class Database {
   }
 
   async getList<T>(ids: Entity['_id'][]): Promise<Array<T>> {
-    const { rows } = await this.db.allDocs({
-      keys: ids,
-      include_docs: true, // eslint-disable-line
-    });
-    return rows
-      .filter((row: Row<T>) => !row.error && row.doc)
-      .map((row: Row<T>) => row.doc);
+    try {
+      const { rows } = await this.db.allDocs({
+        keys: ids,
+        include_docs: true, // eslint-disable-line
+      });
+      return rows
+        .filter((row: Row<T>) => !row.error && row.doc)
+        .map((row: Row<T>) => row.doc);  
+    } catch(error) {
+      if (error.name === 'OpenError') {
+        throw new DatabaseError('Database unreachable or locked by another process');
+      }
+    }
   }
 
   async groupCount(field: string): Promise<{ key: string; value: number }[]> {
