@@ -20,11 +20,12 @@ const {
   IPC_UI_LOCATION_UPDATE,
   IPC_UI_LIBRARY_ALBUM_SELECTION_UPDATE,
   IPC_UI_PLAYLIST_ALBUM_SELECTION_UPDATE,
+  IPC_UI_PLAYLIST_LIST_SELECTION_UPDATE,
   IPC_PLAYBACK_PREV_TRACK,
   IPC_PLAYBACK_NEXT_TRACK,
   IPC_PLAYBACK_CLEAR_QUEUE,
   IPC_UI_EDIT_PLAYLIST_TITLE,
-  IPC_UI_REMOVE_PLAYLIST,
+  IPC_UI_REMOVE_PLAYLISTS,
   IPC_UI_EDIT_ARTIST_TITLE,
   IPC_LIBRARY_IMPORT_MUSIC,
   IPC_LIBRARY_EDIT_ALBUM,
@@ -43,6 +44,7 @@ import {
 } from '../../renderer/routes';
 
 let gridAlbumSelection: Album['_id'][];
+let playlistListSelection: Playlist['_id'][];
 let currentPlaylistId: Playlist['_id'];
 let playlistAlbumSelection: Album['_id'][];
 
@@ -158,18 +160,28 @@ export default function initMenu({
         {
           label: 'Rename Current Playlist',
           id: 'edit-playlist-title',
+          enabled: false,
           click: (): void => window.webContents.send(IPC_UI_EDIT_PLAYLIST_TITLE)
         },
         {
           label: 'Remove Current Playlist',
           id: 'remove-playlist',
-          click: (): void => window.webContents.send(IPC_UI_REMOVE_PLAYLIST, currentPlaylistId)
+          enabled: false,
+          click: (): void => window.webContents.send(IPC_UI_REMOVE_PLAYLISTS, [currentPlaylistId])
         },
         { type: 'separator' },
         {
           label: 'Remove Selected Albums from Playlist',
           id: 'remove-from-playlist',
+          enabled: false,
           click: (): void => window.webContents.send(IPC_PLAYLIST_REMOVE_ALBUMS, currentPlaylistId, playlistAlbumSelection)
+        },
+        { type: 'separator' },
+        {
+          label: 'Remove Selected Playlists',
+          id: 'remove-playlists',
+          enabled: false,
+          click: (): void => window.webContents.send(IPC_UI_REMOVE_PLAYLISTS, playlistListSelection)
         },
       ]
     },
@@ -199,6 +211,7 @@ export default function initMenu({
           label: 'Remove Selected Albums from Library',
           id: 'remove-albums',
           enabled: false,
+          accelerator: 'Backspace',
           click: (): void => window.webContents.send(IPC_LIBRARY_REMOVE_ALBUMS, gridAlbumSelection)
         },
         {
@@ -278,6 +291,13 @@ export default function initMenu({
     }
   ];
 
+  const playlistListSelectionEntries = [
+    {
+      entry: menu.getMenuItemById('remove-playlists'),
+      multiple: true
+    }
+  ];
+
   ipc.on(IPC_UI_LIBRARY_ALBUM_SELECTION_UPDATE, (_event, selection: Album['_id'][]) => {
     gridAlbumSelection = selection;
     enableMenuEntriesFromSelection(libraryAlbumSelectionEntries, selection);
@@ -291,6 +311,14 @@ export default function initMenu({
     currentPlaylistId = playlistId;
     playlistAlbumSelection = selection;
     enableMenuEntriesFromSelection(playlistAlbumSelectionEntries, selection);
+  });
+
+  ipc.on(IPC_UI_PLAYLIST_LIST_SELECTION_UPDATE, (
+    _event,
+    selection: Playlist['_id'][]
+  ) => {
+    playlistListSelection = selection;
+    enableMenuEntriesFromSelection(playlistListSelectionEntries, selection);
   });
 
   ipc.on(IPC_UI_LOCATION_UPDATE, (_event, location: string) => {

@@ -1,0 +1,35 @@
+@import "../../styles/variables";
+@import "../../styles/mixins";
+
+.tooltip-container {
+  &.tooltip-playlist-view {
+    background-color: $backgroundDarkColor;
+    border-color: rgba($lightColor, .1);
+    padding: 0;
+    .tooltip-arrow {
+      &[data-placement*='top']::before {
+        border-top-color: rgba($lightColor, .1);
+      }
+      &[data-placement*='top']::after {
+        border-top-color: $backgroundDarkColor;
+      }
+      &[data-placement*='bottom']::before {
+        border-bottom-color: rgba($lightColor, .1);
+      }
+      &[data-placement*='bottom']::after {
+        border-bottom-color: $backgroundDarkColor;
+      }
+    }
+  }
+  .tooltip-body {
+    padding: 1rem 1.5rem;
+    overflow-y: auto;
+    max-width: $tooltipMaxWidth;
+    .playlist-date {
+      text-align: center;
+      font-size: .9rem;
+      line-height: 1.5rem;
+      margin: 0;
+    }
+  }
+}

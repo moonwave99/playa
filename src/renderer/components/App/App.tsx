@@ -3,6 +3,7 @@ import { Switch, Route, Redirect, useHistory } from 'react-router';
 import { generatePath } from 'react-router-dom';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import { createSelector } from 'reselect';
+import { sortBy } from 'lodash';
 import Player from '../../lib/player';
 import { selectFolderDialog } from '../../lib/dialog';
 import useImportAlbums from '../../hooks/useImportAlbums/useImportAlbums';
@@ -109,6 +110,7 @@ export const App: FC<AppProps> = ({
   } = useSelector(appSelector);
 
   const [hasSearchFocus, setSearchFocus] = useState(false);
+  const [latestPlaylistResumed, setLatestPlaylistResumed] = useState(false);
 
   const {
     show: showImportDialog,
@@ -170,8 +172,9 @@ export const App: FC<AppProps> = ({
 
   // reopen last opened playlist on app restart
   useEffect(() => {
-    if (lastOpenedPlaylistId && playlists.length > 0 ) {
+    if (lastOpenedPlaylistId && playlists.length > 0 && !latestPlaylistResumed) {
       history.replace(generatePath(PLAYLIST_SHOW, { _id: lastOpenedPlaylistId }));
+      setLatestPlaylistResumed(true);
     }
   }, [lastOpenedPlaylistId, playlists.length]);
 
@@ -244,7 +247,9 @@ export const App: FC<AppProps> = ({
               <CreatePlaylist/>
             </Route>
             <Route path={PLAYLIST_ALL} exact>
-              <AllPlaylistContainer playlists={playlists}/>
+              <AllPlaylistContainer
+                playlists={sortBy(playlists, 'created').reverse()}
+                currentPlaylistId={currentPlaylistId}/>
             </Route>
             <Route path={PLAYLIST_SHOW}>
               { playlists.length > 0

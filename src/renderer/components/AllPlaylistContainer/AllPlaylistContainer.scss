@@ -1,0 +1,13 @@
+@import "../../styles/variables";
+@import "../../styles/mixins";
+
+.all-playlists {
+  padding: var(--section-gutter);
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+  position: relative;
+  &-empty-placeholder {
+    @include emptyComponent();
+  }
+}

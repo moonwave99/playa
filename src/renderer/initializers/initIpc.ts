@@ -23,7 +23,7 @@ import {
 } from '../actions/playlistContentActions';
 
 import {
-  deletePlaylistAction
+  deletePlaylistsAction
 } from '../actions/playlistListActions';
 
 import { IPC_MESSAGES } from '../../constants';
@@ -38,7 +38,7 @@ const {
   IPC_UI_SWIPE,
   IPC_UI_EDIT_PLAYLIST_TITLE,
   IPC_UI_EDIT_ARTIST_TITLE,
-  IPC_UI_REMOVE_PLAYLIST,
+  IPC_UI_REMOVE_PLAYLISTS,
   IPC_LIBRARY_IMPORT_MUSIC,
   IPC_LIBRARY_EDIT_ALBUM,
   IPC_LIBRARY_REMOVE_ALBUMS,
@@ -116,16 +116,16 @@ export default function initIpc({
     },
     [IPC_UI_EDIT_PLAYLIST_TITLE]: (): void => dispatch(setEditPlaylistTitle(true)),
     [IPC_UI_EDIT_ARTIST_TITLE]: (): void => dispatch(setEditArtistTitle(true)),
-    [IPC_UI_REMOVE_PLAYLIST]: (_event: IpcRendererEvent, playlistId: Playlist['_id']): void => {
+    [IPC_UI_REMOVE_PLAYLISTS]: (_event: IpcRendererEvent, playlistIDs: Playlist['_id'][]): void => {
       const { playlists } = store.getState();
-      const playlist = playlists.allById[playlistId];
+      const playlistsToRemove = playlistIDs.map(_id => playlists.allById[_id]);
 
-      if (!playlist) {
+      if (!playlistsToRemove.length) {
         return;
       }
-      
-      deletePlaylistAction({
-        playlist,
+
+      deletePlaylistsAction({
+        playlists: playlistsToRemove,
         dispatch
       }).handler();
     }

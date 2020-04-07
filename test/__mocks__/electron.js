@@ -10,8 +10,9 @@ const {
   IPC_ARTIST_PICTURE_GET_FROM_URL_REQUEST,
   IPC_SEARCH_REQUEST,
   IPC_PLAYLIST_SAVE_REQUEST,
-  IPC_PLAYLIST_DELETE_REQUEST,
   IPC_PLAYLIST_SAVE_LIST_REQUEST,
+  IPC_PLAYLIST_DELETE_REQUEST,
+  IPC_PLAYLIST_DELETE_LIST_REQUEST,
   IPC_ALBUM_GET_LIST_REQUEST,
   IPC_ALBUM_SAVE_REQUEST,
   IPC_ALBUM_CONTENT_REQUEST,
@@ -76,6 +77,10 @@ module.exports = {
         case IPC_ALBUM_DELETE_LIST_REQUEST:
           return args[0].length > 0
             ? fixtures.albums
+            : [];
+        case IPC_PLAYLIST_DELETE_LIST_REQUEST:
+          return args[0].length > 0
+            ? fixtures.playlists
             : [];
         case IPC_ALBUM_GET_SINGLE_INFO:
           return {
