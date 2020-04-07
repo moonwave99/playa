@@ -60,15 +60,21 @@ export function generateRows({
     }
   }
 
+  function padRow(row: HasId[]): void {
+    if (!row) {
+      return;
+    }
+    const padding = threshold.columns - row.length;
+    for (let i = 0; i < padding; i++) {
+      row.push({ _id: EMPTY_CELL });
+    }
+  }
+
   if (groupBy) {
     const groupedItems = groupItemsBy(items, groupBy);
     const rows = Object.entries(groupedItems).reduce((memo, [, value]) => {
       const rows = [...chunk(value, threshold.columns)];
-      const lastRow = rows[rows.length - 1];
-      const padding = threshold.columns - lastRow.length;
-      for (let i = 0; i < padding; i++) {
-        lastRow.push({ _id: EMPTY_CELL });
-      }
+      padRow(rows[rows.length - 1]);
       return [...memo, ...rows];
     }, []);
     return {
@@ -77,8 +83,11 @@ export function generateRows({
     };
   }
 
+  const rows = [...chunk(items, threshold.columns)];
+  padRow(rows[rows.length - 1]);
+
   return {
-    rows: [...chunk(items, threshold.columns)],
+    rows,
     threshold
   };
 }
