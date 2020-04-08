@@ -20,6 +20,7 @@ import './CompactAlbumView.scss';
 type CompactAlbumViewProps = {
   album: Album;
   index: number;
+  selectedIDs: Album['_id'][];
   selected?: boolean;
   isCurrent?: boolean;
   onAlbumMove: Function;
@@ -32,6 +33,7 @@ type CompactAlbumViewProps = {
 export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
   album,
   index,
+  selectedIDs,
   isCurrent = false,
   selected = false,
   onAlbumMove,
@@ -43,6 +45,7 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
   const dispatch = useDispatch();
   const { _id, year, title, type, cover } = album;
   const { artist } = useSelector((state: ApplicationState) => getAlbumContentById(state, _id));
+  const selection = selectedIDs.indexOf(_id) > -1 ? selectedIDs : [_id];
 
   const {
     isOver,
@@ -66,11 +69,11 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
 
   function _onDoubleClick(event: SyntheticEvent): void {
     event.preventDefault();
-    onDoubleClick(album, artist);
+    onDoubleClick({ album, artist });
   }
 
   function _onContextMenu(): void {
-    onContextMenu && onContextMenu(album, artist);
+    onContextMenu && onContextMenu({ album, artist, selection });
   }
 
   function onActionsButtonClick(event: MouseEvent): void {

@@ -140,7 +140,10 @@ describe('AlbumView', () => {
         onDoubleClick={jest.fn()}/>
       , defaultStore);
     wrapper.simulate('contextmenu')
-    expect(handler).toHaveBeenCalledWith(albums[0], artists[0]);
+    expect(handler).toHaveBeenCalledWith({
+      album: albums[0],
+      artist: artists[0]
+    });
   });
 
   it('should call the onDoubleClick handler when the cover is double clicked', () => {
@@ -154,6 +157,8 @@ describe('AlbumView', () => {
         onDoubleClick={handler}/>
       , defaultStore);
     wrapper.find('figure.album-cover').simulate('doubleClick')
-    expect(handler).toHaveBeenCalledWith(albums[0]);
+    expect(handler).toHaveBeenCalledWith({
+      album: albums[0]
+    });
   });
 });

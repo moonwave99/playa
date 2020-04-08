@@ -102,15 +102,15 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
   }, [_rev]);
 
   function _onClick(event: React.MouseEvent): void {
-    onClick && onClick(event, album, artist);
+    onClick && onClick({ event, album, artist });
   }
 
   function _onDoubleClick(): void {
-    onDoubleClick && onDoubleClick(album, artist);
+    onDoubleClick && onDoubleClick({ album, artist });
   }
 
   function _onContextMenu(): void {
-    onContextMenu && onContextMenu(album, artist, selection);
+    onContextMenu && onContextMenu({ album, artist, selection });
   }
 
   const { title, year } = album;

@@ -247,19 +247,21 @@ export const getAlbumContentResponse = (album: Album): Function =>
     });
   }
 
-export const reloadAlbumContent = (album: Album): Function =>
-  async (dispatch: Function): Promise<void> => {
+export const reloadAlbumContent = (albumID: Album['_id']): Function =>
+  async (dispatch: Function, getState: Function): Promise<void> => {
+    const { albums } = getState();
+    const album = albums.allById[albumID];
     const reloadedAlbum = await ipc.invoke(IPC_ALBUM_CONTENT_REQUEST, album);
     const reloadedTracks = await ipc.invoke(IPC_TRACK_GET_LIST_REQUEST, reloadedAlbum.tracks, true);
     dispatch(getAlbumContentResponse(reloadedAlbum));
     dispatch(getTrackListResponse(reloadedTracks));
   }
 
-export const editAlbum = ({ _id }: Album): Function =>
+export const editAlbum = (editingAlbumId: Album['_id']): Function =>
   (dispatch: Function): void => {
     dispatch({
       type: ALBUM_SET_EDITING,
-      editingAlbumId: _id
+      editingAlbumId
     });
   }
 

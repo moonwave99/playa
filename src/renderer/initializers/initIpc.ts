@@ -1,11 +1,9 @@
 import { History } from 'history';
 import { Store } from 'redux';
 import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
-import { getFromList } from '../utils/storeUtils';
 import { setEditPlaylistTitle, setEditArtistTitle } from '../store/modules/ui';
 import { Playlist } from '../store/modules/playlist';
 import { Album, editAlbum } from '../store/modules/album';
-import { Artist } from '../store/modules/artist';
 import {
   playPreviousTrack,
   playNextTrack,
@@ -80,7 +78,7 @@ export default function initIpc({
     },
     [IPC_LIBRARY_IMPORT_MUSIC]: (): void => importMusicHandler(),
     [IPC_LIBRARY_EDIT_ALBUM]: (_event: IpcRendererEvent, albumID: Album['_id']): void =>
-      dispatch(editAlbum({ _id: albumID } as Album)),
+      dispatch(editAlbum(albumID)),
     [IPC_LIBRARY_ADD_ALBUMS_TO_PLAYLIST]: (_event: IpcRendererEvent, selection: Album['_id'][]): void =>
       addAlbumsToPlaylistHandler(selection),
     [IPC_LIBRARY_REMOVE_ALBUMS]: (_event: IpcRendererEvent, selection: Album['_id'][]): void => {
@@ -112,10 +110,7 @@ export default function initIpc({
     [IPC_LIBRARY_REVEAL_ALBUM]: (_event: IpcRendererEvent, selection: Album['_id'][]): void => {
       const { albums } = store.getState();
       revealInFinderAction({
-        albums: [{
-          album: getFromList(albums.allById, [selection[0]])[0] as Album,
-          artist: {} as Artist
-        }],
+        selection: [albums.allById[selection[0]]],
         dispatch
       }).handler();
     },

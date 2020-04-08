@@ -46,12 +46,9 @@ const actionGroupsMap: ActionGroupsMap = {
   [PlaylistContentActionGroups.ALBUMS]: [PlaylistContentActions.REMOVE_ALBUMS],
 };
 
-export type GetPlaylistContentContextMenuParams = {
+export type GetPlaylistContentContextMenuParams = ActionParams & {
   type: typeof PLAYLIST_CONTENT_CONTEXT_ACTIONS;
   actionGroups?: PlaylistContentActionGroups[];
-  playlist: Playlist;
-  selection?: Album['_id'][];
-  dispatch?: Function;
 }
 
 export function getActionGroups({

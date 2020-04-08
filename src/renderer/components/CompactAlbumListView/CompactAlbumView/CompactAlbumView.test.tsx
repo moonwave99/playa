@@ -31,6 +31,7 @@ describe('CompactAlbumView', () => {
     const wrapper = renderInAll(
       <CompactAlbumView
         index={0}
+        selectedIDs={[]}
         album={albums[0]}
         onAlbumMove={jest.fn()}
         onContextMenu={jest.fn()}
@@ -45,6 +46,7 @@ describe('CompactAlbumView', () => {
       <CompactAlbumView
         isCurrent
         index={0}
+        selectedIDs={[]}
         album={albums[0]}
         onAlbumMove={jest.fn()}
         onContextMenu={jest.fn()}
@@ -59,6 +61,7 @@ describe('CompactAlbumView', () => {
       <CompactAlbumView
         sortable
         index={0}
+        selectedIDs={[]}
         album={albums[0]}
         onAlbumMove={jest.fn()}
         onContextMenu={jest.fn()}
@@ -73,6 +76,7 @@ describe('CompactAlbumView', () => {
       <CompactAlbumView
         isCurrent
         index={0}
+        selectedIDs={[]}
         album={albums[0]}
         onAlbumMove={jest.fn()}
         onContextMenu={jest.fn()}
@@ -87,6 +91,7 @@ describe('CompactAlbumView', () => {
       <CompactAlbumView
         isCurrent
         index={0}
+        selectedIDs={[]}
         album={albums[0]}
         onAlbumMove={jest.fn()}
         onContextMenu={jest.fn()}
@@ -102,6 +107,7 @@ describe('CompactAlbumView', () => {
       <CompactAlbumView
         isCurrent
         index={0}
+        selectedIDs={[]}
         album={albums[0]}
         onAlbumMove={jest.fn()}
         onContextMenu={jest.fn()}
@@ -117,6 +123,7 @@ describe('CompactAlbumView', () => {
       <CompactAlbumView
         isCurrent
         index={0}
+        selectedIDs={[]}
         album={{
           ...albums[0],
           year: null
@@ -135,6 +142,7 @@ describe('CompactAlbumView', () => {
       <CompactAlbumView
         isCurrent
         index={0}
+        selectedIDs={[]}
         album={albums[0]}
         onAlbumMove={jest.fn()}
         onContextMenu={handler}
@@ -142,7 +150,11 @@ describe('CompactAlbumView', () => {
         onDoubleClick={jest.fn()}/>
       , defaultStore);
     wrapper.simulate('contextmenu');
-    expect(handler).toHaveBeenCalledWith(albums[0], artists[0]);
+    expect(handler).toHaveBeenCalledWith({
+      album: albums[0],
+      artist: artists[0],
+      selection: [albums[0]._id]
+    });
   });
 
   it('should call the onDoubleClick handler when the cover is double clicked', () => {
@@ -151,6 +163,7 @@ describe('CompactAlbumView', () => {
       <CompactAlbumView
         isCurrent
         index={0}
+        selectedIDs={[]}
         album={albums[0]}
         onAlbumMove={jest.fn()}
         onContextMenu={jest.fn()}
@@ -158,7 +171,10 @@ describe('CompactAlbumView', () => {
         onDoubleClick={handler}/>
       , defaultStore);
     wrapper.simulate('doubleClick')
-    expect(handler).toHaveBeenCalledWith(albums[0], artists[0]);
+    expect(handler).toHaveBeenCalledWith({
+      album: albums[0],
+      artist: artists[0]
+    });
   });
 
   it('should call the onClick handler when clicked', () => {
@@ -167,6 +183,7 @@ describe('CompactAlbumView', () => {
       <CompactAlbumView
         isCurrent
         index={0}
+        selectedIDs={[]}
         album={albums[0]}
         onAlbumMove={jest.fn()}
         onContextMenu={jest.fn()}

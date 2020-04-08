@@ -94,15 +94,27 @@ export const LibraryView: FC<LibraryViewProps> = ({
     }));
   }, []);
 
-	function onAlbumContextMenu(
-    album: Album,
-    artist: Artist,
-    selection: Album['_id'][]
-  ): void {
+	function onAlbumContextMenu({
+    album,
+    artist,
+    selection
+  }: {
+    album: Album;
+    artist: Artist;
+    selection: Album['_id'][];
+  }): void {
+    const menuSelection = [
+      album,
+      ...selection
+        .filter(_id => _id !== album._id)
+        .map(_id => ({ _id }))
+    ] as Album[];
+
 		openContextMenu([
       {
         type: ALBUM_CONTEXT_ACTIONS,
-        albums: [{ album, artist }],
+        selection: menuSelection,
+        artist,
         dispatch,
         actionGroups: [
           AlbumActionsGroups.PLAYBACK,
@@ -124,9 +136,15 @@ export const LibraryView: FC<LibraryViewProps> = ({
     ]);
 	}
 
-	function onAlbumDoubleClick(album: Album, artist: Artist, track: Track): void {
+	function onAlbumDoubleClick({
+    album,
+    track
+  }: {
+    album: Album;
+    track: Track;
+  }): void {
     actionsMap(AlbumActions.PLAY_ALBUM)({
-      albums: [{ album, artist }],
+      selection: [album],
       queue: [album._id],
       trackId: track ? track._id : null,
       dispatch
@@ -134,16 +152,12 @@ export const LibraryView: FC<LibraryViewProps> = ({
 	}
 
   function onAlbumEnter(selection: Album['_id'][]): void {
-    if (selection.length === 0) {
-      return;
-    }
-    const album = latest.find(({ _id }) => _id === selection[0]);
-    if (!album) {
+    if (selection.length !== 1) {
       return;
     }
     actionsMap(AlbumActions.PLAY_ALBUM)({
-      albums: [{ album, artist: {} as Artist }],
-      queue: [album._id],
+      selection: [{ _id: selection[0]} ] as Album[],
+      queue: selection,
       dispatch
     }).handler();
   }

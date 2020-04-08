@@ -68,7 +68,10 @@ describe('AlbumGridTileView', () => {
         album={albums[0]}/>
     , defaultStore);
     wrapper.find('figure').simulate('doubleClick');
-    expect(handler).toHaveBeenCalledWith(albums[0], artists[0]);
+    expect(handler).toHaveBeenCalledWith({
+      album: albums[0],
+      artist: artists[0]
+    });
   });
 
   it('should call the onContextMenu handler when right clicked', () => {
@@ -79,6 +82,10 @@ describe('AlbumGridTileView', () => {
         album={albums[0]}/>
     , defaultStore);
     wrapper.find('figure').simulate('contextmenu');
-    expect(handler).toHaveBeenCalledWith(albums[0], artists[0], [albums[0]._id]);
+    expect(handler).toHaveBeenCalledWith({
+      album: albums[0],
+      artist: artists[0],
+      selection: [albums[0]._id]
+    });
   });
 });

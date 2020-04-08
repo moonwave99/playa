@@ -3,6 +3,7 @@ import { MenuItemConstructorOptions } from 'electron';
 export type Action = {
   title: string;
   handler: Function;
+  enabled?: boolean;
 }
 
 export type ActionCreator<T> = (actionParams: T) => Action;
@@ -31,8 +32,8 @@ export function grouper<T>({
     ...actionGroupsMap[group]
       .map(actionID => actionsMap[actionID])
       .map(action => {
-        const { title, handler } = action(actionParams);
-        return { label: title, click: handler };
+        const { title, handler, enabled } = action(actionParams);
+        return { label: title, click: handler, enabled };
       }),
     ...index < original.length - 1 ? [{ type : 'separator'}] : []
   ], []);

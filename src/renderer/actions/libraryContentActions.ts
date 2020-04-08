@@ -71,12 +71,9 @@ const actionGroupsMap: ActionGroupsMap = {
   ]
 };
 
-export type GetLibraryContentContextMenuParams = {
+export type GetLibraryContentContextMenuParams = ActionParams & {
   type: typeof LIBRARY_CONTENT_CONTEXT_ACTIONS;
   actionGroups?: LibraryContentActionGroups[];
-  currentAlbumId?: Album['_id'];
-  selection?: Album['_id'][];
-  dispatch?: Function;
 }
 
 export function getActionGroups({
