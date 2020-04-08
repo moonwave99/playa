@@ -63,7 +63,8 @@ export const SearchView = (): ReactElement => {
       openContextMenu([
         {
           type: ALBUM_CONTEXT_ACTIONS,
-          albums: [{ album, artist }],
+          artist,
+          selection: [album],
           queue: [albumIDs[0]],
           dispatch,
           actionGroups: [
@@ -81,7 +82,7 @@ export const SearchView = (): ReactElement => {
       openContextMenu([
         {
           type: ALBUM_CONTEXT_ACTIONS,
-          albums: albums.map(album => ({ album, artist })),
+          selection: albums,
           queue: albumIDs,
           dispatch,
           actionGroups: [
@@ -92,9 +93,9 @@ export const SearchView = (): ReactElement => {
     }
   }
 
-  function onResultDoubleClick(album: Album, artist: Artist): void {
+  function onResultDoubleClick(album: Album): void {
     actionsMap(AlbumActions.PLAY_ALBUM)({
-      albums: [{ album, artist }],
+      selection: [album],
       queue: [album._id],
       dispatch
     }).handler();
@@ -102,7 +103,7 @@ export const SearchView = (): ReactElement => {
 
   function onResultEnter(album: Album): void {
     actionsMap(AlbumActions.PLAY_ALBUM)({
-      albums: [{ album, artist: {} as Artist }],
+      selection: [album],
       queue: [album._id],
       dispatch
     }).handler();

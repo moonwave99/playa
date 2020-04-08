@@ -85,7 +85,21 @@ export const PlaylistContainer = (): ReactElement => {
     }
   }
 
-  function onAlbumContextMenu(album: Album, artist: Artist): void {
+  function onAlbumContextMenu({
+    album,
+    artist,
+    selection = []
+  }: {
+    album: Album;
+    artist: Artist;
+    selection: Album['_id'][];
+  }): void {
+    const menuSelection = [
+      album,
+      ...selection
+        .filter(_id => _id !== album._id)
+        .map(_id => ({ _id }))
+    ] as Album[];
     openContextMenu([
       {
         type: PLAYLIST_CONTENT_CONTEXT_ACTIONS,
@@ -95,7 +109,8 @@ export const PlaylistContainer = (): ReactElement => {
       },
       {
         type: ALBUM_CONTEXT_ACTIONS,
-        albums: [{ album, artist }],
+        selection: menuSelection,
+        artist,
         queue: playlist.albums,
         dispatch,
         actionGroups: [
@@ -108,11 +123,17 @@ export const PlaylistContainer = (): ReactElement => {
     ]);
   }
 
-  function onAlbumDoubleClick(album: Album, artist: Artist, track: Track): void {
+  function onAlbumDoubleClick({
+    album,
+    track
+  }: {
+    album: Album;
+    track: Track;
+  }): void {
     actionsMap(AlbumActions.PLAY_ALBUM)({
       queue: playlist.albums,
       playlistId: playlist._id,
-      albums: [{ album, artist }],
+      selection: [album],
       trackId: track ? track._id : null,
       dispatch
     }).handler();
@@ -125,9 +146,7 @@ export const PlaylistContainer = (): ReactElement => {
     actionsMap(AlbumActions.PLAY_ALBUM)({
       queue: playlist.albums,
       playlistId: playlist._id,
-      albums: [{
-        album: albums[selection[0]],
-        artist: {} as Artist }],
+      selection: selection.map(_id => ({ _id })) as Album[],
       dispatch
     }).handler();
   }

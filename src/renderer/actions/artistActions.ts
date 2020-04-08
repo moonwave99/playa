@@ -53,11 +53,9 @@ const actionGroupsMap: ActionGroupsMap = {
   ]
 };
 
-export type GetArtistContextMenuParams = {
+export type GetArtistContextMenuParams = ActionParams & {
   type: typeof ARTIST_CONTEXT_ACTIONS;
   actionGroups?: ArtistActionsGroups[];
-  artist: Artist;
-  dispatch?: Function;
 }
 
 export function getActionGroups({

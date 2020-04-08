@@ -1,7 +1,6 @@
 import React, { ReactElement, FC, useState, useEffect } from 'react';
 import { AlbumView } from './AlbumView/AlbumView';
 import { Album } from '../../store/modules/album';
-import { Artist } from '../../store/modules/artist';
 import { Track } from '../../store/modules/track';
 import { EntityHashMap } from '../../utils/storeUtils';
 
@@ -38,9 +37,6 @@ export const AlbumListView: FC<AlbumListViewProps> = ({
     if (!album) {
       return null;
     }
-    function onDoubleClick(album: Album, artist: Artist, track: Track): void {
-      onAlbumDoubleClick(album, artist, track);
-    }
     return (
       <li key={`${album._id}`}>
         <AlbumView
@@ -49,7 +45,7 @@ export const AlbumListView: FC<AlbumListViewProps> = ({
           dragType={dragType}
           album={album}
           onContextMenu={onAlbumContextMenu}
-          onDoubleClick={onDoubleClick}/>
+          onDoubleClick={onAlbumDoubleClick}/>
       </li>
     );
   }

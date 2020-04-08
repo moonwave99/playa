@@ -87,6 +87,7 @@ export const CompactAlbumListView: FC<CompactAlbumListViewProps> = ({
         key={_id}
         album={album}
         index={index}
+        selectedIDs={selection}
         isCurrent={_id === currentAlbumId}
         selected={selection.indexOf(_id) > -1}
         sortable={sortable}

@@ -105,16 +105,16 @@ export const AlbumDetailView: FC<AlbumDetailViewProps> = ({
 
   drag(drop(ref));
 
-  function onCoverDoubleClick(album: Album): void {
-    onDoubleClick(album);
+  function onCoverDoubleClick(): void {
+    onDoubleClick({ album });
   }
 
   function onTrackDoubleClick(track: Track): void {
-    onDoubleClick(album, artist, track);
+    onDoubleClick({ album, track });
   }
 
   function _onContextMenu(): void {
-    onContextMenu && onContextMenu(album, artist);
+    onContextMenu && onContextMenu({ album, artist });
   }
 
   function onActionsButtonClick(): void {

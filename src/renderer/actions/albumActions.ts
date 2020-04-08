@@ -1,6 +1,8 @@
 import { ipcRenderer as ipc, MenuItemConstructorOptions } from 'electron';
 import { Action, ActionCreator, ActionGroupsMap, ActionMap, grouper } from './actionUtils';
 
+import { Playlist } from '../store/modules/playlist';
+
 import {
   Album,
   reloadAlbumContent,
@@ -8,6 +10,7 @@ import {
 } from '../store/modules/album';
 
 import { Artist } from '../store/modules/artist';
+import { Track } from '../store/modules/track';
 
 import {
   playTrack,
@@ -16,9 +19,6 @@ import {
   enqueueAtEnd
 } from '../store/modules/player';
 
-import { Playlist } from '../store/modules/playlist';
-import { Track } from '../store/modules/track';
-
 import { IPC_MESSAGES, SEARCH_URLS } from '../../constants';
 const {
   IPC_SYS_REVEAL_IN_FINDER,
@@ -26,10 +26,8 @@ const {
 } = IPC_MESSAGES;
 
 export type ActionParams = {
-  albums: {
-    album: Album;
-    artist: Artist;
-  }[];
+  selection: Album[];
+  artist?: Artist;
   queue?: Album['_id'][];
   playlistId?: Playlist['_id'];
   trackId?: Track['_id'];
@@ -40,12 +38,12 @@ function createSearchAction(
   searchURL: SEARCH_URLS,
   siteName: string
 ): ActionCreator<ActionParams> {
-  return ({ albums }): Action => {
-    const { title: albumTitle } = albums[0].album;
-    const query = `${albums[0].artist.name} ${albumTitle}`;
+  return ({ selection, artist }): Action => {
+    const query = `${artist.name} ${selection[0].title}`;
     return {
       title: `Search album on ${siteName}`,
-      handler(): void { ipc.send(IPC_SYS_OPEN_URL, searchURL, query) }
+      handler(): void { ipc.send(IPC_SYS_OPEN_URL, searchURL, query) },
+      enabled: selection.length === 1
     };
   }
 }
@@ -54,23 +52,24 @@ function createSearchArtistAction(
   searchURL: SEARCH_URLS,
   siteName: string
 ): ActionCreator<ActionParams> {
-  return ({ albums }): Action => {
-    const query = `${albums[0].artist.name}`;
+  return ({ selection, artist }): Action => {
+    const query = artist.name;
     return {
       title: `Search artist on ${siteName}`,
-      handler(): void { ipc.send(IPC_SYS_OPEN_URL, searchURL, query) }
+      handler(): void { ipc.send(IPC_SYS_OPEN_URL, searchURL, query) },
+      enabled: selection.length === 1
     };
   }
 }
 
 export const playAlbumAction: ActionCreator<ActionParams> = ({
-  albums,
+  selection,
   queue,
   playlistId,
   trackId,
   dispatch
 }) => {
-  const { _id: albumId } = albums[0].album;
+  const albumId = selection[0]._id;
   return {
     title: 'Play album',
     handler(): void {
@@ -81,64 +80,67 @@ export const playAlbumAction: ActionCreator<ActionParams> = ({
 }
 
 export const editAlbumAction: ActionCreator<ActionParams> = ({
-  albums,
+  selection,
   dispatch
 }) => {
+  const albumId = selection[0]._id;
   return {
     title: 'Edit album',
     handler(): void {
-      dispatch(editAlbum(albums[0].album));
-    }
+      dispatch(editAlbum(albumId));
+    },
+    enabled: selection.length === 1
   };
 }
 
 export const enqueueAfterCurrentAction: ActionCreator<ActionParams> = ({
-  albums,
+  selection,
   dispatch
 }) => {
   return {
     title: 'Enqueue after current album',
-    handler(): void { dispatch(enqueueAfterCurrent(albums.map(({ album }) => album._id))) }
+    handler(): void { dispatch(enqueueAfterCurrent(selection.map(({ _id }) => _id))) }
   };
 }
 
 export const enqueueAtEndAction: ActionCreator<ActionParams> = ({
-  albums,
+  selection,
   dispatch
 }) => {
   return {
     title: 'Enqueue at the end',
-    handler(): void { dispatch(enqueueAtEnd(albums.map(({ album }) => album._id))) }
+    handler(): void { dispatch(enqueueAtEnd(selection.map(({ _id }) => _id))) }
   };
 }
 
 export const removeFromQueueAction: ActionCreator<ActionParams> = ({
-  albums,
+  selection,
   queue,
   dispatch
 }) => {
   return {
     title: 'Remove from queue',
     handler(): void {
-      const albumIDs = albums.map(({ album }) => album._id);
-      const updatedQueue = queue.filter(_id => albumIDs.indexOf(_id) === -1);
+      const updatedQueue = queue.filter(_id => (selection.map(({ _id }) => _id)).indexOf(_id) === -1);
       dispatch(updateQueue(updatedQueue));
     }
   };
 }
 
-export const revealInFinderAction: ActionCreator<ActionParams> = ({ albums }) => {
-  const { path } = albums[0].album;
+export const revealInFinderAction: ActionCreator<ActionParams> = ({ selection }) => {
+  const { path } = selection[0];
   return {
     title: 'Reveal album in Finder',
-    handler(): void { ipc.send(IPC_SYS_REVEAL_IN_FINDER, path) }
+    handler(): void { ipc.send(IPC_SYS_REVEAL_IN_FINDER, path) },
+    enabled: selection.length === 1
   };
 }
 
-export const reloadAlbumContentAction: ActionCreator<ActionParams> = ({ albums, dispatch }) => {
+export const reloadAlbumContentAction: ActionCreator<ActionParams> = ({ selection, dispatch }) => {
   return {
     title: 'Reload album tracks',
-    handler(): Function { return dispatch(reloadAlbumContent(albums[0].album)) }
+    handler(): Function { return dispatch(reloadAlbumContent((selection[0]._id))) },
+    enabled: selection.length === 1
   };
 }
 
@@ -211,15 +213,9 @@ const actionGroupsMap: ActionGroupsMap = {
   ]
 };
 
-export type GetAlbumContextMenuParams = {
+export type GetAlbumContextMenuParams = ActionParams & {
   type: typeof ALBUM_CONTEXT_ACTIONS;
-  queue?: Album['_id'][];
   actionGroups: AlbumActionsGroups[];
-  albums: {
-    album: Album;
-    artist: Artist;
-  }[];
-  dispatch?: Function;
 }
 
 export function getActionGroups({

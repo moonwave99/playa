@@ -19,7 +19,7 @@ export default function useEditAlbum(appElement: HTMLElement): {
   }
 
   function onModalRequestClose(): void {
-    dispatch(editAlbum({} as Album));
+    dispatch(editAlbum(null as Album['_id']));
     setShowModal(false);
   }
 
@@ -28,7 +28,7 @@ export default function useEditAlbum(appElement: HTMLElement): {
     artist: Artist;
   }): void {
     dispatch(updateAlbum(updatedAlbum, artist));
-    dispatch(editAlbum({} as Album));
+    dispatch(editAlbum(null as Album['_id']));
     setShowModal(false);
   }
 

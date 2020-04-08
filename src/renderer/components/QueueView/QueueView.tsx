@@ -44,11 +44,18 @@ export const QueueView = (): ReactElement => {
     });
   }, [currentAlbumId]);
 
-  function onAlbumContextMenu(album: Album, artist: Artist): void {
+  function onAlbumContextMenu({
+    album,
+    artist
+  }: {
+    album: Album;
+    artist: Artist;
+  }): void {
     openContextMenu([
       {
         type: ALBUM_CONTEXT_ACTIONS,
-        albums: [{ album, artist }],
+        artist,
+        selection: [album],
         queue: queue.map(({ _id }) => _id),
         dispatch,
         actionGroups: [
@@ -62,7 +69,13 @@ export const QueueView = (): ReactElement => {
     ]);
   }
 
-  function onAlbumDoubleClick(album: Album, _artist: Artist, track: Track): void {
+  function onAlbumDoubleClick({
+    album,
+    track
+  }: {
+    album: Album;
+    track: Track;
+  }): void {
     dispatch(playTrack({
       playlistId: currentPlaylist ? currentPlaylist._id : null,
       albumId: album._id,

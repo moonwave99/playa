@@ -94,7 +94,11 @@ describe('album actions', () => {
 
   describe('reloadAlbumContent', () => {
     it('should dispatch expected actions', async () => {
-      const store = mockStore({});
+      const store = mockStore({
+        albums: {
+          allById: toObj(albums)
+        }
+      });
       const album = albums[0];
       const expectedActions = [
         {
@@ -106,7 +110,7 @@ describe('album actions', () => {
           results: [tracks[0], tracks[1]]
         }
       ];
-      await reloadAlbumContent(album)(store.dispatch);
+      await reloadAlbumContent(album._id)(store.dispatch, store.getState);
       expect(store.getActions()).toEqual(expectedActions);
     });
   });
@@ -140,7 +144,7 @@ describe('album actions', () => {
     it('should dispatch ALBUM_SET_EDITING', () => {
       const dispatch = jest.fn();
       const album = albums[0];
-      editAlbum(album)(dispatch);
+      editAlbum(album._id)(dispatch);
       expect(dispatch).toHaveBeenCalledWith({
         type: ALBUM_SET_EDITING,
         editingAlbumId: albums[0]. _id

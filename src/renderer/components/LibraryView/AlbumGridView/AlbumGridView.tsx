@@ -112,7 +112,9 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
       return (null);
     }
 
-    function onClick(event: MouseEvent, { _id }: Album): void {
+    function onClick({ event }: {
+      event: MouseEvent;
+    }): void {
       onItemClick({
         _id,
         ...event

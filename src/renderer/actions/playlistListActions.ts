@@ -78,11 +78,9 @@ const actionGroupsMap: ActionGroupsMap = {
   ]
 };
 
-export type GetPlaylistListContextMenuParams = {
+export type GetPlaylistListContextMenuParams = ActionParams & {
   type: typeof PLAYLIST_LIST_CONTEXT_ACTIONS;
   actionGroups?: PlaylistListActionGroups[];
-  playlists: Playlist[];
-  dispatch?: Function;
 }
 
 export function getActionGroups({
