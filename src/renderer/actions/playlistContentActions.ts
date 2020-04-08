@@ -31,11 +31,11 @@ export const removeAlbumsAction: ActionCreator<ActionParams> = ({
 export const PLAYLIST_CONTENT_CONTEXT_ACTIONS = 'playa/context-menu/playlist-content-actions';
 
 export enum PlaylistContentActions {
-  REMOVE_ALBUM = 'REMOVE_ALBUM'
+  REMOVE_ALBUMS = 'REMOVE_ALBUMS'
 }
 
 export const PlaylistContentActionsMap: ActionMap<ActionParams> = {
-  [PlaylistContentActions.REMOVE_ALBUM]: removeAlbumsAction
+  [PlaylistContentActions.REMOVE_ALBUMS]: removeAlbumsAction
 }
 
 export enum PlaylistContentActionGroups {
@@ -43,7 +43,7 @@ export enum PlaylistContentActionGroups {
 }
 
 const actionGroupsMap: ActionGroupsMap = {
-  [PlaylistContentActionGroups.ALBUMS]: [PlaylistContentActions.REMOVE_ALBUM],
+  [PlaylistContentActionGroups.ALBUMS]: [PlaylistContentActions.REMOVE_ALBUMS],
 };
 
 export type GetPlaylistContentContextMenuParams = {

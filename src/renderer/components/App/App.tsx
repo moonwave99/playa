@@ -81,11 +81,12 @@ type AppProps = {
 const CreatePlaylist = (): ReactElement => {
   const playlist = getDefaultPlaylist();
   const dispatch = useDispatch();
+  const { _id } = playlist;
   dispatch({
     type: PLAYLIST_GET_RESPONSE,
     playlist
   });
-  return <Redirect to={generatePath(PLAYLIST_SHOW, { _id: playlist._id })}/>;
+  return <Redirect to={generatePath(PLAYLIST_SHOW, { _id })}/>;
 }
 
 export const App: FC<AppProps> = ({

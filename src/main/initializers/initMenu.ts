@@ -21,6 +21,7 @@ const {
   IPC_UI_LIBRARY_ALBUM_SELECTION_UPDATE,
   IPC_UI_PLAYLIST_ALBUM_SELECTION_UPDATE,
   IPC_UI_PLAYLIST_LIST_SELECTION_UPDATE,
+  IPC_UI_MENU_REMOTE_CALL,
   IPC_PLAYBACK_PREV_TRACK,
   IPC_PLAYBACK_NEXT_TRACK,
   IPC_PLAYBACK_CLEAR_QUEUE,
@@ -309,6 +310,14 @@ export default function initMenu({
       multiple: true
     }
   ];
+
+  ipc.on(IPC_UI_MENU_REMOTE_CALL, (_event, id: string) => {
+    const entry = menu.getMenuItemById(id);
+    if (!entry) {
+      return;
+    }
+    entry.click();
+  });
 
   ipc.on(IPC_UI_LIBRARY_ALBUM_SELECTION_UPDATE, (_event, selection: Album['_id'][]) => {
     gridAlbumSelection = selection;

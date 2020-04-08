@@ -92,6 +92,7 @@ export const IPC_MESSAGES = {
   IPC_UI_PLAYLIST_ALBUM_SELECTION_UPDATE: 'ui:playlist-album-selection-update',
   IPC_UI_PLAYLIST_LIST_SELECTION_UPDATE: 'ui:playlist-list-selection-update',
   IPC_UI_REMOVE_PLAYLISTS: 'ui:remove-playlists',
+  IPC_UI_MENU_REMOTE_CALL: 'ui:menu-remote-call',
   IPC_PLAYBACK_PREV_TRACK: 'ui:playback:prev-track',
   IPC_PLAYBACK_NEXT_TRACK: 'ui:playback:next-track',
   IPC_PLAYBACK_CLEAR_QUEUE: 'ui:playback:clear-queue',

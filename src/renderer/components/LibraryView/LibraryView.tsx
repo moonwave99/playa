@@ -94,7 +94,11 @@ export const LibraryView: FC<LibraryViewProps> = ({
     }));
   }, []);
 
-	function onAlbumContextMenu(album: Album, artist: Artist): void {
+	function onAlbumContextMenu(
+    album: Album,
+    artist: Artist,
+    selection: Album['_id'][]
+  ): void {
 		openContextMenu([
       {
         type: ALBUM_CONTEXT_ACTIONS,
@@ -110,7 +114,7 @@ export const LibraryView: FC<LibraryViewProps> = ({
       },
       {
         type: LIBRARY_CONTENT_CONTEXT_ACTIONS,
-        selection: [album],
+        selection,
         dispatch,
         currentAlbumId,
         actionGroups: [
@@ -144,11 +148,8 @@ export const LibraryView: FC<LibraryViewProps> = ({
     }).handler();
   }
 
-  function onAlbumBackspace(selectionIDs: Album['_id'][]): void {
-    const selection: Album[] = latest.filter(
-      ({ _id }) => selectionIDs.indexOf(_id) > -1
-    );
-    actionsMap(LibraryContentActions.REMOVE_ALBUM)({
+  function onAlbumBackspace(selection: Album['_id'][]): void {
+    actionsMap(LibraryContentActions.REMOVE_ALBUMS)({
       selection,
       currentAlbumId,
       dispatch

@@ -84,9 +84,9 @@ export default function initIpc({
     [IPC_LIBRARY_ADD_ALBUMS_TO_PLAYLIST]: (_event: IpcRendererEvent, selection: Album['_id'][]): void =>
       addAlbumsToPlaylistHandler(selection),
     [IPC_LIBRARY_REMOVE_ALBUMS]: (_event: IpcRendererEvent, selection: Album['_id'][]): void => {
-      const { player, albums } = store.getState();
+      const { player } = store.getState();
       removeLibraryAlbumsAction({
-        selection: getFromList(albums.allById, selection),
+        selection,
         currentAlbumId: player.currentAlbumId,
         dispatch
       }).handler();

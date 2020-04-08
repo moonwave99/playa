@@ -279,7 +279,7 @@ describe('library actions', () => {
           queue: [albums[1]._id]
         }
       ];
-      await removeAlbums([albums[0]])(store.dispatch, store.getState);
+      await removeAlbums([albums[0]._id])(store.dispatch, store.getState);
       expect(store.getActions()).toEqual(expectedActions);
     });
 
@@ -350,7 +350,7 @@ describe('library actions', () => {
           playlists: [playlists[0]]
         }
       ];
-      await removeAlbums([albums[0]])(store.dispatch, store.getState);
+      await removeAlbums([albums[0]._id])(store.dispatch, store.getState);
       expect(store.getActions()).toEqual(expectedActions);
     });
   });
