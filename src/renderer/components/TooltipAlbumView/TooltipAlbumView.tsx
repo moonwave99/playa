@@ -41,7 +41,7 @@ export const TooltipAlbumView: FC<TooltipAlbumViewProps> = ({
   }, [tracks.length]);
 
   function onTrackDoubleClick(track: Track): void {
-    onDoubleClick(album, artist, track);
+    onDoubleClick({ album, artist, track });
   }
 
   function renderTracklist(): ReactElement {

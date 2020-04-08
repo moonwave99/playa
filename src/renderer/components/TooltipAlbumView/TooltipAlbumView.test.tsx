@@ -68,6 +68,10 @@ describe('TooltipAlbumView', () => {
 
     wrapper.find('.tracklist-item').at(1).simulate('doubleclick');
 
-    expect(handler).toHaveBeenCalledWith(album, artists[0], tracks[1]);
+    expect(handler).toHaveBeenCalledWith({
+      album,
+      artist: artists[0],
+      track: tracks[1]
+    });
   });
 });
