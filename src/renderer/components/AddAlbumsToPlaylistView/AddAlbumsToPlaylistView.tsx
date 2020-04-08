@@ -37,7 +37,7 @@ export const AddAlbumsToPlaylistView: FC<AddAlbumsToPlaylistViewProps> = ({
       const { _id, title, created } = playlist;
       const date = formatDate({ date: created, options: DATE_FORMATS.SHORT });
       return (
-        <li key={_id} onClick={onClick}>
+        <li key={_id} onClick={onClick} id={`add-to-playlist-item-${_id}`}>
           <span className="playlist-date">{date}</span>
           <span className="playlist-title">{title}</span>
         </li>
