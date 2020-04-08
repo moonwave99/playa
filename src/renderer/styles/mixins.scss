@@ -190,16 +190,17 @@
 
 @mixin horizontalSeparator(
   $separatorWidth: 30%,
-  $color: $albumSeparatorColor
+  $color: $albumSeparatorColor,
+  $height: $mainUnit * 3
 ) {
-  margin-bottom: calc(var(--section-gutter) * 3);
+  margin-bottom: $height;
   position: relative;
   &:after {
     content: '';
     position: absolute;
     width: $separatorWidth;
     left: calc((100% - #{$separatorWidth}) / 2);
-    bottom: calc(var(--section-gutter) * -1.5);
+    bottom: $height / -2;
     height: 1px;
     background-color: $color;
   }
