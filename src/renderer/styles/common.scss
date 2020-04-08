@@ -207,6 +207,7 @@ input[type=search] {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	z-index: 1010;
 	&-after-open{
 		opacity: 1;
 	}

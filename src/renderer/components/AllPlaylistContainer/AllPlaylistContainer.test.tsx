@@ -26,14 +26,21 @@ const defaultStore = {
 describe('AllPlaylistContainer', () => {
   it('should contain a .all-playlists', () => {
     const wrapper = renderInAll(
-      <AllPlaylistContainer playlists={playlists}/>
+      <AllPlaylistContainer playlists={playlists} currentPlaylistId={null}/>
       , defaultStore);
     expect(wrapper.is('.all-playlists')).toBe(true);
   });
 
+  it('should contain a placeholder if there are no playlists', () => {
+    const wrapper = renderInAll(
+      <AllPlaylistContainer playlists={[]} currentPlaylistId={null}/>
+      , defaultStore);
+    expect(wrapper.find('.all-playlists-empty-placeholder')).toHaveLength(1);
+  });
+
   it('should update page title', () => {
     mountInAll(
-      <AllPlaylistContainer playlists={playlists}/>
+      <AllPlaylistContainer playlists={playlists} currentPlaylistId={null}/>
       , defaultStore);
     expect(document.title).toBe('All Playlists');
   });

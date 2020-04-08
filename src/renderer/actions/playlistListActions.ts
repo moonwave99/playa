@@ -4,7 +4,7 @@ import { confirmDialog } from '../lib/dialog';
 
 import {
   Playlist,
-  deletePlaylistRequest,
+  deletePlaylistListRequest,
 } from '../store/modules/playlist';
 
 import {
@@ -13,18 +13,21 @@ import {
 } from '../store/modules/player';
 
 export type ActionParams = {
-  playlist: Playlist;
+  playlists: Playlist[];
   dispatch?: Function;
 }
 
 export const playPlaylistAction: ActionCreator<ActionParams> = ({
-  playlist,
+  playlists,
   dispatch
 }) => {
   return {
     title: `Play playlist`,
     handler: async (): Promise<void> => {
-      const { _id: playlistId, albums } = playlist;
+      if (!playlists.length) {
+        return;
+      }
+      const { _id: playlistId, albums } = playlists[0];
       if (albums.length === 0) {
         return;
       }
@@ -34,8 +37,8 @@ export const playPlaylistAction: ActionCreator<ActionParams> = ({
   };
 }
 
-export const deletePlaylistAction: ActionCreator<ActionParams> = ({
-  playlist,
+export const deletePlaylistsAction: ActionCreator<ActionParams> = ({
+  playlists,
   dispatch
 }) => {
   return {
@@ -43,10 +46,10 @@ export const deletePlaylistAction: ActionCreator<ActionParams> = ({
     handler: async (): Promise<void> => {
       const confirmed = await confirmDialog({
         title: 'Remove playlist',
-        message: `You are about to delete playlist '${playlist.title}', are you sure?`
+        message: `You are about to delete ${playlists.length} playlist(s), are you sure?`
       });
       if (confirmed) {
-        dispatch(deletePlaylistRequest(playlist));
+        dispatch(deletePlaylistListRequest(playlists));
       }
     }
   };
@@ -56,12 +59,12 @@ export const PLAYLIST_LIST_CONTEXT_ACTIONS = 'playa/context-menu/playlist-list-a
 
 export enum PlaylistListActions {
   PLAY_PLAYLIST = 'PLAY_PLAYLIST',
-  DELETE_PLAYLIST = 'DELETE_PLAYLIST'
+  DELETE_PLAYLISTS = 'DELETE_PLAYLIST'
 }
 
 export const PlaylistListActionsMap: ActionMap<ActionParams> = {
   [PlaylistListActions.PLAY_PLAYLIST]: playPlaylistAction,
-  [PlaylistListActions.DELETE_PLAYLIST]: deletePlaylistAction
+  [PlaylistListActions.DELETE_PLAYLISTS]: deletePlaylistsAction
 }
 
 export enum PlaylistListActionGroups {
@@ -71,14 +74,14 @@ export enum PlaylistListActionGroups {
 const actionGroupsMap: ActionGroupsMap = {
   [PlaylistListActionGroups.PLAYLIST]: [
     PlaylistListActions.PLAY_PLAYLIST,
-    PlaylistListActions.DELETE_PLAYLIST
+    PlaylistListActions.DELETE_PLAYLISTS
   ]
 };
 
 export type GetPlaylistListContextMenuParams = {
   type: typeof PLAYLIST_LIST_CONTEXT_ACTIONS;
   actionGroups?: PlaylistListActionGroups[];
-  playlist: Playlist;
+  playlists: Playlist[];
   dispatch?: Function;
 }
 
@@ -86,14 +89,14 @@ export function getActionGroups({
   actionGroups = [
     PlaylistListActionGroups.PLAYLIST
   ],
-  playlist,
+  playlists,
   dispatch
 }: GetPlaylistListContextMenuParams): MenuItemConstructorOptions[] {
   return grouper<ActionParams>({
     actionGroups,
     actionGroupsMap,
     actionParams: {
-      playlist,
+      playlists,
       dispatch
     },
     actionsMap: PlaylistListActionsMap

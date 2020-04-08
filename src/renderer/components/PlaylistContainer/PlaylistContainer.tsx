@@ -133,7 +133,7 @@ export const PlaylistContainer = (): ReactElement => {
   }
 
   function onAlbumBackspace(selection: Album['_id'][]): void {
-    actionsMap(PlaylistContentActions.REMOVE_ALBUM)({
+    actionsMap(PlaylistContentActions.REMOVE_ALBUMS)({
       selection,
       playlist,
       dispatch

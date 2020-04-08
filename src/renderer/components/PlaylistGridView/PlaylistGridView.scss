@@ -1,0 +1,48 @@
+@import "../../styles/variables";
+@import "../../styles/mixins";
+
+.playlist-grid {
+  .playlist-grid-row {
+    @include clearFix();
+    .playlist-grid-tile {
+      float: left;
+      margin-bottom: 1.5rem;
+      padding: 0 .75rem;
+      @include ellipsis();
+      &:not(.is-playing) {
+        .playlist-cover {
+          @include playOverlay('../../static/icons/album/play.svg', $mainUnit);
+        }
+      }
+      &.is-playing {
+        .playlist-cover {
+          @include playOverlay('../../static/icons/album/play.svg', $mainUnit, rgba(white, .1), '', 1, 1);
+        }
+      }
+      &.selected {
+        .playlist-cover {
+          box-shadow: 0 0 0 2px $mainColor;
+          z-index: 1000;
+        }
+      }
+      .playlist-cover {
+        @include squareCover($backgroundDarkColor);
+        transform: scale(.9);
+      }
+      .playlist-title {
+        @include ellipsis();
+        text-align: center;
+        display: block;
+        line-height: 1.5rem;
+        font-size: .9rem;
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+  &-empty-placeholder {
+    @include emptyComponent();
+  }
+}

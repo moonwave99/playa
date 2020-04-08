@@ -25,12 +25,13 @@ const {
   IPC_UI_SWIPE,
   IPC_LIBRARY_IMPORT_MUSIC,
   IPC_LIBRARY_EDIT_ALBUM,
+  IPC_LIBRARY_ADD_ALBUMS_TO_PLAYLIST,
   IPC_LIBRARY_REMOVE_ALBUMS,
   IPC_PLAYLIST_REMOVE_ALBUMS,
   IPC_LIBRARY_REVEAL_ALBUM,
   IPC_UI_EDIT_PLAYLIST_TITLE,
   IPC_UI_EDIT_ARTIST_TITLE,
-  IPC_UI_REMOVE_PLAYLIST
+  IPC_UI_REMOVE_PLAYLISTS
 } = IPC_MESSAGES;
 
 describe('initIpc', () => {
@@ -60,6 +61,7 @@ describe('initIpc', () => {
     store,
     focusSearchHandler: jest.fn(),
     importMusicHandler: jest.fn(),
+    addAlbumsToPlaylistHandler: jest.fn(),
     history: {
       replace: jest.fn(),
       goBack: jest.fn(),
@@ -123,6 +125,12 @@ describe('initIpc', () => {
     expect(handler).toHaveBeenCalledWith(ipcEvent, '1');
   });
 
+  it('should handle IPC_LIBRARY_ADD_ALBUMS_TO_PLAYLIST', () => {
+    const handler = ipcRenderer.handlers[IPC_LIBRARY_ADD_ALBUMS_TO_PLAYLIST];
+    ipcRenderer.trigger(IPC_LIBRARY_ADD_ALBUMS_TO_PLAYLIST, ['1']);
+    expect(handler).toHaveBeenCalledWith(ipcEvent, ['1']);
+  });
+
   it('should handle IPC_LIBRARY_REMOVE_ALBUMS', () => {
     const handler = ipcRenderer.handlers[IPC_LIBRARY_REMOVE_ALBUMS];
     ipcRenderer.trigger(IPC_LIBRARY_REMOVE_ALBUMS, ['1', '2']);
@@ -153,9 +161,9 @@ describe('initIpc', () => {
     expect(handler).toHaveBeenCalledWith(ipcEvent, '1');
   });
 
-  it('should handle IPC_UI_REMOVE_PLAYLIST', () => {
-    const handler = ipcRenderer.handlers[IPC_UI_REMOVE_PLAYLIST];
-    ipcRenderer.trigger(IPC_UI_REMOVE_PLAYLIST, '1');
-    expect(handler).toHaveBeenCalledWith(ipcEvent, '1');
+  it('should handle IPC_UI_REMOVE_PLAYLISTS', () => {
+    const handler = ipcRenderer.handlers[IPC_UI_REMOVE_PLAYLISTS];
+    ipcRenderer.trigger(IPC_UI_REMOVE_PLAYLISTS, ['1']);
+    expect(handler).toHaveBeenCalledWith(ipcEvent, ['1']);
   });
 });

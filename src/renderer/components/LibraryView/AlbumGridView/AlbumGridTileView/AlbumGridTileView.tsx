@@ -110,7 +110,7 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
   }
 
   function _onContextMenu(): void {
-    onContextMenu && onContextMenu(album, artist);
+    onContextMenu && onContextMenu(album, artist, selection);
   }
 
   const { title, year } = album;

@@ -3,10 +3,12 @@ import { Switch, Route, Redirect, useHistory } from 'react-router';
 import { generatePath } from 'react-router-dom';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import { createSelector } from 'reselect';
+import { uniq } from 'lodash';
 import Player from '../../lib/player';
 import { selectFolderDialog } from '../../lib/dialog';
 import useImportAlbums from '../../hooks/useImportAlbums/useImportAlbums';
 import useEditAlbum from '../../hooks/useEditAlbum/useEditAlbum';
+import useAddAlbumsToPlaylist from '../../hooks/useAddAlbumsToPlaylist/useAddAlbumsToPlaylist';
 import { AppHeader } from './AppHeader/AppHeader';
 import { PlayerView } from '../PlayerView/PlayerView';
 import { ArtistView } from '../ArtistView/ArtistView';
@@ -17,22 +19,21 @@ import { SidebarView } from '../SidebarView/SidebarView';
 import { AllPlaylistContainer } from '../AllPlaylistContainer/AllPlaylistContainer';
 import { PlaylistContainer } from '../PlaylistContainer/PlaylistContainer';
 import { CustomDragLayer } from '../CustomDragLayer/CustomDragLayer';
-
 import './App.scss';
 
 import initIpc from '../../initializers/initIpc';
 import { ApplicationState } from '../../store/store';
-import { Album, selectors as albumSelectors } from '../../store/modules/album';
-import { getAllArtistsRequest } from '../../store/modules/artist';
 
 import {
   Playlist,
   getDefaultPlaylist,
   getAllPlaylistsRequest,
+  savePlaylistRequest,
   selectors as playlistSelectors,
   PLAYLIST_GET_RESPONSE
 } from '../../store/modules/playlist';
-
+import { Album, selectors as albumSelectors } from '../../store/modules/album';
+import { getAllArtistsRequest } from '../../store/modules/artist';
 import { updateLocation } from '../../store/modules/ui';
 
 import {
@@ -41,8 +42,6 @@ import {
   togglePlayback,
   selectors as playerSelectors
 } from '../../store/modules/player';
-
-import { toArray } from '../../utils/storeUtils';
 
 import {
   QUEUE,
@@ -55,15 +54,14 @@ import {
 } from '../../routes';
 
 const appSelector = createSelector(
-  playlistSelectors.allById,
+  playlistSelectors.allByDate,
   playlistSelectors.recent,
   playerSelectors.state,
   albumSelectors.state,
   ({ ui }: ApplicationState) => ui,
   (playlists, recentPlaylists, player, { allById: albums, editingAlbumId }, ui) => {
-    const playlistArray = toArray(playlists);
     return {
-      playlists: playlistArray,
+      playlists,
       recentPlaylists,
       currentPlaylistId: player.currentPlaylistId,
       currentAlbumId: player.currentAlbumId,
@@ -83,11 +81,12 @@ type AppProps = {
 const CreatePlaylist = (): ReactElement => {
   const playlist = getDefaultPlaylist();
   const dispatch = useDispatch();
+  const { _id } = playlist;
   dispatch({
     type: PLAYLIST_GET_RESPONSE,
     playlist
   });
-  return <Redirect to={generatePath(PLAYLIST_SHOW, { _id: playlist._id })}/>;
+  return <Redirect to={generatePath(PLAYLIST_SHOW, { _id })}/>;
 }
 
 export const App: FC<AppProps> = ({
@@ -109,6 +108,23 @@ export const App: FC<AppProps> = ({
   } = useSelector(appSelector);
 
   const [hasSearchFocus, setSearchFocus] = useState(false);
+  const [latestPlaylistResumed, setLatestPlaylistResumed] = useState(false);
+
+  function onCreatePlaylist(albums: Album['_id'][] = []): void {
+    const playlist = getDefaultPlaylist();
+    dispatch({
+      type: PLAYLIST_GET_RESPONSE,
+      playlist: { ...playlist, albums }
+    });
+    history.replace(generatePath(PLAYLIST_SHOW, { _id: playlist._id }));
+  }
+
+  function onSavePlaylist(playlist: Playlist, albums: Album['_id'][] = []): void {
+    dispatch(savePlaylistRequest({
+      ...playlist,
+      albums: uniq([...playlist.albums, ...albums])
+    }));
+  }
 
   const {
     show: showImportDialog,
@@ -119,6 +135,15 @@ export const App: FC<AppProps> = ({
     show: showEditModal,
     render: renderEditModal
   } = useEditAlbum(mainElementRef.current);
+
+  const {
+    show: showAddAlbumsToPlaylistModal,
+    render: renderAddAlbumsToPlaylistModal
+  } = useAddAlbumsToPlaylist({
+    appElement: mainElementRef.current,
+    onCreatePlaylist,
+    onSavePlaylist
+  });
 
   function onFocusSearch(): void {
     setSearchFocus(true);
@@ -145,6 +170,10 @@ export const App: FC<AppProps> = ({
     showImportDialog(folder);
   }
 
+  function addAlbumsToPlaylistHandler(albumIDs: Album['_id'][]): void {
+    showAddAlbumsToPlaylistModal(albumIDs);
+  }
+
   useEffect(() => {
     if (editingAlbum) {
       showEditModal(editingAlbum);
@@ -158,6 +187,7 @@ export const App: FC<AppProps> = ({
       history,
       dispatch,
       importMusicHandler,
+      addAlbumsToPlaylistHandler,
       store,
       focusSearchHandler: onFocusSearch
     });
@@ -170,8 +200,9 @@ export const App: FC<AppProps> = ({
 
   // reopen last opened playlist on app restart
   useEffect(() => {
-    if (lastOpenedPlaylistId && playlists.length > 0 ) {
+    if (lastOpenedPlaylistId && playlists.length > 0 && !latestPlaylistResumed) {
       history.replace(generatePath(PLAYLIST_SHOW, { _id: lastOpenedPlaylistId }));
+      setLatestPlaylistResumed(true);
     }
   }, [lastOpenedPlaylistId, playlists.length]);
 
@@ -184,15 +215,6 @@ export const App: FC<AppProps> = ({
   useEffect(() => {
     updateLocation(history.location.pathname);
   }, [history.location.pathname]);
-
-  function onCreatePlaylist(albums: Album['_id'][] = []): void {
-    const playlist = getDefaultPlaylist();
-    dispatch({
-      type: PLAYLIST_GET_RESPONSE,
-      playlist: { ...playlist, albums }
-    });
-    history.replace(generatePath(PLAYLIST_SHOW, { _id: playlist._id }));
-  }
 
   function onQueueButtonDrop(albums: Album['_id'][] = []): void {
     dispatch(enqueueAtEnd(albums));
@@ -244,7 +266,9 @@ export const App: FC<AppProps> = ({
               <CreatePlaylist/>
             </Route>
             <Route path={PLAYLIST_ALL} exact>
-              <AllPlaylistContainer playlists={playlists}/>
+              <AllPlaylistContainer
+                playlists={playlists}
+                currentPlaylistId={currentPlaylistId}/>
             </Route>
             <Route path={PLAYLIST_SHOW}>
               { playlists.length > 0
@@ -261,6 +285,7 @@ export const App: FC<AppProps> = ({
       <CustomDragLayer/>
       { renderImportModal() }
       { renderEditModal() }
+      { renderAddAlbumsToPlaylistModal() }
     </main>
   );
 }

@@ -15,6 +15,7 @@ const {
   IPC_PLAYLIST_SAVE_REQUEST,
   IPC_PLAYLIST_SAVE_LIST_REQUEST,
   IPC_PLAYLIST_DELETE_REQUEST,
+  IPC_PLAYLIST_DELETE_LIST_REQUEST,
   IPC_SEARCH_REQUEST,
   IPC_ALBUM_GET_LIST_REQUEST,
   IPC_ALBUM_SAVE_REQUEST,
@@ -121,6 +122,10 @@ export default async function initDatabase({
 
   ipc.handle(IPC_PLAYLIST_DELETE_REQUEST,
     async (_event, playlist) => await db.playlist.delete(playlist)
+  );
+
+  ipc.handle(IPC_PLAYLIST_DELETE_LIST_REQUEST,
+    async (_event, playlists) => await db.playlist.deleteBulk(playlists)
   );
 
   ipc.handle(IPC_SEARCH_REQUEST, async (_event, query) => await search(query));

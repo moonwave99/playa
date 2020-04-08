@@ -6,7 +6,8 @@ const {
   IPC_UI_STATE_UPDATE,
   IPC_UI_LOCATION_UPDATE,
   IPC_UI_LIBRARY_ALBUM_SELECTION_UPDATE,
-  IPC_UI_PLAYLIST_ALBUM_SELECTION_UPDATE
+  IPC_UI_PLAYLIST_ALBUM_SELECTION_UPDATE,
+  IPC_UI_PLAYLIST_LIST_SELECTION_UPDATE
 } = IPC_MESSAGES;
 
 const MAX_TITLE_LENGTH = 50;
@@ -139,6 +140,9 @@ export const updateLibraryAlbumSelection =
 
 export const updatePlaylistAlbumSelection =
   (playlistId: string, selection: string[]): void => ipc.send(IPC_UI_PLAYLIST_ALBUM_SELECTION_UPDATE, playlistId, selection);
+
+export const updatePlaylistListSelection =
+  (selection: string[]): void => ipc.send(IPC_UI_PLAYLIST_LIST_SELECTION_UPDATE, selection);
 
 const INITIAL_STATE = {
   started: true,

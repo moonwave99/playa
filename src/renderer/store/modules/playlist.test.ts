@@ -11,6 +11,7 @@ import reducer, {
   getAllPlaylistsRequest,
   savePlaylistRequest,
   deletePlaylistRequest,
+  deletePlaylistListRequest,
   PLAYLIST_GET_REQUEST,
   PLAYLIST_GET_RESPONSE,
   PLAYLIST_GET_ALL_REQUEST,
@@ -18,7 +19,9 @@ import reducer, {
   PLAYLIST_SAVE_REQUEST,
   PLAYLIST_SAVE_RESPONSE,
   PLAYLIST_DELETE_REQUEST,
-  PLAYLIST_DELETE_RESPONSE
+  PLAYLIST_DELETE_RESPONSE,
+  PLAYLIST_DELETE_LIST_REQUEST,
+  PLAYLIST_DELETE_LIST_RESPONSE
 } from './playlist';
 
 describe('playlist actions', () => {
@@ -76,6 +79,17 @@ describe('playlist actions', () => {
       }]);
     });
   });
+
+  describe('deletePlaylistListRequest', () => {
+    it('should dispatch PLAYLIST_DELETE_LIST_RESPONSE', async () => {
+      const store = mockStore({});
+      await deletePlaylistListRequest(playlists)(store.dispatch);
+      expect(store.getActions()).toEqual([{
+        type: PLAYLIST_DELETE_LIST_RESPONSE,
+        playlists
+      }]);
+    });
+  });
 });
 
 describe('playlist reducer', () => {
@@ -83,6 +97,15 @@ describe('playlist reducer', () => {
     expect(reducer(undefined, {} as PlaylistActionTypes)).toEqual({
       allById: {},
       isLoading: false
+    });
+  });
+
+  it('should handle PLAYLIST_GET_REQUEST', () => {
+    expect(reducer({} as PlaylistState, {
+      type: PLAYLIST_GET_REQUEST,
+      id: '1'
+    })).toEqual({
+      isLoading: true
     });
   });
 
@@ -166,6 +189,30 @@ describe('playlist reducer', () => {
         type: PLAYLIST_DELETE_RESPONSE,
         playlist: { _id: '666' } as Playlist
       })).toEqual(initialState);
+    });
+  });
+
+  it('should handle PLAYLIST_DELETE_LIST_REQUEST', () => {
+    expect(reducer({} as PlaylistState, {
+      type: PLAYLIST_DELETE_LIST_REQUEST,
+      playlists
+    })).toEqual({});
+  });
+
+  it('should handle PLAYLIST_DELETE_LIST_RESPONSE', () => {
+    const initialState = {
+      allById: {
+        "1": playlists[0],
+        "2": playlists[1]
+      },
+      isLoading: false
+    };
+    expect(reducer(initialState, {
+      type: PLAYLIST_DELETE_LIST_RESPONSE,
+      playlists
+    })).toEqual({
+      allById: {},
+      isLoading: false
     });
   });
 });

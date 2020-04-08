@@ -1,6 +1,6 @@
 import React from 'react';
 import { MockAudioElement } from '../../../../test/mockAudioElement'
-import { renderInAll, mountInAll, simulateClick } from '../../../../test/testUtils';
+import { mountInAll, simulateClick } from '../../../../test/testUtils';
 import { albums, artists } from '../../../../test/testFixtures';
 import { toObj } from '../../utils/storeUtils';
 import Player from '../../lib/player';
@@ -34,14 +34,14 @@ const defaultStore = {
 
 describe('App', () => {
   it('should render an .app', () => {
-		const wrapper = renderInAll(
+		const wrapper = mountInAll(
 			<App
         player={new Player({ audioElement: new MockAudioElement() })}
         queue={[]}
         waveformBasePath="/path/to/waveforms"
         lastOpenedPlaylistId={null}/>
 		, defaultStore);
-		expect(wrapper.is('.app')).toBe(true);
+		expect(wrapper.find('.app')).toHaveLength(1);
   });
 
   it('should render the edit album modal if editingAlbum', () => {

@@ -24,9 +24,11 @@ type AlbumGridViewProps = {
   currentTrackId?: Track['_id'];
   showArtists?: boolean;
   autoFocus?: boolean;
-  groupBy?: string;
+  interactive?: boolean;
+  showTooltips?: boolean;
   clearSelectionOnBlur?: boolean;
   onSelectionChange?: Function;
+  groupBy?: string;
   onEnter?: Function;
   onBackspace?: Function;
   onAlbumContextMenu?: Function;
@@ -37,9 +39,11 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
   albums = [],
   currentAlbumId,
   currentTrackId,
-  clearSelectionOnBlur = false,
   showArtists = true,
   autoFocus = false,
+  interactive = true,
+  showTooltips = true,
+  clearSelectionOnBlur = false,
   groupBy,
   onSelectionChange,
   onEnter,
@@ -59,8 +63,9 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
   } = useGrid({
     items: albums,
     thresholds: ALBUM_GRID_THRESHOLDS,
-    initialSelection: [albums[0]._id],
+    initialSelection: interactive ? [albums[0]._id] : [],
     excludeClass: '.album-cover',
+    interactive,
     clearSelectionOnBlur,
     groupBy,
     onEnter,
@@ -107,6 +112,32 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
       return (null);
     }
 
+    function onClick(event: MouseEvent, { _id }: Album): void {
+      onItemClick({
+        _id,
+        ...event
+      });
+    }
+
+    if (!showTooltips) {
+      return (
+        <AlbumGridTileView
+          key={_id}
+          style={{ width: `${(100 / threshold.columns)}%` }}
+          showArtist={showArtists}
+          album={album}
+          selected={selection.indexOf(_id) > -1}
+          selectedIDs={selection}
+          isPlaying={_id === currentAlbumId}
+          isDragging={isDragging}
+          onClick={onClick}
+          onDoubleClick={onAlbumDoubleClick}
+          onContextMenu={onAlbumContextMenu}
+          onDragBegin={onDragBegin}
+          onDragEnd={onDragEnd}/>
+      );
+    }
+
     function renderTooltip(tooltipArgs: TooltipArg): ReactElement {
       return (
         <TooltipAlbumView
@@ -124,13 +155,6 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
         onMouseEnter,
         onMouseLeave,
       } = getTriggerProps({ ref });
-
-      function onClick(event: MouseEvent, { _id }: Album): void {
-        onItemClick({
-          _id,
-          ...event
-        });
-      }
 
       return (
         <AlbumGridTileView

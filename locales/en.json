@@ -55,6 +55,10 @@
       },
       "editAlbum": {
         "title": "Edit Album:"
+      },
+      "addAlbumsToPlaylist": {
+        "title": "Select Playlist",
+        "newPlaylist": "New Playlist"
       }
     },
     "artist": {

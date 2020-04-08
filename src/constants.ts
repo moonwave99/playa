@@ -38,6 +38,11 @@ export const COLORS = {
 export const LIBRARY_LATEST_ALBUM_LIMIT = 14;
 export const LIBRARY_LATEST_DAY_COUNT = 90;
 
+export const DATE_FORMATS = {
+  DEFAULT: { year: 'numeric', month: 'long', day: 'numeric' },
+  SHORT: { year: 'numeric', month: 'numeric', day: 'numeric' }
+};
+
 export const ALBUM_GRID_THRESHOLDS = [
   {
     width: 1400,
@@ -85,7 +90,9 @@ export const IPC_MESSAGES = {
   IPC_UI_EDIT_ARTIST_TITLE: 'ui:edit-artist-title',
   IPC_UI_LIBRARY_ALBUM_SELECTION_UPDATE: 'ui:library-album-selection-update',
   IPC_UI_PLAYLIST_ALBUM_SELECTION_UPDATE: 'ui:playlist-album-selection-update',
-  IPC_UI_REMOVE_PLAYLIST: 'ui:remove-playlist',
+  IPC_UI_PLAYLIST_LIST_SELECTION_UPDATE: 'ui:playlist-list-selection-update',
+  IPC_UI_REMOVE_PLAYLISTS: 'ui:remove-playlists',
+  IPC_UI_MENU_REMOTE_CALL: 'ui:menu-remote-call',
   IPC_PLAYBACK_PREV_TRACK: 'ui:playback:prev-track',
   IPC_PLAYBACK_NEXT_TRACK: 'ui:playback:next-track',
   IPC_PLAYBACK_CLEAR_QUEUE: 'ui:playback:clear-queue',
@@ -99,6 +106,8 @@ export const IPC_MESSAGES = {
   IPC_PLAYLIST_SAVE_LIST_RESPONSE : 'playlist:save-list:response',
   IPC_PLAYLIST_DELETE_REQUEST : 'playlist:delete:request',
   IPC_PLAYLIST_DELETE_RESPONSE : 'playlist:delete:response',
+  IPC_PLAYLIST_DELETE_LIST_REQUEST : 'playlist:delete-list:request',
+  IPC_PLAYLIST_DELETE_LIST_RESPONSE : 'playlist:delete-list:response',
   IPC_PLAYLIST_REMOVE_ALBUMS : 'playlist:remove-albums',
   IPC_ALBUM_SAVE_REQUEST : 'album:save:request',
   IPC_ALBUM_SAVE_RESPONSE : 'album:save:response',
@@ -144,6 +153,7 @@ export const IPC_MESSAGES = {
   IPC_ABOUT_OPEN_LINK: 'about:open-link',
   IPC_LIBRARY_IMPORT_MUSIC: 'library:import-music',
   IPC_LIBRARY_EDIT_ALBUM: 'library:edit-album',
+  IPC_LIBRARY_ADD_ALBUMS_TO_PLAYLIST: 'library:add-albums-to-playlist',
   IPC_LIBRARY_REMOVE_ALBUMS: 'library:remove-albums',
   IPC_LIBRARY_REVEAL_ALBUM: 'library:reveal-album'
 };

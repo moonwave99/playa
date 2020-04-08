@@ -1,6 +1,6 @@
 import { intersection, uniq, without } from 'lodash';
 import { ipcRenderer as ipc } from 'electron';
-import { toArray } from '../../utils/storeUtils';
+import { toArray, getFromList } from '../../utils/storeUtils';
 
 import {
   Playlist,
@@ -145,7 +145,7 @@ export const importAlbum = ({
     });
   }
 
-export const removeAlbums = (albumsToRemove: Album[]): Function =>
+export const removeAlbums = (albumsToRemoveIDs: Album['_id'][]): Function =>
   async (dispatch: Function, getState: Function): Promise<void> => {
     const {
       library,
@@ -156,7 +156,7 @@ export const removeAlbums = (albumsToRemove: Album[]): Function =>
     } = getState();
     const currentAlbums: Album[] = library.latest.map((_id: Album['_id']) => albums.allById[_id]);
     const queue: Album['_id'][] = player.queue;
-    const albumsToRemoveIDs = albumsToRemove.map(({ _id }) => _id);
+    const albumsToRemove = getFromList(albums.allById, albumsToRemoveIDs);
     const results = await ipc.invoke(IPC_ALBUM_DELETE_LIST_REQUEST, albumsToRemove);
 
     if (results.length === 0) {

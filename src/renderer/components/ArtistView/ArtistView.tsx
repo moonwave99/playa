@@ -83,7 +83,7 @@ export const ArtistView = (): ReactElement => {
     }
   }, []);
 
-  function onAlbumContextMenu(album: Album, artist: Artist): void {
+  function onAlbumContextMenu(album: Album, artist: Artist, selection: Album['_id'][]): void {
 		openContextMenu([
       {
         type: ALBUM_CONTEXT_ACTIONS,
@@ -99,7 +99,7 @@ export const ArtistView = (): ReactElement => {
       },
       {
         type: LIBRARY_CONTENT_CONTEXT_ACTIONS,
-        selection: [album],
+        selection,
         dispatch,
         currentAlbumId,
         actionGroups: [
@@ -137,11 +137,8 @@ export const ArtistView = (): ReactElement => {
     }).handler();
   }
 
-  function onAlbumBackspace(selectionIDs: Album['_id'][]): void {
-    const selection: Album[] = albums.filter(
-      ({ _id }) => selectionIDs.indexOf(_id) > -1
-    );
-    actionsMap(LibraryContentActions.REMOVE_ALBUM)({
+  function onAlbumBackspace(selection: Album['_id'][]): void {
+    actionsMap(LibraryContentActions.REMOVE_ALBUMS)({
       selection,
       currentAlbumId,
       dispatch

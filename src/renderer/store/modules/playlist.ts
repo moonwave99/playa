@@ -1,6 +1,7 @@
 import { ipcRenderer as ipc } from 'electron';
 import createCachedSelector from 're-reselect';
-import { sample } from 'lodash';
+import { intersection, sample, sortBy } from 'lodash';
+import { customAlphabet } from 'nanoid';
 import {
   EntityHashMap,
   toArray,
@@ -24,8 +25,11 @@ import { IPC_MESSAGES, RECENT_PLAYLIST_COUNT } from '../../../constants';
 const {
   IPC_PLAYLIST_GET_ALL_REQUEST,
   IPC_PLAYLIST_SAVE_REQUEST,
-  IPC_PLAYLIST_DELETE_REQUEST
+  IPC_PLAYLIST_DELETE_REQUEST,
+  IPC_PLAYLIST_DELETE_LIST_REQUEST
 } = IPC_MESSAGES;
+
+const nanoid = customAlphabet('1234567890abcdef', 10);
 
 export interface Playlist {
   _id: string;
@@ -44,6 +48,7 @@ export interface PlaylistState {
 export const selectors = {
   state: ({ playlists }: ApplicationState): PlaylistState => playlists,
   allById: ({ playlists }: ApplicationState): EntityHashMap<Playlist> => playlists.allById,
+  allByDate: ({ playlists }: ApplicationState): Playlist[] => sortBy(toArray(playlists.allById), 'created').reverse(),
   findById: (
     { playlists }: ApplicationState,
     id: Playlist['_id']
@@ -51,11 +56,22 @@ export const selectors = {
   recent: (
     { playlists }: ApplicationState,
     limit = RECENT_PLAYLIST_COUNT
-  ): Playlist[] => toArray(playlists.allById)
-    .sort((a: Playlist, b: Playlist) =>
-      new Date(b.accessed).getTime() - new Date(a.accessed).getTime()
-    ).slice(0, limit)
-    .sort((a: Playlist, b: Playlist) => a.title.localeCompare(b.title))
+  ): Playlist[] =>
+    sortBy(
+      toArray(playlists.allById),
+      'created'
+    ).reverse()
+      .slice(0, limit)
+      .sort((a: Playlist, b: Playlist) => a.title.localeCompare(b.title)),
+  withoutAlbums: (
+    { playlists }: ApplicationState,
+    albumIDs: Album['_id'][]
+  ): Playlist[] =>
+    sortBy(
+      toArray(playlists.allById)
+      .filter(({ albums }) => !intersection(albums, albumIDs).length),
+      'created'
+    ).reverse()
 };
 
 type GetPlaylistByIdSelection = {
@@ -99,8 +115,9 @@ const NEW_PLAYLIST_NAMES: string[] = [
 
 export function getDefaultPlaylist(): Playlist {
   const now = new Date().toISOString();
+  const _id = nanoid();
   return {
-    _id: now,
+    _id,
     _rev: null,
     title: sample(NEW_PLAYLIST_NAMES),
     created: now,
@@ -109,16 +126,18 @@ export function getDefaultPlaylist(): Playlist {
   };
 }
 
-export const PLAYLIST_GET_REQUEST       = 'playa/playlists/GET_REQUEST';
-export const PLAYLIST_GET_RESPONSE      = 'playa/playlists/GET_RESPONSE';
-export const PLAYLIST_GET_ALL_REQUEST   = 'playa/playlists/GET_ALL_REQUEST';
-export const PLAYLIST_GET_ALL_RESPONSE  = 'playa/playlists/GET_ALL_RESPONSE';
-export const PLAYLIST_GET_LIST_REQUEST  = 'playa/playlists/GET_LIST_REQUEST';
-export const PLAYLIST_GET_LIST_RESPONSE = 'playa/playlists/GET_LIST_RESPONSE';
-export const PLAYLIST_SAVE_REQUEST      = 'playa/playlists/SAVE_REQUEST';
-export const PLAYLIST_SAVE_RESPONSE     = 'playa/playlists/SAVE_RESPONSE';
-export const PLAYLIST_DELETE_REQUEST    = 'playa/playlists/DELETE_REQUEST';
-export const PLAYLIST_DELETE_RESPONSE   = 'playa/playlists/DELETE_RESPONSE';
+export const PLAYLIST_GET_REQUEST           = 'playa/playlists/GET_REQUEST';
+export const PLAYLIST_GET_RESPONSE          = 'playa/playlists/GET_RESPONSE';
+export const PLAYLIST_GET_ALL_REQUEST       = 'playa/playlists/GET_ALL_REQUEST';
+export const PLAYLIST_GET_ALL_RESPONSE      = 'playa/playlists/GET_ALL_RESPONSE';
+export const PLAYLIST_GET_LIST_REQUEST      = 'playa/playlists/GET_LIST_REQUEST';
+export const PLAYLIST_GET_LIST_RESPONSE     = 'playa/playlists/GET_LIST_RESPONSE';
+export const PLAYLIST_SAVE_REQUEST          = 'playa/playlists/SAVE_REQUEST';
+export const PLAYLIST_SAVE_RESPONSE         = 'playa/playlists/SAVE_RESPONSE';
+export const PLAYLIST_DELETE_REQUEST        = 'playa/playlists/DELETE_REQUEST';
+export const PLAYLIST_DELETE_RESPONSE       = 'playa/playlists/DELETE_RESPONSE';
+export const PLAYLIST_DELETE_LIST_REQUEST   = 'playa/playlists/DELETE_LIST_REQUEST';
+export const PLAYLIST_DELETE_LIST_RESPONSE  = 'playa/playlists/DELETE_LIST_RESPONSE';
 
 interface GetPlaylistRequestAction {
   type: typeof PLAYLIST_GET_REQUEST;
@@ -164,6 +183,16 @@ interface DeletePlaylistResponseAction {
   playlist: Playlist;
 }
 
+interface DeletePlaylistListRequestAction {
+  type: typeof PLAYLIST_DELETE_LIST_REQUEST;
+  playlists: Playlist[];
+}
+
+interface DeletePlaylistListResponseAction {
+  type: typeof PLAYLIST_DELETE_LIST_RESPONSE;
+  playlists: Playlist[];
+}
+
 export type PlaylistActionTypes =
     GetPlaylistRequestAction
   | GetPlaylistResponseAction
@@ -173,7 +202,9 @@ export type PlaylistActionTypes =
   | SavePlaylistRequestAction
   | SavePlaylistResponseAction
   | DeletePlaylistRequestAction
-  | DeletePlaylistResponseAction;
+  | DeletePlaylistResponseAction
+  | DeletePlaylistListRequestAction
+  | DeletePlaylistListResponseAction;
 
 export const getPlaylistRequest = (id: Playlist['_id']): Function =>
   async (dispatch: Function, getState: Function): Promise<void> => {
@@ -232,6 +263,15 @@ export const deletePlaylistRequest = (playlist: Playlist): Function =>
     });
   }
 
+export const deletePlaylistListRequest = (playlists: Playlist[]): Function =>
+  async (dispatch: Function): Promise<void> => {
+    await ipc.invoke(IPC_PLAYLIST_DELETE_LIST_REQUEST, playlists);
+    dispatch({
+      type: PLAYLIST_DELETE_LIST_RESPONSE,
+      playlists
+    });
+  }
+
 const INITIAL_STATE: PlaylistState = {
 	allById: {},
   isLoading: false
@@ -272,9 +312,15 @@ export default function reducer(
         ...state,
         allById: removeIds(state.allById, [action.playlist._id])
       };
+    case PLAYLIST_DELETE_LIST_RESPONSE:
+      return {
+        ...state,
+        allById: removeIds(state.allById, action.playlists.map(({ _id }) => _id))
+      };
     case PLAYLIST_GET_ALL_REQUEST:
     case PLAYLIST_SAVE_REQUEST:
     case PLAYLIST_DELETE_REQUEST:
+    case PLAYLIST_DELETE_LIST_REQUEST:
     default:
       return state;
   }

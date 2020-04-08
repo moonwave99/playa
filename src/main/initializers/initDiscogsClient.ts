@@ -1,5 +1,6 @@
 import { ipcMain as ipc } from 'electron';
 import * as Path from 'path';
+import * as fs from 'fs-extra';
 import DiscogsClient, { DISCOGS_VARIOUS_ARTISTS_ID } from '../lib/discogsClient';
 import { IPC_MESSAGES } from '../../constants';
 import { Album } from '../../renderer/store/modules/album';
@@ -22,7 +23,7 @@ type initDiscogsClientParams = {
   debug?: boolean;
 }
 
-export default function initDiscogsClient({
+export default async function initDiscogsClient({
   userDataPath,
   appName,
   appVersion,
@@ -30,9 +31,12 @@ export default function initDiscogsClient({
   discogsSecret,
   disabled = false,
   debug = false
-}: initDiscogsClientParams): void {
+}: initDiscogsClientParams): Promise<void> {
   const coversPath = Path.join(userDataPath, 'covers');
   const artistPicturesPath = Path.join(userDataPath, 'artistPictures');
+  await fs.ensureDir(coversPath);
+  await fs.ensureDir(artistPicturesPath);
+
   const discogsClient = new DiscogsClient({
     coversPath,
     artistPicturesPath,

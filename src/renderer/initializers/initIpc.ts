@@ -23,7 +23,7 @@ import {
 } from '../actions/playlistContentActions';
 
 import {
-  deletePlaylistAction
+  deletePlaylistsAction
 } from '../actions/playlistListActions';
 
 import { IPC_MESSAGES } from '../../constants';
@@ -38,9 +38,10 @@ const {
   IPC_UI_SWIPE,
   IPC_UI_EDIT_PLAYLIST_TITLE,
   IPC_UI_EDIT_ARTIST_TITLE,
-  IPC_UI_REMOVE_PLAYLIST,
+  IPC_UI_REMOVE_PLAYLISTS,
   IPC_LIBRARY_IMPORT_MUSIC,
   IPC_LIBRARY_EDIT_ALBUM,
+  IPC_LIBRARY_ADD_ALBUMS_TO_PLAYLIST,
   IPC_LIBRARY_REMOVE_ALBUMS,
   IPC_LIBRARY_REVEAL_ALBUM,
   IPC_PLAYLIST_REMOVE_ALBUMS
@@ -52,6 +53,7 @@ type InitIpcParams = {
   store: Store;
   focusSearchHandler: (_event: IpcRendererEvent) => void;
   importMusicHandler: Function;
+  addAlbumsToPlaylistHandler: Function;
 }
 
 export default function initIpc({
@@ -59,7 +61,8 @@ export default function initIpc({
   dispatch,
   store,
   focusSearchHandler,
-  importMusicHandler
+  importMusicHandler,
+  addAlbumsToPlaylistHandler
 }: InitIpcParams): Function {
   const handlerMap = {
     [IPC_ERROR]: (_event: IpcRendererEvent, error: Error): void => console.log('[ipc]', error),
@@ -78,10 +81,12 @@ export default function initIpc({
     [IPC_LIBRARY_IMPORT_MUSIC]: (): void => importMusicHandler(),
     [IPC_LIBRARY_EDIT_ALBUM]: (_event: IpcRendererEvent, albumID: Album['_id']): void =>
       dispatch(editAlbum({ _id: albumID } as Album)),
+    [IPC_LIBRARY_ADD_ALBUMS_TO_PLAYLIST]: (_event: IpcRendererEvent, selection: Album['_id'][]): void =>
+      addAlbumsToPlaylistHandler(selection),
     [IPC_LIBRARY_REMOVE_ALBUMS]: (_event: IpcRendererEvent, selection: Album['_id'][]): void => {
-      const { player, albums } = store.getState();
+      const { player } = store.getState();
       removeLibraryAlbumsAction({
-        selection: getFromList(albums.allById, selection),
+        selection,
         currentAlbumId: player.currentAlbumId,
         dispatch
       }).handler();
@@ -116,16 +121,16 @@ export default function initIpc({
     },
     [IPC_UI_EDIT_PLAYLIST_TITLE]: (): void => dispatch(setEditPlaylistTitle(true)),
     [IPC_UI_EDIT_ARTIST_TITLE]: (): void => dispatch(setEditArtistTitle(true)),
-    [IPC_UI_REMOVE_PLAYLIST]: (_event: IpcRendererEvent, playlistId: Playlist['_id']): void => {
+    [IPC_UI_REMOVE_PLAYLISTS]: (_event: IpcRendererEvent, playlistIDs: Playlist['_id'][]): void => {
       const { playlists } = store.getState();
-      const playlist = playlists.allById[playlistId];
+      const playlistsToRemove = playlistIDs.map(_id => playlists.allById[_id]);
 
-      if (!playlist) {
+      if (!playlistsToRemove.length) {
         return;
       }
-      
-      deletePlaylistAction({
-        playlist,
+
+      deletePlaylistsAction({
+        playlists: playlistsToRemove,
         dispatch
       }).handler();
     }

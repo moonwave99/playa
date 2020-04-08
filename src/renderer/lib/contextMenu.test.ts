@@ -19,7 +19,7 @@ describe('openContextMenu', () => {
       },
       {
         type: PLAYLIST_LIST_CONTEXT_ACTIONS,
-        playlist: playlists[0],
+        playlists,
         dispatch
       }
     ]);

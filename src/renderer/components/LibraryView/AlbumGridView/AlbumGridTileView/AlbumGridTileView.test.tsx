@@ -79,6 +79,6 @@ describe('AlbumGridTileView', () => {
         album={albums[0]}/>
     , defaultStore);
     wrapper.find('figure').simulate('contextmenu');
-    expect(handler).toHaveBeenCalledWith(albums[0], artists[0]);
+    expect(handler).toHaveBeenCalledWith(albums[0], artists[0], [albums[0]._id]);
   });
 });

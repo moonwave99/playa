@@ -40,7 +40,7 @@ export const PlaylistList: FC<PlaylistListProps> = ({
     openContextMenu([
       {
         type: PLAYLIST_LIST_CONTEXT_ACTIONS,
-        playlist,
+        playlists: [playlist],
         dispatch
       }
     ]);
@@ -48,7 +48,7 @@ export const PlaylistList: FC<PlaylistListProps> = ({
 
   function onPlayButtonDoubleClick(playlist: Playlist): void {
     actionsMap(PlaylistListActions.PLAY_PLAYLIST)({
-      playlist,
+      playlists: [playlist],
       dispatch
     }).handler();
   }

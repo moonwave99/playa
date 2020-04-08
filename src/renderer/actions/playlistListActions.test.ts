@@ -6,7 +6,7 @@ import { toObj } from '../utils/storeUtils';
 import { playlists, albums, tracks } from '../../../test/testFixtures';
 
 import {
-  PLAYLIST_DELETE_RESPONSE
+  PLAYLIST_DELETE_LIST_RESPONSE
 } from '../store/modules/playlist';
 
 import {
@@ -16,14 +16,14 @@ import {
 
 import {
   playPlaylistAction,
-  deletePlaylistAction
+  deletePlaylistsAction
 } from './playlistListActions';
 
 describe('playlistListActions', () => {
   describe('playPlaylistAction', () => {
     it('should return a title and a handler', async () => {
       const { title, handler } = playPlaylistAction({
-        playlist: playlists[0]
+        playlists: [playlists[0]]
       });
       expect(typeof title).toBe('string');
       expect(typeof handler).toBe('function');
@@ -56,7 +56,7 @@ describe('playlistListActions', () => {
       }
     });
     const { handler } = playPlaylistAction({
-      playlist: playlistWithAlbums,
+      playlists: [playlistWithAlbums],
       dispatch: store.dispatch
     });
     await handler();
@@ -75,10 +75,10 @@ describe('playlistListActions', () => {
     );
   });
 
-  describe('deletePlaylistAction', () => {
+  describe('deletePlaylistsAction', () => {
     it('should return a title and a handler', async () => {
-      const { title, handler } = deletePlaylistAction({
-        playlist: playlists[0]
+      const { title, handler } = deletePlaylistsAction({
+        playlists
       });
       expect(typeof title).toBe('string');
       expect(typeof handler).toBe('function');
@@ -90,14 +90,14 @@ describe('playlistListActions', () => {
           allById: toObj(playlists)
         }
       });
-      const { handler } = deletePlaylistAction({
-        playlist: playlists[0],
+      const { handler } = deletePlaylistsAction({
+        playlists,
         dispatch: store.dispatch
       });
       await handler();
       const expectedActions = [{
-        type: PLAYLIST_DELETE_RESPONSE,
-        playlist: playlists[0]
+        type: PLAYLIST_DELETE_LIST_RESPONSE,
+        playlists
       }];
 
       expectedActions.forEach(

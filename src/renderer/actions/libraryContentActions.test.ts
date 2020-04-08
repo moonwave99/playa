@@ -26,14 +26,16 @@ import {
 } from '../store/modules/ui';
 
 import {
-  removeAlbumsAction
+  ActionParams,
+  removeAlbumsAction,
+  addAlbumsToPlaylistAction
 } from './libraryContentActions';
 
 describe('libraryContentActions', () => {
   describe('removeAlbumsAction', () => {
     it('should return a title and a handler', async () => {
       const { title, handler } = removeAlbumsAction({
-        selection: [albums[0]],
+        selection: [albums[0]._id],
         currentAlbumId: null
       });
       expect(typeof title).toBe('string');
@@ -62,7 +64,7 @@ describe('libraryContentActions', () => {
         }
       });
       const { handler } = removeAlbumsAction({
-        selection: [albums[0]],
+        selection: [albums[0]._id],
         currentAlbumId: null,
         dispatch: store.dispatch
       });
@@ -108,7 +110,7 @@ describe('libraryContentActions', () => {
         }
       });
       const { handler } = removeAlbumsAction({
-        selection: [albums[0]],
+        selection: [albums[0]._id],
         currentAlbumId: '1',
         dispatch: store.dispatch
       });
@@ -117,6 +119,14 @@ describe('libraryContentActions', () => {
       expect(store.getActions()).toEqual([{
         type: SHOW_DIALOG
       }]);
+    });
+  });
+
+  describe('addAlbumsToPlaylistAction', () => {
+    it('should return a title and a handler', async () => {
+      const { title, handler } = addAlbumsToPlaylistAction(null as ActionParams);
+      expect(typeof title).toBe('string');
+      expect(typeof handler).toBe('function');
     });
   });
 });
