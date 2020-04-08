@@ -91,14 +91,15 @@ function createWindow({
     })
   );
 
-  mainWindow.once('ready-to-show', () => mainWindow.show());
+  mainWindow.once('ready-to-show', () => {
+    if (is.development && !isRunningInSpectron) {
+      mainWindow.webContents.toggleDevTools();
+    }
+    mainWindow.show();
+  });
 
   if (is.development) {
     mainWindow.maximize();
-  }
-
-  if (is.development && !isRunningInSpectron) {
-    mainWindow.webContents.toggleDevTools();
   }
 
   return mainWindow;
@@ -126,13 +127,15 @@ if (backupProduction) {
 }
 
 initDialog();
+initURLHandler();
+
 runAsync(initDatabase, {
   userDataPath,
   debug,
   environment
 });
-initURLHandler();
-initDiscogsClient({
+
+runAsync(initDiscogsClient, {
   userDataPath,
   appName: APP_NAME,
   appVersion: APP_VERSION,
@@ -142,7 +145,7 @@ initDiscogsClient({
   debug
 });
 
-initWaveform(userDataPath);
+runAsync(initWaveform, userDataPath);
 
 const appState = initAppState({ userDataPath, environment });
 const { lastWindowSize, lastWindowPosition } = appState.getState();

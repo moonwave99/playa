@@ -1,5 +1,6 @@
 import { ipcMain as ipc } from 'electron';
 import * as Path from 'path';
+import * as fs from 'fs-extra';
 import sha1 from 'sha1';
 import { saveData } from '../lib/saveData';
 import log, { LogContext, LogLevel } from '../lib/logger';
@@ -22,8 +23,9 @@ function renderWaveformSVG(pathContent: string): string {
 </svg>`;
 }
 
-export default function initWaveform(userDataPath: string): void {
+export default async function initWaveform(userDataPath: string): Promise<void> {
   const waveformBasePath = Path.join(userDataPath, 'waveforms');
+  await fs.ensureDir(waveformBasePath);
   ipc.handle(IPC_WAVEFORM_SAVE_REQUEST, async (_event, trackId: string, content: string) => {
     const targetPath = Path.join(waveformBasePath, `${sha1(trackId)}.svg`);
     try {
