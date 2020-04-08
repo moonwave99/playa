@@ -10,6 +10,7 @@ type PlaylistGridTileViewProps = {
   selected?: boolean;
   isPlaying?: boolean;
   style?: object;
+  selectedIDs?: Playlist['_id'][];
   onClick?: Function;
   onContextMenu?: Function;
   onMouseEnter?: (event: React.MouseEvent<HTMLElement, MouseEvent>) => void;
@@ -22,6 +23,7 @@ export const PlaylistGridTileView: FC<PlaylistGridTileViewProps> = ({
   isPlaying = false,
   selected = false,
   style,
+  selectedIDs = [],
   onClick,
   onContextMenu,
   onMouseEnter,
@@ -29,13 +31,14 @@ export const PlaylistGridTileView: FC<PlaylistGridTileViewProps> = ({
   tooltipTriggerRef
 }) => {
   const { _id, title } = playlist;
+  const selection = selectedIDs.indexOf(_id) > -1 ? selectedIDs : [_id];
 
   function _onClick(event: React.MouseEvent): void {
-    onClick && onClick(event, playlist);
+    onClick && onClick({ event, playlist });
   }
 
   function _onContextMenu(): void {
-    onContextMenu && onContextMenu(playlist);
+    onContextMenu && onContextMenu({ playlist, selection });
   }
 
   const classNames = cx('playlist-grid-tile', {

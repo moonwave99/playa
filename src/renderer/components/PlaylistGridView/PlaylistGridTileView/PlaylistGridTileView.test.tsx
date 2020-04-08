@@ -47,6 +47,9 @@ describe('PlaylistGridTileView', () => {
         playlist={playlists[0]}/>
     , defaultStore);
     wrapper.find('figure').simulate('contextmenu');
-    expect(handler).toHaveBeenCalledWith(playlists[0]);
+    expect(handler).toHaveBeenCalledWith({
+      playlist: playlists[0],
+      selection: [playlists[0]._id]
+    });
   });
 });

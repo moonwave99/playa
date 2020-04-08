@@ -115,7 +115,11 @@ export const PlaylistGridView: FC<PlaylistGridViewProps> = ({
         onMouseLeave,
       } = getTriggerProps({ ref });
 
-      function onClick(event: MouseEvent, { _id }: Playlist): void {
+      function onClick({
+        event
+      }: {
+        event: MouseEvent;
+      }): void {
         onItemClick({
           _id,
           ...event
@@ -128,6 +132,7 @@ export const PlaylistGridView: FC<PlaylistGridViewProps> = ({
           playlist={playlist}
           selected={selection.indexOf(_id) > -1}
           isPlaying={_id === currentPlaylistId}
+          selectedIDs={selection}
           onClick={onClick}
           onContextMenu={onPlaylistContextMenu}
           onMouseEnter={onMouseEnter}

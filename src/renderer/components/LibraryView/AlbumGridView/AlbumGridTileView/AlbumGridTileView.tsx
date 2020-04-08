@@ -26,7 +26,7 @@ type AlbumGridTileViewProps = {
   isPlaying?: boolean;
   isDragging?: boolean;
   style?: object;
-  selectedIDs?: string[];
+  selectedIDs?: Album['_id'][];
   onClick?: Function;
   onDoubleClick?: Function;
   onContextMenu?: Function;
@@ -59,7 +59,9 @@ export const AlbumGridTileView: FC<AlbumGridTileViewProps> = ({
   const [seed, setSeed] = useState(0);
 
   const { _id, artist: artistId, cover, _rev } = album;
-  const artist = useSelector((state: ApplicationState) => artistSelectors.findById(state, artistId));
+  const artist = useSelector(
+    (state: ApplicationState) => artistSelectors.findById(state, artistId)
+  );
   const selection = selectedIDs.indexOf(_id) > -1 ? selectedIDs : [_id];
 
   function onDrop(url: string): void {

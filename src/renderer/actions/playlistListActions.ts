@@ -24,9 +24,6 @@ export const playPlaylistAction: ActionCreator<ActionParams> = ({
   return {
     title: `Play playlist`,
     handler: async (): Promise<void> => {
-      if (!playlists.length) {
-        return;
-      }
       const { _id: playlistId, albums } = playlists[0];
       if (albums.length === 0) {
         return;

@@ -37,11 +37,24 @@ export const AllPlaylistContainer: FC<AllPlaylistContainerProps> = ({
     }
   }, []);
 
-  function onPlaylistContextMenu(playlist: Playlist): void {
+  function onPlaylistContextMenu({
+    playlist,
+    selection
+  }: {
+    playlist: Playlist;
+    selection: Playlist['_id'][];
+  }): void {
+    const menuPlaylists = [
+      playlist,
+      ...selection
+        .filter(_id => _id !== playlist._id)
+        .map(x => playlists.find(({ _id }) => _id === x))
+    ] as Playlist[];
+
     openContextMenu([
       {
         type: PLAYLIST_LIST_CONTEXT_ACTIONS,
-        playlists: [playlist],
+        playlists: menuPlaylists,
         dispatch
       }
     ]);
