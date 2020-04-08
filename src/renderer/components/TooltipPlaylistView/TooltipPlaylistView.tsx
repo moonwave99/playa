@@ -3,14 +3,13 @@ import { TooltipArg } from 'react-popper-tooltip';
 import cx from 'classnames';
 import { Playlist } from '../../store/modules/playlist';
 import { formatDate } from '../../utils/datetimeUtils';
+import { DATE_FORMATS } from '../../../constants';
 
 import './TooltipPlaylistView.scss';
 
 type TooltipPlaylistViewProps = TooltipArg & {
   playlist: Playlist;
 }
-
-const DATE_FORMAT = { year: 'numeric', month: 'long', day: 'numeric' };
 
 export const TooltipPlaylistView: FC<TooltipPlaylistViewProps> = ({
   playlist,
@@ -40,7 +39,7 @@ export const TooltipPlaylistView: FC<TooltipPlaylistViewProps> = ({
         })}/>
       <div className="tooltip-body">
         <p className="playlist-date">
-          {formatDate({ date: created, options: DATE_FORMAT })}
+          {formatDate({ date: created, options: DATE_FORMATS.DEFAULT })}
         </p>
       </div>
     </div>

@@ -38,6 +38,11 @@ export const COLORS = {
 export const LIBRARY_LATEST_ALBUM_LIMIT = 14;
 export const LIBRARY_LATEST_DAY_COUNT = 90;
 
+export const DATE_FORMATS = {
+  DEFAULT: { year: 'numeric', month: 'long', day: 'numeric' },
+  SHORT: { year: 'numeric', month: 'numeric', day: 'numeric' }
+};
+
 export const ALBUM_GRID_THRESHOLDS = [
   {
     width: 1400,
@@ -147,6 +152,7 @@ export const IPC_MESSAGES = {
   IPC_ABOUT_OPEN_LINK: 'about:open-link',
   IPC_LIBRARY_IMPORT_MUSIC: 'library:import-music',
   IPC_LIBRARY_EDIT_ALBUM: 'library:edit-album',
+  IPC_LIBRARY_ADD_ALBUMS_TO_PLAYLIST: 'library:add-albums-to-playlist',
   IPC_LIBRARY_REMOVE_ALBUMS: 'library:remove-albums',
   IPC_LIBRARY_REVEAL_ALBUM: 'library:reveal-album'
 };

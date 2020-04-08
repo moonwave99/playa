@@ -1,7 +1,7 @@
 import { ipcRenderer as ipc } from 'electron';
 import createCachedSelector from 're-reselect';
-import { sample } from 'lodash';
-import { nanoid } from 'nanoid';
+import { intersection, sample, sortBy } from 'lodash';
+import { customAlphabet } from 'nanoid';
 import {
   EntityHashMap,
   toArray,
@@ -29,6 +29,8 @@ const {
   IPC_PLAYLIST_DELETE_LIST_REQUEST
 } = IPC_MESSAGES;
 
+const nanoid = customAlphabet('1234567890abcdef', 10);
+
 export interface Playlist {
   _id: string;
   _rev?: string;
@@ -46,6 +48,7 @@ export interface PlaylistState {
 export const selectors = {
   state: ({ playlists }: ApplicationState): PlaylistState => playlists,
   allById: ({ playlists }: ApplicationState): EntityHashMap<Playlist> => playlists.allById,
+  allByDate: ({ playlists }: ApplicationState): Playlist[] => sortBy(toArray(playlists.allById), 'created').reverse(),
   findById: (
     { playlists }: ApplicationState,
     id: Playlist['_id']
@@ -53,11 +56,22 @@ export const selectors = {
   recent: (
     { playlists }: ApplicationState,
     limit = RECENT_PLAYLIST_COUNT
-  ): Playlist[] => toArray(playlists.allById)
-    .sort((a: Playlist, b: Playlist) =>
-      new Date(b.accessed).getTime() - new Date(a.accessed).getTime()
-    ).slice(0, limit)
-    .sort((a: Playlist, b: Playlist) => a.title.localeCompare(b.title))
+  ): Playlist[] =>
+    sortBy(
+      toArray(playlists.allById),
+      'created'
+    ).reverse()
+      .slice(0, limit)
+      .sort((a: Playlist, b: Playlist) => a.title.localeCompare(b.title)),
+  withoutAlbums: (
+    { playlists }: ApplicationState,
+    albumIDs: Album['_id'][]
+  ): Playlist[] =>
+    sortBy(
+      toArray(playlists.allById)
+      .filter(({ albums }) => !intersection(albums, albumIDs).length),
+      'created'
+    ).reverse()
 };
 
 type GetPlaylistByIdSelection = {

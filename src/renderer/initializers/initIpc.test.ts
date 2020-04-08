@@ -25,6 +25,7 @@ const {
   IPC_UI_SWIPE,
   IPC_LIBRARY_IMPORT_MUSIC,
   IPC_LIBRARY_EDIT_ALBUM,
+  IPC_LIBRARY_ADD_ALBUMS_TO_PLAYLIST,
   IPC_LIBRARY_REMOVE_ALBUMS,
   IPC_PLAYLIST_REMOVE_ALBUMS,
   IPC_LIBRARY_REVEAL_ALBUM,
@@ -60,6 +61,7 @@ describe('initIpc', () => {
     store,
     focusSearchHandler: jest.fn(),
     importMusicHandler: jest.fn(),
+    addAlbumsToPlaylistHandler: jest.fn(),
     history: {
       replace: jest.fn(),
       goBack: jest.fn(),
@@ -121,6 +123,12 @@ describe('initIpc', () => {
     const handler = ipcRenderer.handlers[IPC_LIBRARY_EDIT_ALBUM];
     ipcRenderer.trigger(IPC_LIBRARY_EDIT_ALBUM, '1');
     expect(handler).toHaveBeenCalledWith(ipcEvent, '1');
+  });
+
+  it('should handle IPC_LIBRARY_ADD_ALBUMS_TO_PLAYLIST', () => {
+    const handler = ipcRenderer.handlers[IPC_LIBRARY_ADD_ALBUMS_TO_PLAYLIST];
+    ipcRenderer.trigger(IPC_LIBRARY_ADD_ALBUMS_TO_PLAYLIST, ['1']);
+    expect(handler).toHaveBeenCalledWith(ipcEvent, ['1']);
   });
 
   it('should handle IPC_LIBRARY_REMOVE_ALBUMS', () => {

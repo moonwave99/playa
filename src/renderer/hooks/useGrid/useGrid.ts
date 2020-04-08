@@ -156,6 +156,7 @@ type UseGridParams = {
   thresholds?: Threshold[];
   direction?: 'both'|'vertical'|'horizontal';
   excludeClass?: string;
+  interactive?: boolean;
   clearSelectionOnBlur?: boolean;
   initialSelection?: string[];
   groupBy?: string;
@@ -171,6 +172,7 @@ export default function useGrid({
   }],
   direction = 'both',
   excludeClass = '',
+  interactive = true,
   clearSelectionOnBlur = false,
   initialSelection = [],
   groupBy,
@@ -233,6 +235,9 @@ export default function useGrid({
   }, [items]);
 
   useEffect(() => {
+    if (!interactive) {
+      return;
+    }
     function onUp(event: KeyboardEvent): void {
       event.preventDefault()
       event.stopPropagation();
@@ -331,6 +336,9 @@ export default function useGrid({
   }, [items, rows, selection]);
 
   function onItemClick({ _id, metaKey }: OnItemClickParams): void {
+    if (!interactive) {
+      return;
+    }
     setFocus(true);
     if (metaKey) {
       if (selection.indexOf(_id) > -1){

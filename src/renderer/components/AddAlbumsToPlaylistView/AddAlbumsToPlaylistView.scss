@@ -1,0 +1,38 @@
+@import "../../styles/variables";
+@import "../../styles/mixins";
+@import "../../styles/common";
+
+.add-albums-to-playlist {
+  .album-grid {
+    @include horizontalSeparator(66.6%, $albumSeparatorColor, $mainUnit * 2);
+    .album-grid-row:last-child {
+      .album-grid-tile {
+        margin-bottom: 0;
+      }
+    }
+  }
+  .playlist-list {
+    list-style: none;
+    margin: 0;
+    max-height: $mainUnit * 8;
+    overflow: scroll;
+    li {
+      @include ellipsis();
+      line-height: 2.5rem;
+      &.new-playlist {
+        color: $mainColor;
+      }
+      &:hover {
+        background-color: $backgroundLightColor;
+      }
+      .playlist-date {
+        @include monospace();
+        margin-right: 1rem;
+        width: 6rem;
+        display: inline-block;
+        text-align: right;
+        color: darken($lightColor, 30%);
+      }
+    }
+  }
+}

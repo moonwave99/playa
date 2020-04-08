@@ -29,6 +29,7 @@ const {
   IPC_UI_EDIT_ARTIST_TITLE,
   IPC_LIBRARY_IMPORT_MUSIC,
   IPC_LIBRARY_EDIT_ALBUM,
+  IPC_LIBRARY_ADD_ALBUMS_TO_PLAYLIST,
   IPC_LIBRARY_REMOVE_ALBUMS,
   IPC_LIBRARY_REVEAL_ALBUM,
   IPC_PLAYLIST_REMOVE_ALBUMS
@@ -208,6 +209,13 @@ export default function initMenu({
           click: (): void => window.webContents.send(IPC_LIBRARY_EDIT_ALBUM, gridAlbumSelection[0])
         },
         {
+          label: 'Add Selected Albums to Playlist...',
+          id: 'add-albums-to-playlist',
+          enabled: false,
+          accelerator: 'cmd+shift+p',
+          click: (): void => window.webContents.send(IPC_LIBRARY_ADD_ALBUMS_TO_PLAYLIST, gridAlbumSelection)
+        },
+        {
           label: 'Remove Selected Albums from Library',
           id: 'remove-albums',
           enabled: false,
@@ -273,6 +281,10 @@ export default function initMenu({
     {
       entry: menu.getMenuItemById('edit-album'),
       multiple: false
+    },
+    {
+      entry: menu.getMenuItemById('add-albums-to-playlist'),
+      multiple: true
     },
     {
       entry: menu.getMenuItemById('reveal-album'),

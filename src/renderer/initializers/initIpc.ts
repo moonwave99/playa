@@ -41,6 +41,7 @@ const {
   IPC_UI_REMOVE_PLAYLISTS,
   IPC_LIBRARY_IMPORT_MUSIC,
   IPC_LIBRARY_EDIT_ALBUM,
+  IPC_LIBRARY_ADD_ALBUMS_TO_PLAYLIST,
   IPC_LIBRARY_REMOVE_ALBUMS,
   IPC_LIBRARY_REVEAL_ALBUM,
   IPC_PLAYLIST_REMOVE_ALBUMS
@@ -52,6 +53,7 @@ type InitIpcParams = {
   store: Store;
   focusSearchHandler: (_event: IpcRendererEvent) => void;
   importMusicHandler: Function;
+  addAlbumsToPlaylistHandler: Function;
 }
 
 export default function initIpc({
@@ -59,7 +61,8 @@ export default function initIpc({
   dispatch,
   store,
   focusSearchHandler,
-  importMusicHandler
+  importMusicHandler,
+  addAlbumsToPlaylistHandler
 }: InitIpcParams): Function {
   const handlerMap = {
     [IPC_ERROR]: (_event: IpcRendererEvent, error: Error): void => console.log('[ipc]', error),
@@ -78,6 +81,8 @@ export default function initIpc({
     [IPC_LIBRARY_IMPORT_MUSIC]: (): void => importMusicHandler(),
     [IPC_LIBRARY_EDIT_ALBUM]: (_event: IpcRendererEvent, albumID: Album['_id']): void =>
       dispatch(editAlbum({ _id: albumID } as Album)),
+    [IPC_LIBRARY_ADD_ALBUMS_TO_PLAYLIST]: (_event: IpcRendererEvent, selection: Album['_id'][]): void =>
+      addAlbumsToPlaylistHandler(selection),
     [IPC_LIBRARY_REMOVE_ALBUMS]: (_event: IpcRendererEvent, selection: Album['_id'][]): void => {
       const { player, albums } = store.getState();
       removeLibraryAlbumsAction({
