@@ -67,7 +67,7 @@ describe('Playlist interaction', () => {
     );
   }, TEN_SECONDS);
 
-  it.skip('removes selected album from current playlist', async () => {
+  it('removes selected album from current playlist', async () => {
     await populateTestDB({
       playlists: [{
         ...TestPlaylists[0],
@@ -109,7 +109,7 @@ describe('Playlist interaction', () => {
     );
   }, TEN_SECONDS);
 
-  it.skip('removes all albums from current playlist', async () => {
+  it('removes all albums from current playlist', async () => {
     await populateTestDB({
       playlists: [{
         ...TestPlaylists[0],
