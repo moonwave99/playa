@@ -187,7 +187,7 @@ export default function useGrid({
   selectItem: Function;
   grid: (node?: Element | null) => void;
 } {
-  const [hasFocus, setFocus] = useState(false);
+  const hasFocus = useRef(false);
   const [selection, setSelection] = useState(initialSelection);
   const [rows, setRows] = useState([] as HasId[][]);
   const [threshold, setThreshold] = useState(thresholds[0]);
@@ -199,7 +199,7 @@ export default function useGrid({
       return;
     }
     if (!ref.current.contains(event.target) || !event.target.classList.contains(excludeClass)) {
-      setFocus(false);
+      hasFocus.current = false;
       clearSelectionOnBlur && setSelection([]);
     }
   };
@@ -241,7 +241,7 @@ export default function useGrid({
     function onUp(event: KeyboardEvent): void {
       event.preventDefault()
       event.stopPropagation();
-      if (!hasFocus) {
+      if (!hasFocus.current) {
         return;
       }
       const newIndex = moveSelection({
@@ -256,7 +256,7 @@ export default function useGrid({
     function onDown(event: KeyboardEvent): void {
       event.preventDefault()
       event.stopPropagation();
-      if (!hasFocus) {
+      if (!hasFocus.current) {
         return;
       }
       const newIndex = moveSelection({
@@ -269,7 +269,7 @@ export default function useGrid({
     }
 
     function onLeft(): void {
-      if (!hasFocus) {
+      if (!hasFocus.current) {
         return;
       }
       const newIndex = moveSelection({
@@ -282,7 +282,7 @@ export default function useGrid({
     }
 
     function onRight(): void {
-      if (!hasFocus) {
+      if (!hasFocus.current) {
         return;
       }
       const newIndex = moveSelection({
@@ -295,21 +295,21 @@ export default function useGrid({
     }
 
     function _onEnter(): void {
-      if (!hasFocus) {
+      if (!hasFocus.current) {
         return;
       }
       onEnter && onEnter(selection);
     }
 
     function _onBackspace(): void {
-      if (!hasFocus) {
+      if (!hasFocus.current) {
         return;
       }
       onBackspace && onBackspace(selection);
     }
 
     function onAll(): void {
-      if (!hasFocus) {
+      if (!hasFocus.current) {
         return;
       }
       setSelection(items.map(({ _id }) => _id));
@@ -339,7 +339,7 @@ export default function useGrid({
     if (!interactive) {
       return;
     }
-    setFocus(true);
+    hasFocus.current = true;
     if (metaKey) {
       if (selection.indexOf(_id) > -1){
         setSelection(without(selection, _id));
@@ -348,11 +348,11 @@ export default function useGrid({
       }
       return;
     }
-    setSelection([_id ]);
+    setSelection([_id]);
   }
 
   function requestFocus(): void {
-    setFocus(true);
+    hasFocus.current = true;
   }
 
   function selectItem(selectedID: HasId['_id']): void {

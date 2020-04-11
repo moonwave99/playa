@@ -2,7 +2,7 @@ import React, { FC, useRef, MouseEvent } from 'react';
 import cx from 'classnames';
 import { Album } from '../../store/modules/album';
 
-type CoverViewProps = {
+export type CoverViewProps = {
   className?: string;
   src: string;
   album: Album;

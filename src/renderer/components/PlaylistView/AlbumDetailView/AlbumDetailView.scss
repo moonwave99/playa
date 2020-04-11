@@ -29,7 +29,7 @@
     }
   }
   .album-header {
-    padding: calc(var(--section-gutter) * .5 + 0.5px);
+    padding: calc(var(--section-gutter) * .5);
     background-color: rgba($backgroundDarkColor, .4);
     display: flex;
     transition: background-color .3s ease-in-out;
@@ -53,7 +53,9 @@
     }
     .album-info-wrapper {
       flex: 1;
+      @include ellipsis();
       h2 {
+        @include ellipsis();
         margin: calc(var(--section-gutter) * 0.5) 0 0 0;
         font-size: 1.8rem;
         line-height: 2.5rem;

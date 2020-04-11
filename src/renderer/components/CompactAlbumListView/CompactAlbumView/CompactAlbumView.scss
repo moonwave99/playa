@@ -24,7 +24,6 @@
     vertical-align: middle;
     font-size: 3rem;
     color: $backgroundLightColor;
-    transition: color .3s ease-in-out;
   }
 
   &:not(.is-current):hover .album-inner-wrapper{
@@ -36,7 +35,7 @@
   &:not(.is-current):hover {
 		transition: background-color .3s ease-in-out;
     .album-cover {
-      @include albumCover($albumCoverCompactWidth, $backgroundColor);
+      @include albumCover($albumCoverCompactWidth, $backgroundColor, 70%, 1);
       @include playOverlay('../../../static/icons/album/play.svg', 40%);
     }
   }
@@ -55,7 +54,7 @@
     background-color: $backgroundLightColor;
   }
   .album-cover {
-    @include albumCover($albumCoverCompactWidth);
+    @include albumCover($albumCoverCompactWidth, $backgroundColor, 70%, 1);
   }
   .album-content {
 		@include ellipsis(100%);

@@ -1,13 +1,23 @@
-import React, { FC, useState, useEffect, useCallback } from 'react';
+import React, { FC, useState, useEffect, useCallback, memo } from 'react';
 import cx from 'classnames';
+import { isEqual } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { AlbumDetailView } from './AlbumDetailView/AlbumDetailView';
-import { CompactAlbumListView } from '../CompactAlbumListView/CompactAlbumListView';
+import {
+  CompactAlbumListView as RawCompactAlbumListView,
+  CompactAlbumListViewProps
+} from '../CompactAlbumListView/CompactAlbumListView';
 import { Playlist } from '../../store/modules/playlist';
 import { Album } from '../../store/modules/album';
 import { Track } from '../../store/modules/track';
 import { UIDragTypes } from '../../store/modules/ui';
 import { EntityHashMap, immutableMove } from '../../utils/storeUtils';
+
+const CompactAlbumListView = memo(RawCompactAlbumListView, (
+  a: CompactAlbumListViewProps,
+  b: CompactAlbumListViewProps) => {
+  return (a.currentAlbumId === b.currentAlbumId) && isEqual(a.albums, b.albums);
+});
 
 import './PlaylistView.scss';
 
@@ -53,19 +63,19 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
     }
     , [albumOrder]
   );
-  
-  useEffect(() => {
-    setAlbumOrder(playlist.albums);
-    setSelectedAlbumId(playlist.albums[0]);
-  }, [playlist.albums])
 
-  function _onSelectionChange(_ids: Album['_id'][]): void {
+  const _onSelectionChange = (_ids: Album['_id'][]): void => {
     onSelectionChange(_ids);
     if (_ids.length > 1) {
       return;
     }
     setSelectedAlbumId(_ids[0]);
-  }
+  };
+
+  useEffect(() => {
+    setAlbumOrder(playlist.albums);
+    setSelectedAlbumId(playlist.albums[0]);
+  }, [playlist.albums]);
 
   const playlistClasses = cx('playlist-view', { 'is-current': isCurrent });
 

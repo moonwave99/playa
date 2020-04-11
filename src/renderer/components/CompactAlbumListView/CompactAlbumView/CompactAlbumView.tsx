@@ -1,9 +1,9 @@
-import React, { FC, ReactElement, SyntheticEvent, MouseEvent, useEffect } from 'react';
+import React, { FC, ReactElement, SyntheticEvent, MouseEvent, useEffect, memo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, generatePath } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import cx from 'classnames';
-import { CoverView } from '../../CoverView/CoverView';
+import { CoverView as RawCoverView, CoverViewProps } from '../../CoverView/CoverView';
 import useReorder from '../../../hooks/useReorder/useReorder';
 import {
   Album,
@@ -17,7 +17,11 @@ import { formatArtist } from '../../../utils/albumUtils';
 import { ARTIST_SHOW } from '../../../routes';
 import './CompactAlbumView.scss';
 
-type CompactAlbumViewProps = {
+const CoverView = memo(RawCoverView, (a: CoverViewProps, b: CoverViewProps) => {
+  return a.src === b.src;
+});
+
+export type CompactAlbumViewProps = {
   album: Album;
   index: number;
   selectedIDs: Album['_id'][];

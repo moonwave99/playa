@@ -65,6 +65,7 @@ export const PlaylistGridView: FC<PlaylistGridViewProps> = ({
     thresholds: ALBUM_GRID_THRESHOLDS,
     initialSelection: [playlists[0]._id],
     excludeClass: '.playlist-cover',
+    clearSelectionOnBlur: true,
     onEnter,
     onBackspace
   });

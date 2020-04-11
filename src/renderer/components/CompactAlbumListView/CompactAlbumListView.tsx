@@ -1,5 +1,12 @@
-import React, { ReactElement, FC, useEffect } from 'react';
-import { CompactAlbumView } from './CompactAlbumView/CompactAlbumView';
+import React, { ReactElement, FC, useEffect, memo } from 'react';
+import {
+  FixedSizeList as List,
+  ListChildComponentProps,
+  areEqual
+} from 'react-window';
+import memoize from 'memoize-one';
+import AutoSizer from "react-virtualized-auto-sizer";
+import { CompactAlbumView as RawCompactAlbumView } from './CompactAlbumView/CompactAlbumView';
 import { Album } from '../../store/modules/album';
 import { Artist } from '../../store/modules/artist';
 import { Track } from '../../store/modules/track';
@@ -8,7 +15,11 @@ import scrollTo from '../../lib/scrollTo';
 
 import './CompactAlbumListView.scss';
 
-type CompactAlbumListViewProps = {
+const CompactAlbumView = memo(RawCompactAlbumView);
+
+const ITEM_SIZE = 84;
+
+export type CompactAlbumListViewProps = {
   albums: Album[];
   currentAlbumId: Album['_id'];
   onSelectionChange: Function;
@@ -31,9 +42,9 @@ export const CompactAlbumListView: FC<CompactAlbumListViewProps> = ({
   onAlbumDoubleClick,
   sortable = false
 }) => {
+
   const {
     grid,
-    rows,
     selection,
     onItemClick,
     requestFocus,
@@ -68,20 +79,38 @@ export const CompactAlbumListView: FC<CompactAlbumListViewProps> = ({
     selectItem(albums[0]._id);
   }, [albums.length]);
 
-  function renderAlbum(album: Album, index: number): ReactElement {
+  function renderAlbum({
+    album,
+    index,
+    selection,
+    currentAlbumId,
+    onAlbumMove,
+    onAlbumContextMenu
+  }: {
+    album: Album;
+    index: number;
+    selection: Album['_id'][];
+    currentAlbumId: Album['_id'];
+    onAlbumMove: Function;
+    onAlbumContextMenu: Function;
+  }): ReactElement {
     if (!album) {
       return;
     }
+
+    const { _id } = album;
+
     function onClick(event: MouseEvent, { _id }: Album): void {
       onItemClick({
         _id,
         ...event
       });
     }
+
     function onDoubleClick(album: Album, artist: Artist, track: Track): void {
       onAlbumDoubleClick(album, artist, track);
     }
-    const { _id } = album;
+
     return (
       <CompactAlbumView
         key={_id}
@@ -98,13 +127,65 @@ export const CompactAlbumListView: FC<CompactAlbumListViewProps> = ({
     );
   }
 
-	return (
-    <ol className="compact-album-list" ref={grid}>
-      {rows.map((row, index) => (
-        <li key={index}>
-          {row.map((album) => renderAlbum(album as Album, index))}
-        </li>
-      ))}
-    </ol>
-	);
+  const createItemData = memoize((
+    albums,
+    onAlbumMove,
+    onAlbumContextMenu
+	) => ({
+    albums,
+    onAlbumMove,
+    onAlbumContextMenu
+	}));
+
+  const itemData = createItemData(
+    albums,
+    onAlbumMove,
+    onAlbumContextMenu
+  );
+
+  const GenerateRow = memo(({ data, index, style }: ListChildComponentProps) => {
+    const {
+      albums,
+      onAlbumMove,
+      onAlbumContextMenu
+    } = data;
+
+    const album = albums[index];
+    if (!album) {
+      return null;
+    }
+    return (
+      <li
+        key={album._id}
+        style={style}>
+        {renderAlbum({
+          album,
+          index,
+          selection,
+          currentAlbumId,
+          onAlbumMove,
+          onAlbumContextMenu
+        })}
+      </li>
+    )
+  }, areEqual);
+
+  return (
+    <section data-key-catch="useGrid" ref={grid} className="sizer-wrapper">
+      <AutoSizer defaultWidth={100} defaultHeight={2 * ITEM_SIZE}>
+        {({ height, width }): ReactElement => (
+          <List
+            className="compact-album-list"
+            outerElementType="ol"
+            itemData={itemData}
+            itemCount={albums.length}
+            itemSize={ITEM_SIZE}
+            height={height}
+            width={width}>
+            {GenerateRow}
+          </List>
+        )}
+      </AutoSizer>
+    </section>
+  );
 }
