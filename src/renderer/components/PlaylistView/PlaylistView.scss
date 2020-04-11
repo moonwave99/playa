@@ -21,14 +21,14 @@
   	}
     @media (max-width: $miniWindowThreshold) {
       width: 100%;
-      max-height: 50%;
+      height: 50%;
     }
     .sizer-wrapper {
       // viewport - header - player - table header - title
       height: calc(100vh - #{$headerHeight} - #{$playerHeight});
       @media (max-width: $miniWindowThreshold) {
         // viewport - player - searchbar - title
-        height: calc(100vh - 9rem - 3rem - 3rem - 3.5 * var(--section-gutter));
+        height: 100%;
       }
     }
   }
@@ -39,7 +39,7 @@
     }
     @media (max-width: $miniWindowThreshold) {
       width: 100%;
-      max-height: 50%;
+      height: 50%;
       border-bottom: 1px solid $darkColor;
     }
   }

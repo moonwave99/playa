@@ -29,7 +29,7 @@
     }
   }
   .album-header {
-    padding: calc(var(--section-gutter) * .5);
+    padding: 0 calc(var(--section-gutter) * .5) 0 0;
     background-color: rgba($backgroundDarkColor, .4);
     display: flex;
     transition: background-color .3s ease-in-out;
@@ -49,7 +49,6 @@
     }
     @media (max-width: $smallWindowThreshold) {
       width: 100%;
-      padding-bottom: calc(var(--section-gutter) * .5);
     }
     .album-info-wrapper {
       flex: 1;

@@ -3,7 +3,7 @@
 
 .compact-album-view {
 	@include albumType('border-left-color');
-	padding: .75rem 1rem .75rem 2rem;
+	padding: 0 1rem 0 1rem;
   position: relative;
   background-color: rgba($backgroundDarkColor, .4);
 	border-left: .5rem solid;
@@ -17,12 +17,12 @@
     content: '⋮';
     cursor: move;
     position: absolute;
-    top: .75rem;
-    left: .5rem;
+    top: 0;
+    left: 0;
     line-height: $albumCoverCompactWidth;
     height: $albumCoverCompactWidth;
     vertical-align: middle;
-    font-size: 3rem;
+    font-size: 2rem;
     color: $backgroundLightColor;
   }
 
@@ -58,28 +58,29 @@
   }
   .album-content {
 		@include ellipsis(100%);
-    margin: 0 0 0 1.6rem;
+    margin: 0 0 0 1rem;
     display: flex;
 		flex: 1;
     flex-direction: column;
     .album-title {
 			@include ellipsis(100%);
       font-weight: bold;
-      color: $highlightColor;
-      font-size: 1rem;
-      line-height: 2rem;
+      font-size: .9rem;
+      line-height: 1.8rem;
       .icon {
         margin-left: .5rem;
       }
     }
 		.album-info {
 			@include ellipsis(100%);
+			font-size: .9rem;
 			a {
 				cursor: pointer;
 			}
 			.album-year {
 				@include monospace();
 				margin-right: .25rem;
+				color: darken($lightColor, 30%);
 				&:after {
 					content: '·';
 					padding-left: .25rem;
