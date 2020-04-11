@@ -36,7 +36,8 @@
 @mixin albumCover(
   $width,
   $bgColor: $backgroundLightColor,
-  $bgSize: 70%
+  $bgSize: 70%,
+  $initialOpacity: 0
 ) {
   margin: 0;
   background-image: radial-gradient(
@@ -52,9 +53,10 @@
   > img {
     width: $width;
     height: $width;
-    opacity: 0;
+    opacity: $initialOpacity;
     transition: opacity .5s ease-in-out;
     background-color: $bgColor;
+    border: 1px solid transparent;
     &.empty {
       display: none;
     }
