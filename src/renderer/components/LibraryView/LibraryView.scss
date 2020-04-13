@@ -2,10 +2,10 @@
 @import "../../styles/mixins";
 
 .library {
-  padding: var(--section-gutter) 0;
+  padding: 0;
   height: 100%;
   width: 100%;
-  overflow: auto;
+  overflow-y: auto;
   position: relative;
   &.drag-is-over {
     &.drag-can-drop {
@@ -47,8 +47,7 @@
   }
 
   .library-latest-albums {
-    margin-bottom: $mainUnit;
-    padding: 0 var(--section-gutter);
+    padding: var(--section-gutter);
     position: relative;
     &.drag-is-over {
       &.drag-can-drop {

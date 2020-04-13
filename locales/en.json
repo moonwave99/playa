@@ -1,10 +1,18 @@
 {
   "translation": {
     "buttons": {
-      "library": "Library",
-      "queue": "Queue",
-      "playlists": "Playlists",
-      "importMusic": "Import Music"
+      "library": {
+        "title": "Library",
+        "importMusic": "Import Music",
+        "browseByImportDate": "Browse Library by Import Date",
+        "browseByArtists": "Browse Library by Artists"
+      },
+      "queue": {
+        "title": "Queue"
+      },
+      "playlists": {
+        "title": "Playlists"
+      }
     },
     "sidebar": {
       "buttons": {

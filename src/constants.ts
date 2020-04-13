@@ -35,7 +35,7 @@ export const COLORS = {
   BACKGROUND_COLOR: '#1F1F1F'
 };
 
-export const LIBRARY_LATEST_ALBUM_LIMIT = 14;
+export const LIBRARY_LATEST_ALBUM_LIMIT = 35;
 export const LIBRARY_LATEST_DAY_COUNT = 90;
 
 export const DATE_FORMATS = {
@@ -70,6 +70,25 @@ export const ALBUM_GRID_THRESHOLDS = [
   }
 ];
 
+export const ARTIST_GRID_THRESHOLDS = [
+  {
+    width: 1200,
+    columns: 7
+  },
+  {
+    width: 960,
+    columns: 5
+  },
+  {
+    width: 640,
+    columns: 4
+  },
+  {
+    width: 400,
+    columns: 2
+  }
+];
+
 export const ALBUM_GRID_TOOLTIP_DELAY_SHOW = 500;
 export const ALBUM_GRID_TOOLTIP_DELAY_HIDE = 200;
 
@@ -88,6 +107,7 @@ export const IPC_MESSAGES = {
   IPC_UI_LOCATION_UPDATE: 'ui:location-update',
   IPC_UI_EDIT_PLAYLIST_TITLE: 'ui:edit-playlist-title',
   IPC_UI_EDIT_ARTIST_TITLE: 'ui:edit-artist-title',
+  IPC_UI_LIBRARY_SET_VIEW: 'ui:library-set-view',
   IPC_UI_LIBRARY_ALBUM_SELECTION_UPDATE: 'ui:library-album-selection-update',
   IPC_UI_PLAYLIST_ALBUM_SELECTION_UPDATE: 'ui:playlist-album-selection-update',
   IPC_UI_PLAYLIST_LIST_SELECTION_UPDATE: 'ui:playlist-list-selection-update',

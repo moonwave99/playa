@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC, ReactElement, useState, useEffect } from 'react';
 import { useLocation, useHistory } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -7,12 +7,11 @@ import { LatestAlbumsView } from './LatestAlbumsView/LatestAlbumsView';
 import { ArtistListView } from './ArtistListView/ArtistListView';
 
 import { ApplicationState } from '../../store/store';
-import { updateTitle } from '../../store/modules/ui';
+import { UILibraryView, updateTitle } from '../../store/modules/ui';
 import { Album } from '../../store/modules/album';
 import { Artist } from '../../store/modules/artist';
 import { Track } from '../../store/modules/track';
 import { openContextMenu } from '../../lib/contextMenu';
-import scrollTo from '../../lib/scrollTo';
 
 import {
   ALBUM_CONTEXT_ACTIONS,
@@ -72,10 +71,12 @@ export const LibraryView: FC<LibraryViewProps> = ({
 
 	const {
     latest,
+    libraryView,
     currentAlbumId,
     currentTrackId
-  } = useSelector(({ albums, library, player }: ApplicationState) => ({
+  } = useSelector(({ albums, library, player, ui }: ApplicationState) => ({
     latest: library.latest ? library.latest.map((_id: Album['_id']) => albums.allById[_id]).filter(a => !!a) : null,
+    libraryView: ui.libraryView,
     ...player
   }));
 
@@ -187,15 +188,10 @@ export const LibraryView: FC<LibraryViewProps> = ({
     history.replace(
       `${LIBRARY}?letter=${letter}`
     );
-    scrollTo({
-      selector: '.artists-start',
-      block: 'start',
-      behavior: 'smooth'
-    });
   }
 
-	return (
-		<section className="library">
+  function renderTimeline(): ReactElement {
+    return (
       <LatestAlbumsView
         albums={latest}
         currentAlbumId={currentAlbumId}
@@ -205,14 +201,22 @@ export const LibraryView: FC<LibraryViewProps> = ({
         onAlbumContextMenu={onAlbumContextMenu}
         onAlbumDoubleClick={onAlbumDoubleClick}
         onDrop={onDrop}/>
-      {
-        latest && latest.length > 0
-        ? <ArtistListView
-            selectedLetter={selectedLetter}
-            onContextMenu={onArtistContextMenu}
-            onLetterClick={onLetterClick}/>
-        : null
-      }
+    );
+  }
+
+  function renderArtists(): ReactElement {
+    return (
+      <ArtistListView
+        selectedLetter={selectedLetter}
+        onContextMenu={onArtistContextMenu}
+        onLetterClick={onLetterClick}/>
+    );
+  }
+
+	return (
+		<section className="library">
+      { libraryView === UILibraryView.Artists && renderArtists() }
+      { libraryView === UILibraryView.Timeline && renderTimeline() }
 		</section>
 	);
 }

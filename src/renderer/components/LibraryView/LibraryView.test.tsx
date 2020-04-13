@@ -3,6 +3,7 @@ import { mountInAll } from '../../../../test/testUtils';
 import { albums, artists } from '../../../../test/testFixtures';
 import { LibraryView } from './LibraryView';
 import { Album } from '../../store/modules/album';
+import { UILibraryView } from '../../store/modules/ui';
 import { toObj } from '../../utils/storeUtils';
 
 const defaultStore = {
@@ -31,6 +32,9 @@ const defaultStore = {
   library: {
     latest: albums.map(({ _id }) => _id),
     latestAlbumId: albums[1]._id
+  },
+  ui: {
+    libraryView: UILibraryView.Timeline
   }
 };
 
@@ -40,26 +44,6 @@ describe('LibraryView', () => {
       <LibraryView onDrop={jest.fn()}/>
     , defaultStore);
     expect(wrapper.find('.library')).toHaveLength(1);
-  });
-
-  it('should contain a .library-artists', () => {
-    const wrapper = mountInAll(
-      <LibraryView onDrop={jest.fn()}/>
-    , defaultStore);
-    expect(wrapper.find('.library-artists')).toHaveLength(1);
-  });
-
-  it('should not contain a .library-artists if there are no albums', () => {
-    const wrapper = mountInAll(
-      <LibraryView onDrop={jest.fn()}/>
-    , {
-        ...defaultStore,
-        library: {
-          latest: [],
-          latestAlbumId: null
-        }
-      });
-    expect(wrapper.find('.library-artists')).toHaveLength(0);
   });
 
   it('should contain an .library-latest-albums', () => {
@@ -76,14 +60,41 @@ describe('LibraryView', () => {
     expect(document.title).toBe('Library');
   });
 
-  it('should select letter on alphabet letter click', () => {
-    const wrapper = mountInAll(
-      <LibraryView onDrop={jest.fn()}/>
-    , defaultStore);
-    wrapper
-      .find('.alphabet .letter-s a')
-      .simulate('click');
+  describe('if libraryView is Artists', () => {
+    it('should contain an .artist-list', () => {
+      const wrapper = mountInAll(
+        <LibraryView onDrop={jest.fn()}/>
+      , {
+          ...defaultStore,
+          library: {
+            latest: [],
+            latestAlbumId: null
+          },
+          ui: {
+            libraryView: UILibraryView.Artists
+          }
+        });
+      expect(wrapper.find('.artist-list')).toHaveLength(1);
+    });
 
-    expect(wrapper.find('.alphabet .letter-s').is('.selected')).toBe(true);
+    it('should select letter on alphabet letter click', () => {
+      const wrapper = mountInAll(
+        <LibraryView onDrop={jest.fn()}/>
+      , {
+          ...defaultStore,
+          library: {
+            latest: [],
+            latestAlbumId: null
+          },
+          ui: {
+            libraryView: UILibraryView.Artists
+          }
+        });
+      wrapper
+        .find('.alphabet .letter-s a')
+        .simulate('click');
+
+      expect(wrapper.find('.alphabet .letter-s').is('.selected')).toBe(true);
+    });
   });
 });

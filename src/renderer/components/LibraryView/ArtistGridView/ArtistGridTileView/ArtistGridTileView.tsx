@@ -13,13 +13,15 @@ import {
 } from '../../../../store/modules/artist';
 import { ARTIST_SHOW } from '../../../../routes';
 
-type ArtistListItemViewProps = {
+type ArtistGridTileViewProps = {
   artist: Artist;
+  style?: object;
   onContextMenu: Function;
 };
 
-export const ArtistListItemView: FC<ArtistListItemViewProps> = ({
+export const ArtistGridTileView: FC<ArtistGridTileViewProps> = ({
   artist,
+  style,
   onContextMenu
 }) => {
   const dispatch = useDispatch();
@@ -65,7 +67,7 @@ export const ArtistListItemView: FC<ArtistListItemViewProps> = ({
     'drag-can-drop': canDrop
   });
 	return (
-    <article ref={viewRef} onContextMenu={_onContextMenu}>
+    <article ref={viewRef} onContextMenu={_onContextMenu} style={style}>
       <Link
         id={`artist-${name}`}
         className={classNames}

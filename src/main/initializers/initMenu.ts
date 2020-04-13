@@ -18,6 +18,7 @@ const {
   IPC_UI_NAVIGATE_TO,
   IPC_UI_FOCUS_SEARCH,
   IPC_UI_LOCATION_UPDATE,
+  IPC_UI_LIBRARY_SET_VIEW,
   IPC_UI_LIBRARY_ALBUM_SELECTION_UPDATE,
   IPC_UI_PLAYLIST_ALBUM_SELECTION_UPDATE,
   IPC_UI_PLAYLIST_LIST_SELECTION_UPDATE,
@@ -194,6 +195,16 @@ export default function initMenu({
           label: 'Show Library',
           accelerator: 'cmd+2',
           click: (): void => window.webContents.send(IPC_UI_NAVIGATE_TO, LIBRARY)
+        },
+        {
+          label: 'Browse Library by Import Date',
+          accelerator: 'cmd+shift+1',
+          click: (): void => window.webContents.send(IPC_UI_LIBRARY_SET_VIEW, 'Timeline')
+        },
+        {
+          label: 'Browse Library by Artists',
+          accelerator: 'cmd+shift+2',
+          click: (): void => window.webContents.send(IPC_UI_LIBRARY_SET_VIEW, 'Artists')
         },
         { type: 'separator' },
         {

@@ -1,24 +1,24 @@
 @import "../../../styles/variables";
 @import "../../../styles/mixins";
 
-.library-artists {
+.artist-list {
   opacity: 1;
   transition: opacity .3s ease-in-out;
-  min-height: 100vh;
   &.loading {
     opacity: 0;
   }
+  .alphabet-wrapper {
+    overflow: auto;
+  }
   .alphabet {
     @include monospace();
-    position: sticky;
-    top: calc(var(--section-gutter) * -1);
-    margin: 0 0 2rem 0;
-    padding: 0 var(--section-gutter);
+    margin: 0;
+    padding: 0;
     list-style: none;
     font-size: 1.5rem;
     line-height: $mainUnit;
+    height: $mainUnit;
     background-color: $backgroundDarkColor;
-    text-align: center;
     border-left: 1px solid $backgroundColor;
     z-index: 10;
     li {
@@ -37,108 +37,10 @@
         }
       }
     }
-    @media (max-width: $miniWindowThreshold) {
-      font-size: 1.2rem;
-      line-height: 2.5rem;
-      padding: 0;
-      li {
-        padding: 0 .6rem;
-      }
-    }
-  }
-  .artist-list {
-    margin: 0;
-    padding: 0 var(--section-gutter);
-    list-style: none;
-    @include clearFix();
-    li {
-      float: left;
-      width: calc(100% / 5);
-      @media (min-width: $wideWindowThreshold) {
-        width: calc(100% / 7);
-      }
-      @media (max-width: $smallWindowThreshold) {
-        width: calc(100% / 3);
-      }
-      @media (max-width: $miniWindowThreshold) {
-        width: calc(100% / 2);
-      }
-      .artist-list-item {
-        display: flex;
-        flex-direction: column;
-        margin: 0 1rem 1rem 0;
-        background-color: rgba($backgroundDarkColor, .4);
-        border-radius: .5rem;
-        border: 1px solid rgba($highlightColor, .1);
-        color: $lightColor;
-        font-size: .9rem;
-        &.drag-is-over {
-          &.drag-can-drop {
-            .artist-picture-wrapper {
-              .artist-picture {
-                border: 1px solid $mainColor;
-              }
-            }
-          }
-        }
-        .artist-picture-wrapper {
-          width: 100%;
-          height: 0;
-          padding-bottom: 100%;
-          border-top-left-radius: .25rem;
-          border-top-right-radius: .25rem;
-          background-color: $backgroundDarkColor;
-          .artist-picture {
-            display: block;
-            position: relative;
-            width: 100%;
-            padding-bottom: 100%;
-            background-position: center;
-            background-size: cover;
-            opacity: 0;
-            transition: opacity .5s ease-in-out;
-            &:after {
-              content: '';
-              position: absolute;
-              top: 0;
-              bottom: 0;
-              left: 0;
-              right: 0;
-              background-color: rgba(white, .1);
-              pointer-events: none;
-              opacity: 0;
-              transition: opacity .2s ease-in-out;
-            }
-          }
-        }
-        .artist-name {
-          @include ellipsis(100%);
-          width: 100%;
-          padding: 1rem;
-          letter-spacing: .01rem;
-        }
-        &.loaded {
-          .artist-picture-wrapper {
-            .artist-picture {
-              opacity: 1;
-            }
-          }
-        }
-        &:hover {
-          transition: background-color .2s ease-in-out;
-          background-color: $backgroundDarkColor;
-          .artist-name {
-            text-decoration: underline;
-          }
-          .artist-picture-wrapper {
-            .artist-picture {
-              &:after {
-                opacity: 1;
-              }
-            }
-          }
-        }
-      }
+    @media (min-width: $wideWindowThreshold) {
+      width: 100%!important;
+      text-align: center;
+      padding: 0 var(--section-gutter);
     }
   }
 }

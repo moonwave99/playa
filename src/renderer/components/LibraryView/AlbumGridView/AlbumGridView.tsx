@@ -191,14 +191,15 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
     );
   }
 
-  function renderRow(row: Album[], rowIndex: number): ReactElement {
+  function renderRow(row: Album[]): ReactElement {
     const classNames = cx('album-grid-row', {
       [`album-grid-row-${row[0].type}`]: !!groupBy
     });
+    const rowId = row.map(({ _id }) => _id).join('-');
     return (
       <div
         className={classNames}
-        key={rowIndex}>{row.map(renderTile)}
+        key={rowId}>{row.map(renderTile)}
       </div>
     );
   }
