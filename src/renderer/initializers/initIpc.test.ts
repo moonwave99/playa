@@ -23,6 +23,7 @@ const {
   IPC_PLAYBACK_NEXT_TRACK,
   IPC_PLAYBACK_CLEAR_QUEUE,
   IPC_UI_SWIPE,
+  IPC_UI_LIBRARY_SET_VIEW,
   IPC_LIBRARY_IMPORT_MUSIC,
   IPC_LIBRARY_EDIT_ALBUM,
   IPC_LIBRARY_ADD_ALBUMS_TO_PLAYLIST,
@@ -111,6 +112,12 @@ describe('initIpc', () => {
     expect(handler).toHaveBeenCalledWith(ipcEvent, 'left');
     ipcRenderer.trigger(IPC_UI_SWIPE, 'right');
     expect(handler).toHaveBeenCalledWith(ipcEvent, 'right');
+  });
+
+  it('should handle IPC_UI_LIBRARY_SET_VIEW', () => {
+    const handler = ipcRenderer.handlers[IPC_UI_LIBRARY_SET_VIEW];
+    ipcRenderer.trigger(IPC_UI_LIBRARY_SET_VIEW, 'Artists');
+    expect(handler).toHaveBeenCalledWith(ipcEvent, 'Artists');
   });
 
   it('should handle IPC_LIBRARY_IMPORT_MUSIC', () => {

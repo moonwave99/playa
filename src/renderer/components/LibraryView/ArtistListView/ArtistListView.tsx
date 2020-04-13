@@ -2,12 +2,11 @@ import React, { FC, ReactElement, SyntheticEvent } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, generatePath } from 'react-router-dom';
 import cx from 'classnames';
-import { ArtistListItemView } from './ArtistListItemView/ArtistListItemView';
+import { ArtistGridView } from '../ArtistGridView/ArtistGridView';
 
 import './ArtistListView.scss';
 
 import {
-  Artist,
   selectors as artistSelectors,
   VARIOUS_ARTISTS_ID
 } from '../../../store/modules/artist';
@@ -15,6 +14,8 @@ import {
 import { ApplicationState } from '../../../store/store';
 import { ARTIST_SHOW } from '../../../routes';
 import { ALPHABET } from '../../../utils/artistUtils';
+
+const alphabetWidth = `${ALPHABET.length * 3.2}rem`;
 
 type ArtistListViewProps = {
   selectedLetter: string;
@@ -37,7 +38,7 @@ export const ArtistListView: FC<ArtistListViewProps> = ({
       onLetterClick(letter);
     }
 
-    const classNames = cx(`letter-${letter}`, { 'selected' : letter === selectedLetter })
+    const classNames = cx(`letter-${letter}`, { selected : letter === selectedLetter })
     return (
       <li key={letter} className={classNames}>
         <a href="#" onClick={onClick}>{letter}</a>
@@ -45,32 +46,20 @@ export const ArtistListView: FC<ArtistListViewProps> = ({
     );
   }
 
-  function renderArtist(artist: Artist): ReactElement {
-    const { _id } = artist;
-    return (
-      <li key={_id}>
-        <ArtistListItemView artist={artist} onContextMenu={onContextMenu}/>
-      </li>
-    );
-  }
-
-  const classNames = cx('library-artists');
-
   return (
-    <section className={classNames}>
-      <div className="artists-start"></div>
-      <ul className="alphabet">
-        {ALPHABET.map(renderLetter)}
-        <li>
-          <Link
-            to={generatePath(ARTIST_SHOW, { _id: VARIOUS_ARTISTS_ID })}>
-            {VARIOUS_ARTISTS_ID}
-          </Link>
-        </li>
-      </ul>
-      <ul className="artist-list">
-        {artists.map(renderArtist)}
-      </ul>
+    <section className="artist-list">
+      <div className="alphabet-wrapper">
+        <ul className="alphabet" style={{ width: alphabetWidth }}>
+          {ALPHABET.map(renderLetter)}
+          <li>
+            <Link
+              to={generatePath(ARTIST_SHOW, { _id: VARIOUS_ARTISTS_ID })}>
+              {VARIOUS_ARTISTS_ID}
+            </Link>
+          </li>
+        </ul>
+      </div>
+      <ArtistGridView artists={artists} onContextMenu={onContextMenu}/>
     </section>
   );
 }

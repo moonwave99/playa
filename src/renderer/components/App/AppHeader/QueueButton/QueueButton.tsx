@@ -48,7 +48,7 @@ export const QueueButton: FC<QueueButtonProps> = ({
     <div ref={drop} className="button-drag-wrapper">
       <Link to={QUEUE} className={classNames}>
         <FontAwesomeIcon icon="play" className="button-icon"/>
-        <span className="button-text">{t('buttons.queue')}</span>
+        <span className="button-text">{t('buttons.queue.title')}</span>
       </Link>
     </div>
   );

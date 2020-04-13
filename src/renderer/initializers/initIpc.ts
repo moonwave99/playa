@@ -1,7 +1,12 @@
 import { History } from 'history';
 import { Store } from 'redux';
 import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
-import { setEditPlaylistTitle, setEditArtistTitle } from '../store/modules/ui';
+import {
+  UILibraryView,
+  setEditPlaylistTitle,
+  setEditArtistTitle,
+  setLibraryView
+} from '../store/modules/ui';
 import { Playlist } from '../store/modules/playlist';
 import { Album, editAlbum } from '../store/modules/album';
 import {
@@ -37,6 +42,7 @@ const {
   IPC_UI_EDIT_PLAYLIST_TITLE,
   IPC_UI_EDIT_ARTIST_TITLE,
   IPC_UI_REMOVE_PLAYLISTS,
+  IPC_UI_LIBRARY_SET_VIEW,
   IPC_LIBRARY_IMPORT_MUSIC,
   IPC_LIBRARY_EDIT_ALBUM,
   IPC_LIBRARY_ADD_ALBUMS_TO_PLAYLIST,
@@ -128,7 +134,9 @@ export default function initIpc({
         playlists: playlistsToRemove,
         dispatch
       }).handler();
-    }
+    },
+    [IPC_UI_LIBRARY_SET_VIEW]:
+      (_event: IpcRendererEvent, view: UILibraryView): void => dispatch(setLibraryView(view))
   }
 
   const entries = Object.entries(handlerMap);

@@ -10,6 +10,7 @@ import { ArtistTitleProvider } from './ArtistTitleProvider/ArtistTitleProvider';
 import { PlaylistTitleProvider } from './PlaylistTitleProvider/PlaylistTitleProvider';
 import { openSimpleContextMenu } from '../../../lib/contextMenu';
 import { VARIOUS_ARTISTS_ID } from '../../../store/modules/artist';
+import { UILibraryView } from '../../../store/modules/ui';
 import { Title } from '../../../store/modules/ui';
 
 import './AppHeader.scss';
@@ -32,6 +33,7 @@ type AppHeaderProps = {
 	onSearchFormSubmit: Function;
 	onSearchFormBlur: Function;
 	importMusicHandler: Function;
+	libraryViewSwitch: (view: UILibraryView) => void;
 	onQueueButtonDrop: Function;
 };
 
@@ -41,6 +43,7 @@ export const AppHeader: FC<AppHeaderProps> = ({
 	onSearchFormSubmit,
 	onSearchFormBlur,
 	importMusicHandler,
+	libraryViewSwitch,
 	onQueueButtonDrop
 }) => {
 	const { t } = useTranslation();
@@ -55,17 +58,27 @@ export const AppHeader: FC<AppHeaderProps> = ({
 		return (
 			<NavLink to={path} className={classNames} activeClassName="selected">
 				<FontAwesomeIcon icon={icons[path]} className="button-icon"/>
-				<span className="button-text">{t(`buttons.${className}`)}</span>
+				<span className="button-text">{t(`buttons.${className}.title`)}</span>
 			</NavLink>
 		);
 	}
 
 	function onLibraryActionsButtonClick(): void {
-		openSimpleContextMenu([{
-			id: 'library-add-music',
-			label: t('buttons.importMusic'),
-			click: (): void => importMusicHandler()
-		}]);
+		openSimpleContextMenu([
+			{
+				id: 'library-add-music',
+				label: t('buttons.library.importMusic'),
+				click: (): void => importMusicHandler()
+			},
+			{
+				label: t('buttons.library.browseByImportDate'),
+				click: (): void => libraryViewSwitch(UILibraryView.Timeline)
+			},
+			{
+				label: t('buttons.library.browseByArtists'),
+				click: (): void => libraryViewSwitch(UILibraryView.Artists)
+			},
+		]);
 	}
 
 	return (

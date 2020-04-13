@@ -32,9 +32,9 @@ export const UIDragTypes = {
   LIBRARY_ALBUMS: 'LIBRARY_ALBUMS'
 };
 
-export enum UIAlbumView {
-  Compact,
-  Extended
+export enum UILibraryView {
+  Artists = 'Artists',
+  Timeline = 'Timeline'
 }
 
 export type Title = {
@@ -47,6 +47,7 @@ export type UIState = {
   title: Title;
   editPlaylistTitle: boolean;
   editArtistTitle: boolean;
+  libraryView: UILibraryView;
 };
 
 export const SHOW_DIALOG              = 'playa/ui/SHOW_DIALOG';
@@ -54,6 +55,7 @@ export const UPDATE_STATE             = 'playa/ui/UPDATE_STATE';
 export const UPDATE_TITLE             = 'playa/ui/UPDATE_TITLE';
 export const SET_EDIT_PLAYLIST_TITLE  = 'playa/ui/SET_EDIT_PLAYLIST_TITLE';
 export const SET_EDIT_ARTIST_TITLE    = 'playa/ui/SET_EDIT_ARTIST_TITLE';
+export const SET_LIBRARY_VIEW         = 'playa/ui/SET_LIBRARY_VIEW';
 
 interface ShowDialogAction {
   type: typeof SHOW_DIALOG;
@@ -79,12 +81,18 @@ interface SetEditArtistTitle {
   editArtistTitle: boolean;
 }
 
+interface SetLibraryView {
+  type: typeof SET_LIBRARY_VIEW;
+  libraryView: UILibraryView;
+}
+
 export type UIActionTypes =
     ShowDialogAction
   | UpdateStateAction
   | UpdateTitleAction
   | SetEditPlaylistTitle
-  | SetEditArtistTitle;
+  | SetEditArtistTitle
+  | SetLibraryView;
 
 export const showDialog = (
   title: string,
@@ -132,6 +140,14 @@ export const setEditArtistTitle = (editArtistTitle: boolean): Function =>
     });
   }
 
+export const setLibraryView = (libraryView: UILibraryView): Function =>
+  (dispatch: Function): void => {
+    dispatch({
+      type: SET_LIBRARY_VIEW,
+      libraryView
+    });
+  }
+
 export const updateLocation =
   (location: string): void => ipc.send(IPC_UI_LOCATION_UPDATE, location);
 
@@ -148,7 +164,8 @@ const INITIAL_STATE = {
   started: true,
   title: { main: 'Playa' },
   editPlaylistTitle: false,
-  editArtistTitle: false
+  editArtistTitle: false,
+  libraryView: UILibraryView.Timeline
 };
 
 export default function reducer(
@@ -170,6 +187,11 @@ export default function reducer(
       return {
         ...state,
         editArtistTitle: action.editArtistTitle
+      };
+    case SET_LIBRARY_VIEW:
+      return {
+        ...state,
+        libraryView: action.libraryView
       };
     case SHOW_DIALOG:
     case UPDATE_STATE:

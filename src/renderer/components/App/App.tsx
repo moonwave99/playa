@@ -34,7 +34,11 @@ import {
 } from '../../store/modules/playlist';
 import { Album, selectors as albumSelectors } from '../../store/modules/album';
 import { getAllArtistsRequest } from '../../store/modules/artist';
-import { updateLocation } from '../../store/modules/ui';
+import {
+  UILibraryView,
+  setLibraryView,
+  updateLocation
+} from '../../store/modules/ui';
 
 import {
   updateQueue,
@@ -216,6 +220,10 @@ export const App: FC<AppProps> = ({
     updateLocation(history.location.pathname);
   }, [history.location.pathname]);
 
+  function libraryViewSwitch(view: UILibraryView): void {
+    dispatch(setLibraryView(view));
+  }
+
   function onQueueButtonDrop(albums: Album['_id'][] = []): void {
     dispatch(enqueueAtEnd(albums));
   }
@@ -240,6 +248,7 @@ export const App: FC<AppProps> = ({
         onSearchFormSubmit={onSearchFormSubmit}
         onSearchFormBlur={onSearchFormBlur}
         importMusicHandler={importMusicHandler}
+        libraryViewSwitch={libraryViewSwitch}
         onQueueButtonDrop={onQueueButtonDrop}/>
       <div className="main-container">
         <div className="sidebar-wrapper">

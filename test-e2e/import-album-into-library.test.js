@@ -64,6 +64,7 @@ describe('Import album into library', () => {
     });
 
     // check that artist is now inside ArtistListView
+    await menuAddon.clickMenu('Library', 'Browse Library by Artists');
     await app.client.click(`.library .alphabet .letter-${artist.toLowerCase().charAt(0)}`);
     await app.client.waitUntil(async () => {
       const isArtistRendered =
@@ -120,6 +121,7 @@ describe('Import album into library', () => {
     });
 
     // check that artist is now inside ArtistListView
+    await menuAddon.clickMenu('Library', 'Browse Library by Artists');
     await app.client.click(`.library .alphabet .letter-${artist.toLowerCase().charAt(0)}`);
     await app.client.waitUntil(async () => {
       const isArtistRendered =

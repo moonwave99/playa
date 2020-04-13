@@ -1,14 +1,17 @@
 import reducer, {
   UIActionTypes,
   UIState,
+  UILibraryView,
   updateState,
   updateTitle,
   setEditPlaylistTitle,
   setEditArtistTitle,
+  setLibraryView,
   UPDATE_STATE,
   UPDATE_TITLE,
   SET_EDIT_PLAYLIST_TITLE,
-  SET_EDIT_ARTIST_TITLE
+  SET_EDIT_ARTIST_TITLE,
+  SET_LIBRARY_VIEW
 } from './ui';
 
 describe('ui actions', () => {
@@ -60,6 +63,17 @@ describe('ui actions', () => {
       });
     });
   });
+
+  describe('setLibraryView', () => {
+    it('should dispatch a setLibraryView request', () => {
+      const dispatch = jest.fn();
+      setLibraryView(UILibraryView.Artists)(dispatch);
+      expect(dispatch).toHaveBeenCalledWith({
+        type: SET_LIBRARY_VIEW,
+        libraryView: UILibraryView.Artists
+      });
+    });
+  });
 });
 
 describe('ui reducer', () => {
@@ -70,7 +84,8 @@ describe('ui reducer', () => {
         main: 'Playa'
       },
       editPlaylistTitle: false,
-      editArtistTitle: false
+      editArtistTitle: false,
+      libraryView: UILibraryView.Timeline
     });
   });
 
@@ -111,6 +126,15 @@ describe('ui reducer', () => {
       editArtistTitle: true
     })).toEqual({
       editArtistTitle: true
+    });
+  });
+
+  it('should handle SET_LIBRARY_VIEW', () => {
+    expect(reducer({} as UIState, {
+      type: SET_LIBRARY_VIEW,
+      libraryView: UILibraryView.Artists
+    })).toEqual({
+      libraryView: UILibraryView.Artists
     });
   });
 });
