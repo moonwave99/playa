@@ -6,6 +6,7 @@ import { toObj } from '../../utils/storeUtils';
 import { albums, artists, tracks } from '../../../../test/testFixtures';
 import reducer, {
   Album,
+  AlbumTypes,
   AlbumActionTypes,
   AlbumState,
   getAlbumRequest,
@@ -16,6 +17,8 @@ import reducer, {
   reloadAlbumContent,
   editAlbum,
   updateAlbum,
+  getAlbumCoverRequest,
+  getAlbumCoverFromUrlRequest,
   ALBUM_GET_RESPONSE,
   ALBUM_GET_LIST_REQUEST,
   ALBUM_GET_LIST_RESPONSE,
@@ -215,6 +218,116 @@ describe('album actions', () => {
         title: 'updated title'
       }, artist)(store.dispatch, store.getState);
       expect(store.getActions()).toEqual(expectedActions);
+    });
+  });
+
+  describe('getAlbumCoverRequest', () => {
+    it('should dispatch expected actions', async () => {
+      const store = mockStore({
+        albums: {
+          allById: toObj(albums)
+        },
+        artists: {
+          allById: toObj(artists),
+          latestArtistId: null
+        }
+      });
+
+      const expectedActions = [
+        {
+          type: ALBUM_SAVE_RESPONSE,
+          album: {
+            ...albums[0],
+            noDiscogsResults: false,
+            cover: '/path/to/cover'
+          }
+        }
+      ];
+
+      await getAlbumCoverRequest(albums[0])(store.dispatch, store.getState);
+      expect(store.getActions()).toEqual(expectedActions);
+    });
+
+    it('should dispatch nothing if album should have no cover', async () => {
+      const store = mockStore({
+        albums: {
+          allById: toObj(albums)
+        },
+        artists: {
+          allById: toObj(artists),
+          latestArtistId: null
+        }
+      });
+
+      await getAlbumCoverRequest({
+        ...albums[0],
+        type: AlbumTypes.Remix
+      })(store.dispatch, store.getState);
+      expect(store.getActions()).toEqual([]);
+    });
+
+    it('should dispatch nothing if album already has a cover', async () => {
+      const store = mockStore({
+        albums: {
+          allById: toObj(albums)
+        },
+        artists: {
+          allById: toObj(artists),
+          latestArtistId: null
+        }
+      });
+
+      await getAlbumCoverRequest({
+        ...albums[0],
+        cover: '/path/to/cover'
+      })(store.dispatch, store.getState);
+      expect(store.getActions()).toEqual([]);
+    });
+  });
+
+  describe('getAlbumCoverFromUrlRequest', () => {
+    it('should dispatch expected actions', async () => {
+      const store = mockStore({
+        albums: {
+          allById: toObj(albums)
+        },
+        artists: {
+          allById: {},
+          latestArtistId: null
+        }
+      });
+
+      const expectedActions = [
+        {
+          type: ALBUM_SAVE_RESPONSE,
+          album: {
+            ...albums[0],
+            noDiscogsResults: false,
+            cover: '/path/to/cover'
+          }
+        }
+      ];
+
+      await getAlbumCoverFromUrlRequest(albums[0], 'https://path/to/covers/1.jpg')(store.dispatch);
+      expect(store.getActions()).toEqual(expectedActions);
+    });
+
+    it('should dispatch nothing if album should have no cover', async () => {
+      const store = mockStore({
+        albums: {
+          allById: toObj(albums)
+        },
+        artists: {
+          allById: {},
+          latestArtistId: null
+        }
+      });
+
+      await getAlbumCoverFromUrlRequest({
+        ...albums[0],
+        type: AlbumTypes.Remix
+      }, 'https://path/to/covers/1.jpg')(store.dispatch);
+      expect(store.getActions()).toEqual([]);
     });
   });
 });
