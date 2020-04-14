@@ -17,15 +17,6 @@ describe('Playlist interaction', () => {
     app = menuApp.app;
     menuAddon = menuApp.menuAddon;
     contextMenuAddon = menuApp.contextMenuAddon;
-  });
-
-  afterEach(() => {
-    if (app && app.isRunning()) {
-      return app.stop();
-    }
-  });
-
-  it('removes current playlist', async () => {
     await populateTestDB({
       playlists: [{
         ...TestPlaylists[0],
@@ -34,7 +25,53 @@ describe('Playlist interaction', () => {
       albums: TestAlbums,
       artists: TestArtists
     });
+  });
 
+  afterEach(() => {
+    if (app && app.isRunning()) {
+      return app.stop();
+    }
+  });
+
+  it('renames current playlist', async () => {
+    await app.start();
+    await app.client.waitUntilWindowLoaded();
+
+    const { _id, title } = TestPlaylists[0];
+    const newTitle = 'New Playlist Title';
+
+    // select playlist
+    await app.client.click(`#playlist-list-item-${_id}`);
+    await app.client.waitUntil(
+      async () => await app.client.getText('.app-header .heading-main') === title
+    );
+    await app.client.click('.app-header h1');
+
+    // rename playlist
+    await app.client.waitForExist('.app-header-middle-wrapper form');
+    await app.client.keys(new Array(title.length).fill('Backspace'));
+    await app.client.setValue('.app-header-middle-wrapper form input', newTitle);
+    await app.client.keys('Enter');
+
+    // check that title has been updated
+    await app.client.waitUntil(
+      async () => await app.client.getText('.app-header .heading-main') === newTitle
+    );
+
+    // check that sidebar playlist item has been updated
+    await app.client.waitUntil(
+      async () => await app.client.getText(`#playlist-list-item-${_id}`) === newTitle
+    );
+
+    // check that playlist has been updated in all playlists view
+    await app.client.click('.app-header .button-playlists');
+    await app.client.waitForExist('.all-playlists');
+    await app.client.waitUntil(
+      async () => await app.client.getText(`#playlist-grid-tile-${_id}`) === newTitle
+    );
+  });
+
+  it('removes current playlist', async () => {
     await app.start();
 
     mock(app, [
@@ -48,41 +85,48 @@ describe('Playlist interaction', () => {
 
     await app.client.waitUntilWindowLoaded();
 
-    await app.client.click(`#playlist-list-item-${TestPlaylists[0]._id}`);
+    const { _id, title } = TestPlaylists[0];
+
+    // select playlist
+    await app.client.click(`#playlist-list-item-${_id}`);
     await app.client.waitUntil(
-      async () => await app.client.getText('.app-header .heading-main') === TestPlaylists[0].title
+      async () => await app.client.getText('.app-header .heading-main') === title
     );
 
+    // remove playlist
     menuAddon.clickMenu('Playlist', 'Remove Current Playlist');
-
     await app.client.waitUntil(
       async () => await app.client.getText('.app-header .heading-main') === 'Playback Queue'
     );
 
+    // check that playlist is not displayed in sidebar
     await app.client.waitUntil(
       async () => {
-        const selection = await app.client.elements('.sidebar-playlists .playlist-list-item');
+        const selection = await app.client.elements(`#playlist-list-item-${_id}`);
+        return selection.value.length === 0
+      }
+    );
+
+    // check that playlist is not displayed in all playlists view
+    await app.client.click('.app-header .button-playlists');
+    await app.client.waitForExist('.all-playlists');
+    await app.client.waitUntil(
+      async () => {
+        const selection = await app.client.elements(`#playlist-grid-tile-${_id}`);
         return selection.value.length === 0
       }
     );
   }, TEN_SECONDS);
 
   it('removes selected album from current playlist', async () => {
-    await populateTestDB({
-      playlists: [{
-        ...TestPlaylists[0],
-        albums: TestAlbums.map(({ _id }) => _id)
-      }],
-      albums: TestAlbums,
-      artists: TestArtists
-    });
-
     await app.start();
     await app.client.waitUntilWindowLoaded();
 
-    await app.client.click(`#playlist-list-item-${TestPlaylists[0]._id}`);
+    const { _id, title } = TestPlaylists[0];
+
+    await app.client.click(`#playlist-list-item-${_id}`);
     await app.client.waitUntil(
-      async () => await app.client.getText('.app-header .heading-main') === TestPlaylists[0].title
+      async () => await app.client.getText('.app-header .heading-main') === title
     );
 
     // select second album
@@ -110,21 +154,14 @@ describe('Playlist interaction', () => {
   }, TEN_SECONDS);
 
   it('removes all albums from current playlist', async () => {
-    await populateTestDB({
-      playlists: [{
-        ...TestPlaylists[0],
-        albums: TestAlbums.map(({ _id }) => _id)
-      }],
-      albums: TestAlbums,
-      artists: TestArtists
-    });
-
     await app.start();
     await app.client.waitUntilWindowLoaded();
 
-    await app.client.click(`#playlist-list-item-${TestPlaylists[0]._id}`);
+    const { _id, title } = TestPlaylists[0];
+
+    await app.client.click(`#playlist-list-item-${_id}`);
     await app.client.waitUntil(
-      async () => await app.client.getText('.app-header .heading-main') === TestPlaylists[0].title
+      async () => await app.client.getText('.app-header .heading-main') === title
     );
 
     // select all albums
