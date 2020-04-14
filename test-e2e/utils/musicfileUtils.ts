@@ -124,6 +124,7 @@ export async function generateAlbum(album: FileAlbum): Promise<GeneratedAlbumInf
       _id: tracks[index],
       _rev: null,
       path: tracks[index],
+      found: true,
       artist,
       year,
       title: track,

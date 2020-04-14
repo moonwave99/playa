@@ -53,7 +53,7 @@ export const TracklistViewItem: FC<TracklistViewItemProps> = ({
   });
 
   return (
-    <li className={trackClassNames} onDoubleClick={_onDoubleClick}>
+    <li className={trackClassNames} onDoubleClick={_onDoubleClick} id={`track-${number}`}>
       {renderTrackNumber(number)}
       <span className="playback-info">
         <FontAwesomeIcon
