@@ -59,7 +59,9 @@ export default function useSelect<T>({
   onItemClick: Function;
   selection: SelectionItem[];
   direction: number;
+  requestFocus: Function;
 } {
+  const hasFocus = useRef(false);
   const [selection, setSelection] = useState(
     items.map((_item, index) => ({
       index,
@@ -77,6 +79,7 @@ export default function useSelect<T>({
   }, [items])
 
   function onItemClick({ index, metaKey, shiftKey }: OnItemClickParams): void {
+    hasFocus.current = true;
     const newSelection = select({
       selection,
       index,
@@ -95,6 +98,9 @@ export default function useSelect<T>({
 
   useEffect(() => {
     function onUp(): void {
+      if (!hasFocus.current) {
+        return;
+      }
       const index = Math.max(lastClickedIndex.current - 1, 0);
       const newSelection = select({
         selection,
@@ -106,6 +112,9 @@ export default function useSelect<T>({
     }
 
     function onDown(): void {
+      if (!hasFocus.current) {
+        return;
+      }
       const index = Math.min(lastClickedIndex.current + 1, items.length - 1);
       const newSelection = select({
         selection,
@@ -117,6 +126,9 @@ export default function useSelect<T>({
     }
 
     function _onEnter(): void {
+      if (!hasFocus.current) {
+        return;
+      }
       onEnter && onEnter(
         selection
           .filter(({ selected }) => selected)
@@ -125,6 +137,9 @@ export default function useSelect<T>({
     }
 
     function onAll(): void {
+      if (!hasFocus.current) {
+        return;
+      }      
       setSelection(selection.map(({ index }) => ({
         index,
         selected: true
@@ -138,9 +153,14 @@ export default function useSelect<T>({
     return (): void => { mousetrap.unbind(['up', 'down', 'enter', 'command+a']) };
   }, [items.length, selection]);
 
+  function requestFocus(): void {
+    hasFocus.current = true;
+  }
+
   return {
     onItemClick,
     selection,
-    direction: direction.current
+    direction: direction.current,
+    requestFocus
   };
 }

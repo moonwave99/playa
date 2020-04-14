@@ -51,7 +51,7 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
 	}
 
 	const [renderedItems, setRenderedItems] = useState([]);
-	const { selection, direction, onItemClick } = useSelect({
+	const { selection, direction, onItemClick, requestFocus } = useSelect({
 		items: results,
 		onEnter: _onResultEnter
 	});
@@ -72,6 +72,7 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
 
 	useEffect(() => {
 		setRenderedItems([]);
+		requestFocus();
 	}, [results, query]);
 
 	useEffect(() => {
