@@ -53,8 +53,8 @@ export const SearchForm: FC<SearchFormProps> = ({
 	};
 
 	useEffect(() => {
-		hasFocus && inputRef.current.focus();
-	}, []);
+		requestFocus && inputRef.current.focus();
+	}, [requestFocus]);
 
 	function _onFocus(): void {
 		setFocus(true);
