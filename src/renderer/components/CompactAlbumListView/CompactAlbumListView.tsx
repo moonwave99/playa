@@ -17,7 +17,7 @@ import './CompactAlbumListView.scss';
 
 const CompactAlbumView = memo(RawCompactAlbumView);
 
-const ITEM_SIZE = 63;
+const ITEM_SIZE = 64;
 
 export type CompactAlbumListViewProps = {
   albums: Album[];
