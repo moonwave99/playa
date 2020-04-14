@@ -104,7 +104,7 @@ export const PlaylistContainer = (): ReactElement => {
       {
         type: PLAYLIST_CONTENT_CONTEXT_ACTIONS,
         playlist,
-        selection: [album._id],
+        selection,
         dispatch
       },
       {
@@ -130,6 +130,7 @@ export const PlaylistContainer = (): ReactElement => {
     album: Album;
     track: Track;
   }): void {
+    console.log(album)
     actionsMap(AlbumActions.PLAY_ALBUM)({
       queue: playlist.albums,
       playlistId: playlist._id,

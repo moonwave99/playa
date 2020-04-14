@@ -63,7 +63,7 @@
         letter-spacing: .01em;
         transition: color .3s ease-in-out;
         @media (max-width: $miniWindowThreshold) {
-          font-size: 1.2rem;
+          font-size: 1rem;
           line-height: 1.5rem;
           .button-album-actions {
             height: auto;
@@ -82,7 +82,7 @@
         letter-spacing: 0;
         font-weight: normal;
         @media (max-width: $miniWindowThreshold) {
-          font-size: 1rem;
+          font-size: .9rem;
           line-height: 1.5rem;
         }
         .album-year {

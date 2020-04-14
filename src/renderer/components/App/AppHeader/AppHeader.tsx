@@ -29,7 +29,7 @@ const icons: { [key: string]: IconName } = {
 
 type AppHeaderProps = {
 	title: Title;
-	hasSearchFocus: boolean;
+	requestSearchFocus: boolean;
 	onSearchFormSubmit: Function;
 	onSearchFormBlur: Function;
 	importMusicHandler: Function;
@@ -39,7 +39,7 @@ type AppHeaderProps = {
 
 export const AppHeader: FC<AppHeaderProps> = ({
 	title,
-	hasSearchFocus,
+	requestSearchFocus,
 	onSearchFormSubmit,
 	onSearchFormBlur,
 	importMusicHandler,
@@ -130,7 +130,7 @@ export const AppHeader: FC<AppHeaderProps> = ({
 			</div>
 			<div className="app-header-right-wrapper">
 				<SearchForm
-					hasFocus={hasSearchFocus}
+					requestFocus={requestSearchFocus}
 					onFormSubmit={onSearchFormSubmit}
 					onBlur={onSearchFormBlur}/>
 			</div>

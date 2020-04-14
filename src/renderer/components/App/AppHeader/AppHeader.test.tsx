@@ -5,6 +5,12 @@ mockRouter({
   routeMatch: { url: '/library' }
 });
 
+const defaultStore = {
+  artists: {
+    allById: {}
+  }
+};
+
 import { AppHeader } from './AppHeader';
 
 describe('AppHeader', () => {
@@ -12,13 +18,13 @@ describe('AppHeader', () => {
 		const wrapper = renderInAll(
 			<AppHeader
         title={{ main: 'Playa' }}
-        hasSearchFocus={false}
+        requestSearchFocus={false}
         onSearchFormSubmit={jest.fn()}
         onSearchFormBlur={jest.fn()}
         importMusicHandler={jest.fn()}
         libraryViewSwitch={jest.fn()}
         onQueueButtonDrop={jest.fn()}/>
-		);
+		, defaultStore);
 		expect(wrapper.is('.app-header')).toBe(true);
   });
 
@@ -26,13 +32,13 @@ describe('AppHeader', () => {
 		const wrapper = renderInAll(
 			<AppHeader
         title={{ main: 'Playa' }}
-        hasSearchFocus={false}
+        requestSearchFocus={false}
         onSearchFormSubmit={jest.fn()}
         onSearchFormBlur={jest.fn()}
         importMusicHandler={jest.fn()}
         libraryViewSwitch={jest.fn()}
         onQueueButtonDrop={jest.fn()}/>
-		);
+		, defaultStore);
 		expect(wrapper.find('h1')).toHaveLength(1);
   });
 
@@ -40,13 +46,13 @@ describe('AppHeader', () => {
     const wrapper = renderInAll(
 			<AppHeader
         title={{ main: 'Playa' }}
-        hasSearchFocus={false}
+        requestSearchFocus={false}
         onSearchFormSubmit={jest.fn()}
         onSearchFormBlur={jest.fn()}
         importMusicHandler={jest.fn()}
         libraryViewSwitch={jest.fn()}
         onQueueButtonDrop={jest.fn()}/>
-		);
+		, defaultStore);
     expect(wrapper.find('.button-library').is(':not(.button-outline)')).toBe(true);
   });
 });

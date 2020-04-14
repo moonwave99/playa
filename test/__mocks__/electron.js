@@ -1,4 +1,3 @@
-const fixtures = require('../testFixtures');
 const { toObj } = require('../../src/renderer/utils/storeUtils');
 const { IPC_MESSAGES } = require('../../src/constants');
 
@@ -52,6 +51,7 @@ module.exports = {
     removeListener: jest.fn(),
     removeEventListener: jest.fn(),
     invoke: (message, ...args) => {
+      const fixtures = require('../testFixtures');
       switch (message) {
         case IPC_DIALOG_SHOW_MESSAGE:
           return { response: 0 };

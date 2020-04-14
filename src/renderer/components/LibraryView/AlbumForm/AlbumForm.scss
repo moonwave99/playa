@@ -31,6 +31,10 @@ $labelHeight: 2rem;
     &.input-artist {
       flex: 0 0 calc(100% / 3 * 2);
       padding-right: $labelHeight * 0.5;
+      input.has-suggestions {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+      }
     }
     &.input-isVariousArtists {
       flex: 0 0 calc(100% / 3);
@@ -55,38 +59,6 @@ $labelHeight: 2rem;
       width: 100%;
       margin: 0;
       padding: 0 1rem;
-    }
-  }
-
-  .react-autosuggest__container {
-    position: relative;
-
-    .react-autosuggest__suggestions-container {
-      position: absolute;
-      top: $mainUnit;
-      left: 0;
-      right: 0;
-      ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        background-color: $backgroundColor;
-        border: 1px solid $mainColor;
-        border-bottom-left-radius: .5rem;
-        border-bottom-right-radius: .5rem;
-        max-height: 5 * $mainUnit;
-        overflow-y: scroll;
-        li {
-          line-height: $mainUnit;
-          padding: 0 1rem;
-          background-color: $darkColor;
-          color: $highlightColor;
-          &.react-autosuggest__suggestion--highlighted {
-            color: $mainColor;
-            background-color: $highlightColor;
-          }
-        }
-      }
     }
   }
 }

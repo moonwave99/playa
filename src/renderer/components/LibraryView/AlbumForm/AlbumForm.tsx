@@ -16,6 +16,8 @@ import {
   searchArtists,
 } from '../../../store/modules/artist';
 
+import { SUGGESTION_LENGTH_THRESHOLD } from '../../../../constants';
+
 import './AlbumForm.scss';
 
 type AlbumFormProps = {
@@ -42,10 +44,11 @@ export const AlbumForm: FC<AlbumFormProps> = ({
   const { t } = useTranslation();
   const [suggestionQuery, setSuggestionQuery] = useState('');
   const artistSuggestions = useSelector(
-    (state: ApplicationState) => suggestionQuery === '' ? [] : searchArtists(state, suggestionQuery)
+    (state: ApplicationState) => suggestionQuery.length < SUGGESTION_LENGTH_THRESHOLD
+			? []
+			: searchArtists(state, suggestionQuery)
   );
   const [artist, setArtist] = useState(getDefaultArtist());
-  const classNames = cx('form', 'album-form', className);
 
   useEffect(() => {
     if (propArtist && propArtist.name) {
@@ -120,6 +123,9 @@ export const AlbumForm: FC<AlbumFormProps> = ({
     const data = {
       'data-key-catch': 'Space'
     };
+    const className = cx({
+      'has-suggestions' : artistSuggestions.length >0  && suggestionQuery.length > 0
+    });
     return (
       <Autosuggest
         suggestions={artistSuggestions}
@@ -132,6 +138,7 @@ export const AlbumForm: FC<AlbumFormProps> = ({
           onChange,
           required: true,
           disabled: isAlbumFromVA,
+          className,
           name: 'artist',
           id: 'artist',
           value: artist.name,
@@ -140,6 +147,8 @@ export const AlbumForm: FC<AlbumFormProps> = ({
         }}/>
     );
   }
+
+  const classNames = cx('form', 'album-form', className);
 
   return (
     <Form

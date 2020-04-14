@@ -2,11 +2,9 @@
 @import "../../../styles/mixins";
 
 .compact-album-view {
-	@include albumType('border-left-color');
 	padding: 0 1rem 0 1rem;
   position: relative;
   background-color: rgba($backgroundDarkColor, .4);
-	border-left: .5rem solid;
 
   .album-inner-wrapper {
     display: flex;
@@ -18,7 +16,7 @@
     cursor: move;
     position: absolute;
     top: 0;
-    left: 0;
+    left: 0.125rem;
     line-height: $albumCoverCompactWidth;
     height: $albumCoverCompactWidth;
     vertical-align: middle;

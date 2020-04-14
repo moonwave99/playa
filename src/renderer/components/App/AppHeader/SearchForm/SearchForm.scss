@@ -5,6 +5,16 @@
 	margin: 0;
 	padding: 0;
 	display: flex;
+	&.has-focus {
+		.button {
+			background-color: lighten($backgroundColor, 5%);
+		}
+	}
+	&.has-suggestions {
+		.search-input {
+			border-bottom-left-radius: 0;
+		}
+	}
 	.search-input,
 	.button {
 		margin: 0;
@@ -29,7 +39,40 @@
 			color: $mainColor;
 		}
 	}
-	.search-input:focus + button {
-		background-color: lighten($backgroundColor, 5%);
+
+	.react-autosuggest__container {
+		position: relative;
+		z-index: 1010;
+
+		.react-autosuggest__suggestions-container {
+			position: absolute;
+			top: $formMiniHeight;
+			left: 0;
+			right: 0;
+			ul {
+				list-style: none;
+				padding: 0;
+				margin: 0;
+				background-color: $backgroundColor;
+				border: 1px solid $mainColor;
+				border-bottom-left-radius: .5rem;
+				border-bottom-right-radius: .5rem;
+				max-height: 5 * $formMiniHeight;
+				overflow-y: scroll;
+				li {
+					@include ellipsis();
+					line-height: $formMiniHeight;
+					font-size: .7rem;
+					padding: 0 1rem;
+					background-color: $darkColor;
+					color: $highlightColor;
+					&.react-autosuggest__suggestion--highlighted {
+						color: $mainColor;
+						background-color: $highlightColor;
+					}
+				}
+			}
+		}
 	}
+
 }

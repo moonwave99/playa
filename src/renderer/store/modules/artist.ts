@@ -13,22 +13,6 @@ export const VARIOUS_ARTISTS_ID = 'V/A';
 
 import { ApplicationState } from '../store';
 
-import {
-  Album,
-  ALBUM_GET_LIST_RESPONSE
-} from './album';
-
-import { IPC_MESSAGES } from '../../../constants';
-
-const {
-  IPC_ARTIST_GET_ALL_REQUEST,
-  IPC_ARTIST_SAVE_REQUEST,
-  IPC_ARTIST_DELETE_REQUEST,
-  IPC_ALBUM_FIND_REQUEST,
-  IPC_ARTIST_PICTURE_GET_REQUEST,
-  IPC_ARTIST_PICTURE_GET_FROM_URL_REQUEST
-} = IPC_MESSAGES;
-
 export type Artist = {
   _id: string;
   _rev?: string;
@@ -46,6 +30,36 @@ export function getDefaultArtist(): Artist {
     noDiscogsResults: false
   };
 }
+
+export const selectors = {
+  state: ({ artists }: { artists: ArtistState }): ArtistState => artists,
+  allById: ({ artists }: { artists: ArtistState }): EntityHashMap<Artist> => artists.allById,
+  findById: ({ artists }: { artists: ArtistState }, id: Artist['_id']): Artist => artists.allById[id] || getDefaultArtist(),
+  findByList: ({ artists }: { artists: ArtistState }, ids: Artist['_id'][]): Artist[] => ids.map(id => artists.allById[id]),
+  findByLetter: ({ artists }: { artists: ArtistState }, letter: string): Artist[] => {
+    return Object.values(artists.allById).filter(({ name }) => {
+      return (letter === VARIOUS_ARTIST_KEY && name === VARIOUS_ARTISTS_ID)
+        || (letter.match(/[a-z]/) && name.charAt(0).toLowerCase() === letter)
+        || (!name.charAt(0).toLowerCase().match(/[a-z]/) && name !== VARIOUS_ARTISTS_ID && letter === NUMERIC_KEY);
+    });
+  }
+};
+
+import {
+  Album,
+  ALBUM_GET_LIST_RESPONSE
+} from './album';
+
+import { IPC_MESSAGES } from '../../../constants';
+
+const {
+  IPC_ARTIST_GET_ALL_REQUEST,
+  IPC_ARTIST_SAVE_REQUEST,
+  IPC_ARTIST_DELETE_REQUEST,
+  IPC_ALBUM_FIND_REQUEST,
+  IPC_ARTIST_PICTURE_GET_REQUEST,
+  IPC_ARTIST_PICTURE_GET_FROM_URL_REQUEST
+} = IPC_MESSAGES;
 
 export const VariousArtist = {
   ...getDefaultArtist(),
@@ -180,20 +194,6 @@ export interface ArtistState {
   isLoading: boolean;
 }
 
-export const selectors = {
-  state: ({ artists }: { artists: ArtistState }): ArtistState => artists,
-  allById: ({ artists }: { artists: ArtistState }): EntityHashMap<Artist> => artists.allById,
-  findById: ({ artists }: { artists: ArtistState }, id: Artist['_id']): Artist => artists.allById[id] || getDefaultArtist(),
-  findByList: ({ artists }: { artists: ArtistState }, ids: Artist['_id'][]): Artist[] => ids.map(id => artists.allById[id]),
-  findByLetter: ({ artists }: { artists: ArtistState }, letter: string): Artist[] => {
-    return Object.values(artists.allById).filter(({ name }) => {
-      return (letter === VARIOUS_ARTIST_KEY && name === VARIOUS_ARTISTS_ID)
-        || (letter.match(/[a-z]/) && name.charAt(0).toLowerCase() === letter)
-        || (!name.charAt(0).toLowerCase().match(/[a-z]/) && name !== VARIOUS_ARTISTS_ID && letter === NUMERIC_KEY);
-    });
-  }
-};
-
 export const getAlbumsByArtist = createCachedSelector(
   selectors.findById,
   ({ albums }: ApplicationState) => albums.allById,
@@ -204,7 +204,7 @@ export const searchArtists = createCachedSelector(
   selectors.allById,
   (_state: ApplicationState, query: string) => query,
   (artists, query) => toArray(artists).filter(
-    ({ name }) => name.match(new RegExp(`^${query}`, 'gi'))
+    ({ name }) => name.match(new RegExp(`${query}`, 'gi'))
   )
 )((_state_: ApplicationState, query: string) => query);
 

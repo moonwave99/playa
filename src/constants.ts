@@ -97,6 +97,8 @@ export const FONTS = ['Fira Mono', 'Inter UI', 'Nunito'];
 export const WAVEFORM_RESOLUTION = 1000;
 export const WAVEFORM_PRECISION = 2;
 
+export const SUGGESTION_LENGTH_THRESHOLD = 3;
+
 export const IPC_MESSAGES = {
   IPC_ERROR: 'error',
   IPC_UI_STATE_LOAD: 'ui:state:load',

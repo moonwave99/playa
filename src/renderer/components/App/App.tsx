@@ -111,7 +111,7 @@ export const App: FC<AppProps> = ({
     title
   } = useSelector(appSelector);
 
-  const [hasSearchFocus, setSearchFocus] = useState(false);
+  const [requestSearchFocus, setRequestSearchFocus] = useState(false);
   const [latestPlaylistResumed, setLatestPlaylistResumed] = useState(false);
 
   function onCreatePlaylist(albums: Album['_id'][] = []): void {
@@ -150,7 +150,7 @@ export const App: FC<AppProps> = ({
   });
 
   function onFocusSearch(): void {
-    setSearchFocus(true);
+    setRequestSearchFocus(true);
   }
 
   function onKeyDown(event: KeyboardEvent): void {
@@ -229,7 +229,7 @@ export const App: FC<AppProps> = ({
   }
 
   function onSearchFormBlur(): void {
-    setSearchFocus(false);
+    setRequestSearchFocus(false);
   }
 
   function onSearchFormSubmit(query: string): void {
@@ -244,7 +244,7 @@ export const App: FC<AppProps> = ({
     <main className="app" ref={mainElementRef}>
       <AppHeader
         title={title}
-        hasSearchFocus={hasSearchFocus}
+        requestSearchFocus={requestSearchFocus}
         onSearchFormSubmit={onSearchFormSubmit}
         onSearchFormBlur={onSearchFormBlur}
         importMusicHandler={importMusicHandler}
