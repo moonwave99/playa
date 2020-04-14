@@ -12,6 +12,13 @@ describe('TracklistViewItem', () => {
     expect(wrapper.is('.tracklist-item')).toBe(true);
   });
 
+  it('should be .is-selected if track is selected', () => {
+    const wrapper = render(
+      <TracklistViewItem track={tracks[0]} isSelected/>
+    );
+    expect(wrapper.is('.is-selected')).toBe(true);
+  });
+
   it('should be .is-current if track is current', () => {
     const wrapper = render(
       <TracklistViewItem track={tracks[0]} isCurrent/>

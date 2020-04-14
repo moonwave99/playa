@@ -2,6 +2,7 @@ import React, { FC, useState, useEffect, useCallback, memo } from 'react';
 import cx from 'classnames';
 import { isEqual } from 'lodash';
 import { useTranslation } from 'react-i18next';
+import Mousetrap from 'mousetrap';
 import { AlbumDetailView } from './AlbumDetailView/AlbumDetailView';
 import {
   CompactAlbumListView as RawCompactAlbumListView,
@@ -16,7 +17,9 @@ import { EntityHashMap, immutableMove } from '../../utils/storeUtils';
 const CompactAlbumListView = memo(RawCompactAlbumListView, (
   a: CompactAlbumListViewProps,
   b: CompactAlbumListViewProps) => {
-  return (a.currentAlbumId === b.currentAlbumId) && isEqual(a.albums, b.albums);
+  return  (a.currentAlbumId === b.currentAlbumId)
+    && (a.hasFocus === b.hasFocus)
+    && isEqual(a.albums, b.albums);
 });
 
 import './PlaylistView.scss';
@@ -52,6 +55,7 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
   const [selectedAlbumId, setSelectedAlbumId] = useState(
     playlist.albums ? playlist.albums[0] : null
   );
+  const [focusedComponent, setFocusedComponent] = useState(0);
   const [albumOrder, setAlbumOrder] = useState(playlist.albums || []);
   const hasAlbums = playlist.albums.length > 0 && Object.keys(albums).length > 0;
 
@@ -77,6 +81,18 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
     setSelectedAlbumId(playlist.albums[0]);
   }, [playlist.albums]);
 
+  useEffect(() => {
+    const mousetrap = new Mousetrap();
+    function updateComponentFocus(): void {
+      setFocusedComponent((focusedComponent + 1) % 2);
+    }
+    mousetrap.bind('left', updateComponentFocus);
+    mousetrap.bind('right', updateComponentFocus);
+    return (): void => {
+      mousetrap.unbind(['left', 'right']);
+    };
+  }, [focusedComponent]);
+
   const playlistClasses = cx('playlist-view', { 'is-current': isCurrent });
 
   if (!hasAlbums) {
@@ -94,6 +110,7 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
           albums={albumOrder.map(_id => albums[_id])}
           currentAlbumId={currentAlbumId}
           sortable={true}
+          hasFocus={focusedComponent === 0}
           onSelectionChange={_onSelectionChange}
           onAlbumMove={onAlbumMove}
           onEnter={onAlbumEnter}
@@ -102,12 +119,14 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
           onAlbumDoubleClick={onAlbumDoubleClick}/>
       </div>
       <div className="album-detail-wrapper">
-      { albums[selectedAlbumId] && <AlbumDetailView
-        album={albums[selectedAlbumId]}
-        currentTrackId={currentTrackId}
-        dragType={UIDragTypes.PLAYLIST_ALBUMS}
-        onDoubleClick={onAlbumDoubleClick}
-        onContextMenu={onAlbumContextMenu}/> }
+      { albums[selectedAlbumId] &&
+        <AlbumDetailView
+          album={albums[selectedAlbumId]}
+          currentTrackId={currentTrackId}
+          hasFocus={focusedComponent === 1}
+          dragType={UIDragTypes.PLAYLIST_ALBUMS}
+          onDoubleClick={onAlbumDoubleClick}
+          onContextMenu={onAlbumContextMenu}/> }
       </div>
     </section>
 	);

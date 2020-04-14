@@ -59,7 +59,7 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
     selection,
     threshold,
     onItemClick,
-    requestFocus
+    setFocus
   } = useGrid({
     items: albums,
     thresholds: ALBUM_GRID_THRESHOLDS,
@@ -90,7 +90,7 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
 
   useEffect(() => {
     if (autoFocus) {
-      requestFocus();
+      setFocus(true);
     }
   }, []);
 

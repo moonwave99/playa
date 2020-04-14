@@ -24,11 +24,13 @@ import {
   showTrackArtists
 } from '../../../utils/albumUtils';
 import { ARTIST_SHOW } from '../../../routes';
+import useGrid, { KeyboardDirections } from '../../../hooks/useGrid/useGrid';
 import './AlbumDetailView.scss';
 
 type AlbumDetailViewProps = {
   album: Album;
   isCurrent?: boolean;
+  hasFocus?: boolean;
   currentTrackId: Track['_id'];
   dragType: string;
   onContextMenu: Function;
@@ -48,6 +50,7 @@ type Palette = {
 export const AlbumDetailView: FC<AlbumDetailViewProps> = ({
   album,
   isCurrent = false,
+  hasFocus = false,
   currentTrackId,
   dragType,
   onContextMenu,
@@ -64,6 +67,30 @@ export const AlbumDetailView: FC<AlbumDetailViewProps> = ({
     artist,
     tracks
   } = useSelector((state: ApplicationState) => getAlbumContentById(state, _id));
+
+  function onEnter(selection: Track['_id'][]): void {
+    const track = tracks.find(({ _id }) => _id === selection[0]);
+    onDoubleClick({ album, track });
+  }
+
+  const {
+    selection,
+    setFocus,
+    selectItem,
+  } = useGrid({
+    items: album.tracks.map(_id => ({ _id })),
+    direction: KeyboardDirections.Vertical,
+    clearSelectionOnBlur: false,
+    onEnter
+  });
+
+  useEffect(() => {
+    setFocus(hasFocus);
+  }, [hasFocus]);
+
+  useEffect(() => {
+    selectItem(album.tracks[0]);
+  }, [album.tracks]);  
 
   useEffect(() => {
     inView && dispatch(getAlbumRequest(_id));
@@ -192,6 +219,7 @@ export const AlbumDetailView: FC<AlbumDetailViewProps> = ({
         <TracklistView
           tracklist={album.tracks}
           tracks={tracks}
+          selectedTrackId={selection[0]}
           currentTrackId={currentTrackId}
           showArtists={showTrackArtists(album)}
           showTrackNumbers={showTrackNumbers(album)}

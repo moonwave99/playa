@@ -59,7 +59,7 @@ export const PlaylistGridView: FC<PlaylistGridViewProps> = ({
     selection,
     threshold,
     onItemClick,
-    requestFocus
+    setFocus
   } = useGrid({
     items: playlists,
     thresholds: ALBUM_GRID_THRESHOLDS,
@@ -87,7 +87,7 @@ export const PlaylistGridView: FC<PlaylistGridViewProps> = ({
   }, [selection, previousSelection]);
 
   useEffect(() => {
-    requestFocus();
+    setFocus(true);
   }, []);
 
   function renderTile(playlist: Playlist): ReactElement {

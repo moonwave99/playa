@@ -53,6 +53,9 @@
       &.is-current .artist {
         color: $mainColor;
       }
+      &.is-selected {
+        background-color: $backgroundColor;
+      }
       .playback-info,
       .track-number {
         width: 1.5rem;

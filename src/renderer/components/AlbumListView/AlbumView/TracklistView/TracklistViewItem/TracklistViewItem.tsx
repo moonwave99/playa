@@ -10,6 +10,7 @@ import { SEARCH } from '../../../../../routes';
 type TracklistViewItemProps = {
   track: Track;
   isCurrent?: boolean;
+  isSelected?: boolean;
   showArtists?: boolean;
   showTrackNumber?: boolean;
   onDoubleClick?: Function;
@@ -19,6 +20,7 @@ type TracklistViewItemProps = {
 export const TracklistViewItem: FC<TracklistViewItemProps> = ({
   track,
   isCurrent = false,
+  isSelected = false,
   showTrackNumber = true,
   showArtists = false,
   onDoubleClick
@@ -49,7 +51,8 @@ export const TracklistViewItem: FC<TracklistViewItemProps> = ({
   }
 
   const trackClassNames = cx('tracklist-item', 'ready', {
-    'is-current': isCurrent
+    'is-current': isCurrent,
+    'is-selected': isSelected,
   });
 
   return (

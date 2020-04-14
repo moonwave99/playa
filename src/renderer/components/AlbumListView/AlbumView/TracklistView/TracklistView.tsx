@@ -7,6 +7,7 @@ import './TracklistView.scss';
 
 type TracklistViewProps = {
   className?: string;
+  selectedTrackId?: Track['_id'];
   currentTrackId?: Track['_id'];
   tracklist: Track['_id'][];
   tracks: Track[];
@@ -18,11 +19,12 @@ type TracklistViewProps = {
 // #TODO reload onClick if some tracks are not found
 export const TracklistView: FC<TracklistViewProps> = ({
   className,
+  selectedTrackId,
   currentTrackId,
   tracklist,
   tracks,
-  showTrackNumbers = true,
   showArtists = false,
+  showTrackNumbers = true,
   onTrackDoubleClick
 }) => {
   const maxNameLength = Math.max(...tracklist.map(x => x.length));
@@ -46,6 +48,7 @@ export const TracklistView: FC<TracklistViewProps> = ({
         key={_id}
         track={track}
         isCurrent={_id === currentTrackId}
+        isSelected={_id === selectedTrackId}
         showArtists={showArtists}
         showTrackNumber={showTrackNumbers}
         onDoubleClick={onTrackDoubleClick}/>

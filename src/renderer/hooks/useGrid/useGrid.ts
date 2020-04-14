@@ -7,7 +7,8 @@ import {
 } from 'react';
 
 import Mousetrap from 'mousetrap';
-import { chunk, without, groupBy as groupItemsBy } from 'lodash';
+import { chunk, without, groupBy as groupItemsBy, isEqual } from 'lodash';
+import { usePrevious } from 'react-delta';
 
 export const EMPTY_CELL = 'USE_GRID_EMPTY_CELL';
 export enum Directions {
@@ -189,7 +190,7 @@ export default function useGrid({
   selection: string[];
   threshold: Threshold;
   onItemClick: Function;
-  requestFocus: Function;
+  setFocus: Function;
   selectItem: Function;
   grid: (node?: Element | null) => void;
 } {
@@ -231,7 +232,12 @@ export default function useGrid({
     setThreshold(threshold);
   }
 
+  const previousItems = usePrevious(items);
+
   useEffect(() => {
+    if (isEqual(previousItems, items)) {
+      return;
+    }
     recompute();
   }, [items]);
 
@@ -357,8 +363,8 @@ export default function useGrid({
     setSelection([_id]);
   }
 
-  function requestFocus(): void {
-    hasFocus.current = true;
+  function setFocus(focus: boolean): void {
+    hasFocus.current = focus;
   }
 
   function selectItem(selectedID: HasId['_id']): void {
@@ -372,7 +378,7 @@ export default function useGrid({
     selection,
     threshold,
     onItemClick,
-    requestFocus,
+    setFocus,
     selectItem,
     grid: setRef
   };

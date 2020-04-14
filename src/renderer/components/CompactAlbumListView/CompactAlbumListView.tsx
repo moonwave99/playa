@@ -22,6 +22,7 @@ const ITEM_SIZE = 64;
 export type CompactAlbumListViewProps = {
   albums: Album[];
   currentAlbumId: Album['_id'];
+  hasFocus?: boolean;
   onSelectionChange: Function;
   onAlbumMove?: Function;
   onEnter?: Function;
@@ -34,6 +35,7 @@ export type CompactAlbumListViewProps = {
 export const CompactAlbumListView: FC<CompactAlbumListViewProps> = ({
   albums,
   currentAlbumId,
+  hasFocus = false,
   onSelectionChange,
   onAlbumMove,
   onEnter,
@@ -47,7 +49,7 @@ export const CompactAlbumListView: FC<CompactAlbumListViewProps> = ({
     grid,
     selection,
     onItemClick,
-    requestFocus,
+    setFocus,
     selectItem
   } = useGrid({
     items: albums,
@@ -69,8 +71,8 @@ export const CompactAlbumListView: FC<CompactAlbumListViewProps> = ({
   }, [selection]);
 
   useEffect(() => {
-    requestFocus();
-  }, []);
+    setFocus(hasFocus);
+  }, [hasFocus]);
 
   useEffect(() => {
     if (!albums.length) {
