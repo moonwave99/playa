@@ -1,4 +1,4 @@
-import React, { FC, ReactElement, SyntheticEvent, MouseEvent, useEffect, memo } from 'react';
+import React, { FC, ReactElement, MouseEvent, useEffect, memo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, generatePath } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -71,8 +71,7 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
     }
   }, [cover]);
 
-  function _onDoubleClick(event: SyntheticEvent): void {
-    event.preventDefault();
+  function _onDoubleClick(): void {
     onDoubleClick({ album, artist });
   }
 
@@ -115,14 +114,13 @@ export const CompactAlbumView: FC<CompactAlbumViewProps> = ({
       id={`album-${_id}`}
       className={classNames}
       ref={ref}
-      onDoubleClick={_onDoubleClick}
-      onContextMenu={_onContextMenu}
-      onClick={_onClick}>
-      <div className="album-inner-wrapper">
-        <CoverView
-          className="album-cover"
-          src={cover}
-          album={album}/>
+      onContextMenu={_onContextMenu}>
+      <CoverView
+        onDoubleClick={_onDoubleClick}
+        className="album-cover"
+        src={cover}
+        album={album}/>
+      <div className="album-inner-wrapper" onClick={_onClick}>
         <p className="album-content header-like">
           <span className="album-title">
             {title}{ isCurrent ? <FontAwesomeIcon className="icon" icon="volume-up"/> : null }

@@ -170,7 +170,7 @@ describe('CompactAlbumView', () => {
         onClick={jest.fn()}
         onDoubleClick={handler}/>
       , defaultStore);
-    wrapper.simulate('doubleClick')
+    wrapper.find('.album-cover').at(0).simulate('doubleClick')
     expect(handler).toHaveBeenCalledWith({
       album: albums[0],
       artist: artists[0]
@@ -190,7 +190,7 @@ describe('CompactAlbumView', () => {
         onClick={handler}
         onDoubleClick={jest.fn()}/>
       , defaultStore);
-    wrapper.simulate('click');
+    wrapper.find('.album-inner-wrapper').at(0).simulate('click');
     expect(handler).toHaveBeenCalled();
   });
 });

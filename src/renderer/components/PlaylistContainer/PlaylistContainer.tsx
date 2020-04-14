@@ -130,7 +130,6 @@ export const PlaylistContainer = (): ReactElement => {
     album: Album;
     track: Track;
   }): void {
-    console.log(album)
     actionsMap(AlbumActions.PLAY_ALBUM)({
       queue: playlist.albums,
       playlistId: playlist._id,

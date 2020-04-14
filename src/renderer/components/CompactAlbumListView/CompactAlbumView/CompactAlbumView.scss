@@ -2,16 +2,18 @@
 @import "../../../styles/mixins";
 
 .compact-album-view {
-	padding: 0 1rem 0 1rem;
+	display: flex;
+	padding: 0 1rem;
   position: relative;
   background-color: rgba($backgroundDarkColor, .4);
 
   .album-inner-wrapper {
     display: flex;
+		flex: 1;
     align-items: center;
   }
 
-  &.sortable .album-inner-wrapper::before {
+  &.sortable::before {
     content: '⋮';
     cursor: move;
     position: absolute;
@@ -24,10 +26,8 @@
     color: $backgroundLightColor;
   }
 
-  &:not(.is-current):hover .album-inner-wrapper{
-    &:before {
-      color: $highlightColor;
-    }
+  &:not(.is-current):hover::before {
+    color: $highlightColor;
   }
 
   &:not(.is-current):hover {
@@ -53,6 +53,7 @@
   }
   .album-cover {
     @include albumCover($albumCoverCompactWidth, $backgroundColor, 70%, 1);
+		float: left;
   }
   .album-content {
 		@include ellipsis(100%);

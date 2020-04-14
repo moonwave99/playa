@@ -12,7 +12,7 @@ export const playlists: Playlist[] = [
     title: 'New Playlist 1',
     created: createDatesList[0],
     accessed: createDatesList[0],
-    albums: [] as string[]
+    albums: [] as Album['_id'][]
   },
   {
     _id: '2',
@@ -20,7 +20,7 @@ export const playlists: Playlist[] = [
     title: 'New Playlist 2',
     created: createDatesList[1],
     accessed: createDatesList[1],
-    albums: [] as string[]
+    albums: [] as Album['_id'][]
   },
 ];
 
@@ -34,7 +34,7 @@ export const albums: Album[] = [
     type: AlbumTypes.Album,
     created: createDatesList[0],
     path: '/path/to/album_1',
-    tracks: [],
+    tracks: [] as Track['_id'][],
     cover: null,
     noDiscogsResults: false
   },
@@ -47,7 +47,7 @@ export const albums: Album[] = [
     type: AlbumTypes.Album,
     created: createDatesList[1],
     path: '/path/to/album_2',
-    tracks: [],
+    tracks: [] as Track['_id'][],
     cover: null,
     noDiscogsResults: false
   }
