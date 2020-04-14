@@ -10,7 +10,7 @@ import { CompactAlbumView as RawCompactAlbumView } from './CompactAlbumView/Comp
 import { Album } from '../../store/modules/album';
 import { Artist } from '../../store/modules/artist';
 import { Track } from '../../store/modules/track';
-import useGrid from '../../hooks/useGrid/useGrid';
+import useGrid, { KeyboardDirections } from '../../hooks/useGrid/useGrid';
 import scrollTo from '../../lib/scrollTo';
 
 import './CompactAlbumListView.scss';
@@ -51,7 +51,7 @@ export const CompactAlbumListView: FC<CompactAlbumListViewProps> = ({
     selectItem
   } = useGrid({
     items: albums,
-    direction: 'vertical',
+    direction: KeyboardDirections.Vertical,
     clearSelectionOnBlur: false,
     onEnter,
     onBackspace

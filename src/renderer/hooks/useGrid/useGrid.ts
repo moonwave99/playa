@@ -151,10 +151,16 @@ export function moveSelection({
   }
 }
 
+export enum KeyboardDirections {
+  Horizontal,
+  Vertical,
+  Both
+}
+
 type UseGridParams = {
   items: HasId[];
   thresholds?: Threshold[];
-  direction?: 'both'|'vertical'|'horizontal';
+  direction?: KeyboardDirections;
   excludeClass?: string;
   interactive?: boolean;
   clearSelectionOnBlur?: boolean;
@@ -170,7 +176,7 @@ export default function useGrid({
     width: 0,
     columns: 1
   }],
-  direction = 'both',
+  direction = KeyboardDirections.Both,
   excludeClass = '',
   interactive = true,
   clearSelectionOnBlur = false,
@@ -317,12 +323,12 @@ export default function useGrid({
 
     const mousetrap = new Mousetrap();
 
-    if (direction === 'both' || direction === 'vertical') {
+    if (direction === KeyboardDirections.Both || direction === KeyboardDirections.Vertical) {
       mousetrap.bind('up', onUp);
       mousetrap.bind('down', onDown);
     }
 
-    if (direction === 'both' || direction === 'horizontal') {
+    if (direction === KeyboardDirections.Both || direction === KeyboardDirections.Horizontal) {
       mousetrap.bind('left', onLeft);
       mousetrap.bind('right', onRight);
     }
