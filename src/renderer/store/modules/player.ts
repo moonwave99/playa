@@ -240,8 +240,10 @@ export const updateQueue = (queue: Album['_id'][] = []): Function =>
     const { albums } = getState();
     const uniqQueue = uniq(queue);
     const missingAlbumIDs = uniqQueue.filter(x => !albums.allById[x]);
-    const results = await ipc.invoke(IPC_ALBUM_GET_LIST_REQUEST, missingAlbumIDs);
-    dispatch(getAlbumListResponse(results));
+    if (missingAlbumIDs.length) {
+      const results = await ipc.invoke(IPC_ALBUM_GET_LIST_REQUEST, missingAlbumIDs);
+      dispatch(getAlbumListResponse(results));
+    }
     dispatch(updateState({ queue: uniqQueue }));
     dispatch({
       type: PLAYER_UPDATE_QUEUE,

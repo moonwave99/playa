@@ -22,6 +22,14 @@ export const playlists: Playlist[] = [
     accessed: createDatesList[1],
     albums: [] as Album['_id'][]
   },
+  {
+    _id: '3',
+    _rev: null,
+    title: 'New Playlist 3',
+    created: createDatesList[2],
+    accessed: createDatesList[2],
+    albums: [] as Album['_id'][]
+  }
 ];
 
 export const albums: Album[] = [

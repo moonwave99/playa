@@ -73,7 +73,12 @@ module.exports = {
         case IPC_ARTIST_SAVE_LIST_REQUEST:
           return args[0].map(({ _id, _rev }) => ({ id: _id, rev: _rev }));
         case IPC_SEARCH_REQUEST:
+          return args[0].length > 0
+            ? fixtures.albums
+            : [];
         case IPC_ALBUM_GET_LIST_REQUEST:
+          const albumMap = toObj(fixtures.albums);
+          return (args[0] || []).map(x => albumMap[x]).filter(x => !!x);
         case IPC_ALBUM_DELETE_LIST_REQUEST:
           return args[0].length > 0
             ? fixtures.albums
@@ -86,9 +91,9 @@ module.exports = {
           return {
             album: {
               ...fixtures.albums[0],
-              tracks: fixtures.tracks.map(({ _id }) => _id)
+              tracks: fixtures.tracks.slice(0, 2).map(({ _id }) => _id)
             },
-            tracks: fixtures.tracks
+            tracks: fixtures.tracks.slice(0, 2)
           };
         case IPC_ALBUM_CONTENT_REQUEST:
           const album = args[0];

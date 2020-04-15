@@ -88,8 +88,8 @@ describe('Database', () => {
         dateFrom: new Date('2020-01-01').toISOString()
       });
       expect(results.length).toBe(playlists.length);
-      expect(results[0]).toBe(playlists[1]);
-      expect(results[1]).toBe(playlists[0]);
+      expect(results[0]).toBe(playlists[playlists.length - 1]);
+      expect(results[results.length - 1]).toBe(playlists[0]);
     });
     it('should order results by given order', async () => {
       const results = await db.getLatest({

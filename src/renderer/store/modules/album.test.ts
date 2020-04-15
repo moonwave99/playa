@@ -2,8 +2,10 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 const mockStore = configureStore([thunk]);
 
-import { toObj } from '../../utils/storeUtils';
 import { albums, artists, tracks } from '../../../../test/testFixtures';
+import { ApplicationState } from '../../store/store';
+import { EntityHashMap, toObj } from '../../utils/storeUtils';
+
 import reducer, {
   Album,
   AlbumTypes,
@@ -19,6 +21,8 @@ import reducer, {
   updateAlbum,
   getAlbumCoverRequest,
   getAlbumCoverFromUrlRequest,
+  selectors,
+  getAlbumContentById,
   ALBUM_GET_RESPONSE,
   ALBUM_GET_LIST_REQUEST,
   ALBUM_GET_LIST_RESPONSE,
@@ -30,7 +34,7 @@ import reducer, {
   ALBUM_SET_EDITING
 } from './album';
 
-import { Artist, ARTIST_SAVE_RESPONSE } from './artist';
+import { Artist, VariousArtist, ARTIST_SAVE_RESPONSE } from './artist';
 import { TRACK_GET_LIST_RESPONSE } from './track';
 
 describe('album actions', () => {
@@ -54,6 +58,19 @@ describe('album actions', () => {
       ];
       await getAlbumRequest('1')(store.dispatch, store.getState);
       expect(store.getActions()).toEqual(expectedActions);
+    });
+
+    it('', async () => {
+      const store = mockStore({
+        albums: {
+          allById: {}
+        },
+        tracks: {
+          allById: {}
+        }
+      });
+      await getAlbumRequest('666')(store.dispatch, store.getState);
+      expect(store.getActions()).toEqual([]);
     });
   });
 
@@ -432,5 +449,120 @@ describe('album reducer', () => {
       allById: {},
       editingAlbumId: null
     });
+  });
+});
+
+describe('album selectors', () => {
+  const state = {
+    albums: {
+      allById: toObj(albums)
+    }
+  } as ApplicationState;
+  describe('state', () => {
+    it('should return the albums state', () => {
+      const selection = selectors.state(state);
+      expect(selection).toEqual(state.albums);
+    });
+  });
+
+  describe('allById', () => {
+    it('should return albums.allById', () => {
+      const selection = selectors.allById(state);
+      expect(selection).toEqual(state.albums.allById);
+    });
+  });
+
+  describe('findById', () => {
+    it('should find an album by id', () => {
+      const selection = selectors.findById(state, albums[0]._id);
+      expect(selection).toEqual(albums[0]);
+    });
+  });
+
+  describe('findByList', () => {
+    it('should return albums contained in given id list', () => {
+      const selection = selectors.findByList(state, [albums[0]._id, albums[1]._id]);
+      expect(selection).toEqual([albums[0], albums[1]]);
+    });
+  });
+
+  describe('findByVariousArtists', () => {
+    it('should return albums from V/A', () => {
+      const state = {
+        albums: {
+          allById: {
+            ...toObj(albums),
+            '1': {
+              ...albums[0],
+              isAlbumFromVA: true
+            }
+          } as EntityHashMap<Album>
+        }
+      } as ApplicationState;
+      const selection = selectors.findByVariousArtists(state);
+      expect(selection).toEqual([{
+        ...albums[0],
+        isAlbumFromVA: true
+      }]);
+    });
+  });
+
+  describe('getAlbumContentById', () => {
+    it('should return album content by given id', () => {
+      const state = {
+        albums: {
+          allById: {
+            ...toObj(albums),
+            '1': {
+              ...albums[0],
+              tracks: [tracks[0]._id, tracks[1]._id]
+            }
+          } as EntityHashMap<Album>
+        },
+        artists: {
+          allById: toObj(artists)
+        },
+        tracks: {
+          allById: toObj(tracks)
+        }
+      } as ApplicationState;
+
+      const selection = getAlbumContentById(state, albums[0]._id);
+
+      expect(selection.artist).toEqual(artists[0]);
+      expect(selection.tracks).toEqual([
+        tracks[0],
+        tracks[1]
+      ]);
+    });
+  });
+
+  it('should return VariousArtist as artist is album is from V/A', () => {
+    const state = {
+      albums: {
+        allById: {
+          ...toObj(albums),
+          '1': {
+            ...albums[0],
+            isAlbumFromVA: true,
+            tracks: [tracks[0]._id, tracks[1]._id]
+          }
+        } as EntityHashMap<Album>
+      },
+      artists: {
+        allById: toObj(artists)
+      },
+      tracks: {
+        allById: toObj(tracks)
+      }
+    } as ApplicationState;
+
+    const selection = getAlbumContentById(state, albums[0]._id);
+
+    expect(selection.artist).toEqual(VariousArtist);
+    expect(selection.tracks).toEqual([
+      tracks[0],
+      tracks[1]
+    ]);
   });
 });
