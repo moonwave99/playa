@@ -22,7 +22,8 @@ globalAny.fetchMock = globalAny.fetch;
 
 globalAny.IntersectionObserver = jest.fn(() => ({
   observe: jest.fn(),
-  unobserve: jest.fn()
+  unobserve: jest.fn(),
+  disconnect: jest.fn(),
 }));
 
 configure({ adapter: new Adapter() });

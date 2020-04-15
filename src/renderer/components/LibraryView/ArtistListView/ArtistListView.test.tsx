@@ -53,8 +53,8 @@ describe('ArtistListView', () => {
   });
 
   // 1 artists starting with 'a' in the fixtures
-  it.skip('should contain 1 list item', () => {
-    const wrapper = renderInAll(
+  it('should contain 1 list item', () => {
+    const wrapper = mountInAll(
       <ArtistListView
         selectedLetter="a"
         onLetterClick={jest.fn()}

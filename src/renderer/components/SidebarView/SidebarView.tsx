@@ -12,7 +12,7 @@ type SidebarViewProps = {
 };
 
 export const SidebarView: FC<SidebarViewProps> = ({
-	recentPlaylists = [],
+	recentPlaylists,
 	currentPlaylistId,
 	onCreatePlaylist,
 }) => {

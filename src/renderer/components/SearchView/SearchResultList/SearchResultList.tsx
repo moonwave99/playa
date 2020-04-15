@@ -242,7 +242,7 @@ export const SearchResultList: React.FC<SearchResultListProps> = ({
 					</div>
 				</div>
 				<div {...getTableBodyProps()} className="tbody">
-					<AutoSizer>
+					<AutoSizer defaultWidth={960} defaultHeight={2 * ITEM_SIZE}>
 						{({ height, width }): ReactElement => {
 							return (
 								<List

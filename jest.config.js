@@ -14,6 +14,7 @@ module.exports = {
   moduleNameMapper: {
     "\\.(css|less|sass|scss)$": "<rootDir>/test/__mocks__/styleMock.js",
     "\\.(gif|ttf|eot|svg)$": "<rootDir>/test/__mocks__/fileMock.js",
+    "react-virtualized-auto-sizer": "<rootDir>/test/__mocks__/react-virtualized-auto-sizer.tsx",
     "disconnect": "<rootDir>/test/__mocks__/disconnect.js",
     "electron": "<rootDir>/test/__mocks__/electron.js",
     "music-metadata": "<rootDir>/test/__mocks__/music-metadata.js",

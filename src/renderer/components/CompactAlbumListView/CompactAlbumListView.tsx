@@ -174,7 +174,7 @@ export const CompactAlbumListView: FC<CompactAlbumListViewProps> = ({
 
   return (
     <section data-key-catch="useGrid" ref={grid} className="sizer-wrapper">
-      <AutoSizer defaultWidth={100} defaultHeight={2 * ITEM_SIZE}>
+      <AutoSizer defaultWidth={960} defaultHeight={2 * ITEM_SIZE}>
         {({ height, width }): ReactElement => (
           <List
             className="compact-album-list"

@@ -118,6 +118,26 @@ describe('CompactAlbumView', () => {
     expect(wrapper.find('.album-artist').text()).toBe(artists[0].name);
   });
 
+  it('should contain a placeholder if artist is not found', () => {
+    const wrapper = renderInAll(
+      <CompactAlbumView
+        isCurrent
+        index={0}
+        selectedIDs={[]}
+        album={albums[0]}
+        onAlbumMove={jest.fn()}
+        onContextMenu={jest.fn()}
+        onClick={jest.fn()}
+        onDoubleClick={jest.fn()}/>
+      , {
+        ...defaultStore,
+        artists: {
+          allById: {}
+        }
+      });
+    expect(wrapper.find('.album-artist-link.loading')).toHaveLength(1);
+  });
+
   it('should not render the year if album has it not', () => {
     const wrapper = renderInAll(
       <CompactAlbumView
@@ -150,6 +170,27 @@ describe('CompactAlbumView', () => {
         onDoubleClick={jest.fn()}/>
       , defaultStore);
     wrapper.simulate('contextmenu');
+    expect(handler).toHaveBeenCalledWith({
+      album: albums[0],
+      artist: artists[0],
+      selection: [albums[0]._id]
+    });
+  });
+
+  it('should call the onContextMenu handler when the action buttons is clicked', () => {
+    const handler = jest.fn();
+    const wrapper = mountInAll(
+      <CompactAlbumView
+        isCurrent
+        index={0}
+        selectedIDs={[]}
+        album={albums[0]}
+        onAlbumMove={jest.fn()}
+        onContextMenu={handler}
+        onClick={jest.fn()}
+        onDoubleClick={jest.fn()}/>
+      , defaultStore);
+    wrapper.find('.button-album-actions').simulate('click');
     expect(handler).toHaveBeenCalledWith({
       album: albums[0],
       artist: artists[0],

@@ -1,6 +1,7 @@
 import React from 'react';
 import { renderInAll, mountInAll, mockRouter } from '../../../../test/testUtils';
-import { albums } from '../../../../test/testFixtures';
+import { toObj } from '../../utils/storeUtils';
+import { albums, artists } from '../../../../test/testFixtures';
 
 mockRouter({
   location: { pathname: '/search', search: 'query=slowdive' }
@@ -23,7 +24,10 @@ describe('SearchView', () => {
       search: {
         results: albums
       },
-      player: {}
+      player: {},
+      artists: {
+        allById: toObj(artists)
+      }
     };
 		const wrapper = renderInAll(<SearchView/>, store);
 		expect(wrapper.find('.search-result-list'))

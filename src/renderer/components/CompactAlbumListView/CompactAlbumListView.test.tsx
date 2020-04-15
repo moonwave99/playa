@@ -1,7 +1,9 @@
 import React from 'react';
+import { ReactWrapper } from 'enzyme';
 import { mountInAll } from '../../../../test/testUtils';
 import { albums, artists } from '../../../../test/testFixtures';
 import { toObj } from '../../utils/storeUtils';
+
 import { CompactAlbumListView } from './CompactAlbumListView';
 
 const defaultStore = {
@@ -38,7 +40,7 @@ describe('CompactAlbumListView', () => {
     expect(wrapper.find('.sizer-wrapper')).toHaveLength(1);
   });
 
-  it.skip('should render n=albums.length <li>s', () => {
+  it('should render n=albums.length <li>s', () => {
     let wrapper = mountInAll(
       <CompactAlbumListView
         currentAlbumId={null}
@@ -46,7 +48,8 @@ describe('CompactAlbumListView', () => {
         onSelectionChange={jest.fn()}
         onAlbumContextMenu={jest.fn()}
         onAlbumDoubleClick={jest.fn()}/>
-      , defaultStore);
+      , defaultStore) as ReactWrapper;
+
     expect(wrapper.find('li')).toHaveLength(albums.length);
     wrapper.unmount();
 

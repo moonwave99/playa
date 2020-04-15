@@ -9,7 +9,7 @@ import Backend from 'react-dnd-test-backend';
 import { shallow, render, mount } from 'enzyme';
 export { shallow, render, mount } from 'enzyme';
 
-const rendererMap: { [key: string] : Function} = {
+const rendererMap: { [key: string] : Function } = {
   'shallow': shallow,
   'render': render,
   'mount': mount
