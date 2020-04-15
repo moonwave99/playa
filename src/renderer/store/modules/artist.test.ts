@@ -12,14 +12,20 @@ import reducer, {
   Artist,
   ArtistActionTypes,
   ArtistState,
+  VariousArtist,
+  getDefaultArtist,
   getArtistReleases,
   getAllArtistsRequest,
   saveArtistRequest,
   deleteArtistRequest,
   getAlbumsByArtist,
   searchArtists,
+  getArtistPictureRequest,
+  getArtistPictureFromUrlRequest,
+  selectors,
   ARTIST_GET_ALL_REQUEST,
   ARTIST_GET_ALL_RESPONSE,
+  ARTIST_GET_LIST_RESPONSE,
   ARTIST_SAVE_REQUEST,
   ARTIST_SAVE_RESPONSE,
   ARTIST_DELETE_REQUEST,
@@ -106,6 +112,58 @@ describe('artist selectors', () => {
     );
     expect(selection).toEqual([artists[1]]);
   });
+
+  describe('getArtistPictureRequest', () => {
+    it('should dispatch expected actions', async () => {
+      const store = mockStore({
+        artists: {
+          allById: toObj(artists)
+        }
+      });
+      await getArtistPictureRequest(artists[0])(store.dispatch);
+      expect(store.getActions()).toEqual([{
+        type: ARTIST_SAVE_RESPONSE,
+        artist: {
+          ...artists[0],
+          picture: '/path/to/artistPicture',
+          noDiscogsResults: false
+        }
+      }]);
+    });
+
+    it('should dispatch nothing if artist already has a picture', async () => {
+      const store = mockStore({
+        artists: {
+          allById: toObj(artists)
+        }
+      });
+      await getArtistPictureRequest({
+        ...artists[0],
+        picture: '/path/to/artistPicture'
+      })(store.dispatch);
+      expect(store.getActions()).toEqual([]);
+    });
+  });
+
+  describe('getArtistPictureFromUrlRequest', () => {
+    it('should dispatch ARTIST_SAVE_RESPONSE', async () => {
+      const store = mockStore({
+        artists: {
+          allById: toObj(artists)
+        }
+      });
+
+      await getArtistPictureFromUrlRequest(artists[0], 'https://path/to/covers/1.jpg')(store.dispatch);
+      expect(store.getActions()).toEqual([{
+        type: ARTIST_SAVE_RESPONSE,
+        artist: {
+          ...artists[0],
+          picture: '/path/to/artistPicture',
+          noDiscogsResults: false
+        }
+      }]);
+    });
+  });
 });
 
 describe('artist reducer', () => {
@@ -130,7 +188,7 @@ describe('artist reducer', () => {
     })).toEqual({
       allById: toObj(artists),
       isLoading: false,
-      latestArtistId: '4'
+      latestArtistId: artists[artists.length - 1]._id
     });
 
     expect(reducer({} as ArtistState, {
@@ -143,6 +201,15 @@ describe('artist reducer', () => {
     });
   });
 
+  it('should handle ARTIST_GET_LIST_RESPONSE', () => {
+    expect(reducer({} as ArtistState, {
+      type: ARTIST_GET_LIST_RESPONSE,
+      artists
+    })).toEqual({
+      allById: toObj(artists),
+    });
+  });
+
   it('should handle ARTIST_SAVE_REQUEST', () => {
     expect(reducer({} as ArtistState, {
       type: ARTIST_SAVE_REQUEST,
@@ -150,27 +217,51 @@ describe('artist reducer', () => {
     })).toEqual({});
   });
 
-  it('should handle ARTIST_SAVE_RESPONSE', () => {
-    const initialState = {
-      allById: {
-        '1': artists[0],
-        '2': artists[1]
-      },
-      isLoading: false,
-      latestArtistId: '2'
-    };
+  describe('should handle ARTIST_SAVE_RESPONSE', () => {
+    it('should persist existing artist', () => {
+      const initialState = {
+        allById: {
+          '1': artists[0],
+          '2': artists[1]
+        },
+        isLoading: false,
+        latestArtistId: '2'
+      };
 
-    const updatedArtist = { ...artists[0], name: 'Updated Name' };
-    expect(reducer(initialState, {
-      type: ARTIST_SAVE_RESPONSE,
-      artist: updatedArtist
-    })).toEqual({
-      allById: {
-        '1': updatedArtist,
-        '2': artists[1]
-      },
-      isLoading: false,
-      latestArtistId: '2'
+      const updatedArtist = { ...artists[0], name: 'Updated Name' };
+      expect(reducer(initialState, {
+        type: ARTIST_SAVE_RESPONSE,
+        artist: updatedArtist
+      })).toEqual({
+        allById: {
+          '1': updatedArtist,
+          '2': artists[1]
+        },
+        isLoading: false,
+        latestArtistId: '2'
+      });
+    });
+
+    it('should persist new artist', () => {
+      const initialState = {
+        allById: {
+          '1': artists[0]
+        },
+        isLoading: false,
+        latestArtistId: '1'
+      };
+
+      expect(reducer(initialState, {
+        type: ARTIST_SAVE_RESPONSE,
+        artist: artists[1]
+      })).toEqual({
+        allById: {
+          '1': artists[0],
+          '2': artists[1]
+        },
+        isLoading: false,
+        latestArtistId: '2'
+      });
     });
   });
 
@@ -208,6 +299,62 @@ describe('artist reducer', () => {
         type: ARTIST_DELETE_RESPONSE,
         artist: { _id: '666' } as Artist
       })).toEqual(initialState);
+    });
+  });
+});
+
+describe('artist selectors', () => {
+  const state = {
+    artists: {
+      allById: toObj(artists)
+    }
+  } as ApplicationState;
+  describe('state', () => {
+    it('should return the artists state', () => {
+      const selection = selectors.state(state);
+      expect(selection).toEqual(state.artists);
+    });
+  });
+
+  describe('allById', () => {
+    it('should return artists.allById', () => {
+      const selection = selectors.allById(state);
+      expect(selection).toEqual(state.artists.allById);
+    });
+  });
+
+  describe('findById', () => {
+    it('should find an artist by id', () => {
+      const selection = selectors.findById(state, artists[0]._id);
+      expect(selection).toEqual(artists[0]);
+    });
+    it('should return default artist if no artist is found', () => {
+      const selection = selectors.findById(state, '666');
+      expect(selection).toEqual(getDefaultArtist());
+    });
+  });
+
+  describe('findByList', () => {
+    it('should return artists contained in given id list', () => {
+      const selection = selectors.findByList(state, [artists[0]._id, artists[1]._id]);
+      expect(selection).toEqual([artists[0], artists[1]]);
+    });
+  });
+
+  describe('findByLetter', () => {
+    it('should return artists starting by given letter', () => {
+      const selection = selectors.findByLetter(state, 'a');
+      expect(selection).toEqual([artists[3]]);
+    });
+
+    it('should return artists starting by numbers if given letter is #', () => {
+      const selection = selectors.findByLetter(state, '#');
+      expect(selection).toEqual([artists[4]]);
+    });
+
+    it('should return [VariousArtist] if given letter is V/A', () => {
+      const selection = selectors.findByLetter(state, 'V/A');
+      expect(selection).toEqual([VariousArtist]);
     });
   });
 });

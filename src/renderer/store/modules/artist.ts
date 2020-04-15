@@ -31,15 +31,23 @@ export function getDefaultArtist(): Artist {
   };
 }
 
+export const VariousArtist = {
+  ...getDefaultArtist(),
+  _id: VARIOUS_ARTISTS_ID,
+  name: VARIOUS_ARTISTS_ID
+};
+
 export const selectors = {
   state: ({ artists }: { artists: ArtistState }): ArtistState => artists,
   allById: ({ artists }: { artists: ArtistState }): EntityHashMap<Artist> => artists.allById,
   findById: ({ artists }: { artists: ArtistState }, id: Artist['_id']): Artist => artists.allById[id] || getDefaultArtist(),
   findByList: ({ artists }: { artists: ArtistState }, ids: Artist['_id'][]): Artist[] => ids.map(id => artists.allById[id]),
   findByLetter: ({ artists }: { artists: ArtistState }, letter: string): Artist[] => {
+    if (letter === VARIOUS_ARTIST_KEY) {
+      return [VariousArtist];
+    }
     return Object.values(artists.allById).filter(({ name }) => {
-      return (letter === VARIOUS_ARTIST_KEY && name === VARIOUS_ARTISTS_ID)
-        || (letter.match(/[a-z]/) && name.charAt(0).toLowerCase() === letter)
+      return (letter.match(/[a-z]/) && name.charAt(0).toLowerCase() === letter)
         || (!name.charAt(0).toLowerCase().match(/[a-z]/) && name !== VARIOUS_ARTISTS_ID && letter === NUMERIC_KEY);
     });
   }
@@ -60,12 +68,6 @@ const {
   IPC_ARTIST_PICTURE_GET_REQUEST,
   IPC_ARTIST_PICTURE_GET_FROM_URL_REQUEST
 } = IPC_MESSAGES;
-
-export const VariousArtist = {
-  ...getDefaultArtist(),
-  _id: VARIOUS_ARTISTS_ID,
-  name: VARIOUS_ARTISTS_ID
-};
 
 export const ARTIST_GET_ALL_REQUEST   = 'playa/artists/GET_ALL_REQUEST';
 export const ARTIST_GET_ALL_RESPONSE  = 'playa/artists/GET_ALL_RESPONSE';

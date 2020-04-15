@@ -120,5 +120,12 @@ export const artists: Artist[] = [
     name: 'Adorable',
     picture: null,
     noDiscogsResults: false
+  },
+  {
+    _id: '5',
+    _rev: null,
+    name: '65daysofstatic',
+    picture: null,
+    noDiscogsResults: false
   }
 ];
