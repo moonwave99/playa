@@ -8,6 +8,7 @@
   background-color: rgba($backgroundDarkColor, .4);
 
   .album-inner-wrapper {
+		@include ellipsis();
     display: flex;
 		flex: 1;
     align-items: center;
@@ -56,13 +57,13 @@
 		float: left;
   }
   .album-content {
-		@include ellipsis(100%);
+		@include ellipsis();
     margin: 0 0 0 1rem;
     display: flex;
 		flex: 1;
     flex-direction: column;
     .album-title {
-			@include ellipsis(100%);
+			@include ellipsis();
       font-weight: bold;
       font-size: .9rem;
       line-height: 1.8rem;
