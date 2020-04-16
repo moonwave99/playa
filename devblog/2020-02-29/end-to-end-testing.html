@@ -1,0 +1,310 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>End to End Testing / Devblog / Playa</title>
+    <meta name="generator" content="waffel">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="google-site-verification" content="xyz">
+
+
+
+    <meta name="description" content="This week I focused mostly on end to end testing (e2e from now on). I am fairly new to e2e, as I usually never adventures myself outside of the green…">
+
+    <meta property="og:site_name" content="Playa">
+    <meta property="og:url" content="https://moonwave99.github.com/playa/devblog/2020-02-29/end-to-end-testing">
+    <meta property="og:title" content="End to End Testing | Playa">
+
+    <meta property="og:type" content="article">
+    <meta property="og:description" content="This week I focused mostly on end to end testing (e2e from now on). I am fairly new to e2e, as I usually never adventures myself outside of the green pastures of unit and integration.">
+    <meta property="article:published_time" content="2020-02-29T01:00:00.000+0100">
+
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="https://moonwave99.github.com/playa//">
+    <meta name="twitter:creator" content="@moonwavelabs">
+    <meta name="twitter:url" content="https://moonwave99.github.com/playa/devblog/2020-02-29/end-to-end-testing">
+    <meta name="twitter:title" content="End to End Testing | Playa">
+
+    <meta name="twitter:description" content="This week I focused mostly on end to end testing (e2e from now on). I am fairly new to e2e, as I usually never adventures myself outside of the green pastures of unit and integration.">
+
+
+    <link rel="stylesheet" href="https://moonwave99.github.com/playa/css/app.css">
+  </head>
+
+  <body class="w-100 sans-serif blog-single">
+
+    <nav class="navigation w-100 text-right v-mid ph3 ph4-ns avenir bg-yellow">
+      <a class="link black underline-hover mr4-ns" href="https://moonwave99.github.com/playa/index.html">Home</a>
+      <a class="link black underline-hover mr4-ns" href="https://moonwave99.github.com/playa/about.html">About</a>
+      <a class="link black underline-hover mr4-ns b" href="https://moonwave99.github.com/playa/devblog.html">Devblog</a>
+      <a class="link black underline-hover mr4-ns" href="https://github.com/moonwave99/playa" target="_blank">Github</a>
+      <a class="link black underline-hover mr4-ns" href="mailto:hello@diegocaponera.com?subject=Playa">Contact</a>
+    </nav>
+
+    <main class="main w-100">
+
+
+      <article class="blog-post mw8-ns center ph3 pb5 pv6-ns">
+        <header class="blog-post-header mb5">
+          <time class="tracked ttu">February 29, 2020</time>
+          <h1 class="f3 f1-ns lh-solid mt4 mb4">End to End Testing</h1>
+        </header>
+        <section class="blog-post-content">
+          <p class="lh-copy">This week I focused mostly on <strong>end to end testing</strong> (<em>e2e</em> from now on). I am fairly new to e2e, as I usually never adventures myself outside of the green pastures of unit and integration.</p>
+          <p class="lh-copy">Electron is a fairly new technology and a lot of practices are yet to settle as mature. My research prompted me with the choice between <a class="link blue underline-hover" href="https://github.com/DevExpress/testcafe-browser-provider-electron" target='_blank'>testcafe</a> and <a class="link blue underline-hover" href="https://github.com/electron-userland/spectron" target='_blank'>spectron</a>. I gave the in-house solution a try first.</p>
+          <p class="lh-copy">First I set up a <code class="dark-pink">npm</code> command in <code class="dark-pink">package.json</code> like this:</p><pre><code class="language-javascript">{
+  ...
+    &quot;scripts&quot;: {
+    ...
+        &quot;test:e2e&quot;: &quot;jest --config jest.config.e2e.js&quot;
+    },
+  ...
+}</code></pre>
+          <p class="lh-copy">Where the <code class="dark-pink">jest.config.e2e.js</code> configuration files contains:</p><pre><code class="language-javascript">module.exports = {
+  roots: [
+    &quot;&lt;rootDir&gt;/test-e2e&quot;
+  ],
+  testMatch: [
+    &quot;**/?(*.)+(spec|test).+(ts|tsx|js)&quot;
+  ],
+  transform: {
+    &quot;^.+\\.(ts|tsx)$&quot;: &quot;ts-jest&quot;
+  }
+}</code></pre>
+          <p class="lh-copy">Test suite runs with <code class="dark-pink">$ yarn/npm run test:e2e</code>.</p>
+          <h2 class="mt5">
+            <a name="run-tests-in-isolation-the-data-problem" class="anchor" href="#run-tests-in-isolation-the-data-problem">
+              <span class="link blue">#</span>
+            </a>
+            Run tests in isolation: the data problem
+          </h2>
+          <p class="lh-copy">In unit tests it is good practice to mock intermediate layers, as you have to just test the <a class="link blue underline-hover" href="https://en.wikipedia.org/wiki/Design_by_contract" target='_blank'>interface contract</a>, e.g. if you are testing a library that makes calls to an external HTTP API, you want to ensure that you get some data back and your parse it properly.</p>
+          <p class="lh-copy">Same applies for databases. But in an e2e environment, you want to test your app against a <strong>real database instance</strong>, to be certain that every layer of the application harmoniously works in the real life scenario.</p>
+          <p class="lh-copy">The first problem I encountered, was to be able to connect to a database at all in the Spectron environment. In order to provide you testing methods, it runs your Electron app against a <a class="link blue underline-hover" href="https://webdriver.io/" target='_blank'>WebDriver.IO</a> instance, whose <code class="dark-pink">userData</code> path is buried somewhere inside <code class="dark-pink">/var</code>. Definitely not the one I expect to retrieve data from, usually <code class="dark-pink">~/Library/Application Support/$AppName</code>.</p>
+          <p class="lh-copy">Luckily, there is an easy way to infere if the app is running in test mode, i.e. from an <strong>environment variable</strong>:</p><pre><code class="language-javascript">const Application = require(&#39;spectron&#39;).Application;
+
+const app = new Application({
+  ...
+  env: { RUNNING_IN_SPECTRON: &#39;1&#39; },
+  ...
+});</code></pre>
+          <p class="lh-copy">I updated <code class="dark-pink">/src/main/lib/getUserDataPath.ts</code> accordingly:</p><pre><code class="language-javascript">import * as Path from &#39;path&#39;;
+import { app } from &#39;electron&#39;;
+import { is } from &#39;electron-util&#39;;
+import { name as APP_NAME } from &#39;../../../package.json&#39;;
+
+export default function getUserDataPath(): string {
+  let userDataPath = app.getPath(&#39;userData&#39;);
+  if (process.env.RUNNING_IN_SPECTRON) {
+    userDataPath = Path.join(process.cwd(), &#39;.spectron&#39;);
+  }
+  if (is.development) {
+    userDataPath = userDataPath.replace(&#39;Electron&#39;, APP_NAME);
+  }
+  return userDataPath;
+}</code></pre>
+          <p class="lh-copy">Now I can store all the temp data in the <code class="dark-pink">.spectron</code> folder!</p>
+          <p class="lh-copy">This is how I populate the database before each test: I simply wipe out then the database folder, then add some fresh data to it afterwards.</p><pre><code class="language-typescript">import * as Path from &#39;path&#39;;
+import * as fs from &#39;fs-extra&#39;;
+import Database from &#39;../src/main/lib/database&#39;;
+
+const SPECTRON_BASEPATH = Path.join(process.cwd(), &#39;.spectron&#39;);
+const DB_PATH = Path.join(SPECTRON_BASEPATH, &#39;databases&#39;);
+
+async function prepareDir(): Promise&lt;void&gt; {
+  await fs.remove(SPECTRON_BASEPATH);
+  await fs.ensureDir(SPECTRON_BASEPATH);
+  await fs.ensureDir(DB_PATH);
+}
+
+export async function populateTestDB(): Promise&lt;void&gt; {
+  await prepareDir();
+  const playlistDB = new Database({
+    path: DB_PATH + Path.sep,
+    name: &#39;playlist&#39;
+  });
+
+  const now = new Date().toISOString();
+  await playlistDB.save({
+    _id: &#39;1&#39;,
+    _rev: null,
+    title: &#39;New Playlist 1&#39;,
+    created: now,
+    accessed: now,
+    albums: [] as string[]
+  });
+
+  await playlistDB.close();
+}
+</code></pre>
+
+          <h2 class="mt5">
+            <a name="dipping-my-feet-into-the-spectron-api" class="anchor" href="#dipping-my-feet-into-the-spectron-api">
+              <span class="link blue">#</span>
+            </a>
+            Dipping my feet into the Spectron API
+          </h2>
+          <p class="lh-copy">Let&#39;s peek at <code class="dark-pink">application-launch.test.js</code>:</p><pre><code class="language-javascript">const Application = require(&#39;spectron&#39;).Application;
+const electronPath = require(&#39;electron&#39;);
+const path = require(&#39;path&#39;);
+const { populateTestDB } = require(&#39;./utils&#39;);
+
+const TEN_SECONDS = 10000;
+
+describe(&#39;Application launch&#39;, () =&gt; {
+  let app;
+  beforeEach(async () =&gt; {
+    await populateTestDB();
+    app = new Application({
+      path: electronPath,
+      env: { RUNNING_IN_SPECTRON: &#39;1&#39; },
+      args: [path.join(__dirname, &#39;..&#39;)]
+    });
+    return app.start();
+  });
+
+  afterEach(() =&gt; {
+    if (app &amp;&amp; app.isRunning()) {
+      return app.stop();
+    }
+  });
+
+  it(&#39;recalls last opened playlist&#39;, async () =&gt; {
+    await app.client.waitUntilWindowLoaded();
+    await app.client.click(&#39;.playlist-list .playlist-list-item&#39;);
+    await app.client.waitUntil(async() =&gt; await app.client.getText(&#39;h1&#39;) === &#39;New Playlist 1&#39;);
+    await app.restart();
+    await app.client.waitUntilWindowLoaded();
+    expect(await app.client.getText(&#39;h1&#39;)).toBe(&#39;New Playlist 1&#39;);
+  }, TEN_SECONDS);
+});</code></pre>
+          <p class="lh-copy">The <code class="dark-pink">afterEach</code> callback is very important, because if you don&#39;t stop the app instances they will hang in the main process, preventing it from ending (think about your CI environment). You will get following error message:</p><pre><code class="language-bash">Jest did not exit one second after the test run has completed.
+This usually means that there are asynchronous operations that were not stopped in your tests.
+Consider running Jest with `--detectOpenHandles` to troubleshoot this issue.</code></pre>
+          <p class="lh-copy">The test ensures that the app shows the last opened playlist on subsequent launches. I spent a bit of time figuring out how to run actions on <code class="dark-pink">DOM</code> elements (i.e. the whole point of automated tests). Most important caveat is that Spectron uses the <a class="link blue underline-hover" href="http://v4.webdriver.io/api.html" target='_blank'>legacy Webdriver v4 API</a>, so <code class="dark-pink">$(selection).click()</code> and similars won&#39;t work.</p>
+          <p class="lh-copy">It took me a while to understand where Spectron exposed <code class="dark-pink">browser</code> instance: it does in <code class="dark-pink">app.client</code>. For some reason I could not destructure / assign it to a variable, so I always have to refer it as <code class="dark-pink">app.client</code> for the moment.</p>
+          <p class="lh-copy">Good, time to run <code class="dark-pink">app.client.click(&#39;.playlist-list .playlist-list-item&#39;)</code>! It should load the clicked playlist. Actually this should be a test on its own, but I am aiming at testing just the critical path, and not every single interaction.</p>
+          <p class="lh-copy">How do I check that the playlist was loaded? The <code class="dark-pink">waitUntil</code> method checks that the app title contains the playlist title. This assumption relies on the fact that:</p>
+          <ol>
+            <li>there is just an <code class="dark-pink">&lt;h1&gt;</code>;</li>
+            <li>the playlist title is known beforehand.</li>
+          </ol>
+          <p class="lh-copy">To make the test more pure, one should give an <code class="dark-pink">id</code> to the header inside the corresponing React component, and keep track of how the database was populated. Food for thought, I can live with the current state of things.</p>
+          <p class="lh-copy">Ok, now I can <code class="dark-pink">restart</code> the app and check that I am in the <code class="dark-pink">&lt;PlaylistView&gt;</code> and the title is the one of last opened playlist.</p>
+          <p class="lh-copy">One last gotcha: pass an increased timeout value to <code class="dark-pink">it</code>, as some operations may last a bit longer on the first run. <code class="dark-pink">TEN_SECONDS</code> is acceptable, your mileage may vary.</p>
+          <h3 class="mt5">
+            <a name="edit-improvements-now-in-place" class="anchor" href="#edit-improvements-now-in-place">
+              <span class="link blue">#</span>
+            </a>
+            Edit: improvements now in place
+          </h3>
+          <p class="lh-copy">Test fixtures can be passed as parameters to <code class="dark-pink">populateTestDB</code>. Samples are provided accordingly as <code class="dark-pink">TestPlaylists</code>.</p><pre><code class="language-typescript">// utils/databaseUtils.ts
+export const TestPlaylists: TestPlaylist[] = [
+  {
+    _id: &#39;1&#39;,
+    _rev: null,
+    title: &#39;New Playlist 1&#39;,
+    created: null,
+    accessed: null,
+    albums: []
+  },
+  ...
+];
+
+export async function populateTestDB({
+  playlists = []
+}): Promise&lt;void&gt; {
+  await prepareDir();
+  ...
+  await Promise.all(playlists.map(async playlist =&gt; {
+    const now = new Date().toISOString();
+    return await db.playlist.save&lt;TestPlaylist&gt;({
+      ...playlist,
+      created: now,
+      accessed: now
+    });
+  }));
+
+// testfile
+const { populateTestDB, TestPlaylists } = require(&#39;./utils/databaseUtils&#39;);
+
+await populateTestDB({
+  playlists: [TestPlaylists[0]],
+  albums: [],
+  tracks: []
+});
+...
+const { title } = TestPlaylists[0];
+await app.client.waitUntil(async() =&gt; await app.client.getText(&#39;h1&#39;) === title);</code></pre>
+
+          <h2 class="mt5">
+            <a name="final-considerations" class="anchor" href="#final-considerations">
+              <span class="link blue">#</span>
+            </a>
+            Final considerations
+          </h2>
+          <p class="lh-copy">E2e tests are immensely useful to test paths that are difficult to track for active developers, such as:</p>
+          <ul>
+            <li>test what happens <strong>after a fresh install</strong>;</li>
+            <li>test on <strong>different screen sizes</strong> than the usual one;</li>
+            <li>test corner cases in a <strong>deterministic way</strong>.</li>
+          </ul>
+          <p class="lh-copy">Thinking and writing them is an ongoing process that just started now, and that is already helping me in providing quality to the application and further understanding of my own code and of the technologies it interacts with.</p>
+        </section>
+      </article>
+      <div class="album-bar relative overflow-hidden w-100 bg-mid-gray"></div>
+
+    </main>
+    <footer class="footer w-100 f6 ph3 ph0-ns pv3 pt4-ns pb5-ns bg-dark-gray light-silver">
+      <div class="w-80-ns center">
+        <p class="bb lh-copy pb4">
+          &copy; 2020 made with
+          <a href="https://moonwave99.github.io/waffel" target="_blank" class="link light-silver hover-white underline">waffel</a>,
+          <a href="https://tachyons.io" target="_blank" class="link light-silver hover-white underline">tachyons</a> and love by
+          <a href="https://www.diegocaponera.com" target="_blank" class="link light-silver hover-white underline">Diego Caponera</a>.
+        </p>
+        <div class="lh-copy cf">
+          <p class="fl">
+            <a href="#top" class="link light-silver hover-white underline">Back to top</a>
+          </p>
+          <p class="fr">
+            <a href="https://github.com/moonwave99/playa" target="_blank" class="link light-silver hover-white underline">Github</a> /
+            <a href="https://github.com/moonwave99/playa/issues" target="_blank" class="link light-silver hover-white underline">Issues</a> /
+            <a href="https://github.com/moonwave99/playa/releases" target="_blank" class="link light-silver hover-white underline">Releases</a>
+          </p>
+        </div>
+    </footer>
+
+
+    <script src="https://moonwave99.github.com/playa/js/vendor.js"></script>
+    <script src="https://moonwave99.github.com/playa/js/app.js"></script>
+    <script>
+      require('initialize')({
+        // place options here
+        title: 'Playa'
+      });
+    </script>
+    <script>
+      (function(b, o, i, l, e, r) {
+        b.GoogleAnalyticsObject = l;
+        b[l] || (b[l] =
+          function() {
+            (b[l].q = b[l].q || []).push(arguments)
+          });
+        b[l].l = +new Date;
+        e = o.createElement(i);
+        r = o.getElementsByTagName(i)[0];
+        e.src = 'https://www.google-analytics.com/analytics.js';
+        r.parentNode.insertBefore(e, r)
+      }(window, document, 'script', 'ga'));
+      ga('create', 'UA-XXXXXXX-Y', 'auto');
+      ga('send', 'pageview');
+    </script>
+  </body>
+
+</html>

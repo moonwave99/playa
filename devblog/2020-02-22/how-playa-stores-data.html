@@ -1,0 +1,309 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>How Playa stores data / Devblog / Playa</title>
+    <meta name="generator" content="waffel">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="google-site-verification" content="xyz">
+
+
+
+    <meta name="description" content="We all love a slick user interface that incarnates the zeitgeist, but without a well structured persistence layer it is of no use. Here I will give…">
+
+    <meta property="og:site_name" content="Playa">
+    <meta property="og:url" content="https://moonwave99.github.com/playa/devblog/2020-02-22/how-playa-stores-data">
+    <meta property="og:title" content="How Playa stores data | Playa">
+
+    <meta property="og:type" content="article">
+    <meta property="og:description" content="We all love a slick user interface that incarnates the zeitgeist, but without a well structured persistence layer it is of no use. Here I will give an overview of how I tried to make up for the lack of total outward slickness with sound invisible choices.">
+    <meta property="article:published_time" content="2020-02-22T01:00:00.000+0100">
+
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="https://moonwave99.github.com/playa//">
+    <meta name="twitter:creator" content="@moonwavelabs">
+    <meta name="twitter:url" content="https://moonwave99.github.com/playa/devblog/2020-02-22/how-playa-stores-data">
+    <meta name="twitter:title" content="How Playa stores data | Playa">
+
+    <meta name="twitter:description" content="We all love a slick user interface that incarnates the zeitgeist, but without a well structured persistence layer it is of no use. Here I will give an overview of how I tried to make up for the lack of total outward slickness with sound invisible choices.">
+
+
+    <link rel="stylesheet" href="https://moonwave99.github.com/playa/css/app.css">
+  </head>
+
+  <body class="w-100 sans-serif blog-single">
+
+    <nav class="navigation w-100 text-right v-mid ph3 ph4-ns avenir bg-yellow">
+      <a class="link black underline-hover mr4-ns" href="https://moonwave99.github.com/playa/index.html">Home</a>
+      <a class="link black underline-hover mr4-ns" href="https://moonwave99.github.com/playa/about.html">About</a>
+      <a class="link black underline-hover mr4-ns b" href="https://moonwave99.github.com/playa/devblog.html">Devblog</a>
+      <a class="link black underline-hover mr4-ns" href="https://github.com/moonwave99/playa" target="_blank">Github</a>
+      <a class="link black underline-hover mr4-ns" href="mailto:hello@diegocaponera.com?subject=Playa">Contact</a>
+    </nav>
+
+    <main class="main w-100">
+
+
+      <article class="blog-post mw8-ns center ph3 pb5 pv6-ns">
+        <header class="blog-post-header mb5">
+          <time class="tracked ttu">February 22, 2020</time>
+          <h1 class="f3 f1-ns lh-solid mt4 mb4">How Playa stores data</h1>
+        </header>
+        <section class="blog-post-content">
+          <p class="lh-copy">We all love a slick user interface that incarnates the <em>zeitgeist</em>, but without a well structured persistence layer it is of no use. Here I will give an overview of how I tried to make up for the lack of total outward slickness with sound invisible choices.</p>
+          <h2 class="mt5">
+            <a name="what-should-be-stored-" class="anchor" href="#what-should-be-stored-">
+              <span class="link blue">#</span>
+            </a>
+            What should be stored?
+          </h2>
+          <p class="lh-copy">First thing: what should a music player persist?</p>
+          <p class="lh-copy">If it holds a <strong>library</strong> of my music, it should definitely store it in an indexed way, e.g. a <a class="link blue underline-hover" href="https://en.wikipedia.org/wiki/Relational_database" target='_blank'>RDBMS</a> .<br>What about the <strong>playlists</strong>? They deserve to be stored somewhere as well, either as files or as database entries.<br>Last but not least, the <strong>user session</strong>: to grant a good UX, things like last opened playlist and volume settings should be persisted.</p>
+          <h2 class="mt5">
+            <a name="early-days" class="anchor" href="#early-days">
+              <span class="link blue">#</span>
+            </a>
+            Early days
+          </h2>
+          <p class="lh-copy">In the first iteration of Playa, I stored the playlists as <code class="dark-pink">.yaml</code> files, like:</p><pre><code class="language-yaml">title: Playlist Title
+lastPlayedAlbumId: a_25a6ee2e14d160875717bbf417fef140
+lastPlayedTrackId: t_14f04ad6e0ff78b7a6e66304e3eb3ef3
+lastScrolledAlbumId: null
+tracklist:
+  - /path/to/track_01.mp3
+  - /path/to/track_02.mp3
+  - /path/to/track_03.mp3
+  - ...</code></pre>
+          <p class="lh-copy">Not bad, but I wasn&#39;t storing any track metadata, as I extracted it from the music files everytime I loaded a playlist. For long playlists, the lag was noticeable: this convinced me to cache this information in a database.</p>
+          <p class="lh-copy">I tried to use <a class="link blue underline-hover" href="https://github.com/mapbox/node-sqlite3/" target='_blank'>SQLite</a>, but I had many issues bundling it inside the Electron app. Before starting to write code that I could not commit to ship, I looked for alternatives. <a class="link blue underline-hover" href="https://github.com/google/leveldb" target='_blank'>LevelDB</a> seemed a good choice, as it is embedded in browsers. <a class="link blue underline-hover" href="https://github.com/pouchdb/pouchdb" target='_blank'>PouchDB</a> seemed the stablest wrapper that allowed:</p>
+          <ol>
+            <li>to access the database from a <strong>specific path</strong> (good for separating dev/prod/test environment);</li>
+            <li>to perform an <a class="link blue underline-hover" href="https://github.com/pouchdb/pouchdb/tree/master/packages/node_modules/pouchdb-find" target='_blank'>indexed search</a>.</li>
+          </ol>
+          <p class="lh-copy">On the downsides I must mention that the API is inconsistent at times (<code class="dark-pink">rev</code> vs. <code class="dark-pink">_rev</code>, <code class="dark-pink">id</code> vs. <code class="dark-pink">_id</code>, I am looking at you two), and some operations that are trivial in the relational world, are a bit more cumbersome in the NoSQL wildness (e.g. auto-incrementing the primary key or pagination).</p>
+          <h2 class="mt5">
+            <a name="data-schema" class="anchor" href="#data-schema">
+              <span class="link blue">#</span>
+            </a>
+            Data schema
+          </h2>
+          <p class="lh-copy">PouchDB has no tables, so relationships between entities are totally up to the use we make of data, and there is no way to ensure <a class="link blue underline-hover" href="https://en.wikipedia.org/wiki/Referential_integrity" target='_blank'>referential integrity</a>. As the app schema is relatively simple and there are no concurrent ways of changing data, I can live with that.</p>
+          <p class="lh-copy">The schema is relatively simple:</p><iframe width="700" height="400" src='https://dbdiagram.io/embed/5e5bb6044495b02c3b879d7b'></iframe>
+
+          <p class="lh-copy">Things to notice:</p>
+          <ol>
+            <li>the <strong>primary keys</strong> are stored as strings;</li>
+            <li>the relationship are saved as array of IDs.</li>
+          </ol>
+          <p class="lh-copy">In the relational mindset this would grant you an anathema, but here it is fine: the relationships are mostly hierarchical, the volume of I/O operations is low, and we do not need to perform any <code class="dark-pink">JOIN</code>s - more on that <a class="link blue underline-hover" href="#redux-stores" null>later</a>.</p>
+          <p class="lh-copy">How to be sure that there will be no duplicate primary keys? I used a different strategy for each entity:</p>
+          <ul>
+            <li>playlists: I used the <strong>current timestamp</strong>. It will be always different and ascendent, so documents will already be sorted;</li>
+            <li>albums: I actually keep track of the highest value in the <strong>redux store</strong>, and I increment it on every album insertion;</li>
+            <li>tracks: I use the <strong>track filename</strong> itself.</li>
+          </ul>
+
+          <h2 class="mt5">
+            <a name="database-client" class="anchor" href="#database-client">
+              <span class="link blue">#</span>
+            </a>
+            Database client
+          </h2>
+          <p class="lh-copy">I wrapped all the PouchDB interactions inside a class that wraps a database instance:</p><pre><code class="language-typescript">export default class Database {
+  private db;
+  constructor({
+    path,
+    name,
+  }: DatabaseParams) {
+    const LocalPouchDB = PouchDB.defaults({ prefix: path });
+    this.db = new LocalPouchDB(name);
+  }
+
+  // uses pouchdb-find plugin, see: https://pouchdb.com/guides/mango-queries.html
+  async find&lt;T&gt;(selector: { [key: string]: string|number }): Promise&lt;Array&lt;T&gt;&gt; {...}
+
+  // uses pouchdb-quick-search plugin, see: https://github.com/pouchdb-community/pouchdb-quick-search
+  async search&lt;T&gt;(query: string, fields: string[]): Promise&lt;Array&lt;T&gt;&gt; {...}
+
+  async findAll&lt;T&gt;(): Promise&lt;Array&lt;T&gt;&gt; {...}
+  async get&lt;T&gt;(_id: string): Promise&lt;T&gt; {...}
+  async getList&lt;T&gt;(ids: Entity[&#39;_id&#39;][]): Promise&lt;Array&lt;T&gt;&gt; {...}
+
+  async save&lt;T extends Entity&gt;(entity: T): Promise&lt;T&gt; {...}
+  async saveBulk&lt;T&gt;(entities: T[]): Promise&lt;T[]&gt; {...}
+
+  async delete&lt;T extends Entity&gt;(entity: T): Promise&lt;Entity&gt; {...}
+
+  // marks the document as { _deleted: true }
+  async deleteBulk&lt;T&gt;(entities: T[]): Promise&lt;T[]&gt; {...}
+
+  // physically removes the document from the database
+  async removeBulk&lt;T&gt;(entities: T[]): Promise&lt;Result[]&gt; {...}
+}</code></pre>
+          <p class="lh-copy">I am definitely <em>not</em> happy with how I named things: <code class="dark-pink">search</code> vs <code class="dark-pink">find</code>, <code class="dark-pink">delete</code> and <code class="dark-pink">remove</code>...with all chance I am going to refactor similar methods into a single public one, with a parameter that routes to the right internal implementation.</p>
+          <p class="lh-copy">Some usage examples:</p><pre><code class="language-typescript">// get albums of a playlist
+const playlist = {
+  ...
+  albums: [&#39;1&#39;, &#39;2&#39;, &#39;3&#39;]
+}
+
+const albumDB = new Database({ path: &#39;/path/to/database&#39;, name: &#39;albums&#39; });
+const albums = await albumDB.getList&lt;Album&gt;(playlist.albums);
+
+// add an album to a playlist
+const playlist = {
+  ...
+  albums: [&#39;1&#39;, &#39;2&#39;, &#39;3&#39;]
+}
+
+const album = {
+  _id: &#39;4&#39;,
+  ...
+}
+
+const playlistDB = new Database({ path: &#39;/path/to/database&#39;, name: &#39;playlists&#39; });
+const updatedPlaylist = await playlistDB.save&lt;Playlist&gt;({
+  ...playlist,
+  albums: [...playlist.albums, album._id]
+});
+</code></pre>
+          <p class="lh-copy">Important: the database clients reside in the <code class="dark-pink">main</code> process, so all interactions happens via <code class="dark-pink">ipc</code> - no direct access via actions/stores.</p>
+          <h2 class="mt5">
+            <a name="redux-stores" class="anchor" href="#redux-stores">
+              <span class="link blue">#</span>
+            </a>
+            Redux stores
+          </h2>
+          <p class="lh-copy">It is good practice to keep the stores as normalised as possible, i.e. without nested objects and with an hash that allows <code class="dark-pink">O(1)</code> access:</p><pre><code class="language-javascript">const playlistState = {
+  allById: {
+    &#39;2020-02-03T12:56:50.342Z&#39;: {
+      ...
+      albums: [&#39;1&#39;, &#39;2&#39;, ...]
+    },
+    &#39;2020-02-05T02:11:23.125Z&#39;: { ... },
+    ...
+  },
+  ...
+}
+
+const albumState = {
+  allById: {
+    &#39;1&#39;: {
+      ...
+      artist: &#39;1&#39;,
+      tracks: [&#39;/path/to/track_01&#39;, &#39;/path/to/track_02&#39;, ...]
+    },
+    &#39;2&#39;: { ... },
+    ...
+  },
+  ...
+}
+
+const artistState = {
+  allById: {
+    &#39;1&#39;: {
+      ...
+      name: &#39;Slowdive&#39;
+    },
+    &#39;2&#39;: { ... },
+    ...
+  },
+  ...
+}
+
+const trackState = {
+  allById: {
+    &#39;/path/to/track_01&#39;: { ... },
+    &#39;/path/to/track_02&#39;: { ... },
+    ...
+  },
+  ...
+}</code></pre>
+          <p class="lh-copy">For instance, I can access a playlist by <code class="dark-pink">id</code> via <code class="dark-pink">state.playlists.allById[id]</code>.</p>
+          <p class="lh-copy"><strong>Many-to-one relationships</strong> are easy to handle as well: <code class="dark-pink">albums = playlist.albums.map(id =&gt; state.albums.allById[id])</code>.</p>
+          <p class="lh-copy">More complex selectors for top-level React components are wrapped in a proper <strong>reselect selector</strong> of course.</p>
+          <h2 class="mt5">
+            <a name="session-persistence" class="anchor" href="#session-persistence">
+              <span class="link blue">#</span>
+            </a>
+            Session persistence
+          </h2>
+          <p class="lh-copy">This was a straightforward task - a <code class="dark-pink">JSON</code> file suffices:</p><pre><code class="language-javascript">{
+  &quot;lastOpenedPlaylistId&quot;: &quot;2020-02-03T12:56:50.342Z&quot;,
+  &quot;lastWindowSize&quot;: [1680, 1027],
+  &quot;lastWindowPosition&quot;: [0, 23],
+  &quot;queue&quot;: [&quot;9946&quot;, &quot;9947&quot;, &quot;9948&quot;],
+  &quot;volume&quot;: 1
+}</code></pre>
+          <p class="lh-copy">I load it when the app starts and I use the values accordingly. Some are needed by Electron (window size and position), others by the React app - I inject the latter as <code class="dark-pink">props</code> of the root component.</p>
+          <p class="lh-copy">What about persistence timing? Window values are set and saved on app quit:</p><pre><code class="language-javascript">app.on(&#39;will-quit&#39;, () =&gt; {
+  appState.setState({
+    lastWindowSize: mainWindow.getSize(),
+    lastWindowPosition: mainWindow.getPosition()
+  });
+  appState.save();
+});</code></pre>
+          <p class="lh-copy">The values determined by user interaction, like the last opened playlist, the playback queue or the volume level are updated via <code class="dark-pink">ipc</code>:</p><pre><code class="language-typescript">// renderer
+ipc.send(IPC_UI_STATE_UPDATE, params);
+
+// main
+ipc.on(IPC_UI_STATE_UPDATE, (_event, params: object) =&gt; appState.setState(params));</code></pre>
+          <p class="lh-copy">While the Electron persistence strategies have still room for improvement in my opinion, I consider myself more than satisfied for the moment.</p>
+        </section>
+      </article>
+      <div class="album-bar relative overflow-hidden w-100 bg-mid-gray"></div>
+
+    </main>
+    <footer class="footer w-100 f6 ph3 ph0-ns pv3 pt4-ns pb5-ns bg-dark-gray light-silver">
+      <div class="w-80-ns center">
+        <p class="bb lh-copy pb4">
+          &copy; 2020 made with
+          <a href="https://moonwave99.github.io/waffel" target="_blank" class="link light-silver hover-white underline">waffel</a>,
+          <a href="https://tachyons.io" target="_blank" class="link light-silver hover-white underline">tachyons</a> and love by
+          <a href="https://www.diegocaponera.com" target="_blank" class="link light-silver hover-white underline">Diego Caponera</a>.
+        </p>
+        <div class="lh-copy cf">
+          <p class="fl">
+            <a href="#top" class="link light-silver hover-white underline">Back to top</a>
+          </p>
+          <p class="fr">
+            <a href="https://github.com/moonwave99/playa" target="_blank" class="link light-silver hover-white underline">Github</a> /
+            <a href="https://github.com/moonwave99/playa/issues" target="_blank" class="link light-silver hover-white underline">Issues</a> /
+            <a href="https://github.com/moonwave99/playa/releases" target="_blank" class="link light-silver hover-white underline">Releases</a>
+          </p>
+        </div>
+    </footer>
+
+
+    <script src="https://moonwave99.github.com/playa/js/vendor.js"></script>
+    <script src="https://moonwave99.github.com/playa/js/app.js"></script>
+    <script>
+      require('initialize')({
+        // place options here
+        title: 'Playa'
+      });
+    </script>
+    <script>
+      (function(b, o, i, l, e, r) {
+        b.GoogleAnalyticsObject = l;
+        b[l] || (b[l] =
+          function() {
+            (b[l].q = b[l].q || []).push(arguments)
+          });
+        b[l].l = +new Date;
+        e = o.createElement(i);
+        r = o.getElementsByTagName(i)[0];
+        e.src = 'https://www.google-analytics.com/analytics.js';
+        r.parentNode.insertBefore(e, r)
+      }(window, document, 'script', 'ga'));
+      ga('create', 'UA-XXXXXXX-Y', 'auto');
+      ga('send', 'pageview');
+    </script>
+  </body>
+
+</html>

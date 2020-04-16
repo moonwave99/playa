@@ -1,0 +1,269 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Dev environment / Devblog / Playa</title>
+    <meta name="generator" content="waffel">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="google-site-verification" content="xyz">
+
+
+
+    <meta name="description" content="In this post I give an overview of the app infrastructure and the tasks I run in the development environment, from watching to testing to the build…">
+
+    <meta property="og:site_name" content="Playa">
+    <meta property="og:url" content="https://moonwave99.github.com/playa/devblog/2020-02-15/dev-environment">
+    <meta property="og:title" content="Dev environment | Playa">
+
+    <meta property="og:type" content="article">
+    <meta property="og:description" content="In this post I give an overview of the app infrastructure and the tasks I run in the development environment, from watching to testing to the build step.">
+    <meta property="article:published_time" content="2020-02-15T01:00:00.000+0100">
+
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="https://moonwave99.github.com/playa//">
+    <meta name="twitter:creator" content="@moonwavelabs">
+    <meta name="twitter:url" content="https://moonwave99.github.com/playa/devblog/2020-02-15/dev-environment">
+    <meta name="twitter:title" content="Dev environment | Playa">
+
+    <meta name="twitter:description" content="In this post I give an overview of the app infrastructure and the tasks I run in the development environment, from watching to testing to the build step.">
+
+
+    <link rel="stylesheet" href="https://moonwave99.github.com/playa/css/app.css">
+  </head>
+
+  <body class="w-100 sans-serif blog-single">
+
+    <nav class="navigation w-100 text-right v-mid ph3 ph4-ns avenir bg-yellow">
+      <a class="link black underline-hover mr4-ns" href="https://moonwave99.github.com/playa/index.html">Home</a>
+      <a class="link black underline-hover mr4-ns" href="https://moonwave99.github.com/playa/about.html">About</a>
+      <a class="link black underline-hover mr4-ns b" href="https://moonwave99.github.com/playa/devblog.html">Devblog</a>
+      <a class="link black underline-hover mr4-ns" href="https://github.com/moonwave99/playa" target="_blank">Github</a>
+      <a class="link black underline-hover mr4-ns" href="mailto:hello@diegocaponera.com?subject=Playa">Contact</a>
+    </nav>
+
+    <main class="main w-100">
+
+
+      <article class="blog-post mw8-ns center ph3 pb5 pv6-ns">
+        <header class="blog-post-header mb5">
+          <time class="tracked ttu">February 15, 2020</time>
+          <h1 class="f3 f1-ns lh-solid mt4 mb4">Dev environment</h1>
+        </header>
+        <section class="blog-post-content">
+          <p class="lh-copy">In this post I give an overview of the app infrastructure and the tasks I run in the development environment, from watching to testing to the build step.</p>
+          <ol>
+            <li><a class="link blue underline-hover" href="#typescript" null>Typescript</a></li>
+            <li><a class="link blue underline-hover" href="#electron" null>Electron</a></li>
+            <li><a class="link blue underline-hover" href="#lint" null>Lint</a></li>
+            <li><a class="link blue underline-hover" href="#test" null>Test</a></li>
+            <li><a class="link blue underline-hover" href="#build" null>Build</a></li>
+            <li><a class="link blue underline-hover" href="#terminal-setup" null>Terminal setup</a></li>
+          </ol>
+
+          <h2 class="mt5">
+            <a name="typescript" class="anchor" href="#typescript">
+              <span class="link blue">#</span>
+            </a>
+            Typescript
+          </h2>
+          <p class="lh-copy">The configuration is fairly standard, exception made for some modules:</p><pre><code class="language-javascript">// tsconfig.json
+{
+    &quot;compilerOptions&quot;: {
+        &quot;jsx&quot;: &quot;react&quot;,
+        &quot;module&quot;: &quot;ESNext&quot;,
+        &quot;moduleResolution&quot;: &quot;node&quot;,
+        &quot;resolveJsonModule&quot;: true,
+        &quot;allowSyntheticDefaultImports&quot;: true,
+        &quot;noImplicitAny&quot;: true,
+        &quot;noImplicitThis&quot;: true,
+        &quot;sourceMap&quot;: true,
+        &quot;esModuleInterop&quot;: true,
+        &quot;target&quot;: &quot;es2017&quot;,
+        &quot;types&quot;: [&quot;node&quot;, &quot;lodash&quot;, &quot;express&quot;, &quot;electron&quot;, &quot;electron-settings&quot;, &quot;pouchdb&quot;, &quot;jest&quot;]
+    },
+    &quot;include&quot;: [
+        &quot;typings.d.ts&quot;,
+        &quot;src/**/*.ts&quot;,
+        &quot;src/**/*.tsx&quot;
+    ],
+    &quot;exclude&quot;: [&quot;node_modules&quot;]
+}
+
+// typings.d.ts
+declare module &#39;pouchdb-quick-search&#39;;
+declare module &#39;disconnect&#39;;
+declare module &#39;sha1&#39;;
+declare module &#39;browser-id3-writer&#39;;</code></pre>
+
+          <h2 class="mt5">
+            <a name="electron" class="anchor" href="#electron">
+              <span class="link blue">#</span>
+            </a>
+            Electron
+          </h2>
+          <p class="lh-copy">In a traditional application, the backend process runs on a server, while the frontend runs on the remote clients. An Electron app has two heads: a <strong>main process</strong> similar to the former that interacts with the operation system, and a <strong>renderer process</strong> that handles the browser code and takes care of the user interaction.</p>
+          <p class="lh-copy">Even though one could use all node modules from the renderer as well, it is good practice to minimise such interaction and to rely as much as possible on the <code class="dark-pink">ipc</code> (inter process communication) module.</p>
+          <p class="lh-copy">The fact that the code for the two processes share the same physical location can be a source of confusion:</p><pre><code class="language-bash">src
+  main
+    main.ts
+  renderer
+    index.html
+    index.ts</code></pre>
+          <p class="lh-copy">A peek at the <strong>webpack configuration</strong> will fugue that:</p><pre><code class="language-javascript">const outputFolder = &#39;/_pack&#39;;
+
+const mainConfig = {
+    entry: &#39;./src/main/main.ts&#39;,
+    target: &#39;electron-main&#39;,
+  output: {
+        filename: &#39;main.bundle.js&#39;,
+        path: __dirname + outputFolder
+    },
+  ...
+}
+
+const rendererConfig = {
+    entry: &#39;./src/renderer/index.tsx&#39;,
+    target: &#39;electron-renderer&#39;,
+    output: {
+        filename: &#39;renderer.bundle.js&#39;,
+        path: __dirname + outputFolder
+    },
+  ...
+}
+
+module.exports = {
+    mainConfig,
+    rendererConfig
+};</code></pre>
+          <p class="lh-copy">Two separate bundles are generated - one used by the main Electron process, and one inside the Chromium instance. The app infact starts with:</p><pre><code class="language-bash">$ electron ./_pack/main.bundle.js</code></pre>
+          <p class="lh-copy">This loads the <code class="dark-pink">main.ts</code> file, that requests <code class="dark-pink">index.html</code> (inside whom webpack injected a reference to <code class="dark-pink">renderer.bundle.js</code>):</p><pre><code class="language-javascript">mainWindow.loadURL(
+  url.format({
+    pathname: Path.join(__dirname, &#39;./index.html&#39;),
+    protocol: &#39;file:&#39;,
+    slashes: true,
+  })
+);</code></pre>
+          <p class="lh-copy">All code is watched in a separated terminal tab via <code class="dark-pink">$ webpack --watch --config ./webpack.dev.js</code>.</p>
+          <h2 class="mt5">
+            <a name="lint" class="anchor" href="#lint">
+              <span class="link blue">#</span>
+            </a>
+            Lint
+          </h2>
+          <p class="lh-copy">Nothing too fancy here as well. Do not forget to use <code class="dark-pink">react-hooks/rules-of-hooks</code>!</p><pre><code class="language-javascript">//.eslintrc.js
+module.exports = {
+    root: true,
+    parser: &#39;@typescript-eslint/parser&#39;,
+    plugins: [
+        &#39;@typescript-eslint&#39;,
+        &#39;react&#39;,
+        &#39;react-hooks&#39;
+    ],
+    rules: {
+        &#39;react/jsx-uses-react&#39;: &#39;error&#39;,
+        &#39;react/jsx-uses-vars&#39;: &#39;error&#39;,
+        &#39;react-hooks/rules-of-hooks&#39;: &#39;error&#39;
+    },
+    extends: [
+        &#39;eslint:recommended&#39;,
+        &#39;plugin:@typescript-eslint/eslint-recommended&#39;,
+        &#39;plugin:@typescript-eslint/recommended&#39;,
+    ],
+};</code></pre>
+          <p class="lh-copy">I setup a <code class="dark-pink">lint</code> command in <code class="dark-pink">package.json</code> that runs <code class="dark-pink">$ yarn eslint ./src --ext .js,.jsx,.ts,.tsx</code> of course.</p>
+          <h2 class="mt5">
+            <a name="test" class="anchor" href="#test">
+              <span class="link blue">#</span>
+            </a>
+            Test
+          </h2>
+          <p class="lh-copy">I run unit/integration and e2e tests both via <strong>jest</strong>, via following commands:</p>
+          <ul>
+            <li><strong>test</strong> -&gt; <code class="dark-pink">$ jest --config jest.config.js</code>;</li>
+            <li><strong>test:e2e</strong> -&gt; <code class="dark-pink">$ jest --runInBand --config jest.config.e2e.js</code>.</li>
+          </ul>
+          <p class="lh-copy">More about the specific strategies in the <a class="link blue underline-hover" href="/devblog/2020-02-08/testing" null>test</a> and <a class="link blue underline-hover" href="/devblog/2020-02-29/end-to-end-testing" null>e2e tests</a> posts respectively.</p>
+          <h2 class="mt5">
+            <a name="build" class="anchor" href="#build">
+              <span class="link blue">#</span>
+            </a>
+            Build
+          </h2>
+          <p class="lh-copy">At the moment I am building the app just for OS X, because it is the only platform available to me. Contributions for Linux/Win are mostly welcome of course.</p>
+          <p class="lh-copy">The <code class="dark-pink">pack</code> command first bundles the js code for production (<code class="dark-pink">webpack --config ./webpack.prod.js</code>), then uses <a class="link blue underline-hover" href="https://github.com/electron-userland/electron-builder" target='_blank'>electron-builder</a>.</p>
+          <h2 class="mt5">
+            <a name="terminal-setup" class="anchor" href="#terminal-setup">
+              <span class="link blue">#</span>
+            </a>
+            Terminal setup
+          </h2>
+          <p class="lh-copy">I find very useful to have a fixed terminal tab setup when dealing with repeated and ongoing tasks. In this case I need to monitor:</p>
+          <ul>
+            <li>the <strong>webpack logs</strong> (watching);</li>
+            <li>the <strong>electron logs</strong> (watching);</li>
+            <li><strong>lint</strong> output;</li>
+            <li><strong>test</strong> output;</li>
+            <li><strong>e2d</strong> test output.</li>
+          </ul>
+          <p class="lh-copy">I renamed the tab accordingly and saved them as a session:</p>
+          <p class="lh-copy"><img src="/images/screenshots/terminal_setup.png" alt="terminal"></p>
+          <p class="lh-copy">It is enough to <code class="dark-pink">⌘+1-5</code>, then <code class="dark-pink">↑ + Enter</code> to rerun the command if needed.</p>
+          <p class="lh-copy">It may look trivial, but not to have to think much to which tab I have to switch <a class="link blue underline-hover" href="https://xkcd.com/1205/" target='_blank'>saves time</a>!</p>
+        </section>
+      </article>
+      <div class="album-bar relative overflow-hidden w-100 bg-mid-gray"></div>
+
+    </main>
+    <footer class="footer w-100 f6 ph3 ph0-ns pv3 pt4-ns pb5-ns bg-dark-gray light-silver">
+      <div class="w-80-ns center">
+        <p class="bb lh-copy pb4">
+          &copy; 2020 made with
+          <a href="https://moonwave99.github.io/waffel" target="_blank" class="link light-silver hover-white underline">waffel</a>,
+          <a href="https://tachyons.io" target="_blank" class="link light-silver hover-white underline">tachyons</a> and love by
+          <a href="https://www.diegocaponera.com" target="_blank" class="link light-silver hover-white underline">Diego Caponera</a>.
+        </p>
+        <div class="lh-copy cf">
+          <p class="fl">
+            <a href="#top" class="link light-silver hover-white underline">Back to top</a>
+          </p>
+          <p class="fr">
+            <a href="https://github.com/moonwave99/playa" target="_blank" class="link light-silver hover-white underline">Github</a> /
+            <a href="https://github.com/moonwave99/playa/issues" target="_blank" class="link light-silver hover-white underline">Issues</a> /
+            <a href="https://github.com/moonwave99/playa/releases" target="_blank" class="link light-silver hover-white underline">Releases</a>
+          </p>
+        </div>
+    </footer>
+
+
+    <script src="https://moonwave99.github.com/playa/js/vendor.js"></script>
+    <script src="https://moonwave99.github.com/playa/js/app.js"></script>
+    <script>
+      require('initialize')({
+        // place options here
+        title: 'Playa'
+      });
+    </script>
+    <script>
+      (function(b, o, i, l, e, r) {
+        b.GoogleAnalyticsObject = l;
+        b[l] || (b[l] =
+          function() {
+            (b[l].q = b[l].q || []).push(arguments)
+          });
+        b[l].l = +new Date;
+        e = o.createElement(i);
+        r = o.getElementsByTagName(i)[0];
+        e.src = 'https://www.google-analytics.com/analytics.js';
+        r.parentNode.insertBefore(e, r)
+      }(window, document, 'script', 'ga'));
+      ga('create', 'UA-XXXXXXX-Y', 'auto');
+      ga('send', 'pageview');
+    </script>
+  </body>
+
+</html>

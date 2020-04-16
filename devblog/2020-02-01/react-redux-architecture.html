@@ -1,0 +1,186 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>The React/Redux architecture / Devblog / Playa</title>
+    <meta name="generator" content="waffel">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="google-site-verification" content="xyz">
+
+
+
+    <meta name="description" content="Many practices flourished in the React ecosystems, addressing from how to structure the src folder to where and how store the app state, to how to…">
+
+    <meta property="og:site_name" content="Playa">
+    <meta property="og:url" content="https://moonwave99.github.com/playa/devblog/2020-02-01/react-redux-architecture">
+    <meta property="og:title" content="The React/Redux architecture | Playa">
+
+    <meta property="og:type" content="article">
+    <meta property="og:description" content="Many practices flourished in the React ecosystems, addressing from how to structure the src folder to where and how store the app state, to how to style components. Here are my choices in regard.">
+    <meta property="article:published_time" content="2020-02-01T01:00:00.000+0100">
+
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="https://moonwave99.github.com/playa//">
+    <meta name="twitter:creator" content="@moonwavelabs">
+    <meta name="twitter:url" content="https://moonwave99.github.com/playa/devblog/2020-02-01/react-redux-architecture">
+    <meta name="twitter:title" content="The React/Redux architecture | Playa">
+
+    <meta name="twitter:description" content="Many practices flourished in the React ecosystems, addressing from how to structure the src folder to where and how store the app state, to how to style components. Here are my choices in regard.">
+
+
+    <link rel="stylesheet" href="https://moonwave99.github.com/playa/css/app.css">
+  </head>
+
+  <body class="w-100 sans-serif blog-single">
+
+    <nav class="navigation w-100 text-right v-mid ph3 ph4-ns avenir bg-yellow">
+      <a class="link black underline-hover mr4-ns" href="https://moonwave99.github.com/playa/index.html">Home</a>
+      <a class="link black underline-hover mr4-ns" href="https://moonwave99.github.com/playa/about.html">About</a>
+      <a class="link black underline-hover mr4-ns b" href="https://moonwave99.github.com/playa/devblog.html">Devblog</a>
+      <a class="link black underline-hover mr4-ns" href="https://github.com/moonwave99/playa" target="_blank">Github</a>
+      <a class="link black underline-hover mr4-ns" href="mailto:hello@diegocaponera.com?subject=Playa">Contact</a>
+    </nav>
+
+    <main class="main w-100">
+
+
+      <article class="blog-post mw8-ns center ph3 pb5 pv6-ns">
+        <header class="blog-post-header mb5">
+          <time class="tracked ttu">February 01, 2020</time>
+          <h1 class="f3 f1-ns lh-solid mt4 mb4">The React/Redux architecture</h1>
+        </header>
+        <section class="blog-post-content">
+          <p class="lh-copy">Many practices flourished in the React ecosystems, addressing from how to structure the src folder to where and how store the app state, to how to style components. Here are my choices in regard.</p>
+          <h2 class="mt5">
+            <a name="the-code-class-dark-pink-src-code-organisation" class="anchor" href="#the-code-class-dark-pink-src-code-organisation">
+              <span class="link blue">#</span>
+            </a>
+            The <code class="dark-pink">src</code> organisation
+          </h2>
+          <p class="lh-copy">The folder structure of an application should favour the development process first of all. How often am I accessing a file? Should other people of the team have non frequent access to any part of it? <a class="link blue underline-hover" href="https://medium.com/hackernoon/the-100-correct-way-to-structure-a-react-app-or-why-theres-no-such-thing-3ede534ef1ed" target='_blank'>This article</a> contains a lot of sound considerations in this direction.</p>
+          <p class="lh-copy">Each <strong>component</strong> lives in a folder named as the component itself, among with specs and styles. The hierarchy system is completely arbitr..ahem is mixed: some components are contained inside the parent component, some others live ad the base level because are shared.</p><pre><code class="language-bash">src
+  renderer
+    components
+      AlbumListView
+        AlbumListView.tsx
+        AlbumListView.test.tsx
+        AlbumListView.scss
+        AlbumView
+          AlbumView.tsx
+          AlbumView.test.tsx
+          AlbumView.scss</code></pre>
+          <p class="lh-copy">There are some <strong>providers</strong> that are <code class="dark-pink">HOC</code> around pure view layers. They take care of data fetching and event handling, to keep UI easy to test:</p><pre><code class="language-typescript">export const PlaylistContainer = (): ReactElement =&gt; {
+  const dispatch = useDispatch();
+  const { _id } = useParams();
+
+  const {
+    playlist,
+    albums,
+    isLoading
+    ...
+  } = useSelector((state: ApplicationState) =&gt; getPlaylistById(state, _id));
+
+  useEffect(() =&gt; {
+    ...
+  }, [playlist.title]);
+
+  function onAlbumContextMenu() { ... }
+  function onAlbumDoubleClick() { ... }
+
+  const shouldShowPlaylist = !isLoading &amp;&amp; playlist.albums.length === Object.keys(albums).length;
+  if (!shouldShowPlaylist) {
+    return null;
+  }
+    return (
+    &lt;CSSTransition
+      in={!isLoading}
+      timeout={300}
+      classNames=&quot;playlist-view&quot;
+      unmountOnExit&gt;
+      &lt;PlaylistView
+        albums={albums}
+        playlist={playlist}
+        onAlbumContextMenu={onAlbumContextMenu}
+        onAlbumDoubleClick={onAlbumDoubleClick}/&gt;
+     &lt;/CSSTransition&gt;
+    );
+};</code></pre>
+
+          <h2 class="mt5">
+            <a name="styles" class="anchor" href="#styles">
+              <span class="link blue">#</span>
+            </a>
+            Styles
+          </h2>
+          <p class="lh-copy">I used no particular library (besides a normaliser). I am very fond of <a class="link blue underline-hover" href="https://en.wikipedia.org/wiki/The_Elements_of_Typographic_Style" target='_blank'>Robert Bringhurst</a> lectures on typography, and grid systems in general. With <code class="dark-pink">rem</code> units and SASS preprocessing, it is easy to use a size scale that keeps everythin <em>in beat</em>.</p>
+          <p class="lh-copy">Styles are imported directly from modules via <code class="dark-pink">style-loader</code>:</p><pre><code class="language-javascript">// App.tsx
+import React, { FC, ReactElement, useState, useEffect, useRef } from &#39;react&#39;;
+...
+import &#39;./App.scss&#39;;</code></pre>
+
+          <h2 class="mt5">
+            <a name="redux" class="anchor" href="#redux">
+              <span class="link blue">#</span>
+            </a>
+            Redux
+          </h2>
+          <p class="lh-copy">I like Redux because it acts more like a low level glue, rather than as a framework. It makes you think about the solutions, and gives you freedom of implementation. Such freedom has a price, called a lot of code to write (and to test). There is a lot of boilerplate to be written, mainly because of Typescript definitions, but once the foundation is stable I didn&#39;t have to add much more material: combining existing actions is enough.</p>
+          <p class="lh-copy">I use the the standard <code class="dark-pink">redux-thunk</code> as async handler middleware.</p>
+        </section>
+      </article>
+      <div class="album-bar relative overflow-hidden w-100 bg-mid-gray"></div>
+
+    </main>
+    <footer class="footer w-100 f6 ph3 ph0-ns pv3 pt4-ns pb5-ns bg-dark-gray light-silver">
+      <div class="w-80-ns center">
+        <p class="bb lh-copy pb4">
+          &copy; 2020 made with
+          <a href="https://moonwave99.github.io/waffel" target="_blank" class="link light-silver hover-white underline">waffel</a>,
+          <a href="https://tachyons.io" target="_blank" class="link light-silver hover-white underline">tachyons</a> and love by
+          <a href="https://www.diegocaponera.com" target="_blank" class="link light-silver hover-white underline">Diego Caponera</a>.
+        </p>
+        <div class="lh-copy cf">
+          <p class="fl">
+            <a href="#top" class="link light-silver hover-white underline">Back to top</a>
+          </p>
+          <p class="fr">
+            <a href="https://github.com/moonwave99/playa" target="_blank" class="link light-silver hover-white underline">Github</a> /
+            <a href="https://github.com/moonwave99/playa/issues" target="_blank" class="link light-silver hover-white underline">Issues</a> /
+            <a href="https://github.com/moonwave99/playa/releases" target="_blank" class="link light-silver hover-white underline">Releases</a>
+          </p>
+        </div>
+    </footer>
+
+
+    <script src="https://moonwave99.github.com/playa/js/vendor.js"></script>
+    <script src="https://moonwave99.github.com/playa/js/app.js"></script>
+    <script>
+      require('initialize')({
+        // place options here
+        title: 'Playa'
+      });
+    </script>
+    <script>
+      (function(b, o, i, l, e, r) {
+        b.GoogleAnalyticsObject = l;
+        b[l] || (b[l] =
+          function() {
+            (b[l].q = b[l].q || []).push(arguments)
+          });
+        b[l].l = +new Date;
+        e = o.createElement(i);
+        r = o.getElementsByTagName(i)[0];
+        e.src = 'https://www.google-analytics.com/analytics.js';
+        r.parentNode.insertBefore(e, r)
+      }(window, document, 'script', 'ga'));
+      ga('create', 'UA-XXXXXXX-Y', 'auto');
+      ga('send', 'pageview');
+    </script>
+  </body>
+
+</html>

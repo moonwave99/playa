@@ -1,0 +1,508 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Testing Playa / Devblog / Playa</title>
+    <meta name="generator" content="waffel">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="google-site-verification" content="xyz">
+
+
+
+    <meta name="description" content="I have to be honest: I seldom tested my applications, at least not thoroughly. This time I wanted not only to strive for good coverage, but to use a…">
+
+    <meta property="og:site_name" content="Playa">
+    <meta property="og:url" content="https://moonwave99.github.com/playa/devblog/2020-02-08/testing">
+    <meta property="og:title" content="Testing Playa | Playa">
+
+    <meta property="og:type" content="article">
+    <meta property="og:description" content="I have to be honest: I seldom tested my applications, at least not thoroughly. This time I wanted not only to strive for good coverage, but to use a test-first approach, at least for when the prototype reached an usable level.">
+    <meta property="article:published_time" content="2020-02-08T01:00:00.000+0100">
+
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="https://moonwave99.github.com/playa//">
+    <meta name="twitter:creator" content="@moonwavelabs">
+    <meta name="twitter:url" content="https://moonwave99.github.com/playa/devblog/2020-02-08/testing">
+    <meta name="twitter:title" content="Testing Playa | Playa">
+
+    <meta name="twitter:description" content="I have to be honest: I seldom tested my applications, at least not thoroughly. This time I wanted not only to strive for good coverage, but to use a test-first approach, at least for when the prototype reached an usable level.">
+
+
+    <link rel="stylesheet" href="https://moonwave99.github.com/playa/css/app.css">
+  </head>
+
+  <body class="w-100 sans-serif blog-single">
+
+    <nav class="navigation w-100 text-right v-mid ph3 ph4-ns avenir bg-yellow">
+      <a class="link black underline-hover mr4-ns" href="https://moonwave99.github.com/playa/index.html">Home</a>
+      <a class="link black underline-hover mr4-ns" href="https://moonwave99.github.com/playa/about.html">About</a>
+      <a class="link black underline-hover mr4-ns b" href="https://moonwave99.github.com/playa/devblog.html">Devblog</a>
+      <a class="link black underline-hover mr4-ns" href="https://github.com/moonwave99/playa" target="_blank">Github</a>
+      <a class="link black underline-hover mr4-ns" href="mailto:hello@diegocaponera.com?subject=Playa">Contact</a>
+    </nav>
+
+    <main class="main w-100">
+
+
+      <article class="blog-post mw8-ns center ph3 pb5 pv6-ns">
+        <header class="blog-post-header mb5">
+          <time class="tracked ttu">February 08, 2020</time>
+          <h1 class="f3 f1-ns lh-solid mt4 mb4">Testing Playa</h1>
+        </header>
+        <section class="blog-post-content">
+          <p class="lh-copy">I have to be honest: I seldom tested my applications, at least not thoroughly. This time I wanted not only to strive for good coverage, but to use a <strong>test-first</strong> approach, at least for when the prototype reached an usable level.</p>
+          <p class="lh-copy">I will talk about:</p>
+          <ol>
+            <li><a class="link blue underline-hover" href="#jest-setup" null>Jest setup</a>;</li>
+            <li><a class="link blue underline-hover" href="#testing-react-components" null>Testing React components</a>;</li>
+            <li><a class="link blue underline-hover" href="#testing-redux" null>Testing Redux actions and stores</a>;</li>
+            <li><a class="link blue underline-hover" href="#testing=uutils" null>Testing utils</a>.</li>
+          </ol>
+
+          <h2 class="mt5">
+            <a name="jest-setup" class="anchor" href="#jest-setup">
+              <span class="link blue">#</span>
+            </a>
+            Jest setup
+          </h2>
+          <p class="lh-copy">First, the tests reside next to the code they refer to, see:</p><pre><code class="language-bash">src
+  main
+    lib
+      database.test.ts
+      database.ts
+      ...
+  renderer
+    components
+      SearchView
+        SearchView.scss
+        SearchView.test.tsx
+        SearchView.tsx
+      ...</code></pre>
+          <p class="lh-copy">The jest configuration instructs the following:</p>
+          <ul>
+            <li>to transform the <code class="dark-pink">.ts</code>/<code class="dark-pink">.tsx</code> files to js;</li>
+            <li>to mock imported styles / images;</li>
+            <li>to map some modules to the corresponding mocks.</li>
+          </ul>
+          <pre><code class="language-javascript">// jest.config.js
+module.exports = {
+  roots: [
+    &quot;&lt;rootDir&gt;/src&quot;
+  ],
+  testMatch: [
+    &quot;**/?(*.)+(test).+(ts|tsx|js)&quot;
+  ],
+  transform: {
+    &quot;^.+\\.(ts|tsx)$&quot;: &quot;ts-jest&quot;
+  },
+  setupFilesAfterEnv: [
+    &quot;&lt;rootDir&gt;/test/testSetup.ts&quot;
+  ],
+  moduleNameMapper: {
+    &quot;\\.(css|less|sass|scss)$&quot;: &quot;&lt;rootDir&gt;/test/__mocks__/styleMock.js&quot;,
+    &quot;\\.(gif|ttf|eot|svg)$&quot;: &quot;&lt;rootDir&gt;/test/__mocks__/fileMock.js&quot;,
+    &quot;disconnect&quot;: &quot;&lt;rootDir&gt;/test/__mocks__/disconnect.js&quot;,
+    &quot;electron&quot;: &quot;&lt;rootDir&gt;/test/__mocks__/electron.js&quot;,
+    &quot;music-metadata&quot;: &quot;&lt;rootDir&gt;/test/__mocks__/music-metadata.js&quot;,
+    &quot;pouchdb&quot;: &quot;&lt;rootDir&gt;/test/__mocks__/pouchdb.ts&quot;,
+    &quot;@fortawesome/react-fontawesome&quot;: &quot;&lt;rootDir&gt;/test/__mocks__/@fortawesome/react-fontawesome.tsx&quot;
+  }
+}</code></pre>
+          <p class="lh-copy">In <code class="dark-pink">testSetup.ts</code> there are the global mocks:</p><pre><code class="language-typescript">import React = require(&#39;react&#39;);
+import initI18n from &#39;../src/renderer/initializers/initI18n&#39;;
+
+// disables useLayoutEffect for CSSTransition component
+React.useLayoutEffect = React.useEffect;
+
+// allows injecting any kind of object into the jest global variable
+const globalAny: any = global;
+
+// yelds a second of white noise for the waveform generator
+globalAny.AudioContext = jest.fn().mockImplementation(() =&gt; ({
+  decodeAudioData: () =&gt; ({
+    duration: 1,
+    length: 44100,
+    numberOfChannels: 2,
+    sampleRate: 44100,
+    getChannelData: () =&gt; Array.from(Array(44100).keys()).map(() =&gt; Math.random())
+  })
+}));
+
+// mocks HTTP fetch()
+globalAny.fetch = require(&quot;jest-fetch-mock&quot;);
+globalAny.fetchMock = globalAny.fetch;
+
+// initialises i18next
+initI18n();</code></pre>
+          <p class="lh-copy">Ready to go with <code class="dark-pink">yarn test</code> that runs <code class="dark-pink">$ jest --config jest.config.js</code>, hoping to always see green fields.</p>
+          <h2 class="mt5">
+            <a name="testing-react-components" class="anchor" href="#testing-react-components">
+              <span class="link blue">#</span>
+            </a>
+            Testing React components
+          </h2>
+          <p class="lh-copy">The line between unit and integration test for React components is blurry: how do we test <em>just</em> the contract, i.e. the expected output for the given input, by completely ignoring the implementation?</p>
+          <p class="lh-copy">For simple components, it is definitely feasible:</p><pre><code class="language-tsx">// component
+const Label = ({ text }): ReactElement =&gt; {
+  return &lt;span className=&quot;label&quot;&gt;{text}&lt;/span&gt;;
+}
+
+// test
+it(&#39;should render a .label&#39;, () =&gt; {
+  const wrapper = render(&lt;Label text=&quot;hello&quot;/&gt;);
+  expect(wrapper.is(&#39;.label&#39;)).toBe(true);
+  expect(wrapper.text()).toBe(&#39;hello&#39;);
+});</code></pre>
+          <p class="lh-copy">We are checking that the passed <code class="dark-pink">prop</code> is used as expected, and that the renderer element has the proper class.</p>
+          <p class="lh-copy">But the higher we go in the componen hierarchy, the more subcomponents we expect to be rendered. My rule is to check <strong>just for the direct children</strong>, e.g. I check that a <code class="dark-pink">List</code> has the right number of <code class="dark-pink">ListItems</code>: I am handling the tested component not like a complete black box, because I know the implementation of its children, but not even am I dissecting it.</p>
+          <p class="lh-copy">A common mistake is to test the internal state of the component. We do not have to check the internals of the component, as long as it does what it promises to do.</p>
+          <h3 class="mt5">
+            <a name="testing-components-that-usecustomhooks" class="anchor" href="#testing-components-that-usecustomhooks">
+              <span class="link blue">#</span>
+            </a>
+            Testing components that useCustomHooks
+          </h3>
+          <p class="lh-copy">Many components include <code class="dark-pink">useDispatch</code>/<code class="dark-pink">useSelector</code>, <code class="dark-pink">useDrag/Drop</code>, <code class="dark-pink">useHistory</code>/<code class="dark-pink">useLocation</code>, all hooks that throw an exception if not run in a specific context. They should be rendered / mounted in such context in order to be tested, for instance:</p><pre><code class="language-tsx">const wrapper = render(
+  &lt;Provider store={mockedStore}&gt;
+    &lt;AlbumView
+      currentTrackId={null}
+      album={albums[0]}
+      dragType={&#39;&#39;}
+      albumActions={[]}
+      onContextMenu={jest.fn()}
+      onDoubleClick={jest.fn()}/&gt; 
+  &lt;/Provider&gt;
+);</code></pre>
+          <p class="lh-copy"><strong>Important:</strong> even if the component itself does not use any hook, its children may do!</p>
+          <p class="lh-copy">Tired of wrapping almost every element in two or three mocked layers, I wrote some <code class="dark-pink">testUtils</code> with all the wrappers and and a function that composes them upon need:</p><pre><code class="language-tsx">const routerWrapper = function(element: ReactElement) {
+  return &lt;MemoryRouter&gt;{element}&lt;/MemoryRouter&gt;;
+}
+
+const providerWrapper = function(element: ReactElement, store: object = defaultStore) {
+  const mockedStore = configureMockStore([thunk])(store);
+  return &lt;Provider store={mockedStore}&gt;{element}&lt;/Provider&gt;;
+}
+
+const dndProviderWrapper = function(element: ReactElement) {
+  return &lt;DndProvider backend={Backend}&gt;{element}&lt;/DndProvider&gt;;
+}
+
+// the renderer (shallow, render, mount) come from enzyme
+export function wrap(renderer: Renderers, ...wrappers: Wrappers[]): Function { ... }
+
+export const shallowInRouter =
+  (element: ReactElement) =&gt; wrap(Renderers.shallow, Wrappers.Router)(element);
+export const renderInRouter =
+  (element: ReactElement) =&gt; wrap(Renderers.render, Wrappers.Router)(element);
+export const mountInRouter =
+  (element: ReactElement) =&gt; wrap(Renderers.mount, Wrappers.Router)(element);
+
+// composition order reflects the one of the real app,
+// i.e. the redux provider being the outermost
+export const shallowInAll = wrap(
+  Renderers.shallow,
+  Wrappers.Provider,
+  Wrappers.Router,
+  Wrappers.DndProvider
+);
+
+export const renderInAll = wrap(
+  Renderers.render,
+  Wrappers.Provider,
+  Wrappers.Router,
+  Wrappers.DndProvider
+);
+
+export const mountInAll = wrap(
+  Renderers.mount,
+  Wrappers.Provider,
+  Wrappers.Router,
+  Wrappers.DndProvider
+);</code></pre>
+
+          <h2 class="mt5">
+            <a name="testing-redux" class="anchor" href="#testing-redux">
+              <span class="link blue">#</span>
+            </a>
+            Testing Redux
+          </h2>
+
+          <h3 class="mt5">
+            <a name="redux-actions" class="anchor" href="#redux-actions">
+              <span class="link blue">#</span>
+            </a>
+            Redux actions
+          </h3>
+          <p class="lh-copy">Actions are one of the most vital parts of the application, because they glue together the user interaction with the model and the view layer. The responsibility of every single <strong>action creator</strong> should be clear, among with its expected behaviour.</p>
+          <p class="lh-copy">Let&#39;s have a look at <code class="dark-pink">getAllPlaylistsRequest</code>:</p><pre><code class="language-typescript">export const getAllPlaylistsRequest = (): Function =&gt;
+  async (dispatch: Function): Promise&lt;void&gt; =&gt; {
+    const playlists = await ipc.invoke(IPC_PLAYLIST_GET_ALL_REQUEST);
+    dispatch({
+      type: PLAYLIST_GET_ALL_RESPONSE,
+      playlists
+    });
+  }</code></pre>
+          <p class="lh-copy">Remember that the app uses <a class="link blue underline-hover" href="https://github.com/reduxjs/redux-thunk" target='_blank'>redux-thunk</a> for handling <strong>asynchronous actions</strong>. This is why the function is returning <em>another <code class="dark-pink">async</code> function</em> that takes <code class="dark-pink">dispatch</code> as an argument, and not a plain action (i.e. an object with type and params).</p>
+          <p class="lh-copy">In plain redux in fact, we would just have checked the return value of the creator:</p><pre><code class="language-typescript">// plain redux example, not part of the app
+const getAllPlaylistsResponse = (playlists) =&gt; {
+  return {
+    type: PLAYLIST_GET_ALL_RESPONSE,
+    playlists
+  }
+}
+
+const action = getAllPlaylistsResponse(playlists);
+expect(action.type).toBe(PLAYLIST_GET_ALL_RESPONSE);
+expect(action.playlists).toEqual(playlists);</code></pre>
+          <p class="lh-copy">In our case we must tackle the problem from a different angle: we should <strong>spy</strong> on the passed <code class="dark-pink">dispatch</code> function, and see if it has been called with the right action parameters!</p>
+          <p class="lh-copy">We need a little configuration in order to achieve this, namely:</p>
+          <ul>
+            <li>to use <a class="link blue underline-hover" href="https://github.com/dmitry-zaets/redux-mock-store" target='_blank'>redux-mock-store</a>;</li>
+            <li>to pass the <code class="dark-pink">dispatch</code> function of the mocked store to the action creator we want to test;</li>
+            <li>to inspect the contents of <code class="dark-pink">store.getActions()</code> after the action creator has been called.</li>
+          </ul>
+          <pre><code class="language-typescript">import configureStore from &#39;redux-mock-store&#39;;
+import thunk from &#39;redux-thunk&#39;;
+const mockStore = configureStore([thunk]);
+
+describe(&#39;getAllPlaylistsRequest&#39;, () =&gt; {
+  it(&#39;should dispatch PLAYLIST_GET_ALL_RESPONSE&#39;, async () =&gt; {
+    // we pass the empty object as the initial state, ymmv
+    const store = mockStore({});
+
+    // always remember to await if the creator makes async calls!
+    await getAllPlaylistsRequest()(store.dispatch);
+    expect(store.getActions()).toEqual([{
+      type: PLAYLIST_GET_ALL_RESPONSE,
+      playlists
+    }]);
+  });
+});</code></pre>
+          <p class="lh-copy"><code class="dark-pink">store.getActions()</code> is the secret of our success: it returns all the calls to <code class="dark-pink">store.dispatch</code>, so we can check that everything went as expected. In this case, the tested function makes an async call to the database via <code class="dark-pink">ipc</code>, then dispatches a <code class="dark-pink">PLAYLIST_GET_ALL_RESPONSE</code> action with <code class="dark-pink">playlists</code> as parameter.</p>
+          <p class="lh-copy"><strong>Important:</strong> the responsibility of an action creator/action is <em>not</em> to return data. It may be one of the desired effects on the store, but in the end it should <strong>just dispatch actions</strong>. The store itself will take care of returning a proper update of the current state based on the incoming action.</p>
+          <p class="lh-copy">Let&#39;s make an example with a little more branching - a creator that fetches the playlist if not present in the store, and does nothing in case it is already present.</p><pre><code class="language-typescript">export const getSinglePlaylistsRequest = (id: string): Function =&gt;
+  async (dispatch: Function, getState: Function): Promise&lt;void&gt; =&gt; {
+    const { playlists } = getState();
+    if (playlists.allById[id]) {
+      return;
+    }
+    const playlist = await ipc.invoke(IPC_PLAYLIST_GET_SINGLE_REQUEST, id);
+    dispatch({
+      type: PLAYLIST_GET_SINGLE_RESPONSE,
+      playlist
+    });
+  }</code></pre>
+          <p class="lh-copy">Notice how we are passing the <code class="dark-pink">id</code> parameter to the creator this time - it will be available in the closure of the action itself. Another parameter is passed to the async function, the <code class="dark-pink">getState</code> function of the store, that allows inspection on the current state.</p>
+          <p class="lh-copy">Of course one must know how the state is structured, in this case it is required to access the playlists from the <code class="dark-pink">playlists.allById</code> hashmap.</p>
+          <p class="lh-copy">Let&#39;s test the thing:</p><pre><code class="language-typescript">import configureStore from &#39;redux-mock-store&#39;;
+import thunk from &#39;redux-thunk&#39;;
+const mockStore = configureStore([thunk]);
+
+describe(&#39;getSinglePlaylistsRequest&#39;, () =&gt; {
+  it(&#39;should dispatch PLAYLIST_GET_SINGLE_RESPONSE if requested playlist is not in store&#39;, async () =&gt; {
+    // now we have to pass the proper initial state
+    const store = mockStore({
+      playlists: {
+        allById: {}
+      }
+    });
+    // we pass &#39;1&#39; as playlist id
+    await getSinglePlaylistsRequest(&#39;1&#39;)(store.dispatch);
+    expect(store.getActions()).toEqual([{
+      type: PLAYLIST_GET_SINGLE_RESPONSE,
+      playlist: someExpectedMockedValue
+    }]);
+  });
+
+  it(&#39;should dispatch nothing if requested playlist is in store&#39;, async () =&gt; {
+    // now we have to pass the proper initial state
+    const store = mockStore({
+      playlists: {
+        allById: {
+          &#39;1&#39;: someMockedValue
+        }
+      }
+    });
+    await getSinglePlaylistsRequest(&#39;1&#39;)(store.dispatch);
+    expect(store.getActions()).toEqual([]);
+  });  
+});</code></pre>
+          <p class="lh-copy">That&#39;s it! This is of tremendous help at understanding the actions flow and all the possible cases, in a predictable way because we always know the initial state before testing.</p>
+          <h3 class="mt5">
+            <a name="redux-store-reducers" class="anchor" href="#redux-store-reducers">
+              <span class="link blue">#</span>
+            </a>
+            Redux store reducers
+          </h3>
+          <p class="lh-copy">If the action creator dispatch actions inside them, something should take care of performing something with such actions - the <strong>store reducers</strong> do.</p><pre><code class="language-typescript">// EntityHashMap&lt;T&gt; is just { [key]: string: T }
+export interface PlaylistState {
+  allById: EntityHashMap&lt;Playlist&gt;;
+}
+
+const INITIAL_STATE: PlaylistState = {
+    allById: {}
+}
+
+export default function reducer(
+  state: PlaylistState = INITIAL_STATE,
+  action: PlaylistActionTypes
+): PlaylistState {
+  switch (action.type) {    
+    case PLAYLIST_GET_ALL_RESPONSE:
+      return {
+        ...state,
+        // ensureAll&lt;T&gt; ensures that every array entry is a T
+        //   by filling missing values with defaults.
+        // toObj transforms an array into an hash of { [entry._id]: entry }.
+        allById: toObj(ensureAll&lt;Playlist&gt;(action.playlists, getDefaultPlaylist))
+      };
+    ...
+    default:
+      return state;
+  }
+}</code></pre>
+          <p class="lh-copy">Let&#39;s skip all the <code class="dark-pink">ActionTypes</code> typing magic for a second and let&#39;s focus on the reducer. A reducer is a <strong>pure function</strong> that returns an updated stated based on the current state and the incoming action. It should neither write nor read nor request anything. If it is the case, chances are that such side effects <strong>should be moved into the action creator itself</strong>, that is perfectly allowed to make calls and dispatch as many action as it wants.</p>
+          <p class="lh-copy">In this case, if the incoming action is of type <code class="dark-pink">PLAYLIST_GET_ALL_RESPONSE</code>, the new state is expected to be <code class="dark-pink">{ allById: anHashOfTheIncomingPlaylists }</code>. Easy, let&#39;s test it:</p><pre><code class="language-typescript">describe(&#39;playlist reducer&#39;, () =&gt; {
+  it(&#39;should handle PLAYLIST_GET_ALL_RESPONSE&#39;, () =&gt; {
+    const playlists = [{ _id: &#39;1&#39;, ... }, { _id: &#39;2&#39;, ... }];
+    expect(reducer({} as PlaylistState, {
+      type: PLAYLIST_GET_ALL_RESPONSE,
+      playlists
+    })).toEqual({
+      allById: {
+        &quot;1&quot;: playlists[0],
+        &quot;2&quot;: playlists[1]
+      }
+    });
+  });
+  ...
+});</code></pre>
+          <p class="lh-copy">Looks like a very simple test, isn&#39;t it? It is a good symptom! It means that the application is well tokenised into bits of little and precise responsibility.</p>
+          <h2 class="mt5">
+            <a name="testing-utils" class="anchor" href="#testing-utils">
+              <span class="link blue">#</span>
+            </a>
+            Testing utils
+          </h2>
+          <p class="lh-copy">Here I used a 100% <strong>test first approach</strong> (don&#39;t dig into the repo history to disprove me please). This is because it is much faster and safer to implement a function in a vacuum, just to ensure the contract is respected. Of course one can work on any library function while it already plugged inside another component, but it is better to save the overhead of providing the right input / checking if the unexpected results are due to another part of the application.</p>
+          <p class="lh-copy">This way the tests are used as a playground: for instance, I had to impement <code class="dark-pink">getPrevTrack</code> and <code class="dark-pink">getNextTrack</code> functions to navigate the playback queue. Instead of reloading the app and interacting with the playback bar every time, I just run the test file:</p><pre><code class="language-typescript">// tracklistUtils.test.ts
+import { getNextTrack, getPrevTrack } from &#39;./tracklistUtils&#39;;
+
+const albums = [
+  {
+    _id: &#39;a&#39;,
+    tracks: [&#39;ta1&#39;, &#39;ta2&#39;, &#39;ta3&#39;]
+  },
+  {
+    _id: &#39;b&#39;,
+    tracks: [&#39;tb1&#39;, &#39;tb2&#39;, &#39;tb3&#39;]
+  },
+  {
+    _id: &#39;c&#39;,
+    tracks: [&#39;tc1&#39;, &#39;tc2&#39;, &#39;tc3&#39;]
+  }
+];
+
+describe(&#39;getNextTrack&#39;, () =&gt; {
+  it(&#39;should return { null, null } if track is not found&#39;, () =&gt; {
+    expect(getNextTrack(&#39;td1&#39;, albums)).toEqual({
+      albumId: null,
+      trackId: null
+    });
+  });
+
+  it(&#39;should return next track in the same album if track is not the last of album&#39;, () =&gt; {
+    expect(getNextTrack(&#39;ta1&#39;, albums)).toEqual({
+      albumId: &#39;a&#39;,
+      trackId: &#39;ta2&#39;
+    });
+  });
+
+  it(&#39;should return first track of next album if track was the last of its album&#39;, () =&gt; {
+    expect(getNextTrack(&#39;ta3&#39;, albums)).toEqual({
+      albumId: &#39;b&#39;,
+      trackId: &#39;tb1&#39;
+    });
+  });
+
+  it(&#39;should return { null, null } if track is last of last album&#39;, () =&gt; {
+    expect(getNextTrack(&#39;tc3&#39;, albums)).toEqual({
+      albumId: null,
+      trackId: null
+    });
+  });
+
+  it(&#39;should give the identity if composed with getPrevTrack&#39;, () =&gt; {
+    const { trackId } = getNextTrack(&#39;ta1&#39;, albums);
+    expect(getPrevTrack(trackId, albums)).toEqual({
+      albumId: &#39;a&#39;,
+      trackId: &#39;ta1&#39;
+    });
+  });
+});</code></pre>
+          <p class="lh-copy">Et voilà, contract fulfilled!</p>
+          <h2 class="mt5">
+            <a name="final-considerations" class="anchor" href="#final-considerations">
+              <span class="link blue">#</span>
+            </a>
+            Final considerations
+          </h2>
+          <p class="lh-copy">Even though I have not reached the coverage threshold I am aiming at, testing Playa was of immense help in understanding and entwining the testing and implementation processes.</p>
+        </section>
+      </article>
+      <div class="album-bar relative overflow-hidden w-100 bg-mid-gray"></div>
+
+    </main>
+    <footer class="footer w-100 f6 ph3 ph0-ns pv3 pt4-ns pb5-ns bg-dark-gray light-silver">
+      <div class="w-80-ns center">
+        <p class="bb lh-copy pb4">
+          &copy; 2020 made with
+          <a href="https://moonwave99.github.io/waffel" target="_blank" class="link light-silver hover-white underline">waffel</a>,
+          <a href="https://tachyons.io" target="_blank" class="link light-silver hover-white underline">tachyons</a> and love by
+          <a href="https://www.diegocaponera.com" target="_blank" class="link light-silver hover-white underline">Diego Caponera</a>.
+        </p>
+        <div class="lh-copy cf">
+          <p class="fl">
+            <a href="#top" class="link light-silver hover-white underline">Back to top</a>
+          </p>
+          <p class="fr">
+            <a href="https://github.com/moonwave99/playa" target="_blank" class="link light-silver hover-white underline">Github</a> /
+            <a href="https://github.com/moonwave99/playa/issues" target="_blank" class="link light-silver hover-white underline">Issues</a> /
+            <a href="https://github.com/moonwave99/playa/releases" target="_blank" class="link light-silver hover-white underline">Releases</a>
+          </p>
+        </div>
+    </footer>
+
+
+    <script src="https://moonwave99.github.com/playa/js/vendor.js"></script>
+    <script src="https://moonwave99.github.com/playa/js/app.js"></script>
+    <script>
+      require('initialize')({
+        // place options here
+        title: 'Playa'
+      });
+    </script>
+    <script>
+      (function(b, o, i, l, e, r) {
+        b.GoogleAnalyticsObject = l;
+        b[l] || (b[l] =
+          function() {
+            (b[l].q = b[l].q || []).push(arguments)
+          });
+        b[l].l = +new Date;
+        e = o.createElement(i);
+        r = o.getElementsByTagName(i)[0];
+        e.src = 'https://www.google-analytics.com/analytics.js';
+        r.parentNode.insertBefore(e, r)
+      }(window, document, 'script', 'ga'));
+      ga('create', 'UA-XXXXXXX-Y', 'auto');
+      ga('send', 'pageview');
+    </script>
+  </body>
+
+</html>

@@ -1,0 +1,179 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>About / Playa</title>
+    <meta name="generator" content="waffel">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="google-site-verification" content="xyz">
+
+
+
+    <meta name="description" content="The music player that thinks in albums">
+    <meta name="keywords" content="player, mp3, electron, react, redux">
+
+    <meta property="og:site_name" content="Playa">
+    <meta property="og:url" content="https://moonwave99.github.com/playa/about">
+    <meta property="og:title" content=" | Playa">
+
+    <meta property="og:type" content="website">
+    <meta property="og:description" content="The music player that thinks in albums">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="https://moonwave99.github.com/playa//">
+    <meta name="twitter:creator" content="@moonwavelabs">
+    <meta name="twitter:url" content="https://moonwave99.github.com/playa/about">
+    <meta name="twitter:title" content=" | Playa">
+
+    <meta name="twitter:description" content="The music player that thinks in albums">
+
+
+    <link rel="stylesheet" href="https://moonwave99.github.com/playa/css/app.css">
+  </head>
+
+  <body class="w-100 sans-serif about">
+
+    <nav class="navigation w-100 text-right v-mid ph3 ph4-ns avenir bg-yellow">
+      <a class="link black underline-hover mr4-ns" href="https://moonwave99.github.com/playa/index.html">Home</a>
+      <a class="link black underline-hover mr4-ns b" href="https://moonwave99.github.com/playa/about.html">About</a>
+      <a class="link black underline-hover mr4-ns" href="https://moonwave99.github.com/playa/devblog.html">Devblog</a>
+      <a class="link black underline-hover mr4-ns" href="https://github.com/moonwave99/playa" target="_blank">Github</a>
+      <a class="link black underline-hover mr4-ns" href="mailto:hello@diegocaponera.com?subject=Playa">Contact</a>
+    </nav>
+
+    <main class="main w-100">
+
+
+      <article class="about mw7-ns center ph3 pb5 pv6-ns">
+        <header class="page-header mb5">
+          <h1 class="f3 f1-ns lh-solid mt4 mb4 black">About</h1>
+        </header>
+        <section class="page-content">
+          <p class="lh-copy">Playa is a <strong>digital audio files player</strong> for desktop, developed using web technologies inside the <a class="link blue underline-hover" href="https://www.electronjs.org" target='_blank'>Electron</a> framework.</p>
+          <p class="lh-copy">It is my reconciliation with development after a long break, since I decided to devote my life to music. Why have I chosen such an anachronistic project, in this streamable era of eternal present?</p>
+          <p class="lh-copy">Because I am an avid collector of digital music (as much as I am <a class="link blue underline-hover" href="https://www.discogs.com/user/Diego_C/collection" target='_blank'>of physical one</a>), and I spent a considerable amount of temporal and mental resources in order to organise it; I like to enjoy things I care for.</p>
+          <p class="lh-copy">On this website I want to share my train of thought and the solutions I found to the problems I am encountering, rather than merely promoting a piece of software that I do not intend to earn my living on - unless somebody is willing to sponsor me of course.</p>
+          <h2 class="mt5">
+            <a name="life-before-playa" class="anchor" href="#life-before-playa">
+              <span class="link blue">#</span>
+            </a>
+            Life before Playa
+          </h2>
+          <p class="lh-copy">My favourite Windows player (after <a class="link blue underline-hover" href="https://en.wikipedia.org/wiki/Winamp" target='_blank'>Winamp</a> of course) was <a class="link blue underline-hover" href="https://www.foobar2000.org" target='_blank'>foobar2000</a>.</p>
+          <p class="lh-copy"><img src="http://www.fooblog2000.com/wp-content/uploads/2007/02/foobar-feb14-conf-anim.gif" alt="The mythical foobar2000"></p>
+          <p class="lh-copy">Unlike most of the then competitors, one of the available mods showed the files grouped in albums, next to the artwork. This visual detail meant a lot to me, because I was transitioning from party playlists and single songs to appreciating full LPs and discographies of bands.</p>
+          <p class="lh-copy">As I transitioned to Mac hardware, I realised there was no OS X port of foobar. How sad! I tried to emulate it through Wine, but the overhead and the frequent crashed made me desist and fallback to other solutions such as <a class="link blue underline-hover" href="http://www.cogx.org" target='_blank'>Cog</a>. All the available options were either too bloated or too minimal.</p>
+          <p class="lh-copy">Around 2009 I gave Spotify a chance. It looked like black magic to me back then, such a big catalog without having to rely on my external disk all the time. But there wasn&#39;t <em>everything</em>, and I didn&#39;t want to switch between many apps for such a vital need for me.</p>
+          <p class="lh-copy">My final pick was <a class="link blue underline-hover" href="https://vox.rocks" target='_blank'>Vox</a>, the best no-frills player. But guess what? No simple group-by-albums. Yes it has the Collections feature, but you need to import all the files manually, plus it is closed source and so not tweakable.</p>
+          <p class="lh-copy">Tired of dragging folders from my external drive, I decided to do the dirty work. From scratch.</p>
+          <h2 class="mt5">
+            <a name="electron" class="anchor" href="#electron">
+              <span class="link blue">#</span>
+            </a>
+            Electron
+          </h2>
+          <p class="lh-copy">I had the idea countless times before. Java, Java FX (...), Flash, Objective C. I was either missing the focus, the will, the knowledge. It was about 2015 when I&#39;ve read of a runtime that allowed a <strong>Chromium instance</strong> and a <strong>node.js backend</strong> to be wrapped and shipped together. I could use the web technologies I already mastered to build a desktop app, finally with a decent UI (Swing, I am looking at you).</p>
+          <p class="lh-copy">I started fiddling with <a class="link blue underline-hover" href="https://www.electronjs.org" target='_blank'>Electron</a> in no time, first implementing a CMS for static generated websites. I did using an <a class="link blue underline-hover" href="https://atom.io" target='_blank'>electron based editor</a>, how meta is that. I liked it. I felt it was the moment to start.</p>
+          <p class="lh-copy">Like many others I guess, I like to give silly names to my projects. The aforementioned CMS was called Vaneella, because it handle a set of plain (<em>vanilla</em>) text files. I wanted my player to be real badass, a true P L A Y A H. I took a step back, I noticed the joyful iberic wordplay and I sticked to that.</p>
+          <p class="lh-copy">It was a chance to learn this React thing everybody was talking about. The <code class="dark-pink">JSX</code> syntax definitely sold it to me, as it allowed to write the UI in a familiar, declarative way - <code class="dark-pink">HTML</code> basically.</p>
+          <p class="lh-copy"><img src="https://github.com/moonwave99/playa/blob/master/docs/images/playa.png?raw=true" alt="Early Playa"></p>
+          <p class="lh-copy">The waveform background in the playback bar! The artwork from Discogs! The last.fm scrobbles! The playlist tabs! Ah, THE TRACKS AUTOMAGICALLY GROUPED BY FREAKING ALBUM.</p>
+          <h2 class="mt5">
+            <a name="vamos-a-la-playa-a-class-link-blue-underline-hover-href-https-www-youtube-com-watch-v-stsvj1psnms-target-_blank-oh-oh-oh-oh-oh-a-" class="anchor" href="#vamos-a-la-playa-a-class-link-blue-underline-hover-href-https-www-youtube-com-watch-v-stsvj1psnms-target-_blank-oh-oh-oh-oh-oh-a-">
+              <span class="link blue">#</span>
+            </a>
+            Vamos a la Playa (<a class="link blue underline-hover" href="https://www.youtube.com/watch?v=sTsVJ1PsnMs" target='_blank'>oh, oh-oh oh-oh</a>)
+          </h2>
+          <p class="lh-copy">I felt like the first iteration had lost momentum. The tech stack looked a bit old, like all stacks older than a couple of weeks nowadays I must say. Many design choices looked questionable. Almost no test coverage. And the biggest deal: I wanted to index my collection, but I had no vision how to include such feature in the application.</p>
+          <p class="lh-copy">I tackled the problem from a different angle. What if I organised everything <em>beforehand</em>, so that the app would just reflect such order, instead of developing for a blurred usecase?</p>
+          <p class="lh-copy">A little digression on how I organised my music folders of the years. At the very beginning there was God, and he or she or it created the world, the animals, the light, and Napster. And he or she or it told the first humans to use it sparsely because without broadband connection (that he or she or it forgot to create initially) it took biblical ages to download even a single song.</p>
+          <p class="lh-copy">TL;DR I was young and happy and without full albums to sort, apart from those I directly ripped from my friends.</p>
+          <p class="lh-copy">When I started to pile up more stuff, I sinned. I sorted it by <em>genre</em>. It looked cool. Subgenres too. Problem is that genres are not a <a class="link blue underline-hover" href="https://en.wikipedia.org/wiki/Partition_of_a_set" target='_blank'>partition</a> of music, i.e. they overlap. And filesystem does not. And what about those bands with diverse discographies?</p>
+          <p class="lh-copy">One morning I ditched all my precious, nonsensical subnormal subfolders for the aseptic and ascetic <em>alphabetical order</em>. I could not browse anymore by <code class="dark-pink">[Shoegaze - Dreampop - Indie - Noise]</code> or by <code class="dark-pink">[Electro - Industrial - EBM - Future Pop]</code>, but I felt like I did the right thing.</p>
+          <p class="lh-copy">What about the album folders? I slowly normalised them to <code class="dark-pink">year - title</code>, e.g. <code class="dark-pink">1991 - Just for a Day</code>. Some bands had a plethora of singles or bootlegs, and I couldn&#39;t easily find the main releases. Time for a real discography partition now.</p>
+          <p class="lh-copy">I took <a class="link blue underline-hover" href="https://rateyourmusic.com/artist/alice-in-chains" target='_blank'>rateyourmusic</a> as a model. Every artist page there shows their releases grouped as <em>albums</em>, <em>EPs</em>, <em>compilations</em> or <em>singles</em>. RYM is one of my best friends. It introduced me to soooo much good music. It really shaped my taste, so I trusted it blind.</p>
+          <p class="lh-copy">After a very slow and at times painful process, my music collection now looks like:</p><pre><code class="language-bash">Music
+  A  
+    ...
+    Alice in Chains
+      [Album]
+        1990 - Facelift
+        1992 - Dirt
+        ...
+      [Bootleg / Unauthorized]
+        ...
+      [Compilation]
+        ...
+      [EP]
+        1992 - Sap
+        1994 - Jar of Flies
+      [Single]
+        1992 - Angry Chair
+        1992 - Down In A Hole
+        ...</code></pre>
+          <p class="lh-copy">Why am I sure? Because I checked with a script that every folder matches such structure, and I import all further media to respect the structure. I sacrificed all non music material such as booklets, covers, cue files, etc...as I never cared much over the years.</p>
+          <p class="lh-copy">NOW I could import all my music, using the folder names as the single source of truth!</p>
+          <h2 class="mt5">
+            <a name="where-do-we-go-from-here" class="anchor" href="#where-do-we-go-from-here">
+              <span class="link blue">#</span>
+            </a>
+            Where do we go from here
+          </h2>
+          <p class="lh-copy">Playa helped me to rediscover a lot of music I forgot I had already listened to, as well as to sharpen back my problem solving skills. There is room for improvement I hope to fill with further dedication and thanks to the <a class="link blue underline-hover" href="mailto:hello@diegocaponera.com?subject=Playa" null>feedback I will get through this page</a>.</p>
+        </section>
+      </article>
+      <div class="album-bar relative overflow-hidden w-100 bg-mid-gray"></div>
+
+    </main>
+    <footer class="footer w-100 f6 ph3 ph0-ns pv3 pt4-ns pb5-ns bg-dark-gray light-silver">
+      <div class="w-80-ns center">
+        <p class="bb lh-copy pb4">
+          &copy; 2020 made with
+          <a href="https://moonwave99.github.io/waffel" target="_blank" class="link light-silver hover-white underline">waffel</a>,
+          <a href="https://tachyons.io" target="_blank" class="link light-silver hover-white underline">tachyons</a> and love by
+          <a href="https://www.diegocaponera.com" target="_blank" class="link light-silver hover-white underline">Diego Caponera</a>.
+        </p>
+        <div class="lh-copy cf">
+          <p class="fl">
+            <a href="#top" class="link light-silver hover-white underline">Back to top</a>
+          </p>
+          <p class="fr">
+            <a href="https://github.com/moonwave99/playa" target="_blank" class="link light-silver hover-white underline">Github</a> /
+            <a href="https://github.com/moonwave99/playa/issues" target="_blank" class="link light-silver hover-white underline">Issues</a> /
+            <a href="https://github.com/moonwave99/playa/releases" target="_blank" class="link light-silver hover-white underline">Releases</a>
+          </p>
+        </div>
+    </footer>
+
+
+    <script src="https://moonwave99.github.com/playa/js/vendor.js"></script>
+    <script src="https://moonwave99.github.com/playa/js/app.js"></script>
+    <script>
+      require('initialize')({
+        // place options here
+        title: 'Playa'
+      });
+    </script>
+    <script>
+      (function(b, o, i, l, e, r) {
+        b.GoogleAnalyticsObject = l;
+        b[l] || (b[l] =
+          function() {
+            (b[l].q = b[l].q || []).push(arguments)
+          });
+        b[l].l = +new Date;
+        e = o.createElement(i);
+        r = o.getElementsByTagName(i)[0];
+        e.src = 'https://www.google-analytics.com/analytics.js';
+        r.parentNode.insertBefore(e, r)
+      }(window, document, 'script', 'ga'));
+      ga('create', 'UA-XXXXXXX-Y', 'auto');
+      ga('send', 'pageview');
+    </script>
+  </body>
+
+</html>
