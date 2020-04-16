@@ -163,7 +163,7 @@ export const ArtistView = (): ReactElement => {
     }).handler();
   }
 
-  if (!_id) {
+  if (!artistId) {
     return <Redirect to={LIBRARY}/>;
   }
 

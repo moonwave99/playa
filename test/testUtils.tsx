@@ -105,6 +105,21 @@ type MockRouterParams = {
   }
 }
 
+class MockRouter {
+  routeParams: object;
+  routeMatch: object;
+  location: object;
+  constructor(
+    routeParams: object,
+    routeMatch: object,
+    location: object
+  ) {
+    this.routeParams = routeParams;
+    this.routeMatch = routeMatch;
+    this.location = location;
+  }
+}
+
 export const mockRouter = function({
   routeParams = { _id: '1' },
   routeMatch = { url: '/'},
@@ -112,13 +127,22 @@ export const mockRouter = function({
     pathname: '/',
     search: ''
   }
-}: MockRouterParams) {
+}: MockRouterParams): MockRouter {
+
+  const router = new MockRouter(
+    routeParams,
+    routeMatch,
+    location
+  );
+
   jest.mock('react-router', () => ({
     ...jest.requireActual('react-router'),
-    useParams: () => routeParams,
-    useRouteMatch: () => routeMatch,
-    useLocation: () => location
+    useParams: () => router.routeParams,
+    useRouteMatch: () => router.routeMatch,
+    useLocation: () => router.location
   }));
+
+  return router;
 }
 
 const keyMap: {
