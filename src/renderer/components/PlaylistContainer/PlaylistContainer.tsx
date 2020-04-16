@@ -137,6 +137,10 @@ export const PlaylistContainer = (): ReactElement => {
       trackId: track ? track._id : null,
       dispatch
     }).handler();
+    dispatch(savePlaylistRequest({
+      ...playlist,
+      accessed: new Date().toISOString()
+    }));
   }
 
   function onAlbumEnter(selection: Album['_id'][]): void {
@@ -149,6 +153,10 @@ export const PlaylistContainer = (): ReactElement => {
       selection: selection.map(_id => ({ _id })) as Album[],
       dispatch
     }).handler();
+    dispatch(savePlaylistRequest({
+      ...playlist,
+      accessed: new Date().toISOString()
+    }));
   }
 
   function onAlbumBackspace(selection: Album['_id'][]): void {

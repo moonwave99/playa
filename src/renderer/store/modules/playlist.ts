@@ -59,7 +59,7 @@ export const selectors = {
   ): Playlist[] =>
     sortBy(
       toArray(playlists.allById),
-      'created'
+      'accessed'
     ).reverse()
       .slice(0, limit)
       .sort((a: Playlist, b: Playlist) => a.title.localeCompare(b.title)),
