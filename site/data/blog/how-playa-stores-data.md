@@ -154,7 +154,20 @@ const albumState = {
   allById: {
     '1': {
       ...
+      artist: '1',
       tracks: ['/path/to/track_01', '/path/to/track_02', ...]
+    },
+    '2': { ... },
+    ...
+  },
+  ...
+}
+
+const artistState = {
+  allById: {
+    '1': {
+      ...
+      name: 'Slowdive'
     },
     '2': { ... },
     ...
