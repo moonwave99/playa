@@ -17,9 +17,9 @@
       </ul>
       <p class="mt5 mb4 mb0-l">
         <a
-          href="{{ config.links.download }}"
+          href="{{ data.downloadURL }}"
           class="f5 br2 ph4 pv3 lh-copy white bg-black link underline-hover">
-          {{ t('home.hero.download') }}
+          {{ t('home.hero.download', { version: data.appVersion }) }}
         </a>
       </p>
     </header>

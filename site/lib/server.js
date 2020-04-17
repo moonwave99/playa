@@ -4,6 +4,8 @@ const filters = require('./filters');
 const helpers = require('./helpers');
 const git = require('./git');
 
+const { version: appVersion, repository } = require('../../package.json');
+
 module.exports.startServer = async function(port, path, callback) {
   const domain = process.env.DOMAIN || 'localhost';
   const wfl = new Waffel({
@@ -31,5 +33,11 @@ module.exports.startServer = async function(port, path, callback) {
   });
   wfl.on('server:start', callback);
   await wfl.init()
-  wfl.generate({ data: { git } });
+  wfl.generate({
+    data: {
+      git,
+      appVersion,
+      downloadURL: `${repository}/releases/download/v${appVersion}/Playa-${appVersion}-mac.zip`
+    }
+  });
 };

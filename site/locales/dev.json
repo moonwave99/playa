@@ -23,7 +23,7 @@
           "outro": "and other open source libraries."
         }
       },
-      "download": "Download v0.3 for Mac OS X"
+      "download": "Download {{version}} for Mac OS X"
     },
     "blog": {
       "title": "Latest news from devblog"
