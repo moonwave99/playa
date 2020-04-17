@@ -3,17 +3,19 @@
 {% block body %}
 <section class="blog w-80-ns center ph3 ph0-ns pv6-ns">
   <h1 class="f2 f1-ns lh-solid mt5 mt4-ns mb5 black">{{ t('blog.title') }}</h1>
+  <div class="flex flex-wrap">
   {% for post in item %}
-  <article class="blog-post mb5">
-    <header>
-      <time class="tracked ttu">{{ post.date | format('MMMM DD, YYYY') }}</time>
-      <h2 class="f5 f4-ns lh-copy">
-        <a class="link blue underline-hover" href="{{ url('blog.single', post) }}">{{ post.title }}</a>
-      </h2>
-    </header>
-    <p class="measure lh-copy">{{ post.__content | excerpt(500) }}</p>
-  </article>
+    <article class="blog-post-content w-100 w-50-l pr4-l mb5">
+      <header>
+        <time class="tracked ttu">{{ post.date | format('MMMM DD, YYYY') }}</time>
+        <h2 class="f5 f4-ns lh-copy">
+          <a class="link blue underline-hover" href="{{ url('blog.single', post) }}">{{ post.title }}</a>
+        </h2>
+      </header>
+      <p class="measure lh-copy">{{ post.__content | excerpt(500) }}</p>
+    </article>
   {% endfor %}
+  </div>
   {% set multiple = (page.pagination.page > 1) and (page.pagination.page < page.pagination.total) %}
   <p class="pagination{% if multiple %} cf multiple{% endif %}">
   {% if page.pagination.page > 1 %}
