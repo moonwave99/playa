@@ -1,8 +1,9 @@
-import React, { ReactElement, useEffect } from 'react';
+import React, { ReactElement, useEffect, memo } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect, useParams } from 'react-router';
-import { PlaylistView } from '../PlaylistView/PlaylistView';
+import { isEqual } from 'lodash';
+import { PlaylistView as RawPlaylistView, PlaylistViewProps } from '../PlaylistView/PlaylistView';
 
 import {
   getPlaylistRequest,
@@ -36,6 +37,22 @@ import {
 import { QUEUE } from '../../routes';
 
 import actionsMap from '../../actions/actions';
+
+const PlaylistView = memo(RawPlaylistView, (a: PlaylistViewProps, b: PlaylistViewProps) => {
+  return isEqual({
+    currentTrackId: a.currentTrackId,
+    currentAlbumId: a.currentAlbumId,
+    isCurrent: a.isCurrent,
+    albums: a.albums,
+    albumOrder: a.albumOrder
+  }, {
+    currentTrackId: b.currentTrackId,
+    currentAlbumId: b.currentAlbumId,
+    isCurrent: b.isCurrent,
+    albums: b.albums,
+    albumOrder: b.albumOrder
+  });
+});
 
 export const PlaylistContainer = (): ReactElement => {
   const dispatch = useDispatch();
@@ -183,7 +200,7 @@ export const PlaylistContainer = (): ReactElement => {
       unmountOnExit>
       <PlaylistView
         albums={albums}
-        playlist={playlist}
+        albumOrder={playlist.albums}
         isCurrent={currentPlaylistId === playlist._id}
         currentAlbumId={currentAlbumId}
         currentTrackId={currentTrackId}

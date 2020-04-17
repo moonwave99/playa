@@ -30,7 +30,7 @@ describe('PlaylistView', () => {
   it('should render a .playlist-view', () => {
     const wrapper = renderInAll(
       <PlaylistView
-        playlist={playlists[0]}
+        albumOrder={playlists[0].albums}
         currentTrackId={null}
         currentAlbumId={null}
         albums={toObj(albums)}
@@ -48,7 +48,7 @@ describe('PlaylistView', () => {
   it('should render a .playlist-empty-placeholder if playlist is empty', () => {
     const wrapper = renderInAll(
       <PlaylistView
-        playlist={playlists[0]}
+        albumOrder={playlists[0].albums}
         currentTrackId={null}
         currentAlbumId={null}
         albums={toObj(albums)}
@@ -70,7 +70,7 @@ describe('PlaylistView', () => {
     }
     const wrapper = renderInAll(
       <PlaylistView
-        playlist={playlist}
+        albumOrder={playlist.albums}
         currentTrackId={null}
         currentAlbumId={null}
         albums={toObj(albums)}

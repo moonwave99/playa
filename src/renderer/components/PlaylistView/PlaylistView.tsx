@@ -8,7 +8,6 @@ import {
   CompactAlbumListView as RawCompactAlbumListView,
   CompactAlbumListViewProps
 } from '../CompactAlbumListView/CompactAlbumListView';
-import { Playlist } from '../../store/modules/playlist';
 import { Album } from '../../store/modules/album';
 import { Track } from '../../store/modules/track';
 import { UIDragTypes } from '../../store/modules/ui';
@@ -24,9 +23,9 @@ const CompactAlbumListView = memo(RawCompactAlbumListView, (
 
 import './PlaylistView.scss';
 
-type PlaylistViewProps = {
+export type PlaylistViewProps = {
   albums: EntityHashMap<Album>;
-  playlist: Playlist;
+  albumOrder: Album['_id'][];
   isCurrent?: boolean;
   currentAlbumId: Album['_id'];
   currentTrackId: Track['_id'];
@@ -40,7 +39,7 @@ type PlaylistViewProps = {
 
 export const PlaylistView: FC<PlaylistViewProps> = ({
   albums,
-  playlist,
+  albumOrder,
   isCurrent = false,
   currentAlbumId,
   currentTrackId,
@@ -52,17 +51,13 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
   onAlbumDoubleClick
 }) => {
   const { t } = useTranslation();
-  const [selectedAlbumId, setSelectedAlbumId] = useState(
-    playlist.albums ? playlist.albums[0] : null
-  );
+  const [selectedAlbumId, setSelectedAlbumId] = useState(albumOrder[0] || null);
   const [focusedComponent, setFocusedComponent] = useState(0);
-  const [albumOrder, setAlbumOrder] = useState(playlist.albums || []);
-  const hasAlbums = playlist.albums.length > 0 && Object.keys(albums).length > 0;
+  const hasAlbums = albumOrder.length > 0 && Object.keys(albums).length > 0;
 
   const onAlbumMove = useCallback(
     (dragIndex: number, hoverIndex: number): void => {
       const newOrder = immutableMove<Album['_id']>(albumOrder, dragIndex, hoverIndex);
-      setAlbumOrder(newOrder);
       onAlbumOrderChange(newOrder);
     }
     , [albumOrder]
@@ -76,10 +71,9 @@ export const PlaylistView: FC<PlaylistViewProps> = ({
     setSelectedAlbumId(_ids[0]);
   };
 
-  useEffect(() => {
-    setAlbumOrder(playlist.albums);
-    setSelectedAlbumId(playlist.albums[0]);
-  }, [playlist.albums]);
+  // useEffect(() => {
+  //   setSelectedAlbumId(albumOrder[0]);
+  // }, [albumOrder]);
 
   useEffect(() => {
     const mousetrap = new Mousetrap();
