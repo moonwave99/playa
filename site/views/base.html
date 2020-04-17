@@ -22,7 +22,8 @@
     <script>
       require('initialize')({
         // place options here
-        title: '{{ config.title }}'
+        title: '{{ config.title }}',
+        basePath: '{{ asset('') }}',
       });
     </script>
     {% include '_includes/google_analytics.html' %}

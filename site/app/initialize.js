@@ -70,7 +70,7 @@ module.exports = function(_options){
       .forEach(element => fillAlbumBar({
         element,
         observer,
-        images: [...Array(10).keys()].map(i => `/images/albums/${i}.jpg`)
+        images: [...Array(10).keys()].map(i => `${options.basePath}/images/albums/${i}.jpg`)
       }));
 
     const $screenshots = document.querySelectorAll('.hero-screenshots img');
