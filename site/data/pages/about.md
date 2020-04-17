@@ -96,7 +96,7 @@ Playa helped me to rediscover a lot of music I forgot I had already listened to,
 [cog]: http://www.cogx.org
 [vox]: https://vox.rocks
 [atom]: https://atom.io
-[playa]: https://github.com/moonwave99/playa/blob/master/docs/images/playa.png?raw=true
+[playa]: https://github.com/moonwave99/playa-old/blob/master/docs/images/playa.png?raw=true
 [righeira]: https://www.youtube.com/watch?v=sTsVJ1PsnMs
 [rym]: https://rateyourmusic.com/artist/alice-in-chains
 [partition]: https://en.wikipedia.org/wiki/Partition_of_a_set

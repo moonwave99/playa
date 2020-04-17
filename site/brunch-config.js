@@ -2,6 +2,9 @@ const Waffel = require('waffel');
 const renderer = require('./lib/renderer');
 const filters = require('./lib/filters');
 const helpers = require('./lib/helpers');
+const git = require('./lib/git');
+
+const GIT_REV = process.env.GIT_REV;
 
 module.exports = {
   paths: {
@@ -10,13 +13,13 @@ module.exports = {
   files: {
     javascripts: {
       joinTo: {
-        'js/app.js': /^app/,
-        'js/vendor.js': /^(?!app\/)/
+        [`js/app_${GIT_REV}.js`]: /^app/,
+        [`js/vendor_${GIT_REV}.js`]: /^(?!app\/)/
       }
     },
     stylesheets: {
       joinTo: {
-        'css/app.css': /^(vendor|app)/
+        [`css/app_${GIT_REV}.css`]: /^(vendor|app)/
       }
     }
   },
@@ -62,6 +65,7 @@ module.exports = {
             domain: 'https://moonwave99.github.com/playa',
             destinationFolder: 'production',
             uglyUrls: true,
+            versionAssets: true,
             markdownOptions: {
               renderer: renderer()
             },
@@ -75,7 +79,7 @@ module.exports = {
             helpers
           });
           await wfl.init()
-          return wfl.generate();
+          wfl.generate({ data: { git } });
         }
       }
     }

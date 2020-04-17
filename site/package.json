@@ -5,8 +5,8 @@
   "author": "Diego Caponera <diego.caponera@gmail.com>",
   "homepage": "https://moonwave99.github.com/playa",
   "scripts": {
-    "start": "brunch watch --server",
-    "build": "brunch b -p --env production",
+    "start": "GIT_REV=`git rev-parse HEAD` brunch watch --server",
+    "build": "GIT_REV=`git rev-parse HEAD` brunch b -p --env production",
     "clean": "rm -rf public production",
     "publish": "gh-pages -d production"
   },
@@ -19,6 +19,7 @@
     "css-brunch": "^2.6.1",
     "cssnano-brunch": "^1.2.1",
     "gh-pages": "^2.2.0",
+    "git-rev-sync": "^2.0.0",
     "javascript-brunch": "^2.0.0",
     "lodash": "^4.17.13",
     "marked": "^0.8.0",

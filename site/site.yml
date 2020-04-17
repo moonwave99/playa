@@ -8,7 +8,7 @@ config:
       site: https://www.diegocaponera.com
       email: hello@diegocaponera.com
     github: https://github.com/moonwave99/playa
-    download: https://github.com/moonwave99/playa/releases/download/v0.2.3/Playa-darwin-x64_v0.2.3.zip
+    download: https://github.com/moonwave99/playa-old/releases/download/v0.2.3/Playa-darwin-x64_v0.2.3.zip
     waffel: https://moonwave99.github.io/waffel
     tachyons: https://tachyons.io
     discogs: https://www.discogs.com
