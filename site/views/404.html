@@ -2,6 +2,10 @@
 {% block title %}{{ t('notFound.title') }}{% endblock %}
 
 {% block body %}
- <h1>{{ t('notFound.title') }}</h1>
- <p><a href="{{ url('home') }}">{{ t('notFound.text') }}</a></p>
+<article class="about mw7-ns center ph3 pb5 pv6-ns">
+  <h1>{{ t('notFound.title') }}</h1>
+  <p class="measure lh-copy">
+    <a class="link blue underline-hover" href="{{ url('home') }}">{{ t('notFound.text') }}</a>
+  </p>
+</article>
 {% endblock %}
