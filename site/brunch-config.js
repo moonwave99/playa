@@ -3,6 +3,7 @@ const renderer = require('./lib/renderer');
 const filters = require('./lib/filters');
 const helpers = require('./lib/helpers');
 const git = require('./lib/git');
+const appInfo = require('./lib/appInfo');
 
 const GIT_REV = process.env.GIT_REV;
 
@@ -79,7 +80,12 @@ module.exports = {
             helpers
           });
           await wfl.init()
-          wfl.generate({ data: { git } });
+          wfl.generate({
+            data: {
+              git,
+              ...appInfo
+            }
+          });
         }
       }
     }

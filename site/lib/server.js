@@ -3,8 +3,7 @@ const renderer = require('./renderer');
 const filters = require('./filters');
 const helpers = require('./helpers');
 const git = require('./git');
-
-const { version: appVersion, repository } = require('../../package.json');
+const appInfo = require('./appInfo');
 
 module.exports.startServer = async function(port, path, callback) {
   const domain = process.env.DOMAIN || 'localhost';
@@ -36,8 +35,7 @@ module.exports.startServer = async function(port, path, callback) {
   wfl.generate({
     data: {
       git,
-      appVersion,
-      downloadURL: `${repository}/releases/download/v${appVersion}/Playa-${appVersion}-mac.zip`
+      ...appInfo
     }
   });
 };
