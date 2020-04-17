@@ -37,7 +37,7 @@
     }
   },
   "notFound" : {
-    "title" : "Not Found",
+    "title" : "Page Not Found",
     "text"  : "Life's hard, sometimes - Go back to Homepage."
   }
 }

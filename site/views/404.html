@@ -2,11 +2,13 @@
 {% block title %}{{ t('notFound.title') }}{% endblock %}
 
 {% block body %}
-<article class="about mw7-ns center ph3 pb5 pv6-ns">
-  <h1>{{ t('notFound.title') }}</h1>
-  <p class="measure lh-copy">
-    <a class="link blue underline-hover" href="{{ url('home') }}">{{ t('notFound.text') }}</a>
-  </p>
-</article>
-<div class="album-bar relative overflow-hidden w-100 bg-mid-gray"></div>
+<div class="not-found flex flex-column">
+  <article class="flex-auto mw7-ns center ph3 pb5 pv6-ns">
+    <h1>{{ t('notFound.title') }}</h1>
+    <p class="measure lh-copy">
+      <a class="link blue underline-hover" href="{{ url('home') }}">{{ t('notFound.text') }}</a>
+    </p>
+  </article>
+  <div class="album-bar relative overflow-hidden w-100 bg-mid-gray"></div>
+</div>
 {% endblock %}
