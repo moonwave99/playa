@@ -12,12 +12,20 @@
 	},
 	"license": "MIT",
 	"private": false,
+	"build": {
+		"files": [
+			"_pack",
+			"locales",
+			"settings",
+			"node_modules"
+		]
+	},
 	"scripts": {
 		"start": "electron ./_pack/main.bundle.js",
 		"development": "rimraf _pack && webpack --watch --config ./webpack.dev.js --progress --colors",
 		"pouchdb": "pouchdb-server -p 5984 -d ./.pouchdb",
 		"production": "rimraf _pack && webpack --config ./webpack.prod.js --progress --colors",
-		"pack": "yarn run production && rimraf dist && electron-builder --dir",
+		"pack": "yarn run production && rimraf dist && electron-builder",
 		"clean": "rimraf build && rimraf _pack && rimraf dist",
 		"lint": "yarn eslint ./src --ext .js,.jsx,.ts,.tsx",
 		"test": "jest --config jest.config.js",
