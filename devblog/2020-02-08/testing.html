@@ -7,7 +7,7 @@
     <title>Testing Playa / Playa Devblog / Playa</title>
     <meta name="generator" content="waffel">
 
-    <meta name="version" content="85a415a@master">
+    <meta name="version" content="f49e609@master">
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -35,7 +35,7 @@
     <meta name="twitter:description" content="I have to be honest: I seldom tested my applications, at least not thoroughly. This time I wanted not only to strive for good coverage, but to use a test-first approach, at least for when the prototype reached an usable level.">
 
 
-    <link rel="stylesheet" href="https://moonwave99.github.io/playa/css/app_85a415a874563603e969e3bfcf1bcfde792f74df.css">
+    <link rel="stylesheet" href="https://moonwave99.github.io/playa/css/app_f49e6097205f710d456f93ed90310af8e558721a.css">
   </head>
 
   <body class="w-100 sans-serif blog-single">
@@ -161,7 +161,7 @@ it(&#39;should render a .label&#39;, () =&gt; {
   expect(wrapper.text()).toBe(&#39;hello&#39;);
 });</code></pre>
           <p class="lh-copy">We are checking that the passed <code class="dark-pink">prop</code> is used as expected, and that the renderer element has the proper class.</p>
-          <p class="lh-copy">But the higher we go in the componen hierarchy, the more subcomponents we expect to be rendered. My rule is to check <strong>just for the direct children</strong>, e.g. I check that a <code class="dark-pink">List</code> has the right number of <code class="dark-pink">ListItems</code>: I am handling the tested component not like a complete black box, because I know the implementation of its children, but not even am I dissecting it.</p>
+          <p class="lh-copy">But the higher we go in the component hierarchy, the more subcomponents we expect to be rendered. My rule is to check <strong>just for the direct children</strong>, e.g. I check that a <code class="dark-pink">List</code> has the right number of <code class="dark-pink">ListItems</code>: I am handling the tested component not like a complete black box, because I know the implementation of its children, but not even am I dissecting it.</p>
           <p class="lh-copy">A common mistake is to test the internal state of the component. We do not have to check the internals of the component, as long as it does what it promises to do.</p>
           <h3 class="mt5">
             <a name="testing-components-that-usecustomhooks" class="anchor" href="#testing-components-that-usecustomhooks">
@@ -482,8 +482,8 @@ describe(&#39;getNextTrack&#39;, () =&gt; {
     </footer>
 
 
-    <script src="https://moonwave99.github.io/playa/js/vendor_85a415a874563603e969e3bfcf1bcfde792f74df.js"></script>
-    <script src="https://moonwave99.github.io/playa/js/app_85a415a874563603e969e3bfcf1bcfde792f74df.js"></script>
+    <script src="https://moonwave99.github.io/playa/js/vendor_f49e6097205f710d456f93ed90310af8e558721a.js"></script>
+    <script src="https://moonwave99.github.io/playa/js/app_f49e6097205f710d456f93ed90310af8e558721a.js"></script>
     <script>
       require('initialize')({
         // place options here
