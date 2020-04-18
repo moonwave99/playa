@@ -159,6 +159,12 @@ html, body {
   pre {
     padding: 2rem;
     margin: 2rem 0;
+    @media screen and (max-width: 30em) {
+      padding: 1rem;
+      code {
+        font-size: .8rem;
+      }
+    }
   }
   iframe {
     max-width: 100%;

@@ -1,9 +1,9 @@
 <section class="hero bg-yellow pt5 pb0 pb4-l">
   <div class="h-100 cf">
     <header class="fl w-100 w-50-xl h-100 pl3 pl5-ns pr4 flex flex-column justify-center">
-      <h1 class="f1 f-headline-ns lh-solid mv0 black">{{ t('home.hero.title') }}</h1>
-      <p class="f5 lh-copy ttu tracked mb4 black-80">{{ t('home.hero.caption') }}</p>
-      <ul class="pl3 lh-copy">
+      <h1 class="f1 f-headline-ns lh-solid mv0 black tr-ns tc">{{ t('home.hero.title') }}</h1>
+      <p class="f5 lh-copy ttu tracked mb4 black-80 tr-ns tc">{{ t('home.hero.caption') }}</p>
+      <ul class="list pl3 lh-copy tr-ns tc">
         <li>{{ t('home.hero.description.files') }}</li>
         <li>{{ t('home.hero.description.artwork', { link: config.links.discogs }) }}</li>
         <li>
@@ -15,7 +15,7 @@
           {{ t('home.hero.description.stack.outro') }}
         </li>
       </ul>
-      <p class="mt5 mb4 mb0-l">
+      <p class="mt5 mb4 mb0-l db-ns dn tr-ns tc">
         <a
           href="{{ data.downloadURL }}"
           class="f5 br2 ph4 pv3 lh-copy white bg-black link underline-hover">

@@ -20,7 +20,7 @@
         "artwork": "displays album art from <a class='link blue underline-hover' href='{{link}}' target='_blank'>Discogs</a>",
         "stack": {
           "intro": "built on top of",
-          "outro": "and other open source libraries."
+          "outro": "and other FOSS."
         }
       },
       "download": "Download {{version}} for Mac OS X"
