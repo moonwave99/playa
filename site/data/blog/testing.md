@@ -121,7 +121,7 @@ it('should render a .label', () => {
 
 We are checking that the passed `prop` is used as expected, and that the renderer element has the proper class.
 
-But the higher we go in the componen hierarchy, the more subcomponents we expect to be rendered. My rule is to check **just for the direct children**, e.g. I check that a `List` has the right number of `ListItems`: I am handling the tested component not like a complete black box, because I know the implementation of its children, but not even am I dissecting it.
+But the higher we go in the component hierarchy, the more subcomponents we expect to be rendered. My rule is to check **just for the direct children**, e.g. I check that a `List` has the right number of `ListItems`: I am handling the tested component not like a complete black box, because I know the implementation of its children, but not even am I dissecting it.
 
 A common mistake is to test the internal state of the component. We do not have to check the internals of the component, as long as it does what it promises to do.
 

@@ -57,7 +57,7 @@ In the relational mindset this would grant you an anathema, but here it is fine:
 How to be sure that there will be no duplicate primary keys? I used a different strategy for each entity:
 
 - playlists: I used the **current timestamp**. It will be always different and ascendent, so documents will already be sorted;
-- albums: I actually keep track of the highest value in the **redux store**, and I increment it on every album insertion;
+- albums/artists: I actually keep track of the highest value in the **redux store**, and I increment it on every record insertion;
 - tracks: I use the **track filename** itself.
 
 ## Database client
