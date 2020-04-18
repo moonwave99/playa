@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% set title = t('meta.description') %}
 {% block title %}{{config.title}} - {{ t('meta.description') }}{% endblock %}
 {% block body %}
   {% include '_includes/home/hero.html' %}
