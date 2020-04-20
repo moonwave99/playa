@@ -45,7 +45,7 @@ window.addEventListener('load', async () => {
       author={author as unknown as Author}
       homepage={homepage}
       repository={repository}
-      tos={`${homepage}/terms-of-service`}
+      tos={`${homepage}/terms-of-use`}
       onLinkClick={onLinkClick}/>,
     document.getElementById('about')
   );
