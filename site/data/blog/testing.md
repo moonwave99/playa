@@ -11,7 +11,7 @@ I will talk about:
 1. [Jest setup](#jest-setup);
 2. [Testing React components](#testing-react-components);
 3. [Testing Redux actions and stores](#testing-redux);
-4. [Testing utils](#testing=uutils).
+4. [Testing utils](#testing-utils).
 
 ## Jest setup
 
