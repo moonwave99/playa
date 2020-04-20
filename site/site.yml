@@ -26,7 +26,7 @@ structure:
     url:      /about
   terms:
     template: terms
-    url:      /terms
+    url:      /terms-of-use
   blog:
     collection: blog
     pages:

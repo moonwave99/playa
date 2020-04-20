@@ -8,6 +8,7 @@
     <meta property="og:site_name" content="{{ t('meta.title') }}">
     <meta property="og:url" content="{{ absoluteURL(page.path) }}">
     <meta property="og:title" content="{{ title }} | {{ t('meta.title') }}">
+    <meta property="og:image" content="{{ asset('images/screenshots/playlist.png') }}">
   {% block meta_og %}
     <meta property="og:type" content="website">
     <meta property="og:description" content="{{ t('meta.description') }}">
@@ -17,6 +18,7 @@
     <meta name="twitter:creator" content="{{ config.twitter }}">
     <meta name="twitter:url" content="{{ absoluteURL(page.path) }}">
     <meta name="twitter:title" content="{{ title }} | {{ t('meta.title') }}">
+    <meta property="twitter:image:src" content="{{ asset('images/screenshots/playlist.png') }}">
   {% block meta_twitter %}
     <meta name="twitter:description" content="{{ t('meta.description') }}">
   {% endblock %}
