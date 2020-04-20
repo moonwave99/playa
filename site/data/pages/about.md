@@ -13,7 +13,7 @@ On this website I want to share my train of thought and the solutions I found to
 
 My favourite Windows player (after [Winamp][winamp] of course) was [foobar2000][foobar].
 
-![The mythical foobar2000](http://www.fooblog2000.com/wp-content/uploads/2007/02/foobar-feb14-conf-anim.gif)
+![The mythical foobar2000](images/foobar.gif)
 
 Unlike most of the then competitors, one of the available mods showed the files grouped in albums, next to the artwork. This visual detail meant a lot to me, because I was transitioning from party playlists and single songs to appreciating full LPs and discographies of bands.
 
