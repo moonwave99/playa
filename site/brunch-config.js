@@ -63,9 +63,11 @@ module.exports = {
       hooks: {
         onCompile: async (generatedFiles) => {
           const wfl = new Waffel({
-            domain: 'https://moonwave99.github.io/playa',
+            domain: 'https://moonwave99.github.io',
+            basePath: 'playa',
             destinationFolder: 'production',
             uglyUrls: true,
+            displayExt: false,
             versionAssets: true,
             markdownOptions: {
               renderer: renderer()

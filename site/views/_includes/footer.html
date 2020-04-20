@@ -7,13 +7,14 @@
       <a href="{{ config.links.author.site }}" target="_blank" class="link light-silver hover-white underline">Diego Caponera</a>.
     </p>
     <div class="lh-copy cf">
-      <p class="fl">
+      <p class="fl dn di-ns">
         <a href="#top" class="link light-silver hover-white underline">Back to top</a>
       </p>
-      <p class="fr">
+      <p class="fr-ns fn tc tr-ns">
         <a href="{{ config.links.github }}" target="_blank" class="link light-silver hover-white underline">Github</a> /
-        <a href="{{ config.links.github }}/issues" target="_blank" class="link light-silver hover-white underline">Issues</a> /
-        <a href="{{ config.links.github }}/releases" target="_blank" class="link light-silver hover-white underline">Releases</a>
+        <a href="{{ config.links.github }}/issues" target="_blank" class="link light-silver hover-white underline">{{ t('footer.issues') }}</a> /
+        <a href="{{ config.links.github }}/releases" target="_blank" class="link light-silver hover-white underline">{{ t('footer.releases') }}</a> /
+        <a href="{{ url('terms') }}" class="link light-silver hover-white underline">{{ t('footer.terms') }}</a>
       </p>
     </div>
   </div>

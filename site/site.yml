@@ -24,6 +24,9 @@ structure:
   about:
     template: about
     url:      /about
+  terms:
+    template: terms
+    url:      /terms
   blog:
     collection: blog
     pages:

@@ -36,6 +36,11 @@
       "older": "Older entries"
     }
   },
+  "footer": {
+    "issues": "Issues",
+    "releases": "Releases",
+    "terms": "Terms of Use"
+  },
   "notFound" : {
     "title" : "Page Not Found",
     "text"  : "Life's hard, sometimes - Go back to Homepage."
