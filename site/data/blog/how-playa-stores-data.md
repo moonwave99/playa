@@ -60,6 +60,8 @@ How to be sure that there will be no duplicate primary keys? I used a different 
 - albums/artists: I actually keep track of the highest value in the **redux store**, and I increment it on every record insertion;
 - tracks: I use the **track filename** itself.
 
+EDIT: I dropped autoincrement in favour of [UUIDs][nanoid], since autoincremental ids were not even useful for sorting (artists are sorted alphabetically, and albums by import date).
+
 ## Database client
 
 I wrapped all the PouchDB interactions inside a class that wraps a database instance:
@@ -237,3 +239,4 @@ While the Electron persistence strategies have still room for improvement in my 
 [pouchdb]: https://github.com/pouchdb/pouchdb
 [pouchdb-find]: https://github.com/pouchdb/pouchdb/tree/master/packages/node_modules/pouchdb-find
 [referential-integrity]: https://en.wikipedia.org/wiki/Referential_integrity
+[nanoid]: https://github.com/ai/nanoid
