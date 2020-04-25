@@ -7,7 +7,7 @@
     <title>How Playa stores data / Playa Devblog / Playa</title>
     <meta name="generator" content="waffel">
 
-    <meta name="version" content="3490e0e@master">
+    <meta name="version" content="e875670@master">
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -37,7 +37,7 @@
     <meta name="twitter:description" content="We all love a slick user interface that incarnates the zeitgeist, but without a well structured persistence layer it is of no use. Here I will give an overview of how I tried to make up for the lack of total outward slickness with sound invisible choices.">
 
 
-    <link rel="stylesheet" href="https://moonwave99.github.io/playa/css/app_3490e0e855f97158c000e726f44dec337da419bf.css">
+    <link rel="stylesheet" href="https://moonwave99.github.io/playa/css/app_e875670cb22cbe6cd00cd2ce31f8bf2d18e57e72.css">
   </head>
 
   <body class="w-100 sans-serif blog-single">
@@ -111,7 +111,7 @@ tracklist:
             <li>albums/artists: I actually keep track of the highest value in the <strong>redux store</strong>, and I increment it on every record insertion;</li>
             <li>tracks: I use the <strong>track filename</strong> itself.</li>
           </ul>
-
+          <p class="lh-copy">EDIT: I dropped autoincrement in favour of <a class="link blue underline-hover" href="https://github.com/ai/nanoid" target='_blank'>UUIDs</a>, since autoincremental ids were not even useful for sorting (artists are sorted alphabetically, and albums by import date).</p>
           <h2 class="mt5">
             <a name="database-client" class="anchor" href="#database-client">
               <span class="link blue">#</span>
@@ -286,8 +286,8 @@ ipc.on(IPC_UI_STATE_UPDATE, (_event, params: object) =&gt; appState.setState(par
     </footer>
 
 
-    <script src="https://moonwave99.github.io/playa/js/vendor_3490e0e855f97158c000e726f44dec337da419bf.js"></script>
-    <script src="https://moonwave99.github.io/playa/js/app_3490e0e855f97158c000e726f44dec337da419bf.js"></script>
+    <script src="https://moonwave99.github.io/playa/js/vendor_e875670cb22cbe6cd00cd2ce31f8bf2d18e57e72.js"></script>
+    <script src="https://moonwave99.github.io/playa/js/app_e875670cb22cbe6cd00cd2ce31f8bf2d18e57e72.js"></script>
     <script>
       require('initialize')({
         // place options here
