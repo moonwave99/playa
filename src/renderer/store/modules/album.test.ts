@@ -179,8 +179,7 @@ describe('album actions', () => {
           allById: {}
         },
         artists: {
-          allById: {},
-          latestArtistId: null
+          allById: {}
         }
       });
       const album = albums[0];
@@ -207,8 +206,7 @@ describe('album actions', () => {
           allById: {}
         },
         artists: {
-          allById: {},
-          latestArtistId: '4'
+          allById: {}
         }
       });
       const album = albums[0];
@@ -217,8 +215,8 @@ describe('album actions', () => {
         {
           type: ARTIST_SAVE_RESPONSE,
           artist: {
-            ...artists[0],
-            _id: '5'
+            ...artist,
+            _id: '1'
           }
         },
         {
@@ -226,7 +224,7 @@ describe('album actions', () => {
           album: {
             ...album,
             title: 'updated title',
-            artist: '5'
+            artist: '1'
           }
         }
       ];
@@ -245,8 +243,7 @@ describe('album actions', () => {
           allById: toObj(albums)
         },
         artists: {
-          allById: toObj(artists),
-          latestArtistId: null
+          allById: toObj(artists)
         }
       });
 
@@ -271,8 +268,7 @@ describe('album actions', () => {
           allById: toObj(albums)
         },
         artists: {
-          allById: toObj(artists),
-          latestArtistId: null
+          allById: toObj(artists)
         }
       });
 
@@ -289,8 +285,7 @@ describe('album actions', () => {
           allById: toObj(albums)
         },
         artists: {
-          allById: toObj(artists),
-          latestArtistId: null
+          allById: toObj(artists)
         }
       });
 
@@ -309,8 +304,7 @@ describe('album actions', () => {
           allById: toObj(albums)
         },
         artists: {
-          allById: {},
-          latestArtistId: null
+          allById: {}
         }
       });
 
@@ -335,8 +329,7 @@ describe('album actions', () => {
           allById: toObj(albums)
         },
         artists: {
-          allById: {},
-          latestArtistId: null
+          allById: {}
         }
       });
 

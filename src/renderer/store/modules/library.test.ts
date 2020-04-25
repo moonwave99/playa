@@ -60,60 +60,13 @@ describe('library actions', () => {
           allById: {}
         },
         artists: {
-          allById: {},
-          latestArtistId: '0'
+          allById: {}
         },
         tracks: {
           allById: {}
         },
         library: {
-          latest: [],
-          latestAlbumId: '0'
-        }
-      });
-      const expectedActions = [
-        {
-          type: TRACK_GET_LIST_RESPONSE,
-          results: tracks
-        },
-        {
-          type: ALBUM_SAVE_RESPONSE,
-          album: { ...albums[0], _id: '1', artist: '1' }
-        },
-        {
-          type: LIBRARY_ADD_TO_LATEST_ALBUMS,
-          albums: [{ ...albums[0], _id: '1', artist: '1' }]
-        },
-        {
-          type: ALBUM_GET_LIST_RESPONSE,
-          results: [{ ...albums[0], _id: '1', artist: '1' }]
-        }
-      ];
-      await importAlbum({
-        album: { ...albums[0], _id: null },
-        artist: artists[0],
-        tracks
-      })(store.dispatch, store.getState);
-      expectedActions.forEach(
-        action => expect(store.getActions()).toContainEqual(action)
-      );
-    });
-
-    it('should update existing artist if artist name from params exists', async () => {
-      const store = mockStore({
-        albums: {
-          allById: {}
-        },
-        artists: {
-          allById: toObj(artists),
-          latestArtistId: '4'
-        },
-        tracks: {
-          allById: {}
-        },
-        library: {
-          latest: [],
-          latestAlbumId: '0'
+          latest: []
         }
       });
       const expectedActions = [
@@ -132,15 +85,11 @@ describe('library actions', () => {
         {
           type: LIBRARY_ADD_TO_LATEST_ALBUMS,
           albums: [{ ...albums[0], _id: '1', artist: '1' }]
-        },
-        {
-          type: ALBUM_GET_LIST_RESPONSE,
-          results: [{ ...albums[0], _id: '1', artist: '1' }]
         }
       ];
       await importAlbum({
         album: { ...albums[0], _id: null },
-        artist: artists[0],
+        artist: { ...artists[0], _id: null },
         tracks
       })(store.dispatch, store.getState);
       expectedActions.forEach(
@@ -148,28 +97,22 @@ describe('library actions', () => {
       );
     });
 
-    it('should update existing artist if artist name from params exists, and it has no id', async () => {
+    it('should find artist by name, and use existing id if found', async () => {
       const store = mockStore({
         albums: {
           allById: {}
         },
         artists: {
-          allById: toObj(artists),
-          latestArtistId: '4'
+          allById: toObj(artists)
         },
         tracks: {
           allById: {}
         },
         library: {
-          latest: [],
-          latestAlbumId: '0'
+          latest: []
         }
       });
       const expectedActions = [
-        {
-          type: ARTIST_SAVE_RESPONSE,
-          artist: artists[0]
-        },
         {
           type: TRACK_GET_LIST_RESPONSE,
           results: tracks
@@ -181,10 +124,6 @@ describe('library actions', () => {
         {
           type: LIBRARY_ADD_TO_LATEST_ALBUMS,
           albums: [{ ...albums[0], _id: '1', artist: '1' }]
-        },
-        {
-          type: ALBUM_GET_LIST_RESPONSE,
-          results: [{ ...albums[0], _id: '1', artist: '1' }]
         }
       ];
       await importAlbum({
@@ -203,15 +142,13 @@ describe('library actions', () => {
           allById: {}
         },
         artists: {
-          allById: toObj(artists),
-          latestArtistId: '4'
+          allById: toObj(artists)
         },
         tracks: {
           allById: {}
         },
         library: {
-          latest: [],
-          latestAlbumId: '0'
+          latest: []
         }
       });
       const expectedActions = [
@@ -226,10 +163,6 @@ describe('library actions', () => {
         {
           type: LIBRARY_ADD_TO_LATEST_ALBUMS,
           albums: [{ ...albums[0], _id: '1', artist: VARIOUS_ARTISTS_ID, isAlbumFromVA: true }]
-        },
-        {
-          type: ALBUM_GET_LIST_RESPONSE,
-          results: [{ ...albums[0], _id: '1', artist: VARIOUS_ARTISTS_ID, isAlbumFromVA: true }]
         }
       ];
       await importAlbum({
@@ -359,7 +292,6 @@ describe('library actions', () => {
 describe('library reducer', () => {
   const initialState = {
     latest: null as Album['_id'][],
-    latestAlbumId: null as Album['_id'],
     loadingLatest: false
   }
   it('should return the initial state', () => {
@@ -372,7 +304,6 @@ describe('library reducer', () => {
       type: LIBRARY_GET_LATEST_REQUEST
     })).toEqual({
       latest: null,
-      latestAlbumId: null,
       loadingLatest: true
     });
   });
@@ -384,7 +315,6 @@ describe('library reducer', () => {
       results
     })).toEqual({
       latest: albums.map(({ _id }) => _id),
-      latestAlbumId: albums[1]._id,
       loadingLatest: false
     });
 
@@ -393,7 +323,6 @@ describe('library reducer', () => {
       results: []
     })).toEqual({
       latest: [],
-      latestAlbumId: '0',
       loadingLatest: false
     });
   });
@@ -404,7 +333,6 @@ describe('library reducer', () => {
       albums
     })).toEqual({
       latest: albums.map(({ _id }) => _id),
-      latestAlbumId: `${Math.max(...albums.map(({ _id }) => +_id))}`,
       loadingLatest: false
     });
   });

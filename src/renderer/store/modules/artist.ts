@@ -192,7 +192,6 @@ export const getArtistPictureFromUrlRequest = (
 
 export interface ArtistState {
   allById: EntityHashMap<Artist>;
-  latestArtistId: Artist['_id'];
   isLoading: boolean;
 }
 
@@ -212,15 +211,7 @@ export const searchArtists = createCachedSelector(
 
 const INITIAL_STATE: ArtistState = {
 	allById: {},
-  latestArtistId: null as Artist['_id'],
   isLoading: false
-}
-
-function getLatestArtistId(artists: Artist[]): Artist['_id'] {
-  if (!artists.length) {
-    return '0';
-  }
-  return [...artists].sort((a: Artist, b: Artist) => +b._id - +a._id)[0]._id;
 }
 
 export default function reducer(
@@ -237,7 +228,6 @@ export default function reducer(
       return {
         ...state,
         allById: toObj(ensureAll<Artist>(action.artists, getDefaultArtist)),
-        latestArtistId: getLatestArtistId(action.artists),
         isLoading: false
       };
     case ARTIST_GET_LIST_RESPONSE:
@@ -253,7 +243,6 @@ export default function reducer(
         ...state,
         isLoading: false,
         allById: updateId(state.allById, action.artist._id, action.artist),
-        latestArtistId: !state.allById[action.artist._id] ? action.artist._id : state.latestArtistId
       };
     case ARTIST_DELETE_RESPONSE:
       return {

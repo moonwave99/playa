@@ -31,7 +31,7 @@ describe('Remove albums from library', () => {
     const { path: albumPath, tracks } = await generateAlbum(FileAlbums[0]);
 
     await app.start();
-    
+
     mock(app, [
       {
         method: 'showOpenDialog',
@@ -63,15 +63,15 @@ describe('Remove albums from library', () => {
 
     // Check album is inside recent albums grid
     await app.client.waitUntil(async () => {
-      const renderedTitle = await app.client.getText('#album-grid-tile-1 .album-title');
-      const renderedArtist = await app.client.getText('#album-grid-tile-1 .album-artist');
-      const renderedYear = await app.client.getText('#album-grid-tile-1 .album-year');
+      const renderedTitle = await app.client.getText('.album-title');
+      const renderedArtist = await app.client.getText('.album-artist');
+      const renderedYear = await app.client.getText('.album-year');
       return renderedTitle === title
         && renderedArtist === artist
         && +renderedYear === year;
     });
 
-    await app.client.click('#album-grid-tile-1 .album-cover');
+    await app.client.click('.album-cover');
     await app.client.keys(['Backspace']);
     await app.client.waitUntil(async () =>
       await app.client.getText('.library-latest-albums-empty-placeholder') === 'Library is empty.'

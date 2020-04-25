@@ -30,8 +30,7 @@ const defaultStore = {
     allById: {}
   },
   library: {
-    latest: albums.map(({ _id }) => _id),
-    latestAlbumId: albums[1]._id
+    latest: albums.map(({ _id }) => _id)
   },
   ui: {
     libraryView: UILibraryView.Timeline
@@ -67,8 +66,7 @@ describe('LibraryView', () => {
       , {
           ...defaultStore,
           library: {
-            latest: [],
-            latestAlbumId: null
+            latest: []
           },
           ui: {
             libraryView: UILibraryView.Artists
@@ -83,8 +81,7 @@ describe('LibraryView', () => {
       , {
           ...defaultStore,
           library: {
-            latest: [],
-            latestAlbumId: null
+            latest: []
           },
           ui: {
             libraryView: UILibraryView.Artists

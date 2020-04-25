@@ -147,13 +147,13 @@ describe('Database', () => {
     it('should persist given document', async () => {
       const updatedPlaylist = await db.save({
         ...playlists[0],
+        _id: null,
         title: 'new title'
-      } as Entity);
-      expect(updatedPlaylist).toEqual({
-        ...playlists[0],
-        title: 'new title',
-        _rev: '0'
-      });
+      } as Entity) as Playlist;
+
+      expect(updatedPlaylist.title).toBe('new title');
+      expect(updatedPlaylist._rev).toBe('0');
+      expect(updatedPlaylist._id).not.toBe(null);
     });
 
     it('should give a new rev to already existing document', async () => {
@@ -163,6 +163,7 @@ describe('Database', () => {
       } as Entity);
 
       const { _rev: rev } = updatedPlaylist;
+      expect(updatedPlaylist._id).toBe(playlists[0]._id);
 
       const reUpdatedPlaylist = await db.save({
         ...updatedPlaylist,

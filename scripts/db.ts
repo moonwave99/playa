@@ -10,6 +10,6 @@ const db = initDBs({
 
 // this is just an example scripting playground
 (async () => {
-  const results = await db.album.find({ _id: '18182'});
+  const results = await db.track.find({ _id: '/Volumes/Public/Music/D/Dido/[Album]/1999 - No Angel/01 - Here With Me.mp3'});
   console.log(results);
 })();

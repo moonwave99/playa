@@ -58,21 +58,41 @@ class LocalPouchDB {
     return Promise.resolve(result);
   }
   async createIndex() { true }
-  async put({ _id, _deleted, ...entity }: { _id: string, _deleted?: boolean, entity: object }) {
+  async put({ _id, _rev, _deleted, ...entity }: { _id: string, _rev?: string, _deleted?: boolean, entity: object }) {
     if (_id.startsWith('_design')) {
       this.views[_id] = { _id, ...entity };
       return;
     }
-    const newRev = `${+(this.db[this.name][_id]._rev)++}`;
+    if (!this.db[this.name][_id]) {
+      const newId = '1';
+      this.db[this.name][newId] = {
+        ...entity,
+        _id: newId,
+        _rev: '0'
+      };
+      return {
+        ok: true,
+        rev: '0'
+      }
+    }
+    const newRev = `${+(_rev || '0') + 1}`;
     if (_deleted === true) {
       delete this.db[this.name][_id];
     }
-    return _id === '1' ? {
-      ok: true,
-      rev: newRev
-    } : {
-      ok: false
-    };
+    if (_id === '1') {
+      this.db[this.name][_id] = {
+        ...entity,
+        _rev: newRev
+      };
+      return {
+        ok: true,
+        rev: newRev
+      };
+    } else {
+      return {
+        ok: false
+      };
+    }
   }
   async search({ query, fields }: { query: string, fields: string[] }) {
     return {

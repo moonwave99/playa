@@ -67,8 +67,16 @@ module.exports = {
         case IPC_PLAYLIST_DELETE_REQUEST:
         case IPC_ALBUM_SAVE_REQUEST:
         case IPC_ARTIST_SAVE_REQUEST:
-        case IPC_ARTIST_DELETE_REQUEST:
-          return args[0];
+        case IPC_ARTIST_DELETE_REQUEST: {
+          if (!args[0]._id) {
+            return {
+              ...args[0],
+              _id: '1',
+            };
+          } else {
+            return args[0];
+          }
+        }
         case IPC_PLAYLIST_SAVE_LIST_REQUEST:
         case IPC_ARTIST_SAVE_LIST_REQUEST:
           return args[0].map(({ _id, _rev }) => ({ id: _id, rev: _rev }));

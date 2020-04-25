@@ -170,8 +170,7 @@ describe('artist reducer', () => {
   it('should return the initial state', () => {
     expect(reducer(undefined, {} as ArtistActionTypes)).toEqual({
       allById: {},
-      isLoading: false,
-      latestArtistId: null as Artist['_id']
+      isLoading: false
     });
   });
 
@@ -187,8 +186,7 @@ describe('artist reducer', () => {
       artists
     })).toEqual({
       allById: toObj(artists),
-      isLoading: false,
-      latestArtistId: artists[artists.length - 1]._id
+      isLoading: false
     });
 
     expect(reducer({} as ArtistState, {
@@ -196,8 +194,7 @@ describe('artist reducer', () => {
       artists: []
     })).toEqual({
       allById: {},
-      isLoading: false,
-      latestArtistId: '0'
+      isLoading: false
     });
   });
 
@@ -224,8 +221,7 @@ describe('artist reducer', () => {
           '1': artists[0],
           '2': artists[1]
         },
-        isLoading: false,
-        latestArtistId: '2'
+        isLoading: false
       };
 
       const updatedArtist = { ...artists[0], name: 'Updated Name' };
@@ -237,8 +233,7 @@ describe('artist reducer', () => {
           '1': updatedArtist,
           '2': artists[1]
         },
-        isLoading: false,
-        latestArtistId: '2'
+        isLoading: false
       });
     });
 
@@ -247,8 +242,7 @@ describe('artist reducer', () => {
         allById: {
           '1': artists[0]
         },
-        isLoading: false,
-        latestArtistId: '1'
+        isLoading: false
       };
 
       expect(reducer(initialState, {
@@ -259,8 +253,7 @@ describe('artist reducer', () => {
           '1': artists[0],
           '2': artists[1]
         },
-        isLoading: false,
-        latestArtistId: '2'
+        isLoading: false
       });
     });
   });
@@ -278,8 +271,7 @@ describe('artist reducer', () => {
         '1': artists[0],
         '2': artists[1]
       },
-      isLoading: false,
-      latestArtistId: '2'
+      isLoading: false
     };
 
     it('should remove artist by given id if found', () => {

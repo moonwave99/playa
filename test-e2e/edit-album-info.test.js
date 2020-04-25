@@ -53,16 +53,16 @@ describe('Edit album information', () => {
 
     // Check album is inside recent albums grid
     await app.client.waitUntil(async () => {
-      const renderedTitle = await app.client.getText('#album-grid-tile-1 .album-title');
-      const renderedArtist = await app.client.getText('#album-grid-tile-1 .album-artist');
-      const renderedYear = await app.client.getText('#album-grid-tile-1 .album-year');
+      const renderedTitle = await app.client.getText('.album-title');
+      const renderedArtist = await app.client.getText('.album-artist');
+      const renderedYear = await app.client.getText('.album-year');
       return renderedTitle === title
         && renderedArtist === artist
         && +renderedYear === year;
     });
 
     // select album
-    await app.client.click('#album-grid-tile-1 .album-cover');
+    await app.client.click('.album-cover');
     await menuAddon.clickMenu('Library', 'Edit Selected Album');
 
     const newData = {
@@ -91,9 +91,9 @@ describe('Edit album information', () => {
 
     // check album was updated
     await app.client.waitUntil(async () => {
-      const renderedTitle = await app.client.getText('#album-grid-tile-1 .album-title');
-      const renderedArtist = await app.client.getText('#album-grid-tile-1 .album-artist');
-      const renderedYear = await app.client.getText('#album-grid-tile-1 .album-year');
+      const renderedTitle = await app.client.getText('.album-title');
+      const renderedArtist = await app.client.getText('.album-artist');
+      const renderedYear = await app.client.getText('.album-year');
       return renderedTitle === newData.title
         && renderedArtist === newData.artist
         && +renderedYear === newData.year;

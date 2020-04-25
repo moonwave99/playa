@@ -15,7 +15,7 @@ import {
   Artist,
   VariousArtist,
   selectors as artistSelectors,
-  saveArtistRequest
+  ARTIST_SAVE_RESPONSE
 } from './artist';
 
 import {
@@ -30,6 +30,7 @@ const {
   IPC_ALBUM_SAVE_REQUEST,
   IPC_ALBUM_GET_LIST_REQUEST,
   IPC_ALBUM_CONTENT_REQUEST,
+  IPC_ARTIST_SAVE_REQUEST,
   IPC_TRACK_GET_LIST_REQUEST,
   IPC_COVER_GET_REQUEST,
   IPC_COVER_GET_FROM_URL_REQUEST
@@ -266,15 +267,15 @@ export const editAlbum = (editingAlbumId: Album['_id']): Function =>
   }
 
 export const updateAlbum = (album: Album, artist: Artist): Function =>
-  (dispatch: Function, getState: Function): void => {
+  async (dispatch: Function): Promise<void> => {
     let artistId = artist._id;
     if (!artistId) {
-      const { artists }: ApplicationState = getState();
-      artistId = `${+artists.latestArtistId + 1}`;
-      dispatch(saveArtistRequest({
-        ...artist,
-        _id: artistId
-      }));
+      const savedArtist = await ipc.invoke(IPC_ARTIST_SAVE_REQUEST, artist);
+      artistId = savedArtist._id;
+      dispatch({
+        type: ARTIST_SAVE_RESPONSE,
+        artist: savedArtist
+      });
     }
     dispatch(saveAlbumRequest({ ...album, artist: artistId }));
   }

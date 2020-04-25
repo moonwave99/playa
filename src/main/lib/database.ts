@@ -1,6 +1,7 @@
 import PouchDB from 'pouchdb';
 import PouchFind from 'pouchdb-find';
 import search from 'pouchdb-quick-search';
+import { customAlphabet } from 'nanoid';
 
 import log, { LogContext } from './logger';
 import { DatabaseError } from '../../errors';
@@ -14,6 +15,8 @@ PouchDB.plugin(search);
 function capitalizeFirstLetter(string: string): string {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
+
+const nanoid = customAlphabet('1234567890abcdef', 10);
 
 export interface Entity {
   _id: string;
@@ -159,7 +162,7 @@ export default class Database {
       });
       return rows
         .filter((row: Row<T>) => !row.error && row.doc)
-        .map((row: Row<T>) => row.doc);  
+        .map((row: Row<T>) => row.doc);
     } catch(error) {
       if (error.name === 'OpenError') {
         throw new DatabaseError('Database unreachable or locked by another process');
@@ -179,7 +182,11 @@ export default class Database {
   }
 
   async save<T extends Entity>(entity: T): Promise<T> {
-    const { _id, _rev, ...other } = entity;
+    const { _rev, ...other } = entity;
+    let _id = entity._id;
+    if (!entity._id) {
+      _id = nanoid();
+    }
     const doc: T = await this.get(_id);
     let payload;
     if (doc._rev) {
@@ -189,7 +196,7 @@ export default class Database {
     }
     const response = await this.db.put(payload);
     if (response.ok === true) {
-      return Promise.resolve({ ...entity, _rev: response.rev });
+      return Promise.resolve({ ...entity, _id, _rev: response.rev });
     }
     throw new DatabaseError(`Problems persisting entity: ${_id} - ${_rev}`);
   }

@@ -16,8 +16,7 @@ const defaultStore = {
     allById: {}
   },
   library: {
-    latest: [] as object[],
-    latestAlbumId: null as Album['_id']
+    latest: [] as object[]
   }
 };
 
