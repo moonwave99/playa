@@ -9,7 +9,11 @@
     "about"     : "About",
     "blog"      : "Devblog",
     "github"    : "Github",
-    "contact"   : "Contact"
+    "contact"   : "Contact",
+    "toggler"   : {
+      "open": "Menu",
+      "close": "Close"
+    }
   },
   "home": {
     "hero": {

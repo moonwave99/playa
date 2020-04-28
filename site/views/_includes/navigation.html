@@ -1,7 +1,14 @@
-<nav class="navigation w-100 text-right v-mid ph3 ph4-ns avenir{% if page.name != 'home' %} bg-yellow{% endif %}">
-  <a class="link black underline-hover mr4-ns{% if page.name == 'home' %} b{% endif %}" href="{{ url('home') }}">{{ t('nav.home') }}</a>
-  <a class="link black underline-hover mr4-ns{% if page.name == 'about' %} b{% endif %}" href="{{ url('about') }}">{{ t('nav.about') }}</a>
-  <a class="link black underline-hover mr4-ns{% if page.name.split('.')[0] == 'blog' %} b{% endif %}" href="{{ url('blog.index', {}, { page: 1 }) }}">{{ t('nav.blog') }}</a>
-  <a class="link black underline-hover mr4-ns" href="{{ config.links.github }}" target="_blank">{{ t('nav.github') }}</a>
-  <a class="link black underline-hover mr4-ns" href="mailto:{{ config.links.author.email }}?subject=Playa">{{ t('nav.contact') }}</a>
-</nav>
+<section class="navigation">
+  <input type="checkbox" class="navigation-toggler" id="navToggler">
+  <label for="navToggler" class="navigation-toggler-label tracked ttu">
+    <span class="open">{{ t('nav.toggler.open')}}</span>
+    <span class="close">{{ t('nav.toggler.close')}}</span>
+  </label>
+  <nav class="navigation-content w-100 text-right v-mid ph3 ph4-ns avenir{% if page.name != 'home' %} bg-yellow{% endif %}">
+    <a class="link black underline-hover mr4-ns{% if page.name == 'home' %} b{% endif %}" href="{{ url('home') }}">{{ t('nav.home') }}</a>
+    <a class="link black underline-hover mr4-ns{% if page.name == 'about' %} b{% endif %}" href="{{ url('about') }}">{{ t('nav.about') }}</a>
+    <a class="link black underline-hover mr4-ns{% if page.name.split('.')[0] == 'blog' %} b{% endif %}" href="{{ url('blog.index', {}, { page: 1 }) }}">{{ t('nav.blog') }}</a>
+    <a class="link black underline-hover mr4-ns" href="{{ config.links.github }}" target="_blank">{{ t('nav.github') }}</a>
+    <a class="link black underline-hover mr4-ns" href="mailto:{{ config.links.author.email }}?subject=Playa">{{ t('nav.contact') }}</a>
+  </nav>
+</section>
