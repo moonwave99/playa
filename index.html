@@ -7,7 +7,7 @@
     <title>Playa - The music player that thinks in albums</title>
     <meta name="generator" content="waffel">
 
-    <meta name="version" content="e875670@master">
+    <meta name="version" content="5994dc3@master">
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -36,18 +36,25 @@
     <meta name="twitter:description" content="The music player that thinks in albums">
 
 
-    <link rel="stylesheet" href="https://moonwave99.github.io/playa/css/app_e875670cb22cbe6cd00cd2ce31f8bf2d18e57e72.css">
+    <link rel="stylesheet" href="https://moonwave99.github.io/playa/css/app_5994dc3169f3fd0f46150bada3f6a52b12f02ce6.css">
   </head>
 
   <body class="w-100 sans-serif home">
 
-    <nav class="navigation w-100 text-right v-mid ph3 ph4-ns avenir">
-      <a class="link black underline-hover mr4-ns b" href="https://moonwave99.github.io/playa">Home</a>
-      <a class="link black underline-hover mr4-ns" href="https://moonwave99.github.io/playa/about">About</a>
-      <a class="link black underline-hover mr4-ns" href="https://moonwave99.github.io/playa/devblog">Devblog</a>
-      <a class="link black underline-hover mr4-ns" href="https://github.com/moonwave99/playa" target="_blank">Github</a>
-      <a class="link black underline-hover mr4-ns" href="mailto:hello@diegocaponera.com?subject=Playa">Contact</a>
-    </nav>
+    <section class="navigation">
+      <input type="checkbox" class="navigation-toggler" id="navToggler">
+      <label for="navToggler" class="navigation-toggler-label tracked ttu">
+        <span class="open">Menu</span>
+        <span class="close">Close</span>
+      </label>
+      <nav class="navigation-content w-100 text-right v-mid ph3 ph4-ns avenir">
+        <a class="link black underline-hover mr4-ns b" href="https://moonwave99.github.io/playa">Home</a>
+        <a class="link black underline-hover mr4-ns" href="https://moonwave99.github.io/playa/about">About</a>
+        <a class="link black underline-hover mr4-ns" href="https://moonwave99.github.io/playa/devblog">Devblog</a>
+        <a class="link black underline-hover mr4-ns" href="https://github.com/moonwave99/playa" target="_blank">Github</a>
+        <a class="link black underline-hover mr4-ns" href="mailto:hello@diegocaponera.com?subject=Playa">Contact</a>
+      </nav>
+    </section>
 
     <main class="main w-100">
 
@@ -188,11 +195,10 @@
     </footer>
 
 
-    <script src="https://moonwave99.github.io/playa/js/vendor_e875670cb22cbe6cd00cd2ce31f8bf2d18e57e72.js"></script>
-    <script src="https://moonwave99.github.io/playa/js/app_e875670cb22cbe6cd00cd2ce31f8bf2d18e57e72.js"></script>
+    <script src="https://moonwave99.github.io/playa/js/vendor_5994dc3169f3fd0f46150bada3f6a52b12f02ce6.js"></script>
+    <script src="https://moonwave99.github.io/playa/js/app_5994dc3169f3fd0f46150bada3f6a52b12f02ce6.js"></script>
     <script>
       require('initialize')({
-        // place options here
         title: 'Playa',
         basePath: 'https://moonwave99.github.io/playa',
       });
