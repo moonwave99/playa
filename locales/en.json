@@ -85,7 +85,7 @@
         "title": "All Playlists",
         "empty": "No playlists yet"
       },
-      "createdOn": "Created on {{date}}",
+      "subtitle": "{{count}} album(s), created on {{date}}",
       "empty": "Playlist is empty.",
       "props": {
         "title": "Title",

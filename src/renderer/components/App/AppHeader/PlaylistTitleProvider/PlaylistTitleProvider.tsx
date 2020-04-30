@@ -15,7 +15,7 @@ export const PlaylistTitleProvider = (): ReactElement => {
 	const { _id } = useParams();
 	const { playlist, isTitleEditing } = useSelector(({ playlists, ui }: ApplicationState) => {
 		return {
-			playlist: playlists.allById[_id] || {} as Playlist,
+			playlist: playlists.allById[_id] || { albums: [] } as Playlist,
 			isTitleEditing: ui.editPlaylistTitle
 		}
 	});
@@ -59,12 +59,17 @@ export const PlaylistTitleProvider = (): ReactElement => {
 		options: { year: 'numeric', month: 'long', day: 'numeric' }
 	});
 
+	const subTitle = t('playlists.subtitle', {
+		count: playlist.albums.length,
+		date
+	});
+
 	return (
 		<EditableTitle
 			className="playlist-title"
 			isEditing={isEditing}
 			title={playlist.title}
-			subTitle={t('playlists.createdOn', { date })}
+			subTitle={subTitle}
 			onTitleClick={onTitleClick}
 			onBlur={onBlur}
 			onSubmit={onSubmit}/>
