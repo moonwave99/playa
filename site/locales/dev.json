@@ -2,7 +2,7 @@
   "meta": {
     "title": "Playa",
     "description": "The music player that thinks in albums",
-    "keywords": "player, mp3, electron, react, redux"
+    "keywords": "player, mp3, javascript, electron, react, redux"
   },
   "nav": {
     "home"      : "Home",
