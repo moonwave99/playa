@@ -1,7 +1,7 @@
 const path = require('path');
-const { getApp } = require('./utils/appUtils');
-const { TEN_SECONDS } = require('./utils/appUtils');
-const { populateTestDB, TestArtists, TestAlbums } = require('./utils/databaseUtils');
+const { getApp } = require('../utils/appUtils');
+const { TEN_SECONDS } = require('../utils/appUtils');
+const { populateTestDB, TestArtists, TestAlbums } = require('../utils/databaseUtils');
 
 describe('Edit artist information', () => {
   let app, menuAddon;

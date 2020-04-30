@@ -1,6 +1,6 @@
 module.exports = {
   roots: [
-    "<rootDir>/test-e2e"
+    "<rootDir>/e2e/tests"
   ],
   testMatch: [
     "**/?(*.)+(test).+(ts|tsx|js)"

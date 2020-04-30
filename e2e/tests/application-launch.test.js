@@ -1,5 +1,5 @@
-const { getApp, TEN_SECONDS } = require('./utils/appUtils');
-const { populateTestDB, TestPlaylists } = require('./utils/databaseUtils');
+const { getApp, TEN_SECONDS } = require('../utils/appUtils');
+const { populateTestDB, TestPlaylists } = require('../utils/databaseUtils');
 
 describe('Application launch', () => {
   let app, menuAddon;

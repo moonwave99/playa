@@ -1,8 +1,8 @@
 const path = require('path');
-const { getApp } = require('./utils/appUtils');
-const { TEN_SECONDS } = require('./utils/appUtils');
-const { populateTestDB, TestAlbums, TestPlaylists, TestArtists } = require('./utils/databaseUtils');
-const { FileAlbums, generateAlbum } = require('./utils/musicfileUtils');
+const { getApp } = require('../utils/appUtils');
+const { TEN_SECONDS } = require('../utils/appUtils');
+const { populateTestDB, TestAlbums, TestPlaylists, TestArtists } = require('../utils/databaseUtils');
+const { FileAlbums, generateAlbum } = require('../utils/musicfileUtils');
 
 function mock(app, options) {
   app.electron.ipcRenderer.sendSync('SPECTRON_FAKE_DIALOG/SEND', options);
@@ -12,7 +12,7 @@ describe('Playlist interaction', () => {
   let app, menuAddon, contextMenuAddon;
   beforeEach(async () => {
     const menuApp = await getApp({
-      args: ['-r', path.join(__dirname, '__mocks__/mock-dialog.js')]
+      args: ['-r', path.join(process.cwd(), 'e2e/__mocks__/mock-dialog.js')]
     });
     app = menuApp.app;
     menuAddon = menuApp.menuAddon;

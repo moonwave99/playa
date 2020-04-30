@@ -1,5 +1,5 @@
-const { getApp } = require('./utils/appUtils');
-const { populateTestDB, TestPlaylists } = require('./utils/databaseUtils');
+const { getApp } = require('../utils/appUtils');
+const { populateTestDB, TestPlaylists } = require('../utils/databaseUtils');
 
 describe('About window', () => {
   let app, menuAddon;
