@@ -151,4 +151,32 @@ describe('Player interaction', () => {
     // Pause playback
     await app.client.keys('Space');
   }, TEN_SECONDS);
+
+  it('seeks to position when the progress bar is clicked', async () => {
+    await app.start();
+    await app.client.waitUntilWindowLoaded();
+
+    await app.client.click(`#playlist-list-item-${TestPlaylists[0]._id} .playlist-list-item-link`);
+    await app.client.waitUntil(
+      async () => await app.client.getText('.app-header .heading-main') === TestPlaylists[0].title
+    );
+
+    // Starts Playback
+    await app.client.keys('Enter');
+
+    // Playback control shows pause indicator
+    await app.client.waitForExist('.player-controls .control-playback.is-playing');
+
+    // workaround to click in the middle of playback bar
+    await app.client.click('.current-track-title');
+
+    // check that elapsed and left time are as expected
+    await app.client.waitUntil(async () => {
+      const elapsedTime = await app.client.getText('.duration-elapsed');
+      const leftTime = await app.client.getText('.duration-left');
+      const duration = generatedAlbums[0].tracks[0].duration;
+      return elapsedTime === `00:0${Math.ceil(duration / 2)}`
+        && leftTime === `-00:0${Math.floor(duration / 2)}`;
+    });
+  }, TEN_SECONDS);
 });
