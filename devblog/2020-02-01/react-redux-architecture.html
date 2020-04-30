@@ -7,7 +7,7 @@
     <title>The React/Redux architecture / Playa Devblog / Playa</title>
     <meta name="generator" content="waffel">
 
-    <meta name="version" content="5994dc3@master">
+    <meta name="version" content="e38feff@master">
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -15,7 +15,7 @@
 
 
 
-    <meta name="description" content="Many practices flourished in the React ecosystems, addressing from how to structure the src folder to where and how store the app state, to how to…">
+    <meta name="description" content="Many practices flourished in the React ecosystems, addressing from project files hierarchy to where and how store the app state, to components…">
 
     <meta property="og:site_name" content="Playa">
     <meta property="og:url" content="https://moonwave99.github.io/playa/devblog/2020-02-01/react-redux-architecture">
@@ -23,7 +23,7 @@
     <meta property="og:image" content="https://moonwave99.github.io/playa/images/screenshots/playlist.png">
 
     <meta property="og:type" content="article">
-    <meta property="og:description" content="Many practices flourished in the React ecosystems, addressing from how to structure the src folder to where and how store the app state, to how to style components. Here are my choices in regard.">
+    <meta property="og:description" content="Many practices flourished in the React ecosystems, addressing from project files hierarchy to where and how store the app state, to components styles. Here are my choices in regard.">
     <meta property="article:published_time" content="2020-02-01T01:00:00.000+0100">
 
 
@@ -34,10 +34,10 @@
     <meta name="twitter:title" content="The React/Redux architecture | Playa">
     <meta property="twitter:image:src" content="https://moonwave99.github.io/playa/images/screenshots/playlist.png">
 
-    <meta name="twitter:description" content="Many practices flourished in the React ecosystems, addressing from how to structure the src folder to where and how store the app state, to how to style components. Here are my choices in regard.">
+    <meta name="twitter:description" content="Many practices flourished in the React ecosystems, addressing from project files hierarchy to where and how store the app state, to components styles. Here are my choices in regard.">
 
 
-    <link rel="stylesheet" href="https://moonwave99.github.io/playa/css/app_5994dc3169f3fd0f46150bada3f6a52b12f02ce6.css">
+    <link rel="stylesheet" href="https://moonwave99.github.io/playa/css/app_e38feff2d201a6061c7e2e0ca0ecbccbdd8373e0.css">
   </head>
 
   <body class="w-100 sans-serif blog-single">
@@ -66,14 +66,15 @@
           <h1 class="f3 f1-ns lh-solid mt4 mb4">The React/Redux architecture</h1>
         </header>
         <section class="blog-post-content">
-          <p class="lh-copy">Many practices flourished in the React ecosystems, addressing from how to structure the src folder to where and how store the app state, to how to style components. Here are my choices in regard.</p>
+          <p class="lh-copy">Many practices flourished in the React ecosystems, addressing from project files hierarchy to where and how store the app state, to components styles. Here are my choices in regard.</p>
           <h2 class="mt5">
             <a name="the-code-class-dark-pink-src-code-organisation" class="anchor" href="#the-code-class-dark-pink-src-code-organisation">
               <span class="link blue">#</span>
             </a>
             The <code class="dark-pink">src</code> organisation
           </h2>
-          <p class="lh-copy">The folder structure of an application should favour the development process first of all. How often am I accessing a file? Should other people of the team have non frequent access to any part of it? <a class="link blue underline-hover" href="https://medium.com/hackernoon/the-100-correct-way-to-structure-a-react-app-or-why-theres-no-such-thing-3ede534ef1ed" target='_blank'>This article</a> contains a lot of sound considerations in this direction.</p>
+          <p class="lh-copy">The folder structure of an application should favour the development process first of all. How often am I accessing a file? Should other people of the team have non frequent access to any part of it? <a class="link blue underline-hover" href="https://medium.com/hackernoon/the-100-correct-way-to-structure-a-react-app-or-why-theres-no-such-thing-3ede534ef1ed" target='_blank'>This article by David Gilbertson
+            </a> contains a lot of sound considerations in this direction.</p>
           <p class="lh-copy">Each <strong>component</strong> lives in a folder named as the component itself, among with specs and styles. The hierarchy system is completely arbitr..ahem is mixed: some components are contained inside the parent component, some others live ad the base level because are shared.</p><pre><code class="language-bash">src
   renderer
     components
@@ -133,15 +134,180 @@
 import React, { FC, ReactElement, useState, useEffect, useRef } from &#39;react&#39;;
 ...
 import &#39;./App.scss&#39;;</code></pre>
-
+          <p class="lh-copy">Why no inline styles? I am just fine with SASS preprocessing / interpolation / mixins.</p>
           <h2 class="mt5">
             <a name="redux" class="anchor" href="#redux">
               <span class="link blue">#</span>
             </a>
             Redux
           </h2>
-          <p class="lh-copy">I like Redux because it acts more like a low level glue, rather than as a framework. It makes you think about the solutions, and gives you freedom of implementation. Such freedom has a price, called a lot of code to write (and to test). There is a lot of boilerplate to be written, mainly because of Typescript definitions, but once the foundation is stable I didn&#39;t have to add much more material: combining existing actions is enough.</p>
-          <p class="lh-copy">I use the the standard <code class="dark-pink">redux-thunk</code> as async handler middleware.</p>
+          <p class="lh-copy">I like Redux because it acts more like a <strong>low level glue</strong>, rather than as a <strong>rigid framework</strong>. It makes you think about the solutions, and gives you freedom of implementation. Such freedom has a price, called a lot of code to write (and to test). There is a lot of boilerplate to be written, mainly because of Typescript definitions, but once the foundation is stable I didn&#39;t have to add much more material: combining existing actions is enough.</p>
+          <h3 class="mt5">
+            <a name="selectors" class="anchor" href="#selectors">
+              <span class="link blue">#</span>
+            </a>
+            Selectors
+          </h3>
+          <p class="lh-copy">Selectors are used in <code class="dark-pink">useSelector</code> hooks or inside <code class="dark-pink">(re-)reselect</code> selectors.</p><pre><code class="language-typescript">// /src/renderer/store/modules/album.ts
+export const selectors = {
+  state: ({ albums }: { albums: AlbumState }): AlbumState =&gt; albums,
+  allById: ({ albums }: { albums: AlbumState }): EntityHashMap&lt;Album&gt; =&gt; albums.allById,
+  findById: ({ albums }: { albums: AlbumState }, id: Album[&#39;_id&#39;]): Album =&gt; albums.allById[id],
+  findByList: ({ albums }: { albums: AlbumState }, ids: Album[&#39;_id&#39;][]): Album[] =&gt; ids.map(id =&gt; albums.allById[id]),
+  findByVariousArtists: ({ albums }: { albums: AlbumState }): Album[] =&gt;
+    toArray(albums.allById).filter(({ isAlbumFromVA }) =&gt; isAlbumFromVA)
+};
+
+// Usage example
+import { selectors as albumSelectors } from &#39;../../store/modules/album&#39;;
+
+...
+
+const albums = useSelector((state: ApplicationState) =&gt; {
+  return albumSelectors.findByList(state, listOfAlbumIDs)
+});</code></pre>
+          <p class="lh-copy">Is it worth having them, as opposed to write ad hoc composite selectors every time? As long as they are tested, they cost nothing and they make simple compositions self-explaining.</p>
+          <p class="lh-copy">For more complex cases, <code class="dark-pink">reselect</code> does the job:</p><pre><code class="language-typescript">import { createSelector } from &#39;reselect&#39;;
+
+...
+
+export const playerSelector = createSelector(
+  selectors.state,
+  playlistSelectors.allById,
+  albumSelectors.allById,
+  trackSelectors.allById,
+  waveformSelectors.allById,
+  (player, playlists, albums, tracks, waveforms): GetPlayerInfoSelection =&gt; {
+    const {
+      currentPlaylistId,
+      currentAlbumId,
+      currentTrackId,
+      queue
+    } = player;
+    return {
+      currentPlaylist: playlists[currentPlaylistId],
+      currentAlbum: albums[currentAlbumId],
+      currentAlbumId,
+      currentTrack: tracks[currentTrackId],
+      waveform: waveforms[currentTrackId],
+      queue: queue.map(x =&gt; albums[x])
+    };
+  }
+);</code></pre>
+          <p class="lh-copy">It makes the component smaller:</p><pre><code class="language-typescript">import {
+    playerSelector
+} from &#39;../../store/modules/player&#39;;
+
+...
+
+const {
+  currentPlaylist,
+  currentAlbum,
+  currentTrack,
+  queue,
+  waveform
+} = useSelector(playerSelector);</code></pre>
+          <p class="lh-copy">Bonus: you test the selector in the store context, leaving the UI to its UI things.</p>
+          <h3 class="mt5">
+            <a name="actions" class="anchor" href="#actions">
+              <span class="link blue">#</span>
+            </a>
+            Actions
+          </h3>
+          <p class="lh-copy">I use the the standard <code class="dark-pink">redux-thunk</code> as async handler middleware. Here we have an example of <strong>sync</strong> vs <strong>async</strong> action:</p><pre><code class="language-typescript">export const getAlbumListResponse = (results: Album[]): Function =&gt;
+  (dispatch: Function): void =&gt; {
+    dispatch({
+      type: ALBUM_GET_LIST_RESPONSE,
+      results
+    });
+  }
+
+export const getAlbumListRequest = (ids: Album[&#39;_id&#39;][]): Function =&gt;
+  async (dispatch: Function): Promise&lt;void&gt; =&gt; {
+    dispatch(
+      getAlbumListResponse(
+        await ipc.invoke(IPC_ALBUM_GET_LIST_REQUEST, ids)
+      )
+    );
+  }</code></pre>
+          <p class="lh-copy">In the first case (<code class="dark-pink">getAlbumListResponse</code>), an action of type <code class="dark-pink">ALBUM_GET_LIST_RESPONSE</code> is dispatched (and thus handled by the reducer).</p>
+          <p class="lh-copy">In the second (<code class="dark-pink">getAlbumListRequest</code>), we have to wait for the response of the <code class="dark-pink">ipc.invoke</code> call. We could have moved it outside the action, but that would have given responsibility to the caller context (with all chance, a React component).</p>
+          <p class="lh-copy">In order to keep everything in our tidy black box, it is enough to mark the function as <code class="dark-pink">async</code> (and to update the return type to <code class="dark-pink">Promise&lt;void&gt;</code>). Now the action is dispatched after <code class="dark-pink">await</code>ing for the results.</p>
+          <p class="lh-copy">Pay attention to how the request and response handlers are separated, both in the actions and in the reducer. In this case I&#39;ve chosen <em>not</em> to dispatch a <code class="dark-pink">ALBUM_GET_LIST_REQUEST</code> action, because I am not updating the UI accordingly. Let&#39;s make a more universal example:</p><pre><code class="language-typescript">// action creator
+export const getDataRequest = (query: string): Function =&gt;
+  async (dispatch: Function): Promise&lt;void&gt; =&gt; {
+    dispatch({
+      type: GET_DATA_REQUEST,
+      query
+    });
+    try {
+      const data = await someService.get(query);
+      dispatch({
+        type: GET_DATA_RESPONSE,
+        data
+      });
+    } catch(error) {
+      dispatch({
+        type: GET_DATA_ERROR,
+        error
+      });      
+    }
+  }
+
+// reducer
+function reducer(state, action) {
+  switch (action.type) {
+    case GET_DATA_REQUEST:
+      return {
+        ...state,
+        loading: true
+      };
+    case GET_DATA_RESPONSE:
+      return {
+        ...state,
+        loading: false,
+        error: null,
+        data: action.data
+      };
+    case GET_DATA_ERROR:
+      return {
+        ...state,
+        loading: false,
+        error: action.error
+      };
+  } 
+);
+
+// compo
+function Compo() {
+  const { data, loading, error } = useSelector( ... );
+
+  if (loading) {
+    return &lt;div&gt;Loading...&lt;/div&gt;;
+  }
+
+  if (error) {
+    return &lt;div&gt;{ error.message }&lt;/div&gt;;
+  }
+
+  // do something with data
+  return ...;
+}</code></pre>
+          <p class="lh-copy">This way, we cover all cases and we split responsibility between actions. The UI knows when to display a spinner or if to display an error message. This is also important because it makes the components independent - an action may be fired from a part of the UI, and the effects may be reflected elsewhere.</p>
+          <p class="lh-copy">As an action creator can dispatch multiple actions, we are not tied to dispatch actions of the same store - think about dispatching a common error or UI handler actions.</p>
+          <p class="lh-copy"><strong>Note</strong>: in the Playa case, the <code class="dark-pink">getAlbumListResponse</code> wrapper was needed because the list could come from different sources.</p>
+          <h2 class="mt5">
+            <a name="what-i-would-like-to-improve" class="anchor" href="#what-i-would-like-to-improve">
+              <span class="link blue">#</span>
+            </a>
+            What I would like to improve
+          </h2>
+          <ul>
+            <li>implement centralised error handling;</li>
+            <li>wrap <code class="dark-pink">ipc</code>/database communication in an additional layer to improve testability;</li>
+            <li>fine grain some selectors to prevent redundant component re-renders.</li>
+          </ul>
+
         </section>
       </article>
       <div class="album-bar relative overflow-hidden w-100 bg-mid-gray"></div>
@@ -170,8 +336,8 @@ import &#39;./App.scss&#39;;</code></pre>
     </footer>
 
 
-    <script src="https://moonwave99.github.io/playa/js/vendor_5994dc3169f3fd0f46150bada3f6a52b12f02ce6.js"></script>
-    <script src="https://moonwave99.github.io/playa/js/app_5994dc3169f3fd0f46150bada3f6a52b12f02ce6.js"></script>
+    <script src="https://moonwave99.github.io/playa/js/vendor_e38feff2d201a6061c7e2e0ca0ecbccbdd8373e0.js"></script>
+    <script src="https://moonwave99.github.io/playa/js/app_e38feff2d201a6061c7e2e0ca0ecbccbdd8373e0.js"></script>
     <script>
       require('initialize')({
         title: 'Playa',

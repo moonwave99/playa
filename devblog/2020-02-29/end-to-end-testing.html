@@ -7,7 +7,7 @@
     <title>End to End Testing / Playa Devblog / Playa</title>
     <meta name="generator" content="waffel">
 
-    <meta name="version" content="5994dc3@master">
+    <meta name="version" content="e38feff@master">
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -37,7 +37,7 @@
     <meta name="twitter:description" content="This week I focused mostly on end to end testing (e2e from now on). I am fairly new to e2e, as I usually never adventures myself outside of the green pastures of unit and integration.">
 
 
-    <link rel="stylesheet" href="https://moonwave99.github.io/playa/css/app_5994dc3169f3fd0f46150bada3f6a52b12f02ce6.css">
+    <link rel="stylesheet" href="https://moonwave99.github.io/playa/css/app_e38feff2d201a6061c7e2e0ca0ecbccbdd8373e0.css">
   </head>
 
   <body class="w-100 sans-serif blog-single">
@@ -78,7 +78,7 @@
 }</code></pre>
           <p class="lh-copy">Where the <code class="dark-pink">jest.config.e2e.js</code> configuration files contains:</p><pre><code class="language-javascript">module.exports = {
   roots: [
-    &quot;&lt;rootDir&gt;/test-e2e&quot;
+    &quot;&lt;rootDir&gt;/e2e/tests&quot;
   ],
   testMatch: [
     &quot;**/?(*.)+(spec|test).+(ts|tsx|js)&quot;
@@ -163,7 +163,7 @@ export async function populateTestDB(): Promise&lt;void&gt; {
           <p class="lh-copy">Let&#39;s peek at <code class="dark-pink">application-launch.test.js</code>:</p><pre><code class="language-javascript">const Application = require(&#39;spectron&#39;).Application;
 const electronPath = require(&#39;electron&#39;);
 const path = require(&#39;path&#39;);
-const { populateTestDB } = require(&#39;./utils&#39;);
+const { populateTestDB } = require(&#39;../utils&#39;);
 
 const TEN_SECONDS = 10000;
 
@@ -174,7 +174,7 @@ describe(&#39;Application launch&#39;, () =&gt; {
     app = new Application({
       path: electronPath,
       env: { RUNNING_IN_SPECTRON: &#39;1&#39; },
-      args: [path.join(__dirname, &#39;..&#39;)]
+      args: [path.join(__dirname, &#39;../..&#39;)]
     });
     return app.start();
   });
@@ -242,7 +242,7 @@ export async function populateTestDB({
   }));
 
 // testfile
-const { populateTestDB, TestPlaylists } = require(&#39;./utils/databaseUtils&#39;);
+const { populateTestDB, TestPlaylists } = require(&#39;../utils/databaseUtils&#39;);
 
 await populateTestDB({
   playlists: [TestPlaylists[0]],
@@ -294,8 +294,8 @@ await app.client.waitUntil(async() =&gt; await app.client.getText(&#39;h1&#39;) 
     </footer>
 
 
-    <script src="https://moonwave99.github.io/playa/js/vendor_5994dc3169f3fd0f46150bada3f6a52b12f02ce6.js"></script>
-    <script src="https://moonwave99.github.io/playa/js/app_5994dc3169f3fd0f46150bada3f6a52b12f02ce6.js"></script>
+    <script src="https://moonwave99.github.io/playa/js/vendor_e38feff2d201a6061c7e2e0ca0ecbccbdd8373e0.js"></script>
+    <script src="https://moonwave99.github.io/playa/js/app_e38feff2d201a6061c7e2e0ca0ecbccbdd8373e0.js"></script>
     <script>
       require('initialize')({
         title: 'Playa',
