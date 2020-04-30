@@ -194,6 +194,7 @@ export const AlbumView: FC<AlbumViewProps> = ({
         <TracklistView
           tracklist={album.tracks}
           tracks={tracks}
+          albumId={album._id}
           currentTrackId={currentTrackId}
           showArtists={showTrackArtists(album)}
           showTrackNumbers={showTrackNumbers(album)}

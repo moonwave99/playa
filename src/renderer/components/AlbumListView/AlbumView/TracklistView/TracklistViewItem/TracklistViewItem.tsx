@@ -9,6 +9,7 @@ import { SEARCH } from '../../../../../routes';
 
 type TracklistViewItemProps = {
   track: Track;
+  id?: string;
   isCurrent?: boolean;
   isSelected?: boolean;
   showArtists?: boolean;
@@ -19,6 +20,7 @@ type TracklistViewItemProps = {
 // #TODO reload onClick if some tracks are not found
 export const TracklistViewItem: FC<TracklistViewItemProps> = ({
   track,
+  id,
   isCurrent = false,
   isSelected = false,
   showTrackNumber = true,
@@ -56,7 +58,7 @@ export const TracklistViewItem: FC<TracklistViewItemProps> = ({
   });
 
   return (
-    <li className={trackClassNames} onDoubleClick={_onDoubleClick} id={`track-${number}`}>
+    <li className={trackClassNames} onDoubleClick={_onDoubleClick} id={`track-${id || number}`}>
       {renderTrackNumber(number)}
       <span className="playback-info">
         <FontAwesomeIcon

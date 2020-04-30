@@ -90,7 +90,7 @@ export const AlbumDetailView: FC<AlbumDetailViewProps> = ({
 
   useEffect(() => {
     selectItem(album.tracks[0]);
-  }, [album.tracks]);  
+  }, [album.tracks]);
 
   useEffect(() => {
     inView && dispatch(getAlbumRequest(_id));
@@ -219,6 +219,7 @@ export const AlbumDetailView: FC<AlbumDetailViewProps> = ({
         <TracklistView
           tracklist={album.tracks}
           tracks={tracks}
+          albumId={album._id}
           selectedTrackId={selection[0]}
           currentTrackId={currentTrackId}
           showArtists={showTrackArtists(album)}

@@ -47,7 +47,7 @@ describe('Player interaction', () => {
     await app.start();
     await app.client.waitUntilWindowLoaded();
 
-    await app.client.click(`#playlist-list-item-${TestPlaylists[0]._id}`);
+    await app.client.click(`#playlist-list-item-${TestPlaylists[0]._id} .playlist-list-item-link`);
     await app.client.waitUntil(
       async () => await app.client.getText('.app-header .heading-main') === TestPlaylists[0].title
     );
@@ -62,7 +62,7 @@ describe('Player interaction', () => {
     await app.client.waitForExist(`#album-${TestAlbums[0]._id}.is-current`);
 
     // First track in album is marked as playing
-    await app.client.waitForExist(`#track-1.is-current`);
+    await app.client.waitForExist(`#track-${TestAlbums[0]._id}_0.is-current`);
 
     // Current track info is displayed in playback bar
     await app.client.waitUntil(async () => {
@@ -78,10 +78,13 @@ describe('Player interaction', () => {
       return showsCurrentTrackTitle && showsCurrentTrackInfo && showsCurrentAlbumCover;
     });
 
+    // Current playlist has a playback indicator
+    await app.client.waitForExist(`#playlist-list-item-${TestPlaylists[0]._id}.is-playing`);
+
     const lastTrackIndex = generatedAlbums[0].tracks.length - 1;
 
     // Play last track of first album
-    await app.client.doubleClick(`#track-${generatedAlbums[0].tracks[lastTrackIndex].number}`);
+    await app.client.doubleClick(`#track-${TestAlbums[0]._id}_${lastTrackIndex}`);
 
     // Pause playback
     await app.client.keys('Space');
@@ -130,6 +133,20 @@ describe('Player interaction', () => {
           === `[${TestAlbums[0]._id}] ${TestAlbums[0].title}`;
       return showsCurrentTrackTitle && showsCurrentTrackInfo && showsCurrentAlbumCover;
     });
+
+    // Navigate to library
+    await app.client.click('.app-header .button-library');
+    await app.client.waitUntil(async () => await app.client.getText('.app-header h1') === 'Library');
+
+    // Current album is playing
+    await app.client.waitForExist(`#album-grid-tile-${TestAlbums[0]._id}.is-playing`);
+
+    // Navigate to queue
+    await app.client.click('.app-header .button-queue');
+    await app.client.waitUntil(async () => await app.client.getText('.app-header h1 .heading-main') === 'Playback Queue');
+
+    // Current track is playing
+    await app.client.waitForExist(`#track-${TestAlbums[0]._id}_${lastTrackIndex}.is-current`);
 
     // Pause playback
     await app.client.keys('Space');

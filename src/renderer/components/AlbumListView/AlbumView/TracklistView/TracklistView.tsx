@@ -1,12 +1,14 @@
 import React, { FC, ReactElement } from 'react';
 import cx from 'classnames';
 import { TracklistViewItem } from './TracklistViewItem/TracklistViewItem';
+import { Album } from '../../../../store/modules/album';
 import { Track } from '../../../../store/modules/track';
 import { COLORS } from '../../../../../constants';
 import './TracklistView.scss';
 
 type TracklistViewProps = {
   className?: string;
+  albumId?: Album['_id'];
   selectedTrackId?: Track['_id'];
   currentTrackId?: Track['_id'];
   tracklist: Track['_id'][];
@@ -19,6 +21,7 @@ type TracklistViewProps = {
 // #TODO reload onClick if some tracks are not found
 export const TracklistView: FC<TracklistViewProps> = ({
   className,
+  albumId,
   selectedTrackId,
   currentTrackId,
   tracklist,
@@ -46,6 +49,7 @@ export const TracklistView: FC<TracklistViewProps> = ({
     return (
       <TracklistViewItem
         key={_id}
+        id={albumId ? `${albumId}_${index}` : `${index}`}
         track={track}
         isCurrent={_id === currentTrackId}
         isSelected={_id === selectedTrackId}

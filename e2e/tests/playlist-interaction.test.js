@@ -41,7 +41,7 @@ describe('Playlist interaction', () => {
     const newTitle = 'New Playlist Title';
 
     // select playlist
-    await app.client.click(`#playlist-list-item-${_id}`);
+    await app.client.click(`#playlist-list-item-${_id} .playlist-list-item-link`);
     await app.client.waitUntil(
       async () => await app.client.getText('.app-header .heading-main') === title
     );
@@ -60,7 +60,7 @@ describe('Playlist interaction', () => {
 
     // check that sidebar playlist item has been updated
     await app.client.waitUntil(
-      async () => await app.client.getText(`#playlist-list-item-${_id}`) === newTitle
+      async () => await app.client.getText(`#playlist-list-item-${_id} .playlist-list-item-link`) === newTitle
     );
 
     // check that playlist has been updated in all playlists view
@@ -88,7 +88,7 @@ describe('Playlist interaction', () => {
     const { _id, title } = TestPlaylists[0];
 
     // select playlist
-    await app.client.click(`#playlist-list-item-${_id}`);
+    await app.client.click(`#playlist-list-item-${_id} .playlist-list-item-link`);
     await app.client.waitUntil(
       async () => await app.client.getText('.app-header .heading-main') === title
     );
@@ -124,7 +124,7 @@ describe('Playlist interaction', () => {
 
     const { _id, title } = TestPlaylists[0];
 
-    await app.client.click(`#playlist-list-item-${_id}`);
+    await app.client.click(`#playlist-list-item-${_id} .playlist-list-item-link`);
     await app.client.waitUntil(
       async () => await app.client.getText('.app-header .heading-main') === title
     );
@@ -159,7 +159,7 @@ describe('Playlist interaction', () => {
 
     const { _id, title } = TestPlaylists[0];
 
-    await app.client.click(`#playlist-list-item-${_id}`);
+    await app.client.click(`#playlist-list-item-${_id} .playlist-list-item-link`);
     await app.client.waitUntil(
       async () => await app.client.getText('.app-header .heading-main') === title
     );
