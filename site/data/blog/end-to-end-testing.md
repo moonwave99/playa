@@ -26,7 +26,7 @@ Where the `jest.config.e2e.js` configuration files contains:
 ```javascript
 module.exports = {
   roots: [
-    "<rootDir>/test-e2e"
+    "<rootDir>/e2e/tests"
   ],
   testMatch: [
     "**/?(*.)+(spec|test).+(ts|tsx|js)"
@@ -127,7 +127,7 @@ Let's peek at `application-launch.test.js`:
 const Application = require('spectron').Application;
 const electronPath = require('electron');
 const path = require('path');
-const { populateTestDB } = require('./utils');
+const { populateTestDB } = require('../utils');
 
 const TEN_SECONDS = 10000;
 
@@ -138,7 +138,7 @@ describe('Application launch', () => {
     app = new Application({
       path: electronPath,
       env: { RUNNING_IN_SPECTRON: '1' },
-      args: [path.join(__dirname, '..')]
+      args: [path.join(__dirname, '../..')]
     });
     return app.start();
   });
@@ -218,7 +218,7 @@ export async function populateTestDB({
   }));
   
 // testfile
-const { populateTestDB, TestPlaylists } = require('./utils/databaseUtils');
+const { populateTestDB, TestPlaylists } = require('../utils/databaseUtils');
 
 await populateTestDB({
   playlists: [TestPlaylists[0]],
