@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AlbumForm } from '../AlbumForm/AlbumForm';
 import { TracklistView } from '../../AlbumListView/AlbumView/TracklistView/TracklistView';
@@ -27,6 +27,10 @@ export const ImportView: FC<ImportViewProps> = ({
   const { t } = useTranslation();
   const [isAlbumFromVA, setAlbumFromVA] = useState(false);
   const [albumType, setAlbumType] = useState(AlbumTypes.Album);
+
+  useEffect(() => {
+    window.getSelection().removeAllRanges();
+  }, []);
 
   function _onFormSubmit({
     title,

@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import ReactModal from 'react-modal';
 import { EditAlbumView } from '../../components/LibraryView/EditAlbumView/EditAlbumView'
@@ -12,6 +12,10 @@ export default function useEditAlbum(appElement: HTMLElement): {
   const dispatch = useDispatch();
   const [album, setAlbum] = useState();
   const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    window.getSelection().removeAllRanges();
+  }, []);  
 
   function show(album: Album): void {
     setAlbum(album);

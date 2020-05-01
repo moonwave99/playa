@@ -26,6 +26,10 @@ globalAny.IntersectionObserver = jest.fn(() => ({
   disconnect: jest.fn(),
 }));
 
+globalAny.getSelection = () => ({
+  removeAllRanges: () => {}
+});
+
 configure({ adapter: new Adapter() });
 
 initI18n();
