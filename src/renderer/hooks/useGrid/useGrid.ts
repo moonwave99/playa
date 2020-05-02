@@ -22,8 +22,9 @@ type ListenerEvent = MouseEvent & {
   target: Element;
 };
 
-export type HasId = {
+export type GridCell = {
   _id: string;
+  firstOfGroup?: boolean;
 };
 
 export type Threshold = {
@@ -38,7 +39,7 @@ type OnItemClickParams = {
 };
 
 type GenerateRowsParams = {
-  items: HasId[];
+  items: GridCell[];
   thresholds: Threshold[];
   groupBy?: string;
   windowWidth: number;
@@ -50,7 +51,7 @@ export function generateRows({
   groupBy,
   windowWidth
 }: GenerateRowsParams): {
-  rows: HasId[][];
+  rows: GridCell[][];
   threshold: Threshold;
 } {
   let threshold = thresholds[thresholds.length - 1];
@@ -61,7 +62,7 @@ export function generateRows({
     }
   }
 
-  function padRow(row: HasId[]): void {
+  function padRow(row: GridCell[]): void {
     if (!row) {
       return;
     }
@@ -75,6 +76,7 @@ export function generateRows({
     const groupedItems = groupItemsBy(items, groupBy);
     const rows = Object.entries(groupedItems).reduce((memo, [, value]) => {
       const rows = [...chunk(value, threshold.columns)];
+      rows[0][0].firstOfGroup = true;
       padRow(rows[rows.length - 1]);
       return [...memo, ...rows];
     }, []);
@@ -99,9 +101,9 @@ export function moveSelection({
   rows,
   direction
 }: {
-  items: HasId[];
+  items: GridCell[];
   selection: string[];
-  rows: HasId[][];
+  rows: GridCell[][];
   direction: Directions;
 }): number {
   if (selection.length === 0 && items.length > 0) {
@@ -159,7 +161,7 @@ export enum KeyboardDirections {
 }
 
 type UseGridParams = {
-  items: HasId[];
+  items: GridCell[];
   thresholds?: Threshold[];
   direction?: KeyboardDirections;
   excludeClass?: string;
@@ -186,7 +188,7 @@ export default function useGrid({
   onEnter,
   onBackspace
 }: UseGridParams): {
-  rows: HasId[][];
+  rows: GridCell[][];
   selection: string[];
   threshold: Threshold;
   onItemClick: Function;
@@ -196,7 +198,7 @@ export default function useGrid({
 } {
   const hasFocus = useRef(false);
   const [selection, setSelection] = useState(initialSelection);
-  const [rows, setRows] = useState([] as HasId[][]);
+  const [rows, setRows] = useState([] as GridCell[][]);
   const [threshold, setThreshold] = useState(thresholds[0]);
 
   const ref = useRef(null);
@@ -367,7 +369,7 @@ export default function useGrid({
     hasFocus.current = focus;
   }
 
-  function selectItem(selectedID: HasId['_id']): void {
+  function selectItem(selectedID: GridCell['_id']): void {
     if (items.find(({ _id }) => _id === selectedID)) {
       setSelection([selectedID]);
     }

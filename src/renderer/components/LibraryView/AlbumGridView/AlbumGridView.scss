@@ -4,6 +4,15 @@
 .album-grid {
   .album-grid-row {
     @include clearFix();
+    &.has-group-title {
+      .album-grid-group-title {
+        font-weight: normal;
+        font-size: 1.2rem;
+        line-height: $mainUnit;
+        color: $highlightColor;
+        margin: 1.5rem 0 0 1.5rem;
+      }
+    }
     .album-grid-tile {
       float: left;
       margin-bottom: 1.5rem;

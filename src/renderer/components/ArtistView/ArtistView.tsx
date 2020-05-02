@@ -2,6 +2,7 @@ import React, { ReactElement, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect, useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import cx from 'classnames';
 import { AlbumGridView } from '../LibraryView/AlbumGridView/AlbumGridView';
 import './ArtistView.scss';
 
@@ -163,6 +164,11 @@ export const ArtistView = (): ReactElement => {
     }).handler();
   }
 
+  function renderGroupTitle(album: Album): ReactElement {
+    const classNames = cx('album-grid-group-title', `album-row-group-title-${album.type}`);
+    return <h2 className={classNames}>{album.type}</h2>;
+  }
+
   if (!artistId) {
     return <Redirect to={LIBRARY}/>;
   }
@@ -183,7 +189,8 @@ export const ArtistView = (): ReactElement => {
             onEnter={onAlbumEnter}
             onBackspace={onAlbumBackspace}
             onAlbumContextMenu={onAlbumContextMenu}
-            onAlbumDoubleClick={onAlbumDoubleClick}/>
+            onAlbumDoubleClick={onAlbumDoubleClick}
+            renderGroupTitle={renderGroupTitle}/>
       }
     </section>
   );

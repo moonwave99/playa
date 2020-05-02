@@ -1,5 +1,5 @@
 import {
-  HasId,
+  GridCell,
   Threshold,
   Directions,
   generateRows,
@@ -8,7 +8,7 @@ import {
 
 import { ALBUM_GRID_THRESHOLDS } from '../../../constants';
 
-type Item = HasId & { type?: string }
+type Item = GridCell & { type?: string }
 
 function generateItems(count = 0, type?: string): Item[] {
   const items: Item[] = [];

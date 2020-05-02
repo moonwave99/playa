@@ -1,6 +1,6 @@
 import React from 'react';
 import { renderInAll, mountInAll, mockRouter } from '../../../../test/testUtils';
-import { artists } from '../../../../test/testFixtures';
+import { artists, albums } from '../../../../test/testFixtures';
 import { toObj } from '../../utils/storeUtils';
 import { Album } from '../../store/modules/album';
 
@@ -16,7 +16,7 @@ const defaultStore = {
     currentAlbumId: null as Album['_id']
   },
   albums: {
-    allById: {}
+    allById: toObj(albums)
   },
   artists: {
     allById: toObj(artists)
@@ -43,7 +43,12 @@ describe('ArtistView', () => {
     router.routeParams = { _id: '1' }
     const wrapper = renderInAll(
 			<ArtistView/>
-		, defaultStore);
+		, {
+      ...defaultStore,
+      albums: {
+        allById: {}
+      }
+    });
     expect(wrapper.find('.artist-empty-placeholder')).toHaveLength(1);
   });
 

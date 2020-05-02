@@ -7,7 +7,7 @@ import { AlbumGridTileView } from './AlbumGridTileView/AlbumGridTileView';
 import { TooltipAlbumView } from '../../TooltipAlbumView/TooltipAlbumView';
 import { Album } from '../../../store/modules/album';
 import { Track } from '../../../store/modules/track';
-import useGrid, { EMPTY_CELL } from '../../../hooks/useGrid/useGrid';
+import useGrid, { GridCell, EMPTY_CELL } from '../../../hooks/useGrid/useGrid';
 import scrollTo from '../../../lib/scrollTo';
 
 import './AlbumGridView.scss';
@@ -33,6 +33,7 @@ type AlbumGridViewProps = {
   onBackspace?: Function;
   onAlbumContextMenu?: Function;
   onAlbumDoubleClick?: Function;
+  renderGroupTitle?: (album: Album) => ReactElement;
 };
 
 export const AlbumGridView: FC<AlbumGridViewProps> = ({
@@ -49,7 +50,8 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
   onEnter,
   onBackspace,
   onAlbumContextMenu,
-  onAlbumDoubleClick
+  onAlbumDoubleClick,
+  renderGroupTitle
 }) => {
   const [isDragging, setDragging] = useState(false);
 
@@ -191,15 +193,19 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
     );
   }
 
-  function renderRow(row: Album[]): ReactElement {
+  function renderRow(row: (Album & GridCell)[]): ReactElement {
+    const hasGroupTitle = row[0].firstOfGroup;
     const classNames = cx('album-grid-row', {
-      [`album-grid-row-${row[0].type}`]: !!groupBy
+      [`album-grid-row-${row[0].type}`]: !!groupBy,
+      'has-group-title': hasGroupTitle
     });
     const rowId = row.map(({ _id }) => _id).join('-');
     return (
       <div
         className={classNames}
-        key={rowId}>{row.map(renderTile)}
+        key={rowId}>
+        {hasGroupTitle && renderGroupTitle && renderGroupTitle(row[0])}
+        {row.map(renderTile)}
       </div>
     );
   }

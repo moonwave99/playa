@@ -6,9 +6,6 @@
 	padding: 0;
 	.album-grid {
 		.album-grid-row	{
-			@include albumType('border-left-color');
-			border-left-width: calc(var(--section-gutter) / 3);
-			border-left-style: solid;
 			border-bottom: 1px solid $darkColor;
 			background-color: rgba($backgroundDarkColor, .4);
 			padding:
@@ -16,6 +13,13 @@
 				var(--section-gutter)
 				0
 				calc(var(--section-gutter) * 2 / 3);
+			&.has-group-title {
+				padding:
+					0
+					var(--section-gutter)
+					0
+					calc(var(--section-gutter) * 2 / 3);
+			}
 		}
 	}
 	&-empty-placeholder {
