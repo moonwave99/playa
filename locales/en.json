@@ -52,7 +52,14 @@
         }
       },
       "latest": {
-        "title": "Latest additions"
+        "title": "Latest additions",
+        "intervals": {
+          "oneDay": "Today",
+          "oneWeek": "This Week",
+          "twoWeeks": "Two Weeks Ago",
+          "oneMonth": "This Month",
+          "before": "Before"
+        }
       },
       "importAlbum": {
         "title": "Import Album:",
