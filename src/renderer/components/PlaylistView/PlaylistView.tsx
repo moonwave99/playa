@@ -12,6 +12,7 @@ import { Album } from '../../store/modules/album';
 import { Track } from '../../store/modules/track';
 import { UIDragTypes } from '../../store/modules/ui';
 import { EntityHashMap, immutableMove } from '../../utils/storeUtils';
+import { GridCell } from '../../hooks/useGrid/useGrid';
 
 const CompactAlbumListView = memo(RawCompactAlbumListView, (
   a: CompactAlbumListViewProps,
@@ -31,8 +32,8 @@ export type PlaylistViewProps = {
   currentTrackId: Track['_id'];
   onSelectionChange: Function;
   onAlbumOrderChange: Function;
-  onAlbumEnter: Function;
-  onAlbumBackspace: Function;
+  onAlbumEnter: (selection: GridCell['_id'][]) => void;
+  onAlbumBackspace: (selection: GridCell['_id'][]) => void;
   onAlbumContextMenu: Function;
   onAlbumDoubleClick: Function;
 };

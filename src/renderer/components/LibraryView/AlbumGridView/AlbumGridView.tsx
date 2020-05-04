@@ -28,9 +28,9 @@ type AlbumGridViewProps = {
   showTooltips?: boolean;
   clearSelectionOnBlur?: boolean;
   onSelectionChange?: Function;
-  groupBy?: string;
-  onEnter?: Function;
-  onBackspace?: Function;
+  groupBy?: (album: Album) => string;
+  onEnter?: (selection: GridCell['_id'][]) => void;
+  onBackspace?: (selection: GridCell['_id'][]) => void;
   onAlbumContextMenu?: Function;
   onAlbumDoubleClick?: Function;
   renderGroupTitle?: (album: Album) => ReactElement;
@@ -62,7 +62,7 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
     threshold,
     onItemClick,
     setFocus
-  } = useGrid({
+  } = useGrid<Album>({
     items: albums,
     thresholds: ALBUM_GRID_THRESHOLDS,
     initialSelection: interactive ? [albums[0]._id] : [],

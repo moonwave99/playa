@@ -7,13 +7,15 @@ import { Album } from '../../../store/modules/album';
 import { Track } from '../../../store/modules/track';
 import { updateLibraryAlbumSelection } from '../../../store/modules/ui';
 import useNativeDrop, { NativeTypes } from '../../../hooks/useNativeDrop/useNativeDrop';
+import { GridCell } from '../../../hooks/useGrid/useGrid';
+import { groupByDate, LIBRARY_INTERVALS } from '../../../utils/datetimeUtils';
 
 type LatestAlbumsViewProps = {
   albums: Album[];
   currentAlbumId: Album['_id'];
   currentTrackId: Track['_id'];
-  onAlbumEnter: Function;
-  onAlbumBackspace: Function;
+  onAlbumEnter: (selection: GridCell['_id'][]) => void;
+  onAlbumBackspace: (selection: GridCell['_id'][]) => void;
   onAlbumContextMenu: Function;
   onAlbumDoubleClick: Function;
   onDrop: Function;

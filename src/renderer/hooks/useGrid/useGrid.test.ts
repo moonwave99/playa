@@ -6,6 +6,7 @@ import {
   moveSelection
 } from './useGrid';
 
+import { Album } from '../../store/modules/album';
 import { ALBUM_GRID_THRESHOLDS } from '../../../constants';
 
 type Item = GridCell & { type?: string }
@@ -44,11 +45,11 @@ describe('generateRows', () => {
     const thresholds = ALBUM_GRID_THRESHOLDS;
 
     thresholds.forEach(({ width, columns }: Threshold) => {
-      const { rows, threshold } = generateRows({
+      const { rows, threshold } = generateRows<Album>({
         items,
         thresholds,
         windowWidth: width + 1,
-        groupBy: 'type'
+        groupBy: ({ type }) => type
       });
 
       expect(threshold).toEqual({ width, columns });
@@ -202,13 +203,13 @@ describe('locateNextPosition', () => {
           direction: Directions.Down
         })
       ).toBe(0);
-    });    
+    });
     it('should move to next row if direction is down', () => {
-      const { rows } = generateRows({
+      const { rows } = generateRows<Album>({
         items,
         thresholds: ALBUM_GRID_THRESHOLDS,
         windowWidth: 1401,
-        groupBy: 'type'
+        groupBy: ({ type }) => type
       });
 
       expect(
@@ -249,11 +250,11 @@ describe('locateNextPosition', () => {
     });
 
     it('should move to prev row if direction is up', () => {
-      const { rows } = generateRows({
+      const { rows } = generateRows<Album>({
         items,
         thresholds: ALBUM_GRID_THRESHOLDS,
         windowWidth: 1401,
-        groupBy: 'type'
+        groupBy: ({ type }) => type
       });
 
       expect(
