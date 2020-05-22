@@ -1,3 +1,4 @@
+import { escapeRegExp }from 'lodash';
 import { ipcRenderer as ipc } from 'electron';
 import createCachedSelector from 're-reselect';
 import {
@@ -205,7 +206,7 @@ export const searchArtists = createCachedSelector(
   selectors.allById,
   (_state: ApplicationState, query: string) => query,
   (artists, query) => toArray(artists).filter(
-    ({ name }) => name.match(new RegExp(`${query}`, 'gi'))
+    ({ name }) => name.match(new RegExp(`${escapeRegExp(query)}`, 'gi'))
   )
 )((_state_: ApplicationState, query: string) => query);
 
