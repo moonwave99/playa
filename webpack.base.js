@@ -58,126 +58,75 @@ const mainConfig = {
 	]
 };
 
-const rendererConfig = {
-	entry: './src/renderer/index.tsx',
-	target: 'electron-renderer',
-	output: {
-		filename: 'renderer.bundle.js',
-		path: __dirname + outputFolder,
-	},
-	node: {
-		__dirname: false,
-		__filename: false,
-	},
-	resolve: {
-		extensions: ['.js', '.json', '.ts', '.tsx'],
-	},
-	module: {
-		rules: [
-			{
-				test: /\.(ts|tsx)$/,
-				exclude: /node_modules/,
-				use: {
-					loader: 'ts-loader',
+function generateConfig(target = 'index', rules = {}) {
+	return {
+		entry: `./src/renderer/${target}.tsx`,
+		target: 'electron-renderer',
+		output: {
+			filename: `${target}.bundle.js`,
+			path: __dirname + outputFolder,
+		},
+		node: {
+			__dirname: false,
+			__filename: false,
+		},
+		resolve: {
+			extensions: ['.js', '.json', '.ts', '.tsx'],
+		},
+		module: {
+			rules: [
+				{
+					test: /\.(ts|tsx)$/,
+					exclude: /node_modules/,
+					use: {
+						loader: 'ts-loader',
+					},
 				},
-			},
-			{
-				test: /\.(scss|css)$/,
-				use: [
-					'style-loader',
-					'css-loader?sourceMap',
-					'sass-loader?sourceMap',
-				],
-			},
-			{
-				test: /\.(gif|jpg|png|svg|ico|icns)$/,
-				loader: 'file-loader',
-				options: {
-					name: '[path][name].[ext]',
+				{
+					test: /\.(scss|css)$/,
+					use: [
+						'style-loader',
+						'css-loader?sourceMap',
+						'sass-loader?sourceMap',
+					],
 				},
-			},
-			{
-				test: /\.(eot|ttf|woff|woff2)$/,
-				loader: 'file-loader',
-				options: {
-					name: '[path][name].[ext]',
+				{
+					test: /\.(gif|jpg|png|svg|ico|icns)$/,
+					loader: 'file-loader',
+					options: {
+						name: '[path][name].[ext]',
+					},
 				},
-			},
-			{
-				test: /\.node$/,
-				use: 'native-ext-loader'
-			}
+				{
+					test: /\.(eot|ttf|woff|woff2)$/,
+					loader: 'file-loader',
+					options: {
+						name: '[path][name].[ext]',
+					},
+				},
+				{
+					test: /\.node$/,
+					use: 'native-ext-loader'
+				}
+			]
+		},
+		plugins: [
+			new HtmlWebpackPlugin({
+				filename: `${target}.html`,
+				template: path.resolve(__dirname, `./src/renderer/${target}.html`),
+			})
 		],
-	},
-	plugins: [
-		new HtmlWebpackPlugin({
-			filename: 'index.html',
-			template: path.resolve(__dirname, './src/renderer/index.html'),
-		})
-	],
-};
+		...rules
+	}
+}
 
-const aboutConfig = {
-	entry: './src/renderer/about.tsx',
-	target: 'electron-renderer',
-	output: {
-		filename: 'about.bundle.js',
-		path: __dirname + outputFolder,
-	},
-	node: {
-		__dirname: false,
-		__filename: false,
-	},
-	resolve: {
-		extensions: ['.js', '.json', '.ts', '.tsx'],
-	},
-	module: {
-		rules: [
-			{
-				test: /\.(ts|tsx)$/,
-				exclude: /node_modules/,
-				use: {
-					loader: 'ts-loader',
-				},
-			},
-			{
-				test: /\.(scss|css)$/,
-				use: [
-					'style-loader',
-					'css-loader?sourceMap',
-					'sass-loader?sourceMap',
-				],
-			},
-			{
-				test: /\.(gif|jpg|png|svg|ico|icns)$/,
-				loader: 'file-loader',
-				options: {
-					name: '[path][name].[ext]',
-				},
-			},
-			{
-				test: /\.(eot|ttf|woff|woff2)$/,
-				loader: 'file-loader',
-				options: {
-					name: '[path][name].[ext]',
-				},
-			},
-			{
-				test: /\.node$/,
-				use: 'native-ext-loader'
-			}
-		],
-	},
-	plugins: [
-		new HtmlWebpackPlugin({
-			filename: 'about.html',
-			template: path.resolve(__dirname, './src/renderer/about.html'),
-		})
-	]
-};
+const rendererConfig = generateConfig('index');
+const aboutConfig = generateConfig('about');
+const onboardingConfig = generateConfig('onboarding');
 
 module.exports = {
 	mainConfig,
 	rendererConfig,
-	aboutConfig
+	aboutConfig,
+	onboardingConfig
 };

@@ -8,6 +8,7 @@ interface AppStateValues {
   lastWindowPosition: [number, number];
   queue: string[];
   volume: number;
+  showOnboarding: boolean;
 }
 
 export default class AppState {
@@ -43,7 +44,8 @@ export default class AppState {
         lastWindowSize: [null, null],
         lastWindowPosition: [null, null],
         queue: [],
-        volume: 1
+        volume: 1,
+        showOnboarding: true
       };
     }
     return this;

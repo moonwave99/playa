@@ -31,6 +31,10 @@
         "tos": "Terms of Use"
       }
     },
+    "onboarding": {
+      "title": "Welcome to Playa!",
+      "dismiss": "Let's go!"
+    },
     "queue": {
       "title": {
         "main": "Playback Queue",

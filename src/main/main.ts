@@ -20,6 +20,8 @@ import initURLHandler from './initializers/initURLHandler';
 import initAppState from './initializers/initAppState';
 import initDialog from './initializers/initDialog';
 
+import openOnboardingWindow from './lib/onboardingWindow';
+
 import {
   name as APP_NAME,
   version as APP_VERSION
@@ -38,72 +40,9 @@ import {
   COLORS
 } from '../constants';
 
-let mainWindow: Electron.BrowserWindow;
-
-function createWindow({
-  size = [DEFAULT_WIDTH, DEFAULT_HEIGHT],
-  position = [0, 0],
-  isRunningInSpectron = false,
-  backgroundColor = COLORS.BACKGROUND_COLOR
-}): BrowserWindow {
-  const [width, height] = size;
-  const [x, y] = position;
-  const mainWindow = new BrowserWindow({
-    width,
-    height,
-    x,
-    y,
-    minWidth,
-    minHeight,
-    backgroundColor,
-    maximizable: false,
-    focusable: true,
-    show: false,
-    titleBarStyle: 'hidden',
-    trafficLightPosition,
-    webPreferences: {
-      allowRunningInsecureContent: false,
-      nodeIntegration: true,
-      nativeWindowOpen: true
-    }
-  });
-
-  // Open external URLs in default OS browser
-  mainWindow.webContents.on('new-window', (event: Event, url: string) => {
-    event.preventDefault();
-    shell.openExternal(url);
-  });
-
-  mainWindow.on('swipe', (_event: Event, direction: string) => {
-    mainWindow.webContents.send(IPC_MESSAGES.IPC_UI_SWIPE, direction);
-  });
-
-  initMenu({
-    window: mainWindow,
-    debug: is.development
-  });
-
-  mainWindow.loadURL(
-    url.format({
-      pathname: Path.join(__dirname, './index.html'),
-      protocol: 'file:',
-      slashes: true
-    })
-  );
-
-  mainWindow.once('ready-to-show', () => {
-    if (is.development && !isRunningInSpectron) {
-      mainWindow.webContents.toggleDevTools();
-    }
-    mainWindow.show();
-  });
-
-  if (is.development) {
-    mainWindow.maximize();
-  }
-
-  return mainWindow;
-}
+const {
+  IPC_UI_SWIPE
+} = IPC_MESSAGES;
 
 const {
   disableDiscogsRequests,
@@ -148,7 +87,84 @@ runAsync(initDiscogsClient, {
 runAsync(initWaveform, userDataPath);
 
 const appState = initAppState({ userDataPath, environment });
-const { lastWindowSize, lastWindowPosition } = appState.getState();
+const {
+  lastWindowSize,
+  lastWindowPosition,
+  showOnboarding
+} = appState.getState();
+
+let mainWindow: Electron.BrowserWindow;
+
+function createWindow({
+  size = [DEFAULT_WIDTH, DEFAULT_HEIGHT],
+  position = [0, 0],
+  isRunningInSpectron = false,
+  backgroundColor = COLORS.BACKGROUND_COLOR
+}): BrowserWindow {
+  const [width, height] = size;
+  const [x, y] = position;
+  const mainWindow = new BrowserWindow({
+    width,
+    height,
+    x,
+    y,
+    minWidth,
+    minHeight,
+    backgroundColor,
+    maximizable: false,
+    focusable: true,
+    show: false,
+    titleBarStyle: 'hidden',
+    trafficLightPosition,
+    webPreferences: {
+      allowRunningInsecureContent: false,
+      nodeIntegration: true,
+      nativeWindowOpen: true
+    }
+  });
+
+  // Open external URLs in default OS browser
+  mainWindow.webContents.on('new-window', (event: Event, url: string) => {
+    event.preventDefault();
+    shell.openExternal(url);
+  });
+
+  mainWindow.on('swipe', (_event: Event, direction: string) => {
+    mainWindow.webContents.send(IPC_UI_SWIPE, direction);
+  });
+
+  initMenu({
+    window: mainWindow,
+    debug: is.development
+  });
+
+  mainWindow.loadURL(
+    url.format({
+      pathname: Path.join(__dirname, './index.html'),
+      protocol: 'file:',
+      slashes: true
+    })
+  );
+
+  mainWindow.once('ready-to-show', () => {
+    if (is.development && !isRunningInSpectron) {
+      mainWindow.webContents.toggleDevTools();
+    }
+    mainWindow.show();
+  });
+
+  mainWindow.once('show', () => {
+    if (showOnboarding) {
+      setTimeout(() => openOnboardingWindow(appState), 1000);
+    }
+  });
+
+  if (is.development) {
+    mainWindow.maximize();
+  }
+
+  return mainWindow;
+}
 
 log({
   level: LogLevel.Force,

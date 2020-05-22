@@ -1,0 +1,25 @@
+@import "../../styles/variables";
+@import "../../styles/mixins";
+@import "../../styles/common";
+
+.onboarding {
+	height: 100vh;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+
+	h1 {
+		color: $highlightColor;
+		font-size: 2rem;
+		margin-top: 3rem;
+	}
+
+	.onboarding-footer {
+		margin-top: auto;
+		padding: 2rem 0;
+		.button {
+			padding: 0 1rem;
+		}
+	}
+}

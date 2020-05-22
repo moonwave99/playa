@@ -15,6 +15,9 @@ export const TRAFFIC_LIGHTS_POSITION = {
 export const ABOUT_WINDOW_WIDTH = 600;
 export const ABOUT_WINDOW_HEIGHT = 350;
 
+export const ONBOARDING_WINDOW_WIDTH = 800;
+export const ONBOARDING_WINDOW_HEIGHT = 600;
+
 export const RECENT_PLAYLIST_COUNT = 10;
 
 export const MUSIC_FILE_EXTENSIONS = ['mp3', 'm4a', 'flac', 'ogg'];
@@ -173,6 +176,7 @@ export const IPC_MESSAGES = {
   IPC_TRACK_GET_LIST_RAW_REQUEST: 'track:get-list:raw-request',
   IPC_ABOUT_CLOSE_WINDOW: 'about:close-window',
   IPC_ABOUT_OPEN_LINK: 'about:open-link',
+  IPC_ONBOARDING_CLOSE_WINDOW: 'onboarding:close-window',
   IPC_LIBRARY_IMPORT_MUSIC: 'library:import-music',
   IPC_LIBRARY_EDIT_ALBUM: 'library:edit-album',
   IPC_LIBRARY_ADD_ALBUMS_TO_PLAYLIST: 'library:add-albums-to-playlist',
