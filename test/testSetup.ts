@@ -30,6 +30,22 @@ globalAny.getSelection = () => ({
   removeAllRanges: () => {}
 });
 
+globalAny.matchMedia =
+  globalAny.matchMedia ||
+  function() {
+    return {
+      matches: false,
+      addListener: function() {},
+      removeListener: function() {}
+    };
+  };
+
+globalAny.requestAnimationFrame =
+  globalAny.requestAnimationFrame ||
+  function(callback: Function) {
+    setTimeout(callback, 0);
+  };
+
 configure({ adapter: new Adapter() });
 
 initI18n();

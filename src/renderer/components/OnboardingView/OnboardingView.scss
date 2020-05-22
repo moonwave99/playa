@@ -1,6 +1,8 @@
 @import "../../styles/variables";
 @import "../../styles/mixins";
 @import "../../styles/common";
+@import "~slick-carousel/slick/slick.css";
+@import "~slick-carousel/slick/slick-theme.css";
 
 .onboarding {
 	height: 100vh;
@@ -15,9 +17,47 @@
 		margin-top: 3rem;
 	}
 
+	.onboarding-carousel {
+		flex: 1;
+		.onboarding-slide {
+			width: 80vw;
+			margin: 0 auto;
+			&-image-wrapper {
+				text-align: center;
+				img {
+					width: 60%;
+					margin: 0 auto;
+				}
+			}
+			&-caption {
+				font-size: 1.2rem;
+				line-height: 2.5rem;
+			}
+		}
+	}
+
+	.slick-prev {
+		left: 2rem;
+		z-index: 1010;
+	}
+
+	.slick-next {
+		right: 2rem;
+	}
+
+	.slick-dots {
+		padding-bottom: 1rem;
+		li button:before {
+			font-size: .75rem;
+		}
+		li.slick-active button:before {
+			color: $mainColor;
+		}
+	}
+
 	.onboarding-footer {
 		margin-top: auto;
-		padding: 2rem 0;
+		padding: 2rem 0 3rem 0;
 		.button {
 			padding: 0 1rem;
 		}

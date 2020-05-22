@@ -285,6 +285,9 @@ export const App: FC<AppProps> = ({
                 : <Redirect to={QUEUE}/>
               }
             </Route>
+            <Route>
+              <Redirect to={LIBRARY}/>
+            </Route>
           </Switch>
         </div>
       </div>

@@ -27,6 +27,8 @@ export enum Wrappers {
   DndProvider = 'DndProvider'
 }
 
+export const wait = (ms = 0) => new Promise(resolve => setTimeout(resolve, ms));
+
 const defaultStore = {};
 
 const routerWrapper = function(element: ReactElement) {

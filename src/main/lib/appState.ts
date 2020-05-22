@@ -11,6 +11,15 @@ interface AppStateValues {
   showOnboarding: boolean;
 }
 
+export const defaultState = {
+  lastOpenedPlaylistId: null,
+  lastWindowSize: [null, null],
+  lastWindowPosition: [null, null],
+  queue: [],
+  volume: 1,
+  showOnboarding: true
+} as AppStateValues;
+
 export default class AppState {
   appState: AppStateValues;
   path: string;
@@ -39,14 +48,7 @@ export default class AppState {
         message: `Loaded from ${this.path}...`
       }, this.appState);
     } catch (error) {
-      this.appState = {
-        lastOpenedPlaylistId: null,
-        lastWindowSize: [null, null],
-        lastWindowPosition: [null, null],
-        queue: [],
-        volume: 1,
-        showOnboarding: true
-      };
+      this.appState = defaultState;
     }
     return this;
   }
