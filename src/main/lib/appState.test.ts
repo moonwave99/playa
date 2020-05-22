@@ -46,7 +46,8 @@ describe('appState', () => {
       lastWindowSize: [null, null],
       lastWindowPosition: [null, null],
       queue: [],
-      volume: 1   
+      volume: 1,
+      showOnboarding: true
     });
   });
 

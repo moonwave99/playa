@@ -31,6 +31,21 @@
         "tos": "Terms of Use"
       }
     },
+    "onboarding": {
+      "title": "Welcome to Playa",
+      "slides": [
+        {
+          "caption": "Please take a minute for a quick tour"
+        },
+        {
+          "caption": "To import music, just drag a folder into the Library view."
+        },
+        {
+          "caption": "Enjoy your Music!"
+        }
+      ],
+      "dismiss": "Let's go!"
+    },
     "queue": {
       "title": {
         "main": "Playback Queue",

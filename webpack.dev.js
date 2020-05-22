@@ -7,5 +7,6 @@ module.exports = [
 		mode: 'development',
 		devtool: 'eval-source-map'
 	}),
-	merge(baseConfig.aboutConfig, { mode: 'development' })
+	merge(baseConfig.aboutConfig, { mode: 'development' }),
+	merge(baseConfig.onboardingConfig, { mode: 'development' })
 ];

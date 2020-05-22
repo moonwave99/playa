@@ -29,6 +29,9 @@ const defaultStore = {
   },
   ui: {
     title: {}
+  },
+  library: {
+    latest: [] as string[]
   }
 };
 

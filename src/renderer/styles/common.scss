@@ -86,6 +86,9 @@ a {
 		background-color: $hoverColor;
 		border-color: $hoverColor;
 	}
+	&[disabled] {
+		opacity: .5;
+	}
 	&.selected, &.selected:hover {
 		background-color: $mainColor;
 		color: $highlightColor;
