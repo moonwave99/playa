@@ -1,3 +1,5 @@
+import { isAfter, sub } from 'date-fns';
+
 export function formatDuration(seconds: number): string {
   const format = (val: number): string => `0${Math.floor(val)}`.slice(-2);
   const hours = seconds / 3600;
@@ -20,10 +22,47 @@ export function formatDate({
   return new Date(date).toLocaleDateString(locale, options);
 }
 
-export function daysAgo({
-  date = new Date(),
-  days = 1
-}): string {
-  date.setDate(date.getDate() - days);
-  return date.toISOString();
+export const LIBRARY_INTERVALS = {
+  ONE_DAY: 'ONE_DAY',
+  ONE_WEEK: 'ONE_WEEK',
+  TWO_WEEKS: 'TWO_WEEKS',
+  ONE_MONTH: 'ONE_MONTH',
+  BEFORE: 'BEFORE'
+};
+
+export function groupByDate(date: Date): string {
+  const now = Date.now();
+  const oneDayAgo = sub(now, {
+    days: 1
+  });
+
+  const oneWeekAgo = sub(now, {
+    weeks: 1
+  });
+
+  const twoWeeksAgo = sub(now, {
+    weeks: 2
+  });
+
+  const oneMonthAgo = sub(now, {
+    months: 1
+  });
+
+  if (isAfter(date, oneDayAgo)) {
+    return LIBRARY_INTERVALS.ONE_DAY;
+  }
+
+  if (isAfter(date, oneWeekAgo)) {
+    return LIBRARY_INTERVALS.ONE_WEEK;
+  }
+
+  if (isAfter(date, twoWeeksAgo)) {
+    return LIBRARY_INTERVALS.TWO_WEEKS;
+  }
+
+  if (isAfter(date, oneMonthAgo)) {
+    return LIBRARY_INTERVALS.ONE_MONTH;
+  }
+
+  return LIBRARY_INTERVALS.BEFORE;
 }

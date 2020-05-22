@@ -31,12 +31,8 @@ import {
 } from '../../actions/libraryContentActions';
 
 import actionsMap from '../../actions/actions';
-import { daysAgo } from '../../utils/datetimeUtils';
 
-import {
-  LIBRARY_LATEST_ALBUM_LIMIT,
-	LIBRARY_LATEST_DAY_COUNT
-} from '../../../constants';
+import { LIBRARY_LATEST_ALBUM_LIMIT } from '../../../constants';
 
 import {
   LIBRARY
@@ -75,7 +71,11 @@ export const LibraryView: FC<LibraryViewProps> = ({
     currentAlbumId,
     currentTrackId
   } = useSelector(({ albums, library, player, ui }: ApplicationState) => ({
-    latest: library.latest ? library.latest.map((_id: Album['_id']) => albums.allById[_id]).filter(a => !!a) : null,
+    latest: library.latest
+      ? library.latest
+        .map((_id: Album['_id']) => albums.allById[_id])
+        .filter(a => !!a)
+      : null,
     libraryView: ui.libraryView,
     ...player
   }));
@@ -83,7 +83,7 @@ export const LibraryView: FC<LibraryViewProps> = ({
 	useEffect(() => {
 		dispatch(
 			getLatestRequest(
-				daysAgo({ days: LIBRARY_LATEST_DAY_COUNT }),
+				new Date().toISOString(),
 				LIBRARY_LATEST_ALBUM_LIMIT
 			)
 		);

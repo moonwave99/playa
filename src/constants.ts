@@ -35,7 +35,7 @@ export const COLORS = {
   BACKGROUND_COLOR: '#1F1F1F'
 };
 
-export const LIBRARY_LATEST_ALBUM_LIMIT = 35;
+export const LIBRARY_LATEST_ALBUM_LIMIT = 50;
 export const LIBRARY_LATEST_DAY_COUNT = 90;
 
 export const DATE_FORMATS = {

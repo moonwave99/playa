@@ -38,6 +38,10 @@ import {
   LibraryContentActions
 } from '../../actions/libraryContentActions';
 
+function grouper(album: Album): string {
+  return album.type;
+}
+
 export const ArtistView = (): ReactElement => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -184,7 +188,7 @@ export const ArtistView = (): ReactElement => {
             albums={albums}
             currentAlbumId={currentAlbumId}
             currentTrackId={currentTrackId}
-            groupBy="type"
+            groupBy={grouper}
             onSelectionChange={onSelectionChange}
             onEnter={onAlbumEnter}
             onBackspace={onAlbumBackspace}

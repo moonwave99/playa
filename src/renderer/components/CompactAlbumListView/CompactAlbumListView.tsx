@@ -10,7 +10,7 @@ import { CompactAlbumView as RawCompactAlbumView } from './CompactAlbumView/Comp
 import { Album } from '../../store/modules/album';
 import { Artist } from '../../store/modules/artist';
 import { Track } from '../../store/modules/track';
-import useGrid, { KeyboardDirections } from '../../hooks/useGrid/useGrid';
+import useGrid, { GridCell, KeyboardDirections } from '../../hooks/useGrid/useGrid';
 import scrollTo from '../../lib/scrollTo';
 
 import './CompactAlbumListView.scss';
@@ -25,8 +25,8 @@ export type CompactAlbumListViewProps = {
   hasFocus?: boolean;
   onSelectionChange: Function;
   onAlbumMove?: Function;
-  onEnter?: Function;
-  onBackspace?: Function;
+  onEnter?: (selection: GridCell['_id'][]) => void;
+  onBackspace?: (selection: GridCell['_id'][]) => void;
   onAlbumContextMenu: Function;
   onAlbumDoubleClick: Function;
   sortable?: boolean;

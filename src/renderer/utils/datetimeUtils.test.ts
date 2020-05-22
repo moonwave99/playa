@@ -1,4 +1,10 @@
-import { formatDuration } from './datetimeUtils';
+import { sub } from 'date-fns';
+
+import {
+  formatDuration,
+  groupByDate,
+  LIBRARY_INTERVALS
+} from './datetimeUtils';
 
 describe('formatDuration', () => {
   it('should return 00:0s when seconds are <10', () => {
@@ -20,5 +26,16 @@ describe('formatDuration', () => {
   it('should return hh:mm:ss when seconds are s>3600', () => {
     expect(formatDuration(3600)).toEqual('01:00:00');
     expect(formatDuration(3600 + 300 + 23)).toEqual('01:05:23');
+  });
+});
+
+describe('groupByDate', () => {
+  it('should group given albums by addition date', () => {
+    const now = new Date();
+    expect(groupByDate(now)).toBe(LIBRARY_INTERVALS.ONE_DAY);
+    expect(groupByDate(sub(now, { days: 2 }))).toBe(LIBRARY_INTERVALS.ONE_WEEK);
+    expect(groupByDate(sub(now, { days: 9 }))).toBe(LIBRARY_INTERVALS.TWO_WEEKS);
+    expect(groupByDate(sub(now, { days: 15 }))).toBe(LIBRARY_INTERVALS.ONE_MONTH);
+    expect(groupByDate(sub(now, { days: 32 }))).toBe(LIBRARY_INTERVALS.BEFORE);
   });
 });

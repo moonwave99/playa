@@ -25,6 +25,7 @@ type ListenerEvent = MouseEvent & {
 export type GridCell = {
   _id: string;
   firstOfGroup?: boolean;
+  group?: string;
 };
 
 export type Threshold = {
@@ -38,19 +39,19 @@ type OnItemClickParams = {
   shiftKey: boolean;
 };
 
-type GenerateRowsParams = {
+type GenerateRowsParams<T> = {
   items: GridCell[];
   thresholds: Threshold[];
-  groupBy?: string;
+  groupBy?: (item: T) => string;
   windowWidth: number;
 }
 
-export function generateRows({
+export function generateRows<T>({
   items,
   thresholds,
   groupBy,
   windowWidth
-}: GenerateRowsParams): {
+}: GenerateRowsParams<T & GridCell>): {
   rows: GridCell[][];
   threshold: Threshold;
 } {
@@ -74,8 +75,8 @@ export function generateRows({
 
   if (groupBy) {
     const groupedItems = groupItemsBy(items, groupBy);
-    const rows = Object.entries(groupedItems).reduce((memo, [, value]) => {
-      const rows = [...chunk(value, threshold.columns)];
+    const rows = Object.entries(groupedItems).reduce((memo, [group, value]) => {
+      const rows = [...chunk(value.map(x => ({ ...x, group })), threshold.columns)];
       rows[0][0].firstOfGroup = true;
       padRow(rows[rows.length - 1]);
       return [...memo, ...rows];
@@ -102,7 +103,7 @@ export function moveSelection({
   direction
 }: {
   items: GridCell[];
-  selection: string[];
+  selection: GridCell['_id'][];
   rows: GridCell[][];
   direction: Directions;
 }): number {
@@ -160,20 +161,20 @@ export enum KeyboardDirections {
   Both
 }
 
-type UseGridParams = {
+type UseGridParams<T> = {
   items: GridCell[];
   thresholds?: Threshold[];
   direction?: KeyboardDirections;
   excludeClass?: string;
   interactive?: boolean;
   clearSelectionOnBlur?: boolean;
-  initialSelection?: string[];
-  groupBy?: string;
-  onEnter?: Function;
-  onBackspace?: Function;
+  initialSelection?: GridCell['_id'][];
+  groupBy?: (item: T) => string;
+  onEnter?: (selection: GridCell['_id'][]) => void;
+  onBackspace?: (selection: GridCell['_id'][]) => void;
 }
 
-export default function useGrid({
+export default function useGrid<T>({
   items = [],
   thresholds = [{
     width: 0,
@@ -187,13 +188,13 @@ export default function useGrid({
   groupBy,
   onEnter,
   onBackspace
-}: UseGridParams): {
+}: UseGridParams<T>): {
   rows: GridCell[][];
-  selection: string[];
+  selection: GridCell['_id'][];
   threshold: Threshold;
-  onItemClick: Function;
-  setFocus: Function;
-  selectItem: Function;
+  onItemClick: (params: OnItemClickParams) => void;
+  setFocus: (focus: boolean) => void;
+  selectItem: (selectedID: GridCell['_id']) => void;
   grid: (node?: Element | null) => void;
 } {
   const hasFocus = useRef(false);
@@ -224,7 +225,7 @@ export default function useGrid({
   }, [items, listener]);
 
   function recompute(): void {
-    const { rows: computedRows, threshold } = generateRows({
+    const { rows: computedRows, threshold } = generateRows<T>({
       items,
       thresholds,
       groupBy,
