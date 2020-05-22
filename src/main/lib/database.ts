@@ -146,7 +146,7 @@ export default class Database {
     });
     const { docs } = await this.db.find({
       selector: {
-        [dateField]: { $gte: dateFrom }
+        [dateField]: { $lte: dateFrom }
       },
       sort: [{ [dateField] : order }],
       limit
@@ -295,8 +295,8 @@ export function initDBs({
   forceInitViews = false
 }: InitDBsParams): { [key: string]: Database } {
   return {
-    'playlist': new Database({ path, debug, name: 'playlist' }),
-    'album': new Database({ path, debug, name: 'album', views: {
+    playlist: new Database({ path, debug, name: 'playlist' }),
+    album: new Database({ path, debug, name: 'album', views: {
       groupCountByYear: {
         map: ({ year }: { year: number }): void => emit(year, 1),
         reduce: '_sum'
@@ -308,9 +308,13 @@ export function initDBs({
       groupCountByArtist: {
         map: ({ artist }: { artist: string }): void => emit(artist, 1),
         reduce: '_sum'
-      }
+      },
+      groupCountByCreation: {
+        map: ({ created }: { created: string }): void => emit(created.substring(0, 10), 1),
+        reduce: '_sum'
+      },
     }, forceInitViews }),
-    'artist': new Database({ path, debug, name: 'artist' }),
-    'track': new Database({ path, debug, name: 'track' }),
+    artist: new Database({ path, debug, name: 'artist' }),
+    track: new Database({ path, debug, name: 'track' }),
   };
 }

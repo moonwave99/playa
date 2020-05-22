@@ -120,8 +120,8 @@ class LocalPouchDB {
             return x[key] === selector[key];
           case 'object':
             for (let [k, v] of Object.entries(selector[key])) {
-              if (k === '$gte') {
-                return x[key] >= v;
+              if (k === '$lte') {
+                return x[key] <= v;
               }
             }
             break;

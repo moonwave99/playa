@@ -85,7 +85,7 @@ describe('Database', () => {
     });
     it('should get latest docs sorted asc by given datefield', async () => {
       const results = await db.getLatest({
-        dateFrom: new Date('2020-01-01').toISOString()
+        dateFrom: new Date('2020-01-04').toISOString()
       });
       expect(results.length).toBe(playlists.length);
       expect(results[0]).toBe(playlists[playlists.length - 1]);
@@ -93,7 +93,7 @@ describe('Database', () => {
     });
     it('should order results by given order', async () => {
       const results = await db.getLatest({
-        dateFrom: new Date('2020-01-01').toISOString(),
+        dateFrom: new Date('2020-01-04').toISOString(),
         order: 'desc'
       });
       expect(results.length).toBe(playlists.length);
@@ -103,7 +103,7 @@ describe('Database', () => {
     it('should limit results by given limit', async () => {
       const limit = 1;
       const results = await db.getLatest({
-        dateFrom: new Date('2020-01-01').toISOString(),
+        dateFrom: new Date('2020-01-04').toISOString(),
         limit
       });
       expect(results.length).toBe(limit);

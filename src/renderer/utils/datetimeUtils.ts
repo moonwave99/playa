@@ -22,13 +22,6 @@ export function formatDate({
   return new Date(date).toLocaleDateString(locale, options);
 }
 
-export function daysAgo({
-  date = new Date(),
-  days = 1
-}): string {
-  return sub(date, { days }).toISOString();
-}
-
 export const LIBRARY_INTERVALS = {
   ONE_DAY: 'ONE_DAY',
   ONE_WEEK: 'ONE_WEEK',
