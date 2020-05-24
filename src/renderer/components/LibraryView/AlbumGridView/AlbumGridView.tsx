@@ -60,6 +60,7 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
     rows,
     selection,
     threshold,
+    groupIndices,
     onItemClick,
     setFocus
   } = useGrid<Album>({
@@ -194,7 +195,7 @@ export const AlbumGridView: FC<AlbumGridViewProps> = ({
   }
 
   function renderRow(row: (Album & GridCell)[]): ReactElement {
-    const hasGroupTitle = row[0].firstOfGroup;
+    const hasGroupTitle = groupIndices.indexOf(row[0]._id) > -1;
     const classNames = cx('album-grid-row', {
       [`album-grid-row-${row[0].type}`]: !!groupBy,
       'has-group-title': hasGroupTitle

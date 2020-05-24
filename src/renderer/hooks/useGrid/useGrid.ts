@@ -24,7 +24,6 @@ type ListenerEvent = MouseEvent & {
 
 export type GridCell = {
   _id: string;
-  firstOfGroup?: boolean;
   group?: string;
 };
 
@@ -54,6 +53,7 @@ export function generateRows<T>({
 }: GenerateRowsParams<T & GridCell>): {
   rows: GridCell[][];
   threshold: Threshold;
+  groupStartIndices?: GridCell['_id'][];
 } {
   let threshold = thresholds[thresholds.length - 1];
   for (let i = 0; i < thresholds.length; i++ ) {
@@ -74,16 +74,18 @@ export function generateRows<T>({
   }
 
   if (groupBy) {
+    const groupStartIndices = [] as GridCell['_id'][];
     const groupedItems = groupItemsBy(items, groupBy);
     const rows = Object.entries(groupedItems).reduce((memo, [group, value]) => {
       const rows = [...chunk(value.map(x => ({ ...x, group })), threshold.columns)];
-      rows[0][0].firstOfGroup = true;
+      groupStartIndices.push(rows[0][0]._id);
       padRow(rows[rows.length - 1]);
       return [...memo, ...rows];
     }, []);
     return {
       rows,
-      threshold
+      threshold,
+      groupStartIndices
     };
   }
 
@@ -92,7 +94,8 @@ export function generateRows<T>({
 
   return {
     rows,
-    threshold
+    threshold,
+    groupStartIndices: []
   };
 }
 
@@ -192,6 +195,7 @@ export default function useGrid<T>({
   rows: GridCell[][];
   selection: GridCell['_id'][];
   threshold: Threshold;
+  groupIndices?: GridCell['_id'][];
   onItemClick: (params: OnItemClickParams) => void;
   setFocus: (focus: boolean) => void;
   selectItem: (selectedID: GridCell['_id']) => void;
@@ -200,6 +204,7 @@ export default function useGrid<T>({
   const hasFocus = useRef(false);
   const [selection, setSelection] = useState(initialSelection);
   const [rows, setRows] = useState([] as GridCell[][]);
+  const [groupIndices, setGroupIndices] = useState([] as GridCell['_id'][]);
   const [threshold, setThreshold] = useState(thresholds[0]);
 
   const ref = useRef(null);
@@ -225,7 +230,7 @@ export default function useGrid<T>({
   }, [items, listener]);
 
   function recompute(): void {
-    const { rows: computedRows, threshold } = generateRows<T>({
+    const { rows: computedRows, threshold, groupStartIndices } = generateRows<T>({
       items,
       thresholds,
       groupBy,
@@ -233,6 +238,7 @@ export default function useGrid<T>({
     });
     setRows(computedRows);
     setThreshold(threshold);
+    setGroupIndices(groupStartIndices);
   }
 
   const previousItems = usePrevious(items);
@@ -380,6 +386,7 @@ export default function useGrid<T>({
     rows,
     selection,
     threshold,
+    groupIndices,
     onItemClick,
     setFocus,
     selectItem,
