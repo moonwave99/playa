@@ -23,7 +23,7 @@ export const EditAlbumView: FC<EditAlbumViewProps> = ({
   const [isAlbumFromVA, setAlbumFromVA] = useState(album.isAlbumFromVA);
   const [albumType, setAlbumType] = useState(album.type);
   const artist = useSelector((state: ApplicationState) => artistSelectors.findById(state, album.artist));
-  const { path, type } = album;
+  const { path } = album;
 
   function _onFormSubmit({
     title,
@@ -63,7 +63,7 @@ export const EditAlbumView: FC<EditAlbumViewProps> = ({
       <AlbumForm
         album={album}
         artist={artist}
-        albumType={type}
+        albumType={albumType}
         isAlbumFromVA={isAlbumFromVA}
         onAlbumTypeChange={onAlbumTypeChange}
         onAlbumFromVAChange={onAlbumFromVAChange}
