@@ -82,19 +82,40 @@ describe('artist actions', () => {
 
 describe('artist selectors', () => {
   describe('getAlbumsByArtist', () => {
-    const store = mockStore({
-      albums: {
-        allById: toObj(albums)
-      },
-      artists: {
-        allById: toObj(artists)
-      }
+    it('should return album of selected artist', () => {
+      const store = mockStore({
+        albums: {
+          allById: toObj(albums)
+        },
+        artists: {
+          allById: toObj(artists)
+        }
+      });
+      const selection = getAlbumsByArtist(
+        store.getState() as ApplicationState,
+        artists[0]._id
+      );
+      expect(selection).toEqual([albums[0]]);
     });
-    const selection = getAlbumsByArtist(
-      store.getState() as ApplicationState,
-      artists[0]._id
-    );
-    expect(selection).toEqual([albums[0]]);
+    it('should sort albums by year ascending', () => {
+      const multipleAlbums = [
+        ...albums,
+        { ...albums[0], _id: '3', year: 1960 }
+      ];
+      const store = mockStore({
+        albums: {
+          allById: toObj(multipleAlbums)
+        },
+        artists: {
+          allById: toObj(artists)
+        }
+      });
+      const selection = getAlbumsByArtist(
+        store.getState() as ApplicationState,
+        artists[0]._id
+      );
+      expect(selection).toEqual([multipleAlbums[2], multipleAlbums[0]]);
+    });
   });
 
   describe('searchArtists', () => {

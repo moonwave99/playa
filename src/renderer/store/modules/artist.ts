@@ -199,7 +199,9 @@ export interface ArtistState {
 export const getAlbumsByArtist = createCachedSelector(
   selectors.findById,
   ({ albums }: ApplicationState) => albums.allById,
-  ({ _id }, albums): Album[] => toArray(albums).filter(({ artist }) => artist === _id)
+  ({ _id }, albums): Album[] => toArray(albums)
+    .filter(({ artist }) => artist === _id)
+    .sort((a, b) => a.year - b.year)
 )((_state_: ApplicationState, id: string) => id);
 
 export const searchArtists = createCachedSelector(
