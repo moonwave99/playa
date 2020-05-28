@@ -27,6 +27,10 @@
           "outro": "and other FOSS."
         }
       },
+      "screenshots": {
+        "search": "Playa, Search View",
+        "playlist": "Playa, Playlist View"
+      },
       "download": "Download {{version}} for Mac OS X"
     },
     "blog": {
