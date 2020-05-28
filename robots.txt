@@ -3,4 +3,4 @@
 # Allow crawling of all content
 User-agent: *
 Disallow:
-Sitemap: /sitemap.xml
+Sitemap: https://moonwave99.github.io/playa/sitemap.xml
