@@ -25,15 +25,13 @@
     </header>
     <div class="hero-screenshots fl w-100 w-50-xl h-100 pa3 pa0-l flex flex-column justify-center">
       <div class="screenshot-wrapper relative pv5-l h-100">
+        {% for key in ['library', 'playlist', 'search'] %}
         <div class="screenshot absolute">
           <img class="search"
-            alt="{{ t('home.hero.screenshots.search') }}"
-            data-src="{{ asset('images/screenshots/search.png') }}"/>
+            alt="{{ t('home.hero.screenshots.' + key) }}"
+            data-src="{{ asset('images/screenshots/' + key + '.png') }}"/>
         </div>
-        <div class="screenshot absolute">
-          <img class="playlist"
-            alt="{{ t('home.hero.screenshots.playlist') }}"
-            data-src="{{ asset('images/screenshots/playlist.png') }}"/>
+        {% endfor %}
         </div>
       </div>
     </div>

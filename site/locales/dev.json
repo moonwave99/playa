@@ -28,6 +28,7 @@
         }
       },
       "screenshots": {
+        "library": "Playa, Library View",
         "search": "Playa, Search View",
         "playlist": "Playa, Playlist View"
       },
