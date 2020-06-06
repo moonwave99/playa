@@ -209,7 +209,7 @@ export const getAlbumRequest = (id: Album['_id']): Function =>
       album.tracks.filter((_id: Track['_id']) => !tracks.allById[_id]);
 
     if (notFoundTracks.length > 0) {
-      const albumTracks = await ipc.invoke(IPC_TRACK_GET_LIST_REQUEST, notFoundTracks);
+      const { tracks: albumTracks } = await ipc.invoke(IPC_TRACK_GET_LIST_REQUEST, notFoundTracks);
       dispatch(getTrackListResponse(albumTracks));
     }
   }
@@ -253,7 +253,8 @@ export const reloadAlbumContent = (albumID: Album['_id']): Function =>
     const { albums } = getState();
     const album = albums.allById[albumID];
     const reloadedAlbum = await ipc.invoke(IPC_ALBUM_CONTENT_REQUEST, album);
-    const reloadedTracks = await ipc.invoke(IPC_TRACK_GET_LIST_REQUEST, reloadedAlbum.tracks, true);
+    const { tracks: reloadedTracks }
+      = await ipc.invoke(IPC_TRACK_GET_LIST_REQUEST, reloadedAlbum.tracks, true);
     dispatch(getAlbumContentResponse(reloadedAlbum));
     dispatch(getTrackListResponse(reloadedTracks));
   }

@@ -115,7 +115,9 @@ module.exports = {
           return fixtures.artists;
         case IPC_TRACK_GET_LIST_REQUEST:
           const tracksMap = toObj(fixtures.tracks);
-          return args[0].map(x => tracksMap[x]);
+          return {
+            tracks: args[0].map(x => tracksMap[x])
+          };
         case IPC_ALBUM_GET_STATS_REQUEST:
           if (args[0] === 'artist') {
             return fixtures.artists.map(x => ({

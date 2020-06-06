@@ -34,6 +34,7 @@ export default function useImportAlbums(appElement: HTMLElement): {
   const { t } = useTranslation();
   const [folderToImport, setFolderToImport] = useState(null);
   const [tracksToImport, setTracksToImport] = useState([]);
+  const [albumTitle, setAlbumTitle] = useState('');
   const [showImportModal, setShowImportModal] = useState(false);
 
   async function show(folder: string): Promise<void> {
@@ -59,9 +60,13 @@ export default function useImportAlbums(appElement: HTMLElement): {
       return;
     }
 
-    const processedTracks = await ipc.invoke(IPC_TRACK_GET_LIST_RAW_REQUEST, folderTracks);
+    const {
+      tracks,
+      albumTitle
+    } = await ipc.invoke(IPC_TRACK_GET_LIST_RAW_REQUEST, folderTracks);
     setFolderToImport(folder);
-    setTracksToImport(processedTracks);
+    setTracksToImport(tracks);
+    setAlbumTitle(albumTitle);
     setShowImportModal(true);
   }
 
@@ -103,6 +108,7 @@ export default function useImportAlbums(appElement: HTMLElement): {
         onRequestClose={onImportModalRequestClose}
         isOpen={showImportModal}>
         <ImportView
+          albumTitle={albumTitle}
           tracks={tracksToImport}
           folderToImport={folderToImport}
           onFormSubmit={onImportFormSubmit}/>

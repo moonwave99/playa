@@ -15,12 +15,14 @@ import './ImportView.scss';
 
 type ImportViewProps = {
   tracks: Track[];
+  albumTitle: string;
   folderToImport: string;
   onFormSubmit: Function;
 }
 
 export const ImportView: FC<ImportViewProps> = ({
   tracks = [],
+  albumTitle = '',
   folderToImport,
   onFormSubmit
 }) => {
@@ -65,6 +67,7 @@ export const ImportView: FC<ImportViewProps> = ({
 
   const album = {
     ...getDefaultAlbum(),
+    title: albumTitle,
     year: getYearFromPath(folderToImport)
   };
 

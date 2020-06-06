@@ -181,7 +181,7 @@ export default async function initDatabase({
     if (tracks.length === 0) {
       tracks = await loadAlbum(albums[0].path);
     }
-    const foundTracks = await loadTracklist(tracks, db.track);
+    const { tracks: foundTracks } = await loadTracklist(tracks, db.track);
     return {
       album: {
         ...albums[0],

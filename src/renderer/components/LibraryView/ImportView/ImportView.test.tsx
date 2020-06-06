@@ -30,6 +30,7 @@ describe('ImportView', () => {
   it('should render an .import-view', () => {
     const wrapper = renderInAll(
       <ImportView
+        albumTitle={''}
         onFormSubmit={jest.fn()}
         folderToImport='/path/to/folder'
         tracks={tracks}/>
@@ -40,6 +41,7 @@ describe('ImportView', () => {
   it('should contain a title with the folder name', () => {
     const wrapper = renderInAll(
       <ImportView
+        albumTitle={''}
         onFormSubmit={jest.fn()}
         folderToImport='/path/to/folder'
         tracks={tracks}/>
@@ -50,6 +52,7 @@ describe('ImportView', () => {
   it('should contain an .album-form', () => {
     const wrapper = renderInAll(
       <ImportView
+        albumTitle={''}
         onFormSubmit={jest.fn()}
         folderToImport='/path/to/folder'
         tracks={tracks}/>
@@ -60,6 +63,7 @@ describe('ImportView', () => {
   it('should contain a .tracklist-view', () => {
     const wrapper = renderInAll(
       <ImportView
+        albumTitle={''}
         onFormSubmit={jest.fn()}
         folderToImport='/path/to/folder'
         tracks={tracks}/>

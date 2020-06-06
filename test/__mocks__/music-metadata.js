@@ -7,6 +7,7 @@ module.exports = {
       throw new Error(`${path} not found`);
     }
     const { title, artist, number, duration } = track;
+    const album = track.artist === 'My Bloody Valentine' ? 'Loveless' : '';
     return {
       format: {
         duration
@@ -14,6 +15,7 @@ module.exports = {
       common: {
         title,
         artist,
+        album,
         track: {
           no: number
         }

@@ -34,12 +34,25 @@ async function loadMetadata(paths: string[]): Promise<MetadataResult[]> {
   );
 }
 
+function getAlbumTitle(metadata: MetadataResult[]): string {
+  if (!metadata.length) {
+    return '';
+  }
+  if (!metadata[0].metadata) {
+    return '';
+  }
+  return metadata[0].metadata.common.album || '';
+}
+
 export default async function loadTracklist(
   ids: string[],
   db: Database,
   forceUpdate = false,
   persist = true
-): Promise<Track[]> {
+): Promise<{
+  tracks: Track[];
+  albumTitle: string;
+}> {
   const results = await db.getList<Track>(ids);
   let resultIDs = results.map(({ _id }) => _id);
   if (forceUpdate) {
@@ -73,8 +86,11 @@ export default async function loadTracklist(
       loadedTracks.filter(({ found }) => found)
     );
   }
-  return [
-    ...results,
-    ...loadedTracks
-  ].sort((a, b) => a._id.localeCompare(b._id));
+  return {
+    tracks: [
+      ...results,
+      ...loadedTracks
+    ].sort((a, b) => a._id.localeCompare(b._id)),
+    albumTitle: getAlbumTitle(meta)
+  }
 }

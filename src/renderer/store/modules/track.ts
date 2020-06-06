@@ -61,9 +61,10 @@ export type TrackActionTypes =
 
 export const getTrackListRequest = (ids: string[]): Function =>
   async (dispatch: Function): Promise<void> => {
+    const { tracks: results } = await ipc.invoke(IPC_TRACK_GET_LIST_REQUEST, ids);
     dispatch({
       type: TRACK_GET_LIST_RESPONSE,
-      results: await ipc.invoke(IPC_TRACK_GET_LIST_REQUEST, ids)
+      results
     });
   }
 
