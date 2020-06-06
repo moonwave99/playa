@@ -4,6 +4,7 @@ import { TooltipArg } from 'react-popper-tooltip';
 import cx from 'classnames';
 import { TracklistView } from '../AlbumListView/AlbumView/TracklistView/TracklistView';
 import { Album, getAlbumRequest, getAlbumContentById } from '../../store/modules/album';
+import { Artist } from '../../store/modules/artist';
 import { Track } from '../../store/modules/track';
 import { ApplicationState } from '../../store/store';
 import { showTrackNumbers } from '../../utils/albumUtils';
@@ -13,7 +14,11 @@ import './TooltipAlbumView.scss';
 type TooltipAlbumViewProps = TooltipArg & {
   album: Album;
   currentTrackId: Track['_id'];
-  onDoubleClick: Function;
+  onDoubleClick: (params: {
+    album: Album;
+    artist: Artist;
+    track: Track;
+  }) => void;
 }
 
 export const TooltipAlbumView: FC<TooltipAlbumViewProps> = ({

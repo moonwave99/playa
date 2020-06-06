@@ -22,7 +22,6 @@ import {
 import { getWaveformRequest } from '../../store/modules/waveform';
 import { showDialog } from '../../store/modules/ui';
 import { Album } from '../../store/modules/album';
-import { Artist } from '../../store/modules/artist';
 import { Track } from '../../store/modules/track';
 
 import Player, { PlaybackInfo, PLAYER_EVENTS } from '../../lib/player';
@@ -114,11 +113,13 @@ export const PlayerView: FC<PlayerViewProps> = ({
 		history.replace(QUEUE);
 	}
 
-	function onTracklistDoubleClick(
-		album: Album,
-		_artist: Artist,
-		track: Track
-	): void {
+	function onTracklistDoubleClick({
+		album,
+		track
+	}: {
+		album: Album;
+		track: Track;
+	}): void {
 		dispatch(playTrack({
 			albumId: album._id,
 			trackId: track._id,

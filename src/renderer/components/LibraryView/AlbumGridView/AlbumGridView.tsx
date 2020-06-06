@@ -6,6 +6,7 @@ import cx from 'classnames';
 import { AlbumGridTileView } from './AlbumGridTileView/AlbumGridTileView';
 import { TooltipAlbumView } from '../../TooltipAlbumView/TooltipAlbumView';
 import { Album } from '../../../store/modules/album';
+import { Artist } from '../../../store/modules/artist';
 import { Track } from '../../../store/modules/track';
 import useGrid, { GridCell, EMPTY_CELL } from '../../../hooks/useGrid/useGrid';
 import scrollTo from '../../../lib/scrollTo';
@@ -32,7 +33,11 @@ type AlbumGridViewProps = {
   onEnter?: (selection: GridCell['_id'][]) => void;
   onBackspace?: (selection: GridCell['_id'][]) => void;
   onAlbumContextMenu?: Function;
-  onAlbumDoubleClick?: Function;
+  onAlbumDoubleClick?: (params: {
+    album: Album;
+    artist: Artist;
+    track: Track;
+  }) => void;
   renderGroupTitle?: (album: Album) => ReactElement;
 };
 

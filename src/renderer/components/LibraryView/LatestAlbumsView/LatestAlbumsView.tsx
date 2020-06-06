@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import cx from 'classnames';
 import { AlbumGridView } from '../AlbumGridView/AlbumGridView';
 import { Album } from '../../../store/modules/album';
+import { Artist } from '../../../store/modules/Artist';
 import { Track } from '../../../store/modules/track';
 import { updateLibraryAlbumSelection } from '../../../store/modules/ui';
 import useNativeDrop, { NativeTypes } from '../../../hooks/useNativeDrop/useNativeDrop';
@@ -17,7 +18,11 @@ type LatestAlbumsViewProps = {
   onAlbumEnter: (selection: GridCell['_id'][]) => void;
   onAlbumBackspace: (selection: GridCell['_id'][]) => void;
   onAlbumContextMenu: Function;
-  onAlbumDoubleClick: Function;
+  onAlbumDoubleClick: (params: {
+    album: Album;
+    artist: Artist;
+    track: Track;
+  }) => void;
   onDrop: Function;
 };
 
