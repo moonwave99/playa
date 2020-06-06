@@ -29,7 +29,8 @@
 		"clean": "rimraf build && rimraf _pack && rimraf dist",
 		"lint": "yarn eslint ./src --ext .js,.jsx,.ts,.tsx",
 		"test": "jest --config jest.config.js",
-		"test:e2e": "jest --runInBand --config jest.config.e2e.js"
+		"test:e2e": "jest --runInBand --config jest.config.e2e.js",
+		"db:scripts": "TS_NODE_FILES=true ts-node --project ./tsconfig.scripts.json ./scripts/db.ts"
 	},
 	"devDependencies": {
 		"@types/classnames": "^2.2.9",
