@@ -25,33 +25,33 @@ describe('Onboarding window', () => {
 
   it('shows the Onboarding window', async () => {
     await app.client.waitUntilWindowLoaded();
-    await app.client.waitUntil(async () => await app.client.getWindowCount() === 3);
+    await app.client.waitUntil(async () => await app.client.getWindowCount() === 2);
   });
 
   it('closes the Onboarding window when Esc is pressed', async () => {
     await app.client.waitUntilWindowLoaded();
-    await app.client.waitUntil(async () => await app.client.getWindowCount() === 3);
-    await app.client.windowByIndex(2);
+    await app.client.waitUntil(async () => await app.client.getWindowCount() === 2);
+    await app.client.windowByIndex(1);
     await app.client.waitUntilWindowLoaded();
     await app.client.keys(['Escape']);
-    await app.client.windowByIndex(1);
+    await app.client.windowByIndex(0);
     expect(
       await app.client.getWindowCount()
-    ).toBe(2);
+    ).toBe(1);
   });
 
   it('should not reopen the Onboarding window once dismissed', async () => {
     await app.client.waitUntilWindowLoaded();
-    await app.client.waitUntil(async () => await app.client.getWindowCount() === 3);
-    await app.client.windowByIndex(2);
+    await app.client.waitUntil(async () => await app.client.getWindowCount() === 2);
+    await app.client.windowByIndex(1);
     await app.client.waitUntilWindowLoaded();
     await app.client.keys(['Escape']);
-    await app.client.windowByIndex(1);
+    await app.client.windowByIndex(0);
 
     await app.restart();
     await wait(TEN_SECONDS / 2);
     expect(
       await app.client.getWindowCount()
-    ).toBe(2);
+    ).toBe(1);
   }, TEN_SECONDS);
 });

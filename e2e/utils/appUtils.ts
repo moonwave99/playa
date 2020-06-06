@@ -13,13 +13,19 @@ type GetAppParams = {
   state: object;
 };
 
-export async function getApp({
-  args = [],
-  state = { showOnboarding: false }
-}: GetAppParams = { args: [], state: {} }): Promise<{
-  app: Application,
-  menuAddon: SpectronMenuAddon
+const defaultAppParams = {
+  args: [],
+  state: { showOnboarding: false }
+} as GetAppParams;
+
+export async function getApp(params = defaultAppParams): Promise<{
+  app: Application;
+  menuAddon: SpectronMenuAddon;
 }>{
+  const { state, args } = {
+    ...defaultAppParams,
+    ...params
+  };
   await fs.writeJSON(
     Path.join(SPECTRON_BASEPATH, 'appState.json'),
     { ...defaultState, ...state }

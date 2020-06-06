@@ -118,6 +118,7 @@ function createWindow({
     trafficLightPosition,
     webPreferences: {
       allowRunningInsecureContent: false,
+      enableRemoteModule: true,
       nodeIntegration: true,
       nativeWindowOpen: true
     }

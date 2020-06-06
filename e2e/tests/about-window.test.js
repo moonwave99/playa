@@ -22,7 +22,7 @@ describe('About window', () => {
     await menuAddon.clickMenu('Playa', 'About Playa');
     expect(
       await app.client.getWindowCount()
-    ).toBe(3);
+    ).toBe(2);
   });
 
   it('closes the About window when Esc is pressed', async () => {
@@ -30,13 +30,13 @@ describe('About window', () => {
     await menuAddon.clickMenu('Playa', 'About Playa');
     expect(
       await app.client.getWindowCount()
-    ).toBe(3);
-    await app.client.windowByIndex(2);
+    ).toBe(2);
+    await app.client.windowByIndex(1);
     await app.client.waitUntilWindowLoaded();
     await app.client.keys(['Escape']);
-    await app.client.windowByIndex(1);
+    await app.client.windowByIndex(0);
     expect(
       await app.client.getWindowCount()
-    ).toBe(2);
+    ).toBe(1);
   });
 });

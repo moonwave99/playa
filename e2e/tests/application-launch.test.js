@@ -20,9 +20,7 @@ describe('Application launch', () => {
   });
 
   it('shows an initial window', async () => {
-    const count = await app.client.getWindowCount();
-    // on OSX: main procss + app window
-    expect(count).toBe(2);
+    expect(await app.client.getWindowCount()).toBe(1);
   });
 
   it('recalls last opened playlist', async () => {
