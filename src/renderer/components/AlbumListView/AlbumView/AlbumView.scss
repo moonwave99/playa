@@ -91,6 +91,7 @@
         width: 2rem;
         height: 2rem;
         margin-left: .5rem;
+        align-items: center;
         @media (max-width: $smallWindowThreshold) {
           height: auto;
           line-height: 1;
