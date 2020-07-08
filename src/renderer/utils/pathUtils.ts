@@ -1,3 +1,5 @@
+import { escapeRegExp }from 'lodash';
+
 const SYMBOLS_TO_REPLACE = {
   '?' : '%3F',
   '#' : '%23',
@@ -6,11 +8,11 @@ const SYMBOLS_TO_REPLACE = {
 };
 
 export function encodePath(path: string): string {
-  let output = path;
-  Object.entries(SYMBOLS_TO_REPLACE).forEach(
-    ([symbol, replacement]) => output = output.replace(symbol, replacement)
-  );
-  return output;
+  return Object.entries(SYMBOLS_TO_REPLACE).reduce(
+    (memo, [symbol, replacement]) => memo.replace(
+      new RegExp(`${escapeRegExp(symbol)}`, 'g'), replacement
+    )
+  , path);
 }
 
 export function getYearFromPath(path: string): number {
