@@ -41,6 +41,10 @@ window.addEventListener('load', async () => {
 
   ReactModal.setAppElement('#app');
 
+  function onLibraryScroll(scrolling: boolean): void {
+    document.body.classList.toggle('is-library-scrolling', scrolling);
+  }
+
   ReactDOM.render(
     <Provider store={store}>
       <ConnectedRouter history={history}>
@@ -49,7 +53,8 @@ window.addEventListener('load', async () => {
             player={player}
             waveformBasePath={waveformBasePath}
             lastOpenedPlaylistId={lastOpenedPlaylistId}
-            queue={queue}/>
+            queue={queue}
+            onLibraryScroll={onLibraryScroll}/>
         </DndProvider>
       </ConnectedRouter>
     </Provider>,

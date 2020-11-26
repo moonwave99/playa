@@ -2,6 +2,7 @@ import React, { FC, ReactElement, useState, useEffect } from 'react';
 import { useLocation, useHistory } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import useScroll from '../../hooks/useScroll/useScroll';
 import { getLatestRequest } from '../../store/modules/library';
 import { LatestAlbumsView } from './LatestAlbumsView/LatestAlbumsView';
 import { ArtistListView } from './ArtistListView/ArtistListView';
@@ -44,15 +45,18 @@ const DEFAULT_LETTER = 'a';
 
 type LibraryViewProps = {
 	onDrop: Function;
+	onScroll: (scrolling: boolean) => void;
 };
 
 export const LibraryView: FC<LibraryViewProps> = ({
-  onDrop
+  onDrop,
+  onScroll
 }) => {
   const { t } = useTranslation();
 	const dispatch = useDispatch();
   const location = useLocation();
-	const history = useHistory();
+  const history = useHistory();
+  const { ref } = useScroll(onScroll);
 
   const [selectedLetter, setSelectedLetter] = useState(DEFAULT_LETTER);
 
@@ -214,7 +218,7 @@ export const LibraryView: FC<LibraryViewProps> = ({
   }
 
 	return (
-		<section className="library">
+		<section className="library" ref={ref}>
       { libraryView === UILibraryView.Artists && renderArtists() }
       { libraryView === UILibraryView.Timeline && renderTimeline() }
 		</section>

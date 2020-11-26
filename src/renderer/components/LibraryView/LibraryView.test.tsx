@@ -40,21 +40,21 @@ const defaultStore = {
 describe('LibraryView', () => {
   it('should render a .library', () => {
     const wrapper = mountInAll(
-      <LibraryView onDrop={jest.fn()}/>
+      <LibraryView onDrop={jest.fn()} onScroll={jest.fn()}/>
     , defaultStore);
     expect(wrapper.find('.library')).toHaveLength(1);
   });
 
   it('should contain an .library-latest-albums', () => {
     const wrapper = mountInAll(
-      <LibraryView onDrop={jest.fn()}/>
+      <LibraryView onDrop={jest.fn()} onScroll={jest.fn()}/>
     , defaultStore);
     expect(wrapper.find('.album-grid')).toHaveLength(1);
   });
 
   it('should update page title', () => {
     mountInAll(
-      <LibraryView onDrop={jest.fn()}/>
+      <LibraryView onDrop={jest.fn()} onScroll={jest.fn()}/>
     , defaultStore);
     expect(document.title).toBe('Library');
   });
@@ -62,7 +62,7 @@ describe('LibraryView', () => {
   describe('if libraryView is Artists', () => {
     it('should contain an .artist-list', () => {
       const wrapper = mountInAll(
-        <LibraryView onDrop={jest.fn()}/>
+        <LibraryView onDrop={jest.fn()} onScroll={jest.fn()}/>
       , {
           ...defaultStore,
           library: {
@@ -77,7 +77,7 @@ describe('LibraryView', () => {
 
     it('should select letter on alphabet letter click', () => {
       const wrapper = mountInAll(
-        <LibraryView onDrop={jest.fn()}/>
+        <LibraryView onDrop={jest.fn()} onScroll={jest.fn()}/>
       , {
           ...defaultStore,
           library: {

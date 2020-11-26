@@ -65,6 +65,7 @@ export const TooltipAlbumView: FC<TooltipAlbumViewProps> = ({
   const classNames = cx(
     'tooltip-container',
     'tooltip-album-view',
+    'disappear-on-scrolling',
     { loaded }
   );
 

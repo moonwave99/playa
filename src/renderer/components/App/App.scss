@@ -1,6 +1,13 @@
 @import "../../styles/variables";
 @import "../../styles/common";
 
+.is-library-scrolling {
+  transition: opacity .3s ease-in-out;
+	.disappear-on-scrolling {
+		opacity: 0;
+	}
+}
+
 .app {
   height: 100vh;
   .search-container,

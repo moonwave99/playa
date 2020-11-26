@@ -80,6 +80,7 @@ type AppProps = {
   lastOpenedPlaylistId: Playlist['_id'];
   waveformBasePath: string;
   queue: Album['_id'][];
+  onLibraryScroll: (scrolling: boolean) => void;
 }
 
 const CreatePlaylist = (): ReactElement => {
@@ -97,7 +98,8 @@ export const App: FC<AppProps> = ({
   player,
   lastOpenedPlaylistId,
   waveformBasePath,
-  queue
+  queue,
+  onLibraryScroll
 }): ReactElement => {
   const mainElementRef = useRef(null);
   const history = useHistory();
@@ -263,7 +265,7 @@ export const App: FC<AppProps> = ({
               <ArtistView/>
             </Route>
             <Route path={LIBRARY}>
-              <LibraryView onDrop={onLibraryDrop}/>
+              <LibraryView onDrop={onLibraryDrop} onScroll={onLibraryScroll}/>
             </Route>
             <Route path={QUEUE}>
               <QueueView/>

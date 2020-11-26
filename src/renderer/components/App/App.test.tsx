@@ -42,7 +42,8 @@ describe('App', () => {
         player={new Player({ audioElement: new MockAudioElement() })}
         queue={[]}
         waveformBasePath="/path/to/waveforms"
-        lastOpenedPlaylistId={null}/>
+        lastOpenedPlaylistId={null}
+        onLibraryScroll={jest.fn()}/>
 		, defaultStore);
 		expect(wrapper.find('.app')).toHaveLength(1);
   });
@@ -53,7 +54,8 @@ describe('App', () => {
         player={new Player({ audioElement: new MockAudioElement() })}
         queue={[]}
         waveformBasePath="/path/to/waveforms"
-        lastOpenedPlaylistId={null}/>
+        lastOpenedPlaylistId={null}
+        onLibraryScroll={jest.fn()}/>
 		, {
         ...defaultStore,
         albums: {
@@ -72,7 +74,8 @@ describe('App', () => {
         player={new Player({ audioElement: new MockAudioElement() })}
         queue={[]}
         waveformBasePath="/path/to/waveforms"
-        lastOpenedPlaylistId={null}/>
+        lastOpenedPlaylistId={null}
+        onLibraryScroll={jest.fn()}/>
 		, {
         ...defaultStore,
         albums: {
@@ -93,7 +96,8 @@ describe('App', () => {
         player={new Player({ audioElement: new MockAudioElement() })}
         queue={[]}
         waveformBasePath="/path/to/waveforms"
-        lastOpenedPlaylistId={null}/>
+        lastOpenedPlaylistId={null}
+        onLibraryScroll={jest.fn()}/>
 		, {
         ...defaultStore,
         albums: {
