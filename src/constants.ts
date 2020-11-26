@@ -18,7 +18,7 @@ export const ABOUT_WINDOW_HEIGHT = 350;
 export const ONBOARDING_WINDOW_WIDTH = 800;
 export const ONBOARDING_WINDOW_HEIGHT = 600;
 
-export const RECENT_PLAYLIST_COUNT = 10;
+export const RECENT_PLAYLIST_COUNT = 20;
 
 export const MUSIC_FILE_EXTENSIONS = ['mp3', 'm4a', 'flac', 'ogg'];
 
@@ -38,7 +38,7 @@ export const COLORS = {
   BACKGROUND_COLOR: '#1F1F1F'
 };
 
-export const LIBRARY_LATEST_ALBUM_LIMIT = 50;
+export const LIBRARY_LATEST_ALBUM_LIMIT = 350;
 export const LIBRARY_LATEST_DAY_COUNT = 90;
 
 export const DATE_FORMATS = {
