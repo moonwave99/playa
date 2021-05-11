@@ -120,7 +120,7 @@
 		"history": "^4.10.1",
 		"i18next": "^19.0.3",
 		"jimp": "^0.10.0",
-		"lodash": "^4.17.15",
+		"lodash": "^4.17.21",
 		"memoize-one": "^5.1.1",
 		"mousetrap": "^1.6.5",
 		"music-metadata": "^6.1.1",
