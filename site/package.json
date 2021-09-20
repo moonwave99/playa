@@ -24,7 +24,7 @@
     "lodash": "^4.17.13",
     "marked": "^0.8.0",
     "postcss-brunch": "^3.0.0",
-    "prismjs": "^1.19.0",
+    "prismjs": "^1.25.0",
     "stickybits": "^3.7.4",
     "tachyons": "^4.11.1",
     "uglify-es": "^3.3.9",
