@@ -124,7 +124,7 @@
 		"memoize-one": "^5.1.1",
 		"mousetrap": "^1.6.5",
 		"music-metadata": "^6.1.1",
-		"nanoid": "^3.0.2",
+		"nanoid": "^3.1.31",
 		"node-vibrant": "^3.1.5",
 		"pouchdb": "^7.2.1",
 		"pouchdb-find": "^7.2.1",
