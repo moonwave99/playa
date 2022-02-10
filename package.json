@@ -86,7 +86,7 @@
 		"jest-fetch-mock": "^3.0.1",
 		"mock-fs": "https://github.com/tschaub/mock-fs#master",
 		"native-ext-loader": "^2.3.0",
-		"node-sass": "^4.13.0",
+		"node-sass": "^7.0.0",
 		"react-dnd-test-backend": "^10.0.2",
 		"redux-logger": "^3.0.6",
 		"redux-mock-store": "^1.5.4",
