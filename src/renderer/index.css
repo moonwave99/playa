@@ -1,0 +1,58 @@
+:root {
+  --primary-color: #ffffff;
+  --secondary-color: #b3b3b3;
+  --tertiary-color: #4f4d4d;
+  --background-color: #121212;
+  --accent-color: #4361ee;
+  --selected-no-focus-color: #4f4d4d;
+  --sidebar-background-color: #232323;
+  --sidebar-secondary-color: #7d7d7d;
+  --sidebar-nav-button-background-color: #4f4d4d;
+  --release-group-background-color: #1f1f1f;
+  --release-view-background-color: rgba(255, 255, 255, .1);
+  --header-height: 3.5rem;
+  --sidebar-width: 20rem;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
+  max-width: 100vw;
+  overflow-x: hidden;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  color: var(--primary-color);
+  background-color: var(--background-color);
+  display: flex;
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+#root {
+  width: 100vw;
+  display: flex;
+}
+
+.drag {
+  position: fixed;
+  height: 1rem;
+  top: 0;
+  left: 0;
+  right: 0;
+  -webkit-app-region: drag;
+}

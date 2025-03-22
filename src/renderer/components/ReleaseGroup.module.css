@@ -1,0 +1,80 @@
+.view {
+  background-color: var(--release-group-background-color);
+  border-radius: 0.25rem;
+  padding: .5rem .75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.5rem;
+  height: 100%;
+  color: black;
+  max-width: 100%;
+}
+
+.view>* {
+  margin: 0;
+}
+
+.title {
+  color: var(--primary-color);
+  font-size: .75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: .5rem;
+}
+
+.count {
+  color: var(--secondary-color);
+  font-size: .7rem;
+  flex-shrink: 0;
+}
+
+.title a {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.title a:hover {
+  text-decoration: underline;
+}
+
+.selected {
+  background-color: var(--accent-color);
+}
+
+.coverWrapper,
+.ghost {
+  width: 100%;
+  aspect-ratio: 1/1;
+  align-self: center;
+  flex: 1;
+  overflow: hidden;
+  border-radius: .25rem;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity .2s ease-in-out;
+}
+
+.loaded {
+  opacity: 1;
+}
+
+.releases {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: .5rem;
+  list-style: none;
+}
+
+.releases li {
+  flex: 1;
+}

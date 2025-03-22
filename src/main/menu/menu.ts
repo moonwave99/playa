@@ -1,0 +1,173 @@
+import { Menu, MenuItem, dialog, BrowserWindow, MenuItemConstructorOptions } from 'electron';
+import { importFolder } from '../system';
+import { getStats } from '../db/stats';
+import type { Sidebars, Entities } from '@/types/types';
+import type { QueryKey } from '@tanstack/react-query';
+import { releaseMenu } from './release';
+import { artistMenu } from './artist';
+import { collectionMenu } from './collection';
+import { searchResultMenu } from './searchResult';
+
+export { releaseMenu, artistMenu, collectionMenu, searchResultMenu };
+
+export function buildMenu(params: (MenuItemConstructorOptions | MenuItem)[]) {
+  const menu = Menu.buildFromTemplate(params);
+  menu.popup();
+  return true;
+}
+
+type GetDeleteEntryParams = {
+  title: string;
+  deleteFn: () => Promise<unknown>;
+  queryKeys: QueryKey;
+};
+
+export function getDeleteEntry({ title, deleteFn, queryKeys }: GetDeleteEntryParams) {
+  return {
+    label: `Remove '${title}' from Library`,
+    click: async () => {
+      const cancel = dialog.showMessageBoxSync(null, {
+        message: `Are you sure to delete ${title}?`,
+        detail: 'This action is not reversible!',
+        type: 'warning',
+        buttons: ['OK', 'Cancel'],
+        defaultId: 1,
+      });
+      if (cancel) {
+        return;
+      }
+      await deleteFn();
+      BrowserWindow.getAllWindows()[0].webContents.send('mutate', queryKeys);
+      BrowserWindow.getAllWindows()[0].webContents.send('clearSelection');
+    }
+  }
+}
+
+type NavigateMenuEntry = {
+  label: string;
+  accelerator: string;
+  link: string;
+};
+
+type SidebarMenuEntry = {
+  label: string;
+  accelerator: string;
+  sidebar: Sidebars;
+};
+
+type RandomMenuEntry = {
+  label: string;
+  accelerator: string;
+  entity: Entities;
+}
+
+const navigateMenu: NavigateMenuEntry[] = [
+  {
+    label: 'Latest Releases',
+    accelerator: 'Shift+R',
+    link: '/'
+  },
+  {
+    label: 'Latest Artists',
+    accelerator: 'Shift+A',
+    link: '/artists'
+  },
+  {
+    label: 'Latest Collections',
+    accelerator: 'Shift+C',
+    link: '/collections'
+  },
+];
+
+const sidebarMenu: SidebarMenuEntry[] = [
+  {
+    label: 'Music',
+    accelerator: 'Shift+1',
+    sidebar: 'music'
+  },
+  {
+    label: 'Artists',
+    accelerator: 'Shift+2',
+    sidebar: 'artists'
+  },
+  {
+    label: 'Collections',
+    accelerator: 'Shift+3',
+    sidebar: 'collections'
+  },
+];
+
+const randomMenu: RandomMenuEntry[] = [
+  {
+    label: 'Show Random Release',
+    accelerator: 'Alt+R',
+    entity: 'release',
+  },
+  {
+    label: 'Show Random Artist',
+    accelerator: 'Alt+A',
+    entity: 'artist',
+  },
+  {
+    label: 'Show Random Collection',
+    accelerator: 'Alt+C',
+    entity: 'collection',
+  },
+]
+
+export function setupMenu(win: BrowserWindow) {
+  const menu = Menu.getApplicationMenu();
+  menu.append(new MenuItem({
+    label: 'Navigate',
+    submenu: [
+      ...navigateMenu.map(({ label, accelerator, link }) => ({
+        label,
+        accelerator,
+        click: () => win.webContents.send('navigate', link)
+      })),
+      { type: 'separator' },
+      ...sidebarMenu.map(({ label, accelerator, sidebar }) => ({
+        label,
+        accelerator,
+        click: () => win.webContents.send('navigateSidebar', sidebar)
+      }))
+    ]
+  }));
+  menu.append(new MenuItem({
+    label: 'Library',
+    submenu: [{
+      label: 'Import Folder',
+      accelerator: 'Shift+I',
+      click: async () => {
+        const folder = dialog.showOpenDialogSync(win, {
+          properties: ['openDirectory']
+        });
+        await importFolder(folder[0]);
+        win.webContents.send('mutate', [['releases', 'latest']]);
+      }
+    },
+    { type: 'separator' },
+    ...randomMenu.map(({ label, accelerator, entity }) => ({
+      label,
+      accelerator,
+      click: async () => {
+        const stats = await getStats();
+        win.webContents.send('navigate', getRandomLink(stats, entity));
+      }
+    })),
+    { type: 'separator' },
+    {
+      label: 'Toggle View Mode',
+      accelerator: 'Shift+T',
+      click: () => win.webContents.send('toggleViewMode')
+    }
+    ]
+  }));
+  Menu.setApplicationMenu(menu);
+}
+
+function getRandomLink(stats: Partial<Record<Entities, number>>, entity: Entities): string {
+  const count = stats[entity];
+  const randomId = Math.round(Math.random() * count);
+  return `/${entity}s/${randomId}`;
+}

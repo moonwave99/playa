@@ -1,0 +1,53 @@
+.releaseView {
+  padding: 1rem 0 1rem 1rem;
+  display: flex;
+  gap: 1rem;
+  border-radius: .25rem;
+  margin: 0 1rem;
+  background-color: var(--release-view-background-color);
+}
+
+.releaseSide {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+.releaseSide>* {
+  margin: 0;
+}
+
+.releaseSide a:hover {
+  text-decoration: underline;
+}
+
+.releaseMain {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+.releaseTitle {
+  font-size: 1rem;
+}
+
+.releaseArtist {
+  font-size: 1rem;
+  color: var(--secondary-color);
+}
+
+.releaseInfo {
+  line-height: 1.5rem;
+  font-size: .8rem;
+  /* color: var(--secondary-color); */
+}
+
+.releaseListCover {
+  width: 20rem;
+  height: 20rem;
+}
+
+.selected {
+  background-color: var(--accent-color);
+}

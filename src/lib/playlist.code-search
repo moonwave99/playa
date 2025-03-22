@@ -1,0 +1,122 @@
+# Query: playlist
+
+134 results - 11 files
+
+src/lib/links.ts:
+  25: export function getPlaylistLink({ id }: HasId) {
+
+src/main/api.ts:
+   5: import * as playlist from './db/collection';
+   7: import { releaseMenu, artistMenu, playlistMenu, searchResultMenu } from './menu/menu';
+  19:   'menu:playlist': playlistMenu,
+  24:   [release, artist, playlist, system, menu].forEach(registerHandlers);
+
+src/main/db/release.ts:
+    9:     Playlist,
+  210:     const playlists = await prisma.playlist.findMany({
+  221:         ...playlists.map(({ id, title }: Playlist) => ({
+  224:             description: "Playlist",
+  225:             type: 'playlist' as const,
+  227:                 playlist: `/playlists/${id}`
+
+src/main/db/stats.ts:
+  18:   const playlists = await prisma.playlist.aggregate({
+  26:     playlist: playlists._count.id,
+
+src/main/menu/menu.ts:
+  94:     label: 'Playlists',
+
+src/main/menu/release.ts:
+    4: import { getPlaylists, createPlaylist, updatePlaylist } from "../db/collection";
+    5: import { getPlaylistLink } from '@/lib/links';
+   12: function getAddToPlaylistEntry(selection: Release[], playlists: CollectionWithReleases[]) {
+   14:     label: selection.length > 1 ? `Add ${selection.length} Releases to Playlist...` : 'Add to Playlist...',
+   16:     submenu: playlists.map((playlist: CollectionWithReleases) => ({
+   17:       label: playlist.title,
+   19:         await updatePlaylist(playlist.id, {
+   20:           title: playlist.title,
+   24:               ...playlist.releases.map(({ id }: Release) => id),
+   29:           ['playlists', 'latest'],
+   30:           ['playlists', playlist.id]
+   37: function getRemoveFromPlaylistEntry(selection: Release[], playlist: CollectionWithReleases) {
+   39:     label: `Remove ${selection.length} Releases from Playlist`,
+   42:       await updatePlaylist(playlist.id, {
+   43:         title: playlist.title,
+   44:         releases: playlist.releases
+   49:         ['playlists', playlist.id]
+   97:   const playlists = await getPlaylists();
+   98:   const newPlaylistHandler = async () => {
+   99:     const newPlaylist = await createPlaylist({
+  100:       title: 'New Playlist',
+  103:     BrowserWindow.getAllWindows()[0].webContents.send('mutate', [['playlists'], ['playlists', 'latest']]);
+  104:     BrowserWindow.getAllWindows()[0].webContents.send('navigate', `${getPlaylistLink(newPlaylist)}?new=true`);
+  127:           BrowserWindow.getAllWindows()[0].webContents.send('mutate', (context as CollectionWithReleases).title ? ['playlists', context.id] : ['releases', release.id]);
+  133:         label: 'Add to New Playlist',
+  134:         click: newPlaylistHandler
+  136:       getAddToPlaylistEntry(selection, playlists),
+  138:         ? getRemoveFromPlaylistEntry(selection, context as CollectionWithReleases)
+  162:       label: `Add ${selection.length} Releases to New Playlist`,
+  163:       click: newPlaylistHandler,
+  165:     getAddToPlaylistEntry(selection, playlists),
+  167:       ? getRemoveFromPlaylistEntry(selection, context as CollectionWithReleases)
+
+src/main/menu/searchResult.ts:
+   4: import { getPlaylist } from "../db/collection";
+   8: import { playlistMenu } from "./collection";
+  19:   if (result.type === 'playlist') {
+  20:     const playlist = await getPlaylist(result.id);
+  21:     return playlistMenu(playlist);
+
+src/renderer/Layout.tsx:
+  13: import LatestPlaylists from "./pages/LatestPlaylists/LatestPlaylists";
+  16: import PlaylistPage from "./pages/PlaylistPage/PlaylistPage";
+  48:                             path="/playlists"
+  49:                             element={<LatestPlaylists />}
+  52:                             path="/playlists/:id"
+  53:                             element={<PlaylistPage />}
+
+src/renderer/components/SidebarView.tsx:
+   5: import type { Artist, Playlist, Sidebars } from "@/types/types";
+   9: import { getArtistLink, getPlaylistLink } from "@/lib/links";
+  21:         sidebar: "playlists",
+  22:         label: "Playlists",
+  61:             {currentSidebar === "playlists" ? (
+  63:                     label="playlists"
+  64:                     filterFn={({ title }: Playlist, query: string) =>
+  67:                     onEnter={(playlist: Playlist) =>
+  68:                         navigate(getPlaylistLink(playlist))
+  70:                     onContextMenu={window.api.menu.playlist}
+  71:                     getLink={getPlaylistLink}
+  72:                     getEntryText={({ title }: Playlist) => title}
+  74:                         queryKey: ["playlists"],
+  75:                         queryFn: () => window.api.data.getPlaylists(),
+
+src/renderer/pages/LatestPlaylists/LatestPlaylists.tsx:
+   7: import { getPlaylistLink } from "@/lib/links";
+  17: export default function Playlists() {
+  21:         queryKey: ["playlists", "latest"],
+  22:         queryFn: () => window.api.data.getPlaylists(30),
+  33:             <h1 className={styles.header}>Latest Playlists</h1>
+  39:                 onEnter={(playlist: CollectionWithReleases) =>
+  40:                     navigate(getPlaylistLink(playlist))
+  45:                         link={getPlaylistLink(item)}
+
+src/renderer/pages/PlaylistPage/PlaylistPage.tsx:
+    6:     Playlist,
+   16: export default function PlaylistPage() {
+   21:         queryKey: ["playlists", +id],
+   22:         queryFn: () => window.api.data.getPlaylist(+id),
+   32:         return <Navigate replace to="/playlists" />;
+   36:         await window.api.data.updatePlaylist(+id, {
+   41:         [["playlists"], ["playlists", "latest"], ["playlists", id]].forEach(
+   46:     async function deleteReleasesFromPlaylist(releases: ReleaseWithArtist[]) {
+   49:                 `Are you sure to remove ${releases.length} Releases from Playlist?`
+   55:         await window.api.data.updatePlaylist(+id, {
+   62:         [["playlists"], ["playlists", "latest"], ["playlists", id]].forEach(
+   84:                 playlist={data}
+   90:                 onDelete={deleteReleasesFromPlaylist}
+   98:     playlist: Playlist;
+  103: function Header({ playlist, onTitleUpdate, isFocused }: HeaderProps) {
+  105:     const [title, setTitle] = useState(playlist.title);
+  131:                 onContextMenu={() => window.api.menu.playlist(playlist)}
+  156:                         setTitle(playlist.title);

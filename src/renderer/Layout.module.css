@@ -1,0 +1,21 @@
+.main {
+  flex: 1;
+  display: flex;
+}
+
+.page {
+  display: flex;
+  flex: 1;
+}
+
+.sidebar {
+  width: var(--sidebar-width);
+  display: flex;
+  flex-direction: column;
+}
+
+@media screen and (max-width: 960px) {
+  .sidebar {
+    display: none;
+  }
+}
