@@ -32,8 +32,8 @@ export default function ReleaseWithTracklistView({
     return (
         <article
             className={cx(styles.releaseView, {
-                [styles.selected]: selected,
-                [styles.hasFocus]: selected && hasFocus,
+                selected,
+                hasFocus: selected && hasFocus,
             })}
             onClick={onClick}
         >

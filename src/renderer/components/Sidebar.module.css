@@ -46,14 +46,6 @@
   overflow: hidden;
 }
 
-.selected {
-  background-color: var(--selected-no-focus-color);
-}
-
-.hasFocus {
-  background-color: var(--accent-color);
-}
-
 .noResults {
   flex: 1;
   color: var(--secondary-color);

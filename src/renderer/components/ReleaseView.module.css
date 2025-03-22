@@ -15,14 +15,6 @@
   margin: 0;
 }
 
-.selected {
-  background-color: var(--selected-no-focus-color);
-}
-
-.hasFocus {
-  background-color: var(--accent-color);
-}
-
 .coverWrapper {
   flex: 1;
 }

@@ -12,18 +12,25 @@ import Sidebar from "./Sidebar";
 import MusicSidebar from "./MusicSidebar";
 import { getArtistLink, getCollectionLink } from "@/lib/links";
 
-export const sidebarsMap: { sidebar: Sidebars; label: string }[] = [
+export const sidebarsMap: {
+    sidebar: Sidebars;
+    label: string;
+    accelerator: string;
+}[] = [
     {
         sidebar: "music",
         label: "Music",
+        accelerator: "!",
     },
     {
         sidebar: "artists",
         label: "Artists",
+        accelerator: "@",
     },
     {
         sidebar: "collections",
         label: "Collections",
+        accelerator: "#",
     },
 ];
 
@@ -33,11 +40,13 @@ export default function SidebarView() {
     const navigate = useNavigate();
     const { setContext } = useKeyManager({
         context: KeyManager.global,
-        handlers: {
-            "!": withPrevent(() => setCurrentSidebar("music")),
-            "@": withPrevent(() => setCurrentSidebar("artists")),
-            "#": withPrevent(() => setCurrentSidebar("collections")),
-        },
+        handlers: sidebarsMap.reduce(
+            (memo, { accelerator, sidebar }) => ({
+                ...memo,
+                [accelerator]: withPrevent(() => setCurrentSidebar(sidebar)),
+            }),
+            {}
+        ),
     });
 
     useNavigateSidebar((sidebar: Sidebars) => {
@@ -59,9 +68,7 @@ export default function SidebarView() {
                     filterFn={({ name }: Artist, query: string) =>
                         name.toLowerCase().includes(query.toLowerCase())
                     }
-                    onEnter={(artist: Artist) =>
-                        navigate(getArtistLink(artist))
-                    }
+                    onEnter={(artist) => navigate(getArtistLink(artist))}
                     onContextMenu={window.api.menu.artist}
                     getLink={getArtistLink}
                     getEntryText={({ name }: Artist) => name}
@@ -77,7 +84,7 @@ export default function SidebarView() {
                     filterFn={({ title }: Collection, query: string) =>
                         title.toLowerCase().includes(query.toLowerCase())
                     }
-                    onEnter={(collection: Collection) =>
+                    onEnter={(collection) =>
                         navigate(getCollectionLink(collection))
                     }
                     onContextMenu={window.api.menu.collection}

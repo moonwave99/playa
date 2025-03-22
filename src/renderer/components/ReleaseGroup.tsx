@@ -30,8 +30,8 @@ export default function ReleaseGroup({
     return (
         <article
             className={cx(styles.view, {
-                [styles.selected]: selected,
-                [styles.hasFocus]: selected && hasFocus,
+                selected,
+                hasFocus: selected && hasFocus,
             })}
             onClick={onClick}
         >

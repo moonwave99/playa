@@ -46,11 +46,3 @@
   width: 20rem;
   height: 20rem;
 }
-
-.selected {
-  background-color: var(--selected-no-focus-color);
-}
-
-.hasFocus {
-  background-color: var(--accent-color);
-}

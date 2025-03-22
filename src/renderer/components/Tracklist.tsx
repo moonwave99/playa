@@ -67,7 +67,7 @@ export default function Tracklist({
                 <div
                     onClick={onClick}
                     className={cx(styles.tracklistEntry, {
-                        [styles.selected]: selected,
+                        hasFocus: selected,
                         [styles.firstTrack]: firstTrackIndexes.includes(index),
                     })}
                 >

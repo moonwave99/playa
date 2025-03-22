@@ -56,3 +56,11 @@ a {
   right: 0;
   -webkit-app-region: drag;
 }
+
+.selected {
+  background-color: var(--selected-no-focus-color);
+}
+
+.hasFocus {
+  background-color: var(--accent-color);
+}
