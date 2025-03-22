@@ -24,7 +24,7 @@ export default function ReleaseView({
     onDoubleClick,
     onContextMenu,
 }: ReleaseViewProps) {
-    const { id, hash, title, artist, year, type } = release;
+    const { id, hash, artist, year, type } = release;
     const releaseTitle = getReleaseTitle(release);
     return (
         <article

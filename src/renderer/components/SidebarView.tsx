@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useNavigateSidebar } from "../hooks/ipc";
-import { useKeyManager } from "../hooks/useKeyboardManager";
+import {
+    useKeyManager,
+    KeyManager,
+    withPrevent,
+} from "../hooks/useKeyboardManager";
 import type { Artist, Collection, Sidebars } from "@/types/types";
 import SearchToggler from "./SearchToggler";
 import Sidebar from "./Sidebar";
@@ -23,10 +27,19 @@ export const sidebarsMap: { sidebar: Sidebars; label: string }[] = [
     },
 ];
 
-export default function NewSidebar() {
-    const navigate = useNavigate();
-    const { setContext } = useKeyManager({});
+export default function SidebarView() {
     const [currentSidebar, setCurrentSidebar] = useState<Sidebars>("music");
+
+    const navigate = useNavigate();
+    const { setContext } = useKeyManager({
+        context: KeyManager.global,
+        handlers: {
+            "!": withPrevent(() => setCurrentSidebar("music")),
+            "@": withPrevent(() => setCurrentSidebar("artists")),
+            "#": withPrevent(() => setCurrentSidebar("collections")),
+        },
+    });
+
     useNavigateSidebar((sidebar: Sidebars) => {
         setCurrentSidebar(sidebar);
         setContext("sidebar");

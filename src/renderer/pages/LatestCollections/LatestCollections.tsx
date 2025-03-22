@@ -19,7 +19,7 @@ export default function LatestCollections() {
     const { setContext } = useKeyManager({});
     const { isPending, error, data } = useQuery({
         queryKey: ["collections", "latest"],
-        queryFn: () => window.api.data.getCollections(30),
+        queryFn: () => window.api.data.getCollections(50),
     });
 
     if (isPending) {
@@ -40,14 +40,12 @@ export default function LatestCollections() {
                     navigate(getCollectionLink(collection))
                 }
                 onLeft={() => setContext("sidebar")}
-                render={({ item, selected, hasFocus, onClick }) => (
+                render={({ item, ...rest }) => (
                     <ReleaseGroup
                         link={getCollectionLink(item)}
                         title={item.title}
                         releases={item.releases}
-                        selected={selected}
-                        hasFocus={hasFocus}
-                        onClick={onClick}
+                        {...rest}
                     />
                 )}
             />

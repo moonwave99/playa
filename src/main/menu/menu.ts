@@ -80,24 +80,6 @@ const navigateMenu: NavigateMenuEntry[] = [
   },
 ];
 
-const sidebarMenu: SidebarMenuEntry[] = [
-  {
-    label: 'Music',
-    accelerator: 'Shift+1',
-    sidebar: 'music'
-  },
-  {
-    label: 'Artists',
-    accelerator: 'Shift+2',
-    sidebar: 'artists'
-  },
-  {
-    label: 'Collections',
-    accelerator: 'Shift+3',
-    sidebar: 'collections'
-  },
-];
-
 const randomMenu: RandomMenuEntry[] = [
   {
     label: 'Show Random Release',
@@ -136,43 +118,38 @@ export function setupMenu(win: BrowserWindow) {
         accelerator,
         click: () => win.webContents.send('navigate', link)
       })),
-      { type: 'separator' },
-      ...sidebarMenu.map(({ label, accelerator, sidebar }) => ({
-        label,
-        accelerator,
-        click: () => win.webContents.send('navigateSidebar', sidebar)
-      }))
     ]
   }));
   menu.append(new MenuItem({
     id: 'library',
     label: 'Library',
-    submenu: [{
-      label: 'Import Folder',
-      accelerator: 'Shift+I',
-      click: async () => {
-        const folder = dialog.showOpenDialogSync(win, {
-          properties: ['openDirectory']
-        });
-        await importFolder(folder[0]);
-        win.webContents.send('mutate', [['releases', 'latest']]);
+    submenu: [
+      {
+        label: 'Import Folder',
+        accelerator: 'Shift+I',
+        click: async () => {
+          const folder = dialog.showOpenDialogSync(win, {
+            properties: ['openDirectory']
+          });
+          await importFolder(folder[0]);
+          win.webContents.send('mutate', [['releases', 'latest']]);
+        }
+      },
+      { type: 'separator' },
+      ...randomMenu.map(({ label, accelerator, entity }) => ({
+        label,
+        accelerator,
+        click: async () => {
+          const stats = await getStats();
+          win.webContents.send('navigate', getRandomLink(stats, entity));
+        }
+      })),
+      { type: 'separator' },
+      {
+        label: 'Toggle View Mode',
+        accelerator: 'Shift+T',
+        click: () => win.webContents.send('toggleViewMode')
       }
-    },
-    { type: 'separator' },
-    ...randomMenu.map(({ label, accelerator, entity }) => ({
-      label,
-      accelerator,
-      click: async () => {
-        const stats = await getStats();
-        win.webContents.send('navigate', getRandomLink(stats, entity));
-      }
-    })),
-    { type: 'separator' },
-    {
-      label: 'Toggle View Mode',
-      accelerator: 'Shift+T',
-      click: () => win.webContents.send('toggleViewMode')
-    }
     ]
   }));
   Menu.setApplicationMenu(menu);

@@ -68,11 +68,10 @@ export default function LatestReleases() {
                 isFetchingNextPage={isFetchingNextPage}
                 onEnter={onEnter}
                 onLeft={() => setContext("sidebar")}
-                render={({ item, index, selected, onClick, selection }) => (
+                render={({ item, index, selection, ...rest }) => (
                     <ReleaseView
+                        {...rest}
                         release={item}
-                        selected={selected}
-                        onClick={onClick}
                         onDoubleClick={() => playback(item.id)}
                         onContextMenu={() =>
                             window.api.menu.release(
