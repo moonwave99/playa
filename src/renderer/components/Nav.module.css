@@ -1,34 +1,17 @@
 .nav {
-  height: var(--header-height);
   display: flex;
-  align-items: center;
-  justify-content: space-around;
-  padding-left: 4.5rem;
-  padding-right: 1rem;
-  background-color: var(--sidebar-background-color);
-  gap: .25rem;
+  flex-direction: column;
+  margin-bottom: .5rem;
 }
 
-.button {
-  flex: 1;
-  font-size: 0.8rem;
-  line-height: 1.5rem;
+.nav a {
+  line-height: 2rem;
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: var(--secondary-color);
-  border-radius: 9999px;
-  appearance: none;
-  border: none;
-  background-color: transparent;
   padding: 0 1rem;
+  font-size: 0.8rem;
 }
 
-.button:focus {
-  outline: 1px solid var(--accent-color);
-}
-
-.isCurrent {
-  background-color: var(--sidebar-nav-button-background-color);
-  color: var(--primary-color);
+.nav a:hover {
+  background-color: var(--accent-color);
 }

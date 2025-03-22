@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import { useNavigateSidebar } from "../hooks/ipc";
 import { useKeyManager } from "../hooks/useKeyboardManager";
 import type { Artist, Collection, Sidebars } from "@/types/types";
-import Nav from "./Nav";
+import SearchToggler from "./SearchToggler";
 import Sidebar from "./Sidebar";
 import MusicSidebar from "./MusicSidebar";
 import { getArtistLink, getCollectionLink } from "@/lib/links";
@@ -34,7 +34,7 @@ export default function NewSidebar() {
 
     return (
         <>
-            <Nav
+            <SearchToggler
                 currentSidebar={currentSidebar}
                 selectSidebar={setCurrentSidebar}
                 sidebarsMap={sidebarsMap}

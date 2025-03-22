@@ -31,6 +31,12 @@ export default function MusicSidebar() {
                 inputRef.current?.blur();
                 setContext("sidebar");
             },
+            ArrowRight: () => {
+                if (query === "") {
+                    inputRef.current?.blur();
+                    setContext("list");
+                }
+            },
         },
     });
 
@@ -96,7 +102,11 @@ export default function MusicSidebar() {
                 type="search"
                 placeholder={`Search music`}
                 onInput={onInput}
-                onFocus={() => setContext("input")}
+                onBlur={() => window.api.ui.inputBlur()}
+                onFocus={() => {
+                    setContext("input");
+                    window.api.ui.inputFocus();
+                }}
             />
             {!data.length ? (
                 query && !isPending ? (

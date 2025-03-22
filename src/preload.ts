@@ -28,6 +28,10 @@ contextBridge.exposeInMainWorld('api', {
   onMutate: getHandler('mutate'),
   onClearSelection: getHandler('clearSelection'),
   onToggleViewMode: getHandler('toggleViewMode'),
+  ui: {
+    inputFocus: () => ipc.send('ui', 'inputFocus'),
+    inputBlur: () => ipc.send('ui', 'inputBlur'),
+  }
 });
 
 function getHandlers(entity: Record<string, (...args: unknown[]) => unknown>) {

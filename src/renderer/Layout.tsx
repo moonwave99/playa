@@ -16,6 +16,7 @@ import LatestCollections from "./pages/LatestCollections/LatestCollections";
 import ReleasePage from "./pages/ReleasePage/ReleasePage";
 import ArtistPage from "./pages/ArtistPage/ArtistPage";
 import CollectionPage from "./pages/CollectionPage/CollectionPage";
+import Nav from "./components/Nav";
 import SidebarView from "./components/SidebarView";
 
 import cx from "clsx";
@@ -28,6 +29,7 @@ export default function Layout() {
             <div className={styles.page}>
                 <div className={styles.sidebar}>
                     <SidebarView />
+                    <Nav />
                 </div>
                 <main className={styles.main}>
                     <Routes>

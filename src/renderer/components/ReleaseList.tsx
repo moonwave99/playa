@@ -67,13 +67,14 @@ export default function ReleaseList({
                       })
             }
             onLeft={onLeft}
-            render={({ item, index, selected, selection, onClick }) =>
+            render={({ item, index, selected, hasFocus, selection, onClick }) =>
                 viewMode === "grid" ? (
                     <ReleaseView
                         release={
                             item as ReleaseWithArtistAndTracksAndSubreleases
                         }
                         selected={selected}
+                        hasFocus={hasFocus}
                         onClick={onClick}
                         onContextMenu={() =>
                             onContextMenu(
@@ -89,6 +90,7 @@ export default function ReleaseList({
                             item as ReleaseWithArtistAndTracksAndSubreleases
                         }
                         selected={selected}
+                        hasFocus={hasFocus}
                         onClick={onClick}
                         onContextMenu={() =>
                             onContextMenu(

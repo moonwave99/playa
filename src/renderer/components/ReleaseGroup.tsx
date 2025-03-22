@@ -13,6 +13,7 @@ type ReleaseGroupProps = {
     onDoubleClick?: () => void;
     onContextMenu?: () => void;
     selected?: boolean;
+    hasFocus?: boolean;
 };
 
 const releaseCount = 4;
@@ -21,13 +22,17 @@ export default function ReleaseGroup({
     title,
     link,
     releases,
-    selected,
     onClick,
+    selected,
+    hasFocus,
 }: ReleaseGroupProps) {
     const releasesToDisplay = releases.slice(0, releaseCount);
     return (
         <article
-            className={cx(styles.view, { [styles.selected]: selected })}
+            className={cx(styles.view, {
+                [styles.selected]: selected,
+                [styles.hasFocus]: selected && hasFocus,
+            })}
             onClick={onClick}
         >
             <ul className={styles.releases}>

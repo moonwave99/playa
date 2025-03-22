@@ -40,12 +40,13 @@ export default function LatestCollections() {
                     navigate(getCollectionLink(collection))
                 }
                 onLeft={() => setContext("sidebar")}
-                render={({ item, selected, onClick }) => (
+                render={({ item, selected, hasFocus, onClick }) => (
                     <ReleaseGroup
                         link={getCollectionLink(item)}
                         title={item.title}
                         releases={item.releases}
                         selected={selected}
+                        hasFocus={hasFocus}
                         onClick={onClick}
                     />
                 )}

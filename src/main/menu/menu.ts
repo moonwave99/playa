@@ -1,4 +1,5 @@
-import { Menu, MenuItem, dialog, BrowserWindow, MenuItemConstructorOptions } from 'electron';
+import { Menu, MenuItem, dialog, BrowserWindow, ipcMain as ipc } from 'electron';
+import type { MenuItemConstructorOptions } from 'electron';
 import { importFolder } from '../system';
 import { getStats } from '../db/stats';
 import type { Sidebars, Entities } from '@/types/types';
@@ -116,8 +117,18 @@ const randomMenu: RandomMenuEntry[] = [
 ]
 
 export function setupMenu(win: BrowserWindow) {
+  ipc.on('ui', (_, message) => {
+    if (message !== 'inputBlur' && message !== 'inputFocus') {
+      return;
+    }
+    ['navigate', 'library'].forEach(id => {
+      menu.items.find(x => x.id == id)
+        .submenu.items.forEach(x => x.enabled = message === 'inputBlur');
+    });
+  });
   const menu = Menu.getApplicationMenu();
   menu.append(new MenuItem({
+    id: 'navigate',
     label: 'Navigate',
     submenu: [
       ...navigateMenu.map(({ label, accelerator, link }) => ({
@@ -134,6 +145,7 @@ export function setupMenu(win: BrowserWindow) {
     ]
   }));
   menu.append(new MenuItem({
+    id: 'library',
     label: 'Library',
     submenu: [{
       label: 'Import Folder',

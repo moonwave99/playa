@@ -10,6 +10,7 @@ export type RenderParams<T> = {
     item: T;
     index: number;
     selected: boolean;
+    hasFocus: boolean;
     selection: number[];
     onClick: (event: MouseEvent) => void;
 };
@@ -97,7 +98,7 @@ export default function List<T>({
         setSelection([currentIndex]);
     }, [currentIndex]);
 
-    const { setContext } = useKeyManager({
+    const { currentContext, setContext } = useKeyManager({
         context,
         handlers: {
             ArrowUp: withPrevent((event: KeyboardEvent) => {
@@ -240,6 +241,7 @@ export default function List<T>({
                             index,
                             item: items[index],
                             selected: selection.includes(index),
+                            hasFocus: currentContext === context,
                             selection,
                             onClick: (event: MouseEvent) =>
                                 onClick(index, event),

@@ -58,12 +58,13 @@ export default function LatestArtists() {
                 isFetchingNextPage={isFetchingNextPage}
                 onEnter={(artist) => navigate(getArtistLink(artist))}
                 onLeft={() => setContext("sidebar")}
-                render={({ item, selected, onClick }) => (
+                render={({ item, selected, hasFocus, onClick }) => (
                     <ReleaseGroup
                         link={getArtistLink(item)}
                         title={item.name}
                         releases={item.releases}
                         selected={selected}
+                        hasFocus={hasFocus}
                         onClick={onClick}
                     />
                 )}

@@ -52,6 +52,12 @@ export default function Sidebar<T>({
                 inputRef.current?.blur();
                 setContext("sidebar");
             },
+            ArrowRight: () => {
+                if (query === "") {
+                    inputRef.current?.blur();
+                    setContext("list");
+                }
+            },
         },
     });
 
@@ -112,7 +118,11 @@ export default function Sidebar<T>({
                 type="search"
                 placeholder={`Search ${label}`}
                 onInput={onInput}
-                onFocus={() => setContext("input")}
+                onBlur={() => window.api.ui.inputBlur()}
+                onFocus={() => {
+                    setContext("input");
+                    window.api.ui.inputFocus();
+                }}
             />
             {!filteredItems.length ? (
                 <div className={styles.noResults}>No results for {query}</div>

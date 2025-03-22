@@ -22,7 +22,7 @@
 }
 
 .listWrapper {
-  height: calc(100vh - 9rem);
+  height: calc(100vh - 15.5rem);
   overflow: auto;
 }
 
@@ -81,13 +81,16 @@
 
 .footer {
   font-size: .7rem;
-  height: 3rem;
+  height: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: .25rem;
-  padding: 0 1rem;
+  padding: 0 .5rem;
+  margin: .5rem;
   color: var(--sidebar-secondary-color);
+  border-radius: 9999px;
+  background-color: var(--background-color);
 }
 
 .coverWrapper {

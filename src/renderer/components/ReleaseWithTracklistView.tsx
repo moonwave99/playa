@@ -10,6 +10,7 @@ import styles from "./ReleaseWithTracklistView.module.css";
 
 type ReleaseWithTracklistViewProps = {
     selected?: boolean;
+    hasFocus?: boolean;
     inList?: boolean;
     release: ReleaseWithArtistAndTracksAndSubreleases;
     onContextMenu: (
@@ -21,6 +22,7 @@ type ReleaseWithTracklistViewProps = {
 
 export default function ReleaseWithTracklistView({
     selected,
+    hasFocus,
     inList = false,
     release,
     onContextMenu,
@@ -29,7 +31,10 @@ export default function ReleaseWithTracklistView({
     const { artist, title, type, year } = release;
     return (
         <article
-            className={cx(styles.releaseView, { [styles.selected]: selected })}
+            className={cx(styles.releaseView, {
+                [styles.selected]: selected,
+                [styles.hasFocus]: selected && hasFocus,
+            })}
             onClick={onClick}
         >
             <div className={styles.releaseSide}>

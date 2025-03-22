@@ -40,7 +40,6 @@
 .releaseInfo {
   line-height: 1.5rem;
   font-size: .8rem;
-  /* color: var(--secondary-color); */
 }
 
 .releaseListCover {
@@ -49,5 +48,9 @@
 }
 
 .selected {
+  background-color: var(--selected-no-focus-color);
+}
+
+.hasFocus {
   background-color: var(--accent-color);
 }

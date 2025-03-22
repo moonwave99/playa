@@ -33,6 +33,10 @@ declare global {
       onMutate: (handler: (keys: QueryKey) => void) => () => void;
       onClearSelection: (handler: () => void) => () => void;
       onToggleViewMode: (handler: () => void) => () => void;
+      ui: {
+        inputFocus: () => void;
+        inputBlur: () => void;
+      }
     }
   }
 }

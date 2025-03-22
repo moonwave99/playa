@@ -13,19 +13,25 @@ type ReleaseViewProps = {
     onDoubleClick?: () => void;
     onContextMenu?: () => void;
     selected?: boolean;
+    hasFocus?: boolean;
 };
 
 export default function ReleaseView({
     release,
     selected,
+    hasFocus,
     onClick,
     onDoubleClick,
     onContextMenu,
 }: ReleaseViewProps) {
     const { id, hash, title, artist, year, type } = release;
+    const releaseTitle = getReleaseTitle(release);
     return (
         <article
-            className={cx(styles.view, { [styles.selected]: selected })}
+            className={cx(styles.view, {
+                [styles.selected]: selected,
+                [styles.hasFocus]: selected && hasFocus,
+            })}
             onClick={onClick}
             onDoubleClick={onDoubleClick}
             onContextMenu={onContextMenu}
@@ -40,22 +46,22 @@ export default function ReleaseView({
                 id={id}
                 className={styles.coverWrapper}
                 hash={hash}
-                title={`${artist.name} - ${title}`}
+                title={`${artist.name} - ${releaseTitle}`}
             />
             <div className={styles.footer}>
                 <Link
                     className={styles.artist}
                     to={getArtistLink(artist)}
-                    title={`See ${artist.name} Releases`}
+                    title={`See all ${artist.name} Releases`}
                 >
                     {artist.name}
                 </Link>
                 <Link
                     className={styles.title}
                     to={getReleaseLink(release)}
-                    title={`See ${title} Tracks`}
+                    title={`See ${releaseTitle} Tracks`}
                 >
-                    {getReleaseTitle(release)}
+                    {releaseTitle}
                 </Link>
             </div>
         </article>

@@ -9,18 +9,18 @@ import { addTracksToRelease } from "./db/release";
 import { searchCover, getImageFromURL } from "./discogs.js";
 import { mapSeries } from '../lib/utils';
 import type { ArtistWithReleases, ReleaseType, ReleaseWithArtist, TrackInfo } from "@/types/types";
-import { NAS_BASEPATH, COVERS_BASEPATH, PLAYER_PATH } from '../../settings.json';
+import { LIBRARY_PATH, COVERS_PATH, PLAYER_PATH } from '../../settings.json';
 
 async function crawlFolder(folder: string) {
   const files = await globby("*.{mp3,m4a,flac}", {
-    cwd: path.join(NAS_BASEPATH, folder),
+    cwd: path.join(LIBRARY_PATH, folder),
     caseSensitiveMatch: false
   });
   return files.map(file => path.join(folder, file));
 }
 
 async function getMetadata(filePath: string, index: number): Promise<TrackInfo> {
-  const data = await mm.parseFile(path.join(NAS_BASEPATH, filePath));
+  const data = await mm.parseFile(path.join(LIBRARY_PATH, filePath));
   return {
     path: filePath,
     title: data.common.title || path.basename(filePath),
@@ -73,7 +73,7 @@ export async function revealEntityInFinder(entity: 'release' | 'artist', id: num
 }
 
 function getReleasePath(folderPath: string) {
-  return path.join(NAS_BASEPATH, folderPath);
+  return path.join(LIBRARY_PATH, folderPath);
 }
 
 export async function searchCoverOnDiscogs(id: number) {
@@ -85,23 +85,23 @@ export async function searchCoverOnDiscogs(id: number) {
   if (!release) {
     return;
   }
-  const pic = await searchCover({ release, artist: release.artist, outputPath: COVERS_BASEPATH });
+  const pic = await searchCover({ release, artist: release.artist, outputPath: COVERS_PATH });
   if (!pic) {
     return;
   }
   await pushCovers({
-    cwd: COVERS_BASEPATH,
+    cwd: COVERS_PATH,
     message: `Add covers for ${release.artist.name} - ${release.title}`
   });
 }
 
 export async function importCovers(releases: ReleaseWithArtist[], context: ArtistWithReleases | ReleaseWithArtist) {
-  await mapSeries(releases, async (release: ReleaseWithArtist) => await searchCover({ release, artist: release.artist, outputPath: COVERS_BASEPATH }));
+  await mapSeries(releases, async (release: ReleaseWithArtist) => await searchCover({ release, artist: release.artist, outputPath: COVERS_PATH }));
   const message = (context as ArtistWithReleases).name
     ? `Add covers for ${(context as ArtistWithReleases).name}`
     : `Add covers for ${(context as ReleaseWithArtist).title}`;
   await pushCovers({
-    cwd: COVERS_BASEPATH,
+    cwd: COVERS_PATH,
     message
   });
 }
@@ -117,9 +117,9 @@ export async function downloadCover({ id, url }: { id: number, url: string }) {
   }
 
   const { hash } = release;
-  await getImageFromURL({ outputPath: COVERS_BASEPATH, hash, url });
+  await getImageFromURL({ outputPath: COVERS_PATH, hash, url });
   await pushCovers({
-    cwd: COVERS_BASEPATH,
+    cwd: COVERS_PATH,
     message: `Add covers for ${release.artist.name} - ${release.title}`
   });
 }
@@ -145,7 +145,7 @@ async function importSingleFolder(folder: string) {
   if (!contents) {
     return;
   }
-  const releaseData = parsePath(folder.replace(NAS_BASEPATH, ""));
+  const releaseData = parsePath(folder.replace(LIBRARY_PATH, ""));
   if (!releaseData) {
     return false;
   }
@@ -196,7 +196,7 @@ async function importSingleFolder(folder: string) {
   await searchCover({
     release,
     artist,
-    outputPath: COVERS_BASEPATH,
+    outputPath: COVERS_PATH,
   });
 }
 

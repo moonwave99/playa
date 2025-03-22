@@ -16,6 +16,10 @@
 }
 
 .selected {
+  background-color: var(--selected-no-focus-color);
+}
+
+.hasFocus {
   background-color: var(--accent-color);
 }
 

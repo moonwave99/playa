@@ -1,30 +1,34 @@
-import type { Sidebars } from "@/types/types";
-import cx from "clsx";
 import styles from "./Nav.module.css";
+import { NavLink } from "react-router";
 
-type NavProps = {
-    currentSidebar: Sidebars;
-    selectSidebar: (sidebar: Sidebars) => void;
-    sidebarsMap: { sidebar: Sidebars; label: string }[];
-};
+const navMap = [
+    {
+        link: "/",
+        label: "Latest Releases",
+    },
+    {
+        link: "/artists",
+        label: "Latest Artists",
+    },
+    {
+        link: "/collections",
+        label: "Latest Collections",
+    },
+];
 
-export default function Nav({
-    currentSidebar,
-    selectSidebar,
-    sidebarsMap,
-}: NavProps) {
+export default function Nav() {
     return (
         <nav className={styles.nav}>
-            {sidebarsMap.map(({ sidebar, label }) => (
-                <button
-                    key={sidebar}
-                    className={cx(styles.button, {
-                        [styles.isCurrent]: sidebar === currentSidebar,
-                    })}
-                    onClick={() => selectSidebar(sidebar)}
+            {navMap.map(({ link, label }) => (
+                <NavLink
+                    key={link}
+                    to={link}
+                    className={({ isActive }) =>
+                        isActive ? styles.isActive : undefined
+                    }
                 >
                     {label}
-                </button>
+                </NavLink>
             ))}
         </nav>
     );
