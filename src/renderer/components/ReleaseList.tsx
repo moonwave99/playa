@@ -48,7 +48,7 @@ export default function ReleaseList({
 
     return (
         <List
-            key={viewMode}
+            key={`${viewMode}-${getTotalTracks(releases)}`}
             items={releases}
             className={styles.list}
             columnsConfig={
@@ -103,4 +103,10 @@ export default function ReleaseList({
             }
         />
     );
+}
+
+function getTotalTracks(releases: ReleaseWithArtistAndTracksAndSubreleases[]) {
+    return releases
+        .flatMap((rel) => [rel, ...rel.subReleases])
+        .reduce((memo, { tracks }) => memo + tracks.length, 0);
 }

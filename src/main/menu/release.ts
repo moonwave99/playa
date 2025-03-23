@@ -123,7 +123,10 @@ export const releaseMenu = async (
         label: 'Refresh Folder Contents',
         click: async () => {
           await refreshReleaseContents(release.id);
-          BrowserWindow.getAllWindows()[0].webContents.send('mutate', (context as CollectionWithReleases).title ? ['collections', context.id] : ['releases', release.id]);
+          BrowserWindow.getAllWindows()[0].webContents.send('mutate', [
+            ['releases', release.id],
+            [(context as CollectionWithReleases).title ? 'collections' : 'artists', context.id]
+          ]);
         }
       },
       (release.subReleases.length ? getUnGroupReleasesEntry(release) : { type: 'separator' }),
