@@ -2,11 +2,8 @@ import { useEffect } from "react";
 import type { ReleaseWithArtistAndTracksAndSubreleases } from "@/types/types";
 import { Navigate, useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
-import { getReleaseTitle } from "@/lib/utils";
-import { getArtistLink } from "@/lib/links";
 import ReleaseWithTracklistView from "@/renderer/components/ReleaseWithTracklistView";
 import Loading from "@/renderer/components/Loading";
-import Link from "@/renderer/components/Link";
 import styles from "../Page.module.css";
 
 function hasTracks(release: ReleaseWithArtistAndTracksAndSubreleases) {
