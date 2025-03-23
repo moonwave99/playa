@@ -92,7 +92,8 @@ export default function SidebarView() {
                     getEntryText={({ title }: Collection) => title}
                     queryConfig={() => ({
                         queryKey: ["collections"],
-                        queryFn: () => window.api.data.getCollections(),
+                        queryFn: () =>
+                            window.api.data.getCollections({ take: 50 }),
                     })}
                 />
             ) : null}

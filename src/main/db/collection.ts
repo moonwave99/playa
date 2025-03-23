@@ -1,7 +1,7 @@
 import prisma from "./prisma";
-import type { CollectionCreate, CollectionUpdate, HasId } from '@/types/types';
+import type { CollectionCreate, CollectionUpdate, HasId, PaginationParams } from '@/types/types';
 
-export async function getCollections(take = 50) {
+export async function getCollections({ take = 50 }: PaginationParams) {
   const results = await prisma.collection.findMany({
     take,
     orderBy: { createdAt: "desc" },
