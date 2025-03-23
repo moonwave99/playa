@@ -25,27 +25,37 @@ export default function Tracklist({
     ];
 
     const firstTrackIndexes = getFirstTrackIndexes(allTracks);
-
+    const discsCount = release.subReleases.length + 1;
     if (!isNavigable) {
         return (
             <div className={styles.tracklist}>
-                {allTracks.map((item, index) => (
-                    <div
-                        key={item.id}
-                        className={cx(styles.tracklistEntry, {
-                            [styles.firstTrack]:
-                                firstTrackIndexes.includes(index),
-                        })}
-                    >
-                        <span className={styles.count}>
-                            {item.position < 10
-                                ? `0${item.position}`
-                                : item.position}
-                            .
-                        </span>
-                        <span className={styles.title}>{item.title}</span>
-                    </div>
-                ))}
+                <div
+                    style={{
+                        columnCount: discsCount,
+                        width:
+                            discsCount > 1 ? `${discsCount * 50}%` : undefined,
+                    }}
+                >
+                    {allTracks.map(
+                        ({ id, title, position, duration }, index) => (
+                            <div
+                                key={id}
+                                className={cx(styles.tracklistEntry, {
+                                    [styles.firstTrack]:
+                                        firstTrackIndexes.includes(index),
+                                })}
+                            >
+                                <span className={styles.count}>
+                                    {position < 10 ? `0${position}` : position}.
+                                </span>
+                                <span className={styles.title}>{title}</span>
+                                <span className={styles.duration}>
+                                    {formatDuration(duration)}
+                                </span>
+                            </div>
+                        )
+                    )}
+                </div>
             </div>
         );
     }
@@ -72,12 +82,12 @@ export default function Tracklist({
                     })}
                 >
                     <span className={styles.count}>
-                        {item.position < 10
-                            ? `0${item.position}`
-                            : item.position}
-                        .
+                        {formatPosition(item.position)}.
                     </span>
                     <span className={styles.title}>{item.title}</span>
+                    <span className={styles.duration}>
+                        {formatDuration(item.duration)}
+                    </span>
                 </div>
             )}
         />
@@ -92,4 +102,21 @@ function getFirstTrackIndexes(tracks: Track[]): number[] {
         }
     }
     return indexes;
+}
+
+function formatDuration(duration: number) {
+    const date = new Date(0);
+    date.setSeconds(duration);
+    const formatted = date.toISOString().substring(11, 19);
+    if (duration < 600) {
+        return formatted.slice(4);
+    }
+    if (duration < 3600) {
+        return formatted.slice(3);
+    }
+    return formatted;
+}
+
+function formatPosition(position: number) {
+    return position < 10 ? `0${position}` : position;
 }

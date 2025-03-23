@@ -47,14 +47,8 @@ export default function ReleasePage() {
         window.api.menu.release([data], data.id);
     }
 
-    const { artist } = data;
-
     return (
         <div className={styles.page}>
-            <h1 className={styles.header} onContextMenu={onContextMenu}>
-                <Link to={getArtistLink(artist)}>{artist.name}</Link> -{" "}
-                {getReleaseTitle(data)}
-            </h1>
             <ReleaseWithTracklistView
                 release={data}
                 onContextMenu={onContextMenu}

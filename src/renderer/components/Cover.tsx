@@ -44,7 +44,7 @@ export default function Cover({
             onDrop={onDrop}
             onDragOver={(event) => event.preventDefault()}
             className={cx(styles.coverWrapper, className)}
-            title={title}
+            title={`${title} [${id}]`}
             onContextMenu={onContextMenu}
         >
             <img

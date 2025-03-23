@@ -28,48 +28,38 @@ export default function ReleaseWithTracklistView({
     onContextMenu,
     onClick,
 }: ReleaseWithTracklistViewProps) {
-    const { artist, title, type, year } = release;
+    const { artist, type, year } = release;
+    const releaseTitle = getReleaseTitle(release);
     return (
         <article
             className={cx(styles.releaseView, {
                 selected,
                 hasFocus: selected && hasFocus,
+                [styles.isSingle]: !inList,
             })}
             onClick={onClick}
         >
-            <div className={styles.releaseSide}>
-                <div className={styles.coverWrapper} title={title}>
-                    <Cover
-                        {...release}
-                        title={`${artist.name} - ${getReleaseTitle(release)}`}
-                        onContextMenu={() =>
-                            onContextMenu([release], release.id)
-                        }
-                        className={styles.releaseListCover}
-                    />
+            <header className={styles.header}>
+                <Cover
+                    {...release}
+                    title={`${artist.name} - ${releaseTitle}`}
+                    onContextMenu={() => onContextMenu([release], release.id)}
+                    className={styles.cover}
+                />
+
+                <div className={styles.content}>
+                    <Link className={styles.artist} to={getArtistLink(artist)}>
+                        {artist.name}
+                    </Link>
+                    <Link className={styles.title} to={getReleaseLink(release)}>
+                        {getReleaseTitle(release)}
+                    </Link>
+                    <div className={styles.info}>
+                        {type}, {year} {getDiscInfo(release)}
+                    </div>
                 </div>
-                {inList ? (
-                    <>
-                        <h2 className={styles.releaseTitle}>
-                            <Link to={getArtistLink(artist)}>
-                                {artist.name}
-                            </Link>{" "}
-                        </h2>
-                        <Link
-                            className={styles.releaseArtist}
-                            to={getReleaseLink(release)}
-                        >
-                            {getReleaseTitle(release)}
-                        </Link>
-                    </>
-                ) : null}
-                <p className={styles.releaseInfo}>
-                    {type}, {year} {getDiscInfo(release)}
-                </p>
-            </div>
-            <div className={styles.releaseMain}>
-                <Tracklist release={release} isNavigable={!inList} />
-            </div>
+            </header>
+            <Tracklist release={release} isNavigable={!inList} />
         </article>
     );
 }

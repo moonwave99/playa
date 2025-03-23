@@ -3,8 +3,17 @@
 }
 
 .isNavigable {
-  max-height: calc(100vh - 3rem - var(--header-height));
+  max-height: calc(100vh - 15rem);
   overflow: auto;
+}
+
+.tracklist:not(.isNavigable) {
+  column-fill: auto;
+  overflow-y: auto;
+}
+
+.tracklist:not(.isNavigable) .firstTrack {
+  break-before: column;
 }
 
 .tracklistEntry {
@@ -27,4 +36,16 @@
 
 .selected {
   background-color: var(--accent-color);
+}
+
+.title {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.duration {
+  margin-left: auto;
+  color: var(--secondary-color);
+  font-size: .75rem;
 }

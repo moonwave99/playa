@@ -75,12 +75,12 @@ export function sortReleasesByTypeAndYear(releases: ReleaseWithArtist[], artist:
 }
 
 export function getReleaseWithTracklistHeight(release: ReleaseWithArtistAndTracksAndSubreleases): number {
-  const subReleases = release.subReleases.filter(x => x.tracks?.length);
-  const tracksCount =
-    (release.tracks?.length || 0)
-    + subReleases.reduce((memo, x) => memo += (x.tracks?.length || 0), 0);
-  const tracklistHeight = (tracksCount + subReleases.length + 1.5) * 24;
-  return Math.max(tracklistHeight, 438);
+  const maxTracks = Math.max(...[
+    release,
+    ...release.subReleases
+  ].map(x => x.tracks?.length));
+  // cover height + margin + gap + tracks
+  return 128 + 32 + 16 + (maxTracks * 24);
 }
 
 export async function mapSeries<T, U>(array: T[], callback: (item: T, index: number) => U) {
