@@ -30,7 +30,7 @@
 }
 
 .listWrapper {
-  height: calc(100vh - 15.5rem);
+  height: calc(100vh - 9rem);
   overflow: auto;
 }
 

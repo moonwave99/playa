@@ -86,9 +86,13 @@ function init() {
         setContext("list");
         const removeHandlers = [
             window.api.onToggleViewMode(toggleViewMode),
-            window.api.onMutate((queryKey: QueryKey) =>
-                queryClient.refetchQueries({ queryKey })
-            ),
+            window.api.onMutate((queryKey: QueryKey) => {
+                Array.isArray(queryKey[0])
+                    ? queryKey.forEach((q: QueryKey) =>
+                          queryClient.refetchQueries({ queryKey: q })
+                      )
+                    : queryClient.refetchQueries({ queryKey });
+            }),
             window.api.onNavigate((path: string) => {
                 navigate(path);
                 setContext("list");
