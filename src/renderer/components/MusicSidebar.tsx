@@ -23,7 +23,9 @@ export default function MusicSidebar() {
     const navigate = useNavigate();
     const inputRef = useRef<HTMLInputElement>(null);
     const [query, setQuery] = useState("");
-    const [debouncedQuery] = useDebounce(query, DEBOUNCE_MS);
+    const [debouncedQuery] = useDebounce(query, DEBOUNCE_MS, {
+        leading: false,
+    });
     const { setContext, currentContext } = useKeyManager({
         context: "input",
         handlers: {
@@ -109,7 +111,7 @@ export default function MusicSidebar() {
                 }}
             />
             {!data.length ? (
-                query && !isPending ? (
+                debouncedQuery && !isPending ? (
                     <div className={styles.noResults}>
                         No results for {debouncedQuery}
                     </div>
