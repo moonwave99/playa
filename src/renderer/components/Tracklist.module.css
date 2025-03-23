@@ -26,6 +26,10 @@
   border-radius: .25rem;
 }
 
+.tracklistEntry:hover {
+  background-color: var(--tertiary-color);
+}
+
 .firstTrack {
   margin-top: 1.5rem;
 }
@@ -34,7 +38,8 @@
   color: var(--secondary-color);
 }
 
-.selected {
+.selected,
+.selected:hover {
   background-color: var(--accent-color);
 }
 

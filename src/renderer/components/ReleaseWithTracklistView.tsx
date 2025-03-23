@@ -28,8 +28,13 @@ export default function ReleaseWithTracklistView({
     onContextMenu,
     onClick,
 }: ReleaseWithTracklistViewProps) {
-    const { artist, type, year } = release;
+    const { id, artist, type, year } = release;
     const releaseTitle = getReleaseTitle(release);
+
+    function onDoubleClick(track_id: number) {
+        window.api.system.playback(id, track_id);
+    }
+
     return (
         <article
             className={cx(styles.releaseView, {
@@ -59,7 +64,11 @@ export default function ReleaseWithTracklistView({
                     </div>
                 </div>
             </header>
-            <Tracklist release={release} isNavigable={!inList} />
+            <Tracklist
+                release={release}
+                isNavigable={!inList}
+                onDoubleClick={onDoubleClick}
+            />
         </article>
     );
 }

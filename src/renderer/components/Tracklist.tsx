@@ -11,11 +11,13 @@ import styles from "./Tracklist.module.css";
 type TracklistProps = {
     isNavigable?: boolean;
     release: ReleaseWithArtistAndTracksAndSubreleases;
+    onDoubleClick?: (id: number) => void;
 };
 
 export default function Tracklist({
     isNavigable = false,
     release,
+    onDoubleClick,
 }: TracklistProps) {
     const { setContext } = useKeyManager({});
 
@@ -39,6 +41,7 @@ export default function Tracklist({
                     {allTracks.map(
                         ({ id, title, position, duration }, index) => (
                             <div
+                                onDoubleClick={() => onDoubleClick(id)}
                                 key={id}
                                 className={cx(styles.tracklistEntry, {
                                     [styles.firstTrack]:
@@ -76,6 +79,7 @@ export default function Tracklist({
             render={({ item, index, selected, onClick }) => (
                 <div
                     onClick={onClick}
+                    onDoubleClick={() => onDoubleClick(item.id)}
                     className={cx(styles.tracklistEntry, {
                         hasFocus: selected,
                         [styles.firstTrack]: firstTrackIndexes.includes(index),
