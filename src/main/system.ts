@@ -10,7 +10,7 @@ import { addTracksToRelease } from "./db/release";
 import { searchCover, getImageFromURL } from "./discogs.js";
 import { mapSeries } from '../lib/utils';
 import type { ArtistWithReleases, ReleaseType, ReleaseWithArtist, TrackInfo } from "@/types/types";
-import { LIBRARY_PATH, COVERS_PATH, PLAYER_PATH } from '../../settings.json';
+import { LIBRARY_PATH, COVERS_PATH, PLAYER_PATH, TAGGER_PATH } from '../../settings.json';
 
 export function startDrag(folderPath: string, event?: IpcMainEvent) {
   event.sender.startDrag({
@@ -50,6 +50,23 @@ export async function playback(release_id: number, track_id?: number) {
   }
 
   await run('open', ['-a', PLAYER_PATH, getReleasePath(release.path)]);
+  return true;
+}
+
+export async function openTagger(release_id: number) {
+  const release = await prisma.release.findFirst({
+    where: { id: release_id },
+    include: {
+      artist: true,
+      tracks: { orderBy: { position: 'asc' } }
+    },
+  });
+
+  if (!release) {
+    return;
+  }
+
+  await run('open', ['-a', TAGGER_PATH, getReleasePath(release.path)]);
   return true;
 }
 
@@ -127,7 +144,7 @@ export async function refreshReleaseContents(id: number) {
 }
 
 async function crawlFolder(folder: string) {
-  const files = await globby("*.{mp3,m4a,flac}", {
+  const files = await globby("*.{mp3,m4a,flac,wav}", {
     cwd: path.join(LIBRARY_PATH, folder),
     caseSensitiveMatch: false
   });

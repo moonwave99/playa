@@ -3,7 +3,7 @@ import type { Release, ReleaseWithArtistAndSubreleases, CollectionWithReleases, 
 import { deleteRelease, groupReleases, unGroupReleases } from '../db/release';
 import { getCollections, createCollection, updateCollection } from "../db/collection";
 import { getCollectionLink } from '@/lib/links';
-import { playback, refreshReleaseContents, revealEntityInFinder, importCovers } from '../system';
+import { playback, openTagger, refreshReleaseContents, revealEntityInFinder, importCovers } from '../system';
 import { buildMenu, getDeleteEntry } from './menu';
 import { getReleaseTitle } from '@/lib/utils';
 import { searchReleaseOnDiscogs, searchReleaseOnRYM } from '@/lib/external_links';
@@ -112,6 +112,10 @@ export const releaseMenu = async (
         click: () => playback(release.id)
       },
       {
+        label: `Open Tagger for '${title}'`,
+        click: () => openTagger(release.id)
+      },
+      {
         label: `Reveal '${title}' in Finder`,
         click: () => revealEntityInFinder('release', release.id)
       },
@@ -125,7 +129,7 @@ export const releaseMenu = async (
           await refreshReleaseContents(release.id);
           BrowserWindow.getAllWindows()[0].webContents.send('mutate', [
             ['releases', release.id],
-            [(context as CollectionWithReleases).title ? 'collections' : 'artists', context.id]
+            [(context as CollectionWithReleases)?.title ? 'collections' : 'artists', context?.id]
           ]);
         }
       },
@@ -152,7 +156,10 @@ export const releaseMenu = async (
       getDeleteEntry({
         title,
         deleteFn: () => deleteRelease(release.id),
-        queryKeys: [['releases', 'latest'], ['releases', release.id]]
+        queryKeys: [
+          ['releases', 'latest'],
+          ['releases', release.id],
+          [(context as CollectionWithReleases)?.title ? 'collections' : 'artists', context?.id]]
       }),
     ]);
     return true;
@@ -171,10 +178,13 @@ export const releaseMenu = async (
     getDeleteEntry({
       title: `${selection.length} Releases`,
       deleteFn: () => Promise.all(selection.map(({ id }) => deleteRelease(id))),
-      queryKeys: [['releases', 'latest'], ...selection.flatMap(({ id, artist }) => ([
-        ['releases', id],
-        ['artists', artist.id]
-      ]))]
+      queryKeys: [
+        ['releases', 'latest'],
+        ...selection.flatMap(({ id, artist }) => ([
+          ['releases', id],
+          ['artists', artist.id]
+        ]))
+      ]
     }),
   ]);
   return true;

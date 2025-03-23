@@ -8,7 +8,7 @@ import type { ReleaseWithArtist, Artist, Collection, SearchResult, Sidebars } fr
 
 declare module "*.module.css";
 
-const system = { revealEntityInFinder, refreshReleaseContents, playback, downloadCover, startDrag };
+const system = { revealEntityInFinder, refreshReleaseContents, playback, openTagger, downloadCover, startDrag };
 
 declare global {
   const MAIN_WINDOW_VITE_DEV_SERVER_URL: string | undefined;
