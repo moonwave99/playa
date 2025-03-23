@@ -7,6 +7,7 @@ type CoverProps = {
     id: number;
     title: string;
     hash: string;
+    path: string;
     className?: string;
     onContextMenu?: () => void;
 };
@@ -27,6 +28,7 @@ export default function Cover({
     id,
     title,
     hash,
+    path,
     className,
     onContextMenu,
 }: CoverProps) {
@@ -57,6 +59,10 @@ export default function Cover({
                 onLoad={(event) =>
                     (event.target as HTMLElement).classList.add(styles.loaded)
                 }
+                onDragStart={(event: DragEvent) => {
+                    event.preventDefault();
+                    window.api.system.startDrag(path);
+                }}
             />
         </div>
     );

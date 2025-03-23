@@ -3,7 +3,7 @@ import type { IpcRendererEvent } from "electron";
 import * as release from "./main/db/release";
 import * as artist from "./main/db/artist";
 import * as collection from "./main/db/collection";
-import { revealEntityInFinder, refreshReleaseContents, playback, downloadCover } from "./main/system";
+import { revealEntityInFinder, refreshReleaseContents, playback, downloadCover, startDrag } from "./main/system";
 import type { ReleaseWithArtist, CollectionWithReleases, ArtistWithReleases, SearchResult } from "./types/types";
 
 contextBridge.exposeInMainWorld('api', {
@@ -12,7 +12,7 @@ contextBridge.exposeInMainWorld('api', {
     ...getHandlers(artist),
     ...getHandlers(collection),
   },
-  system: getHandlers({ revealEntityInFinder, refreshReleaseContents, playback, downloadCover }),
+  system: getHandlers({ revealEntityInFinder, refreshReleaseContents, playback, downloadCover, startDrag }),
   menu: {
     'release': (
       selection: ReleaseWithArtist[],
@@ -31,7 +31,7 @@ contextBridge.exposeInMainWorld('api', {
   ui: {
     inputFocus: () => ipc.send('ui', 'inputFocus'),
     inputBlur: () => ipc.send('ui', 'inputBlur'),
-  }
+  },
 });
 
 function getHandlers(entity: Record<string, (...args: unknown[]) => unknown>) {

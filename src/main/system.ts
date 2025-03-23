@@ -1,4 +1,5 @@
 import child_process from 'node:child_process';
+import type { IpcMainEvent } from 'electron';
 import path from "path";
 import prisma from "./db/prisma";
 import globby from "globby";
@@ -11,22 +12,11 @@ import { mapSeries } from '../lib/utils';
 import type { ArtistWithReleases, ReleaseType, ReleaseWithArtist, TrackInfo } from "@/types/types";
 import { LIBRARY_PATH, COVERS_PATH, PLAYER_PATH } from '../../settings.json';
 
-async function crawlFolder(folder: string) {
-  const files = await globby("*.{mp3,m4a,flac}", {
-    cwd: path.join(LIBRARY_PATH, folder),
-    caseSensitiveMatch: false
+export function startDrag(folderPath: string, event?: IpcMainEvent) {
+  event.sender.startDrag({
+    file: path.join(LIBRARY_PATH, folderPath),
+    icon: path.resolve('folder.png')
   });
-  return files.map(file => path.join(folder, file));
-}
-
-async function getMetadata(filePath: string, index: number): Promise<TrackInfo> {
-  const data = await mm.parseFile(path.join(LIBRARY_PATH, filePath));
-  return {
-    path: filePath,
-    title: data.common.title || path.basename(filePath),
-    duration: data.format.duration || 0,
-    position: data.common.track.no || index + 1
-  };
 }
 
 export async function getFolderContents(release: { path: string }): Promise<TrackInfo[]> {
@@ -70,10 +60,6 @@ export async function revealEntityInFinder(entity: 'release' | 'artist', id: num
   }
 
   return shell.openPath(getReleasePath(result.path));
-}
-
-function getReleasePath(folderPath: string) {
-  return path.join(LIBRARY_PATH, folderPath);
 }
 
 export async function searchCoverOnDiscogs(id: number) {
@@ -138,6 +124,28 @@ export async function refreshReleaseContents(id: number) {
     const tracks = await getFolderContents(release);
     await addTracksToRelease(release.id, tracks);
   }));
+}
+
+async function crawlFolder(folder: string) {
+  const files = await globby("*.{mp3,m4a,flac}", {
+    cwd: path.join(LIBRARY_PATH, folder),
+    caseSensitiveMatch: false
+  });
+  return files.map(file => path.join(folder, file));
+}
+
+async function getMetadata(filePath: string, index: number): Promise<TrackInfo> {
+  const data = await mm.parseFile(path.join(LIBRARY_PATH, filePath));
+  return {
+    path: filePath,
+    title: data.common.title || path.basename(filePath),
+    duration: data.format.duration || 0,
+    position: data.common.track.no || index + 1
+  };
+}
+
+function getReleasePath(folderPath: string) {
+  return path.join(LIBRARY_PATH, folderPath);
 }
 
 async function importSingleFolder(folder: string) {

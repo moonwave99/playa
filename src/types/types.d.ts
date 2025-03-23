@@ -3,12 +3,12 @@ import { PrismaClient } from '@prisma/client';
 import * as release from '@/main/db/release';
 import * as artist from '@/main/db/artist';
 import * as collection from '@/main/db/collection';
-import { revealEntityInFinder, playback, downloadCover } from '@/main/system';
+import { revealEntityInFinder, playback, downloadCover, startDrag } from '@/main/system';
 import type { ReleaseWithArtist, Artist, Collection, SearchResult, Sidebars } from './types';
 
 declare module "*.module.css";
 
-const system = { revealEntityInFinder, refreshReleaseContents, playback, downloadCover };
+const system = { revealEntityInFinder, refreshReleaseContents, playback, downloadCover, startDrag };
 
 declare global {
   const MAIN_WINDOW_VITE_DEV_SERVER_URL: string | undefined;
@@ -36,7 +36,7 @@ declare global {
       ui: {
         inputFocus: () => void;
         inputBlur: () => void;
-      }
+      },
     }
   }
 }
