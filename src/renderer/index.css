@@ -12,6 +12,7 @@
   --release-view-background-color: rgba(255, 255, 255, .1);
   --header-height: 3.5rem;
   --sidebar-width: 20rem;
+  --navbar-width: 12rem;
 }
 
 * {

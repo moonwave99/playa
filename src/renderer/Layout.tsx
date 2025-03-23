@@ -26,10 +26,10 @@ export default function Layout() {
     init();
     return (
         <div className={cx(styles.main, { [styles.hasSidebar]: true })}>
+            <Nav />
             <div className={styles.page}>
                 <div className={styles.sidebar}>
                     <SidebarView />
-                    <Nav />
                 </div>
                 <main className={styles.main}>
                     <Routes>
