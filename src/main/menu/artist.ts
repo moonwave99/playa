@@ -1,6 +1,5 @@
-import { BrowserWindow } from 'electron';
 import type { ArtistWithReleases } from "@/types/types";
-import { buildMenu } from "./menu";
+import { buildMenu, send } from "./menu";
 import { revealEntityInFinder, importCovers, refreshReleaseContents } from "../system";
 import { searchArtistOnRYM, searchArtistOnDiscogs } from "@/lib/external_links";
 
@@ -19,7 +18,7 @@ export const artistMenu = (artist: ArtistWithReleases) => {
       label: `Refresh contents for all '${name}' Releases`,
       click: async () => {
         await Promise.all(releases.map(({ id }) => refreshReleaseContents(id)));
-        BrowserWindow.getAllWindows()[0].webContents.send('mutate', ['artists', artist.id]);
+        send('mutate', ['artists', artist.id]);
       }
     },
     { type: 'separator' },

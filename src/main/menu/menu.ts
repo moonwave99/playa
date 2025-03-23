@@ -39,10 +39,14 @@ export function getDeleteEntry({ title, deleteFn, queryKeys }: GetDeleteEntryPar
         return;
       }
       await deleteFn();
-      BrowserWindow.getAllWindows()[0].webContents.send('mutate', queryKeys);
-      BrowserWindow.getAllWindows()[0].webContents.send('clearSelection');
+      send('mutate', queryKeys);
+      send('clearSelection');
     }
   }
+}
+
+export function send(channel: string, ...args: unknown[]) {
+  BrowserWindow.getAllWindows()[0].webContents.send(channel, ...args);
 }
 
 export function setupMenu(win: BrowserWindow) {
@@ -65,7 +69,7 @@ export function setupMenu(win: BrowserWindow) {
       ...navigateMenu.map(({ label, accelerator, link }) => ({
         label,
         accelerator,
-        click: () => win.webContents.send('navigate', link)
+        click: () => send('navigate', link)
       })),
     ]
   }));
@@ -82,7 +86,7 @@ export function setupMenu(win: BrowserWindow) {
             properties: ['openDirectory']
           });
           await importFolder(folder[0]);
-          win.webContents.send('mutate', [['releases', 'latest']]);
+          send('mutate', [['releases', 'latest']]);
         }
       },
       { type: 'separator' },
@@ -91,14 +95,14 @@ export function setupMenu(win: BrowserWindow) {
         accelerator,
         click: async () => {
           const stats = await getStats();
-          win.webContents.send('navigate', getRandomLink(stats, entity));
+          send('navigate', getRandomLink(stats, entity));
         }
       })),
       { type: 'separator' },
       {
         label: 'Toggle View Mode',
         accelerator: 'Shift+T',
-        click: () => win.webContents.send('toggleViewMode')
+        click: () => send('toggleViewMode')
       }
     ]
   }));

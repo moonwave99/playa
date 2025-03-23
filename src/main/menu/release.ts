@@ -1,10 +1,9 @@
-import { BrowserWindow } from 'electron';
 import type { Release, ReleaseWithArtistAndSubreleases, CollectionWithReleases, ArtistWithReleases } from "@/types/types";
 import { deleteRelease, groupReleases, unGroupReleases } from '../db/release';
 import { getCollections, createCollection, updateCollection } from "../db/collection";
 import { getCollectionLink } from '@/lib/links';
 import { playback, openTagger, refreshReleaseContents, revealEntityInFinder, importCovers } from '../system';
-import { buildMenu, getDeleteEntry } from './menu';
+import { buildMenu, getDeleteEntry, send } from './menu';
 import { getReleaseTitle } from '@/lib/utils';
 import { searchReleaseOnDiscogs, searchReleaseOnRYM } from '@/lib/external_links';
 
@@ -24,7 +23,7 @@ function getAddToCollectionEntry(selection: Release[], collections: CollectionWi
             ]),
           ],
         });
-        BrowserWindow.getAllWindows()[0].webContents.send('mutate', [
+        send('mutate', [
           ['collections', 'latest'],
           ['collections', collection.id]
         ]);
@@ -44,10 +43,8 @@ function getRemoveFromCollectionEntry(selection: Release[], collection: Collecti
           .map(({ id }: Release) => id)
           .filter((id: number) => !ids.includes(id)),
       });
-      BrowserWindow.getAllWindows()[0].webContents.send('mutate', [
-        ['collections', collection.id]
-      ]);
-      BrowserWindow.getAllWindows()[0].webContents.send('clearSelection');
+      send('mutate', [['collections', collection.id]]);
+      send('clearSelection');
     }
   }
 }
@@ -65,11 +62,11 @@ function getGroupReleasesEntry(selection: ReleaseWithArtistAndSubreleases[], tar
           .filter(({ id }) => id !== target_id)
           .map(({ id }) => id)
       );
-      BrowserWindow.getAllWindows()[0].webContents.send('mutate', [
+      send('mutate', [
         ['releases', 'latest'],
         ['artists', selection.find(x => x.id === target_id).artist_id]
       ]);
-      BrowserWindow.getAllWindows()[0].webContents.send('clearSelection');
+      send('clearSelection');
     }
   }
 }
@@ -79,11 +76,11 @@ function getUnGroupReleasesEntry(release: ReleaseWithArtistAndSubreleases) {
     label: `Ungroup Releases`,
     click: async () => {
       await unGroupReleases(release);
-      BrowserWindow.getAllWindows()[0].webContents.send('mutate', [
+      send('mutate', [
         ['releases', 'latest'],
         ['artists', release.artist_id]
       ]);
-      BrowserWindow.getAllWindows()[0].webContents.send('clearSelection');
+      send('clearSelection');
     }
   }
 }
@@ -93,14 +90,14 @@ export const releaseMenu = async (
   target_id: number,
   context?: CollectionWithReleases | ArtistWithReleases
 ) => {
-  const collections = await getCollections();
+  const collections = await getCollections({ take: 100 });
   const newCollectionHandler = async () => {
     const newCollection = await createCollection({
       title: 'New Collection',
       releases: selection.map(({ id }) => id)
     });
-    BrowserWindow.getAllWindows()[0].webContents.send('mutate', [['collections'], ['collections', 'latest']]);
-    BrowserWindow.getAllWindows()[0].webContents.send('navigate', `${getCollectionLink(newCollection)}?new=true`);
+    send('mutate', [['collections'], ['collections', 'latest']]);
+    send('navigate', `${getCollectionLink(newCollection)}?new=true`);
   }
 
   if (selection.length === 1) {
@@ -127,7 +124,7 @@ export const releaseMenu = async (
         label: 'Refresh Folder Contents',
         click: async () => {
           await refreshReleaseContents(release.id);
-          BrowserWindow.getAllWindows()[0].webContents.send('mutate', [
+          send('mutate', [
             ['releases', release.id],
             [(context as CollectionWithReleases)?.title ? 'collections' : 'artists', context?.id]
           ]);
