@@ -1,5 +1,5 @@
 import { normalizeTitle } from './utils';
-import type { HasId } from '@/types/types';
+import type { HasId, Entities } from '@/types/types';
 
 export function getURL(url: string, params: Record<string, string>) {
   return `${url}?${new URLSearchParams(params)}`;
@@ -32,4 +32,10 @@ export function getArtistLink({ id }: HasId) {
 
 export function getReleaseLink({ id }: HasId) {
   return `/releases/${id}`;
+}
+
+export function getRandomLink(stats: Partial<Record<Entities, number>>, entity: Entities): string {
+  const count = stats[entity];
+  const randomId = Math.round(Math.random() * count);
+  return `/${entity}s/${randomId}`;
 }

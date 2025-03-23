@@ -1,9 +1,10 @@
 import { Menu, MenuItem, dialog, BrowserWindow, ipcMain as ipc } from 'electron';
 import type { MenuItemConstructorOptions } from 'electron';
-import { importFolder } from '../system';
-import { getStats } from '../db/stats';
-import type { Sidebars, Entities } from '@/types/types';
+import type { Entities } from '@/types/types';
 import type { QueryKey } from '@tanstack/react-query';
+import { getRandomLink } from '@/lib/links';
+import { getStats } from '../db/stats';
+import { importFolder } from '../system';
 import { releaseMenu } from './release';
 import { artistMenu } from './artist';
 import { collectionMenu } from './collection';
@@ -44,60 +45,6 @@ export function getDeleteEntry({ title, deleteFn, queryKeys }: GetDeleteEntryPar
   }
 }
 
-type NavigateMenuEntry = {
-  label: string;
-  accelerator: string;
-  link: string;
-};
-
-type SidebarMenuEntry = {
-  label: string;
-  accelerator: string;
-  sidebar: Sidebars;
-};
-
-type RandomMenuEntry = {
-  label: string;
-  accelerator: string;
-  entity: Entities;
-}
-
-const navigateMenu: NavigateMenuEntry[] = [
-  {
-    label: 'Latest Releases',
-    accelerator: 'Shift+R',
-    link: '/'
-  },
-  {
-    label: 'Latest Artists',
-    accelerator: 'Shift+A',
-    link: '/artists'
-  },
-  {
-    label: 'Latest Collections',
-    accelerator: 'Shift+C',
-    link: '/collections'
-  },
-];
-
-const randomMenu: RandomMenuEntry[] = [
-  {
-    label: 'Show Random Release',
-    accelerator: 'Alt+R',
-    entity: 'release',
-  },
-  {
-    label: 'Show Random Artist',
-    accelerator: 'Alt+A',
-    entity: 'artist',
-  },
-  {
-    label: 'Show Random Collection',
-    accelerator: 'Alt+C',
-    entity: 'collection',
-  },
-]
-
 export function setupMenu(win: BrowserWindow) {
   ipc.on('ui', (_, message) => {
     if (message !== 'inputBlur' && message !== 'inputFocus') {
@@ -108,7 +55,9 @@ export function setupMenu(win: BrowserWindow) {
         .submenu.items.forEach(x => x.enabled = message === 'inputBlur');
     });
   });
+
   const menu = Menu.getApplicationMenu();
+
   menu.append(new MenuItem({
     id: 'navigate',
     label: 'Navigate',
@@ -120,6 +69,7 @@ export function setupMenu(win: BrowserWindow) {
       })),
     ]
   }));
+
   menu.append(new MenuItem({
     id: 'library',
     label: 'Library',
@@ -155,8 +105,43 @@ export function setupMenu(win: BrowserWindow) {
   Menu.setApplicationMenu(menu);
 }
 
-function getRandomLink(stats: Partial<Record<Entities, number>>, entity: Entities): string {
-  const count = stats[entity];
-  const randomId = Math.round(Math.random() * count);
-  return `/${entity}s/${randomId}`;
-}
+type MenuEntry = {
+  label: string;
+  accelerator: string;
+};
+
+const navigateMenu: (MenuEntry & { link: string })[] = [
+  {
+    label: 'Latest Releases',
+    accelerator: 'Shift+R',
+    link: '/'
+  },
+  {
+    label: 'Latest Artists',
+    accelerator: 'Shift+A',
+    link: '/artists'
+  },
+  {
+    label: 'Latest Collections',
+    accelerator: 'Shift+C',
+    link: '/collections'
+  },
+];
+
+const randomMenu: (MenuEntry & { entity: Entities })[] = [
+  {
+    label: 'Show Random Release',
+    accelerator: 'Alt+R',
+    entity: 'release',
+  },
+  {
+    label: 'Show Random Artist',
+    accelerator: 'Alt+A',
+    entity: 'artist',
+  },
+  {
+    label: 'Show Random Collection',
+    accelerator: 'Alt+C',
+    entity: 'collection',
+  },
+];
