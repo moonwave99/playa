@@ -1,38 +1,25 @@
 import { useNavigate } from "react-router";
-import { useInfiniteQuery } from "@tanstack/react-query";
 import type { ReleaseWithArtistAndSubreleases } from "@/types/types";
 import ReleaseView from "@/renderer/components/ReleaseView";
 import { releaseColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
 import { useKeyManager } from "@/renderer/hooks/useKeyboardManager";
+import useLatestReleases from "@/renderer/query/useLatestReleases";
 import { getReleaseLink } from "@/lib/links";
 import List from "@/renderer/components/List";
 import Loading from "@/renderer/components/Loading";
 import styles from "../Page.module.css";
 
-const pageSize = 50;
-
 export default function LatestReleases() {
     const navigate = useNavigate();
     const { setContext } = useKeyManager({});
     const {
-        data,
+        releases,
         error,
         isPending,
         isFetchingNextPage,
-        fetchNextPage,
         hasNextPage,
-    } = useInfiniteQuery({
-        queryKey: ["releases", "latest"],
-        queryFn: (context) =>
-            window.api.data.getLatestReleases({
-                take: pageSize,
-                skip: context.pageParam,
-            }),
-        getNextPageParam: (lastGroup) => lastGroup.pagination.skip + pageSize,
-        initialPageParam: 0,
-    });
-
-    const releases = data ? data.pages.flatMap((page) => page.results) : [];
+        fetchNextPage,
+    } = useLatestReleases();
 
     if (isPending) {
         return <Loading />;

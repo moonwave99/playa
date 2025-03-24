@@ -65,8 +65,8 @@ export default function SidebarView() {
             {currentSidebar === "artists" ? (
                 <Sidebar
                     label="artists"
-                    filterFn={({ name }: Artist, query: string) =>
-                        name.toLowerCase().includes(query.toLowerCase())
+                    filterFn={({ name }: Artist, query) =>
+                        filterFn(name, query)
                     }
                     onEnter={(artist) => navigate(getArtistLink(artist))}
                     onContextMenu={window.api.menu.artist}
@@ -81,8 +81,8 @@ export default function SidebarView() {
             {currentSidebar === "collections" ? (
                 <Sidebar
                     label="collections"
-                    filterFn={({ title }: Collection, query: string) =>
-                        title.toLowerCase().includes(query.toLowerCase())
+                    filterFn={({ title }: Collection, query) =>
+                        filterFn(title, query)
                     }
                     onEnter={(collection) =>
                         navigate(getCollectionLink(collection))
@@ -93,10 +93,14 @@ export default function SidebarView() {
                     queryConfig={() => ({
                         queryKey: ["collections"],
                         queryFn: () =>
-                            window.api.data.getCollections({ take: 50 }),
+                            window.api.data.getCollections({ take: 100 }),
                     })}
                 />
             ) : null}
         </>
     );
+}
+
+function filterFn(key: string, query: string) {
+    return key.toLowerCase().includes(query.toLowerCase());
 }

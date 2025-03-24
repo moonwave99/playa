@@ -1,6 +1,6 @@
 import { Navigate, useParams } from "react-router";
-import { useQuery } from "@tanstack/react-query";
 import type { ReleaseWithArtist } from "@/types/types";
+import useArtist from "@/renderer/query/useArtist";
 import ReleaseList from "@/renderer/components/ReleaseList";
 import Loading from "@/renderer/components/Loading";
 import styles from "../Page.module.css";
@@ -8,10 +8,7 @@ import styles from "../Page.module.css";
 export default function ArtistPage() {
     const { id } = useParams();
 
-    const { isPending, error, data } = useQuery({
-        queryKey: ["artists", +id],
-        queryFn: () => window.api.data.getArtist(+id),
-    });
+    const { isPending, error, artist } = useArtist(+id);
 
     if (isPending) {
         return <Loading />;
@@ -19,28 +16,28 @@ export default function ArtistPage() {
 
     if (error) return "An error has occurred: " + error.message;
 
-    if (!data) {
+    if (!artist) {
         return <Navigate replace to="/" />;
     }
 
     function onContextMenu(selection: ReleaseWithArtist[], target_id: number) {
-        const target = data.releases.find(
+        const target = artist.releases.find(
             ({ id }: ReleaseWithArtist) => id === target_id
         );
         window.api.menu.release(
             selection.length ? selection : [target],
             target_id,
-            data
+            artist
         );
     }
 
-    const { name, releases } = data;
+    const { name, releases } = artist;
 
     return (
         <div className={styles.page}>
             <h1
                 className={styles.header}
-                onContextMenu={() => window.api.menu.artist(data)}
+                onContextMenu={() => window.api.menu.artist(artist)}
             >
                 {name}
             </h1>

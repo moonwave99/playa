@@ -3,11 +3,12 @@ import { countReleasesByType, sortReleasesByTypeAndYear } from '@/lib/utils';
 import type {
   Artist,
   ArtistWithReleases,
+  ArtistWithReleasesFull,
   PaginationParams,
   ArtistUpdate
 } from '@/types/types';
 
-export async function getArtist(id: number) {
+export async function getArtist(id: number): Promise<ArtistWithReleasesFull> {
   const result = await prisma.artist.findFirst({
     where: { id },
     include: {
@@ -34,7 +35,7 @@ export async function getArtist(id: number) {
   if (!result) {
     return null;
   }
-  const { releases, ...artist } = result as ArtistWithReleases;
+  const { releases, ...artist } = result as ArtistWithReleasesFull;
   return {
     ...result,
     releases: sortReleasesByTypeAndYear(releases, artist)

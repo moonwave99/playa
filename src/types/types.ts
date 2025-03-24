@@ -38,6 +38,7 @@ type WithArtists = {
 }
 
 export type ArtistWithReleases = Artist & WithReleasesAndSubreleases;
+export type ArtistWithReleasesFull = Artist & WithReleasesAndSubreleasesAndTracks;
 export type CollectionWithReleases = Collection & WithReleasesAndSubreleasesAndTracks;
 export type ReleaseWithArtist = Release & WithArtist;
 export type ReleaseWithArtistAndSubreleases = Release & WithArtist & WithSubReleases;

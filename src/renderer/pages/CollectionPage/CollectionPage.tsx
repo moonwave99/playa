@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import type { FormEvent } from "react";
 import { useParams, useSearchParams, Navigate } from "react-router";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type {
     Collection,
     ReleaseWithArtist,
     ReleaseWithArtistAndTracksAndSubreleases,
 } from "@/types/types";
+import useCollection from "@/renderer/query/useCollection";
 import { useKeyManager } from "@/renderer/hooks/useKeyboardManager";
 import ReleaseList from "@/renderer/components/ReleaseList";
 import Loading from "@/renderer/components/Loading";
@@ -15,11 +15,13 @@ import styles from "../Page.module.css";
 export default function CollectionPage() {
     const { id } = useParams();
     const [searchParams] = useSearchParams();
-    const queryClient = useQueryClient();
-    const { isPending, error, data } = useQuery({
-        queryKey: ["collections", +id],
-        queryFn: () => window.api.data.getCollection(+id),
-    });
+    const {
+        collection,
+        isPending,
+        error,
+        updateTitle,
+        deleteReleasesFromCollection,
+    } = useCollection(+id);
 
     if (isPending) {
         return <Loading />;
@@ -27,69 +29,33 @@ export default function CollectionPage() {
 
     if (error) return "An error has occurred: " + error.message;
 
-    if (!data) {
+    if (!collection) {
         return <Navigate replace to="/collections" />;
-    }
-
-    async function onTitleUpdate(title: string) {
-        await window.api.data.updateCollection(+id, {
-            title,
-            releases: data.releases.map(({ id }: ReleaseWithArtist) => id),
-        });
-
-        [
-            ["collections"],
-            ["collections", "latest"],
-            ["collections", id],
-        ].forEach((queryKey) => queryClient.invalidateQueries({ queryKey }));
-    }
-
-    async function deleteReleasesFromCollection(releases: ReleaseWithArtist[]) {
-        if (
-            !window.confirm(
-                `Are you sure to remove ${releases.length} Releases from Collection?`
-            )
-        ) {
-            return;
-        }
-        const ids = releases.map(({ id }) => id);
-        await window.api.data.updateCollection(+id, {
-            title: data.title,
-            releases: data.releases
-                .map(({ id }: ReleaseWithArtist) => id)
-                .filter((id: number) => !ids.includes(id)),
-        });
-
-        [
-            ["collections"],
-            ["collections", "latest"],
-            ["collections", id],
-        ].forEach((queryKey) => queryClient.invalidateQueries({ queryKey }));
     }
 
     function onContextMenu(
         selection: ReleaseWithArtistAndTracksAndSubreleases[],
         target_id: number
     ) {
-        const target = data.releases.find(
+        const target = collection.releases.find(
             ({ id }: ReleaseWithArtist) => id === target_id
         );
         window.api.menu.release(
             selection.length ? selection : [target],
             target_id,
-            data
+            collection
         );
     }
 
     return (
         <div className={styles.page}>
             <Header
-                collection={data}
-                onTitleUpdate={onTitleUpdate}
+                collection={collection}
+                onTitleUpdate={updateTitle}
                 isFocused={!!searchParams.get("new")}
             />
             <ReleaseList
-                releases={data.releases}
+                releases={collection.releases}
                 onDelete={deleteReleasesFromCollection}
                 onContextMenu={onContextMenu}
             />
@@ -111,9 +77,7 @@ function Header({ collection, onTitleUpdate, isFocused }: HeaderProps) {
     const { setContext } = useKeyManager({
         context: "input",
         handlers: {
-            Escape: () => {
-                setEditing(false);
-            },
+            Escape: () => setEditing(false),
         },
     });
 

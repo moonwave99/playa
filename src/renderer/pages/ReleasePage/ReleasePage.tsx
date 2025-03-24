@@ -1,34 +1,13 @@
-import { useEffect } from "react";
-import type { ReleaseWithArtistAndTracksAndSubreleases } from "@/types/types";
 import { Navigate, useParams } from "react-router";
-import { useQuery } from "@tanstack/react-query";
+import useRelease from "@/renderer/query/useRelease";
 import ReleaseWithTracklistView from "@/renderer/components/ReleaseWithTracklistView";
 import Loading from "@/renderer/components/Loading";
 import styles from "../Page.module.css";
 
-function hasTracks(release: ReleaseWithArtistAndTracksAndSubreleases) {
-    return [
-        release.tracks,
-        ...release.subReleases.map(
-            (x: ReleaseWithArtistAndTracksAndSubreleases) => x.tracks
-        ),
-    ].every((x) => x.length);
-}
-
 export default function ReleasePage() {
     const { id } = useParams();
 
-    const { isPending, error, data, refetch } = useQuery({
-        queryKey: ["releases", +id],
-        queryFn: () => window.api.data.getRelease(+id),
-    });
-
-    useEffect(() => {
-        if (!data || hasTracks(data)) {
-            return;
-        }
-        window.api.system.refreshReleaseContents(data.id).then(refetch);
-    }, [data]);
+    const { isPending, error, release } = useRelease(+id);
 
     if (isPending) {
         return <Loading />;
@@ -36,18 +15,18 @@ export default function ReleasePage() {
 
     if (error) return "An error has occurred: " + error.message;
 
-    if (!data) {
+    if (!release) {
         return <Navigate replace to="/" />;
     }
 
     function onContextMenu() {
-        window.api.menu.release([data], data.id);
+        window.api.menu.release([release], release.id);
     }
 
     return (
         <div className={styles.page}>
             <ReleaseWithTracklistView
-                release={data}
+                release={release}
                 onContextMenu={onContextMenu}
             />
         </div>

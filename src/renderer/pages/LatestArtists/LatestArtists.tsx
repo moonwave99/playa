@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router";
-import { useInfiniteQuery } from "@tanstack/react-query";
 import ReleaseGroup from "@/renderer/components/ReleaseGroup";
 import List from "@/renderer/components/List";
 import Loading from "@/renderer/components/Loading";
 import { useKeyManager } from "@/renderer/hooks/useKeyboardManager";
+import useLatestArtists from "@/renderer/query/useLatestArtists";
 import { estimateReleaseGroupSize } from "@/lib/utils";
 import { getArtistLink } from "@/lib/links";
 import styles from "../Page.module.css";
@@ -13,30 +13,17 @@ const columnsConfig = [
     { count: 2, width: 600 },
 ];
 
-const pageSize = 50;
-
 export default function LatestArtists() {
     const navigate = useNavigate();
     const { setContext } = useKeyManager({});
     const {
-        data,
+        artists,
         error,
         isPending,
         isFetchingNextPage,
-        fetchNextPage,
         hasNextPage,
-    } = useInfiniteQuery({
-        queryKey: ["artists", "latest"],
-        queryFn: (context) =>
-            window.api.data.getLatestArtists({
-                take: pageSize,
-                skip: context.pageParam,
-            }),
-        getNextPageParam: (lastGroup) => lastGroup.pagination.skip + pageSize,
-        initialPageParam: 0,
-    });
-
-    const artists = data ? data.pages.flatMap((page) => page.results) : [];
+        fetchNextPage,
+    } = useLatestArtists();
 
     if (isPending) {
         return <Loading />;
