@@ -27,7 +27,7 @@ import styles from "./Layout.module.css";
 
 const modalStyle = {
     overlay: {
-        background: "rgba(100,100,100, 0.3)",
+        background: "rgba(100,100,100, 0.4)",
     },
     content: {
         background: "black",
@@ -35,6 +35,7 @@ const modalStyle = {
         height: "min-content",
         margin: "auto",
         borderColor: "var(--tertiary-color)",
+        borderRadius: ".5rem",
     },
 };
 
