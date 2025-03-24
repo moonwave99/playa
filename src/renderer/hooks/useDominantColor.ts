@@ -1,21 +1,31 @@
 import { useState, useEffect } from "react";
 
-export default function useDominantColor(url: string) {
+type ColorInfo = { color: string; useDarkText: boolean; }
+
+export default function useDominantColor(url: string): ColorInfo {
   const [color, setColor] = useState({
     color: "black",
     useDarkText: false,
   });
+
   useEffect(() => {
     getDominantColor(url).then(setColor);
   }, [url]);
+
   return color;
 }
 
-function getDominantColor(url: string) {
+const cache: Record<string, ColorInfo> = {};
+
+function getDominantColor(url: string): Promise<ColorInfo> {
   const image = new Image();
   image.crossOrigin = "";
   image.src = url;
   return new Promise((resolve) => {
+    if (cache[url]) {
+      resolve(cache[url]);
+      return;
+    }
     image.onload = () => {
       const context = document.createElement("canvas").getContext("2d");
       context.drawImage(image, 0, 0, 1, 1);
@@ -23,10 +33,12 @@ function getDominantColor(url: string) {
       const HEX = ((1 << 24) + (i[0] << 16) + (i[1] << 8) + i[2])
         .toString(16)
         .slice(1);
-      resolve({
+
+      cache[url] = {
         color: `#${HEX}`,
         useDarkText: isTextDark(`#${HEX}`),
-      });
+      }
+      resolve(cache[url]);
     };
   });
 }
@@ -49,6 +61,7 @@ function isTextDark(hex: string) {
     }
     return Math.pow((color + 0.055) / 1.055, 2.4);
   });
+
   const luminance = (0.2126 * c[0]) + (0.7152 * c[1]) + (0.0722 * c[2]);
   return luminance > 0.179;
 }
