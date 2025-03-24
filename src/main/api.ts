@@ -4,6 +4,7 @@ import * as release from './db/release';
 import * as artist from './db/artist';
 import * as collection from './db/collection';
 import { revealEntityInFinder, playback, openTagger, refreshReleaseContents, downloadCover, startDrag } from './system';
+import { getSettings, setSettings } from './settings';
 import { releaseMenu, artistMenu, collectionMenu, searchResultMenu } from './menu/menu';
 
 function registerHandlers(entity: Record<string, (...args: unknown[]) => unknown>) {
@@ -20,6 +21,8 @@ const menu = {
   'menu:searchResult': searchResultMenu,
 }
 
+const settings = { setSettings, getSettings };
+
 export default function registerApi() {
-  [release, artist, collection, system, menu].forEach(registerHandlers);
+  [release, artist, collection, system, menu, settings].forEach(registerHandlers);
 }

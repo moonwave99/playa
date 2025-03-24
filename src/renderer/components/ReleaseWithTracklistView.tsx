@@ -32,7 +32,10 @@ export default function ReleaseWithTracklistView({
     const releaseTitle = getReleaseTitle(release);
 
     function onDoubleClick(track_id: number) {
-        window.api.system.playback(id, track_id);
+        window.api.system.playback({
+            release_id: id,
+            track_id,
+        });
     }
 
     return (

@@ -40,8 +40,8 @@ export default function LatestReleases() {
 
     if (error) return "An error has occurred: " + error.message;
 
-    function playback(id: number) {
-        window.api.system.playback(id);
+    function playback(release_id: number) {
+        window.api.system.playback({ release_id });
     }
 
     function onEnter(

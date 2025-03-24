@@ -3,6 +3,7 @@ import type { MouseEvent } from "react";
 import { NavLink } from "react-router";
 import useClickOutside from "../hooks/useClickOutside";
 import cx from "clsx";
+import useStore from "../store";
 import { IoMenu } from "react-icons/io5";
 import styles from "./Nav.module.css";
 
@@ -24,6 +25,8 @@ const navMap = [
 export default function Nav() {
     const [isNavOpen, setNavOpen] = useState(false);
     const ref = useClickOutside(() => setNavOpen(false));
+    const { setModalContents } = useStore();
+
     return (
         <nav
             className={cx(styles.nav, { [styles.isOpen]: isNavOpen })}
@@ -41,9 +44,7 @@ export default function Nav() {
                     <NavLink
                         key={link}
                         to={link}
-                        className={({ isActive }) =>
-                            isActive ? styles.isActive : undefined
-                        }
+                        className={styles.link}
                         onClick={(event: MouseEvent) => {
                             if (event.metaKey) {
                                 event.preventDefault();
@@ -54,6 +55,15 @@ export default function Nav() {
                         {label}
                     </NavLink>
                 ))}
+                <button
+                    className={styles.link}
+                    onClick={() => {
+                        setModalContents("settings");
+                        setNavOpen(false);
+                    }}
+                >
+                    Settings
+                </button>
             </div>
         </nav>
     );

@@ -4,6 +4,7 @@ import * as release from "./main/db/release";
 import * as artist from "./main/db/artist";
 import * as collection from "./main/db/collection";
 import { revealEntityInFinder, refreshReleaseContents, playback, downloadCover, startDrag } from "./main/system";
+import { getSettings, setSettings } from "./main/settings";
 import type { ReleaseWithArtist, CollectionWithReleases, ArtistWithReleases, SearchResult } from "./types/types";
 
 contextBridge.exposeInMainWorld('api', {
@@ -13,6 +14,7 @@ contextBridge.exposeInMainWorld('api', {
     ...getHandlers(collection),
   },
   system: getHandlers({ revealEntityInFinder, refreshReleaseContents, playback, downloadCover, startDrag }),
+  settings: getHandlers({ getSettings, setSettings }),
   menu: {
     'release': (
       selection: ReleaseWithArtist[],
@@ -28,6 +30,7 @@ contextBridge.exposeInMainWorld('api', {
   onMutate: getHandler('mutate'),
   onClearSelection: getHandler('clearSelection'),
   onToggleViewMode: getHandler('toggleViewMode'),
+  onOpenSettings: getHandler('openSettings'),
   ui: {
     inputFocus: () => ipc.send('ui', 'inputFocus'),
     inputBlur: () => ipc.send('ui', 'inputBlur'),

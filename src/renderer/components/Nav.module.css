@@ -23,7 +23,7 @@
   display: block;
 }
 
-.entries a {
+.link {
   line-height: 2.5rem;
   display: flex;
   align-items: center;
@@ -31,8 +31,21 @@
   font-size: 0.8rem;
 }
 
-.entries a:hover {
+.link:hover {
   background-color: var(--accent-color);
+}
+
+.link:is(button) {
+  background-color: transparent;
+  color: var(--primary-color);
+  appearance: none;
+  border: none;
+  width: 100%;
+}
+
+.link:is(button):hover {
+  background-color: var(--accent-color);
+  cursor: pointer;
 }
 
 .button {

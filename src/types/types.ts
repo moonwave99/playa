@@ -90,3 +90,5 @@ export type Entries<T> = {
 }[keyof T][];
 
 export type ViewMode = 'grid' | 'list';
+
+export type Settings = Record<string, string | number | boolean>;

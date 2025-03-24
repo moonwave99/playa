@@ -7,7 +7,7 @@ type CoverProps = {
     id: number;
     title: string;
     hash: string;
-    path: string;
+    path?: string;
     className?: string;
     onContextMenu?: () => void;
 };
@@ -61,6 +61,9 @@ export default function Cover({
                 }
                 onDragStart={(event: DragEvent) => {
                     event.preventDefault();
+                    if (!path) {
+                        return;
+                    }
                     window.api.system.startDrag(path);
                 }}
             />

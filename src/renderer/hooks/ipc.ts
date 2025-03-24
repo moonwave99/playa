@@ -18,3 +18,12 @@ export function useNavigateSidebar(callback: (sidebar: Sidebars) => void) {
     };
   }, []);
 }
+
+export function useOnOpenSettings(callback: () => void) {
+  useEffect(() => {
+    const unsubscribe = window.api.onOpenSettings(callback);
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+}

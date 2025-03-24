@@ -24,7 +24,7 @@ export default function ReleaseView({
     onDoubleClick,
     onContextMenu,
 }: ReleaseViewProps) {
-    const { id, hash, artist, year, type } = release;
+    const { artist, year, type } = release;
     const releaseTitle = getReleaseTitle(release);
     return (
         <article
@@ -43,9 +43,8 @@ export default function ReleaseView({
                 <span>{year}</span>
             </p>
             <Cover
-                id={id}
+                {...release}
                 className={styles.coverWrapper}
-                hash={hash}
                 title={`${artist.name} - ${releaseTitle}`}
             />
             <div className={styles.footer}>

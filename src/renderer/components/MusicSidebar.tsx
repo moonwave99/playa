@@ -78,7 +78,7 @@ export default function MusicSidebar() {
 
     function onEnter(item: SearchResult, event: KeyboardEvent) {
         if (item.type === "release" && event.metaKey) {
-            window.api.system.playback(item.id);
+            window.api.system.playback({ release_id: item.id });
             return;
         }
         navigate(item.links[item.type]);

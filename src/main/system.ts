@@ -10,9 +10,10 @@ import { addTracksToRelease } from "./db/release";
 import { searchCover, getImageFromURL } from "./discogs.js";
 import { mapSeries } from '../lib/utils';
 import type { ArtistWithReleases, ReleaseType, ReleaseWithArtist, TrackInfo } from "@/types/types";
-import { LIBRARY_PATH, COVERS_PATH, PLAYER_PATH, TAGGER_PATH } from '../../settings.json';
+import { getSetting } from './settings.js';
 
 export function startDrag(folderPath: string, event?: IpcMainEvent) {
+  const LIBRARY_PATH = getSetting('LIBRARY_PATH') as string;
   event.sender.startDrag({
     file: path.join(LIBRARY_PATH, folderPath),
     icon: path.resolve('folder.png')
@@ -25,7 +26,13 @@ export async function getFolderContents(release: { path: string }): Promise<Trac
   return Promise.all(contents.map(getMetadata));
 }
 
-export async function playback(release_id: number, track_id?: number) {
+type PlaybackParams = {
+  release_id: number;
+  track_id?: number;
+};
+
+export async function playback({ release_id, track_id }: PlaybackParams) {
+  const PLAYER_PATH = getSetting('PLAYER_PATH') as string;
   if (track_id) {
     const track = await prisma.track.findFirst({
       where: { id: track_id },
@@ -66,6 +73,8 @@ export async function openTagger(release_id: number) {
     return;
   }
 
+  const TAGGER_PATH = getSetting('TAGGER_PATH') as string;
+
   await run('open', ['-a', TAGGER_PATH, getReleasePath(release.path)]);
   return true;
 }
@@ -88,10 +97,13 @@ export async function searchCoverOnDiscogs(id: number) {
   if (!release) {
     return;
   }
+  const COVERS_PATH = getSetting('COVERS_PATH') as string;
+
   const pic = await searchCover({ release, artist: release.artist, outputPath: COVERS_PATH });
   if (!pic) {
     return;
   }
+
   await pushCovers({
     cwd: COVERS_PATH,
     message: `Add covers for ${release.artist.name} - ${release.title}`
@@ -99,10 +111,13 @@ export async function searchCoverOnDiscogs(id: number) {
 }
 
 export async function importCovers(releases: ReleaseWithArtist[], context: ArtistWithReleases | ReleaseWithArtist) {
+  const COVERS_PATH = getSetting('COVERS_PATH') as string;
+
   await mapSeries(releases, async (release: ReleaseWithArtist) => await searchCover({ release, artist: release.artist, outputPath: COVERS_PATH }));
   const message = (context as ArtistWithReleases).name
     ? `Add covers for ${(context as ArtistWithReleases).name}`
     : `Add covers for ${(context as ReleaseWithArtist).title}`;
+
   await pushCovers({
     cwd: COVERS_PATH,
     message
@@ -120,6 +135,8 @@ export async function downloadCover({ id, url }: { id: number, url: string }) {
   }
 
   const { hash } = release;
+  const COVERS_PATH = getSetting('COVERS_PATH') as string;
+
   await getImageFromURL({ outputPath: COVERS_PATH, hash, url });
   await pushCovers({
     cwd: COVERS_PATH,
@@ -144,6 +161,7 @@ export async function refreshReleaseContents(id: number) {
 }
 
 async function crawlFolder(folder: string) {
+  const LIBRARY_PATH = getSetting('LIBRARY_PATH') as string;
   const files = await globby("*.{mp3,m4a,flac,wav}", {
     cwd: path.join(LIBRARY_PATH, folder),
     caseSensitiveMatch: false
@@ -152,6 +170,7 @@ async function crawlFolder(folder: string) {
 }
 
 async function getMetadata(filePath: string, index: number): Promise<TrackInfo> {
+  const LIBRARY_PATH = getSetting('LIBRARY_PATH') as string;
   const data = await mm.parseFile(path.join(LIBRARY_PATH, filePath));
   return {
     path: filePath,
@@ -162,6 +181,7 @@ async function getMetadata(filePath: string, index: number): Promise<TrackInfo> 
 }
 
 function getReleasePath(folderPath: string) {
+  const LIBRARY_PATH = getSetting('LIBRARY_PATH') as string;
   return path.join(LIBRARY_PATH, folderPath);
 }
 
@@ -170,6 +190,7 @@ async function importSingleFolder(folder: string) {
   if (!contents) {
     return;
   }
+  const LIBRARY_PATH = getSetting('LIBRARY_PATH') as string;
   const releaseData = parsePath(folder.replace(LIBRARY_PATH, ""));
   if (!releaseData) {
     return false;
@@ -217,6 +238,8 @@ async function importSingleFolder(folder: string) {
   const fullRelease = await addTracksToRelease(release.id, trackInfo);
 
   console.log("Upserted release", fullRelease);
+
+  const COVERS_PATH = getSetting('COVERS_PATH') as string;
 
   await searchCover({
     release,

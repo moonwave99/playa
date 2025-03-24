@@ -36,7 +36,7 @@ export default function ReleaseList({
         event: KeyboardEvent
     ) {
         if (event.metaKey) {
-            window.api.system.playback(release.id);
+            window.api.system.playback({ release_id: release.id });
             return;
         }
         navigate(getReleaseLink(release));

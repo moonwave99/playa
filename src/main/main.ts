@@ -3,12 +3,13 @@ import path from 'node:path';
 import started from 'electron-squirrel-startup';
 import registerApi from './api';
 import { setupMenu } from './menu/menu';
+import { initSettings } from './settings';
 
 if (started) {
   app.quit();
 }
 
-const createWindow = () => {
+const createWindow = async () => {
   const { height, width } = screen.getPrimaryDisplay().size;
   const mainWindow = new BrowserWindow({
     height,
@@ -42,6 +43,7 @@ const createWindow = () => {
     return { action: 'deny' };
   });
 
+  await initSettings();
   setupMenu(mainWindow);
   registerApi();
 };

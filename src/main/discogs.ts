@@ -1,7 +1,7 @@
 import path from "path";
 import download from "image-downloader";
 import type { Release, Artist } from '@/types/types';
-import { DISCOGS_KEY, DISCOGS_SECRET } from '../../settings.json';
+import { getSetting } from "./settings";
 
 type SearchParams = {
     artist: string;
@@ -10,6 +10,9 @@ type SearchParams = {
 };
 
 export async function search({ artist, title, year }: SearchParams) {
+    const DISCOGS_KEY = getSetting('DISCOGS_KEY') as string;
+    const DISCOGS_SECRET = getSetting('DISCOGS_SECRET') as string;
+
     const params = new URLSearchParams({
         artist: normalize(artist),
         title: normalize(title),

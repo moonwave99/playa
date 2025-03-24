@@ -2,12 +2,14 @@ import { useEffect, useRef } from "react";
 import { Routes, Route, useNavigate, useLocation } from "react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import type { QueryKey } from "@tanstack/react-query";
+import Modal from "react-modal";
 import {
     useKeyManager,
     withMeta,
     withPrevent,
     KeyManager,
 } from "./hooks/useKeyboardManager";
+import { useOnOpenSettings } from "./hooks/ipc";
 import useStore from "./store";
 
 import LatestReleases from "./pages/LatestReleases/LatestReleases";
@@ -18,12 +20,30 @@ import ArtistPage from "./pages/ArtistPage/ArtistPage";
 import CollectionPage from "./pages/CollectionPage/CollectionPage";
 import Nav from "./components/Nav";
 import SidebarView from "./components/SidebarView";
+import SettingsView from "./components/SettingsView";
 
 import cx from "clsx";
 import styles from "./Layout.module.css";
 
+const modalStyle = {
+    overlay: {
+        background: "rgba(100,100,100, 0.3)",
+    },
+    content: {
+        background: "black",
+        width: "60vw",
+        height: "min-content",
+        margin: "auto",
+        borderColor: "var(--tertiary-color)",
+    },
+};
+
+Modal.setAppElement("#root");
+
 export default function Layout() {
-    init();
+    const { modalContents, setModalContents, setContext } = init();
+    useOnOpenSettings(() => setModalContents("settings"));
+
     return (
         <div className={cx(styles.main, { [styles.hasSidebar]: true })}>
             <Nav />
@@ -48,15 +68,42 @@ export default function Layout() {
                     </Routes>
                 </main>
             </div>
+            <Modal
+                isOpen={!!modalContents}
+                onRequestClose={() => setModalContents(null)}
+                style={modalStyle}
+                onAfterOpen={() => {
+                    window.api.ui.inputFocus();
+                    setContext("modal");
+                }}
+                onAfterClose={() => {
+                    window.api.ui.inputBlur();
+                    setContext("list");
+                }}
+            >
+                {modalContents === "settings" && (
+                    <SettingsView
+                        onSave={() => setModalContents(null)}
+                        onCancel={() => setModalContents(null)}
+                    />
+                )}
+            </Modal>
         </div>
     );
 }
 
-function init() {
+type Init = {
+    modalContents: string;
+    setModalContents: (modalContents: string) => void;
+    setContext: (context: string) => void;
+};
+
+function init(): Init {
     const firstRender = useRef(true);
     const navigate = useNavigate();
     const queryClient = useQueryClient();
-    const { path, toggleViewMode, setPath } = useStore();
+    const { path, toggleViewMode, setPath, modalContents, setModalContents } =
+        useStore();
     const { pathname } = useLocation();
 
     const { setContext } = useKeyManager({
@@ -102,4 +149,6 @@ function init() {
             removeHandlers.forEach((removeHandler) => removeHandler());
         };
     }, []);
+
+    return { modalContents, setModalContents, setContext };
 }

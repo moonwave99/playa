@@ -36,13 +36,9 @@ export default function ReleaseGroup({
             onClick={onClick}
         >
             <ul className={styles.releases}>
-                {releasesToDisplay.map(({ id, hash, title, artist }) => (
-                    <li key={id}>
-                        <Cover
-                            id={id}
-                            hash={hash}
-                            title={`${artist.name} - ${title}`}
-                        />
+                {releasesToDisplay.map(({ title, artist, ...rest }) => (
+                    <li key={rest.id}>
+                        <Cover {...rest} title={`${artist.name} - ${title}`} />
                     </li>
                 ))}
                 {Array(releaseCount - releasesToDisplay.length)

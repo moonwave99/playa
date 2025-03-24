@@ -71,6 +71,11 @@ export function setupMenu(win: BrowserWindow) {
         accelerator,
         click: () => send('navigate', link)
       })),
+      {
+        label: 'Settings',
+        accelerator: 'cmd+,',
+        click: () => send('openSettings')
+      }
     ]
   }));
 

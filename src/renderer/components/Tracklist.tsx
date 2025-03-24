@@ -67,7 +67,12 @@ export default function Tracklist({
         <List
             disableMultipleSelection
             context="list"
-            onEnter={(item) => window.api.system.playback(release.id, item.id)}
+            onEnter={(item) =>
+                window.api.system.playback({
+                    release_id: release.id,
+                    track_id: item.id,
+                })
+            }
             items={allTracks}
             className={cx(styles.tracklist, styles.isNavigable)}
             estimateSize={(_: number, index: number) => ({
