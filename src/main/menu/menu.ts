@@ -87,10 +87,10 @@ export function setupMenu(win: BrowserWindow) {
         label: 'Import Folder',
         accelerator: 'Shift+I',
         click: async () => {
-          const folder = dialog.showOpenDialogSync(win, {
-            properties: ['openDirectory']
+          const folders = dialog.showOpenDialogSync(win, {
+            properties: ['openDirectory', 'multiSelections'],
           });
-          await importFolder(folder[0]);
+          await Promise.all(folders.map(importFolder));
           send('mutate', [['releases', 'latest']]);
         }
       },

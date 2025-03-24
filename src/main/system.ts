@@ -246,6 +246,11 @@ async function importSingleFolder(folder: string) {
     artist,
     outputPath: COVERS_PATH,
   });
+
+  await pushCovers({
+    cwd: COVERS_PATH,
+    message: `Add covers for ${release.artist.name} - ${release.title}`
+  });
 }
 
 export async function importFolder(folder: string) {
