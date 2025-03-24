@@ -1,9 +1,10 @@
 .tracklist {
   flex: 1;
+  padding: 0 1rem;
 }
 
 .isNavigable {
-  max-height: calc(100vh - 15rem);
+  max-height: calc(100vh - 11rem);
   overflow: auto;
 }
 

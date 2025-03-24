@@ -11,6 +11,7 @@ import ReleaseView from "@/renderer/components/ReleaseView";
 import ReleaseWithTracklistView from "@/renderer/components/ReleaseWithTracklistView";
 import List from "@/renderer/components/List";
 import useStore from "../store";
+import cx from "clsx";
 import styles from "./ReleaseList.module.css";
 
 type ReleaseListProps = {
@@ -50,7 +51,7 @@ export default function ReleaseList({
         <List
             key={`${viewMode}-${getTotalTracks(releases)}`}
             items={releases}
-            className={styles.list}
+            className={cx(styles.list, styles[viewMode])}
             columnsConfig={
                 viewMode === "grid" ? releaseColumnsConfig : undefined
             }

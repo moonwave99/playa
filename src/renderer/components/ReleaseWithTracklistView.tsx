@@ -4,8 +4,9 @@ import cx from "clsx";
 import Tracklist from "./Tracklist";
 import Cover from "./Cover";
 import Link from "./Link";
+import useDominantColor from "../hooks/useDominantColor";
 import { getReleaseTitle, getDiscInfo } from "@/lib/utils";
-import { getReleaseLink, getArtistLink } from "@/lib/links";
+import { getReleaseLink, getArtistLink, getCover } from "@/lib/links";
 import styles from "./ReleaseWithTracklistView.module.css";
 
 type ReleaseWithTracklistViewProps = {
@@ -28,8 +29,9 @@ export default function ReleaseWithTracklistView({
     onContextMenu,
     onClick,
 }: ReleaseWithTracklistViewProps) {
-    const { id, artist, type, year } = release;
+    const { id, artist, type, year, hash } = release;
     const releaseTitle = getReleaseTitle(release);
+    const { color, useDarkText } = useDominantColor(getCover(hash));
 
     function onDoubleClick(track_id: number) {
         window.api.system.playback({
@@ -41,13 +43,14 @@ export default function ReleaseWithTracklistView({
     return (
         <article
             className={cx(styles.releaseView, {
-                selected,
-                hasFocus: selected && hasFocus,
+                [styles.selected]: selected,
+                [styles.hasFocus]: selected && hasFocus,
                 [styles.isSingle]: !inList,
+                [styles.useDarkText]: useDarkText,
             })}
             onClick={onClick}
         >
-            <header className={styles.header}>
+            <header className={styles.header} style={{ background: color }}>
                 <Cover
                     {...release}
                     title={`${artist.name} - ${releaseTitle}`}

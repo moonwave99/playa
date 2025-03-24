@@ -79,6 +79,7 @@ export default function Tracklist({
                 height: firstTrackIndexes.includes(index) ? 48 : 24,
                 width: 200,
             })}
+            paddingRight={0}
             gap={4}
             onLeft={() => setContext("sidebar")}
             render={({ item, index, selected, onClick }) => (

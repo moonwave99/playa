@@ -3,14 +3,15 @@
   flex-direction: column;
   gap: 1rem;
   border-radius: .25rem;
-  padding: 1rem;
   background-color: var(--release-view-background-color);
+  overflow: hidden;
+  padding-bottom: 1rem;
 }
 
 .isSingle {
-  margin-top: 1rem;
+  margin: 0;
+  padding: 0;
   background-color: transparent;
-  padding: 0 1rem;
 }
 
 .header {
@@ -46,12 +47,23 @@
   color: var(--secondary-color);
 }
 
+.useDarkText .title,
+.useDarkText .artist,
+.useDarkText .info {
+  color: black;
+}
+
 .cover {
   width: var(--release-tracklist-list-cover-size);
   height: var(--release-tracklist-list-cover-size);
+  border-right: 1px solid rgba(100, 100, 100, 0.4);
 }
 
 .isSingle .cover {
   width: var(--release-tracklist-single-cover-size);
   height: var(--release-tracklist-single-cover-size);
+}
+
+.hasFocus {
+  outline: 2px var(--accent-color) solid;
 }
