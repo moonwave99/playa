@@ -1,16 +1,19 @@
 .tracklist {
   flex: 1;
-  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .isNavigable {
   max-height: calc(100vh - 11rem);
   overflow: auto;
+  padding: 0 1rem;
 }
 
 .tracklist:not(.isNavigable) {
   column-fill: auto;
   overflow-y: auto;
+  gap: 4px;
 }
 
 .tracklist:not(.isNavigable) .firstTrack {
@@ -18,13 +21,17 @@
 }
 
 .tracklistEntry {
-  line-height: 1.5rem;
-  font-size: .9rem;
+  line-height: 2.5rem;
+  font-size: .8rem;
   display: flex;
   align-items: center;
   gap: .5rem;
   padding: 0 .5rem;
   border-radius: .25rem;
+}
+
+.even {
+  background-color: var(--tracklist-entry-alternate-background-color);
 }
 
 .tracklistEntry:hover {
@@ -35,7 +42,14 @@
   margin-top: 1.5rem;
 }
 
-.count {
+.position {
+  color: var(--tertiary-color);
+  display: flex;
+  justify-content: center;
+  width: 2ch;
+}
+
+.tracklistEntry:hover .position {
   color: var(--secondary-color);
 }
 

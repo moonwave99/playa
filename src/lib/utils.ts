@@ -1,6 +1,7 @@
 
 import { uniqBy } from 'lodash';
 import type {
+  ReleaseType,
   Release,
   ReleaseWithArtist,
   ReleaseWithArtistAndSubreleases,
@@ -8,6 +9,9 @@ import type {
   ReleaseCountByType,
   ReleaseWithArtistAndTracksAndSubreleases,
 } from "@/types/types";
+
+const releaseTypes: ReleaseType[] =
+  ['Album', 'Compilation', 'EP', 'Single', 'Bootleg', 'Various', 'Tribute', 'Soundtrack'];
 
 export function getReleaseTitle({ title, subReleases = [] }:
   Pick<ReleaseWithArtistAndSubreleases, 'title' | 'subReleases'>): string {
@@ -67,7 +71,7 @@ export function isEmpty(obj: object) {
 }
 
 export function sortReleasesByTypeAndYear(releases: ReleaseWithArtist[], artist: Artist) {
-  return ['Album', 'Compilation', 'Ep', 'Single', 'Bootleg', 'Various', 'Tribute', 'Soundtrack']
+  return releaseTypes
     .flatMap(type => releases
       .filter(x => x.type === type)
       .sort((a, b) => a.year && b.year ? Math.sign(a.year - b.year) : 0)
@@ -80,7 +84,7 @@ export function getReleaseWithTracklistHeight(release: ReleaseWithArtistAndTrack
     ...release.subReleases
   ].map(x => x.tracks?.length));
   // cover height + margin + gap + tracks
-  return 128 + 32 + 16 + (maxTracks * 24);
+  return 128 + 32 + 4 + (maxTracks * (40 + 4));
 }
 
 export async function mapSeries<T, U>(array: T[], callback: (item: T, index: number) => U) {

@@ -1,11 +1,9 @@
 .releaseView {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 4px;
   border-radius: .25rem;
-  background-color: var(--release-view-background-color);
   overflow: hidden;
-  padding-bottom: 1rem;
 }
 
 .isSingle {
@@ -17,6 +15,7 @@
 .header {
   display: flex;
   gap: 1rem;
+  transition: background-color .3s ease-in-out;
 }
 
 .content {
@@ -57,6 +56,7 @@
   width: var(--release-tracklist-list-cover-size);
   height: var(--release-tracklist-list-cover-size);
   border-right: 1px solid rgba(100, 100, 100, 0.4);
+  border-radius: 0;
 }
 
 .isSingle .cover {

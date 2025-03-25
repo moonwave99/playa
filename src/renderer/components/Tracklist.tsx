@@ -30,35 +30,33 @@ export default function Tracklist({
     const discsCount = release.subReleases.length + 1;
     if (!isNavigable) {
         return (
-            <div className={styles.tracklist}>
-                <div
-                    style={{
-                        columnCount: discsCount,
-                        width:
-                            discsCount > 1 ? `${discsCount * 50}%` : undefined,
-                    }}
-                >
-                    {allTracks.map(
-                        ({ id, title, position, duration }, index) => (
-                            <div
-                                onDoubleClick={() => onDoubleClick(id)}
-                                key={id}
-                                className={cx(styles.tracklistEntry, {
-                                    [styles.firstTrack]:
-                                        firstTrackIndexes.includes(index),
-                                })}
-                            >
-                                <span className={styles.count}>
-                                    {position < 10 ? `0${position}` : position}.
-                                </span>
-                                <span className={styles.title}>{title}</span>
-                                <span className={styles.duration}>
-                                    {formatDuration(duration)}
-                                </span>
-                            </div>
-                        )
-                    )}
-                </div>
+            <div
+                className={styles.tracklist}
+                style={{
+                    columnCount: discsCount,
+                    width: discsCount > 1 ? `${discsCount * 50}%` : undefined,
+                }}
+            >
+                {allTracks.map(({ id, title, position, duration }, index) => (
+                    <div
+                        onDoubleClick={() => onDoubleClick(id)}
+                        key={id}
+                        className={cx(
+                            styles.tracklistEntry,
+                            styles[index % 2 === 0 ? "odd" : "even"],
+                            {
+                                [styles.firstTrack]:
+                                    firstTrackIndexes.includes(index),
+                            }
+                        )}
+                    >
+                        <span className={styles.position}>{position}</span>
+                        <span className={styles.title}>{title}</span>
+                        <span className={styles.duration}>
+                            {formatDuration(duration)}
+                        </span>
+                    </div>
+                ))}
             </div>
         );
     }
@@ -76,7 +74,7 @@ export default function Tracklist({
             items={allTracks}
             className={cx(styles.tracklist, styles.isNavigable)}
             estimateSize={(_: number, index: number) => ({
-                height: firstTrackIndexes.includes(index) ? 48 : 24,
+                height: firstTrackIndexes.includes(index) ? 80 : 40,
                 width: 200,
             })}
             paddingRight={0}
@@ -86,14 +84,17 @@ export default function Tracklist({
                 <div
                     onClick={onClick}
                     onDoubleClick={() => onDoubleClick(item.id)}
-                    className={cx(styles.tracklistEntry, {
-                        hasFocus: selected,
-                        [styles.firstTrack]: firstTrackIndexes.includes(index),
-                    })}
+                    className={cx(
+                        styles.tracklistEntry,
+                        styles[index % 2 === 0 ? "odd" : "even"],
+                        {
+                            hasFocus: selected,
+                            [styles.firstTrack]:
+                                firstTrackIndexes.includes(index),
+                        }
+                    )}
                 >
-                    <span className={styles.count}>
-                        {formatPosition(item.position)}.
-                    </span>
+                    <span className={styles.position}>{item.position}</span>
                     <span className={styles.title}>{item.title}</span>
                     <span className={styles.duration}>
                         {formatDuration(item.duration)}
@@ -125,8 +126,4 @@ function formatDuration(duration: number) {
         return formatted.slice(3);
     }
     return formatted;
-}
-
-function formatPosition(position: number) {
-    return position < 10 ? `0${position}` : position;
 }

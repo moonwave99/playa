@@ -162,7 +162,7 @@ export async function refreshReleaseContents(id: number) {
 
 async function crawlFolder(folder: string) {
   const LIBRARY_PATH = getSetting('LIBRARY_PATH') as string;
-  const files = await globby("*.{mp3,m4a,flac,wav}", {
+  const files = await globby("*.{mp3,m4a,flac,wav,ogg}", {
     cwd: path.join(LIBRARY_PATH, folder),
     caseSensitiveMatch: false
   });
@@ -249,7 +249,7 @@ async function importSingleFolder(folder: string) {
 
   await pushCovers({
     cwd: COVERS_PATH,
-    message: `Add covers for ${release.artist.name} - ${release.title}`
+    message: `Add covers for ${artist.name} - ${release.title}`
   });
 }
 

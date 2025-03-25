@@ -50,14 +50,16 @@ export default function ReleaseWithTracklistView({
             })}
             onClick={onClick}
         >
-            <header className={styles.header} style={{ background: color }}>
+            <header
+                className={styles.header}
+                style={{ background: color }}
+                onContextMenu={() => onContextMenu([release], release.id)}
+            >
                 <Cover
                     {...release}
                     title={`${artist.name} - ${releaseTitle}`}
-                    onContextMenu={() => onContextMenu([release], release.id)}
                     className={styles.cover}
                 />
-
                 <div className={styles.content}>
                     <Link className={styles.artist} to={getArtistLink(artist)}>
                         {artist.name}

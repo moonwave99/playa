@@ -106,7 +106,7 @@ export const releaseMenu = async (
     buildMenu([
       {
         label: `Playback '${title}'`,
-        click: () => playback(release.id)
+        click: () => playback({ release_id: release.id })
       },
       {
         label: `Open Tagger for '${title}'`,

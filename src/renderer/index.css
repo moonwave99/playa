@@ -15,6 +15,7 @@
   --navbar-width: 12rem;
   --release-tracklist-single-cover-size: 10rem;
   --release-tracklist-list-cover-size: 8rem;
+  --tracklist-entry-alternate-background-color: #1e1d1d;
 }
 
 * {

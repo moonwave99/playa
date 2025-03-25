@@ -68,6 +68,7 @@ export default function ReleaseList({
                       })
             }
             onLeft={onLeft}
+            paddingRight={viewMode === "grid" ? 16 : 0}
             render={({ item, index, selected, hasFocus, selection, onClick }) =>
                 viewMode === "grid" ? (
                     <ReleaseView
