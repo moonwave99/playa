@@ -1,6 +1,7 @@
 import prisma from "./prisma";
 import sha1 from "sha1";
 import type {
+    HasId,
     TrackInfo,
     PaginationParams,
     SearchResult,
@@ -40,10 +41,26 @@ export async function getRelease(id: number) {
 }
 
 export async function deleteRelease(id: number) {
-    await prisma.release.delete({
-        where: { id }
+    const release = await prisma.release.findFirst({
+        where: { id },
+        include: {
+            subReleases: true
+        }
     });
-    return true;
+    if (!release) {
+        return;
+    }
+    await prisma.release.deleteMany({
+        where: {
+            id: {
+                in: [id, ...release.subReleases.map(({ id }: HasId) => id)]
+            }
+        }
+    });
+}
+
+export async function deleteReleases(ids: number[]) {
+    return Promise.all(ids.map(deleteRelease));
 }
 
 export async function addTracksToRelease(id: number, trackInfo: TrackInfo[]) {

@@ -13,7 +13,7 @@ export type ReleaseCountByType = Record<ReleaseType, number>;
 export type NoteUpdate = { title: string, content: string, artists: number[], releases: number[] };
 export type NoteCreate = { title: string, content: string, artists: number[], releases: number[] };
 
-type WithReleases = {
+export type WithReleases = {
   releases: ReleaseWithArtist[];
 }
 

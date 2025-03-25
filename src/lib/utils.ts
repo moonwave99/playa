@@ -8,6 +8,8 @@ import type {
   Artist,
   ReleaseCountByType,
   ReleaseWithArtistAndTracksAndSubreleases,
+  HasId,
+  WithReleases
 } from "@/types/types";
 
 const releaseTypes: ReleaseType[] =
@@ -74,7 +76,15 @@ export function sortReleasesByTypeAndYear(releases: ReleaseWithArtist[], artist:
   return releaseTypes
     .flatMap(type => releases
       .filter(x => x.type === type)
-      .sort((a, b) => a.year && b.year ? Math.sign(a.year - b.year) : 0)
+      .sort((a, b) => {
+        if (!a.year || !b.year) {
+          return 0;
+        }
+        if (a.year === b.year) {
+          return a.title.toLowerCase() > b.title.toLowerCase() ? 1 : -1;
+        }
+        return Math.sign(a.year - b.year)
+      })
     ).map((x) => ({ ...x, artist }))
 }
 
@@ -87,7 +97,7 @@ export function getReleaseWithTracklistHeight(release: ReleaseWithArtistAndTrack
   return 128 + 32 + 4 + (maxTracks * (40 + 4));
 }
 
-export async function mapSeries<T, U>(array: T[], callback: (item: T, index: number) => U) {
+export async function mapSeries<T, U>(array: T[], callback: (item: T, index: number) => U, interval = 0) {
   if (!array.length) {
     return [];
   }
@@ -96,6 +106,7 @@ export async function mapSeries<T, U>(array: T[], callback: (item: T, index: num
     async function invoke(index: number) {
       const result = await callback(array[index], index);
       output.push(result);
+      await wait(interval);
       output.length === array.length
         ? resolve(output)
         : invoke(output.length);
@@ -110,4 +121,27 @@ export function sortByQueryPosition<K extends string, T extends {
   const posA = a[key].toLowerCase().indexOf(query.toLowerCase());
   const posB = b[key].toLowerCase().indexOf(query.toLowerCase());
   return Math.sign(posA - posB);
+}
+
+export function wait(ms = 100) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+export function getReleaseContextMenuParams({
+  selection,
+  target_id,
+  context,
+}: {
+  selection: ReleaseWithArtist[];
+  target_id: number;
+  context: WithReleases;
+}): [ReleaseWithArtist[], number, WithReleases] {
+  const target = context.releases.find(({ id }: HasId) => id === target_id);
+  const isTargetSelected = !!selection.find((x) => x.id === target_id);
+
+  return [
+    !isTargetSelected || !selection.length ? [target] : selection,
+    target_id,
+    context,
+  ];
 }

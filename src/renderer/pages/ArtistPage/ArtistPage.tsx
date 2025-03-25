@@ -1,6 +1,7 @@
 import { Navigate, useParams } from "react-router";
 import type { ReleaseWithArtist } from "@/types/types";
 import useArtist from "@/renderer/query/useArtist";
+import { getReleaseContextMenuParams } from "@/lib/utils";
 import ReleaseList from "@/renderer/components/ReleaseList";
 import Loading from "@/renderer/components/Loading";
 import styles from "../Page.module.css";
@@ -8,7 +9,7 @@ import styles from "../Page.module.css";
 export default function ArtistPage() {
     const { id } = useParams();
 
-    const { isPending, error, artist } = useArtist(+id);
+    const { isPending, error, artist, deleteReleases } = useArtist(+id);
 
     if (isPending) {
         return <Loading />;
@@ -21,14 +22,20 @@ export default function ArtistPage() {
     }
 
     function onContextMenu(selection: ReleaseWithArtist[], target_id: number) {
-        const target = artist.releases.find(
-            ({ id }: ReleaseWithArtist) => id === target_id
-        );
         window.api.menu.release(
-            selection.length ? selection : [target],
-            target_id,
-            artist
+            ...getReleaseContextMenuParams({
+                selection,
+                target_id,
+                context: artist,
+            })
         );
+    }
+
+    function onDelete(selection: ReleaseWithArtist[], event: KeyboardEvent) {
+        if (!event.metaKey) {
+            return;
+        }
+        deleteReleases(selection.map(({ id }) => id));
     }
 
     const { name, releases } = artist;
@@ -41,7 +48,11 @@ export default function ArtistPage() {
             >
                 {name}
             </h1>
-            <ReleaseList releases={releases} onContextMenu={onContextMenu} />
+            <ReleaseList
+                releases={releases}
+                onContextMenu={onContextMenu}
+                onDelete={onDelete}
+            />
         </div>
     );
 }

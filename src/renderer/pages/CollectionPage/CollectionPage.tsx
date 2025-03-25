@@ -6,6 +6,7 @@ import type {
     ReleaseWithArtist,
     ReleaseWithArtistAndTracksAndSubreleases,
 } from "@/types/types";
+import { getReleaseContextMenuParams } from "@/lib/utils";
 import useCollection from "@/renderer/query/useCollection";
 import { useKeyManager } from "@/renderer/hooks/useKeyboardManager";
 import ReleaseList from "@/renderer/components/ReleaseList";
@@ -37,13 +38,12 @@ export default function CollectionPage() {
         selection: ReleaseWithArtistAndTracksAndSubreleases[],
         target_id: number
     ) {
-        const target = collection.releases.find(
-            ({ id }: ReleaseWithArtist) => id === target_id
-        );
         window.api.menu.release(
-            selection.length ? selection : [target],
-            target_id,
-            collection
+            ...getReleaseContextMenuParams({
+                selection,
+                target_id,
+                context: collection,
+            })
         );
     }
 

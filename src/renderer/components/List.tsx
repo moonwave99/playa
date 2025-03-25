@@ -18,7 +18,7 @@ export type RenderParams<T> = {
 type ListProps<T> = {
     items: T[];
     onEnter?: (item: T, event: KeyboardEvent) => void;
-    onBackspace?: (selection: T[]) => void;
+    onBackspace?: (selection: T[], event: KeyboardEvent) => void;
     onSelect?: (item: T) => void;
     onUp?: () => void;
     onLeft?: () => void;
@@ -145,11 +145,14 @@ export default function List<T>({
             }),
             Enter: (event: KeyboardEvent) =>
                 onEnter && onEnter(items[currentIndex], event),
-            Backspace: () => {
+            Backspace: (event: KeyboardEvent) => {
                 if (!onBackspace || !selection.length) {
                     return;
                 }
-                onBackspace(selection.map((index) => items[index]));
+                onBackspace(
+                    selection.map((index) => items[index]),
+                    event
+                );
                 setSelection([]);
             },
             " ": withPrevent(() => void 0),

@@ -12,16 +12,32 @@ import { mapSeries } from '../lib/utils';
 import type { ArtistWithReleases, ReleaseType, ReleaseWithArtist, TrackInfo } from "@/types/types";
 import { getSetting } from './settings.js';
 
-export function startDrag(folderPath: string, event?: IpcMainEvent) {
-  const LIBRARY_PATH = getSetting('LIBRARY_PATH') as string;
-  event.sender.startDrag({
-    file: path.join(LIBRARY_PATH, folderPath),
-    icon: path.resolve('folder.png')
+export async function importFolder(folder: string) {
+  const folders = await globby("**", {
+    onlyDirectories: true,
+    cwd: folder,
   });
+
+  const COVERS_PATH = getSetting('COVERS_PATH') as string;
+
+  if (!folders.length) {
+    const release = await importSingleFolder(folder);
+    await commitCovers({ cwd: COVERS_PATH, message: `Add covers for ${release.title}` })
+  } else {
+    const releases = await Promise.all(
+      folders
+        .filter((x) => !x.endsWith("]"))
+        .map((f) => importSingleFolder(path.join(folder, f)))
+    );
+    await mapSeries(releases,
+      ({ title }) => commitCovers({ cwd: COVERS_PATH, message: `Add covers for ${title}` }), 500
+    );
+  }
+
+  await pushCovers(COVERS_PATH);
 }
 
 export async function getFolderContents(release: { path: string }): Promise<TrackInfo[]> {
-  console.log('getFolderContents', release);
   const contents = await crawlFolder(release.path);
   return Promise.all(contents.map(getMetadata));
 }
@@ -88,40 +104,21 @@ export async function revealEntityInFinder(entity: 'release' | 'artist', id: num
   return shell.openPath(getReleasePath(result.path));
 }
 
-export async function searchCoverOnDiscogs(id: number) {
-  const release = await prisma.release.findFirst({
-    where: { id },
-    include: { artist: true }
-  });
-
-  if (!release) {
-    return;
-  }
-  const COVERS_PATH = getSetting('COVERS_PATH') as string;
-
-  const pic = await searchCover({ release, artist: release.artist, outputPath: COVERS_PATH });
-  if (!pic) {
-    return;
-  }
-
-  await pushCovers({
-    cwd: COVERS_PATH,
-    message: `Add covers for ${release.artist.name} - ${release.title}`
-  });
-}
-
 export async function importCovers(releases: ReleaseWithArtist[], context: ArtistWithReleases | ReleaseWithArtist) {
   const COVERS_PATH = getSetting('COVERS_PATH') as string;
 
-  await mapSeries(releases, async (release: ReleaseWithArtist) => await searchCover({ release, artist: release.artist, outputPath: COVERS_PATH }));
+  await mapSeries(releases,
+    (release: ReleaseWithArtist) => searchCover({ release, artist: release.artist, outputPath: COVERS_PATH })
+  );
   const message = (context as ArtistWithReleases).name
     ? `Add covers for ${(context as ArtistWithReleases).name}`
     : `Add covers for ${(context as ReleaseWithArtist).title}`;
 
-  await pushCovers({
+  await commitCovers({
     cwd: COVERS_PATH,
     message
   });
+  await pushCovers(COVERS_PATH);
 }
 
 export async function downloadCover({ id, url }: { id: number, url: string }) {
@@ -138,10 +135,11 @@ export async function downloadCover({ id, url }: { id: number, url: string }) {
   const COVERS_PATH = getSetting('COVERS_PATH') as string;
 
   await getImageFromURL({ outputPath: COVERS_PATH, hash, url });
-  await pushCovers({
+  await commitCovers({
     cwd: COVERS_PATH,
     message: `Add covers for ${release.artist.name} - ${release.title}`
   });
+  await pushCovers(COVERS_PATH);
 }
 
 export async function refreshReleaseContents(id: number) {
@@ -158,6 +156,14 @@ export async function refreshReleaseContents(id: number) {
     const tracks = await getFolderContents(release);
     await addTracksToRelease(release.id, tracks);
   }));
+}
+
+export function startDrag(folderPath: string, event?: IpcMainEvent) {
+  const LIBRARY_PATH = getSetting('LIBRARY_PATH') as string;
+  event.sender.startDrag({
+    file: path.join(LIBRARY_PATH, folderPath),
+    icon: path.resolve('folder.png')
+  });
 }
 
 async function crawlFolder(folder: string) {
@@ -186,6 +192,7 @@ function getReleasePath(folderPath: string) {
 }
 
 async function importSingleFolder(folder: string) {
+  console.log('[importSingleFolder] Crawling:', folder);
   const contents = await crawlFolder(folder);
   if (!contents) {
     return;
@@ -214,7 +221,7 @@ async function importSingleFolder(folder: string) {
     },
   });
 
-  console.log("Upserted artist", artist);
+  console.log('[importSingleFolder] upserted artist', artist);
 
   const releaseHash = hashRelease(releaseData);
   const { artist: artistData, ...releaseWithoutArtist } = releaseData;
@@ -237,7 +244,7 @@ async function importSingleFolder(folder: string) {
   const trackInfo = await getFolderContents(release);
   const fullRelease = await addTracksToRelease(release.id, trackInfo);
 
-  console.log("Upserted release", fullRelease);
+  console.log('[importSingleFolder] upserted release:', fullRelease);
 
   const COVERS_PATH = getSetting('COVERS_PATH') as string;
 
@@ -247,27 +254,7 @@ async function importSingleFolder(folder: string) {
     outputPath: COVERS_PATH,
   });
 
-  await pushCovers({
-    cwd: COVERS_PATH,
-    message: `Add covers for ${artist.name} - ${release.title}`
-  });
-}
-
-export async function importFolder(folder: string) {
-  const folders = await globby("**", {
-    onlyDirectories: true,
-    cwd: folder,
-  });
-
-  if (!folders.length) {
-    await importSingleFolder(folder);
-  } else {
-    await Promise.all(
-      folders
-        .filter((x) => !x.endsWith("]"))
-        .map((f) => importSingleFolder(path.join(folder, f)))
-    );
-  }
+  return release;
 }
 
 type ParsePath = {
@@ -333,9 +320,12 @@ function hashRelease({ title, artist, year, type }: Pick<ReleaseWithArtist, "tit
 
 type PushCoversParams = { cwd: string; message: string; }
 
-async function pushCovers({ cwd, message = 'Add Covers' }: PushCoversParams) {
+async function commitCovers({ cwd, message = 'Add Covers' }: PushCoversParams) {
   await run('git', ['add', '*.jpg'], cwd);
   await run('git', ['commit', '-m', message], cwd);
+}
+
+async function pushCovers(cwd: string) {
   await run('git', ['push'], cwd);
 }
 

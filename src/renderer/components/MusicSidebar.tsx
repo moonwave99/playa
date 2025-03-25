@@ -125,7 +125,7 @@ export default function MusicSidebar() {
                         items={data}
                         estimateSize={estimateSize}
                         paddingRight={0}
-                        gap={0}
+                        gap={6}
                         disableMultipleSelection
                         onRight={() => setContext("list")}
                         context="sidebar"

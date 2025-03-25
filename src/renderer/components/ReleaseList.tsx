@@ -16,7 +16,7 @@ import styles from "./ReleaseList.module.css";
 
 type ReleaseListProps = {
     releases: ReleaseWithArtistAndTracksAndSubreleases[];
-    onDelete?: (releases: ReleaseWithArtist[]) => void;
+    onDelete?: (releases: ReleaseWithArtist[], event: KeyboardEvent) => void;
     onContextMenu?: (
         selection: ReleaseWithArtistAndTracksAndSubreleases[],
         target_id: number

@@ -28,6 +28,7 @@ export default function Tracklist({
 
     const firstTrackIndexes = getFirstTrackIndexes(allTracks);
     const discsCount = release.subReleases.length + 1;
+
     if (!isNavigable) {
         return (
             <div className={styles.tracklist}>

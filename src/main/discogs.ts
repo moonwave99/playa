@@ -2,6 +2,7 @@ import path from "path";
 import download from "image-downloader";
 import type { Release, Artist } from '@/types/types';
 import { getSetting } from "./settings";
+import { deburr } from "lodash";
 
 type SearchParams = {
     artist: string;
@@ -14,8 +15,8 @@ export async function search({ artist, title, year }: SearchParams) {
     const DISCOGS_SECRET = getSetting('DISCOGS_SECRET') as string;
 
     const params = new URLSearchParams({
-        artist: normalize(artist),
-        title: normalize(title),
+        artist: deburr(normalize(artist)),
+        title: deburr(normalize(title)),
         year: `${year}`,
         key: DISCOGS_KEY,
         secret: DISCOGS_SECRET,
@@ -63,11 +64,11 @@ export async function searchCover({ release, artist, outputPath }: SearchCoverPa
         year: release.year,
     });
     if (!response?.results?.length) {
-        console.log(`No response for: ${artistName} - ${title}`);
+        console.log(`[searchCover] No response for: ${artistName} - ${title}`);
         return null;
     }
     const { cover_image } = response.results[0];
-    console.log("Downloading: ", artistName, title);
+    console.log('[searchCover] Downloading:', artistName, title);
     if (!cover_image) {
         return false;
     }
@@ -97,7 +98,7 @@ type GetImageParams = {
 };
 
 async function getImage(options: GetImageParams) {
-    console.log("Downloading: ", options.url);
+    console.log('[getImage] Downloading:', options.url);
     await wait();
     await download.image(options);
 }

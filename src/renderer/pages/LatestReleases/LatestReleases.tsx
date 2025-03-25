@@ -5,6 +5,7 @@ import { releaseColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
 import { useKeyManager } from "@/renderer/hooks/useKeyboardManager";
 import useLatestReleases from "@/renderer/query/useLatestReleases";
 import { getReleaseLink } from "@/lib/links";
+import { getReleaseContextMenuParams } from "@/lib/utils";
 import List from "@/renderer/components/List";
 import Loading from "@/renderer/components/Loading";
 import styles from "../Page.module.css";
@@ -62,10 +63,13 @@ export default function LatestReleases() {
                         onDoubleClick={() => playback(item.id)}
                         onContextMenu={() =>
                             window.api.menu.release(
-                                selection.length
-                                    ? selection.map((index) => releases[index])
-                                    : [item],
-                                releases[index].id
+                                ...getReleaseContextMenuParams({
+                                    selection: selection.map(
+                                        (index) => releases[index]
+                                    ),
+                                    target_id: item.id,
+                                    context: { releases },
+                                })
                             )
                         }
                     />

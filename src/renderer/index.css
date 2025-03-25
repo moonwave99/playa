@@ -16,6 +16,7 @@
   --release-tracklist-single-cover-size: 10rem;
   --release-tracklist-list-cover-size: 8rem;
   --tracklist-entry-alternate-background-color: #1e1d1d;
+  --search-results-background-color: #34363b;
 }
 
 * {

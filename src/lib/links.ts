@@ -1,8 +1,9 @@
 import { normalizeTitle } from './utils';
 import type { HasId, Entities } from '@/types/types';
+import { deburr, mapValues } from 'lodash';
 
 export function getURL(url: string, params: Record<string, string>) {
-  return `${url}?${new URLSearchParams(params)}`;
+  return `${url}?${new URLSearchParams(mapValues(params, deburr))}`;
 }
 
 export function getDiscogsURL(q: string, type: 'artist' | 'master') {
