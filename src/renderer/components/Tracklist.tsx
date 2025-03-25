@@ -30,33 +30,40 @@ export default function Tracklist({
     const discsCount = release.subReleases.length + 1;
     if (!isNavigable) {
         return (
-            <div
-                className={styles.tracklist}
-                style={{
-                    columnCount: discsCount,
-                    width: discsCount > 1 ? `${discsCount * 50}%` : undefined,
-                }}
-            >
-                {allTracks.map(({ id, title, position, duration }, index) => (
-                    <div
-                        onDoubleClick={() => onDoubleClick(id)}
-                        key={id}
-                        className={cx(
-                            styles.tracklistEntry,
-                            styles[index % 2 === 0 ? "odd" : "even"],
-                            {
-                                [styles.firstTrack]:
-                                    firstTrackIndexes.includes(index),
-                            }
-                        )}
-                    >
-                        <span className={styles.position}>{position}</span>
-                        <span className={styles.title}>{title}</span>
-                        <span className={styles.duration}>
-                            {formatDuration(duration)}
-                        </span>
-                    </div>
-                ))}
+            <div className={styles.tracklist}>
+                <div
+                    className={styles.discWrapper}
+                    style={{
+                        columnCount: discsCount,
+                        width:
+                            discsCount > 1 ? `${discsCount * 50}%` : undefined,
+                    }}
+                >
+                    {allTracks.map(
+                        ({ id, title, position, duration }, index) => (
+                            <div
+                                onDoubleClick={() => onDoubleClick(id)}
+                                key={id}
+                                className={cx(
+                                    styles.tracklistEntry,
+                                    styles[index % 2 === 0 ? "odd" : "even"],
+                                    {
+                                        [styles.firstTrack]:
+                                            firstTrackIndexes.includes(index),
+                                    }
+                                )}
+                            >
+                                <span className={styles.position}>
+                                    {position}
+                                </span>
+                                <span className={styles.title}>{title}</span>
+                                <span className={styles.duration}>
+                                    {formatDuration(duration)}
+                                </span>
+                            </div>
+                        )
+                    )}
+                </div>
             </div>
         );
     }

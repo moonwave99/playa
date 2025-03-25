@@ -1,7 +1,5 @@
 .tracklist {
   flex: 1;
-  display: flex;
-  flex-direction: column;
 }
 
 .isNavigable {
@@ -18,6 +16,10 @@
 
 .tracklist:not(.isNavigable) .firstTrack {
   break-before: column;
+}
+
+.tracklist:not(.isNavigable) .tracklistEntry:not(:last-child) {
+  margin-bottom: 4px;
 }
 
 .tracklistEntry {
