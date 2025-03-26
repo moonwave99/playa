@@ -12,7 +12,7 @@ import { mapSeries } from '../lib/utils';
 import type { ArtistWithReleases, ReleaseType, ReleaseWithArtist, TrackInfo } from "@/types/types";
 import { getSetting } from './settings';
 
-export async function importFolder(folder: string) {
+export async function importFolder(folder: string): Promise<ReleaseWithArtist[]> {
   const folders = await globby("**", {
     onlyDirectories: true,
     cwd: folder,
@@ -23,11 +23,10 @@ export async function importFolder(folder: string) {
   if (!folders.length) {
     const release = await importSingleFolder(folder);
     const didCommit = await commitCovers({ cwd: COVERS_PATH, message: `Add covers for ${release.title}` })
-    if (!didCommit) {
-      return;
+    if (didCommit) {
+      await pushCovers(COVERS_PATH);
     }
-    await pushCovers(COVERS_PATH);
-    return;
+    return [release];
   }
 
   const releases = await Promise.all(
@@ -38,10 +37,10 @@ export async function importFolder(folder: string) {
   const commitResults = await mapSeries(releases,
     ({ title }) => commitCovers({ cwd: COVERS_PATH, message: `Add covers for ${title}` }), 1000
   );
-  if (commitResults.every(x => !x)) {
-    return;
+  if (commitResults.some(x => !!x)) {
+    await pushCovers(COVERS_PATH);
   }
-  await pushCovers(COVERS_PATH);
+  return releases;
 }
 
 export async function getFolderContents(release: { path: string }): Promise<TrackInfo[]> {

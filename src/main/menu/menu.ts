@@ -90,8 +90,11 @@ export function setupMenu(win: BrowserWindow) {
           const folders = dialog.showOpenDialogSync(win, {
             properties: ['openDirectory', 'multiSelections'],
           });
-          await Promise.all(folders.map(importFolder));
-          send('mutate', [['releases', 'latest']]);
+          const releases = await Promise.all(folders.map(importFolder));
+          send('mutate', [
+            ['releases', 'latest'],
+            ...releases.flat().map(x => (['artists', x.artist_id]))
+          ]);
         }
       },
       { type: 'separator' },
