@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router";
 import { useState, useRef } from "react";
 import type { FormEvent, MouseEvent } from "react";
-import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { useDebounce } from "use-debounce";
+import useSearch from "../query/useSearch";
 import cx from "clsx";
 import type { SearchResult } from "@/types/types";
 import List from "@/renderer/components/List";
@@ -26,6 +26,8 @@ export default function MusicSidebar() {
     const [debouncedQuery] = useDebounce(query, DEBOUNCE_MS, {
         leading: false,
     });
+    const { isPending, error, results } = useSearch(debouncedQuery);
+
     const { setContext, currentContext } = useKeyManager({
         context: "input",
         handlers: {
@@ -47,18 +49,6 @@ export default function MusicSidebar() {
         handlers: {
             f: withMeta(() => inputRef.current?.focus()),
         },
-    });
-
-    const { isPending, error, data } = useQuery({
-        queryKey: ["search", debouncedQuery],
-        queryFn: async () => {
-            if (!debouncedQuery) {
-                return [];
-            }
-            return window.api.data.search(query, 100);
-        },
-        staleTime: DEBOUNCE_MS,
-        placeholderData: keepPreviousData,
     });
 
     if (isPending) {
@@ -110,7 +100,7 @@ export default function MusicSidebar() {
                     window.api.ui.inputFocus();
                 }}
             />
-            {!data.length ? (
+            {!results.length ? (
                 debouncedQuery && !isPending ? (
                     <div className={styles.noResults}>
                         No results for {debouncedQuery}
@@ -122,7 +112,7 @@ export default function MusicSidebar() {
                         onEnter={onEnter}
                         onUp={onUp}
                         className={styles.listWrapper}
-                        items={data}
+                        items={results}
                         estimateSize={estimateSize}
                         paddingRight={0}
                         gap={6}
@@ -142,7 +132,7 @@ export default function MusicSidebar() {
                     <footer className={styles.footer}>
                         Showing
                         <strong className={styles.count}>
-                            {data.length}
+                            {results.length}
                         </strong>{" "}
                         results
                     </footer>
