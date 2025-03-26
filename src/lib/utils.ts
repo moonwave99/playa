@@ -97,7 +97,7 @@ export function getReleaseWithTracklistHeight(release: ReleaseWithArtistAndTrack
   return 128 + 32 + 4 + (maxTracks * (40 + 4));
 }
 
-export async function mapSeries<T, U>(array: T[], callback: (item: T, index: number) => U, interval = 0) {
+export async function mapSeries<T, U>(array: T[], callback: (item: T, index: number) => Promise<U>, interval = 0): Promise<U[]> {
   if (!array.length) {
     return [];
   }

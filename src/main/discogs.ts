@@ -3,6 +3,7 @@ import download from "image-downloader";
 import type { Release, Artist } from '@/types/types';
 import { getSetting } from "./settings";
 import { deburr } from "lodash";
+import { wait } from "@/lib/utils";
 
 type SearchParams = {
     artist: string;
@@ -99,13 +100,9 @@ type GetImageParams = {
 
 async function getImage(options: GetImageParams) {
     console.log('[getImage] Downloading:', options.url);
-    await wait();
+    await wait(500);
     await download.image(options);
 }
-
-const TIMEOUT = 500;
-const wait = (ms = TIMEOUT) =>
-    new Promise((resolve) => setTimeout(resolve, ms));
 
 function normalize(input: string) {
     return input.normalize("NFD").replace(/[\u0300-\u036f]/g, "");

@@ -7,10 +7,10 @@ import sha1 from 'sha1';
 import * as mm from 'music-metadata';
 import { shell } from 'electron';
 import { addTracksToRelease } from "./db/release";
-import { searchCover, getImageFromURL } from "./discogs.js";
+import { searchCover, getImageFromURL } from "./discogs";
 import { mapSeries } from '../lib/utils';
 import type { ArtistWithReleases, ReleaseType, ReleaseWithArtist, TrackInfo } from "@/types/types";
-import { getSetting } from './settings.js';
+import { getSetting } from './settings';
 
 export async function importFolder(folder: string) {
   const folders = await globby("**", {
@@ -22,18 +22,25 @@ export async function importFolder(folder: string) {
 
   if (!folders.length) {
     const release = await importSingleFolder(folder);
-    await commitCovers({ cwd: COVERS_PATH, message: `Add covers for ${release.title}` })
-  } else {
-    const releases = await Promise.all(
-      folders
-        .filter((x) => !x.endsWith("]"))
-        .map((f) => importSingleFolder(path.join(folder, f)))
-    );
-    await mapSeries(releases,
-      ({ title }) => commitCovers({ cwd: COVERS_PATH, message: `Add covers for ${title}` }), 500
-    );
+    const didCommit = await commitCovers({ cwd: COVERS_PATH, message: `Add covers for ${release.title}` })
+    if (!didCommit) {
+      return;
+    }
+    await pushCovers(COVERS_PATH);
+    return;
   }
 
+  const releases = await Promise.all(
+    folders
+      .filter((x) => !x.endsWith("]"))
+      .map((f) => importSingleFolder(path.join(folder, f)))
+  );
+  const commitResults = await mapSeries(releases,
+    ({ title }) => commitCovers({ cwd: COVERS_PATH, message: `Add covers for ${title}` }), 1000
+  );
+  if (commitResults.every(x => !x)) {
+    return;
+  }
   await pushCovers(COVERS_PATH);
 }
 
@@ -110,14 +117,18 @@ export async function importCovers(releases: ReleaseWithArtist[], context: Artis
   await mapSeries(releases,
     (release: ReleaseWithArtist) => searchCover({ release, artist: release.artist, outputPath: COVERS_PATH })
   );
+
   const message = (context as ArtistWithReleases).name
     ? `Add covers for ${(context as ArtistWithReleases).name}`
     : `Add covers for ${(context as ReleaseWithArtist).title}`;
 
-  await commitCovers({
+  const didCommit = await commitCovers({
     cwd: COVERS_PATH,
     message
   });
+  if (!didCommit) {
+    return;
+  }
   await pushCovers(COVERS_PATH);
 }
 
@@ -135,10 +146,13 @@ export async function downloadCover({ id, url }: { id: number, url: string }) {
   const COVERS_PATH = getSetting('COVERS_PATH') as string;
 
   await getImageFromURL({ outputPath: COVERS_PATH, hash, url });
-  await commitCovers({
+  const didCommit = await commitCovers({
     cwd: COVERS_PATH,
     message: `Add covers for ${release.artist.name} - ${release.title}`
   });
+  if (!didCommit) {
+    return;
+  }
   await pushCovers(COVERS_PATH);
 }
 
@@ -322,24 +336,44 @@ type PushCoversParams = { cwd: string; message: string; }
 
 async function commitCovers({ cwd, message = 'Add Covers' }: PushCoversParams) {
   await run('git', ['add', '*.jpg'], cwd);
-  await run('git', ['commit', '-m', message], cwd);
+  const { stdout } = await run('git', ['commit', '-m', message], cwd);
+  return !stdout.some(x => x.includes('nothing to commit'));
 }
 
 async function pushCovers(cwd: string) {
   await run('git', ['push'], cwd);
 }
 
-async function run(command: string, options: string[], cwd?: string) {
-  return new Promise((resolve, reject) => {
+type RunResponse = {
+  code: number;
+  stdout: string[];
+  stderr: string[];
+}
+
+async function run(command: string, options: string[], cwd?: string): Promise<RunResponse> {
+  return new Promise((resolve) => {
     const proc = child_process.spawn(command, options, cwd ? { cwd } : undefined);
-    proc.stdout.on('data', (data) => console.log('stdout', `${data}`));
-    proc.stderr.on('data', (error) => console.log('stderr', `${error}`));
-    proc.on('exit', (code) => {
-      if (code === 0) {
-        resolve(0);
-      } else {
-        reject(code);
-      }
+    const messages: Pick<RunResponse, 'stdout' | 'stderr'> = {
+      stdout: [],
+      stderr: []
+    };
+    proc.stdout.on('data', (data) => {
+      messages.stdout.push(`${data}`);
+      console.log('[run:stdout]', `${data}`);
+    });
+    proc.stderr.on('data', (data) => {
+      messages.stderr.push(`${data}`);
+      console.log('[run:stderr]', `${data}`);
+    });
+    proc.on('exit', async (code) => {
+      console.log('[run:exit]', {
+        command: `${command} ${options.join(' ')}`,
+        code
+      });
+      resolve({
+        ...messages,
+        code
+      });
     });
   })
 }
