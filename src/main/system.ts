@@ -9,7 +9,7 @@ import { shell } from 'electron';
 import { addTracksToRelease } from "./db/release";
 import { searchCover, getImageFromURL } from "./discogs";
 import { mapSeries } from '../lib/utils';
-import type { ArtistWithReleases, ReleaseType, ReleaseWithArtist, TrackInfo } from "@/types/types";
+import type { ReleaseType, ReleaseWithArtist, TrackInfo } from "@/types/types";
 import { getSetting } from './settings';
 
 export async function importFolder(folder: string): Promise<ReleaseWithArtist[]> {
@@ -17,15 +17,8 @@ export async function importFolder(folder: string): Promise<ReleaseWithArtist[]>
     onlyDirectories: true,
     cwd: folder,
   });
-
-  const COVERS_PATH = getSetting('COVERS_PATH') as string;
-
   if (!folders.length) {
     const release = await importSingleFolder(folder);
-    const didCommit = await commitCovers({ cwd: COVERS_PATH, message: `Add covers for ${release.title}` })
-    if (didCommit) {
-      await pushCovers(COVERS_PATH);
-    }
     return [release];
   }
 
@@ -34,12 +27,6 @@ export async function importFolder(folder: string): Promise<ReleaseWithArtist[]>
       .filter((x) => !x.endsWith("]"))
       .map((f) => importSingleFolder(path.join(folder, f)))
   );
-  const commitResults = await mapSeries(releases,
-    ({ title }) => commitCovers({ cwd: COVERS_PATH, message: `Add covers for ${title}` }), 1000
-  );
-  if (commitResults.some(x => !!x)) {
-    await pushCovers(COVERS_PATH);
-  }
   return releases;
 }
 
@@ -110,25 +97,12 @@ export async function revealEntityInFinder(entity: 'release' | 'artist', id: num
   return shell.openPath(getReleasePath(result.path));
 }
 
-export async function importCovers(releases: ReleaseWithArtist[], context: ArtistWithReleases | ReleaseWithArtist) {
+export async function importCovers(releases: ReleaseWithArtist[]) {
   const COVERS_PATH = getSetting('COVERS_PATH') as string;
 
   const foundCovers = await mapSeries(releases,
     (release: ReleaseWithArtist) => searchCover({ release, artist: release.artist, outputPath: COVERS_PATH })
   );
-
-  const message = (context as ArtistWithReleases).name
-    ? `Add covers for ${(context as ArtistWithReleases).name}`
-    : `Add covers for ${(context as ReleaseWithArtist).title}`;
-
-  const didCommit = await commitCovers({
-    cwd: COVERS_PATH,
-    message
-  });
-
-  if (didCommit) {
-    await pushCovers(COVERS_PATH);
-  }
 
   return releases.filter((_, index) => !!foundCovers[index]);
 }
@@ -147,14 +121,6 @@ export async function downloadCover({ id, url }: { id: number, url: string }) {
   const COVERS_PATH = getSetting('COVERS_PATH') as string;
 
   await getImageFromURL({ outputPath: COVERS_PATH, hash, url });
-  const didCommit = await commitCovers({
-    cwd: COVERS_PATH,
-    message: `Add covers for ${release.artist.name} - ${release.title}`
-  });
-  if (!didCommit) {
-    return false;
-  }
-  await pushCovers(COVERS_PATH);
   return true;
 }
 
@@ -332,18 +298,6 @@ function hashArtistName(name: string) {
 
 function hashRelease({ title, artist, year, type }: Pick<ReleaseWithArtist, "title" | 'year' | 'type'> & { artist: { name: string; } }) {
   return sha1([title, artist.name, year, type].join("-")).slice(0, 16);
-}
-
-type PushCoversParams = { cwd: string; message: string; }
-
-async function commitCovers({ cwd, message = 'Add Covers' }: PushCoversParams) {
-  await run('git', ['add', '*.jpg'], cwd);
-  const { stdout } = await run('git', ['commit', '-m', message], cwd);
-  return !stdout.some(x => x.includes('nothing to commit'));
-}
-
-async function pushCovers(cwd: string) {
-  await run('git', ['push'], cwd);
 }
 
 type RunResponse = {

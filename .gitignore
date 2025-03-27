@@ -94,5 +94,8 @@ out/
 # App sensitive data
 settings.json
 
+# Personal scripts
+sync-covers.sh
+
 # db dumps
 dump/

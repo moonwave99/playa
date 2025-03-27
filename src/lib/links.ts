@@ -21,7 +21,6 @@ export function getRYMURL(searchterm: string, type: 'artist' | 'release' = 'rele
 
 export function getCover(hash: string): string {
   return `playa-cover://${hash}-cover.jpg`;
-  return `https://raw.githubusercontent.com/moonwave99/playa-assets/main/covers/${hash}-cover.jpg`;
 }
 
 export function getCollectionLink({ id }: HasId) {

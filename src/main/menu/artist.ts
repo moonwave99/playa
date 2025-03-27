@@ -13,7 +13,7 @@ export const artistMenu = (artist: ArtistWithReleases) => {
     {
       label: `Import '${name}' Covers`,
       click: async () => {
-        const updatedReleases = await importCovers(releases, artist);
+        const updatedReleases = await importCovers(releases);
         send('coverUpdate', updatedReleases);
       }
     },

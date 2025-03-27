@@ -119,7 +119,7 @@ export const releaseMenu = async (
       {
         label: `Import '${title}' Cover`,
         click: async () => {
-          const didUpdate = await importCovers([release], release);
+          const didUpdate = await importCovers([release]);
           if (didUpdate) {
             send('coverUpdate', [release]);
           }
