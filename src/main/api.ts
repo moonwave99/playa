@@ -3,7 +3,7 @@ import type { IpcMainEvent } from 'electron';
 import * as release from './db/release';
 import * as artist from './db/artist';
 import * as collection from './db/collection';
-import { revealEntityInFinder, playback, openTagger, refreshReleaseContents, downloadCover, startDrag } from './system';
+import { revealEntityInFinder, playback, openTagger, refreshReleaseContents, downloadCover, startDrag, importCovers } from './system';
 import { getSettings, setSettings } from './settings';
 import { releaseMenu, artistMenu, collectionMenu, searchResultMenu } from './menu/menu';
 
@@ -13,7 +13,7 @@ function registerHandlers(entity: Record<string, (...args: unknown[]) => unknown
   }));
 }
 
-const system = { revealEntityInFinder, playback, openTagger, refreshReleaseContents, downloadCover, startDrag };
+const system = { revealEntityInFinder, playback, openTagger, refreshReleaseContents, downloadCover, startDrag, importCovers };
 const menu = {
   'menu:release': releaseMenu,
   'menu:artist': artistMenu,

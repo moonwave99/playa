@@ -5,11 +5,14 @@ import type {
 } from "@/types/types";
 import { releaseColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
 import { useKeyManager } from "@/renderer/hooks/useKeyboardManager";
-import { getReleaseLink } from "@/lib/links";
+import { getArtistLink, getReleaseLink } from "@/lib/links";
 import { getReleaseWithTracklistHeight } from "@/lib/utils";
 import ReleaseView from "@/renderer/components/ReleaseView";
 import ReleaseWithTracklistView from "@/renderer/components/ReleaseWithTracklistView";
-import List from "@/renderer/components/List";
+import List, {
+    withCurrentSelection,
+    withCurrentSelectionId,
+} from "@/renderer/components/List";
 import useStore from "../store";
 import cx from "clsx";
 import styles from "./ReleaseList.module.css";
@@ -69,6 +72,7 @@ export default function ReleaseList({
             }
             onLeft={onLeft}
             paddingRight={viewMode === "grid" ? 16 : 0}
+            keyHandlers={getDefaultKeyHandlers(navigate)}
             render={({ item, index, selected, hasFocus, selection, onClick }) =>
                 viewMode === "grid" ? (
                     <ReleaseView
@@ -111,4 +115,23 @@ function getTotalTracks(releases: ReleaseWithArtistAndTracksAndSubreleases[]) {
     return releases
         .flatMap((rel) => [rel, ...rel.subReleases])
         .reduce((memo, { tracks }) => memo + tracks.length, 0);
+}
+
+export function getDefaultKeyHandlers(
+    navigate: ReturnType<typeof useNavigate>
+) {
+    return {
+        a: withCurrentSelection((release) =>
+            navigate(getArtistLink((release as ReleaseWithArtist).artist))
+        ),
+        f: withCurrentSelectionId((id) =>
+            window.api.system.revealEntityInFinder("release", id)
+        ),
+        i: withCurrentSelection((release) =>
+            window.api.system.importCovers([release as ReleaseWithArtist])
+        ),
+        t: withCurrentSelectionId(window.api.system.openTagger),
+        d: withCurrentSelection(window.api.links.searchReleaseOnDiscogs),
+        r: withCurrentSelection(window.api.links.searchReleaseOnRYM),
+    };
 }

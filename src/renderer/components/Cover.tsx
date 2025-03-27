@@ -11,6 +11,7 @@ type CoverProps = {
     path?: string;
     className?: string;
     onContextMenu?: () => void;
+    onDoubleClick?: () => void;
 };
 
 async function getDropURL(event: DragEvent): Promise<string | null> {
@@ -32,6 +33,7 @@ export default function Cover({
     path,
     className,
     onContextMenu,
+    onDoubleClick,
 }: CoverProps) {
     const [key, setKey] = useState(0);
 
@@ -57,6 +59,7 @@ export default function Cover({
             className={cx(styles.coverWrapper, className)}
             title={`${title} [${id}]`}
             onContextMenu={onContextMenu}
+            onDoubleClick={onDoubleClick}
         >
             <img
                 key={key}

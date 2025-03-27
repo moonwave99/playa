@@ -3,13 +3,14 @@ import { PrismaClient } from '@prisma/client';
 import * as release from '@/main/db/release';
 import * as artist from '@/main/db/artist';
 import * as collection from '@/main/db/collection';
-import { revealEntityInFinder, playback, downloadCover, startDrag } from '@/main/system';
+import { revealEntityInFinder, playback, downloadCover, startDrag, importCovers } from '@/main/system';
 import { getSettings, setSettings } from '@/main/settings';
 import type { ReleaseWithArtist, Artist, Collection, SearchResult, Sidebars } from './types';
+import { searchReleaseOnDiscogs, searchReleaseOnRYM } from '@/lib/external_links';
 
 declare module "*.module.css";
 
-const system = { revealEntityInFinder, refreshReleaseContents, playback, openTagger, downloadCover, startDrag };
+const system = { revealEntityInFinder, openTagger, refreshReleaseContents, playback, openTagger, downloadCover, startDrag, importCovers };
 
 const settings = { getSettings, setSettings };
 
@@ -43,6 +44,10 @@ declare global {
         inputFocus: () => void;
         inputBlur: () => void;
       },
+      links: {
+        searchReleaseOnDiscogs: typeof searchReleaseOnDiscogs,
+        searchReleaseOnRYM: typeof searchReleaseOnRYM
+      }
     }
   }
 }

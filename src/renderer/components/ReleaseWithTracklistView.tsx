@@ -33,13 +33,6 @@ export default function ReleaseWithTracklistView({
     const releaseTitle = getReleaseTitle(release);
     const { color, useDarkText } = useDominantColor(getCover(hash));
 
-    function onDoubleClick(track_id: number) {
-        window.api.system.playback({
-            release_id: id,
-            track_id,
-        });
-    }
-
     return (
         <article
             className={cx(styles.releaseView, {
@@ -59,6 +52,9 @@ export default function ReleaseWithTracklistView({
                     {...release}
                     title={`${artist.name} - ${releaseTitle}`}
                     className={styles.cover}
+                    onDoubleClick={() =>
+                        window.api.system.playback({ release_id: release.id })
+                    }
                 />
                 <div className={styles.content}>
                     <Link className={styles.artist} to={getArtistLink(artist)}>
@@ -75,7 +71,12 @@ export default function ReleaseWithTracklistView({
             <Tracklist
                 release={release}
                 isNavigable={!inList}
-                onDoubleClick={onDoubleClick}
+                onDoubleClick={(track_id) =>
+                    window.api.system.playback({
+                        release_id: id,
+                        track_id,
+                    })
+                }
             />
         </article>
     );

@@ -1,11 +1,16 @@
 import { useNavigate } from "react-router";
-import type { ReleaseWithArtistAndSubreleases } from "@/types/types";
+import type {
+    HasId,
+    ReleaseWithArtistAndSubreleases,
+    ReleaseWithArtistAndTracksAndSubreleases,
+} from "@/types/types";
 import ReleaseView from "@/renderer/components/ReleaseView";
 import { releaseColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
 import { useKeyManager } from "@/renderer/hooks/useKeyboardManager";
 import useLatestReleases from "@/renderer/query/useLatestReleases";
 import { getReleaseLink } from "@/lib/links";
 import { getReleaseContextMenuParams } from "@/lib/utils";
+import { getDefaultKeyHandlers } from "@/renderer/components/ReleaseList";
 import List from "@/renderer/components/List";
 import Loading from "@/renderer/components/Loading";
 import styles from "../Page.module.css";
@@ -56,18 +61,20 @@ export default function LatestReleases() {
                 isFetchingNextPage={isFetchingNextPage}
                 onEnter={onEnter}
                 onLeft={() => setContext("sidebar")}
+                keyHandlers={getDefaultKeyHandlers(navigate)}
                 render={({ item, selection, ...rest }) => (
                     <ReleaseView
                         {...rest}
-                        release={item}
-                        onDoubleClick={() => playback(item.id)}
+                        release={
+                            item as ReleaseWithArtistAndTracksAndSubreleases
+                        }
                         onContextMenu={() =>
                             window.api.menu.release(
                                 ...getReleaseContextMenuParams({
                                     selection: selection.map(
                                         (index) => releases[index]
                                     ),
-                                    target_id: item.id,
+                                    target_id: (item as HasId).id,
                                     context: { releases },
                                 })
                             )

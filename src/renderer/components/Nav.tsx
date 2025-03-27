@@ -58,7 +58,7 @@ export default function Nav() {
                 <button
                     className={styles.link}
                     onClick={() => {
-                        setModalContents("settings");
+                        setModalContents({ name: "settings" });
                         setNavOpen(false);
                     }}
                 >

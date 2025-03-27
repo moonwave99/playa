@@ -10,7 +10,6 @@ import styles from "./ReleaseView.module.css";
 type ReleaseViewProps = {
     release: ReleaseWithArtistAndSubreleases;
     onClick: (event: MouseEvent) => void;
-    onDoubleClick?: () => void;
     onContextMenu?: () => void;
     selected?: boolean;
     hasFocus?: boolean;
@@ -21,10 +20,9 @@ export default function ReleaseView({
     selected,
     hasFocus,
     onClick,
-    onDoubleClick,
     onContextMenu,
 }: ReleaseViewProps) {
-    const { artist, year, type } = release;
+    const { artist, year, type, id } = release;
     const releaseTitle = getReleaseTitle(release);
     return (
         <article
@@ -33,7 +31,6 @@ export default function ReleaseView({
                 hasFocus: selected && hasFocus,
             })}
             onClick={onClick}
-            onDoubleClick={onDoubleClick}
             onContextMenu={onContextMenu}
         >
             <p className={styles.info}>
@@ -46,6 +43,9 @@ export default function ReleaseView({
                 {...release}
                 className={styles.coverWrapper}
                 title={`${artist.name} - ${releaseTitle}`}
+                onDoubleClick={() =>
+                    window.api.system.playback({ release_id: id })
+                }
             />
             <div className={styles.footer}>
                 <Link

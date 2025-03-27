@@ -11,6 +11,7 @@ import {
 } from "./hooks/useKeyboardManager";
 import { useOnOpenSettings } from "./hooks/ipc";
 import useStore from "./store";
+import type { ModalContents } from "./store";
 
 import LatestReleases from "./pages/LatestReleases/LatestReleases";
 import LatestArtists from "./pages/LatestArtists/LatestArtists";
@@ -44,7 +45,7 @@ Modal.setAppElement("#root");
 
 export default function Layout() {
     const { modalContents, setModalContents, setContext } = init();
-    useOnOpenSettings(() => setModalContents("settings"));
+    useOnOpenSettings(() => setModalContents({ name: "settings" }));
 
     return (
         <div className={cx(styles.main, { [styles.hasSidebar]: true })}>
@@ -83,7 +84,7 @@ export default function Layout() {
                     setContext("list");
                 }}
             >
-                {modalContents === "settings" && (
+                {modalContents?.name === "settings" && (
                     <SettingsView
                         onSave={() => setModalContents(null)}
                         onCancel={() => setModalContents(null)}
@@ -95,8 +96,8 @@ export default function Layout() {
 }
 
 type Init = {
-    modalContents: string;
-    setModalContents: (modalContents: string) => void;
+    modalContents: ModalContents;
+    setModalContents: (modalContents: ModalContents) => void;
     setContext: (context: string) => void;
 };
 

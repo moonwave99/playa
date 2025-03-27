@@ -2,13 +2,15 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { ViewMode } from '@/types/types';
 
+export type ModalContents = { name: string; params?: Record<string, string | number> };
+
 type Store = {
   viewMode: ViewMode;
   path: string;
-  modalContents: string | null;
+  modalContents: ModalContents | null;
   toggleViewMode: () => void;
   setPath: (path: string) => void;
-  setModalContents: (modalContents: string | null) => void;
+  setModalContents: (modalContents: ModalContents) => void;
 };
 
 const useStore = create<Store>()(
@@ -19,7 +21,7 @@ const useStore = create<Store>()(
       modalContents: null,
       toggleViewMode: () => set((prev) => ({ viewMode: prev.viewMode === 'grid' ? 'list' : 'grid' })),
       setPath: (path: string) => set(({ path })),
-      setModalContents: (modalContents: string | null) => set(({ modalContents }))
+      setModalContents: (modalContents) => set(({ modalContents }))
     }),
     {
       name: 'playa-storage',

@@ -3,9 +3,10 @@ import type { IpcRendererEvent } from "electron";
 import * as release from "./main/db/release";
 import * as artist from "./main/db/artist";
 import * as collection from "./main/db/collection";
-import { revealEntityInFinder, refreshReleaseContents, playback, downloadCover, startDrag } from "./main/system";
+import { revealEntityInFinder, openTagger, refreshReleaseContents, playback, downloadCover, startDrag, importCovers } from "./main/system";
 import { getSettings, setSettings } from "./main/settings";
 import type { ReleaseWithArtist, CollectionWithReleases, ArtistWithReleases, SearchResult } from "./types/types";
+import { searchReleaseOnDiscogs, searchReleaseOnRYM } from "./lib/external_links";
 
 contextBridge.exposeInMainWorld('api', {
   data: {
@@ -13,7 +14,15 @@ contextBridge.exposeInMainWorld('api', {
     ...getHandlers(artist),
     ...getHandlers(collection),
   },
-  system: getHandlers({ revealEntityInFinder, refreshReleaseContents, playback, downloadCover, startDrag }),
+  system: getHandlers({
+    revealEntityInFinder,
+    openTagger,
+    refreshReleaseContents,
+    playback,
+    downloadCover,
+    startDrag,
+    importCovers
+  }),
   settings: getHandlers({ getSettings, setSettings }),
   menu: {
     'release': (
@@ -36,6 +45,10 @@ contextBridge.exposeInMainWorld('api', {
     inputFocus: () => ipc.send('ui', 'inputFocus'),
     inputBlur: () => ipc.send('ui', 'inputBlur'),
   },
+  links: {
+    searchReleaseOnDiscogs,
+    searchReleaseOnRYM
+  }
 });
 
 function getHandlers(entity: Record<string, (...args: unknown[]) => unknown>) {

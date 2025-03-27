@@ -5,6 +5,7 @@ import { useKeyManager, withPrevent } from "../hooks/useKeyboardManager";
 import useResponsiveColumns from "../hooks/useResponsiveColumns";
 import { useClearSelection } from "../hooks/ipc";
 import type { ColumnsConfigEntry } from "../hooks/useResponsiveColumns";
+import type { HasId } from "@/types/types";
 
 export type RenderParams<T> = {
     item: T;
@@ -40,6 +41,7 @@ type ListProps<T> = {
     hasNextPage?: boolean;
     isFetchingNextPage?: boolean;
     fetchNextPage?: () => void;
+    keyHandlers?: Record<string, (selection: T[]) => void>;
 };
 
 function defaultEstimateSize(columns: number) {
@@ -72,6 +74,7 @@ export default function List<T>({
     hasNextPage = false,
     isFetchingNextPage = false,
     fetchNextPage,
+    keyHandlers,
 }: ListProps<T>) {
     const [currentIndex, setCurrentIndex] = useState(-1);
     const [selection, setSelection] = useState<number[]>([]);
@@ -101,6 +104,14 @@ export default function List<T>({
     const { currentContext, setContext } = useKeyManager({
         context,
         handlers: {
+            ...Object.entries(keyHandlers || {}).reduce(
+                (memo, [key, handler]) => ({
+                    ...memo,
+                    [key]: () =>
+                        handler(selection.map((index) => items[index])),
+                }),
+                {}
+            ),
             ArrowUp: withPrevent((event: KeyboardEvent) => {
                 if (currentIndex === 0 && onUp) {
                     onUp();
@@ -254,4 +265,24 @@ export default function List<T>({
             </div>
         </div>
     );
+}
+
+export function withCurrentSelectionId<T extends HasId>(
+    handler: (id: number) => void
+) {
+    return (selection: T[]) => {
+        if (!selection.length) {
+            return;
+        }
+        handler(selection[0].id);
+    };
+}
+
+export function withCurrentSelection<T>(handler: (item: T) => void) {
+    return (selection: T[]) => {
+        if (!selection.length) {
+            return;
+        }
+        handler(selection[0]);
+    };
 }
