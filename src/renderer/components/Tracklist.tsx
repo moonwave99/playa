@@ -82,7 +82,7 @@ export default function Tracklist({
             items={allTracks}
             className={cx(styles.tracklist, styles.isNavigable)}
             estimateSize={(_: number, index: number) => ({
-                height: firstTrackIndexes.includes(index) ? 80 : 40,
+                height: firstTrackIndexes.includes(index) ? 64 : 40,
                 width: 200,
             })}
             paddingRight={0}

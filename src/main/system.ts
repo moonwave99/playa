@@ -113,7 +113,7 @@ export async function revealEntityInFinder(entity: 'release' | 'artist', id: num
 export async function importCovers(releases: ReleaseWithArtist[], context: ArtistWithReleases | ReleaseWithArtist) {
   const COVERS_PATH = getSetting('COVERS_PATH') as string;
 
-  await mapSeries(releases,
+  const foundCovers = await mapSeries(releases,
     (release: ReleaseWithArtist) => searchCover({ release, artist: release.artist, outputPath: COVERS_PATH })
   );
 
@@ -125,10 +125,12 @@ export async function importCovers(releases: ReleaseWithArtist[], context: Artis
     cwd: COVERS_PATH,
     message
   });
-  if (!didCommit) {
-    return;
+
+  if (didCommit) {
+    await pushCovers(COVERS_PATH);
   }
-  await pushCovers(COVERS_PATH);
+
+  return releases.filter((_, index) => !!foundCovers[index]);
 }
 
 export async function downloadCover({ id, url }: { id: number, url: string }) {
@@ -138,7 +140,7 @@ export async function downloadCover({ id, url }: { id: number, url: string }) {
   });
 
   if (!release) {
-    return;
+    return false;
   }
 
   const { hash } = release;
@@ -150,9 +152,10 @@ export async function downloadCover({ id, url }: { id: number, url: string }) {
     message: `Add covers for ${release.artist.name} - ${release.title}`
   });
   if (!didCommit) {
-    return;
+    return false;
   }
   await pushCovers(COVERS_PATH);
+  return true;
 }
 
 export async function refreshReleaseContents(id: number) {

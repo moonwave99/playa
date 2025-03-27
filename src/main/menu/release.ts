@@ -118,7 +118,12 @@ export const releaseMenu = async (
       },
       {
         label: `Import '${title}' Cover`,
-        click: () => importCovers([release], release)
+        click: async () => {
+          const didUpdate = await importCovers([release], release);
+          if (didUpdate) {
+            send('coverUpdate', [release]);
+          }
+        }
       },
       {
         label: 'Refresh Folder Contents',

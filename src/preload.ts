@@ -31,6 +31,7 @@ contextBridge.exposeInMainWorld('api', {
   onClearSelection: getHandler('clearSelection'),
   onToggleViewMode: getHandler('toggleViewMode'),
   onOpenSettings: getHandler('openSettings'),
+  onCoverUpdate: getHandler('coverUpdate'),
   ui: {
     inputFocus: () => ipc.send('ui', 'inputFocus'),
     inputBlur: () => ipc.send('ui', 'inputBlur'),

@@ -70,8 +70,9 @@ export async function searchCover({ release, artist, outputPath }: SearchCoverPa
     }
     const { cover_image } = response.results[0];
     console.log('[searchCover] Downloading:', artistName, title);
-    if (!cover_image) {
-        return false;
+    if (!cover_image || cover_image.endsWith('spacer.gif')) {
+        console.log(`[searchCover] No response for: ${artistName} - ${title}`);
+        return null;
     }
     const pic = `${release.hash}-cover.jpg`;
     await getImage({

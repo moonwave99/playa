@@ -38,6 +38,7 @@ declare global {
       onClearSelection: (handler: () => void) => () => void;
       onToggleViewMode: (handler: () => void) => () => void;
       onOpenSettings: (handler: () => void) => () => void;
+      onCoverUpdate: (handler: (releases: Release[]) => void) => () => void;
       ui: {
         inputFocus: () => void;
         inputBlur: () => void;

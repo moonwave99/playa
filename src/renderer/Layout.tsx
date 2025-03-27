@@ -24,6 +24,7 @@ import SettingsView from "./components/SettingsView";
 
 import cx from "clsx";
 import styles from "./Layout.module.css";
+import { refreshCovers } from "@/lib/utils";
 
 const modalStyle = {
     overlay: {
@@ -145,6 +146,7 @@ function init(): Init {
                 navigate(path);
                 setContext("list");
             }),
+            window.api.onCoverUpdate(refreshCovers),
         ];
         return () => {
             removeHandlers.forEach((removeHandler) => removeHandler());

@@ -1,9 +1,9 @@
-import { app, BrowserWindow, shell, screen } from 'electron';
+import { app, BrowserWindow, shell, screen, protocol, net } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
 import registerApi from './api';
 import { setupMenu } from './menu/menu';
-import { initSettings } from './settings';
+import { initSettings, getSetting } from './settings';
 
 if (started) {
   app.quit();
@@ -56,3 +56,12 @@ app.on('activate', () => {
     createWindow();
   }
 });
+
+app.whenReady().then(() => {
+  const COVERS_PATH = getSetting('COVERS_PATH') as string;
+  const customProtocol = 'playa-cover';
+  protocol.handle(customProtocol, ({ url }) => {
+    const filename = url.slice(`${customProtocol}://`.length);
+    return net.fetch(`file://${path.join(COVERS_PATH, filename)}`);
+  })
+})

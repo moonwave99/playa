@@ -3,7 +3,6 @@ import type { FormEvent } from "react";
 import { useParams, useSearchParams, Navigate } from "react-router";
 import type {
     Collection,
-    ReleaseWithArtist,
     ReleaseWithArtistAndTracksAndSubreleases,
 } from "@/types/types";
 import { getReleaseContextMenuParams } from "@/lib/utils";

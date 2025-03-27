@@ -11,6 +11,7 @@ import type {
   HasId,
   WithReleases
 } from "@/types/types";
+import { getCover } from './links';
 
 const releaseTypes: ReleaseType[] =
   ['Album', 'Compilation', 'EP', 'Single', 'Bootleg', 'Various', 'Tribute', 'Soundtrack'];
@@ -144,4 +145,16 @@ export function getReleaseContextMenuParams({
     target_id,
     context,
   ];
+}
+
+export function refreshCovers(releases: Release[]) {
+  releases.forEach(({ id, hash }) => {
+    const targetElements = document.querySelectorAll(`img[data-id="${id}"]`);
+    if (!targetElements.length) {
+      return;
+    }
+    targetElements.forEach((element: HTMLImageElement) => {
+      element.src = getCover(hash);
+    });
+  })
 }

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { DragEvent } from "react";
 import cx from "clsx";
 import { getCover } from "@/lib/links";
@@ -32,14 +33,22 @@ export default function Cover({
     className,
     onContextMenu,
 }: CoverProps) {
+    const [key, setKey] = useState(0);
+
     async function onDrop(event: DragEvent) {
         event.preventDefault();
         const url = await getDropURL(event);
         if (!url) {
             return;
         }
-        window.api.system.downloadCover({ id, url });
+        const didUpdate = await window.api.system.downloadCover({ id, url });
+        if (!didUpdate) {
+            return;
+        }
+        setKey((prev) => prev + 1);
     }
+
+    const src = getCover(hash);
 
     return (
         <div
@@ -50,8 +59,10 @@ export default function Cover({
             onContextMenu={onContextMenu}
         >
             <img
+                key={key}
+                data-id={id}
                 className={styles.cover}
-                src={getCover(hash)}
+                src={src}
                 loading="lazy"
                 onError={(event) =>
                     ((event.target as HTMLImageElement).src = "")

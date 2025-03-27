@@ -56,7 +56,7 @@ export default function LatestReleases() {
                 isFetchingNextPage={isFetchingNextPage}
                 onEnter={onEnter}
                 onLeft={() => setContext("sidebar")}
-                render={({ item, index, selection, ...rest }) => (
+                render={({ item, selection, ...rest }) => (
                     <ReleaseView
                         {...rest}
                         release={item}
