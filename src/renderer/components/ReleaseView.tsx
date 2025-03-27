@@ -2,7 +2,7 @@ import type { MouseEvent } from "react";
 import cx from "clsx";
 import Cover from "./Cover";
 import Link from "./Link";
-import { getReleaseTitle, getDiscInfo } from "@/lib/utils";
+import { getReleaseTitle, getDiscInfo, withStopPropagation } from "@/lib/utils";
 import { getArtistLink, getReleaseLink } from "@/lib/links";
 import type { ReleaseWithArtistAndSubreleases } from "@/types/types";
 import styles from "./ReleaseView.module.css";
@@ -31,7 +31,7 @@ export default function ReleaseView({
                 hasFocus: selected && hasFocus,
             })}
             onClick={onClick}
-            onContextMenu={onContextMenu}
+            onContextMenu={withStopPropagation(onContextMenu)}
         >
             <p className={styles.info}>
                 <span>

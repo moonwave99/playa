@@ -129,6 +129,7 @@ function init(): Init {
         if (firstRender.current) {
             return;
         }
+        window.api.state.navigate(pathname);
         setPath(pathname);
     }, [pathname]);
 

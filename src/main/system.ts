@@ -1,6 +1,7 @@
 import child_process from 'node:child_process';
 import type { IpcMainEvent } from 'electron';
 import path from "path";
+import { existsSync } from 'node:fs';
 import prisma from "./db/prisma";
 import globby from "globby";
 import sha1 from 'sha1';
@@ -105,6 +106,14 @@ export async function importCovers(releases: ReleaseWithArtist[]) {
   );
 
   return releases.filter((_, index) => !!foundCovers[index]);
+}
+
+export async function importMissingCovers(releases: ReleaseWithArtist[]) {
+  const COVERS_PATH = getSetting('COVERS_PATH') as string;
+  const releasesWithoutCover = releases.filter(
+    ({ hash }) => !existsSync(path.join(COVERS_PATH, `${hash}-cover.jpg`))
+  );
+  return importCovers(releasesWithoutCover);
 }
 
 export async function downloadCover({ id, url }: { id: number, url: string }) {

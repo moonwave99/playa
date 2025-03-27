@@ -16,7 +16,7 @@ const RYMMap = {
 };
 
 export function getRYMURL(searchterm: string, type: 'artist' | 'release' = 'release') {
-  return getURL('https://rateyourmusic.com/search', { searchtype: RYMMap[type], searchterm });
+  return getURL('https://rateyourmusic.com/search', { searchtype: RYMMap[type], searchterm: normalizeTitle(searchterm) });
 }
 
 export function getCover(hash: string): string {

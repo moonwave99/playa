@@ -10,7 +10,6 @@ import { useKeyManager } from "@/renderer/hooks/useKeyboardManager";
 import useLatestReleases from "@/renderer/query/useLatestReleases";
 import { getReleaseLink } from "@/lib/links";
 import { getReleaseContextMenuParams } from "@/lib/utils";
-import { getDefaultKeyHandlers } from "@/renderer/components/ReleaseList";
 import List from "@/renderer/components/List";
 import Loading from "@/renderer/components/Loading";
 import styles from "../Page.module.css";
@@ -61,7 +60,11 @@ export default function LatestReleases() {
                 isFetchingNextPage={isFetchingNextPage}
                 onEnter={onEnter}
                 onLeft={() => setContext("sidebar")}
-                keyHandlers={getDefaultKeyHandlers(navigate)}
+                onSelectionChange={(selection) =>
+                    window.api.state.select(
+                        selection.map((index) => releases[index])
+                    )
+                }
                 render={({ item, selection, ...rest }) => (
                     <ReleaseView
                         {...rest}

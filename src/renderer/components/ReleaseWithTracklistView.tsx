@@ -14,7 +14,7 @@ type ReleaseWithTracklistViewProps = {
     hasFocus?: boolean;
     inList?: boolean;
     release: ReleaseWithArtistAndTracksAndSubreleases;
-    onContextMenu: (
+    onContextMenu?: (
         selection: ReleaseWithArtistAndTracksAndSubreleases[],
         target_id: number
     ) => void;
@@ -46,7 +46,9 @@ export default function ReleaseWithTracklistView({
             <header
                 className={styles.header}
                 style={{ background: color }}
-                onContextMenu={() => onContextMenu([release], release.id)}
+                onContextMenu={() =>
+                    onContextMenu && onContextMenu([release], release.id)
+                }
             >
                 <Cover
                     {...release}

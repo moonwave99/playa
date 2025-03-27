@@ -1,14 +1,29 @@
+import { matchPath } from 'react-router';
 import { Menu, MenuItem, dialog, BrowserWindow, ipcMain as ipc } from 'electron';
 import type { MenuItemConstructorOptions } from 'electron';
-import type { Entities } from '@/types/types';
+import type { ArtistWithReleases, Entities, ReleaseWithArtistAndSubreleases } from '@/types/types';
 import type { QueryKey } from '@tanstack/react-query';
-import { getRandomLink } from '@/lib/links';
+import { getArtistLink, getRandomLink } from '@/lib/links';
 import { getStats } from '../db/stats';
-import { importFolder } from '../system';
+import {
+  importFolder,
+  openTagger,
+  revealEntityInFinder,
+  importCovers,
+  importMissingCovers,
+  refreshReleaseContents,
+} from '../system';
+import {
+  searchReleaseOnDiscogs,
+  searchReleaseOnRYM,
+  searchArtistOnDiscogs,
+  searchArtistOnRYM
+} from '@/lib/external_links';
 import { releaseMenu } from './release';
 import { artistMenu } from './artist';
 import { collectionMenu } from './collection';
 import { searchResultMenu } from './searchResult';
+import { getArtist } from '../db/artist';
 
 export { releaseMenu, artistMenu, collectionMenu, searchResultMenu };
 
@@ -50,17 +65,121 @@ export function send(channel: string, ...args: unknown[]) {
 }
 
 export function setupMenu(win: BrowserWindow) {
+  let selection = [] as ReleaseWithArtistAndSubreleases[];
+  let artist = null as ArtistWithReleases;
+
   ipc.on('ui', (_, message) => {
     if (message !== 'inputBlur' && message !== 'inputFocus') {
       return;
     }
-    ['navigate', 'library'].forEach(id => {
+    ['navigate', 'library', 'release', 'artist'].forEach(id => {
       menu.items.find(x => x.id == id)
         .submenu.items.forEach(x => x.enabled = message === 'inputBlur');
     });
   });
 
+  ipc.on('state:select', (_, newSelection) => {
+    selection = newSelection;
+    menu.getMenuItemById('release').submenu.items.forEach(
+      item => item.enabled = selection.length === 1
+    );
+  });
+
+  ipc.on('state:navigate', async (_, path: string) => {
+    const artistMatch = matchPath('/artists/:id', path);
+
+    menu.getMenuItemById('artist').submenu.items.forEach(
+      item => item.enabled = !!artistMatch
+    );
+    if (!artistMatch) {
+      artist = null;
+      return;
+    }
+    artist = await getArtist(+artistMatch.params.id);
+  });
+
   const menu = Menu.getApplicationMenu();
+
+  menu.append(new MenuItem({
+    id: 'artist',
+    label: 'Artist',
+    submenu: [
+      {
+        label: 'Reveal Artist in Finder',
+        accelerator: 'Cmd+Shift+F',
+        click: () => revealEntityInFinder('artist', artist.id)
+      },
+      {
+        label: 'Refresh all Artist Releases',
+        accelerator: 'Cmd+Shift+A',
+        click: async () => {
+          await Promise.all(artist.releases.map(({ id }) => refreshReleaseContents(id)));
+          send('mutate', ['artists', artist.id]);
+        }
+      },
+      {
+        label: 'Import missing Covers',
+        accelerator: 'Cmd+Shift+C',
+        click: async () => {
+          const update = await importMissingCovers(artist.releases);
+          send('coverUpdate', update);
+        }
+      },
+      { type: 'separator' },
+      {
+        label: 'Search Artist on Discogs',
+        accelerator: 'Cmd+Shift+D',
+        click: () => searchArtistOnDiscogs(artist)
+      },
+      {
+        label: 'Search Artist on RYM',
+        accelerator: 'Shift+R',
+        click: () => searchArtistOnRYM(artist)
+      },
+    ]
+  }));
+
+  menu.append(new MenuItem({
+    id: 'release',
+    label: 'Release',
+    submenu: [
+      {
+        label: 'Go to artist page',
+        accelerator: 'Shift+A',
+        click: () => send('navigate', getArtistLink(selection[0].artist))
+      },
+      {
+        label: 'Open Release in Tagger',
+        accelerator: 'Shift+T',
+        click: () => openTagger(selection[0].id)
+      },
+      {
+        label: 'Reveal Release in Finder',
+        accelerator: 'Shift+F',
+        click: () => revealEntityInFinder('release', selection[0].id)
+      },
+      {
+        label: 'Search Release Cover',
+        accelerator: 'Shift+C',
+        click: async () => {
+          const update = await importCovers(selection);
+          send('coverUpdate', update);
+        }
+      },
+      { type: 'separator' },
+      {
+        label: 'Search Release on Discogs',
+        accelerator: 'Shift+D',
+        click: () => searchReleaseOnDiscogs(selection[0])
+      },
+      {
+        label: 'Search Release on RYM',
+        accelerator: 'Shift+R',
+        click: () => searchReleaseOnRYM(selection[0])
+      },
+
+    ]
+  }));
 
   menu.append(new MenuItem({
     id: 'navigate',
@@ -109,11 +228,12 @@ export function setupMenu(win: BrowserWindow) {
       { type: 'separator' },
       {
         label: 'Toggle View Mode',
-        accelerator: 'Shift+T',
+        accelerator: 'Cmd+Shift+T',
         click: () => send('toggleViewMode')
       }
     ]
   }));
+
   Menu.setApplicationMenu(menu);
 }
 
@@ -125,17 +245,17 @@ type MenuEntry = {
 const navigateMenu: (MenuEntry & { link: string })[] = [
   {
     label: 'Latest Releases',
-    accelerator: 'Shift+R',
+    accelerator: 'Cmd+Shift+1',
     link: '/'
   },
   {
     label: 'Latest Artists',
-    accelerator: 'Shift+A',
+    accelerator: 'Cmd+Shift+2',
     link: '/artists'
   },
   {
     label: 'Latest Collections',
-    accelerator: 'Shift+C',
+    accelerator: 'Cmd+Shift+3',
     link: '/collections'
   },
 ];

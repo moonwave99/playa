@@ -7,7 +7,6 @@ import { buildMenu, getDeleteEntry, send } from './menu';
 import { getReleaseTitle } from '@/lib/utils';
 import { searchReleaseOnDiscogs, searchReleaseOnRYM } from '@/lib/external_links';
 
-
 function getAddToCollectionEntry(selection: Release[], collections: CollectionWithReleases[]) {
   return {
     label: selection.length > 1 ? `Add ${selection.length} Releases to Collection...` : 'Add to Collection...',
@@ -105,24 +104,22 @@ export const releaseMenu = async (
     const title = `${release.artist.name} - ${getReleaseTitle(release)}`;
     buildMenu([
       {
-        label: `Playback '${title}'`,
+        label: `Playback Release`,
         click: () => playback({ release_id: release.id })
       },
       {
-        label: `Open Tagger for '${title}'`,
+        label: `Open Release in Tagger`,
         click: () => openTagger(release.id)
       },
       {
-        label: `Reveal '${title}' in Finder`,
+        label: `Reveal Release in Finder`,
         click: () => revealEntityInFinder('release', release.id)
       },
       {
-        label: `Import '${title}' Cover`,
+        label: `Search Release Cover`,
         click: async () => {
-          const didUpdate = await importCovers([release]);
-          if (didUpdate) {
-            send('coverUpdate', [release]);
-          }
+          const update = await importCovers([release]);
+          send('coverUpdate', update);
         }
       },
       {
@@ -147,11 +144,11 @@ export const releaseMenu = async (
         : { type: 'separator' },
       { type: 'separator' },
       {
-        label: `Search '${title}' on RYM`,
+        label: `Search Release on RYM`,
         click: () => searchReleaseOnRYM(release)
       },
       {
-        label: `Search '${title}' on Discogs`,
+        label: `Search Release on Discogs`,
         click: () => searchReleaseOnDiscogs(release)
       },
       { type: 'separator' },

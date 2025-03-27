@@ -43,7 +43,10 @@ export default function Tracklist({
                     {allTracks.map(
                         ({ id, title, position, duration }, index) => (
                             <div
-                                onDoubleClick={() => onDoubleClick(id)}
+                                onDoubleClick={(event) => {
+                                    event.preventDefault();
+                                    onDoubleClick(id);
+                                }}
                                 key={id}
                                 className={cx(
                                     styles.tracklistEntry,

@@ -25,6 +25,7 @@ export default function ReleaseGroup({
     onClick,
     selected,
     hasFocus,
+    onContextMenu,
 }: ReleaseGroupProps) {
     const releasesToDisplay = releases.slice(0, releaseCount);
     return (
@@ -34,6 +35,7 @@ export default function ReleaseGroup({
                 hasFocus: selected && hasFocus,
             })}
             onClick={onClick}
+            onContextMenu={onContextMenu}
         >
             <ul className={styles.releases}>
                 {releasesToDisplay.map(({ title, artist, ...rest }) => (

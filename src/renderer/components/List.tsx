@@ -41,7 +41,7 @@ type ListProps<T> = {
     hasNextPage?: boolean;
     isFetchingNextPage?: boolean;
     fetchNextPage?: () => void;
-    keyHandlers?: Record<string, (selection: T[]) => void>;
+    onSelectionChange?: (selection: number[]) => void;
 };
 
 function defaultEstimateSize(columns: number) {
@@ -74,7 +74,7 @@ export default function List<T>({
     hasNextPage = false,
     isFetchingNextPage = false,
     fetchNextPage,
-    keyHandlers,
+    onSelectionChange,
 }: ListProps<T>) {
     const [currentIndex, setCurrentIndex] = useState(-1);
     const [selection, setSelection] = useState<number[]>([]);
@@ -101,17 +101,13 @@ export default function List<T>({
         setSelection([currentIndex]);
     }, [currentIndex]);
 
+    useEffect(() => {
+        onSelectionChange && onSelectionChange(selection);
+    }, [selection]);
+
     const { currentContext, setContext } = useKeyManager({
         context,
         handlers: {
-            ...Object.entries(keyHandlers || {}).reduce(
-                (memo, [key, handler]) => ({
-                    ...memo,
-                    [key]: () =>
-                        handler(selection.map((index) => items[index])),
-                }),
-                {}
-            ),
             ArrowUp: withPrevent((event: KeyboardEvent) => {
                 if (currentIndex === 0 && onUp) {
                     onUp();

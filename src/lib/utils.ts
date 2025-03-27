@@ -1,5 +1,5 @@
-
 import { uniqBy } from 'lodash';
+import type { MouseEvent } from 'react';
 import type {
   ReleaseType,
   Release,
@@ -157,4 +157,11 @@ export function refreshCovers(releases: Release[]) {
       element.src = getCover(hash);
     });
   })
+}
+
+export function withStopPropagation(handler: (event: MouseEvent) => void) {
+  return (event: MouseEvent) => {
+    event.stopPropagation();
+    handler(event);
+  };
 }

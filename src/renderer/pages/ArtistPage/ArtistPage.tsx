@@ -41,13 +41,11 @@ export default function ArtistPage() {
     const { name, releases } = artist;
 
     return (
-        <div className={styles.page}>
-            <h1
-                className={styles.header}
-                onContextMenu={() => window.api.menu.artist(artist)}
-            >
-                {name}
-            </h1>
+        <div
+            className={styles.page}
+            onContextMenu={() => window.api.menu.artist(artist)}
+        >
+            <h1 className={styles.header}>{name}</h1>
             <ReleaseList
                 releases={releases}
                 onContextMenu={onContextMenu}

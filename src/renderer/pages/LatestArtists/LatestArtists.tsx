@@ -50,6 +50,7 @@ export default function LatestArtists() {
                         link={getArtistLink(item)}
                         title={item.name}
                         releases={item.releases}
+                        onContextMenu={() => window.api.menu.artist(item)}
                         {...rest}
                     />
                 )}

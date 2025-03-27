@@ -3,10 +3,9 @@ import type { IpcRendererEvent } from "electron";
 import * as release from "./main/db/release";
 import * as artist from "./main/db/artist";
 import * as collection from "./main/db/collection";
-import { revealEntityInFinder, openTagger, refreshReleaseContents, playback, downloadCover, startDrag, importCovers } from "./main/system";
+import { openTagger, refreshReleaseContents, playback, downloadCover, startDrag, importCovers } from "./main/system";
 import { getSettings, setSettings } from "./main/settings";
-import type { ReleaseWithArtist, CollectionWithReleases, ArtistWithReleases, SearchResult } from "./types/types";
-import { searchReleaseOnDiscogs, searchReleaseOnRYM } from "./lib/external_links";
+import type { ReleaseWithArtist, CollectionWithReleases, ArtistWithReleases, SearchResult, ReleaseWithArtistAndSubreleases } from "./types/types";
 
 contextBridge.exposeInMainWorld('api', {
   data: {
@@ -15,7 +14,6 @@ contextBridge.exposeInMainWorld('api', {
     ...getHandlers(collection),
   },
   system: getHandlers({
-    revealEntityInFinder,
     openTagger,
     refreshReleaseContents,
     playback,
@@ -45,10 +43,10 @@ contextBridge.exposeInMainWorld('api', {
     inputFocus: () => ipc.send('ui', 'inputFocus'),
     inputBlur: () => ipc.send('ui', 'inputBlur'),
   },
-  links: {
-    searchReleaseOnDiscogs,
-    searchReleaseOnRYM
-  }
+  state: {
+    select: (selection: ReleaseWithArtistAndSubreleases[]) => ipc.send('state:select', selection),
+    navigate: (path: string) => ipc.send('state:navigate', path),
+  },
 });
 
 function getHandlers(entity: Record<string, (...args: unknown[]) => unknown>) {

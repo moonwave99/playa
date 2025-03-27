@@ -19,6 +19,7 @@ export default function useRelease(id: number): UseRelease {
     if (!firstRefresh.current) {
       return;
     }
+    window.api.state.select([release]);
     if (!release || hasTracks(release)) {
       return;
     }
