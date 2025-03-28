@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useLayoutEffect } from "react";
 import type { MouseEvent, ReactNode } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import useStore from "../store";
 import { useKeyManager, withPrevent } from "../hooks/useKeyboardManager";
 import useResponsiveColumns from "../hooks/useResponsiveColumns";
 import { useClearSelection } from "../hooks/ipc";
@@ -30,7 +31,8 @@ type ListProps<T> = {
     render: (params: RenderParams<T>) => ReactNode;
     estimateSize?: (
         columns: number,
-        index: number
+        index: number,
+        showSidebar: boolean
     ) => { width: number | string; height: number };
     gap?: number;
     paddingEnd?: number;
@@ -44,11 +46,16 @@ type ListProps<T> = {
     onSelectionChange?: (selection: number[]) => void;
 };
 
-function defaultEstimateSize(columns: number) {
-    const size = window.innerWidth / columns;
+function defaultEstimateSize(columns: number, _: number, showSidebar: boolean) {
+    const containerWidth = showSidebar
+        ? window.innerWidth - 384
+        : window.innerWidth;
+
+    const width = containerWidth / columns;
+
     return {
-        width: size,
-        height: size,
+        width,
+        height: width * 1.25,
     };
 }
 
@@ -81,6 +88,7 @@ export default function List<T>({
 
     const ref = useRef<HTMLDivElement>(null);
     const firstRender = useRef(true);
+    const { showSidebar } = useStore();
 
     const { columns } = useResponsiveColumns({
         config: columnsConfig,
@@ -173,7 +181,8 @@ export default function List<T>({
     const virtualizer = useVirtualizer({
         count: items.length,
         getScrollElement: () => ref.current,
-        estimateSize: (index: number) => estimateSize(columns, index).height,
+        estimateSize: (index: number) =>
+            estimateSize(columns, index, showSidebar).height,
         overscan,
         gap,
         lanes: columns,
@@ -241,7 +250,11 @@ export default function List<T>({
                             position: "absolute",
                             top: 0,
                             left: `${(lane / columns) * 100}%`,
-                            height: `${estimateSize(columns, index)}px`,
+                            height: `${estimateSize(
+                                columns,
+                                index,
+                                showSidebar
+                            )}px`,
                             width: `${100 / columns}%`,
                             transform: `translateY(${start}px)`,
                             paddingRight: `${paddingRight}px`,
