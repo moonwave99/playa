@@ -1,7 +1,7 @@
-import type { Artist, Release, Collection, Note, ReleaseType, Track } from '@prisma/client-generated';
-export type { Artist, Release, Collection, Note, ReleaseType, Track } from '@prisma/client-generated';
+import type { Artist, Release, Collection, ReleaseType, Track } from '@prisma/client-generated';
+export type { Artist, Release, Collection, ReleaseType, Track } from '@prisma/client-generated';
 
-export type Entities = 'collection' | 'release' | 'artist' | 'note' | 'searchResult' | 'track';
+export type Entities = 'collection' | 'release' | 'artist' | 'searchResult' | 'track';
 export type HasId = { id: number; };
 export type HasTitle = { title: string; };
 
@@ -10,8 +10,6 @@ export type CollectionUpdate = { title: string, releases: number[] };
 export type ArtistUpdate = Pick<Artist, 'name' | 'path'>;
 export type TrackInfo = Pick<Track, 'path' | 'duration' | 'position' | 'title'>;
 export type ReleaseCountByType = Record<ReleaseType, number>;
-export type NoteUpdate = { title: string, content: string, artists: number[], releases: number[] };
-export type NoteCreate = { title: string, content: string, artists: number[], releases: number[] };
 
 export type WithReleases = {
   releases: ReleaseWithArtist[];
@@ -47,7 +45,6 @@ export type ReleaseWithArtistAndTracksAndSubreleases = Release & WithArtist & Wi
 export type ArtistWithReleaseCount = ArtistWithReleases & {
   releaseCount: ReleaseCountByType
 };
-export type NoteWithEntities = Note & WithReleases & WithArtists;
 
 export type WithSubReleases = {
   subReleases: ReleaseWithArtistAndTracks[];

@@ -16,7 +16,6 @@ model Artist {
   hash      String    @unique @db.VarChar(16)
   path      String    @default("") @db.VarChar(255)
   releases  Release[]
-  notes     Note[]    @relation("ArtistToNote")
 
   @@index([hash], type: Hash)
 }
@@ -35,7 +34,6 @@ model Release {
   artist_id     Int
   artist        Artist       @relation(fields: [artist_id], references: [id])
   tracks        Track[]
-  notes         Note[]       @relation("NoteToRelease")
   collections   Collection[] @relation("CollectionToRelease")
   mainReleaseId Int?
   mainRelease   Release?     @relation("ReleaseGroup", fields: [mainReleaseId], references: [id])
@@ -65,16 +63,6 @@ model Collection {
   updatedAt DateTime  @updatedAt
   title     String    @db.VarChar(255)
   releases  Release[] @relation("CollectionToRelease")
-}
-
-model Note {
-  id        Int       @id @default(autoincrement())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  title     String    @db.VarChar(255)
-  content   String
-  artists   Artist[]  @relation("ArtistToNote")
-  releases  Release[] @relation("NoteToRelease")
 }
 
 enum ReleaseType {
