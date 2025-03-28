@@ -112,7 +112,6 @@ export default function Sidebar<T>({
     return (
         <div className={styles.view}>
             <input
-                autoFocus
                 ref={inputRef}
                 className={styles.input}
                 type="search"

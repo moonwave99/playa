@@ -31,10 +31,6 @@ type WithTracks = {
   tracks: Track[];
 }
 
-type WithArtists = {
-  artists: Artist[];
-}
-
 export type ArtistWithReleases = Artist & WithReleasesAndSubreleases;
 export type ArtistWithReleasesFull = Artist & WithReleasesAndSubreleasesAndTracks;
 export type CollectionWithReleases = Collection & WithReleasesAndSubreleasesAndTracks;

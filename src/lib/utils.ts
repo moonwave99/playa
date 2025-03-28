@@ -41,10 +41,10 @@ export function countReleasesByType(releases: Release[]): ReleaseCountByType {
   return releases.reduce((memo, { type }) => ({ ...memo, [type]: memo[type] ? memo[type] + 1 : 1 }), {} as ReleaseCountByType);
 }
 
-export function estimateReleaseGroupSize(columns: number) {
+export function estimateListCardSize() {
   return {
-    width: window.innerWidth / columns,
-    height: 120,
+    width: '100%',
+    height: 6 * 16,
   };
 }
 

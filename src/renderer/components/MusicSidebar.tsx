@@ -88,7 +88,6 @@ export default function MusicSidebar() {
     return (
         <div className={styles.view}>
             <input
-                autoFocus
                 ref={inputRef}
                 className={styles.input}
                 type="search"
@@ -115,7 +114,7 @@ export default function MusicSidebar() {
                         items={results}
                         estimateSize={estimateSize}
                         paddingRight={0}
-                        gap={6}
+                        gap={12}
                         disableMultipleSelection
                         onRight={() => setContext("list")}
                         context="sidebar"

@@ -30,14 +30,23 @@
   gap: .5rem;
   padding: 0 .5rem;
   border-radius: .25rem;
+
+  &:hover {
+    background-color: var(--tertiary-color);
+
+    .position {
+      color: var(--secondary-color);
+    }
+  }
+}
+
+.tracklistEntry:hover .selected,
+.selected:hover {
+  background-color: var(--accent-color);
 }
 
 .even {
   background-color: var(--tracklist-entry-alternate-background-color);
-}
-
-.tracklistEntry:hover {
-  background-color: var(--tertiary-color);
 }
 
 .firstTrack {
@@ -49,15 +58,6 @@
   display: flex;
   justify-content: center;
   width: 2ch;
-}
-
-.tracklistEntry:hover .position {
-  color: var(--secondary-color);
-}
-
-.selected,
-.selected:hover {
-  background-color: var(--accent-color);
 }
 
 .title {

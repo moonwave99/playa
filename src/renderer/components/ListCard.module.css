@@ -1,0 +1,74 @@
+.listCard {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: background-color .3s ease-in-out;
+  overflow: hidden;
+  border-radius: .25rem;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: .25rem;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.title {
+  font-size: 1rem;
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
+.artist {
+  font-size: 1rem;
+  color: var(--secondary-color);
+}
+
+.isSingle {
+  border-radius: 0;
+
+  .title {
+    font-size: 1.2rem;
+  }
+
+  .artist {
+    font-size: 1.2rem;
+  }
+
+  .cover {
+    width: var(--release-tracklist-single-cover-size);
+    height: var(--release-tracklist-single-cover-size);
+  }
+}
+
+.info {
+  line-height: 1rem;
+  font-size: .8rem;
+  color: var(--secondary-color);
+}
+
+.useDarkText {
+
+  .title,
+  .artist,
+  .info {
+    color: black;
+  }
+}
+
+.cover {
+  width: var(--release-group-height);
+  height: var(--release-group-height);
+  border-right: 1px solid rgba(100, 100, 100, 0.4);
+  border-radius: 0;
+}
+
+.hasFocus {
+  outline: 2px var(--accent-color) solid;
+  outline-offset: -2px;
+}

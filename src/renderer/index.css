@@ -11,10 +11,12 @@
   --release-group-background-color: #1f1f1f;
   --release-view-background-color: #18181A;
   --header-height: 3.5rem;
-  --sidebar-width: 20rem;
+  --sidebar-width: 24rem;
   --navbar-width: 12rem;
+  --release-group-height: 6rem;
   --release-tracklist-single-cover-size: 10rem;
   --release-tracklist-list-cover-size: 8rem;
+  --search-results-size: 4rem;
   --tracklist-entry-alternate-background-color: #1e1d1d;
   --search-results-background-color: #34363b;
 }

@@ -12,6 +12,7 @@ import { getReleaseLink } from "@/lib/links";
 import { getReleaseContextMenuParams } from "@/lib/utils";
 import List from "@/renderer/components/List";
 import Loading from "@/renderer/components/Loading";
+
 import styles from "../Page.module.css";
 
 export default function LatestReleases() {
