@@ -88,7 +88,7 @@ export async function getLatestArtists(
     prisma.artist.findMany({
       take,
       skip,
-      orderBy: { createdAt: "desc" },
+      orderBy: { id: "desc" },
       include: {
         releases: {
           where: {
@@ -99,6 +99,7 @@ export async function getLatestArtists(
     }),
     prisma.artist.count()
   ]);
+
   return {
     pagination: {
       take,
