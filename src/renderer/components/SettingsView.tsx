@@ -74,6 +74,13 @@ export default function SettingsView({ onSave, onCancel }: SettingsViewProps) {
                         />
                     </label>
                 ))}
+                <a
+                    className={styles.info}
+                    href="https://www.discogs.com/settings/developers"
+                    target="_blank"
+                >
+                    You can set up your Discogs Credentials from here
+                </a>
                 <div className={styles.actions}>
                     <button type="submit">Save Settings</button>
                     <button type="button" onClick={onCancel}>

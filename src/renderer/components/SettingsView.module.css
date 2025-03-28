@@ -71,3 +71,13 @@
   justify-content: end;
   gap: 1rem;
 }
+
+.info {
+  font-size: .8rem;
+  text-align: right;
+  color: var(--accent-color);
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

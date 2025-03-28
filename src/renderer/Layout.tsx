@@ -29,7 +29,9 @@ import { refreshCovers } from "@/lib/utils";
 
 const modalStyle = {
     overlay: {
-        background: "rgba(100,100,100, 0.4)",
+        background: "rgba(100,100,100, 0.1)",
+        backdropFilter: "blur(3px)",
+        zIndex: 2,
     },
     content: {
         background: "black",
