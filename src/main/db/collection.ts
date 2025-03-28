@@ -1,5 +1,5 @@
 import prisma from "./prisma";
-import type { CollectionCreate, CollectionUpdate, HasId, PaginationParams } from '@/types/types';
+import type { CollectionCreate, CollectionUpdate, HasId, PaginationParams, Release } from '@/types/types';
 
 export async function getCollections({ take = 50 }: PaginationParams) {
   const results = await prisma.collection.findMany({
@@ -83,6 +83,34 @@ export async function updateCollection(id: number, { title, releases }: Collecti
       releases: {
         connect,
         disconnect
+      }
+    }
+  });
+  return result;
+}
+
+export async function addReleasesToCollection(id: number, releases: Release[]) {
+  const result = await prisma.collection.update({
+    where: {
+      id
+    },
+    data: {
+      releases: {
+        connect: releases.map(({ id }) => ({ id }))
+      }
+    }
+  });
+  return result;
+}
+
+export async function removeReleasesFromCollection(id: number, releases: Release[]) {
+  const result = await prisma.collection.update({
+    where: {
+      id
+    },
+    data: {
+      releases: {
+        disconnect: releases.map(({ id }) => ({ id }))
       }
     }
   });

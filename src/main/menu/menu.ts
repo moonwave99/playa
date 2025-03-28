@@ -1,7 +1,7 @@
 import { matchPath } from 'react-router';
 import { Menu, MenuItem, dialog, BrowserWindow, ipcMain as ipc } from 'electron';
 import type { MenuItemConstructorOptions } from 'electron';
-import type { ArtistWithReleases, Entities, ReleaseWithArtistAndSubreleases } from '@/types/types';
+import type { ArtistWithReleasesFull, Entities, ReleaseWithArtistAndSubreleases } from '@/types/types';
 import type { QueryKey } from '@tanstack/react-query';
 import { getArtistLink, getRandomLink } from '@/lib/links';
 import { getStats } from '../db/stats';
@@ -66,7 +66,7 @@ export function send(channel: string, ...args: unknown[]) {
 
 export function setupMenu(win: BrowserWindow) {
   let selection = [] as ReleaseWithArtistAndSubreleases[];
-  let artist = null as ArtistWithReleases;
+  let artist = null as ArtistWithReleasesFull;
 
   ipc.on('ui', (_, message) => {
     if (message !== 'inputBlur' && message !== 'inputFocus') {
@@ -110,10 +110,14 @@ export function setupMenu(win: BrowserWindow) {
         click: () => revealEntityInFinder('artist', artist.id)
       },
       {
-        label: 'Refresh all Artist Releases',
+        label: 'Refresh Releases',
         accelerator: 'Cmd+Shift+A',
         click: async () => {
-          await Promise.all(artist.releases.map(({ id }) => refreshReleaseContents(id)));
+          await Promise.all(
+            artist.releases
+              .filter(x => !x.tracks.length)
+              .map(x => refreshReleaseContents(x.id))
+          );
           send('mutate', ['artists', artist.id]);
         }
       },
@@ -245,17 +249,17 @@ type MenuEntry = {
 const navigateMenu: (MenuEntry & { link: string })[] = [
   {
     label: 'Latest Releases',
-    accelerator: 'Cmd+Shift+1',
+    accelerator: 'Cmd+1',
     link: '/'
   },
   {
     label: 'Latest Artists',
-    accelerator: 'Cmd+Shift+2',
+    accelerator: 'Cmd+2',
     link: '/artists'
   },
   {
     label: 'Latest Collections',
-    accelerator: 'Cmd+Shift+3',
+    accelerator: 'Cmd+3',
     link: '/collections'
   },
 ];

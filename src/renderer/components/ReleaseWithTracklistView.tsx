@@ -5,7 +5,7 @@ import Tracklist from "./Tracklist";
 import Cover from "./Cover";
 import Link from "./Link";
 import useDominantColor from "../hooks/useDominantColor";
-import { getReleaseTitle, getDiscInfo } from "@/lib/utils";
+import { getReleaseTitle, getDiscInfo, withStopPropagation } from "@/lib/utils";
 import { getReleaseLink, getArtistLink, getCover } from "@/lib/links";
 import styles from "./ReleaseWithTracklistView.module.css";
 
@@ -46,8 +46,11 @@ export default function ReleaseWithTracklistView({
             <header
                 className={styles.header}
                 style={{ background: color }}
-                onContextMenu={() =>
-                    onContextMenu && onContextMenu([release], release.id)
+                onContextMenu={
+                    onContextMenu &&
+                    withStopPropagation(() =>
+                        onContextMenu([release], release.id)
+                    )
                 }
             >
                 <Cover

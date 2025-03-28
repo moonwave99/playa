@@ -1,47 +1,33 @@
-import type { Release, ReleaseWithArtistAndSubreleases, CollectionWithReleases, ArtistWithReleases } from "@/types/types";
+import type { Release, Collection, ReleaseWithArtistAndSubreleases, CollectionWithReleases, ArtistWithReleases } from "@/types/types";
 import { deleteRelease, groupReleases, unGroupReleases } from '../db/release';
-import { getAllCollections, createCollection, updateCollection } from "../db/collection";
+import { getAllCollections, createCollection, addReleasesToCollection, removeReleasesFromCollection } from "../db/collection";
 import { getCollectionLink } from '@/lib/links';
 import { playback, openTagger, refreshReleaseContents, revealEntityInFinder, importCovers } from '../system';
 import { buildMenu, getDeleteEntry, send } from './menu';
 import { getReleaseTitle } from '@/lib/utils';
 import { searchReleaseOnDiscogs, searchReleaseOnRYM } from '@/lib/external_links';
 
-function getAddToCollectionEntry(selection: Release[], collections: CollectionWithReleases[]) {
+function getAddToCollectionEntry(selection: Release[], collections: Collection[]) {
   return {
-    label: selection.length > 1 ? `Add ${selection.length} Releases to Collection...` : 'Add to Collection...',
-    submenu: collections.map((collection: CollectionWithReleases) => ({
-      label: collection.title,
+    label: `Add ${selection.length} Release(s) to Collection...`,
+    submenu: collections.map(({ title, id }) => ({
+      label: title,
       click: async () => {
-        await updateCollection(collection.id, {
-          title: collection.title,
-          releases: [
-            ...new Set([
-              ...selection.map(({ id }) => id),
-              ...collection.releases.map(({ id }: Release) => id),
-            ]),
-          ],
-        });
+        await addReleasesToCollection(id, selection);
         send('mutate', [
           ['collections', 'latest'],
-          ['collections', collection.id]
+          ['collections', id]
         ]);
       }
     }))
   }
 }
 
-function getRemoveFromCollectionEntry(selection: Release[], collection: CollectionWithReleases) {
+function getRemoveFromCollectionEntry(selection: Release[], collection: Collection) {
   return {
-    label: `Remove ${selection.length} Releases from Collection`,
+    label: `Remove ${selection.length} Release(s) from Collection`,
     click: async () => {
-      const ids = selection.map(({ id }) => id);
-      await updateCollection(collection.id, {
-        title: collection.title,
-        releases: collection.releases
-          .map(({ id }: Release) => id)
-          .filter((id: number) => !ids.includes(id)),
-      });
+      await removeReleasesFromCollection(collection.id, selection);
       send('mutate', [['collections', collection.id]]);
       send('clearSelection');
     }
@@ -167,7 +153,7 @@ export const releaseMenu = async (
   buildMenu([
     getGroupReleasesEntry(selection, target_id) || { type: 'separator' },
     {
-      label: `Add ${selection.length} Releases to New Collection`,
+      label: `Add ${selection.length} Release(s) to New Collection`,
       click: newCollectionHandler,
     },
     getAddToCollectionEntry(selection, collections),
