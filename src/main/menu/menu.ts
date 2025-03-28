@@ -234,7 +234,12 @@ export function setupMenu(win: BrowserWindow) {
         label: 'Toggle View Mode',
         accelerator: 'Cmd+Shift+T',
         click: () => send('toggleViewMode')
-      }
+      },
+      {
+        label: 'Toggle Sidebar',
+        accelerator: 'Cmd+\\',
+        click: () => send('toggleSidebar')
+      },
     ]
   }));
 

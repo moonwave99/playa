@@ -46,16 +46,18 @@ const modalStyle = {
 Modal.setAppElement("#root");
 
 export default function Layout() {
-    const { modalContents, setModalContents, setContext } = init();
+    const { showSidebar, modalContents, setModalContents, setContext } = init();
     useOnOpenSettings(() => setModalContents({ name: "settings" }));
 
     return (
         <div className={cx(styles.main, { [styles.hasSidebar]: true })}>
             <Nav />
             <div className={styles.page}>
-                <div className={styles.sidebar}>
-                    <SidebarView />
-                </div>
+                {showSidebar && (
+                    <div className={styles.sidebar}>
+                        <SidebarView />
+                    </div>
+                )}
                 <main className={styles.main}>
                     <Routes>
                         <Route path="/" element={<LatestReleases />} />
@@ -98,6 +100,7 @@ export default function Layout() {
 }
 
 type Init = {
+    showSidebar: boolean;
     modalContents: ModalContents;
     setModalContents: (modalContents: ModalContents) => void;
     setContext: (context: string) => void;
@@ -107,8 +110,15 @@ function init(): Init {
     const firstRender = useRef(true);
     const navigate = useNavigate();
     const queryClient = useQueryClient();
-    const { path, toggleViewMode, setPath, modalContents, setModalContents } =
-        useStore();
+    const {
+        path,
+        toggleViewMode,
+        setPath,
+        showSidebar,
+        modalContents,
+        setModalContents,
+        toggleSidebar,
+    } = useStore();
     const { pathname } = useLocation();
 
     const { setContext } = useKeyManager({
@@ -151,11 +161,12 @@ function init(): Init {
                 setContext("list");
             }),
             window.api.onCoverUpdate(refreshCovers),
+            window.api.onToggleSidebar(toggleSidebar),
         ];
         return () => {
             removeHandlers.forEach((removeHandler) => removeHandler());
         };
     }, []);
 
-    return { modalContents, setModalContents, setContext };
+    return { showSidebar, modalContents, setModalContents, setContext };
 }

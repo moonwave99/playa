@@ -6,9 +6,11 @@ export type ModalContents = { name: string; params?: Record<string, string | num
 
 type Store = {
   viewMode: ViewMode;
+  showSidebar: boolean;
   path: string;
   modalContents: ModalContents | null;
   toggleViewMode: () => void;
+  toggleSidebar: () => void;
   setPath: (path: string) => void;
   setModalContents: (modalContents: ModalContents) => void;
 };
@@ -18,7 +20,9 @@ const useStore = create<Store>()(
     (set) => ({
       viewMode: 'grid',
       path: '/',
+      showSidebar: false,
       modalContents: null,
+      toggleSidebar: () => set((prev) => ({ showSidebar: !prev.showSidebar })),
       toggleViewMode: () => set((prev) => ({ viewMode: prev.viewMode === 'grid' ? 'list' : 'grid' })),
       setPath: (path: string) => set(({ path })),
       setModalContents: (modalContents) => set(({ modalContents }))
