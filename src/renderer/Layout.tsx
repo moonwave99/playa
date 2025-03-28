@@ -12,6 +12,7 @@ import {
 import { useOnOpenSettings } from "./hooks/ipc";
 import useStore from "./store";
 import type { ModalContents } from "./store";
+import { refreshCovers } from "@/lib/utils";
 
 import LatestReleases from "./pages/LatestReleases/LatestReleases";
 import LatestArtists from "./pages/LatestArtists/LatestArtists";
@@ -23,9 +24,9 @@ import Nav from "./components/Nav";
 import SidebarView from "./components/SidebarView";
 import SettingsView from "./components/SettingsView";
 
+import { GoSidebarExpand, GoSidebarCollapse } from "react-icons/go";
 import cx from "clsx";
 import styles from "./Layout.module.css";
-import { refreshCovers } from "@/lib/utils";
 
 const modalStyle = {
     overlay: {
@@ -46,11 +47,26 @@ const modalStyle = {
 Modal.setAppElement("#root");
 
 export default function Layout() {
-    const { showSidebar, modalContents, setModalContents, setContext } = init();
+    const {
+        showSidebar,
+        toggleSidebar,
+        modalContents,
+        setModalContents,
+        setContext,
+    } = init();
     useOnOpenSettings(() => setModalContents({ name: "settings" }));
 
     return (
         <div className={cx(styles.main, { [styles.hasSidebar]: true })}>
+            <button
+                aria-label="Toggle Sidebar"
+                onClick={toggleSidebar}
+                className={cx(styles.toggleSidebarButton, {
+                    [styles.showSidebar]: showSidebar,
+                })}
+            >
+                {showSidebar ? <GoSidebarCollapse /> : <GoSidebarExpand />}
+            </button>
             <Nav />
             <div className={styles.page}>
                 {showSidebar && (
@@ -104,6 +120,7 @@ type Init = {
     modalContents: ModalContents;
     setModalContents: (modalContents: ModalContents) => void;
     setContext: (context: string) => void;
+    toggleSidebar: () => void;
 };
 
 function init(): Init {
@@ -168,5 +185,11 @@ function init(): Init {
         };
     }, []);
 
-    return { showSidebar, modalContents, setModalContents, setContext };
+    return {
+        showSidebar,
+        toggleSidebar,
+        modalContents,
+        setModalContents,
+        setContext,
+    };
 }
