@@ -1,6 +1,6 @@
 import type { Release, ReleaseWithArtistAndSubreleases, CollectionWithReleases, ArtistWithReleases } from "@/types/types";
 import { deleteRelease, groupReleases, unGroupReleases } from '../db/release';
-import { getCollections, createCollection, updateCollection } from "../db/collection";
+import { getAllCollections, createCollection, updateCollection } from "../db/collection";
 import { getCollectionLink } from '@/lib/links';
 import { playback, openTagger, refreshReleaseContents, revealEntityInFinder, importCovers } from '../system';
 import { buildMenu, getDeleteEntry, send } from './menu';
@@ -89,7 +89,7 @@ export const releaseMenu = async (
   target_id: number,
   context?: CollectionWithReleases | ArtistWithReleases
 ) => {
-  const collections = await getCollections({ take: 100 });
+  const collections = await getAllCollections();
   const newCollectionHandler = async () => {
     const newCollection = await createCollection({
       title: 'New Collection',

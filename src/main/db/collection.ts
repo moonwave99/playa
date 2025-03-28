@@ -20,6 +20,14 @@ export async function getCollections({ take = 50 }: PaginationParams) {
   return results;
 }
 
+export async function getAllCollections() {
+  const result = await prisma.collection.findMany({
+    orderBy: { title: "asc" },
+    select: { id: true, title: true },
+  });
+  return result;
+}
+
 export async function getCollection(id: number) {
   const result = await prisma.collection.findFirst({
     where: { id },
