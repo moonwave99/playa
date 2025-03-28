@@ -1,5 +1,6 @@
 import prisma from "./prisma";
 import { countReleasesByType, sortReleasesByTypeAndYear } from '@/lib/utils';
+import { withEntityType } from "@/types/types";
 import type {
   Artist,
   ArtistWithReleases,
@@ -37,10 +38,10 @@ export async function getArtist(id: number): Promise<ArtistWithReleasesFull> {
     return null;
   }
   const { releases, ...artist } = result as ArtistWithReleasesFull;
-  return {
+  return withEntityType({
     ...result,
-    releases: sortReleasesByTypeAndYear(releases, artist)
-  };
+    releases: withEntityType(sortReleasesByTypeAndYear(releases, artist), 'release')
+  }, 'artist');
 }
 
 export type GetArtistsParams = PaginationParams & {
@@ -106,10 +107,13 @@ export async function getLatestArtists(
       skip,
       total
     },
-    results: results.map(withReleaseCount).map((x: ArtistWithReleases) => ({
-      ...x,
-      releases: x.releases.map(y => ({ ...y, artist: { name: x.name } }))
-    }))
+    results: results
+      .map(withReleaseCount)
+      .map(((x: ArtistWithReleases) => withEntityType(x, 'artist')))
+      .map((x: ArtistWithReleases) => ({
+        ...x,
+        releases: withEntityType(x.releases.map(y => ({ ...y, artist: { name: x.name } })), 'release')
+      }))
   };
 }
 
@@ -118,7 +122,7 @@ export async function getAllArtists(): Promise<Artist[]> {
     orderBy: { name: "asc" },
     select: { id: true, name: true, hash: true, path: true },
   });
-  return result;
+  return withEntityType(result, 'artist');
 }
 
 function withReleaseCount(artist: ArtistWithReleases) {
@@ -130,5 +134,5 @@ export async function updateArtist(id: number, { name, path }: ArtistUpdate) {
     where: { id },
     data: { name, path }
   });
-  return result;
+  return withEntityType(result, 'artist');
 }

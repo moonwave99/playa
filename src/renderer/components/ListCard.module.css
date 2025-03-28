@@ -12,21 +12,25 @@
   flex-direction: column;
   justify-content: center;
   gap: .25rem;
-
-  &:hover {
-    text-decoration: underline;
-  }
 }
 
 .title {
   font-size: 1rem;
   color: var(--primary-color);
   font-weight: bold;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .artist {
   font-size: 1rem;
   color: var(--secondary-color);
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .isSingle {

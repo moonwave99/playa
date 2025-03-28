@@ -1,5 +1,6 @@
 import prisma from "./prisma";
 import sha1 from "sha1";
+import { withEntityType } from "@/types/types";
 import type {
     HasId,
     TrackInfo,
@@ -37,7 +38,7 @@ export async function getRelease(id: number) {
             tracks: { orderBy: { position: 'asc' } }
         },
     });
-    return result;
+    return withEntityType(result, 'release');
 }
 
 export async function deleteRelease(id: number) {
@@ -95,7 +96,7 @@ export async function addTracksToRelease(id: number, trackInfo: TrackInfo[]) {
             }
         },
     });
-    return result;
+    return withEntityType(result, 'release');
 }
 
 export async function groupReleases(release_id: number, subReleases: number[]) {
@@ -115,7 +116,7 @@ export async function groupReleases(release_id: number, subReleases: number[]) {
             }
         }
     })
-    return result;
+    return withEntityType(result, 'release');
 }
 
 export async function unGroupReleases(release: Release & WithSubReleases) {
@@ -139,42 +140,6 @@ export async function unGroupReleases(release: Release & WithSubReleases) {
             }
         }))
     ]);
-}
-
-export async function searchReleases(query: string) {
-    const results = await prisma.release.findMany({
-        where: {
-            mainRelease: null,
-            OR: [
-                {
-                    title: {
-                        contains: query,
-                        mode: "insensitive",
-                    },
-                },
-                {
-                    artist: {
-                        name: {
-                            contains: query,
-                            mode: "insensitive",
-                        },
-                    },
-                },
-            ],
-        },
-        select: {
-            id: true,
-            title: true,
-            path: true,
-            type: true,
-            hash: true,
-            year: true,
-            artist: true,
-            subReleases: true,
-            mainRelease: true
-        },
-    });
-    return results;
 }
 
 export async function search(query: string, take = 20): Promise<SearchResult[]> {
@@ -289,6 +254,6 @@ export async function getLatestReleases(
             skip,
             total
         },
-        results: results as ReleaseWithArtistAndSubreleases[]
+        results: withEntityType(results, 'release') as ReleaseWithArtistAndSubreleases[]
     };
 }

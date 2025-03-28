@@ -3,6 +3,7 @@ import cx from "clsx";
 import Cover from "./Cover";
 import Link from "./Link";
 import useDominantColor from "../hooks/useDominantColor";
+import { getDiscInfo, getReleaseTitle } from "@/lib/utils";
 import {
     getCover,
     getArtistLink,
@@ -11,12 +12,15 @@ import {
 } from "@/lib/links";
 import type {
     ArtistWithReleases,
-    ReleaseWithArtist,
+    ReleaseWithArtistAndSubreleases,
     CollectionWithReleases,
 } from "@/types/types";
 import styles from "./ListCard.module.css";
 
-type Item = CollectionWithReleases | ArtistWithReleases | ReleaseWithArtist;
+type Item =
+    | CollectionWithReleases
+    | ArtistWithReleases
+    | ReleaseWithArtistAndSubreleases;
 
 type ListCardProps = {
     item: Item;
@@ -28,11 +32,8 @@ type ListCardProps = {
     onContextMenu?: () => void;
 };
 
-function getCoverRelease(item: Item): ReleaseWithArtist {
-    if ((item as ReleaseWithArtist).artist) {
-        return item as ReleaseWithArtist;
-    }
-    return (item as { releases: ReleaseWithArtist[] }).releases[0];
+function getCoverRelease(item: Item) {
+    return item._type === "release" ? item : item.releases[0];
 }
 
 export default function ListCard({
@@ -49,51 +50,38 @@ export default function ListCard({
     );
 
     function getContent() {
-        if ((item as ReleaseWithArtist).artist) {
-            const release = item as ReleaseWithArtist;
+        if (item._type === "release") {
             return (
                 <>
                     <Link
                         className={styles.artist}
-                        to={getArtistLink(release.artist)}
+                        to={getArtistLink(item.artist)}
                     >
-                        {release.artist.name}
+                        {item.artist.name}
                     </Link>
-                    <Link className={styles.title} to={getReleaseLink(release)}>
-                        {release.title}
+                    <Link className={styles.title} to={getReleaseLink(item)}>
+                        {getReleaseTitle(item)}
                     </Link>
                     <div className={styles.info}>
-                        {release.type}, {release.year}
+                        {item.type}, {item.year} {getDiscInfo(item)}
                     </div>
                 </>
             );
         }
 
-        if ((item as ArtistWithReleases).name) {
-            const artist = item as ArtistWithReleases;
-            return (
-                <>
-                    <Link className={styles.title} to={getArtistLink(artist)}>
-                        {artist.name}
-                    </Link>
-                    <div className={styles.info}>
-                        {artist.releases.length} releases
-                    </div>
-                </>
-            );
-        }
-
-        const collection = item as CollectionWithReleases;
         return (
             <>
-                <Link
-                    className={styles.title}
-                    to={getCollectionLink(collection)}
-                >
-                    {collection.title}
-                </Link>
+                {item._type === "artist" ? (
+                    <Link className={styles.title} to={getArtistLink(item)}>
+                        {item.name}
+                    </Link>
+                ) : (
+                    <Link className={styles.title} to={getCollectionLink(item)}>
+                        {item.title}
+                    </Link>
+                )}
                 <div className={styles.info}>
-                    {collection.releases.length} releases
+                    {item.releases.length} releases
                 </div>
             </>
         );
@@ -114,7 +102,9 @@ export default function ListCard({
             <Cover
                 {...coverRelease}
                 className={styles.cover}
-                title={`${coverRelease.artist.name} - ${coverRelease.title}`}
+                title={`${coverRelease.artist.name} - ${getReleaseTitle(
+                    coverRelease
+                )}`}
             />
             <div className={styles.content}>{getContent()}</div>
         </div>

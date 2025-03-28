@@ -24,7 +24,7 @@ import Nav from "./components/Nav";
 import SidebarView from "./components/SidebarView";
 import SettingsView from "./components/SettingsView";
 
-import { GoSidebarExpand, GoSidebarCollapse } from "react-icons/go";
+import { MdOutlineSearch } from "react-icons/md";
 import cx from "clsx";
 import styles from "./Layout.module.css";
 
@@ -65,7 +65,7 @@ export default function Layout() {
                     [styles.showSidebar]: showSidebar,
                 })}
             >
-                {showSidebar ? <GoSidebarCollapse /> : <GoSidebarExpand />}
+                <MdOutlineSearch />
             </button>
             <Nav />
             <div className={styles.page}>

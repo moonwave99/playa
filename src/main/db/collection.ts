@@ -1,4 +1,5 @@
 import prisma from "./prisma";
+import { withEntityType } from "@/types/types";
 import type { CollectionCreate, CollectionUpdate, HasId, PaginationParams, Release } from '@/types/types';
 
 export async function getCollections({ take = 50 }: PaginationParams) {
@@ -17,7 +18,7 @@ export async function getCollections({ take = 50 }: PaginationParams) {
       }
     },
   });
-  return results;
+  return withEntityType(results, 'collection');
 }
 
 export async function getAllCollections() {
@@ -25,7 +26,7 @@ export async function getAllCollections() {
     orderBy: { title: "asc" },
     select: { id: true, title: true },
   });
-  return result;
+  return withEntityType(result, 'collection');
 }
 
 export async function getCollection(id: number) {
@@ -49,7 +50,7 @@ export async function getCollection(id: number) {
       }
     },
   });
-  return result;
+  return withEntityType({ ...result, releases: withEntityType(result.releases, 'release') }, 'collection');
 }
 
 export async function createCollection({ title, releases = [] }: CollectionCreate) {
@@ -59,7 +60,7 @@ export async function createCollection({ title, releases = [] }: CollectionCreat
       releases: { connect: releases.map(id => ({ id })) }
     }
   });
-  return result;
+  return withEntityType(result, 'collection');
 }
 
 export async function updateCollection(id: number, { title, releases }: CollectionUpdate) {
@@ -86,7 +87,7 @@ export async function updateCollection(id: number, { title, releases }: Collecti
       }
     }
   });
-  return result;
+  return withEntityType(result, 'collection');
 }
 
 export async function addReleasesToCollection(id: number, releases: Release[]) {
@@ -100,7 +101,7 @@ export async function addReleasesToCollection(id: number, releases: Release[]) {
       }
     }
   });
-  return result;
+  return withEntityType(result, 'collection');
 }
 
 export async function removeReleasesFromCollection(id: number, releases: Release[]) {
@@ -114,7 +115,7 @@ export async function removeReleasesFromCollection(id: number, releases: Release
       }
     }
   });
-  return result;
+  return withEntityType(result, 'collection');
 }
 
 export async function deleteCollection(id: number) {

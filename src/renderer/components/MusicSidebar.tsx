@@ -88,6 +88,7 @@ export default function MusicSidebar() {
     return (
         <div className={styles.view}>
             <input
+                autoFocus
                 ref={inputRef}
                 className={styles.input}
                 type="search"

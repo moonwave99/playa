@@ -1,5 +1,12 @@
-import type { Artist, Release, Collection, ReleaseType, Track } from '@prisma/client-generated';
-export type { Artist, Release, Collection, ReleaseType, Track } from '@prisma/client-generated';
+// eslint-disable-next-line import/no-named-as-default
+import Prisma, { ReleaseType } from '@prisma/client-generated';
+
+type Artist = Prisma.Artist & { _type: 'artist' };
+type Release = Prisma.Release & { _type: 'release' };
+type Collection = Prisma.Collection & { _type: 'collection' };
+type Track = Prisma.Track & { _type: 'track' };
+
+export type { Artist, Release, Collection, Track, ReleaseType };
 
 export type Entities = 'collection' | 'release' | 'artist' | 'searchResult' | 'track';
 export type HasId = { id: number; };
@@ -86,3 +93,10 @@ export type Entries<T> = {
 export type ViewMode = 'grid' | 'list';
 
 export type Settings = Record<string, string | number | boolean>;
+
+export function withEntityType<T>(item: T | T[], _type: Entities): (T & { _type: Entities }) | (T & { _type: Entities })[] {
+  if (Array.isArray(item)) {
+    return item.map(x => ({ ...x, _type }));
+  }
+  return { ...item, _type }
+}
