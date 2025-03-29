@@ -78,6 +78,13 @@ export function setupMenu(win: BrowserWindow) {
     });
   });
 
+  win.webContents.on('did-finish-load', () => {
+    ['navigate', 'library', 'release', 'artist'].forEach(id => {
+      menu.items.find(x => x.id == id)
+        .submenu.items.forEach(x => x.enabled = true)
+    });
+  });
+
   ipc.on('state:select', (_, newSelection) => {
     selection = newSelection;
     menu.getMenuItemById('release').submenu.items.forEach(
