@@ -52,7 +52,6 @@ function defaultEstimateSize(columns: number, _: number, showSidebar: boolean) {
         : window.innerWidth;
 
     const width = containerWidth / columns;
-
     return {
         width,
         height: width * 1.25,
@@ -97,6 +96,10 @@ export default function List<T>({
             virtualizer.scrollToIndex(currentIndex);
         },
     });
+
+    useEffect(() => {
+        virtualizer.measure();
+    }, [showSidebar]);
 
     useClearSelection(() => setSelection([]));
 

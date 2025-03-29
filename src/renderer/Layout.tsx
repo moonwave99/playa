@@ -212,8 +212,6 @@ function init(): Init {
         };
     }, []);
 
-    console.log({ showSidebar });
-
     return {
         showSidebar,
         toggleSidebar,
