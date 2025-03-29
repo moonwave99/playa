@@ -10,7 +10,7 @@ type Store = {
   path: string;
   modalContents: ModalContents | null;
   toggleViewMode: () => void;
-  toggleSidebar: () => void;
+  toggleSidebar: (showSidebar?: boolean) => void;
   setPath: (path: string) => void;
   setModalContents: (modalContents: ModalContents) => void;
 };
@@ -22,7 +22,9 @@ const useStore = create<Store>()(
       path: '/',
       showSidebar: false,
       modalContents: null,
-      toggleSidebar: () => set((prev) => ({ showSidebar: !prev.showSidebar })),
+      toggleSidebar: (showSidebar?: boolean) => set(
+        (prev) => ({ showSidebar: showSidebar === undefined ? !prev.showSidebar : showSidebar })
+      ),
       toggleViewMode: () => set((prev) => ({ viewMode: prev.viewMode === 'grid' ? 'list' : 'grid' })),
       setPath: (path: string) => set(({ path })),
       setModalContents: (modalContents) => set(({ modalContents }))

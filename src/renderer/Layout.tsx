@@ -1,7 +1,14 @@
 import { useEffect, useRef } from "react";
-import { Routes, Route, useNavigate, useLocation } from "react-router";
+import {
+    Routes,
+    Route,
+    useNavigate,
+    useLocation,
+    matchPath,
+} from "react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import type { QueryKey } from "@tanstack/react-query";
+import { useMediaQuery } from "react-responsive";
 import Modal from "react-modal";
 import {
     useKeyManager,
@@ -53,14 +60,19 @@ export default function Layout() {
         modalContents,
         setModalContents,
         setContext,
+        isSingleReleasePage,
     } = init();
-    useOnOpenSettings(() => setModalContents({ name: "settings" }));
 
     return (
-        <div className={cx(styles.main, { [styles.hasSidebar]: true })}>
+        <div
+            className={cx(styles.main, {
+                [styles.showSidebar]: showSidebar,
+                [styles.isSingleReleasePage]: isSingleReleasePage,
+            })}
+        >
             <button
                 aria-label="Toggle Sidebar"
-                onClick={toggleSidebar}
+                onClick={() => toggleSidebar()}
                 className={cx(styles.toggleSidebarButton, {
                     [styles.showSidebar]: showSidebar,
                 })}
@@ -121,11 +133,13 @@ type Init = {
     setModalContents: (modalContents: ModalContents) => void;
     setContext: (context: string) => void;
     toggleSidebar: () => void;
+    isSingleReleasePage: boolean;
 };
 
 function init(): Init {
     const firstRender = useRef(true);
     const navigate = useNavigate();
+    const { pathname } = useLocation();
     const queryClient = useQueryClient();
     const {
         path,
@@ -136,7 +150,18 @@ function init(): Init {
         setModalContents,
         toggleSidebar,
     } = useStore();
-    const { pathname } = useLocation();
+
+    const isSmallScreen = useMediaQuery({
+        query: "(max-width: 900px)",
+    });
+
+    useEffect(() => {
+        toggleSidebar(!isSmallScreen);
+    }, [isSmallScreen]);
+
+    useOnOpenSettings(() => setModalContents({ name: "settings" }));
+
+    const isSingleReleasePage = !!matchPath("/releases/:id", pathname);
 
     const { setContext } = useKeyManager({
         context: KeyManager.global,
@@ -191,5 +216,6 @@ function init(): Init {
         modalContents,
         setModalContents,
         setContext,
+        isSingleReleasePage,
     };
 }
