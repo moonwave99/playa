@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useNavigateSidebar } from "../hooks/ipc";
 import {
@@ -53,6 +53,12 @@ export default function SidebarView() {
         setCurrentSidebar(sidebar);
         setContext("sidebar");
     });
+
+    useEffect(() => {
+        return () => {
+            window.api.ui.inputBlur();
+        };
+    }, []);
 
     return (
         <>

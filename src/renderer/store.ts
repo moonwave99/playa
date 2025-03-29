@@ -21,7 +21,7 @@ const useStore = create<Store>()(
       viewMode: 'grid',
       path: '/',
       showSidebar: false,
-      modalContents: null,
+      modalContents: null as ModalContents,
       toggleSidebar: (showSidebar?: boolean) => set(
         (prev) => ({ showSidebar: showSidebar === undefined ? !prev.showSidebar : showSidebar })
       ),

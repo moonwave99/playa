@@ -156,7 +156,9 @@ function init(): Init {
     });
 
     useEffect(() => {
-        toggleSidebar(!isSmallScreen);
+        if (isSmallScreen) {
+            toggleSidebar(false);
+        }
     }, [isSmallScreen]);
 
     useOnOpenSettings(() => setModalContents({ name: "settings" }));
@@ -203,12 +205,14 @@ function init(): Init {
                 setContext("list");
             }),
             window.api.onCoverUpdate(refreshCovers),
-            window.api.onToggleSidebar(toggleSidebar),
+            window.api.onToggleSidebar(() => toggleSidebar()),
         ];
         return () => {
             removeHandlers.forEach((removeHandler) => removeHandler());
         };
     }, []);
+
+    console.log({ showSidebar });
 
     return {
         showSidebar,
