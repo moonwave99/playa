@@ -1,10 +1,12 @@
-import cx from "clsx";
-import List from "./List";
+import { Fragment } from "react";
+import type { MouseEvent } from "react";
 import { useKeyManager } from "../hooks/useKeyboardManager";
 import type {
     Track,
     ReleaseWithArtistAndTracksAndSubreleases,
 } from "@/types/types";
+import List from "./List";
+import cx from "clsx";
 
 import styles from "./Tracklist.module.css";
 
@@ -26,7 +28,6 @@ export default function Tracklist({
         ...release.subReleases.flatMap((x) => x.tracks || []),
     ];
 
-    const firstTrackIndexes = getFirstTrackIndexes(allTracks);
     const discsCount = release.subReleases.length + 1;
 
     if (!isNavigable) {
@@ -40,37 +41,31 @@ export default function Tracklist({
                             discsCount > 1 ? `${discsCount * 50}%` : undefined,
                     }}
                 >
-                    {allTracks.map(
-                        ({ id, title, position, duration }, index) => (
-                            <div
-                                onDoubleClick={(event) => {
-                                    event.preventDefault();
-                                    onDoubleClick(id);
-                                }}
-                                key={id}
-                                className={cx(
-                                    styles.tracklistEntry,
-                                    styles[index % 2 === 0 ? "odd" : "even"],
-                                    {
-                                        [styles.firstTrack]:
-                                            firstTrackIndexes.includes(index),
-                                    }
-                                )}
-                            >
-                                <span className={styles.position}>
-                                    {position}
-                                </span>
-                                <span className={styles.title}>{title}</span>
-                                <span className={styles.duration}>
-                                    {formatDuration(duration)}
-                                </span>
-                            </div>
+                    {[release, ...release.subReleases].map(
+                        ({ tracks, title, discTitle, id }) => (
+                            <Fragment key={id}>
+                                {release.subReleases.length ? (
+                                    <h2 className={styles.discTitle}>
+                                        {discTitle || title}
+                                    </h2>
+                                ) : null}
+                                {tracks.map((track, index) => (
+                                    <TrackEntry
+                                        key={track.id}
+                                        {...track}
+                                        isEven={index % 2 === 0}
+                                        onDoubleClick={onDoubleClick}
+                                    />
+                                ))}
+                            </Fragment>
                         )
                     )}
                 </div>
             </div>
         );
     }
+
+    const titlesInfo = getTitlesInfo(release);
 
     return (
         <List
@@ -85,45 +80,102 @@ export default function Tracklist({
             items={allTracks}
             className={cx(styles.tracklist, styles.isNavigable)}
             estimateSize={(_: number, index: number) => ({
-                height: firstTrackIndexes.includes(index) ? 64 : 40,
+                height:
+                    discsCount > 1 && titlesInfo.find((x) => x.index === index)
+                        ? 112
+                        : 40,
                 width: 200,
             })}
             paddingRight={0}
             gap={4}
             onLeft={() => setContext("sidebar")}
             render={({ item, index, selected, onClick }) => (
-                <div
+                <TrackEntry
+                    key={item.id}
+                    {...item}
                     onClick={onClick}
-                    onDoubleClick={() => onDoubleClick(item.id)}
-                    className={cx(
-                        styles.tracklistEntry,
-                        styles[index % 2 === 0 ? "odd" : "even"],
-                        {
-                            hasFocus: selected,
-                            [styles.firstTrack]:
-                                firstTrackIndexes.includes(index),
-                        }
-                    )}
-                >
-                    <span className={styles.position}>{item.position}</span>
-                    <span className={styles.title}>{item.title}</span>
-                    <span className={styles.duration}>
-                        {formatDuration(item.duration)}
-                    </span>
-                </div>
+                    onDoubleClick={onDoubleClick}
+                    isEven={index % 2 === 0}
+                    selected={selected}
+                    discTitle={
+                        titlesInfo.find((x) => x.index === index)?.discTitle
+                    }
+                />
             )}
         />
     );
 }
 
-function getFirstTrackIndexes(tracks: Track[]): number[] {
-    const indexes = [];
-    for (let i = 1; i < tracks.length; i++) {
-        if (tracks[i].position === 1) {
-            indexes.push(i);
+type TrackEntryProps = Track & {
+    discTitle?: string;
+    selected?: boolean;
+    isEven?: boolean;
+    onClick?: (event: MouseEvent) => void;
+    onDoubleClick: (id: number) => void;
+};
+
+function TrackEntry({
+    id,
+    position,
+    title,
+    duration,
+    discTitle,
+    selected,
+    isEven,
+    onClick,
+    onDoubleClick,
+}: TrackEntryProps) {
+    return (
+        <>
+            {discTitle ? (
+                <h2 className={styles.discTitle}>{discTitle}</h2>
+            ) : null}
+            <div
+                onClick={onClick}
+                onDoubleClick={(event) => {
+                    event.preventDefault();
+                    onDoubleClick(id);
+                }}
+                className={cx(
+                    styles.tracklistEntry,
+                    styles[isEven ? "odd" : "even"],
+                    {
+                        [styles.hasFocus]: selected,
+                    }
+                )}
+            >
+                <span className={styles.position}>{position}</span>
+                <span className={styles.title}>{title}</span>
+                <span className={styles.duration}>
+                    {formatDuration(duration)}
+                </span>
+            </div>
+        </>
+    );
+}
+
+function getTitlesInfo(
+    release: ReleaseWithArtistAndTracksAndSubreleases
+): { discTitle: string; index: number }[] {
+    const tracks = [
+        ...(release.tracks || []),
+        ...release.subReleases.flatMap((x) => x.tracks || []),
+    ];
+    const titlesById: Record<number, string> = [
+        release,
+        ...release.subReleases,
+    ].reduce((memo, { id, discTitle }) => ({ ...memo, [id]: discTitle }), {});
+
+    const info = [];
+    for (let i = 0; i < tracks.length; i++) {
+        if (tracks[i]?.releaseId !== tracks[i - 1]?.releaseId) {
+            info.push({
+                discTitle: titlesById[tracks[i]?.releaseId],
+                index: i,
+            });
         }
     }
-    return indexes;
+    return info;
 }
 
 function formatDuration(duration: number) {

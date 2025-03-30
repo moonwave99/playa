@@ -23,6 +23,9 @@ export async function getArtist(id: number): Promise<ArtistWithReleasesFull> {
               tracks: {
                 orderBy: { position: "asc" },
               }
+            },
+            orderBy: {
+              discNumber: 'asc'
             }
           },
           artist: true,

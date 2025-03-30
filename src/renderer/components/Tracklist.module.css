@@ -14,8 +14,20 @@
   gap: 4px;
 }
 
-.tracklist:not(.isNavigable) .firstTrack {
-  break-before: column;
+.isNavigable .discTitle {
+  margin-top: 2rem;
+}
+
+.discTitle {
+  font-size: .75rem;
+  line-height: 2.5rem;
+  color: var(--secondary-color);
+  padding-left: 1rem;
+  font-weight: 300;
+
+  &:not(:first-child) {
+    break-before: column;
+  }
 }
 
 .tracklist:not(.isNavigable) .tracklistEntry:not(:last-child) {
@@ -38,6 +50,14 @@
       color: var(--secondary-color);
     }
   }
+
+  &.hasFocus {
+    background-color: var(--accent-color);
+
+    &:hover {
+      opacity: .9;
+    }
+  }
 }
 
 .tracklistEntry:hover .selected,
@@ -47,10 +67,6 @@
 
 .even {
   background-color: var(--tracklist-entry-alternate-background-color);
-}
-
-.firstTrack {
-  margin-top: 1.5rem;
 }
 
 .position {
