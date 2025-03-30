@@ -53,6 +53,7 @@ declare global {
       ui: {
         inputFocus: () => void;
         inputBlur: () => void;
+        clearSelection: () => void;
       },
       state: {
         select: (selection: ReleaseWithArtistAndSubreleases[]) => void;

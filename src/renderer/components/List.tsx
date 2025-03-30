@@ -101,7 +101,10 @@ export default function List<T>({
         virtualizer.measure();
     }, [showSidebar]);
 
-    useClearSelection(() => setSelection([]));
+    useClearSelection(() => {
+        setCurrentIndex(selection[0]);
+        setSelection([]);
+    });
 
     useEffect(() => {
         if (firstRender.current) {

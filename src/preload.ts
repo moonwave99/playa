@@ -44,6 +44,7 @@ contextBridge.exposeInMainWorld('api', {
   ui: {
     inputFocus: () => ipc.send('ui', 'inputFocus'),
     inputBlur: () => ipc.send('ui', 'inputBlur'),
+    clearSelection: () => ipc.send('ui', 'clearSelection')
   },
   state: {
     select: (selection: ReleaseWithArtistAndSubreleases[]) => ipc.send('state:select', selection),

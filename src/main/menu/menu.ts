@@ -111,6 +111,10 @@ export function setupMenu(win: BrowserWindow) {
   }
 
   ipc.on('ui', (_, message) => {
+    if (message === 'clearSelection') {
+      send('clearSelection');
+      return;
+    }
     if (message !== 'inputBlur' && message !== 'inputFocus') {
       return;
     }

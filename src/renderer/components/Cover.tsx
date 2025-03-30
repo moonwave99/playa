@@ -10,6 +10,7 @@ type CoverProps = {
     hash: string;
     path?: string;
     className?: string;
+    droppable?: boolean;
     onContextMenu?: () => void;
     onDoubleClick?: () => void;
 };
@@ -34,6 +35,7 @@ export default function Cover({
     className,
     onContextMenu,
     onDoubleClick,
+    droppable = true,
 }: CoverProps) {
     const [key, setKey] = useState(0);
 
@@ -54,7 +56,7 @@ export default function Cover({
 
     return (
         <div
-            onDrop={onDrop}
+            onDrop={droppable ? onDrop : null}
             onDragOver={(event) => event.preventDefault()}
             className={cx(styles.coverWrapper, className)}
             title={`${title} [${id}]`}
