@@ -13,7 +13,7 @@
         "moduleResolution": "node",
         "resolveJsonModule": true,
         "jsx": "react-jsx",
-        "lib": ["ES2021", "DOM", "DOM.Iterable"],
+        "lib": ["ES2023", "DOM", "DOM.Iterable", "ESNext.Array"],
         "baseUrl": ".",
         "paths": {
             "@/*": ["./src/*"]

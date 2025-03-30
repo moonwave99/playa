@@ -1,5 +1,5 @@
 import type { Release, Collection, ReleaseWithArtistAndSubreleases, CollectionWithReleases, ArtistWithReleases } from "@/types/types";
-import { deleteRelease, groupReleases, unGroupReleases } from '../db/release';
+import { deleteRelease, unGroupRelease } from '../db/release';
 import { getAllCollections, createCollection, addReleasesToCollection, removeReleasesFromCollection } from "../db/collection";
 import { getCollectionLink } from '@/lib/links';
 import { playback, openTagger, refreshReleaseContents, revealEntityInFinder, importCovers } from '../system';
@@ -34,40 +34,23 @@ function getRemoveFromCollectionEntry(selection: Release[], collection: Collecti
   }
 }
 
-function getGroupReleasesEntry(selection: ReleaseWithArtistAndSubreleases[], target_id: number) {
+function getGroupReleasesEntry(selection: ReleaseWithArtistAndSubreleases[]) {
   if (selection.some(x => x.subReleases.length)) {
     return null;
   }
   return {
     label: `Group ${selection.length} Releases`,
-    click: async () => {
-      await groupReleases(
-        target_id,
-        selection
-          .filter(({ id }) => id !== target_id)
-          .map(({ id }) => id)
-      );
-      send('mutate', [
-        ['releases', 'latest'],
-        ['artists', selection.find(x => x.id === target_id).artist_id]
-      ]);
-      send('clearSelection');
-    }
+    click: () => send('openGroupDialog', selection)
   }
 }
 
-function getUnGroupReleasesEntry(release: ReleaseWithArtistAndSubreleases) {
-  return {
-    label: `Ungroup Releases`,
-    click: async () => {
-      await unGroupReleases(release);
-      send('mutate', [
-        ['releases', 'latest'],
-        ['artists', release.artist_id]
-      ]);
-      send('clearSelection');
-    }
-  }
+export async function ungroupReleaseHandler(release: ReleaseWithArtistAndSubreleases) {
+  await unGroupRelease(release);
+  send('mutate', [
+    ['releases', 'latest'],
+    ['artists', release.artist_id]
+  ]);
+  send('clearSelection');
 }
 
 export const releaseMenu = async (
@@ -118,7 +101,10 @@ export const releaseMenu = async (
           ]);
         }
       },
-      (release.subReleases.length ? getUnGroupReleasesEntry(release) : { type: 'separator' }),
+      (release.subReleases.length ? {
+        label: 'Ungroup Release',
+        click: () => ungroupReleaseHandler(release)
+      } : { type: 'separator' }),
       { type: 'separator' },
       {
         label: 'Add to New Collection',
@@ -151,7 +137,7 @@ export const releaseMenu = async (
   }
 
   buildMenu([
-    getGroupReleasesEntry(selection, target_id) || { type: 'separator' },
+    getGroupReleasesEntry(selection) || { type: 'separator' },
     {
       label: `Add ${selection.length} Release(s) to New Collection`,
       click: newCollectionHandler,

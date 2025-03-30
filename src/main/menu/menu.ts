@@ -19,7 +19,7 @@ import {
   searchArtistOnDiscogs,
   searchArtistOnRYM
 } from '@/lib/external_links';
-import { releaseMenu } from './release';
+import { releaseMenu, ungroupReleaseHandler } from './release';
 import { artistMenu } from './artist';
 import { collectionMenu } from './collection';
 import { searchResultMenu } from './searchResult';
@@ -67,29 +67,60 @@ export function send(channel: string, ...args: unknown[]) {
 export function setupMenu(win: BrowserWindow) {
   let selection = [] as ReleaseWithArtistAndSubreleases[];
   let artist = null as ArtistWithReleasesFull;
+  let inputFocused = false;
+
+  function refreshMenu() {
+    ['navigate', 'library', 'artist'].forEach(id => {
+      menu.items.find(x => x.id == id)
+        .submenu.items.forEach(x => x.enabled = !inputFocused);
+    });
+    menu.getMenuItemById('release').submenu.items.forEach(
+      item => {
+        if (inputFocused) {
+          item.enabled = false;
+          return;
+        }
+        item.enabled = selection.length === 1;
+      }
+    );
+
+    const groupReleasesEntry =
+      menu.getMenuItemById('release').submenu.items.find(x => x.id === 'groupReleases');
+    const ungroupReleasesEntry =
+      menu.getMenuItemById('release').submenu.items.find(x => x.id === 'ungroupRelease');
+    const isSomeReleaseMain = selection.some(x => x.subReleases.length);
+
+    if (isSomeReleaseMain) {
+      if (selection.length > 1) {
+        groupReleasesEntry.visible = true;
+        groupReleasesEntry.enabled = false;
+        ungroupReleasesEntry.visible = false;
+        ungroupReleasesEntry.enabled = false;
+      } else if (selection.length === 1) {
+        groupReleasesEntry.visible = false;
+        groupReleasesEntry.enabled = false;
+        ungroupReleasesEntry.visible = true;
+        ungroupReleasesEntry.enabled = true;
+      }
+      return;
+    }
+    ungroupReleasesEntry.visible = false;
+    ungroupReleasesEntry.enabled = false;
+    groupReleasesEntry.visible = true;
+    groupReleasesEntry.enabled = selection.length > 1;
+  }
 
   ipc.on('ui', (_, message) => {
     if (message !== 'inputBlur' && message !== 'inputFocus') {
       return;
     }
-    ['navigate', 'library', 'release', 'artist'].forEach(id => {
-      menu.items.find(x => x.id == id)
-        .submenu.items.forEach(x => x.enabled = message === 'inputBlur');
-    });
-  });
-
-  win.webContents.on('did-finish-load', () => {
-    ['navigate', 'library', 'release', 'artist'].forEach(id => {
-      menu.items.find(x => x.id == id)
-        .submenu.items.forEach(x => x.enabled = true)
-    });
+    inputFocused = message === 'inputFocus';
+    refreshMenu();
   });
 
   ipc.on('state:select', (_, newSelection) => {
     selection = newSelection;
-    menu.getMenuItemById('release').submenu.items.forEach(
-      item => item.enabled = selection.length === 1
-    );
+    refreshMenu();
   });
 
   ipc.on('state:navigate', async (_, path: string) => {
@@ -104,6 +135,8 @@ export function setupMenu(win: BrowserWindow) {
     }
     artist = await getArtist(+artistMatch.params.id);
   });
+
+  win.webContents.on('did-finish-load', refreshMenu);
 
   const menu = Menu.getApplicationMenu();
 
@@ -188,7 +221,19 @@ export function setupMenu(win: BrowserWindow) {
         accelerator: 'Shift+R',
         click: () => searchReleaseOnRYM(selection[0])
       },
-
+      {
+        id: 'groupReleases',
+        label: `Group Selected Releases`,
+        accelerator: 'Cmd+G',
+        click: () => send('openGroupDialog', selection),
+      },
+      {
+        id: 'ungroupRelease',
+        label: `Ungroup Selected Release`,
+        accelerator: 'Cmd+Shift+G',
+        visible: false,
+        click: () => ungroupReleaseHandler(selection[0])
+      }
     ]
   }));
 

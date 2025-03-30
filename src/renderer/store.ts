@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { ViewMode } from '@/types/types';
 
-export type ModalContents = { name: string; params?: Record<string, string | number> };
+export type ModalContents = { name: string; params?: Record<string, unknown> };
 
 type Store = {
   viewMode: ViewMode;

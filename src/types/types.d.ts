@@ -9,7 +9,16 @@ import type { ReleaseWithArtist, Artist, Collection, SearchResult, Sidebars, Rel
 
 declare module "*.module.css";
 
-const system = { revealEntityInFinder, openTagger, refreshReleaseContents, playback, openTagger, downloadCover, startDrag, importCovers };
+const system = {
+  revealEntityInFinder,
+  openTagger,
+  refreshReleaseContents,
+  playback,
+  openTagger,
+  downloadCover,
+  startDrag,
+  importCovers
+};
 
 const settings = { getSettings, setSettings };
 
@@ -40,6 +49,7 @@ declare global {
       onToggleSidebar: (handler: () => void) => () => void;
       onOpenSettings: (handler: () => void) => () => void;
       onCoverUpdate: (handler: (releases: Release[]) => void) => () => void;
+      onOpenGroupDialog: (handler: (releases: Release[]) => void) => () => void;
       ui: {
         inputFocus: () => void;
         inputBlur: () => void;

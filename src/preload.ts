@@ -40,6 +40,7 @@ contextBridge.exposeInMainWorld('api', {
   onToggleSidebar: getHandler('toggleSidebar'),
   onOpenSettings: getHandler('openSettings'),
   onCoverUpdate: getHandler('coverUpdate'),
+  onOpenGroupDialog: getHandler('openGroupDialog'),
   ui: {
     inputFocus: () => ipc.send('ui', 'inputFocus'),
     inputBlur: () => ipc.send('ui', 'inputBlur'),

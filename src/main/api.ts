@@ -13,7 +13,14 @@ function registerHandlers(entity: Record<string, (...args: unknown[]) => unknown
   }));
 }
 
-const system = { playback, openTagger, refreshReleaseContents, downloadCover, startDrag, importCovers };
+const system = {
+  playback,
+  openTagger,
+  refreshReleaseContents,
+  downloadCover,
+  startDrag,
+  importCovers
+};
 
 const menu = {
   'menu:release': releaseMenu,

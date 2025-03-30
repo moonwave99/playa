@@ -13,10 +13,9 @@ import Modal from "react-modal";
 import {
     useKeyManager,
     withMeta,
-    withPrevent,
     KeyManager,
 } from "./hooks/useKeyboardManager";
-import { useOnOpenSettings } from "./hooks/ipc";
+import { useOnOpenSettings, useOnOpenGroupDialog } from "./hooks/ipc";
 import useStore from "./store";
 import type { ModalContents } from "./store";
 import { refreshCovers } from "@/lib/utils";
@@ -30,10 +29,12 @@ import CollectionPage from "./pages/CollectionPage/CollectionPage";
 import Nav from "./components/Nav";
 import SidebarView from "./components/SidebarView";
 import SettingsView from "./components/SettingsView";
+import GroupReleasesView from "./components/GroupReleasesView";
 
 import { MdOutlineSearch } from "react-icons/md";
 import cx from "clsx";
 import styles from "./Layout.module.css";
+import { ReleaseWithArtist } from "@/types/types";
 
 const modalStyle = {
     overlay: {
@@ -43,7 +44,7 @@ const modalStyle = {
     },
     content: {
         background: "black",
-        width: "60vw",
+        width: "max(40vw, 600px)",
         height: "min-content",
         margin: "auto",
         borderColor: "var(--tertiary-color)",
@@ -122,6 +123,15 @@ export default function Layout() {
                         onCancel={() => setModalContents(null)}
                     />
                 )}
+                {modalContents?.name === "groupReleases" && (
+                    <GroupReleasesView
+                        releases={
+                            modalContents.params.releases as ReleaseWithArtist[]
+                        }
+                        onSave={() => setModalContents(null)}
+                        onCancel={() => setModalContents(null)}
+                    />
+                )}
             </Modal>
         </div>
     );
@@ -162,14 +172,29 @@ function init(): Init {
     }, [isSmallScreen]);
 
     useOnOpenSettings(() => setModalContents({ name: "settings" }));
+    useOnOpenGroupDialog((releases: ReleaseWithArtist[]) =>
+        setModalContents({ name: "groupReleases", params: { releases } })
+    );
 
     const isSingleReleasePage = !!matchPath("/releases/:id", pathname);
 
-    const { setContext } = useKeyManager({
+    const { setContext, currentContext } = useKeyManager({
         context: KeyManager.global,
         handlers: {
-            ArrowLeft: withMeta(withPrevent(() => navigate(-1))),
-            ArrowRight: withMeta(withPrevent(() => navigate(1))),
+            ArrowLeft: withMeta((event: KeyboardEvent) => {
+                if (currentContext === "modal") {
+                    return;
+                }
+                event.preventDefault();
+                navigate(-1);
+            }),
+            ArrowRight: withMeta((event: KeyboardEvent) => {
+                if (currentContext === "modal") {
+                    return;
+                }
+                event.preventDefault();
+                navigate(1);
+            }),
         },
     });
 

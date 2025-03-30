@@ -11,8 +11,10 @@ import type {
     Collection,
     HasTitle,
     WithSubReleases,
-    ReleaseWithArtistAndSubreleases
+    ReleaseWithArtistAndSubreleases,
 } from '@/types/types';
+
+import { parsePath } from "../system";
 
 import { sortByQueryPosition, getReleaseTitle } from '@/lib/utils'
 
@@ -31,7 +33,7 @@ export async function getRelease(id: number) {
                     }
                 },
                 orderBy: {
-                    disc: 'asc'
+                    discNumber: 'asc'
                 }
             },
             mainRelease: true,
@@ -99,46 +101,71 @@ export async function addTracksToRelease(id: number, trackInfo: TrackInfo[]) {
     return withEntityType(result, 'release');
 }
 
-export async function groupReleases(release_id: number, subReleases: number[]) {
-    await Promise.all(subReleases.map(id => prisma.release.update({
-        where: { id },
-        data: {
-            mainReleaseId: release_id
-        }
-    })));
-    const result = await prisma.release.update({
-        where: {
-            id: release_id
-        },
-        data: {
-            subReleases: {
-                connect: subReleases.map(x => ({ id: x }))
+type GroupReleaseParams = {
+    mainRelease: {
+        id: number;
+        title: string;
+    },
+    discInfo: { id: number, title: string; number: number }[];
+};
+
+export async function groupReleases({ mainRelease, discInfo }: GroupReleaseParams) {
+    await prisma.$transaction([
+        ...discInfo.slice(1).map(({ id, title, number }) => prisma.release.update({
+            where: { id },
+            data: {
+                title: mainRelease.title,
+                mainReleaseId: mainRelease.id,
+                discTitle: title,
+                discNumber: number
             }
-        }
-    })
-    return withEntityType(result, 'release');
+        })),
+        prisma.release.update({
+            where: {
+                id: mainRelease.id,
+            },
+            data: {
+                title: mainRelease.title,
+                discTitle: discInfo[0].title,
+                discNumber: 1,
+                subReleases: {
+                    connect: discInfo.slice(1).map(({ id }) => ({ id }))
+                }
+            }
+        })
+    ]);
 }
 
-export async function unGroupReleases(release: Release & WithSubReleases) {
+export async function unGroupRelease(release: Release & WithSubReleases) {
+    const info = parsePath(release.path);
     await prisma.$transaction([
         prisma.release.update({
             where: {
                 id: release.id
             },
             data: {
+                title: info.title,
+                discNumber: null,
+                discTitle: null,
                 subReleases: {
                     set: []
-                }
+                },
             }
         }),
-        ...release.subReleases.map(({ id }) => prisma.release.update({
-            where: {
-                id
-            },
-            data: {
-                mainReleaseId: null
-            }
-        }))
+        ...release.subReleases.map(({ id, path }) => {
+            const info = parsePath(path);
+            return prisma.release.update({
+                where: {
+                    id
+                },
+                data: {
+                    mainReleaseId: null,
+                    title: info.title,
+                    discNumber: null,
+                    discTitle: null
+                }
+            })
+        })
     ]);
 }
 

@@ -258,7 +258,7 @@ type ParsePath = {
   title: string;
 } | null;
 
-function parsePath(path: string): ParsePath {
+export function parsePath(path: string): ParsePath {
   if (path.endsWith("/")) {
     path = path.slice(0, -1);
   }
