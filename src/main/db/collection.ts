@@ -5,7 +5,7 @@ import type { CollectionCreate, CollectionUpdate, HasId, PaginationParams, Relea
 export async function getCollections({ take = 50 }: PaginationParams) {
   const results = await prisma.collection.findMany({
     take,
-    orderBy: { createdAt: "desc" },
+    orderBy: { updatedAt: "desc" },
     include: {
       releases: {
         include: {
