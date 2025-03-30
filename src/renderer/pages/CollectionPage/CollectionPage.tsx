@@ -8,6 +8,7 @@ import type {
 import { getReleaseContextMenuParams } from "@/lib/utils";
 import useCollection from "@/renderer/query/useCollection";
 import { useKeyManager } from "@/renderer/hooks/useKeyboardManager";
+import { useClearSelectionOnLeave } from "@/renderer/hooks/ipc";
 import ReleaseList from "@/renderer/components/ReleaseList";
 import Loading from "@/renderer/components/Loading";
 import styles from "../Page.module.css";
@@ -22,6 +23,8 @@ export default function CollectionPage() {
         updateTitle,
         deleteReleasesFromCollection,
     } = useCollection(+id);
+
+    useClearSelectionOnLeave();
 
     if (isPending) {
         return <Loading />;

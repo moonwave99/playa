@@ -37,3 +37,10 @@ export function useOnOpenGroupDialog(callback: (selection: ReleaseWithArtist[]) 
   }, []);
 }
 
+export function useClearSelectionOnLeave() {
+  useEffect(() => {
+    return () => {
+      window.api.state.select([])
+    };
+  }, []);
+}

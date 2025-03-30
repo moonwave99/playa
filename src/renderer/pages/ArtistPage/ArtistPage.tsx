@@ -1,6 +1,7 @@
 import { Navigate, useParams } from "react-router";
 import type { ReleaseWithArtist } from "@/types/types";
 import useArtist from "@/renderer/query/useArtist";
+import { useClearSelectionOnLeave } from "@/renderer/hooks/ipc";
 import { getReleaseContextMenuParams } from "@/lib/utils";
 import ReleaseList from "@/renderer/components/ReleaseList";
 import Loading from "@/renderer/components/Loading";
@@ -10,6 +11,8 @@ export default function ArtistPage() {
     const { id } = useParams();
 
     const { isPending, error, artist, deleteReleases } = useArtist(+id);
+
+    useClearSelectionOnLeave();
 
     if (isPending) {
         return <Loading />;

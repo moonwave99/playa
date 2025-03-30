@@ -1,7 +1,7 @@
 import { matchPath } from 'react-router';
 import { Menu, MenuItem, dialog, BrowserWindow, ipcMain as ipc } from 'electron';
 import type { MenuItemConstructorOptions } from 'electron';
-import type { ArtistWithReleasesFull, Entities, ReleaseWithArtistAndSubreleases } from '@/types/types';
+import type { ArtistWithReleases, ArtistWithReleasesFull, Entities, ReleaseWithArtistAndSubreleases } from '@/types/types';
 import type { QueryKey } from '@tanstack/react-query';
 import { getArtistLink, getRandomLink } from '@/lib/links';
 import { getStats } from '../db/stats';
@@ -70,10 +70,21 @@ export function setupMenu(win: BrowserWindow) {
   let inputFocused = false;
 
   function refreshMenu() {
-    ['navigate', 'library', 'artist'].forEach(id => {
+    ['navigate', 'library'].forEach(id => {
       menu.items.find(x => x.id == id)
         .submenu.items.forEach(x => x.enabled = !inputFocused);
     });
+
+    menu.getMenuItemById('artist').submenu.items.forEach(
+      item => {
+        if (inputFocused) {
+          item.enabled = false;
+          return;
+        }
+        item.enabled = !!artist;
+      }
+    );
+
     menu.getMenuItemById('release').submenu.items.forEach(
       item => {
         if (inputFocused) {
@@ -129,7 +140,6 @@ export function setupMenu(win: BrowserWindow) {
 
   ipc.on('state:navigate', async (_, path: string) => {
     const artistMatch = matchPath('/artists/:id', path);
-
     menu.getMenuItemById('artist').submenu.items.forEach(
       item => item.enabled = !!artistMatch
     );

@@ -8,6 +8,7 @@ import ReleaseView from "@/renderer/components/ReleaseView";
 import { releaseColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
 import { useKeyManager } from "@/renderer/hooks/useKeyboardManager";
 import useLatestReleases from "@/renderer/query/useLatestReleases";
+import { useClearSelectionOnLeave } from "@/renderer/hooks/ipc";
 import { getReleaseLink } from "@/lib/links";
 import { getReleaseContextMenuParams } from "@/lib/utils";
 import List from "@/renderer/components/List";
@@ -26,6 +27,8 @@ export default function LatestReleases() {
         hasNextPage,
         fetchNextPage,
     } = useLatestReleases();
+
+    useClearSelectionOnLeave();
 
     if (isPending) {
         return <Loading />;
