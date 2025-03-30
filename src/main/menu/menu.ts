@@ -88,7 +88,7 @@ export function setupMenu(win: BrowserWindow) {
       menu.getMenuItemById('release').submenu.items.find(x => x.id === 'groupReleases');
     const ungroupReleasesEntry =
       menu.getMenuItemById('release').submenu.items.find(x => x.id === 'ungroupRelease');
-    const isSomeReleaseMain = selection.some(x => x.subReleases.length);
+    const isSomeReleaseMain = selection.some(x => x?.subReleases.length);
 
     if (isSomeReleaseMain) {
       if (selection.length > 1) {
