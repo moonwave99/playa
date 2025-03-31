@@ -4,6 +4,7 @@ import useArtist from "@/renderer/query/useArtist";
 import { useClearSelectionOnLeave } from "@/renderer/hooks/ipc";
 import { getReleaseContextMenuParams } from "@/lib/utils";
 import ReleaseList from "@/renderer/components/ReleaseList";
+import ListCard from "@/renderer/components/ListCard";
 import Loading from "@/renderer/components/Loading";
 import styles from "../Page.module.css";
 
@@ -41,18 +42,17 @@ export default function ArtistPage() {
         deleteReleases(selection.map(({ id }) => id));
     }
 
-    const { name, releases } = artist;
-
     return (
         <div
             className={styles.page}
             onContextMenu={() => window.api.menu.artist(artist)}
         >
-            <h1 className={styles.header}>{name}</h1>
+            <ListCard item={artist} isSingle />
             <ReleaseList
-                releases={releases}
+                releases={artist.releases}
                 onContextMenu={onContextMenu}
                 onDelete={onDelete}
+                className={styles.hasHeaderWithCover}
             />
         </div>
     );

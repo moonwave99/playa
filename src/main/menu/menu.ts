@@ -45,11 +45,11 @@ export function getCoverReleaseEntry(release_id: number, context: CollectionWith
     click: async () => {
       if (context._type === 'artist') {
         await setArtistCoverRelease(context.id, release_id);
-        send('mutate', ['artists', 'latest']);
+        send('mutate', [['artists', 'latest'], ['artists', context.id]]);
         return;
       }
       await setCollectionCoverRelease(context.id, release_id);
-      send('mutate', ['collection', 'latest']);
+      send('mutate', [['collections', 'latest'], ['collections', context.id]]);
     }
   };
 }

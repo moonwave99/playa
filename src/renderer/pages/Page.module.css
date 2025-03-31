@@ -99,3 +99,8 @@
   overflow: auto;
   flex: 1;
 }
+
+.hasHeaderWithCover {
+  margin-top: 1rem;
+  max-height: calc(100vh - var(--release-tracklist-single-cover-size) - 1rem);
+}

@@ -64,3 +64,16 @@
 .title:hover {
   text-decoration: underline;
 }
+
+.selected {
+  background-color: var(--selected-no-focus-color);
+}
+
+.hasFocus {
+  background-color: var(--accent-color);
+
+  .title,
+  .info {
+    color: var(--primary-color);
+  }
+}

@@ -3,7 +3,7 @@
 }
 
 .isNavigable {
-  max-height: calc(100vh - 11rem);
+  max-height: calc(100vh - var(--release-tracklist-single-cover-size) - 1rem);
   overflow: auto;
   padding: 0 1rem;
 }

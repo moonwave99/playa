@@ -27,8 +27,8 @@ export default function ReleaseView({
     return (
         <article
             className={cx(styles.view, {
-                selected,
-                hasFocus: selected && hasFocus,
+                [styles.selected]: selected,
+                [styles.hasFocus]: selected && hasFocus,
             })}
             onClick={onClick}
             onContextMenu={withStopPropagation(onContextMenu)}

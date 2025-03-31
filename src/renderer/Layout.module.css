@@ -15,11 +15,11 @@
   background-color: var(--sidebar-background-color);
 }
 
-.isSingleReleasePage .toggleSidebarButton {
+.isDetailPage .toggleSidebarButton {
   left: calc(var(--release-tracklist-single-cover-size) + .5rem);
 }
 
-.showSidebar.isSingleReleasePage .toggleSidebarButton {
+.showSidebar.isDetailPage .toggleSidebarButton {
   left: calc(var(--release-tracklist-single-cover-size) + var(--sidebar-width) + .5rem);
 }
 

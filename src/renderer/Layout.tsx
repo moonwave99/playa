@@ -63,14 +63,14 @@ export default function Layout() {
         modalContents,
         setModalContents,
         setContext,
-        isSingleReleasePage,
+        isDetailPage,
     } = init();
 
     return (
         <div
             className={cx(styles.main, {
                 [styles.showSidebar]: showSidebar,
-                [styles.isSingleReleasePage]: isSingleReleasePage,
+                [styles.isDetailPage]: isDetailPage,
             })}
         >
             <button
@@ -147,7 +147,7 @@ type Init = {
     setModalContents: (modalContents: ModalContents) => void;
     setContext: (context: string) => void;
     toggleSidebar: () => void;
-    isSingleReleasePage: boolean;
+    isDetailPage: boolean;
 };
 
 function init(): Init {
@@ -182,7 +182,10 @@ function init(): Init {
         setModalContents({ name: "groupReleases", params: { releases } })
     );
 
-    const isSingleReleasePage = !!matchPath("/releases/:id", pathname);
+    const isDetailPage = !!(
+        matchPath("/releases/:id", pathname) ||
+        matchPath("/artists/:id", pathname)
+    );
 
     const { setContext, currentContext } = useKeyManager({
         context: KeyManager.global,
@@ -253,6 +256,6 @@ function init(): Init {
         modalContents,
         setModalContents,
         setContext,
-        isSingleReleasePage,
+        isDetailPage,
     };
 }

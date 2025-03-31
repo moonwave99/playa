@@ -21,12 +21,14 @@ type ReleaseListProps = {
         selection: ReleaseWithArtistAndTracksAndSubreleases[],
         target_id: number
     ) => void;
+    className?: string;
 };
 
 export default function ReleaseList({
     releases,
     onDelete,
     onContextMenu,
+    className,
 }: ReleaseListProps) {
     const navigate = useNavigate();
     const { viewMode } = useStore();
@@ -51,7 +53,7 @@ export default function ReleaseList({
         <List
             key={`${viewMode}-${getTotalTracks(releases)}`}
             items={releases}
-            className={cx(styles.list, styles[viewMode])}
+            className={cx(styles.list, styles[viewMode], className)}
             columnsConfig={
                 viewMode === "grid" ? releaseColumnsConfig : undefined
             }

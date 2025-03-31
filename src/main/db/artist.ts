@@ -13,6 +13,11 @@ export async function getArtist(id: number): Promise<ArtistWithReleasesFull> {
   const result = await prisma.artist.findFirst({
     where: { id },
     include: {
+      coverRelease: {
+        include: {
+          artist: true
+        }
+      },
       releases: {
         where: {
           mainRelease: null
