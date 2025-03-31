@@ -165,7 +165,9 @@ export default function List<T>({
                 setCurrentIndex((prev) => Math.min(items.length - 1, prev + 1));
             }),
             Enter: (event: KeyboardEvent) =>
-                onEnter && onEnter(items[currentIndex], event),
+                items[currentIndex] &&
+                onEnter &&
+                onEnter(items[currentIndex], event),
             Backspace: (event: KeyboardEvent) => {
                 if (!onBackspace || !selection.length) {
                     return;
