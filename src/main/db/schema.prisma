@@ -59,7 +59,7 @@ model Track {
   duration  Int
   releaseId Int
   position  Int
-  Release   Release  @relation(fields: [releaseId], references: [id], onDelete: Cascade)
+  release   Release  @relation(fields: [releaseId], references: [id], onDelete: Cascade)
 
   @@index([hash], type: Hash)
 }

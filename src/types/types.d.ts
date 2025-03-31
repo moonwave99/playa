@@ -5,7 +5,7 @@ import * as search from '@/main/db/search';
 import * as release from '@/main/db/release';
 import * as artist from '@/main/db/artist';
 import * as collection from '@/main/db/collection';
-import { playback, downloadCover, startDrag, importCovers } from '@/main/system';
+import { playback, downloadCover, startDrag, importCovers, renameRelease } from '@/main/system';
 import { getSettings, setSettings } from '@/main/settings';
 import type { ReleaseWithArtist, Artist, Collection, SearchResult, Sidebars, ReleaseWithArtistAndSubreleases } from './types';
 
@@ -19,7 +19,8 @@ const system = {
   openTagger,
   downloadCover,
   startDrag,
-  importCovers
+  importCovers,
+  renameRelease
 };
 
 const settings = { getSettings, setSettings };
@@ -52,6 +53,7 @@ declare global {
       onOpenSettings: (handler: () => void) => () => void;
       onCoverUpdate: (handler: (releases: Release[]) => void) => () => void;
       onOpenGroupDialog: (handler: (releases: Release[]) => void) => () => void;
+      onOpenRenameDialog: (handler: (release: ReleaseWithArtistAndSubreleases) => void) => () => void;
       ui: {
         inputFocus: () => void;
         inputBlur: () => void;

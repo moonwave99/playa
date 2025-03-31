@@ -15,7 +15,11 @@ import {
     withMeta,
     KeyManager,
 } from "./hooks/useKeyboardManager";
-import { useOnOpenSettings, useOnOpenGroupDialog } from "./hooks/ipc";
+import {
+    useOnOpenSettings,
+    useOnOpenGroupDialog,
+    useOnOpenRenameDialog,
+} from "./hooks/ipc";
 import useStore from "./store";
 import type { ModalContents } from "./store";
 import { refreshCovers } from "@/lib/utils";
@@ -30,12 +34,16 @@ import Nav from "./components/Nav";
 import SidebarView from "./components/SidebarView";
 import SettingsView from "./components/SettingsView";
 import GroupReleasesView from "./components/GroupReleasesView";
+import RenameReleaseView from "./components/RenameReleaseView";
 
 import { MdOutlineSearch } from "react-icons/md";
 import cx from "clsx";
 import styles from "./Layout.module.css";
 import buttonStyles from "./buttons.module.css";
-import { ReleaseWithArtist } from "@/types/types";
+import {
+    ReleaseWithArtist,
+    ReleaseWithArtistAndSubreleases,
+} from "@/types/types";
 
 const modalStyle = {
     overlay: {
@@ -135,6 +143,16 @@ export default function Layout() {
                         onCancel={() => setModalContents(null)}
                     />
                 )}
+                {modalContents?.name === "renameRelease" && (
+                    <RenameReleaseView
+                        release={
+                            modalContents.params
+                                .release as ReleaseWithArtistAndSubreleases
+                        }
+                        onSave={() => setModalContents(null)}
+                        onCancel={() => setModalContents(null)}
+                    />
+                )}
             </Modal>
         </div>
     );
@@ -180,6 +198,9 @@ function init(): Init {
     useOnOpenSettings(() => setModalContents({ name: "settings" }));
     useOnOpenGroupDialog((releases: ReleaseWithArtist[]) =>
         setModalContents({ name: "groupReleases", params: { releases } })
+    );
+    useOnOpenRenameDialog((release: ReleaseWithArtistAndSubreleases) =>
+        setModalContents({ name: "renameRelease", params: { release } })
     );
 
     const isDetailPage = !!(

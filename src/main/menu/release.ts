@@ -102,6 +102,11 @@ export const releaseMenu = async (
           ]);
         }
       },
+      {
+        id: 'renameRelease',
+        label: `Rename Release`,
+        click: () => send('openRenameDialog', release),
+      },
       getCoverReleaseEntry(release.id, context),
       (release.subReleases.length ? {
         label: 'Ungroup Release',

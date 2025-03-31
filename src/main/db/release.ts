@@ -1,5 +1,6 @@
 import prisma from "./prisma";
 import sha1 from "sha1";
+
 import { withEntityType } from "@/types/types";
 import type {
     HasId,
@@ -70,7 +71,7 @@ export async function addTracksToRelease(id: number, trackInfo: TrackInfo[]) {
     const tracks = await Promise.all(trackInfo.map(track => prisma.track.create({
         data: {
             ...track,
-            hash: sha1(track.path).slice(0, 16),
+            hash: sha1(`${id}-${track.path}`).slice(0, 16),
             releaseId: id
         }
     })));
@@ -186,4 +187,15 @@ export async function getLatestReleases(
         },
         results: withEntityType(results, 'release') as ReleaseWithArtistAndSubreleases[]
     };
+}
+
+export async function renameReleases(
+    infos: Pick<Release, 'id' | 'path' | 'hash' | 'discTitle'>[]
+) {
+    return prisma.$transaction(
+        infos.map(({ id, path, hash, discTitle }) => prisma.release.update({
+            where: { id },
+            data: { path, hash, discTitle }
+        }))
+    );
 }

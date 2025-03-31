@@ -95,7 +95,7 @@ out/
 settings.json
 
 # Personal scripts
-sync-covers.sh
+scripts/
 
 # db dumps
 dump/

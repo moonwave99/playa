@@ -257,6 +257,12 @@ export function setupMenu(win: BrowserWindow) {
         click: () => searchReleaseOnRYM(selection[0])
       },
       {
+        id: 'renameRelease',
+        label: `Rename Release`,
+        accelerator: 'Alt+Shift+R',
+        click: () => send('openRenameDialog', selection.at(0)),
+      },
+      {
         id: 'groupReleases',
         label: `Group Selected Releases`,
         accelerator: 'Cmd+G',

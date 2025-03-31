@@ -1,16 +1,16 @@
 import child_process from 'node:child_process';
 import type { IpcMainEvent } from 'electron';
 import path from "path";
-import { existsSync } from 'node:fs';
+import { existsSync, move } from 'fs-extra';
 import prisma from "./db/prisma";
 import globby from "globby";
 import sha1 from 'sha1';
 import * as mm from 'music-metadata';
-import { shell } from 'electron';
-import { addTracksToRelease } from "./db/release";
+import { dialog, shell } from 'electron';
+import { addTracksToRelease, renameReleases } from "./db/release";
 import { searchCover, getImageFromURL } from "./discogs";
 import { mapSeries } from '../lib/utils';
-import type { ReleaseType, ReleaseWithArtist, TrackInfo } from "@/types/types";
+import type { Release, ReleaseType, ReleaseWithArtist, TrackInfo } from "@/types/types";
 import { getSetting } from './settings';
 
 export async function importFolder(folder: string): Promise<ReleaseWithArtist[]> {
@@ -31,7 +31,7 @@ export async function importFolder(folder: string): Promise<ReleaseWithArtist[]>
   return releases;
 }
 
-export async function getFolderContents(release: { path: string }): Promise<TrackInfo[]> {
+export async function getFolderContents(release: Pick<Release, 'path'>): Promise<TrackInfo[]> {
   const contents = await crawlFolder(release.path);
   return Promise.all(contents.map(getMetadata));
 }
@@ -46,20 +46,21 @@ export async function playback({ release_id, track_id }: PlaybackParams) {
   if (track_id) {
     const track = await prisma.track.findFirst({
       where: { id: track_id },
+      include: { release: true }
     });
     if (!track) {
       return;
     }
-    await run('open', ['-a', PLAYER_PATH, getReleasePath(track.path)]);
+    await run('open', ['-a', PLAYER_PATH, getReleasePath(path.join(
+      track.release.path,
+      track.path
+    ))]);
     return true;
   }
 
   const release = await prisma.release.findFirst({
     where: { id: release_id },
-    include: {
-      artist: true,
-      tracks: { orderBy: { position: 'asc' } }
-    },
+    include: { artist: true },
   });
 
   if (!release) {
@@ -170,7 +171,7 @@ async function getMetadata(filePath: string, index: number): Promise<TrackInfo> 
   const LIBRARY_PATH = getSetting('LIBRARY_PATH') as string;
   const data = await mm.parseFile(path.join(LIBRARY_PATH, filePath));
   return {
-    path: filePath,
+    path: path.basename(filePath),
     title: data.common.title || path.basename(filePath),
     duration: data.format.duration || 0,
     position: data.common.track.no || index + 1
@@ -214,7 +215,7 @@ async function importSingleFolder(folder: string) {
 
   console.log('[importSingleFolder] upserted artist', artist);
 
-  const releaseHash = hashRelease(releaseData);
+  const releaseHash = hashRelease({ ...releaseData, artist_id: artist.id });
   const { artist: artistData, ...releaseWithoutArtist } = releaseData;
   const release = await prisma.release.upsert({
     where: {
@@ -282,6 +283,58 @@ export function parsePath(path: string): ParsePath {
   };
 }
 
+type RenameParam = (ReleaseWithArtist & { newPath: string; newDiscTitle: string; })[]
+
+export async function renameRelease(infos: RenameParam) {
+  const LIBRARY_PATH = getSetting('LIBRARY_PATH') as string;
+  const COVERS_PATH = getSetting('COVERS_PATH') as string;
+
+  for (const info of infos) {
+    if (existsSync(path.join(LIBRARY_PATH, info.newPath))) {
+      dialog.showMessageBoxSync(null, {
+        message: 'Error while renaming',
+        detail: `Path ${info.path} already exists`,
+        type: 'warning',
+        buttons: ['OK'],
+      });
+      return false;
+    }
+  }
+
+  try {
+    const newInfos = infos.map(x => ({
+      ...x,
+      hash: hashRelease(x),
+      path: x.newPath,
+      discTitle: x.newDiscTitle,
+    }));
+
+    Promise.all(infos.map(async (x, index) => {
+      await move(
+        path.join(LIBRARY_PATH, x.path),
+        path.join(LIBRARY_PATH, x.newPath),
+      );
+      await move(
+        path.join(COVERS_PATH, `${x.hash}-cover.jpg`),
+        path.join(COVERS_PATH, `${newInfos[index].hash}-cover.jpg`),
+      );
+    }));
+
+    await renameReleases(newInfos);
+    return true;
+  } catch (error) {
+    console.log('[renameRelease]', error);
+    console.log('[renameRelease]', infos);
+    dialog.showMessageBoxSync(null, {
+      message: 'Error while renaming',
+      detail: `See console logs`,
+      type: 'warning',
+      buttons: ['OK'],
+    });
+    return false;
+  }
+}
+
 type ParseTitle = {
   year: number;
   title: string;
@@ -305,8 +358,8 @@ function hashArtistName(name: string) {
   return sha1(name).slice(0, 16);
 }
 
-function hashRelease({ title, artist, year, type }: Pick<ReleaseWithArtist, "title" | 'year' | 'type'> & { artist: { name: string; } }) {
-  return sha1([title, artist.name, year, type].join("-")).slice(0, 16);
+function hashRelease({ title, artist_id, year, type, discNumber }: Pick<ReleaseWithArtist, 'title' | 'artist_id' | 'year' | 'type'> & { discNumber?: number }) {
+  return sha1([title, artist_id, year, type, discNumber || 1].join("-")).slice(0, 16);
 }
 
 type RunResponse = {
