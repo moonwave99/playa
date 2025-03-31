@@ -27,22 +27,6 @@
   position: fixed;
   top: .75rem;
   left: 5rem;
-  width: 2rem;
-  height: 2rem;
-  font-size: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  appearance: none;
-  border: none;
-  padding: 0;
-  color: var(--primary-color);
-  background-color: transparent;
-  border-radius: .15rem;
-
-  &:hover {
-    background-color: var(--tertiary-color);
-  }
 
   &.showSidebar {
     left: calc(var(--sidebar-width) + .5rem);

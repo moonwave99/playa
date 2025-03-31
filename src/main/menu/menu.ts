@@ -1,7 +1,7 @@
 import { matchPath } from 'react-router';
 import { Menu, MenuItem, dialog, BrowserWindow, ipcMain as ipc } from 'electron';
 import type { MenuItemConstructorOptions } from 'electron';
-import type { ArtistWithReleases, ArtistWithReleasesFull, Entities, ReleaseWithArtistAndSubreleases } from '@/types/types';
+import type { ArtistWithReleasesFull, Entities, ReleaseWithArtistAndSubreleases } from '@/types/types';
 import type { QueryKey } from '@tanstack/react-query';
 import { getArtistLink, getRandomLink } from '@/lib/links';
 import { getStats } from '../db/stats';

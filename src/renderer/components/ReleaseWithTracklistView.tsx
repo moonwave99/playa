@@ -3,6 +3,7 @@ import { ReleaseWithArtistAndTracksAndSubreleases } from "@/types/types";
 import Tracklist from "./Tracklist";
 import ListCard from "./ListCard";
 import { withStopPropagation } from "@/lib/utils";
+import useStore from "../store";
 import styles from "./ReleaseWithTracklistView.module.css";
 
 type ReleaseWithTracklistViewProps = {
@@ -26,6 +27,7 @@ export default function ReleaseWithTracklistView({
     onClick,
 }: ReleaseWithTracklistViewProps) {
     const { id } = release;
+    const { setUseDarkText } = useStore();
     return (
         <article
             className={styles.releaseView}
@@ -40,6 +42,7 @@ export default function ReleaseWithTracklistView({
                 selected={selected}
                 hasFocus={hasFocus}
                 isSingle={!inList}
+                onColorChange={setUseDarkText}
             />
             <Tracklist
                 release={release}

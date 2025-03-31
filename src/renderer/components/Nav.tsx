@@ -6,6 +6,7 @@ import cx from "clsx";
 import useStore from "../store";
 import { IoMenu } from "react-icons/io5";
 import styles from "./Nav.module.css";
+import buttonStyles from "../buttons.module.css";
 
 const navMap = [
     {
@@ -25,7 +26,7 @@ const navMap = [
 export default function Nav() {
     const [isNavOpen, setNavOpen] = useState(false);
     const ref = useClickOutside(() => setNavOpen(false));
-    const { setModalContents } = useStore();
+    const { setModalContents, useDarkText } = useStore();
 
     return (
         <nav
@@ -33,7 +34,9 @@ export default function Nav() {
             ref={ref}
         >
             <button
-                className={styles.button}
+                className={cx(buttonStyles.button, styles.button, {
+                    [buttonStyles.useDarkText]: useDarkText,
+                })}
                 onClick={() => setNavOpen((prev) => !prev)}
                 aria-label="Toggle Navigation"
             >

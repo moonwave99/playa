@@ -34,6 +34,7 @@ import GroupReleasesView from "./components/GroupReleasesView";
 import { MdOutlineSearch } from "react-icons/md";
 import cx from "clsx";
 import styles from "./Layout.module.css";
+import buttonStyles from "./buttons.module.css";
 import { ReleaseWithArtist } from "@/types/types";
 
 const modalStyle = {
@@ -57,6 +58,7 @@ Modal.setAppElement("#root");
 export default function Layout() {
     const {
         showSidebar,
+        useDarkText,
         toggleSidebar,
         modalContents,
         setModalContents,
@@ -74,8 +76,9 @@ export default function Layout() {
             <button
                 aria-label="Toggle Sidebar"
                 onClick={() => toggleSidebar()}
-                className={cx(styles.toggleSidebarButton, {
+                className={cx(buttonStyles.button, styles.toggleSidebarButton, {
                     [styles.showSidebar]: showSidebar,
+                    [buttonStyles.useDarkText]: useDarkText,
                 })}
             >
                 <MdOutlineSearch />
@@ -139,6 +142,7 @@ export default function Layout() {
 
 type Init = {
     showSidebar: boolean;
+    useDarkText: boolean;
     modalContents: ModalContents;
     setModalContents: (modalContents: ModalContents) => void;
     setContext: (context: string) => void;
@@ -159,6 +163,7 @@ function init(): Init {
         modalContents,
         setModalContents,
         toggleSidebar,
+        useDarkText,
     } = useStore();
 
     const isSmallScreen = useMediaQuery({
@@ -239,6 +244,7 @@ function init(): Init {
 
     return {
         showSidebar,
+        useDarkText,
         toggleSidebar,
         modalContents,
         setModalContents,

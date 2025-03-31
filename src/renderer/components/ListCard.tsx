@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import type { MouseEvent } from "react";
 import cx from "clsx";
 import Cover from "./Cover";
@@ -30,6 +31,7 @@ type ListCardProps = {
     onClick?: (event: MouseEvent) => void;
     onDoubleClick?: () => void;
     onContextMenu?: () => void;
+    onColorChange?: (useDarkText: boolean) => void;
 };
 
 function getCoverRelease(item: Item) {
@@ -43,11 +45,19 @@ export default function ListCard({
     isSingle,
     onClick,
     onContextMenu,
+    onColorChange,
 }: ListCardProps) {
     const coverRelease = getCoverRelease(item);
     const { color, useDarkText } = useDominantColor(
         getCover(coverRelease.hash)
     );
+
+    useEffect(() => {
+        onColorChange && onColorChange(useDarkText);
+        return () => {
+            onColorChange && onColorChange(false);
+        };
+    }, [useDarkText]);
 
     function getContent() {
         if (item._type === "release") {
