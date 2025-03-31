@@ -93,7 +93,7 @@ export async function search(query: string, take = 20): Promise<SearchResult[]> 
       },
       coverRelease: coverRelease || releases[0]
     })).toSorted((a: HasTitle, b: HasTitle) => sortByQueryPosition(query, 'title', a, b)),
-    ...artists.map(({ id, name, coverRelease }: ArtistWithReleases) => ({
+    ...artists.map(({ id, name, coverRelease, releases }: ArtistWithReleases) => ({
       id,
       title: name,
       description: 'Artist',

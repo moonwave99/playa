@@ -37,7 +37,7 @@ export function buildMenu(params: (MenuItemConstructorOptions | MenuItem)[]) {
 }
 
 export function getCoverReleaseEntry(release_id: number, context: CollectionWithReleases | ArtistWithReleases): MenuItemConstructorOptions {
-  if (context.releases.length <= 1) {
+  if (!context?._type || context?.releases.length <= 1) {
     return { type: 'separator' };
   }
   return {
