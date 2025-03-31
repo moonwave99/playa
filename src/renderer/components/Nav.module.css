@@ -29,6 +29,12 @@
   align-items: center;
   padding: 0 1rem;
   font-size: 0.8rem;
+
+  &.hasFocus {
+    background-color: var(--accent-color);
+    outline-color: var(--accent-color);
+    border: none
+  }
 }
 
 .link:hover {
@@ -41,6 +47,10 @@
   appearance: none;
   border: none;
   width: 100%;
+
+  &:focus {
+    outline-color: var(--accent-color);
+  }
 }
 
 .link:is(button):hover {
