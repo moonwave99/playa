@@ -17,13 +17,24 @@ const columnsConfig = [
 export default function LatestCollections() {
     const navigate = useNavigate();
     const { setContext } = useKeyManager({});
-    const { isPending, error, collections } = useCollections();
+    const { isPending, error, collections, deleteCollections } =
+        useCollections();
 
     if (isPending) {
         return <Loading />;
     }
 
     if (error) return "An error has occurred: " + error.message;
+
+    function onDelete(
+        selection: CollectionWithReleases[],
+        event: KeyboardEvent
+    ) {
+        if (!event.metaKey) {
+            return;
+        }
+        deleteCollections(selection.map(({ id }) => id));
+    }
 
     return (
         <div className={styles.page}>
@@ -36,9 +47,14 @@ export default function LatestCollections() {
                 onEnter={(collection: CollectionWithReleases) =>
                     navigate(getCollectionLink(collection))
                 }
+                onBackspace={onDelete}
                 onLeft={() => setContext("sidebar")}
                 render={({ item, ...rest }) => (
-                    <ListCard item={item} {...rest} />
+                    <ListCard
+                        item={item}
+                        onContextMenu={() => window.api.menu.collection(item)}
+                        {...rest}
+                    />
                 )}
             />
         </div>

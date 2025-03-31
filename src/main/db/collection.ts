@@ -124,6 +124,10 @@ export async function removeReleasesFromCollection(id: number, releases: Release
   return withEntityType(result, 'collection');
 }
 
+export async function deleteCollections(ids: number[]) {
+  return Promise.all(ids.map(deleteCollection));
+}
+
 export async function deleteCollection(id: number) {
   const result = await prisma.collection.delete({
     where: { id }
