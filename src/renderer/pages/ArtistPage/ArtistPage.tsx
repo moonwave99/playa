@@ -3,6 +3,7 @@ import type { ReleaseWithArtist } from "@/types/types";
 import useArtist from "@/renderer/query/useArtist";
 import { useClearSelectionOnLeave } from "@/renderer/hooks/ipc";
 import { getReleaseContextMenuParams } from "@/lib/utils";
+import useStore from "@/renderer/store";
 import ReleaseList from "@/renderer/components/ReleaseList";
 import ListCard from "@/renderer/components/ListCard";
 import Loading from "@/renderer/components/Loading";
@@ -10,6 +11,7 @@ import styles from "../Page.module.css";
 
 export default function ArtistPage() {
     const { id } = useParams();
+    const { setUseDarkText } = useStore();
 
     const { isPending, error, artist, deleteReleases } = useArtist(+id);
 
@@ -47,7 +49,7 @@ export default function ArtistPage() {
             className={styles.page}
             onContextMenu={() => window.api.menu.artist(artist)}
         >
-            <ListCard item={artist} isSingle />
+            <ListCard item={artist} isSingle onColorChange={setUseDarkText} />
             <ReleaseList
                 releases={artist.releases}
                 onContextMenu={onContextMenu}
