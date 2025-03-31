@@ -159,7 +159,7 @@ export function startDrag(folderPath: string, event?: IpcMainEvent) {
 
 async function crawlFolder(folder: string) {
   const LIBRARY_PATH = getSetting('LIBRARY_PATH') as string;
-  const files = await globby("*.{mp3,m4a,flac,wav,ogg}", {
+  const files = await globby("*.{mp3,m4a,flac,wav,ogg,ape}", {
     cwd: path.join(LIBRARY_PATH, folder),
     caseSensitiveMatch: false
   });
