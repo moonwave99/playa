@@ -21,6 +21,7 @@ import { CSS } from "@dnd-kit/utilities";
 import type { ReleaseWithArtist } from "@/types/types";
 import Cover from "./Cover";
 
+import { PiDotsThreeVerticalBold } from "react-icons/pi";
 import { MdInfoOutline } from "react-icons/md";
 import cx from "clsx";
 import styles from "./GroupReleasesView.module.css";
@@ -86,6 +87,16 @@ export default function GroupReleasesView({
         }
     }
 
+    function fillInfo() {
+        setDiscInfo((prev) =>
+            prev.map((x, index) => ({
+                ...x,
+                discNumber: index + 1,
+                discTitle: `Disc ${index + 1}`,
+            }))
+        );
+    }
+
     return (
         <DndContext
             sensors={sensors}
@@ -108,7 +119,15 @@ export default function GroupReleasesView({
                                 placeholder="Enter disc title"
                                 defaultValue={discInfo[0].title}
                             />
+                            <button
+                                type="button"
+                                className={formStyles.button}
+                                onClick={fillInfo}
+                            >
+                                Fill Progressively
+                            </button>
                         </label>
+
                         <ul className={styles.releaseList}>
                             {discInfo.map((release, index) => (
                                 <li key={release.id}>
@@ -171,7 +190,8 @@ function DiscView({ release, onInput }: DiscViewProps) {
 
     return (
         <article className={styles.release} ref={setNodeRef} style={style}>
-            <div {...attributes} {...listeners}>
+            <div className={styles.dragHandle} {...attributes} {...listeners}>
+                <PiDotsThreeVerticalBold />
                 <Cover
                     className={styles.cover}
                     droppable={false}
