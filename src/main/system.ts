@@ -290,11 +290,20 @@ export async function renameRelease(infos: RenameParam) {
   const COVERS_PATH = getSetting('COVERS_PATH') as string;
 
   for (const info of infos) {
+    if (info.newPath.includes('../')) {
+      dialog.showMessageBoxSync(null, {
+        message: 'Error while renaming',
+        detail: "Path cannot contain any '../' sequence",
+        type: 'error',
+        buttons: ['OK'],
+      });
+      return false;
+    }
     if (existsSync(path.join(LIBRARY_PATH, info.newPath))) {
       dialog.showMessageBoxSync(null, {
         message: 'Error while renaming',
-        detail: `Path ${info.path} already exists`,
-        type: 'warning',
+        detail: `Path ${info.newPath} already exists`,
+        type: 'error',
         buttons: ['OK'],
       });
       return false;
