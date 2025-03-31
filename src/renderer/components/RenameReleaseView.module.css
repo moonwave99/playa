@@ -3,6 +3,11 @@
   flex-direction: column;
   gap: 2rem;
   background-color: black;
+
+  h2,
+  h3 {
+    user-select: none;
+  }
 }
 
 .releaseList {

@@ -3,6 +3,10 @@
   flex-direction: column;
   gap: 2rem;
   background-color: black;
+
+  h2 {
+    user-select: none;
+  }
 }
 
 .view>* {

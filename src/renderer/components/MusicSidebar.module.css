@@ -63,6 +63,7 @@
   text-transform: capitalize;
   font-size: .75rem;
   font-weight: 300;
+  user-select: none;
 }
 
 .noResults {
@@ -87,6 +88,7 @@
   color: var(--sidebar-secondary-color);
   border-radius: .25rem;
   background-color: var(--background-color);
+  user-select: none;
 }
 
 .coverWrapper,

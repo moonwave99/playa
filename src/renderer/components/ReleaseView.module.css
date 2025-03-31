@@ -58,6 +58,7 @@
   justify-content: space-between;
   width: 100%;
   overflow: hidden;
+  user-select: none;
 }
 
 .artist:hover,

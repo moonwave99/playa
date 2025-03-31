@@ -74,6 +74,7 @@
   display: flex;
   justify-content: center;
   width: 2ch;
+  user-select: none;
 }
 
 .title {
@@ -86,4 +87,5 @@
   margin-left: auto;
   color: var(--secondary-color);
   font-size: .75rem;
+  user-select: none;
 }
