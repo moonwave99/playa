@@ -1,6 +1,6 @@
 import { getReleaseTitle, sortByQueryPosition } from "@/lib/utils";
 import prisma from "./prisma";
-import type { SearchResult, Collection, HasTitle, Artist, ReleaseWithArtistAndSubreleases } from '@/types/types';
+import type { SearchResult, HasTitle, ReleaseWithArtistAndSubreleases, CollectionWithReleases, ArtistWithReleases } from '@/types/types';
 
 export async function search(query: string, take = 20): Promise<SearchResult[]> {
   const releases = await prisma.release.findMany({
@@ -83,7 +83,7 @@ export async function search(query: string, take = 20): Promise<SearchResult[]> 
   });
 
   return [
-    ...collections.map(({ id, title, coverRelease }: Collection) => ({
+    ...collections.map(({ id, title, coverRelease, releases }: CollectionWithReleases) => ({
       id,
       title,
       description: "Collection",
@@ -91,9 +91,9 @@ export async function search(query: string, take = 20): Promise<SearchResult[]> 
       links: {
         collection: `/collections/${id}`
       },
-      coverRelease
+      coverRelease: coverRelease || releases[0]
     })).toSorted((a: HasTitle, b: HasTitle) => sortByQueryPosition(query, 'title', a, b)),
-    ...artists.map(({ id, name, coverRelease }: Artist) => ({
+    ...artists.map(({ id, name, coverRelease }: ArtistWithReleases) => ({
       id,
       title: name,
       description: 'Artist',
@@ -101,7 +101,7 @@ export async function search(query: string, take = 20): Promise<SearchResult[]> 
       links: {
         artist: `/artists/${id}`
       },
-      coverRelease
+      coverRelease: coverRelease || releases[0]
     })).toSorted((a: HasTitle, b: HasTitle) => sortByQueryPosition(query, 'title', a, b)),
     ...releases.map(({ id, title, artist, year, type, hash, subReleases }: ReleaseWithArtistAndSubreleases) => ({
       id,

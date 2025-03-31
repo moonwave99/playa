@@ -36,7 +36,10 @@ export function buildMenu(params: (MenuItemConstructorOptions | MenuItem)[]) {
   return true;
 }
 
-export function getCoverReleaseEntry(release_id: number, context: CollectionWithReleases | ArtistWithReleases) {
+export function getCoverReleaseEntry(release_id: number, context: CollectionWithReleases | ArtistWithReleases): MenuItemConstructorOptions {
+  if (context.releases.length <= 1) {
+    return { type: 'separator' };
+  }
   return {
     label: `Set as ${capitalize(context._type)} Cover`,
     click: async () => {
@@ -48,7 +51,7 @@ export function getCoverReleaseEntry(release_id: number, context: CollectionWith
       await setCollectionCoverRelease(context.id, release_id);
       send('mutate', ['collection', 'latest']);
     }
-  }
+  };
 }
 
 type GetDeleteEntryParams = {
