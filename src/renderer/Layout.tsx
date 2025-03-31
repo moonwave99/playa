@@ -164,6 +164,7 @@ function init(): Init {
         setModalContents,
         toggleSidebar,
         useDarkText,
+        setSettings,
     } = useStore();
 
     const isSmallScreen = useMediaQuery({
@@ -237,6 +238,9 @@ function init(): Init {
             window.api.onCoverUpdate(refreshCovers),
             window.api.onToggleSidebar(() => toggleSidebar()),
         ];
+
+        window.api.settings.getSettings().then(setSettings);
+
         return () => {
             removeHandlers.forEach((removeHandler) => removeHandler());
         };

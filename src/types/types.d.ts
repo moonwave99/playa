@@ -1,3 +1,4 @@
+import type { OpenDialogSyncOptions } from 'electron';
 import type { QueryKey } from '@tanstack/react-query';
 import { PrismaClient } from '@prisma/client';
 import * as search from '@/main/db/search';
@@ -60,6 +61,9 @@ declare global {
         select: (selection: ReleaseWithArtistAndSubreleases[]) => void;
         navigate: (path: string) => void;
       },
+      dialog: {
+        open: (options: Partial<OpenDialogSyncOptions>) => Promise<string>;
+      }
     }
   }
 }

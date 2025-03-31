@@ -21,6 +21,7 @@ import { CSS } from "@dnd-kit/utilities";
 import type { ReleaseWithArtist } from "@/types/types";
 import Cover from "./Cover";
 
+import { MdInfoOutline } from "react-icons/md";
 import cx from "clsx";
 import styles from "./GroupReleasesView.module.css";
 import formStyles from "../forms.module.css";
@@ -132,6 +133,7 @@ export default function GroupReleasesView({
                             ))}
                         </ul>
                         <div className={formStyles.info}>
+                            <MdInfoOutline />
                             You can rearrange the order of discs.
                         </div>
                         <div className={formStyles.actions}>
@@ -173,6 +175,7 @@ function DiscView({ release, onInput }: DiscViewProps) {
                 <Cover
                     className={styles.cover}
                     droppable={false}
+                    dragOutside={false}
                     {...release}
                 />
             </div>

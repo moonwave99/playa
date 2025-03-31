@@ -11,6 +11,7 @@ type CoverProps = {
     path?: string;
     className?: string;
     droppable?: boolean;
+    dragOutside?: boolean;
     onContextMenu?: () => void;
     onDoubleClick?: () => void;
 };
@@ -36,6 +37,7 @@ export default function Cover({
     onContextMenu,
     onDoubleClick,
     droppable = true,
+    dragOutside = false,
 }: CoverProps) {
     const [key, setKey] = useState(0);
 
@@ -75,13 +77,17 @@ export default function Cover({
                 onLoad={(event) =>
                     (event.target as HTMLElement).classList.add(styles.loaded)
                 }
-                onDragStart={(event: DragEvent) => {
-                    event.preventDefault();
-                    if (!path) {
-                        return;
-                    }
-                    window.api.system.startDrag(path);
-                }}
+                onDragStart={
+                    dragOutside
+                        ? (event: DragEvent) => {
+                              event.preventDefault();
+                              if (!path) {
+                                  return;
+                              }
+                              window.api.system.startDrag(path);
+                          }
+                        : null
+                }
             />
         </div>
     );

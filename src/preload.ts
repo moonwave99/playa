@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer as ipc } from "electron";
-import type { IpcRendererEvent } from "electron";
+import type { IpcRendererEvent, OpenDialogSyncOptions } from "electron";
 import * as search from "./main/db/search";
 import * as release from "./main/db/release";
 import * as artist from "./main/db/artist";
@@ -52,6 +52,11 @@ contextBridge.exposeInMainWorld('api', {
     select: (selection: ReleaseWithArtistAndSubreleases[]) => ipc.send('state:select', selection),
     navigate: (path: string) => ipc.send('state:navigate', path),
   },
+  dialog: {
+    open: async (
+      options: Partial<OpenDialogSyncOptions>
+    ) => ipc.invoke('dialog:open', options),
+  }
 });
 
 function getHandlers(entity: Record<string, (...args: unknown[]) => unknown>) {

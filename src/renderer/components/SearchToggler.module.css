@@ -24,7 +24,7 @@
   align-items: center;
   justify-content: center;
   color: var(--secondary-color);
-  border-radius: 9999px;
+  border-radius: .25rem;
   appearance: none;
   border: none;
   background-color: transparent;

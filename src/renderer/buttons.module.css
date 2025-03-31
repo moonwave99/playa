@@ -17,6 +17,10 @@
     background-color: var(--tertiary-color);
   }
 
+  &:focus {
+    outline-color: var(--accent-color);
+  }
+
   &.useDarkText {
     color: black;
 

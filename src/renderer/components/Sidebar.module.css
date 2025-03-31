@@ -36,6 +36,7 @@
 
 .listItem {
   font-size: .8rem;
+  font-weight: 300;
   height: 2rem;
   display: flex;
   align-items: center;
@@ -66,7 +67,7 @@
   padding: 0 .5rem;
   margin: .5rem;
   color: var(--sidebar-secondary-color);
-  border-radius: 9999px;
+  border-radius: .25rem;
   background-color: var(--background-color);
 }
 

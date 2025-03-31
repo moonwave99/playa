@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import type { ViewMode } from '@/types/types';
+import type { ViewMode, Settings } from '@/types/types';
 
 export type ModalContents = { name: string; params?: Record<string, unknown> };
 
@@ -10,6 +10,8 @@ type Store = {
   useDarkText: boolean;
   path: string;
   modalContents: ModalContents | null;
+  settings: Settings,
+  setSettings: (settings: Settings) => void;
   toggleViewMode: () => void;
   toggleSidebar: (showSidebar?: boolean) => void;
   setUseDarkText: (useDarkText: boolean) => void;
@@ -25,6 +27,8 @@ const useStore = create<Store>()(
       showSidebar: false,
       useDarkText: false,
       modalContents: null as ModalContents,
+      settings: null as Settings,
+      setSettings: (settings) => set(({ settings })),
       toggleSidebar: (showSidebar?: boolean) => set(
         (prev) => ({ showSidebar: showSidebar === undefined ? !prev.showSidebar : showSidebar })
       ),

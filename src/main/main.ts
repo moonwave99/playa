@@ -1,4 +1,5 @@
-import { app, BrowserWindow, shell, screen, protocol, net } from 'electron';
+import { app, BrowserWindow, shell, screen, protocol, net, dialog, ipcMain as ipc } from 'electron';
+import type { IpcMainEvent, OpenDialogSyncOptions } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
 import registerApi from './api';
@@ -41,6 +42,14 @@ const createWindow = async () => {
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url);
     return { action: 'deny' };
+  });
+
+  ipc.handle('dialog:open', (
+    _: IpcMainEvent,
+    options: Partial<OpenDialogSyncOptions>
+  ) => {
+    const path = dialog.showOpenDialogSync(mainWindow, options);
+    return path?.at(0);
   });
 
   await initSettings();
