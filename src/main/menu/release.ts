@@ -1,9 +1,10 @@
 import type { Release, Collection, ReleaseWithArtistAndSubreleases, CollectionWithReleases, ArtistWithReleases } from "@/types/types";
 import { deleteRelease, unGroupRelease } from '../db/release';
+
 import { getAllCollections, createCollection, addReleasesToCollection, removeReleasesFromCollection } from "../db/collection";
 import { getCollectionLink } from '@/lib/links';
 import { playback, openTagger, refreshReleaseContents, revealEntityInFinder, importCovers } from '../system';
-import { buildMenu, getDeleteEntry, send } from './menu';
+import { buildMenu, getDeleteEntry, getCoverReleaseEntry, send } from './menu';
 import { getReleaseTitle } from '@/lib/utils';
 import { searchReleaseOnDiscogs, searchReleaseOnRYM } from '@/lib/external_links';
 
@@ -97,10 +98,11 @@ export const releaseMenu = async (
           await refreshReleaseContents(release.id);
           send('mutate', [
             ['releases', release.id],
-            [(context as CollectionWithReleases)?.title ? 'collections' : 'artists', context?.id]
+            [context?._type === 'collection' ? 'collections' : 'artists', context?.id]
           ]);
         }
       },
+      getCoverReleaseEntry(release.id, context),
       (release.subReleases.length ? {
         label: 'Ungroup Release',
         click: () => ungroupReleaseHandler(release)
@@ -111,7 +113,7 @@ export const releaseMenu = async (
         click: newCollectionHandler
       },
       getAddToCollectionEntry(selection, collections),
-      (context as CollectionWithReleases)?.title
+      context?._type === 'collection'
         ? getRemoveFromCollectionEntry(selection, context as CollectionWithReleases)
         : { type: 'separator' },
       { type: 'separator' },
@@ -130,7 +132,7 @@ export const releaseMenu = async (
         queryKeys: [
           ['releases', 'latest'],
           ['releases', release.id],
-          [(context as CollectionWithReleases)?.title ? 'collections' : 'artists', context?.id]]
+          [context?._type === 'collection' ? 'collections' : 'artists', context?.id]]
       }),
     ]);
     return true;
@@ -143,7 +145,7 @@ export const releaseMenu = async (
       click: newCollectionHandler,
     },
     getAddToCollectionEntry(selection, collections),
-    (context as CollectionWithReleases)?.title
+    context?._type === 'collection'
       ? getRemoveFromCollectionEntry(selection, context as CollectionWithReleases)
       : { type: 'separator' },
     getDeleteEntry({

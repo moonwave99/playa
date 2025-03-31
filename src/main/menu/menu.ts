@@ -1,9 +1,11 @@
 import { matchPath } from 'react-router';
 import { Menu, MenuItem, dialog, BrowserWindow, ipcMain as ipc } from 'electron';
 import type { MenuItemConstructorOptions } from 'electron';
-import type { ArtistWithReleasesFull, Entities, ReleaseWithArtistAndSubreleases } from '@/types/types';
+import type { ArtistWithReleasesFull, Entities, ReleaseWithArtistAndSubreleases, CollectionWithReleases, ArtistWithReleases } from '@/types/types';
 import type { QueryKey } from '@tanstack/react-query';
 import { getArtistLink, getRandomLink } from '@/lib/links';
+import { setArtistCoverRelease, getArtist } from '../db/artist';
+import { setCollectionCoverRelease } from '../db/collection';
 import { getStats } from '../db/stats';
 import {
   importFolder,
@@ -19,11 +21,12 @@ import {
   searchArtistOnDiscogs,
   searchArtistOnRYM
 } from '@/lib/external_links';
+
 import { releaseMenu, ungroupReleaseHandler } from './release';
 import { artistMenu } from './artist';
 import { collectionMenu } from './collection';
 import { searchResultMenu } from './searchResult';
-import { getArtist } from '../db/artist';
+import { capitalize } from 'lodash';
 
 export { releaseMenu, artistMenu, collectionMenu, searchResultMenu };
 
@@ -31,6 +34,21 @@ export function buildMenu(params: (MenuItemConstructorOptions | MenuItem)[]) {
   const menu = Menu.buildFromTemplate(params);
   menu.popup();
   return true;
+}
+
+export function getCoverReleaseEntry(release_id: number, context: CollectionWithReleases | ArtistWithReleases) {
+  return {
+    label: `Set as ${capitalize(context._type)} Cover`,
+    click: async () => {
+      if (context._type === 'artist') {
+        await setArtistCoverRelease(context.id, release_id);
+        send('mutate', ['artists', 'latest']);
+        return;
+      }
+      await setCollectionCoverRelease(context.id, release_id);
+      send('mutate', ['collection', 'latest']);
+    }
+  }
 }
 
 type GetDeleteEntryParams = {

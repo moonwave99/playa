@@ -3,18 +3,18 @@ import { useState, useRef } from "react";
 import type { FormEvent, MouseEvent } from "react";
 import { useDebounce } from "use-debounce";
 import useSearch from "../query/useSearch";
-import cx from "clsx";
-import type { SearchResult } from "@/types/types";
-import List from "@/renderer/components/List";
-import Link from "@/renderer/components/Link";
-import Cover from "@/renderer/components/Cover";
-
 import {
     useKeyManager,
     KeyManager,
     withMeta,
 } from "@/renderer/hooks/useKeyboardManager";
+import type { SearchResult } from "@/types/types";
+import List from "@/renderer/components/List";
+import Link from "@/renderer/components/Link";
+import Cover from "@/renderer/components/Cover";
 import Loading from "./Loading";
+
+import cx from "clsx";
 import styles from "./MusicSidebar.module.css";
 
 const DEBOUNCE_MS = 300;
@@ -157,7 +157,7 @@ function SearchResultView({
     onClick,
     currentContext,
 }: SearchResultViewProps) {
-    const { id, title, type, hash, artist, links, description } = item;
+    const { title, type, artist, links, description, coverRelease } = item;
 
     function getTitle(): string {
         if (type === "release") {
@@ -170,6 +170,18 @@ function SearchResultView({
         return links[type];
     }
 
+    function renderCover() {
+        if (type === "release" || coverRelease) {
+            return (
+                <Cover
+                    {...(type === "release" ? item : coverRelease)}
+                    className={styles.coverWrapper}
+                />
+            );
+        }
+        return <div className={styles.ghost}></div>;
+    }
+
     return (
         <article
             onClick={onClick}
@@ -179,16 +191,7 @@ function SearchResultView({
             })}
             onContextMenu={onContextMenu}
         >
-            {type === "release" ? (
-                <Cover
-                    id={id}
-                    hash={hash}
-                    title={title}
-                    className={styles.coverWrapper}
-                />
-            ) : (
-                <div className={styles.ghost}></div>
-            )}
+            {renderCover()}
             <div className={styles.description}>
                 <Link to={getLink()} className={styles.title}>
                     {getTitle()}

@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer as ipc } from "electron";
 import type { IpcRendererEvent } from "electron";
+import * as search from "./main/db/search";
 import * as release from "./main/db/release";
 import * as artist from "./main/db/artist";
 import * as collection from "./main/db/collection";
@@ -9,6 +10,7 @@ import type { ReleaseWithArtist, CollectionWithReleases, ArtistWithReleases, Sea
 
 contextBridge.exposeInMainWorld('api', {
   data: {
+    ...getHandlers(search),
     ...getHandlers(release),
     ...getHandlers(artist),
     ...getHandlers(collection),

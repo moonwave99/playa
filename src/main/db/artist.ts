@@ -94,6 +94,11 @@ export async function getLatestArtists(
       skip,
       orderBy: { id: "desc" },
       include: {
+        coverRelease: {
+          include: {
+            artist: true
+          }
+        },
         releases: {
           where: {
             mainRelease: null
@@ -136,6 +141,14 @@ export async function updateArtist(id: number, { name, path }: ArtistUpdate) {
   const result = await prisma.artist.update({
     where: { id },
     data: { name, path }
+  });
+  return withEntityType(result, 'artist');
+}
+
+export async function setArtistCoverRelease(artist_id: number, release_id: number) {
+  const result = await prisma.artist.update({
+    where: { id: artist_id },
+    data: { coverReleaseId: release_id }
   });
   return withEntityType(result, 'artist');
 }

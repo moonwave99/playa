@@ -1,5 +1,6 @@
 import type { QueryKey } from '@tanstack/react-query';
 import { PrismaClient } from '@prisma/client';
+import * as search from '@/main/db/search';
 import * as release from '@/main/db/release';
 import * as artist from '@/main/db/artist';
 import * as collection from '@/main/db/collection';
@@ -28,7 +29,7 @@ declare global {
   const prisma: PrismaClient | undefined;
   interface Window {
     api: {
-      data: typeof release & typeof artist & typeof collection,
+      data: typeof search & typeof release & typeof artist & typeof collection,
       system: typeof system,
       settings: typeof settings,
       menu: {

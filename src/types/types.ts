@@ -1,9 +1,15 @@
 // eslint-disable-next-line import/no-named-as-default
 import Prisma, { ReleaseType } from '@prisma/client-generated';
 
-type Artist = Prisma.Artist & { _type: 'artist' };
+type Artist = Prisma.Artist & {
+  _type: 'artist',
+  coverRelease?: ReleaseWithArtistAndSubreleases
+};
 type Release = Prisma.Release & { _type: 'release' };
-type Collection = Prisma.Collection & { _type: 'collection' };
+type Collection = Prisma.Collection & {
+  _type: 'collection',
+  coverRelease?: ReleaseWithArtistAndSubreleases
+};
 type Track = Prisma.Track & { _type: 'track' };
 
 export type { Artist, Release, Collection, Track, ReleaseType };
@@ -82,6 +88,7 @@ export type SearchResult = {
   artist?: string;
   description: string;
   links: Record<Entities, string>;
+  coverRelease?: ReleaseWithArtist;
 }
 
 export type Sidebars = "music" | "artists" | "collections";

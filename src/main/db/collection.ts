@@ -7,6 +7,12 @@ export async function getCollections({ take = 50 }: PaginationParams) {
     take,
     orderBy: { updatedAt: "desc" },
     include: {
+      coverRelease: {
+        include: {
+          artist: true,
+          subReleases: true,
+        }
+      },
       releases: {
         include: {
           artist: true,
@@ -123,4 +129,12 @@ export async function deleteCollection(id: number) {
     where: { id }
   });
   return result;
+}
+
+export async function setCollectionCoverRelease(collection_id: number, release_id: number) {
+  const result = await prisma.collection.update({
+    where: { id: collection_id },
+    data: { coverReleaseId: release_id }
+  });
+  return withEntityType(result, 'collection');
 }

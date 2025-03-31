@@ -5,18 +5,12 @@ import type {
     HasId,
     TrackInfo,
     PaginationParams,
-    SearchResult,
     Release,
-    Artist,
-    Collection,
-    HasTitle,
     WithSubReleases,
     ReleaseWithArtistAndSubreleases,
 } from '@/types/types';
 
 import { parsePath } from "../system";
-
-import { sortByQueryPosition, getReleaseTitle } from '@/lib/utils'
 
 export async function getRelease(id: number) {
     const result = await prisma.release.findFirst({
@@ -167,97 +161,6 @@ export async function unGroupRelease(release: Release & WithSubReleases) {
             })
         })
     ]);
-}
-
-export async function search(query: string, take = 20): Promise<SearchResult[]> {
-    const releases = await prisma.release.findMany({
-        take,
-        where: {
-            mainRelease: null,
-            OR: [
-                {
-                    title: {
-                        contains: query,
-                        mode: "insensitive",
-                    },
-                },
-                {
-                    artist: {
-                        name: {
-                            contains: query,
-                            mode: "insensitive",
-                        },
-                    },
-                },
-            ],
-        },
-        orderBy: {
-            title: 'asc',
-        },
-
-        select: {
-            id: true,
-            artist: true,
-            title: true,
-            type: true,
-            year: true,
-            hash: true,
-            subReleases: true
-        },
-    });
-
-    const artists = await prisma.artist.findMany({
-        take,
-        where: {
-            name: {
-                contains: query,
-                mode: "insensitive",
-            },
-        },
-    });
-
-    const collections = await prisma.collection.findMany({
-        take,
-        where: {
-            title: {
-                contains: query,
-                mode: "insensitive",
-            },
-        },
-    });
-
-    return [
-        ...collections.map(({ id, title }: Collection) => ({
-            id,
-            title,
-            description: "Collection",
-            type: 'collection' as const,
-            links: {
-                collection: `/collections/${id}`
-            }
-        })).toSorted((a: HasTitle, b: HasTitle) => sortByQueryPosition(query, 'title', a, b)),
-        ...artists.map(({ id, name }: Artist) => ({
-            id,
-            title: name,
-            description: 'Artist',
-            type: 'artist' as const,
-            links: {
-                artist: `/artists/${id}`
-            }
-        })).toSorted((a: HasTitle, b: HasTitle) => sortByQueryPosition(query, 'title', a, b)),
-        ...releases.map(({ id, title, artist, year, type, hash, subReleases }: ReleaseWithArtistAndSubreleases) => ({
-            id,
-            title: getReleaseTitle({ title, subReleases }),
-            hash,
-            artist: artist.name,
-            description: year ? `${type}, ${year}` : type,
-            type: 'release' as const,
-            links: {
-                release: `/releases/${id}`,
-                artist: `/artists/${artist.id}`
-            }
-        })).toSorted((a: HasTitle, b: HasTitle) => sortByQueryPosition(query, 'title', a, b)),
-    ];
 }
 
 export async function getLatestReleases(

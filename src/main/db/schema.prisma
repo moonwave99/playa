@@ -17,6 +17,9 @@ model Artist {
   path      String    @default("") @db.VarChar(255)
   releases  Release[]
 
+  coverReleaseId Int?     @unique
+  coverRelease   Release? @relation("ArtistCover", fields: [coverReleaseId], references: [id])
+
   @@index([hash], type: Hash)
 }
 
@@ -39,6 +42,10 @@ model Release {
   mainRelease   Release?     @relation("ReleaseGroup", fields: [mainReleaseId], references: [id])
   subReleases   Release[]    @relation("ReleaseGroup")
 
+  coverCollections Collection[] @relation("CollectionCover")
+
+  coverArtist Artist? @relation("ArtistCover")
+
   @@index([hash], type: Hash)
 }
 
@@ -58,11 +65,13 @@ model Track {
 }
 
 model Collection {
-  id        Int       @id @default(autoincrement())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  title     String    @db.VarChar(255)
-  releases  Release[] @relation("CollectionToRelease")
+  id             Int       @id @default(autoincrement())
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  title          String    @db.VarChar(255)
+  releases       Release[] @relation("CollectionToRelease")
+  coverReleaseId Int?
+  coverRelease   Release?  @relation("CollectionCover", fields: [coverReleaseId], references: [id])
 }
 
 enum ReleaseType {

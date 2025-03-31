@@ -3,6 +3,7 @@ import type { IpcMainEvent } from 'electron';
 import * as release from './db/release';
 import * as artist from './db/artist';
 import * as collection from './db/collection';
+import * as search from './db/search';
 import { playback, openTagger, refreshReleaseContents, downloadCover, startDrag, importCovers } from './system';
 import { getSettings, setSettings } from './settings';
 import { releaseMenu, artistMenu, collectionMenu, searchResultMenu } from './menu/menu';
@@ -32,5 +33,5 @@ const menu = {
 const settings = { setSettings, getSettings };
 
 export default function registerApi() {
-  [release, artist, collection, system, menu, settings].forEach(registerHandlers);
+  [search, release, artist, collection, system, menu, settings].forEach(registerHandlers);
 }

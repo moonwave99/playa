@@ -4,7 +4,7 @@ import cx from "clsx";
 import Cover from "./Cover";
 import Link from "./Link";
 import useDominantColor from "../hooks/useDominantColor";
-import { getDiscInfo, getReleaseTitle } from "@/lib/utils";
+import { getDiscInfo, getReleaseTitle, getCoverRelease } from "@/lib/utils";
 import {
     getCover,
     getArtistLink,
@@ -33,10 +33,6 @@ type ListCardProps = {
     onContextMenu?: () => void;
     onColorChange?: (useDarkText: boolean) => void;
 };
-
-function getCoverRelease(item: Item) {
-    return item._type === "release" ? item : item.releases[0];
-}
 
 export default function ListCard({
     item,

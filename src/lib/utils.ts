@@ -9,7 +9,10 @@ import type {
   ReleaseCountByType,
   ReleaseWithArtistAndTracksAndSubreleases,
   HasId,
-  WithReleases
+  WithReleases,
+  CollectionWithReleases,
+  ArtistWithReleases,
+
 } from "@/types/types";
 import { getCover } from './links';
 
@@ -164,4 +167,13 @@ export function withStopPropagation(handler: (event: MouseEvent) => void) {
     event.stopPropagation();
     handler(event);
   };
+}
+
+type Item = CollectionWithReleases | ArtistWithReleases | ReleaseWithArtistAndSubreleases;
+
+export function getCoverRelease(item: Item) {
+  if (item._type === "release") {
+    return item;
+  }
+  return item.coverRelease || item.releases[0];
 }
