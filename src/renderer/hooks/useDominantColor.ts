@@ -1,29 +1,34 @@
 import { useState, useEffect } from "react";
 
-type ColorInfo = { color: string; useDarkText: boolean; }
+type ColorInfo = { color: string; useDarkText: boolean; loaded: boolean; }
 
-export default function useDominantColor(url: string): ColorInfo {
+export default function useDominantColor(url: string, count = 0): ColorInfo {
   const [color, setColor] = useState({
     color: "black",
     useDarkText: false,
+    loaded: false,
   });
 
   useEffect(() => {
-    getDominantColor(url).then(setColor);
-  }, [url]);
+    if (count === 0) {
+      return;
+    }
+    getDominantColor(url, count).then(setColor);
+  }, [url, count]);
 
   return color;
 }
 
 const cache: Record<string, ColorInfo> = {};
 
-function getDominantColor(url: string): Promise<ColorInfo> {
+function getDominantColor(url: string, count = 0): Promise<ColorInfo> {
   const image = new Image();
   image.crossOrigin = "";
   image.src = url;
+
   return new Promise((resolve) => {
-    if (cache[url]) {
-      resolve(cache[url]);
+    if (cache[`${url}-${count}`]) {
+      resolve(cache[`${url}-${count}`]);
       return;
     }
     image.onload = () => {
@@ -34,12 +39,22 @@ function getDominantColor(url: string): Promise<ColorInfo> {
         .toString(16)
         .slice(1);
 
-      cache[url] = {
+      cache[`${url}-${count}`] = {
         color: `#${HEX}`,
         useDarkText: isTextDark(`#${HEX}`),
+        loaded: true
       }
-      resolve(cache[url]);
+      resolve(cache[`${url}-${count}`]);
     };
+
+    image.onerror = () => {
+      cache[`${url}-${count}`] = {
+        color: "black",
+        useDarkText: false,
+        loaded: true,
+      };
+      resolve(cache[`${url}-${count}`]);
+    }
   });
 }
 

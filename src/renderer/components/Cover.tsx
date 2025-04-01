@@ -14,6 +14,8 @@ type CoverProps = {
     dragOutside?: boolean;
     onContextMenu?: () => void;
     onDoubleClick?: () => void;
+    onLoad?: () => void;
+    onError?: () => void;
 };
 
 async function getDropURL(event: DragEvent): Promise<string | null> {
@@ -36,10 +38,14 @@ export default function Cover({
     className,
     onContextMenu,
     onDoubleClick,
+    onLoad,
+    onError,
     droppable = true,
     dragOutside = false,
 }: CoverProps) {
-    const [key, setKey] = useState(0);
+    const [loadCount, setLoadCount] = useState(0);
+    const [loaded, setLoaded] = useState(false);
+    const [error, setError] = useState(false);
 
     async function onDrop(event: DragEvent) {
         event.preventDefault();
@@ -51,10 +57,11 @@ export default function Cover({
         if (!didUpdate) {
             return;
         }
-        setKey((prev) => prev + 1);
+        setError(false);
+        setLoadCount((prev) => prev + 1);
     }
 
-    const src = getCover(hash);
+    const src = !error ? getCover(hash) : null;
 
     return (
         <div
@@ -66,17 +73,20 @@ export default function Cover({
             onDoubleClick={onDoubleClick}
         >
             <img
-                key={key}
+                key={loadCount}
                 data-id={id}
-                className={styles.cover}
+                className={cx(styles.cover, { [styles.loaded]: loaded })}
                 src={src}
                 loading="lazy"
-                onError={(event) =>
-                    ((event.target as HTMLImageElement).src = "")
-                }
-                onLoad={(event) =>
-                    (event.target as HTMLElement).classList.add(styles.loaded)
-                }
+                onError={() => {
+                    setError(true);
+                    onError && onError();
+                }}
+                onLoad={() => {
+                    setLoaded(true);
+                    setError(false);
+                    onLoad && onLoad();
+                }}
                 onDragStart={
                     dragOutside
                         ? (event: DragEvent) => {

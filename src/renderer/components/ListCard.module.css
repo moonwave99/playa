@@ -5,6 +5,11 @@
   transition: background-color .3s ease-in-out;
   overflow: hidden;
   border-radius: .25rem;
+  opacity: 0;
+
+  &.loaded {
+    opacity: 1;
+  }
 }
 
 .content {

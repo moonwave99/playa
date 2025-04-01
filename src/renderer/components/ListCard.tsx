@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import type { MouseEvent } from "react";
 import cx from "clsx";
 import Cover from "./Cover";
@@ -43,9 +43,11 @@ export default function ListCard({
     onContextMenu,
     onColorChange,
 }: ListCardProps) {
+    const [loadCount, setLoadCount] = useState(0);
     const coverRelease = getCoverRelease(item);
-    const { color, useDarkText } = useDominantColor(
-        getCover(coverRelease.hash)
+    const { color, useDarkText, loaded } = useDominantColor(
+        getCover(coverRelease.hash),
+        loadCount
     );
 
     useEffect(() => {
@@ -96,6 +98,7 @@ export default function ListCard({
     return (
         <div
             className={cx(styles.listCard, {
+                [styles.loaded]: loaded,
                 [styles.isSingle]: isSingle,
                 [styles.selected]: selected,
                 [styles.hasFocus]: selected && hasFocus,
@@ -111,6 +114,8 @@ export default function ListCard({
                 title={`${coverRelease.artist.name} - ${getReleaseTitle(
                     coverRelease
                 )}`}
+                onLoad={() => setLoadCount((prev) => prev + 1)}
+                onError={() => setLoadCount((prev) => prev + 1)}
             />
             <div className={styles.content}>{getContent()}</div>
         </div>
