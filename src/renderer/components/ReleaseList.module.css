@@ -2,9 +2,11 @@
   height: calc(100vh - var(--header-height));
   overflow: auto;
   max-width: 100vw;
-  padding: 0 1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 
 .grid {
-  padding: 0 0 0 1rem;
+  padding-left: 1rem;
+  padding-right: 0;
 }
