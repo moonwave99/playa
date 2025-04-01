@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import useRefetch from "../hooks/useRefetch";
 import type {
     ReleaseWithArtist,
     ReleaseWithArtistAndSubreleases,
@@ -16,12 +16,17 @@ type RenameReleasesViewProps = {
     onCancel: () => void;
 };
 
+type NewInfo = {
+    newPath: string;
+    newDiscTitle: string;
+};
+
 export default function RenameReleasesView({
     release,
     onSave,
     onCancel,
 }: RenameReleasesViewProps) {
-    const queryClient = useQueryClient();
+    const refetch = useRefetch();
     const [folderInfo, setFolderInfo] = useState(
         [release, ...release.subReleases].map((x, index) => ({
             ...x,
@@ -33,27 +38,25 @@ export default function RenameReleasesView({
     async function onSubmit(event: FormEvent) {
         event.preventDefault();
         const success = await window.api.system.renameRelease(
-            folderInfo.filter((x) => x.path !== x.newPath)
+            folderInfo.filter(
+                (x) => x.path !== x.newPath || x.discTitle !== x.newDiscTitle
+            )
         );
         if (!success) {
             return;
         }
 
-        [
+        refetch([
             ["releases", "latest"],
             ["releases", release.id],
             ["artists", release.artist_id],
-        ].forEach((queryKey) => queryClient.refetchQueries({ queryKey }));
+        ]);
 
         window.api.ui.clearSelection();
         onSave();
     }
 
-    function updateInfo(
-        index: number,
-        key: "newPath" | "newDiscTitle",
-        value: string
-    ) {
+    function updateInfo(index: number, key: keyof NewInfo, value: string) {
         setFolderInfo((prev) =>
             prev.map((x, j) => (j === index ? { ...x, [key]: value } : x))
         );
@@ -99,18 +102,23 @@ export default function RenameReleasesView({
 }
 
 type FolderViewProps = {
-    release: ReleaseWithArtist & { newPath: string; newDiscTitle: string };
+    release: ReleaseWithArtist & NewInfo;
     hasMultipleDiscs: boolean;
-    onInput: (key: "newPath" | "newDiscTitle", value: string) => void;
+    onInput: (key: keyof NewInfo, value: string) => void;
 };
 
 function FolderView({ release, hasMultipleDiscs, onInput }: FolderViewProps) {
-    const title = `${release.title}${
-        hasMultipleDiscs ? ` - ${release.discTitle}` : ""
-    }`;
+    function getTitle() {
+        if (!hasMultipleDiscs || !release.discTitle) {
+            return release.title;
+        }
+
+        return `${release.title} - ${release.discTitle}`;
+    }
+
     return (
         <article className={styles.release}>
-            <h3 className={styles.releaseTitle}>{title}</h3>
+            <h3 className={styles.releaseTitle}>{getTitle()}</h3>
             <label className={cx(formStyles.label, styles.label)}>
                 New Path
                 <input

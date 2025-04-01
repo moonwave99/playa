@@ -289,6 +289,18 @@ export async function renameRelease(infos: RenameParam) {
   const LIBRARY_PATH = getSetting('LIBRARY_PATH') as string;
   const COVERS_PATH = getSetting('COVERS_PATH') as string;
 
+  const shouldJustRenameDiscs =
+    infos.every(x => x.path === x.newPath)
+    && infos.some(x => x.discTitle !== x.newDiscTitle);
+
+  if (shouldJustRenameDiscs) {
+    await renameReleases(infos.map(x => ({
+      ...x,
+      discTitle: x.newDiscTitle
+    })));
+    return true;
+  }
+
   for (const info of infos) {
     if (info.newPath.includes('../')) {
       dialog.showMessageBoxSync(null, {

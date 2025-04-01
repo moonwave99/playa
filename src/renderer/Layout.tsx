@@ -6,8 +6,6 @@ import {
     useLocation,
     matchPath,
 } from "react-router";
-import { useQueryClient } from "@tanstack/react-query";
-import type { QueryKey } from "@tanstack/react-query";
 import { useMediaQuery } from "react-responsive";
 import Modal from "react-modal";
 import {
@@ -20,6 +18,7 @@ import {
     useOnOpenGroupDialog,
     useOnOpenRenameDialog,
 } from "./hooks/ipc";
+import useRefetch from "./hooks/useRefetch";
 import useStore from "./store";
 import type { ModalContents } from "./store";
 import { refreshCovers } from "@/lib/utils";
@@ -172,7 +171,7 @@ function init(): Init {
     const firstRender = useRef(true);
     const navigate = useNavigate();
     const { pathname } = useLocation();
-    const queryClient = useQueryClient();
+    const refetch = useRefetch();
     const {
         path,
         toggleViewMode,
@@ -248,13 +247,7 @@ function init(): Init {
         setContext("list");
         const removeHandlers = [
             window.api.onToggleViewMode(toggleViewMode),
-            window.api.onMutate((queryKey: QueryKey) => {
-                Array.isArray(queryKey[0])
-                    ? queryKey.forEach((q: QueryKey) =>
-                          queryClient.refetchQueries({ queryKey: q })
-                      )
-                    : queryClient.refetchQueries({ queryKey });
-            }),
+            window.api.onMutate(refetch),
             window.api.onNavigate((path: string) => {
                 navigate(path);
                 setContext("list");

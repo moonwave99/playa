@@ -190,12 +190,12 @@ export async function getLatestReleases(
 }
 
 export async function renameReleases(
-    infos: Pick<Release, 'id' | 'path' | 'hash' | 'discTitle'>[]
+    infos: Pick<Release, 'id' | 'path' | 'hash' | 'discTitle' | 'discNumber'>[]
 ) {
     return prisma.$transaction(
-        infos.map(({ id, path, hash, discTitle }) => prisma.release.update({
+        infos.map(({ id, path, hash, discTitle, discNumber }) => prisma.release.update({
             where: { id },
-            data: { path, hash, discTitle }
+            data: { path, hash, discTitle, discNumber }
         }))
     );
 }

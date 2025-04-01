@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import useRefetch from "../hooks/useRefetch";
 import {
     DndContext,
     closestCenter,
@@ -44,7 +44,7 @@ export default function GroupReleasesView({
             coordinateGetter: sortableKeyboardCoordinates,
         })
     );
-    const queryClient = useQueryClient();
+    const refetch = useRefetch();
 
     const [discInfo, setDiscInfo] = useState(
         releases
@@ -67,10 +67,10 @@ export default function GroupReleasesView({
             })),
         });
 
-        [
+        refetch([
             ["releases", "latest"],
             ["artists", discInfo[0].artist.id],
-        ].forEach((queryKey) => queryClient.refetchQueries({ queryKey }));
+        ]);
 
         window.api.ui.clearSelection();
         onSave();
