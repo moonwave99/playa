@@ -12,6 +12,7 @@ import { searchCover, getImageFromURL } from "./discogs";
 import { mapSeries } from '../lib/utils';
 import type { Release, ReleaseType, ReleaseWithArtist, TrackInfo } from "@/types/types";
 import { getSetting } from './settings';
+import { send } from './menu/menu';
 
 export async function importFolder(folder: string): Promise<ReleaseWithArtist[]> {
   const folders = await globby("**", {
@@ -130,8 +131,10 @@ export async function downloadCover({ id, url }: { id: number, url: string }) {
   const { hash } = release;
   const COVERS_PATH = getSetting('COVERS_PATH') as string;
 
-  await getImageFromURL({ outputPath: COVERS_PATH, hash, url });
-  return true;
+  const success = await getImageFromURL({ outputPath: COVERS_PATH, hash, url });
+  if (success) {
+    send('coverUpdate', [release]);
+  }
 }
 
 export async function refreshReleaseContents(id: number) {

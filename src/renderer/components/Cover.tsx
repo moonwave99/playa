@@ -43,7 +43,6 @@ export default function Cover({
     droppable = true,
     dragOutside = false,
 }: CoverProps) {
-    const [loadCount, setLoadCount] = useState(0);
     const [loaded, setLoaded] = useState(false);
     const [error, setError] = useState(false);
 
@@ -58,7 +57,6 @@ export default function Cover({
             return;
         }
         setError(false);
-        setLoadCount((prev) => prev + 1);
     }
 
     const src = !error ? getCover(hash) : null;
@@ -73,7 +71,6 @@ export default function Cover({
             onDoubleClick={onDoubleClick}
         >
             <img
-                key={loadCount}
                 data-id={id}
                 className={cx(styles.cover, { [styles.loaded]: loaded })}
                 src={src}

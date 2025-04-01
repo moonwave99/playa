@@ -157,7 +157,8 @@ export function refreshCovers(releases: Release[]) {
       return;
     }
     targetElements.forEach((element: HTMLImageElement) => {
-      element.src = getCover(hash);
+      const seed = `${Math.random() * 100000}`.slice(0, 5);
+      element.src = `${getCover(hash)}?_=${seed}`;
     });
   })
 }

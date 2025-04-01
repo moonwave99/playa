@@ -70,7 +70,7 @@ app.whenReady().then(() => {
   const COVERS_PATH = getSetting('COVERS_PATH') as string;
   const customProtocol = 'playa-cover';
   protocol.handle(customProtocol, ({ url }) => {
-    const filename = url.slice(`${customProtocol}://`.length);
-    return net.fetch(`file://${path.join(COVERS_PATH, filename)}`);
+    const { hostname } = new URL(url);
+    return net.fetch(`file://${path.join(COVERS_PATH, hostname)}`);
   })
 })
