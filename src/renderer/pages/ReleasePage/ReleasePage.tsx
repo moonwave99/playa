@@ -25,7 +25,7 @@ export default function ReleasePage() {
 
     return (
         <div className={styles.page} onContextMenu={onContextMenu}>
-            <ReleaseWithTracklistView release={release} />
+            <ReleaseWithTracklistView isSingle release={release} />
         </div>
     );
 }

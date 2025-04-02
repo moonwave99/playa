@@ -25,6 +25,7 @@ type Item =
 
 type ListCardProps = {
     item: Item;
+    className?: string;
     selected?: boolean;
     hasFocus?: boolean;
     isSingle?: boolean;
@@ -36,6 +37,7 @@ type ListCardProps = {
 
 export default function ListCard({
     item,
+    className,
     selected,
     hasFocus,
     isSingle,
@@ -103,6 +105,7 @@ export default function ListCard({
                 [styles.selected]: selected,
                 [styles.hasFocus]: selected && hasFocus,
                 [styles.useDarkText]: useDarkText,
+                className,
             })}
             onClick={onClick}
             onContextMenu={onContextMenu}

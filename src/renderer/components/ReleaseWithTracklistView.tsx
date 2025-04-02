@@ -9,7 +9,7 @@ import styles from "./ReleaseWithTracklistView.module.css";
 type ReleaseWithTracklistViewProps = {
     selected?: boolean;
     hasFocus?: boolean;
-    inList?: boolean;
+    isSingle?: boolean;
     release: ReleaseWithArtistAndTracksAndSubreleases;
     onContextMenu?: (
         selection: ReleaseWithArtistAndTracksAndSubreleases[],
@@ -21,7 +21,7 @@ type ReleaseWithTracklistViewProps = {
 export default function ReleaseWithTracklistView({
     selected,
     hasFocus,
-    inList = false,
+    isSingle = false,
     release,
     onContextMenu,
     onClick,
@@ -41,12 +41,12 @@ export default function ReleaseWithTracklistView({
                 item={release}
                 selected={selected}
                 hasFocus={hasFocus}
-                isSingle={!inList}
+                isSingle={isSingle}
                 onColorChange={setUseDarkText}
             />
             <Tracklist
                 release={release}
-                isNavigable={!inList}
+                isNavigable={isSingle}
                 onDoubleClick={(track_id) =>
                     window.api.system.playback({
                         release_id: id,

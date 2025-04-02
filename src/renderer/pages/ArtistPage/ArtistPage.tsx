@@ -49,7 +49,7 @@ export default function ArtistPage() {
             className={styles.page}
             onContextMenu={() => window.api.menu.artist(artist)}
         >
-            <ListCard item={artist} isSingle onColorChange={setUseDarkText} />
+            <ListCard isSingle item={artist} onColorChange={setUseDarkText} />
             <ReleaseList
                 releases={artist.releases}
                 onContextMenu={onContextMenu}
