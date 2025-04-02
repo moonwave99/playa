@@ -78,20 +78,30 @@ function Header({ collection, onTitleUpdate, isFocused }: HeaderProps) {
     const [isEditing, setEditing] = useState(isFocused);
 
     const { setContext } = useKeyManager({
-        context: "collectionInput",
+        context: "collection:input",
         handlers: {
             Escape: () => setEditing(false),
+            Enter: () => setTimeout(() => setEditing(true), 100),
         },
     });
 
     useEffect(() => {
         if (isEditing) {
-            setContext("collectionInput");
+            setContext("collection:input");
             inputRef.current?.focus();
             return;
         }
+        window.api.state.setInputFocused(false);
         setContext("list");
     }, [isEditing]);
+
+    function onTitleFocus() {
+        setContext("collection:input");
+    }
+
+    function onTitleBlur() {
+        setContext("list");
+    }
 
     if (!isEditing) {
         return (
@@ -100,14 +110,16 @@ function Header({ collection, onTitleUpdate, isFocused }: HeaderProps) {
                 className={styles.header}
                 onContextMenu={() => window.api.menu.collection(collection)}
             >
-                {title}
+                <span tabIndex={0} onFocus={onTitleFocus} onBlur={onTitleBlur}>
+                    {title}
+                </span>
             </h1>
         );
     }
 
     function onSubmit(event: FormEvent) {
         event.preventDefault();
-        setEditing(false);
+        setTimeout(() => setEditing(false), 100);
         onTitleUpdate(title);
     }
 
