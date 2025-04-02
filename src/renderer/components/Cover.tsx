@@ -30,6 +30,9 @@ async function getDropURL(event: DragEvent): Promise<string | null> {
     });
 }
 
+const emptyImg =
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
+
 export default function Cover({
     id,
     title,
@@ -59,7 +62,7 @@ export default function Cover({
         setError(false);
     }
 
-    const src = !error ? getCover(hash) : null;
+    const src = !error ? getCover(hash) : emptyImg;
 
     return (
         <div
@@ -80,6 +83,9 @@ export default function Cover({
                     onError && onError();
                 }}
                 onLoad={() => {
+                    if (src === emptyImg) {
+                        return;
+                    }
                     setLoaded(true);
                     setError(false);
                     onLoad && onLoad();

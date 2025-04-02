@@ -186,8 +186,8 @@ function SearchResultView({
         <article
             onClick={onClick}
             className={cx(styles.listItem, {
-                selected,
-                hasFocus: selected && currentContext === "sidebar",
+                [styles.selected]: selected,
+                [styles.hasFocus]: selected && currentContext === "sidebar",
             })}
             onContextMenu={onContextMenu}
         >

@@ -36,6 +36,23 @@
   background-color: var(--search-results-background-color);
   border-radius: .25rem;
   overflow: hidden;
+  padding-right: 1rem;
+
+  &:hover {
+    background-color: var(--search-results-background-color-light);
+  }
+
+  &.selected {
+    background-color: var(--selected-no-focus-color);
+  }
+
+  &.hasFocus {
+    background-color: var(--accent-color);
+
+    &:hover {
+      background-color: var(--accent-color-light);
+    }
+  }
 }
 
 .description {

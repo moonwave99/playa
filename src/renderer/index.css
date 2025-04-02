@@ -4,6 +4,8 @@
   --tertiary-color: #4f4d4d;
   --background-color: #121212;
   --accent-color: #4361ee;
+  --accent-color-light: #627be9;
+  --accent-color-dark: #183ee6;
   --selected-no-focus-color: #4f4d4d;
   --sidebar-background-color: #232323;
   --sidebar-secondary-color: #7d7d7d;
@@ -20,6 +22,7 @@
   --search-results-size: 4rem;
   --tracklist-entry-alternate-background-color: #1e1d1d;
   --search-results-background-color: #34363b;
+  --search-results-background-color-light: #61646d;
 }
 
 * {
@@ -67,12 +70,4 @@ a {
   left: 0;
   right: 0;
   -webkit-app-region: drag;
-}
-
-.selected {
-  background-color: var(--selected-no-focus-color);
-}
-
-.hasFocus {
-  background-color: var(--accent-color);
 }

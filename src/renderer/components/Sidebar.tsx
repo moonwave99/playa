@@ -173,8 +173,8 @@ function DefaultEntry<T>({
         <Link
             to={getLink(item)}
             className={cx(styles.listItem, {
-                selected,
-                hasFocus: selected && currentContext === "sidebar",
+                [styles.selected]: selected,
+                [styles.hasFocus]: selected && currentContext === "sidebar",
             })}
             onClick={onClick}
             onContextMenu={() => onContextMenu && onContextMenu(item)}

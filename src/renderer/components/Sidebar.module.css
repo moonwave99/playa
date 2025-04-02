@@ -45,7 +45,24 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+  padding-right: 1rem;
   user-select: none;
+
+  &:hover {
+    background-color: var(--sidebar-secondary-color);
+  }
+
+  &.selected {
+    background-color: var(--selected-no-focus-color);
+  }
+
+  &.hasFocus {
+    background-color: var(--accent-color);
+
+    &:hover {
+      background-color: var(--accent-color-light);
+    }
+  }
 }
 
 .noResults {
