@@ -12,7 +12,7 @@
   display: flex;
   align-items: center;
   padding: 0 .5rem;
-  margin: 0 .5rem .5rem .5rem;
+  margin: 1rem;
   color: var(--primary-color);
 }
 
@@ -30,7 +30,7 @@
 }
 
 .listWrapper {
-  height: calc(100vh - 9rem);
+  height: calc(100vh - 10.5rem);
   overflow: auto;
 }
 

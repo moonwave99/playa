@@ -16,7 +16,7 @@
   font-size: 1rem;
   gap: .5rem;
   user-select: none;
-  border-bottom: 1px solid rgba(140, 140, 140, 0.3);
+  border-bottom: 1px solid var(--neutral-border-color);
 }
 
 .header a:hover {
