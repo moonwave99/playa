@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: space-around;
   padding: 0 1rem 0 4.5rem;
-  background-color: var(--sidebar-background-color);
+  background-color: var(--background-color);
   gap: .5rem;
   user-select: none;
   border-bottom: 1px solid var(--neutral-border-color);

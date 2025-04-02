@@ -56,10 +56,10 @@ export default function useSidebar({ isPending, query, setQuery }: UseSidebarPar
   }, [currentContext, isPending]);
 
   function onKeyDown(event: ReactKeyboardEvent) {
-    if (event.key !== "ArrowRight") {
+    if (event.key !== "ArrowRight" && event.key !== 'Escape') {
       return;
     }
-    if (inputRef.current.selectionEnd !== query.length) {
+    if (event.key !== "ArrowRight" && inputRef.current.selectionEnd !== query.length) {
       return;
     }
     setTimeout(() => setContext("list"), 0);

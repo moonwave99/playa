@@ -40,7 +40,7 @@
 
 .isSingle {
   border-radius: 0;
-  border-bottom: 1px solid rgba(140, 140, 140, 0.5);
+  border-bottom: .5px solid var(--neutral-border-color);
 
   .title {
     font-size: 1.2rem;
@@ -75,7 +75,7 @@
 .cover {
   width: var(--release-group-height);
   height: var(--release-group-height);
-  border-right: 1px solid rgba(100, 100, 100, 0.4);
+  border-right: 1px solid var(--neutral-border-color);
   border-radius: 0;
 }
 
