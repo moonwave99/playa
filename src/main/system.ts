@@ -286,7 +286,10 @@ export function parsePath(path: string): ParsePath {
   };
 }
 
-type RenameParam = (ReleaseWithArtist & { newPath: string; newDiscTitle: string; })[]
+type RenameParam = (
+  Pick<Release, 'id' | 'path' | 'hash' | 'title' | 'artist_id' | 'year' | 'type' | 'discTitle' | 'discNumber'>
+  & { newPath: string; newDiscTitle: string; newTitle: string }
+)[];
 
 export async function renameRelease(infos: RenameParam) {
   const LIBRARY_PATH = getSetting('LIBRARY_PATH') as string;
@@ -294,11 +297,12 @@ export async function renameRelease(infos: RenameParam) {
 
   const shouldJustRenameDiscs =
     infos.every(x => x.path === x.newPath)
-    && infos.some(x => x.discTitle !== x.newDiscTitle);
+    && infos.some(x => x.title !== x.newTitle || x.discTitle !== x.newDiscTitle);
 
   if (shouldJustRenameDiscs) {
     await renameReleases(infos.map(x => ({
       ...x,
+      title: x.newTitle,
       discTitle: x.newDiscTitle
     })));
     return true;
@@ -330,6 +334,7 @@ export async function renameRelease(infos: RenameParam) {
       ...x,
       hash: hashRelease(x),
       path: x.newPath,
+      title: x.newTitle,
       discTitle: x.newDiscTitle,
     }));
 
@@ -338,8 +343,12 @@ export async function renameRelease(infos: RenameParam) {
         path.join(LIBRARY_PATH, x.path),
         path.join(LIBRARY_PATH, x.newPath),
       );
+      const coverPath = path.join(COVERS_PATH, `${x.hash}-cover.jpg`);
+      if (!existsSync(coverPath)) {
+        return;
+      }
       await move(
-        path.join(COVERS_PATH, `${x.hash}-cover.jpg`),
+        coverPath,
         path.join(COVERS_PATH, `${newInfos[index].hash}-cover.jpg`),
       );
     }));

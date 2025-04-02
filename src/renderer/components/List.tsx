@@ -160,7 +160,6 @@ export default function List<T>({
                     if (!shouldCallOnLeft()) {
                         return;
                     }
-                    setCurrentIndex(-1);
                     onLeft();
                     return;
                 }
@@ -192,11 +191,10 @@ export default function List<T>({
     });
 
     useEffect(() => {
-        // console.log(currentContext, context, items);
         if (currentContext !== context) {
             return;
         }
-        setCurrentIndex(0);
+        setCurrentIndex((prev) => (prev == -1 ? 0 : prev));
     }, [context, currentContext]);
 
     const virtualizer = useVirtualizer({

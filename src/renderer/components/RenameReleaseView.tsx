@@ -10,15 +10,31 @@ import { MdInfoOutline } from "react-icons/md";
 import styles from "./RenameReleaseView.module.css";
 import formStyles from "../forms.module.css";
 
-type RenameReleasesViewProps = {
-    release: ReleaseWithArtistAndSubreleases;
-    onSave: () => void;
-    onCancel: () => void;
+const labelMap = {
+    newTitle: {
+        label: "New Title",
+        placeholder: "Enter new title",
+    },
+    newDiscTitle: {
+        label: "New Disc Title",
+        placeholder: "Enter new disc title",
+    },
+    newPath: {
+        label: "New Path",
+        placeholder: "Enter new path",
+    },
 };
 
 type NewInfo = {
     newPath: string;
     newDiscTitle: string;
+    newTitle?: string;
+};
+
+type RenameReleasesViewProps = {
+    release: ReleaseWithArtistAndSubreleases;
+    onSave: () => void;
+    onCancel: () => void;
 };
 
 export default function RenameReleasesView({
@@ -32,15 +48,21 @@ export default function RenameReleasesView({
             ...x,
             newPath: x.path,
             newDiscTitle: x.discTitle || `Disc ${index + 1}`,
+            newTitle: x.title,
         }))
     );
 
     async function onSubmit(event: FormEvent) {
         event.preventDefault();
         const success = await window.api.system.renameRelease(
-            folderInfo.filter(
-                (x) => x.path !== x.newPath || x.discTitle !== x.newDiscTitle
-            )
+            folderInfo
+                .filter(
+                    (x) =>
+                        x.path !== x.newPath ||
+                        x.discTitle !== x.newDiscTitle ||
+                        x.title !== x.newTitle
+                )
+                .map((x) => ({ ...x, newTitle: folderInfo[0].newTitle }))
         );
         if (!success) {
             return;
@@ -70,6 +92,8 @@ export default function RenameReleasesView({
                     {folderInfo.map((release, index) => (
                         <li key={release.id}>
                             <FolderView
+                                hasFocus={index === 0}
+                                isMainRelease={index === 0}
                                 hasMultipleDiscs={folderInfo.length > 1}
                                 release={release}
                                 onInput={(key, value) =>
@@ -102,55 +126,73 @@ export default function RenameReleasesView({
 }
 
 type FolderViewProps = {
-    release: ReleaseWithArtist & NewInfo;
+    release: NewInfo & Pick<ReleaseWithArtist, "title" | "discTitle">;
+    isMainRelease?: boolean;
     hasMultipleDiscs: boolean;
+    hasFocus?: boolean;
     onInput: (key: keyof NewInfo, value: string) => void;
 };
 
-function FolderView({ release, hasMultipleDiscs, onInput }: FolderViewProps) {
+function FolderView({
+    release,
+    isMainRelease,
+    hasMultipleDiscs,
+    hasFocus,
+    onInput,
+}: FolderViewProps) {
     function getTitle() {
-        if (!hasMultipleDiscs || !release.discTitle) {
+        if (isMainRelease || !hasMultipleDiscs || !release.discTitle) {
             return release.title;
         }
-
         return `${release.title} - ${release.discTitle}`;
     }
 
     return (
         <article className={styles.release}>
             <h3 className={styles.releaseTitle}>{getTitle()}</h3>
-            <label className={cx(formStyles.label, styles.label)}>
-                New Path
-                <input
-                    className={cx(formStyles.input, styles.input)}
-                    required
-                    placeholder="Enter new path"
-                    value={release.newPath}
-                    onInput={(event: FormEvent) =>
-                        onInput(
-                            "newPath",
-                            (event.target as HTMLInputElement).value
-                        )
-                    }
+            {isMainRelease ? (
+                <Field
+                    hasFocus
+                    name="newTitle"
+                    release={release}
+                    onInput={onInput}
                 />
-            </label>
-            {hasMultipleDiscs && (
-                <label className={cx(formStyles.label, styles.label)}>
-                    New Disc Title
-                    <input
-                        className={cx(formStyles.input, styles.input)}
-                        required
-                        placeholder="Enter new disc title"
-                        value={release.newDiscTitle}
-                        onInput={(event: FormEvent) =>
-                            onInput(
-                                "newDiscTitle",
-                                (event.target as HTMLInputElement).value
-                            )
-                        }
-                    />
-                </label>
-            )}
+            ) : null}
+            <Field
+                hasFocus={hasFocus && !isMainRelease}
+                name="newPath"
+                release={release}
+                onInput={onInput}
+            />
+            {hasMultipleDiscs ? (
+                <Field
+                    name="newDiscTitle"
+                    release={release}
+                    onInput={onInput}
+                />
+            ) : null}
         </article>
+    );
+}
+
+type FieldProps = Pick<FolderViewProps, "release" | "onInput" | "hasFocus"> & {
+    name: keyof NewInfo;
+};
+
+function Field({ name, release, hasFocus, onInput }: FieldProps) {
+    return (
+        <label className={cx(formStyles.label, styles.label)}>
+            {labelMap[name].label}
+            <input
+                autoFocus={hasFocus}
+                className={cx(formStyles.input, styles.input)}
+                required
+                placeholder={labelMap[name].placeholder}
+                value={release[name]}
+                onInput={(event: FormEvent) =>
+                    onInput(name, (event.target as HTMLInputElement).value)
+                }
+            />
+        </label>
     );
 }

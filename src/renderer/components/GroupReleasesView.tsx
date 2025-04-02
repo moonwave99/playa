@@ -113,6 +113,7 @@ export default function GroupReleasesView({
                         <label className={cx(formStyles.label)}>
                             Main Release Title
                             <input
+                                autoFocus
                                 name="mainReleaseTitle"
                                 className={formStyles.input}
                                 required
