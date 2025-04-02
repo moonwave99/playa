@@ -21,16 +21,16 @@ export class StateManager {
       path: ''
     }
   }
-  getState() {
+  getState(): State {
     return this.state;
   }
-  getCurrentArtist() {
+  getCurrentArtist(): ArtistWithReleasesFull {
     return this.state.currentArtist;
   }
-  getSelectedReleases() {
+  getSelectedReleases(): ReleaseWithArtistAndSubreleases[] {
     return this.state.selectedReleases;
   }
-  isInputFocused() {
+  isInputFocused(): boolean {
     return this.state.isInputFocused;
   }
   onStateChange(handler: (state: State) => void) {

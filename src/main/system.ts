@@ -52,7 +52,7 @@ export async function playback({ release_id, track_id }: PlaybackParams) {
     if (!track) {
       return;
     }
-    await run('open', ['-a', PLAYER_PATH, getReleasePath(path.join(
+    await run('open', ['-a', PLAYER_PATH, withLibraryPath(path.join(
       track.release.path,
       track.path
     ))]);
@@ -68,7 +68,7 @@ export async function playback({ release_id, track_id }: PlaybackParams) {
     return;
   }
 
-  await run('open', ['-a', PLAYER_PATH, getReleasePath(release.path)]);
+  await run('open', ['-a', PLAYER_PATH, withLibraryPath(release.path)]);
   return true;
 }
 
@@ -87,7 +87,7 @@ export async function openTagger(release_id: number) {
 
   const TAGGER_PATH = getSetting('TAGGER_PATH') as string;
 
-  await run('open', ['-a', TAGGER_PATH, getReleasePath(release.path)]);
+  await run('open', ['-a', TAGGER_PATH, withLibraryPath(release.path)]);
   return true;
 }
 
@@ -97,7 +97,7 @@ export async function revealEntityInFinder(entity: 'release' | 'artist', id: num
     return;
   }
 
-  return shell.openPath(getReleasePath(result.path));
+  return shell.openPath(withLibraryPath(result.path));
 }
 
 export async function importCovers(releases: ReleaseWithArtist[]) {
@@ -181,7 +181,7 @@ async function getMetadata(filePath: string, index: number): Promise<TrackInfo> 
   };
 }
 
-function getReleasePath(folderPath: string) {
+export function withLibraryPath(folderPath: string) {
   const LIBRARY_PATH = getSetting('LIBRARY_PATH') as string;
   return path.join(LIBRARY_PATH, folderPath);
 }

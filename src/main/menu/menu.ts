@@ -1,6 +1,6 @@
 import { Menu, MenuItem, dialog, BrowserWindow } from 'electron';
 import type { MenuItemConstructorOptions } from 'electron';
-import type { Entities, CollectionWithReleases, ArtistWithReleases } from '@/types/types';
+import type { Entities, CollectionWithReleases, ArtistWithReleases, ReleaseWithArtistAndTracks } from '@/types/types';
 import type { QueryKey } from '@tanstack/react-query';
 import { getArtistLink, getRandomLink } from '@/lib/links';
 import { setArtistCoverRelease } from '../db/artist';
@@ -13,6 +13,7 @@ import {
   importCovers,
   importMissingCovers,
   refreshReleaseContents,
+  withLibraryPath
 } from '../system';
 import {
   searchReleaseOnDiscogs,
@@ -103,8 +104,8 @@ export function setupMenu(win: BrowserWindow, state: StateManager) {
         click: async () => {
           await Promise.all(
             state.getCurrentArtist().releases
-              .filter(x => !x.tracks.length)
-              .map(x => refreshReleaseContents(x.id))
+              .filter((x: ReleaseWithArtistAndTracks) => !x.tracks.length)
+              .map((x: ReleaseWithArtistAndTracks) => refreshReleaseContents(x.id))
           );
           send('mutate', ['artists', state.getCurrentArtist().id]);
         }
@@ -218,7 +219,11 @@ export function setupMenu(win: BrowserWindow, state: StateManager) {
         click: async () => {
           const folders = dialog.showOpenDialogSync(win, {
             properties: ['openDirectory', 'multiSelections'],
+            defaultPath: withLibraryPath(state.getCurrentArtist()?.path || '')
           });
+          if (!folders) {
+            return;
+          }
           const releases = await Promise.all(folders.map(importFolder));
           send('mutate', [
             ['releases', 'latest'],
