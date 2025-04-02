@@ -261,7 +261,9 @@ function init(): Init {
                 setContext("list");
             }),
             window.api.onCoverUpdate(refreshCovers),
-            window.api.onToggleSidebar(() => toggleSidebar()),
+            window.api.onToggleSidebar((showSidebar: boolean) =>
+                toggleSidebar(showSidebar)
+            ),
         ];
 
         window.api.settings.getSettings().then(setSettings);

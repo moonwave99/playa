@@ -49,7 +49,7 @@ declare global {
       onMutate: (handler: (keys: QueryKey) => void) => () => void;
       onClearSelection: (handler: () => void) => () => void;
       onToggleViewMode: (handler: () => void) => () => void;
-      onToggleSidebar: (handler: () => void) => () => void;
+      onToggleSidebar: (handler: (showSidebar: boolean) => void) => () => void;
       onOpenSettings: (handler: () => void) => () => void;
       onCoverUpdate: (handler: (releases: Release[]) => void) => () => void;
       onOpenGroupDialog: (handler: (releases: Release[]) => void) => () => void;
@@ -59,6 +59,7 @@ declare global {
         setInputFocused: (inputFocused: boolean) => void;
         navigate: (path: string) => void;
         clearSelection: () => void;
+        toggleSidebar: (showSidebar?: boolean) => void;
       },
       dialog: {
         open: (options: Partial<OpenDialogSyncOptions>) => Promise<string>;

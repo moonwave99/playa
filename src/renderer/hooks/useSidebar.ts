@@ -40,6 +40,7 @@ export default function useSidebar({ isPending, setQuery }: UseSidebarParams): U
   useKeyManager({
     context: 'sidebar:input',
     handlers: {
+      '\\': withMeta(() => window.api.state.toggleSidebar(false)),
       ArrowLeft: withMeta(() => {
         inputRef.current.selectionStart = 0;
         inputRef.current.selectionEnd = 0;

@@ -49,7 +49,8 @@ contextBridge.exposeInMainWorld('api', {
     setInputFocused: (inputFocused: boolean) => ipc.send('state:setInputFocused', inputFocused),
     selectReleases: (selection: ReleaseWithArtistAndSubreleases[]) => ipc.send('state:selectReleases', selection),
     navigate: (path: string) => ipc.send('state:navigate', path),
-    clearSelection: () => ipc.send('state:clearSelection')
+    clearSelection: () => ipc.send('state:clearSelection'),
+    toggleSidebar: (showSidebar?: boolean) => ipc.send('state:toggleSidebar', showSidebar)
   },
   dialog: {
     open: async (

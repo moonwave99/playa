@@ -77,6 +77,7 @@ export function initStateManager() {
     );
     ipc.on('state:navigate', async (_, path: string) => manager.setPath(path));
     ipc.on('state:clearSelection', () => send('clearSelection'));
+    ipc.on('state:toggleSidebar', () => send('toggleSidebar'));
   }
   return manager;
 }
