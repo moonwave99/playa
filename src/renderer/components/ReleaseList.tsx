@@ -31,7 +31,7 @@ export default function ReleaseList({
     className,
 }: ReleaseListProps) {
     const navigate = useNavigate();
-    const { viewMode } = useStore();
+    const { viewMode, showSidebar } = useStore();
     const { setContext } = useKeyManager({});
 
     function onEnter(
@@ -43,10 +43,6 @@ export default function ReleaseList({
             return;
         }
         navigate(getReleaseLink(release));
-    }
-
-    function onLeft() {
-        setContext("sidebar");
     }
 
     return (
@@ -69,7 +65,8 @@ export default function ReleaseList({
                           ),
                       })
             }
-            onLeft={onLeft}
+            onLeft={() => setContext("sidebar")}
+            shouldCallOnLeft={() => showSidebar}
             paddingRight={viewMode === "grid" ? 16 : 0}
             onSelectionChange={(selection) =>
                 window.api.state.select(
