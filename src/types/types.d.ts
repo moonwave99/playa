@@ -54,14 +54,11 @@ declare global {
       onCoverUpdate: (handler: (releases: Release[]) => void) => () => void;
       onOpenGroupDialog: (handler: (releases: Release[]) => void) => () => void;
       onOpenRenameDialog: (handler: (release: ReleaseWithArtistAndSubreleases) => void) => () => void;
-      ui: {
-        inputFocus: () => void;
-        inputBlur: () => void;
-        clearSelection: () => void;
-      },
       state: {
-        select: (selection: ReleaseWithArtistAndSubreleases[]) => void;
+        selectReleases: (selectedReleases: ReleaseWithArtistAndSubreleases[]) => void;
+        setInputFocused: (inputFocused: boolean) => void;
         navigate: (path: string) => void;
+        clearSelection: () => void;
       },
       dialog: {
         open: (options: Partial<OpenDialogSyncOptions>) => Promise<string>;

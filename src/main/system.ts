@@ -12,7 +12,7 @@ import { searchCover, getImageFromURL } from "./discogs";
 import { mapSeries } from '../lib/utils';
 import type { Release, ReleaseType, ReleaseWithArtist, TrackInfo } from "@/types/types";
 import { getSetting } from './settings';
-import { send } from './menu/menu';
+import { send } from './state';
 
 export async function importFolder(folder: string): Promise<ReleaseWithArtist[]> {
   const folders = await globby("**", {

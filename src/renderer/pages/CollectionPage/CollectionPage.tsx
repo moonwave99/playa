@@ -127,11 +127,11 @@ function Header({ collection, onTitleUpdate, isFocused }: HeaderProps) {
                         return;
                     }
                     onTitleUpdate(title);
-                    window.api.ui.inputBlur();
+                    window.api.state.setInputFocused(false);
                 }}
                 onFocus={(event: FormEvent<HTMLInputElement>) => {
                     (event.target as HTMLInputElement).select();
-                    window.api.ui.inputFocus();
+                    window.api.state.setInputFocused(true);
                 }}
                 required
             />

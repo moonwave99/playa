@@ -49,7 +49,7 @@ export function useOnOpenRenameDialog(callback: (release: ReleaseWithArtistAndSu
 export function useClearSelectionOnLeave() {
   useEffect(() => {
     return () => {
-      window.api.state.select([])
+      window.api.state.selectReleases([])
     };
   }, []);
 }

@@ -1,10 +1,9 @@
-import { matchPath } from 'react-router';
-import { Menu, MenuItem, dialog, BrowserWindow, ipcMain as ipc } from 'electron';
+import { Menu, MenuItem, dialog, BrowserWindow } from 'electron';
 import type { MenuItemConstructorOptions } from 'electron';
-import type { ArtistWithReleasesFull, Entities, ReleaseWithArtistAndSubreleases, CollectionWithReleases, ArtistWithReleases } from '@/types/types';
+import type { Entities, CollectionWithReleases, ArtistWithReleases } from '@/types/types';
 import type { QueryKey } from '@tanstack/react-query';
 import { getArtistLink, getRandomLink } from '@/lib/links';
-import { setArtistCoverRelease, getArtist } from '../db/artist';
+import { setArtistCoverRelease } from '../db/artist';
 import { setCollectionCoverRelease } from '../db/collection';
 import { getStats } from '../db/stats';
 import {
@@ -27,6 +26,8 @@ import { artistMenu } from './artist';
 import { collectionMenu } from './collection';
 import { searchResultMenu } from './searchResult';
 import { capitalize } from 'lodash';
+import type { StateManager, State } from '../state';
+import { send } from '../state';
 
 export { releaseMenu, artistMenu, collectionMenu, searchResultMenu };
 
@@ -81,97 +82,9 @@ export function getDeleteEntry({ title, deleteFn, queryKeys }: GetDeleteEntryPar
   }
 }
 
-export function send(channel: string, ...args: unknown[]) {
-  BrowserWindow.getAllWindows()[0].webContents.send(channel, ...args);
-}
-
-export function setupMenu(win: BrowserWindow) {
-  let selection = [] as ReleaseWithArtistAndSubreleases[];
-  let artist = null as ArtistWithReleasesFull;
-  let inputFocused = false;
-
-  function refreshMenu() {
-    ['navigate', 'library'].forEach(id => {
-      menu.items.find(x => x.id == id)
-        .submenu.items.forEach(x => x.enabled = !inputFocused);
-    });
-
-    menu.getMenuItemById('artist').submenu.items.forEach(
-      item => {
-        if (inputFocused) {
-          item.enabled = false;
-          return;
-        }
-        item.enabled = !!artist;
-      }
-    );
-
-    menu.getMenuItemById('release').submenu.items.forEach(
-      item => {
-        if (inputFocused) {
-          item.enabled = false;
-          return;
-        }
-        item.enabled = selection.length === 1;
-      }
-    );
-
-    const groupReleasesEntry =
-      menu.getMenuItemById('release').submenu.items.find(x => x.id === 'groupReleases');
-    const ungroupReleasesEntry =
-      menu.getMenuItemById('release').submenu.items.find(x => x.id === 'ungroupRelease');
-    const isSomeReleaseMain = selection.some(x => x?.subReleases.length);
-
-    if (isSomeReleaseMain) {
-      if (selection.length > 1) {
-        groupReleasesEntry.visible = true;
-        groupReleasesEntry.enabled = false;
-        ungroupReleasesEntry.visible = false;
-        ungroupReleasesEntry.enabled = false;
-      } else if (selection.length === 1) {
-        groupReleasesEntry.visible = false;
-        groupReleasesEntry.enabled = false;
-        ungroupReleasesEntry.visible = true;
-        ungroupReleasesEntry.enabled = true;
-      }
-      return;
-    }
-    ungroupReleasesEntry.visible = false;
-    ungroupReleasesEntry.enabled = false;
-    groupReleasesEntry.visible = true;
-    groupReleasesEntry.enabled = selection.length > 1;
-  }
-
-  ipc.on('ui', (_, message) => {
-    if (message === 'clearSelection') {
-      send('clearSelection');
-      return;
-    }
-    if (message !== 'inputBlur' && message !== 'inputFocus') {
-      return;
-    }
-    inputFocused = message === 'inputFocus';
-    refreshMenu();
-  });
-
-  ipc.on('state:select', (_, newSelection) => {
-    selection = newSelection;
-    refreshMenu();
-  });
-
-  ipc.on('state:navigate', async (_, path: string) => {
-    const artistMatch = matchPath('/artists/:id', path);
-    menu.getMenuItemById('artist').submenu.items.forEach(
-      item => item.enabled = !!artistMatch
-    );
-    if (!artistMatch) {
-      artist = null;
-      return;
-    }
-    artist = await getArtist(+artistMatch.params.id);
-  });
-
-  win.webContents.on('did-finish-load', refreshMenu);
+export function setupMenu(win: BrowserWindow, state: StateManager) {
+  state.onStateChange((state) => refreshMenu(menu, state));
+  win.webContents.on('did-finish-load', () => refreshMenu(menu, state.getState()));
 
   const menu = Menu.getApplicationMenu();
 
@@ -182,25 +95,25 @@ export function setupMenu(win: BrowserWindow) {
       {
         label: 'Reveal Artist in Finder',
         accelerator: 'Cmd+Shift+F',
-        click: () => revealEntityInFinder('artist', artist.id)
+        click: () => revealEntityInFinder('artist', state.getCurrentArtist().id)
       },
       {
         label: 'Refresh Releases',
         accelerator: 'Cmd+Shift+A',
         click: async () => {
           await Promise.all(
-            artist.releases
+            state.getCurrentArtist().releases
               .filter(x => !x.tracks.length)
               .map(x => refreshReleaseContents(x.id))
           );
-          send('mutate', ['artists', artist.id]);
+          send('mutate', ['artists', state.getCurrentArtist().id]);
         }
       },
       {
         label: 'Import missing Covers',
         accelerator: 'Cmd+Shift+C',
         click: async () => {
-          const update = await importMissingCovers(artist.releases);
+          const update = await importMissingCovers(state.getCurrentArtist().releases);
           send('coverUpdate', update);
         }
       },
@@ -208,12 +121,12 @@ export function setupMenu(win: BrowserWindow) {
       {
         label: 'Search Artist on Discogs',
         accelerator: 'Cmd+Shift+D',
-        click: () => searchArtistOnDiscogs(artist)
+        click: () => searchArtistOnDiscogs(state.getCurrentArtist())
       },
       {
         label: 'Search Artist on RYM',
         accelerator: 'Shift+R',
-        click: () => searchArtistOnRYM(artist)
+        click: () => searchArtistOnRYM(state.getCurrentArtist())
       },
     ]
   }));
@@ -225,23 +138,23 @@ export function setupMenu(win: BrowserWindow) {
       {
         label: 'Go to artist page',
         accelerator: 'Shift+A',
-        click: () => send('navigate', getArtistLink(selection[0].artist))
+        click: () => send('navigate', getArtistLink(state.getSelectedReleases()[0].artist))
       },
       {
         label: 'Open Release in Tagger',
         accelerator: 'Shift+T',
-        click: () => openTagger(selection[0].id)
+        click: () => openTagger(state.getSelectedReleases()[0].id)
       },
       {
         label: 'Reveal Release in Finder',
         accelerator: 'Shift+F',
-        click: () => revealEntityInFinder('release', selection[0].id)
+        click: () => revealEntityInFinder('release', state.getSelectedReleases()[0].id)
       },
       {
         label: 'Search Release Cover',
         accelerator: 'Shift+C',
         click: async () => {
-          const update = await importCovers(selection);
+          const update = await importCovers(state.getSelectedReleases());
           send('coverUpdate', update);
         }
       },
@@ -249,31 +162,31 @@ export function setupMenu(win: BrowserWindow) {
       {
         label: 'Search Release on Discogs',
         accelerator: 'Shift+D',
-        click: () => searchReleaseOnDiscogs(selection[0])
+        click: () => searchReleaseOnDiscogs(state.getSelectedReleases()[0])
       },
       {
         label: 'Search Release on RYM',
         accelerator: 'Shift+R',
-        click: () => searchReleaseOnRYM(selection[0])
+        click: () => searchReleaseOnRYM(state.getSelectedReleases()[0])
       },
       {
         id: 'renameRelease',
         label: `Rename Release`,
         accelerator: 'Alt+Shift+R',
-        click: () => send('openRenameDialog', selection.at(0)),
+        click: () => send('openRenameDialog', state.getSelectedReleases().at(0)),
       },
       {
         id: 'groupReleases',
         label: `Group Selected Releases`,
         accelerator: 'Cmd+G',
-        click: () => send('openGroupDialog', selection),
+        click: () => send('openGroupDialog', state.getSelectedReleases()),
       },
       {
         id: 'ungroupRelease',
         label: `Ungroup Selected Release`,
         accelerator: 'Cmd+Shift+G',
         visible: false,
-        click: () => ungroupReleaseHandler(selection[0])
+        click: () => ungroupReleaseHandler(state.getSelectedReleases()[0])
       }
     ]
   }));
@@ -337,6 +250,63 @@ export function setupMenu(win: BrowserWindow) {
   }));
 
   Menu.setApplicationMenu(menu);
+}
+
+
+function refreshMenu(menu: Menu, {
+  isInputFocused,
+  selectedReleases,
+  currentArtist
+}: State) {
+  ['navigate', 'library'].forEach(id => {
+    menu.items.find(x => x.id == id)
+      .submenu.items.forEach(x => x.enabled = !isInputFocused);
+  });
+
+  menu.getMenuItemById('artist').submenu.items.forEach(
+    item => {
+      if (isInputFocused) {
+        item.enabled = false;
+        return;
+      }
+      item.enabled = !!currentArtist;
+    }
+  );
+
+  menu.getMenuItemById('release').submenu.items.forEach(
+    item => {
+      if (isInputFocused) {
+        item.enabled = false;
+        return;
+      }
+      item.enabled = selectedReleases.length === 1;
+    }
+  );
+
+  const groupReleasesEntry =
+    menu.getMenuItemById('release').submenu.items.find(x => x.id === 'groupReleases');
+  const ungroupReleasesEntry =
+    menu.getMenuItemById('release').submenu.items.find(x => x.id === 'ungroupRelease');
+  const isSomeReleaseMain = selectedReleases.some(x => x?.subReleases.length);
+
+  if (isSomeReleaseMain) {
+    if (selectedReleases.length > 1) {
+      groupReleasesEntry.visible = true;
+      groupReleasesEntry.enabled = false;
+      ungroupReleasesEntry.visible = false;
+      ungroupReleasesEntry.enabled = false;
+    } else if (selectedReleases.length === 1) {
+      groupReleasesEntry.visible = false;
+      groupReleasesEntry.enabled = false;
+      ungroupReleasesEntry.visible = true;
+      ungroupReleasesEntry.enabled = true;
+    }
+    return;
+  }
+  ungroupReleasesEntry.visible = false;
+  ungroupReleasesEntry.enabled = false;
+  groupReleasesEntry.visible = true;
+  groupReleasesEntry.enabled = selectedReleases.length > 1;
 }
 
 type MenuEntry = {

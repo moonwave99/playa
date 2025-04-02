@@ -43,6 +43,7 @@ export default function LatestCollections() {
         <div className={styles.page}>
             <h1 className={styles.header}>Latest Collections</h1>
             <List
+                disableMultipleSelection
                 items={collections}
                 className={styles.list}
                 columnsConfig={columnsConfig}

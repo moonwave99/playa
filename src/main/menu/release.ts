@@ -4,7 +4,8 @@ import { deleteRelease, unGroupRelease } from '../db/release';
 import { getAllCollections, createCollection, addReleasesToCollection, removeReleasesFromCollection } from "../db/collection";
 import { getCollectionLink } from '@/lib/links';
 import { playback, openTagger, refreshReleaseContents, revealEntityInFinder, importCovers } from '../system';
-import { buildMenu, getDeleteEntry, getCoverReleaseEntry, send } from './menu';
+import { buildMenu, getDeleteEntry, getCoverReleaseEntry } from './menu';
+import { send } from "../state";
 import { getReleaseTitle } from '@/lib/utils';
 import { searchReleaseOnDiscogs, searchReleaseOnRYM } from '@/lib/external_links';
 

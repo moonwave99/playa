@@ -5,6 +5,7 @@ import started from 'electron-squirrel-startup';
 import registerApi from './api';
 import { setupMenu } from './menu/menu';
 import { initSettings, getSetting } from './settings';
+import { initStateManager } from './state';
 
 if (started) {
   app.quit();
@@ -25,6 +26,9 @@ const createWindow = async () => {
   });
 
   mainWindow.on('swipe', (_, direction) => {
+    if (state.isInputFocused()) {
+      return;
+    }
     if (direction === 'left' && mainWindow.webContents.navigationHistory.canGoBack()) {
       mainWindow.webContents.navigationHistory.goBack();
     }
@@ -53,7 +57,8 @@ const createWindow = async () => {
   });
 
   await initSettings();
-  setupMenu(mainWindow);
+  const state = initStateManager();
+  setupMenu(mainWindow, state);
   registerApi();
 };
 

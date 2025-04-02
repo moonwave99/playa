@@ -45,14 +45,11 @@ contextBridge.exposeInMainWorld('api', {
   onCoverUpdate: getHandler('coverUpdate'),
   onOpenGroupDialog: getHandler('openGroupDialog'),
   onOpenRenameDialog: getHandler('openRenameDialog'),
-  ui: {
-    inputFocus: () => ipc.send('ui', 'inputFocus'),
-    inputBlur: () => ipc.send('ui', 'inputBlur'),
-    clearSelection: () => ipc.send('ui', 'clearSelection')
-  },
   state: {
-    select: (selection: ReleaseWithArtistAndSubreleases[]) => ipc.send('state:select', selection),
+    setInputFocused: (inputFocused: boolean) => ipc.send('state:setInputFocused', inputFocused),
+    selectReleases: (selection: ReleaseWithArtistAndSubreleases[]) => ipc.send('state:selectReleases', selection),
     navigate: (path: string) => ipc.send('state:navigate', path),
+    clearSelection: () => ipc.send('state:clearSelection')
   },
   dialog: {
     open: async (

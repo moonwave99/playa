@@ -70,7 +70,7 @@ export default function ReleaseList({
             shouldCallOnLeft={() => showSidebar}
             paddingRight={viewMode === "grid" ? 16 : 0}
             onSelectionChange={(selection) =>
-                window.api.state.select(
+                window.api.state.selectReleases(
                     selection.map((index) => releases[index])
                 )
             }

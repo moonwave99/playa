@@ -16,7 +16,7 @@ export default function useRelease(id: number): UseRelease {
   });
 
   useEffect(() => {
-    window.api.state.select([release]);
+    window.api.state.selectReleases([release]);
     if (!firstRefresh.current || !release || hasTracks(release)) {
       return;
     }

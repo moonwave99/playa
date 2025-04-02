@@ -72,7 +72,7 @@ export default function GroupReleasesView({
             ["artists", discInfo[0].artist.id],
         ]);
 
-        window.api.ui.clearSelection();
+        window.api.state.clearSelection();
         onSave();
     }
 

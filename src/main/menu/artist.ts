@@ -1,7 +1,8 @@
 import type { ArtistWithReleases } from "@/types/types";
-import { buildMenu, send } from "./menu";
+import { buildMenu } from "./menu";
 import { revealEntityInFinder, importCovers, refreshReleaseContents } from "../system";
 import { searchArtistOnRYM, searchArtistOnDiscogs } from "@/lib/external_links";
+import { send } from "../state";
 
 export const artistMenu = (artist: ArtistWithReleases) => {
   const { id, name, releases } = artist;

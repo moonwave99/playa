@@ -69,7 +69,7 @@ export default function LatestReleases() {
                 onLeft={() => setContext("sidebar")}
                 shouldCallOnLeft={() => showSidebar}
                 onSelectionChange={(selection) =>
-                    window.api.state.select(
+                    window.api.state.selectReleases(
                         selection.map((index) => releases[index])
                     )
                 }

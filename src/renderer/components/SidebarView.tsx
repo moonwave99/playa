@@ -56,7 +56,7 @@ export default function SidebarView() {
 
     useEffect(() => {
         return () => {
-            window.api.ui.inputBlur();
+            window.api.state.setInputFocused(false);
         };
     }, []);
 

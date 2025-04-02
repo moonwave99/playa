@@ -74,7 +74,7 @@ export default function RenameReleasesView({
             ["artists", release.artist_id],
         ]);
 
-        window.api.ui.clearSelection();
+        window.api.state.selectReleases([]);
         onSave();
     }
 

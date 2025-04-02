@@ -79,12 +79,12 @@ export default function useSidebar({ isPending, setQuery }: UseSidebarParams): U
   }
 
   function onBlur() {
-    window.api.ui.inputBlur();
+    window.api.state.setInputFocused(false);
   }
 
   function onFocus() {
     setContext("sidebar:input");
-    window.api.ui.inputFocus();
+    window.api.state.setInputFocused(true);
   }
 
   function onUp() {

@@ -119,11 +119,11 @@ export default function Layout() {
                 onRequestClose={() => setModalContents(null)}
                 style={modalStyle}
                 onAfterOpen={() => {
-                    window.api.ui.inputFocus();
+                    window.api.state.setInputFocused(true);
                     setContext("modal");
                 }}
                 onAfterClose={() => {
-                    window.api.ui.inputBlur();
+                    window.api.state.setInputFocused(false);
                     setContext("list");
                 }}
             >
@@ -211,14 +211,20 @@ function init(): Init {
         context: KeyManager.global,
         handlers: {
             ArrowLeft: withMeta((event: KeyboardEvent) => {
-                if (currentContext === "modal") {
+                if (
+                    currentContext === "modal" ||
+                    currentContext.includes("input")
+                ) {
                     return;
                 }
                 event.preventDefault();
                 navigate(-1);
             }),
             ArrowRight: withMeta((event: KeyboardEvent) => {
-                if (currentContext === "modal") {
+                if (
+                    currentContext === "modal" ||
+                    currentContext.includes("input")
+                ) {
                     return;
                 }
                 event.preventDefault();
@@ -244,7 +250,7 @@ function init(): Init {
     }, [pathname]);
 
     useEffect(() => {
-        window.api.ui.inputBlur();
+        window.api.state.setInputFocused(false);
         setContext("list");
 
         const removeHandlers = [

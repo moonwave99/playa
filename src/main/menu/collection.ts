@@ -1,7 +1,8 @@
 import type { CollectionWithReleases } from "@/types/types";
 import { refreshReleaseContents } from "../system";
 import { deleteCollection } from "../db/collection";
-import { buildMenu, getDeleteEntry, send } from "./menu";
+import { buildMenu, getDeleteEntry } from "./menu";
+import { send } from "../state";
 
 export const collectionMenu = ({ id, title, releases }: CollectionWithReleases) => {
   buildMenu([
