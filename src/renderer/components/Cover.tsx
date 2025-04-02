@@ -82,8 +82,8 @@ export default function Cover({
                     setError(true);
                     onError && onError();
                 }}
-                onLoad={() => {
-                    if (src === emptyImg) {
+                onLoad={(event) => {
+                    if ((event.target as HTMLImageElement).src === emptyImg) {
                         return;
                     }
                     setLoaded(true);
