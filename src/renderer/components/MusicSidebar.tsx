@@ -4,6 +4,7 @@ import type { MouseEvent } from "react";
 import { useDebounce } from "use-debounce";
 import useSearch from "../query/useSearch";
 import useSidebar from "../hooks/useSidebar";
+import { doContextsMatch } from "../hooks/useKeyboardManager";
 import type { SearchResult } from "@/types/types";
 import List from "@/renderer/components/List";
 import Link from "@/renderer/components/Link";
@@ -28,7 +29,7 @@ export default function MusicSidebar() {
     });
     const { isPending, error, results } = useSearch(debouncedQuery);
     const { inputRef, currentContext, inputHandlers, listHandlers } =
-        useSidebar({ isPending, query, setQuery });
+        useSidebar({ isPending, setQuery });
 
     if (isPending) {
         return <Loading />;
@@ -63,7 +64,7 @@ export default function MusicSidebar() {
                 <>
                     <List
                         disableMultipleSelection
-                        context="sidebar"
+                        context="sidebar:list"
                         className={styles.listWrapper}
                         items={results}
                         estimateSize={() => itemDimensions}
@@ -141,7 +142,8 @@ function SearchResultView({
             onClick={onClick}
             className={cx(styles.listItem, {
                 [styles.selected]: selected,
-                [styles.hasFocus]: selected && currentContext === "sidebar",
+                [styles.hasFocus]:
+                    selected && doContextsMatch(currentContext, "sidebar"),
             })}
             onContextMenu={onContextMenu}
         >

@@ -19,7 +19,7 @@ const columnsConfig = [
 export default function LatestCollections() {
     const navigate = useNavigate();
     const { showSidebar } = useStore();
-    const { setContext } = useKeyManager({});
+    const { setContext } = useKeyManager();
     const { isPending, error, collections, deleteCollections } =
         useCollections();
 

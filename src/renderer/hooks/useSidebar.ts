@@ -1,9 +1,5 @@
 import { useEffect, useRef } from "react";
-import type {
-  FormEvent,
-  KeyboardEvent as ReactKeyboardEvent,
-  Ref
-} from "react";
+import type { FormEvent, Ref } from "react";
 
 import {
   useKeyManager,
@@ -14,7 +10,6 @@ import {
 
 type UseSidebarParams = {
   isPending: boolean;
-  query: string;
   setQuery: (query: string) => void;
 };
 
@@ -22,18 +17,16 @@ type UseSidebar = {
   inputRef: Ref<HTMLInputElement>,
   currentContext: string;
   inputHandlers: {
-    onKeyDown: (event: ReactKeyboardEvent) => void;
     onInput: (event: FormEvent) => void;
     onBlur: () => void;
     onFocus: () => void;
   },
   listHandlers: {
     onUp: () => void;
-    onRight: () => void;
-  }
+  },
 }
 
-export default function useSidebar({ isPending, query, setQuery }: UseSidebarParams): UseSidebar {
+export default function useSidebar({ isPending, setQuery }: UseSidebarParams): UseSidebar {
   const firstRender = useRef(true);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -44,27 +37,42 @@ export default function useSidebar({ isPending, query, setQuery }: UseSidebarPar
     },
   });
 
+  useKeyManager({
+    context: 'sidebar:input',
+    handlers: {
+      ArrowLeft: withMeta(() => {
+        inputRef.current.selectionStart = 0;
+        inputRef.current.selectionEnd = 0;
+      }),
+      ArrowRight: (event: KeyboardEvent) => {
+        if (event.metaKey) {
+          inputRef.current.selectionStart = inputRef.current?.value.length
+          inputRef.current.selectionEnd = inputRef.current?.value.length
+          return;
+        }
+        if (inputRef.current?.selectionEnd !== inputRef.current?.value.length) {
+          return;
+        }
+        inputRef.current?.blur();
+        setTimeout(() => setContext("list"), 0);
+      },
+      Escape: () => {
+        inputRef.current?.blur();
+        setTimeout(() => setContext("list"), 0);
+      },
+    }
+  })
+
   useEffect(() => {
     if (
       isPending ||
-      (currentContext !== "sidebar" && !firstRender.current)
+      (!currentContext.startsWith("sidebar") && !firstRender.current)
     ) {
       return;
     }
     inputRef.current?.focus();
     firstRender.current = false;
   }, [currentContext, isPending]);
-
-  function onKeyDown(event: ReactKeyboardEvent) {
-    if (event.key !== "ArrowRight" && event.key !== 'Escape') {
-      return;
-    }
-    if (event.key !== "ArrowRight" && inputRef.current.selectionEnd !== query.length) {
-      return;
-    }
-    setTimeout(() => setContext("list"), 0);
-    inputRef.current?.blur();
-  }
 
   function onInput(event: FormEvent) {
     setQuery((event.target as HTMLInputElement).value);
@@ -75,7 +83,7 @@ export default function useSidebar({ isPending, query, setQuery }: UseSidebarPar
   }
 
   function onFocus() {
-    setContext("sidebar");
+    setContext("sidebar:input");
     window.api.ui.inputFocus();
   }
 
@@ -83,23 +91,16 @@ export default function useSidebar({ isPending, query, setQuery }: UseSidebarPar
     inputRef.current?.focus();
   }
 
-  function onRight() {
-    inputRef.current?.blur();
-    setContext("list");
-  }
-
   return {
     inputRef,
     currentContext,
     inputHandlers: {
-      onKeyDown,
       onInput,
       onBlur,
       onFocus,
     },
     listHandlers: {
       onUp,
-      onRight,
     }
   };
 }

@@ -45,6 +45,7 @@ type ListProps<T> = {
     isFetchingNextPage?: boolean;
     fetchNextPage?: () => void;
     onSelectionChange?: (selection: number[]) => void;
+    shouldPreventSpace?: boolean;
 };
 
 function defaultEstimateSize(columns: number, _: number, showSidebar: boolean) {
@@ -83,6 +84,7 @@ export default function List<T>({
     isFetchingNextPage = false,
     fetchNextPage,
     onSelectionChange,
+    shouldPreventSpace,
 }: ListProps<T>) {
     const [currentIndex, setCurrentIndex] = useState(-1);
     const [selection, setSelection] = useState<number[]>([]);
@@ -125,6 +127,36 @@ export default function List<T>({
         onSelectionChange && onSelectionChange(selection);
     }, [selection]);
 
+    const isVertical = columnsConfig.length === 1 && columns === 1;
+
+    const horizontalHandlers = isVertical
+        ? {}
+        : {
+              ArrowLeft: (event: KeyboardEvent) => {
+                  if (
+                      (columns === 1 || currentIndex == 0) &&
+                      onLeft &&
+                      !event.metaKey
+                  ) {
+                      if (!shouldCallOnLeft()) {
+                          return;
+                      }
+                      onLeft();
+                      return;
+                  }
+                  setCurrentIndex((prev) => Math.max(0, prev - 1));
+              },
+              ArrowRight: () => {
+                  if (columns === 1 && onRight) {
+                      onRight();
+                      return;
+                  }
+                  setCurrentIndex((prev) =>
+                      Math.min(items.length - 1, prev + 1)
+                  );
+              },
+          };
+
     const { currentContext, setContext } = useKeyManager({
         context,
         handlers: {
@@ -151,27 +183,7 @@ export default function List<T>({
                     prev === -1 ? 0 : Math.min(items.length - 1, prev + columns)
                 );
             }),
-            ArrowLeft: withPrevent((event: KeyboardEvent) => {
-                if (
-                    (columns === 1 || currentIndex == 0) &&
-                    onLeft &&
-                    !event.metaKey
-                ) {
-                    if (!shouldCallOnLeft()) {
-                        return;
-                    }
-                    onLeft();
-                    return;
-                }
-                setCurrentIndex((prev) => Math.max(0, prev - 1));
-            }),
-            ArrowRight: withPrevent(() => {
-                if (columns === 1 && onRight) {
-                    onRight();
-                    return;
-                }
-                setCurrentIndex((prev) => Math.min(items.length - 1, prev + 1));
-            }),
+            ...horizontalHandlers,
             Enter: (event: KeyboardEvent) =>
                 items[currentIndex] &&
                 onEnter &&
@@ -186,7 +198,8 @@ export default function List<T>({
                 );
                 setSelection([]);
             },
-            " ": withPrevent(() => void 0),
+            " ": (event: KeyboardEvent) =>
+                shouldPreventSpace && event.preventDefault(),
         },
     });
 

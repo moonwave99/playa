@@ -20,7 +20,7 @@ import styles from "../Page.module.css";
 export default function LatestReleases() {
     const navigate = useNavigate();
     const { showSidebar } = useStore();
-    const { setContext } = useKeyManager({});
+    const { setContext } = useKeyManager();
     const {
         releases,
         error,
@@ -57,6 +57,7 @@ export default function LatestReleases() {
         <div className={styles.page}>
             <h1 className={styles.header}>Latest Releases</h1>
             <List
+                shouldPreventSpace
                 items={releases}
                 className={styles.list}
                 columnsConfig={releaseColumnsConfig}

@@ -33,11 +33,12 @@ type UseKeyManager = {
   currentContext: string;
 };
 
-export function useKeyManager({
-  context,
-  handlers,
-}: UseKeyManagerParams): UseKeyManager {
+export function useKeyManager(params?: UseKeyManagerParams): UseKeyManager {
   const { register, setContext, toggleGlobal, currentContext } = useContext(KeyManagerContext);
+  const {
+    context,
+    handlers,
+  } = params || {};
   useEffect(() => {
     if (context && handlers) {
       register(context, handlers);
@@ -116,10 +117,15 @@ export class KeyManager {
     this.enableGlobal = true;
   }
   keydown(event: KeyboardEvent) {
-    const handler = this.handlers[this.currentContext]?.[event.key];
-    if (handler) {
-      handler(event);
-    }
+    Object.entries(this.handlers).forEach(([key, handlers]) => {
+      if (doContextsMatch(key, this.currentContext)) {
+        const handler = handlers?.[event.key];
+        if (!handler) {
+          return;
+        }
+        handler(event);
+      }
+    })
     if (!this.enableGlobal) {
       return;
     }
@@ -144,4 +150,8 @@ export class KeyManager {
   toggleGlobal(toggle?: boolean) {
     this.enableGlobal = toggle !== undefined ? toggle : !this.enableGlobal;
   }
+}
+
+export function doContextsMatch(a: string, b: string) {
+  return a.split(':').at(0) === b.split(':').at(0);
 }

@@ -32,7 +32,7 @@ export default function ReleaseList({
 }: ReleaseListProps) {
     const navigate = useNavigate();
     const { viewMode, showSidebar } = useStore();
-    const { setContext } = useKeyManager({});
+    const { setContext } = useKeyManager();
 
     function onEnter(
         release: ReleaseWithArtistAndTracksAndSubreleases,
@@ -47,6 +47,7 @@ export default function ReleaseList({
 
     return (
         <List
+            shouldPreventSpace
             key={`${viewMode}-${getTotalTracks(releases)}`}
             items={releases}
             className={cx(styles.list, styles[viewMode], className)}

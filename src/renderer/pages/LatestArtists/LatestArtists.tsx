@@ -18,7 +18,7 @@ const columnsConfig = [
 export default function LatestArtists() {
     const navigate = useNavigate();
     const { showSidebar } = useStore();
-    const { setContext } = useKeyManager({});
+    const { setContext } = useKeyManager();
     const {
         artists,
         error,

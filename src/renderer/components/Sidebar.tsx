@@ -5,6 +5,7 @@ import type { QueryKey } from "@tanstack/react-query";
 import cx from "clsx";
 import List from "@/renderer/components/List";
 import type { RenderParams } from "@/renderer/components/List";
+import { doContextsMatch } from "../hooks/useKeyboardManager";
 import useSidebar from "../hooks/useSidebar";
 import Loading from "./Loading";
 import Link from "./Link";
@@ -42,7 +43,7 @@ export default function Sidebar<T>({
     const [query, setQuery] = useState("");
     const { isPending, error, data } = useQuery<T[]>(queryConfig(query));
     const { inputRef, currentContext, inputHandlers, listHandlers } =
-        useSidebar({ isPending, query, setQuery });
+        useSidebar({ isPending, setQuery });
 
     if (isPending) {
         return <Loading />;
@@ -87,7 +88,7 @@ export default function Sidebar<T>({
                 <div className={styles.noResults}>No results for {query}</div>
             ) : (
                 <List
-                    context="sidebar"
+                    context="sidebar:list"
                     className={styles.listWrapper}
                     items={filteredItems}
                     estimateSize={estimateSize}
@@ -97,6 +98,7 @@ export default function Sidebar<T>({
                     onEnter={onEnter}
                     {...listHandlers}
                     render={renderItem || defaultRenderItem}
+                    shouldPreventSpace
                 />
             )}
             <footer className={styles.footer}>
@@ -132,7 +134,8 @@ function DefaultEntry<T>({
             to={getLink(item)}
             className={cx(styles.listItem, {
                 [styles.selected]: selected,
-                [styles.hasFocus]: selected && currentContext === "sidebar",
+                [styles.hasFocus]:
+                    selected && doContextsMatch(currentContext, "sidebar"),
             })}
             onClick={onClick}
             onContextMenu={() => onContextMenu && onContextMenu(item)}

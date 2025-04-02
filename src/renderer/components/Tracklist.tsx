@@ -21,7 +21,7 @@ export default function Tracklist({
     release,
     onDoubleClick,
 }: TracklistProps) {
-    const { setContext } = useKeyManager({});
+    const { setContext } = useKeyManager();
 
     const allTracks = [
         ...(release.tracks || []),
