@@ -1,13 +1,9 @@
 import { useNavigate } from "react-router";
-import { useState, useRef } from "react";
-import type { FormEvent, MouseEvent } from "react";
+import { useState } from "react";
+import type { MouseEvent } from "react";
 import { useDebounce } from "use-debounce";
 import useSearch from "../query/useSearch";
-import {
-    useKeyManager,
-    KeyManager,
-    withMeta,
-} from "@/renderer/hooks/useKeyboardManager";
+import useSidebar from "../hooks/useSidebar";
 import type { SearchResult } from "@/types/types";
 import List from "@/renderer/components/List";
 import Link from "@/renderer/components/Link";
@@ -19,52 +15,26 @@ import styles from "./MusicSidebar.module.css";
 
 const DEBOUNCE_MS = 300;
 
+const itemDimensions = {
+    width: 300,
+    height: 64,
+};
+
 export default function MusicSidebar() {
     const navigate = useNavigate();
-    const inputRef = useRef<HTMLInputElement>(null);
     const [query, setQuery] = useState("");
     const [debouncedQuery] = useDebounce(query, DEBOUNCE_MS, {
         leading: false,
     });
     const { isPending, error, results } = useSearch(debouncedQuery);
-
-    const { setContext, currentContext } = useKeyManager({
-        context: "input",
-        handlers: {
-            ArrowDown: () => {
-                inputRef.current?.blur();
-                setContext("sidebar");
-            },
-            ArrowRight: () => {
-                if (query === "") {
-                    inputRef.current?.blur();
-                    setContext("list");
-                }
-            },
-        },
-    });
-
-    useKeyManager({
-        context: KeyManager.global,
-        handlers: {
-            f: withMeta(() => inputRef.current?.focus()),
-        },
-    });
+    const { inputRef, currentContext, inputHandlers, listHandlers } =
+        useSidebar({ isPending, query, setQuery });
 
     if (isPending) {
         return <Loading />;
     }
 
     if (error) return "An error has occurred: " + error.message;
-
-    function onUp() {
-        inputRef.current?.focus();
-        setContext("input");
-    }
-
-    function onInput(event: FormEvent<HTMLInputElement>) {
-        setQuery((event.target as HTMLInputElement).value);
-    }
 
     function onEnter(item: SearchResult, event: KeyboardEvent) {
         if (item.type === "release" && event.metaKey) {
@@ -74,31 +44,14 @@ export default function MusicSidebar() {
         navigate(item.links[item.type]);
     }
 
-    function estimateSize() {
-        return {
-            width: 300,
-            height: 64,
-        };
-    }
-
-    function onContextMenu(item: SearchResult) {
-        window.api.menu.searchResult(item);
-    }
-
     return (
         <div className={styles.view}>
             <input
-                autoFocus
                 ref={inputRef}
                 className={styles.input}
                 type="search"
                 placeholder={`Search music`}
-                onInput={onInput}
-                onBlur={() => window.api.ui.inputBlur()}
-                onFocus={() => {
-                    setContext("input");
-                    window.api.ui.inputFocus();
-                }}
+                {...inputHandlers}
             />
             {!results.length ? (
                 debouncedQuery && !isPending ? (
@@ -109,23 +62,24 @@ export default function MusicSidebar() {
             ) : (
                 <>
                     <List
-                        onEnter={onEnter}
-                        onUp={onUp}
+                        disableMultipleSelection
+                        context="sidebar"
                         className={styles.listWrapper}
                         items={results}
-                        estimateSize={estimateSize}
+                        estimateSize={() => itemDimensions}
                         paddingRight={0}
                         gap={12}
-                        disableMultipleSelection
-                        onRight={() => setContext("list")}
-                        context="sidebar"
+                        onEnter={onEnter}
+                        {...listHandlers}
                         render={({ item, selected, onClick }) => (
                             <SearchResultView
                                 item={item}
                                 selected={selected}
                                 onClick={onClick}
                                 currentContext={currentContext}
-                                onContextMenu={() => onContextMenu(item)}
+                                onContextMenu={() =>
+                                    window.api.menu.searchResult(item)
+                                }
                             />
                         )}
                     />

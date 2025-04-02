@@ -4,20 +4,22 @@ import type {
     ReleaseWithArtistAndSubreleases,
     ReleaseWithArtistAndTracksAndSubreleases,
 } from "@/types/types";
-import ReleaseView from "@/renderer/components/ReleaseView";
 import { releaseColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
 import { useKeyManager } from "@/renderer/hooks/useKeyboardManager";
 import useLatestReleases from "@/renderer/query/useLatestReleases";
 import { useClearSelectionOnLeave } from "@/renderer/hooks/ipc";
+import useStore from "@/renderer/store";
 import { getReleaseLink } from "@/lib/links";
 import { getReleaseContextMenuParams } from "@/lib/utils";
-import List from "@/renderer/components/List";
 import Loading from "@/renderer/components/Loading";
+import List from "@/renderer/components/List";
+import ReleaseView from "@/renderer/components/ReleaseView";
 
 import styles from "../Page.module.css";
 
 export default function LatestReleases() {
     const navigate = useNavigate();
+    const { showSidebar } = useStore();
     const { setContext } = useKeyManager({});
     const {
         releases,
@@ -64,6 +66,7 @@ export default function LatestReleases() {
                 isFetchingNextPage={isFetchingNextPage}
                 onEnter={onEnter}
                 onLeft={() => setContext("sidebar")}
+                shouldCallOnLeft={() => showSidebar}
                 onSelectionChange={(selection) =>
                     window.api.state.select(
                         selection.map((index) => releases[index])

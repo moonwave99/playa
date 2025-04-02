@@ -60,6 +60,7 @@ export default function CollectionPage() {
                 releases={collection.releases}
                 onDelete={deleteReleasesFromCollection}
                 onContextMenu={onContextMenu}
+                className={styles.list}
             />
         </div>
     );
@@ -77,7 +78,7 @@ function Header({ collection, onTitleUpdate, isFocused }: HeaderProps) {
     const [isEditing, setEditing] = useState(isFocused);
 
     const { setContext } = useKeyManager({
-        context: "input",
+        context: "collectionInput",
         handlers: {
             Escape: () => setEditing(false),
         },
@@ -85,7 +86,7 @@ function Header({ collection, onTitleUpdate, isFocused }: HeaderProps) {
 
     useEffect(() => {
         if (isEditing) {
-            setContext("input");
+            setContext("collectionInput");
             inputRef.current?.focus();
             return;
         }

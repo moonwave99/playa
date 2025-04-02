@@ -1,15 +1,11 @@
-import { useState, useRef } from "react";
-import type { FormEvent, MouseEvent, ReactNode } from "react";
+import { useState } from "react";
+import type { MouseEvent, ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { QueryKey } from "@tanstack/react-query";
 import cx from "clsx";
 import List from "@/renderer/components/List";
 import type { RenderParams } from "@/renderer/components/List";
-import {
-    useKeyManager,
-    KeyManager,
-    withMeta,
-} from "@/renderer/hooks/useKeyboardManager";
+import useSidebar from "../hooks/useSidebar";
 import Loading from "./Loading";
 import Link from "./Link";
 import styles from "./Sidebar.module.css";
@@ -43,47 +39,16 @@ export default function Sidebar<T>({
     }),
     renderItem,
 }: SidebarProps<T>) {
-    const inputRef = useRef<HTMLInputElement>(null);
     const [query, setQuery] = useState("");
-    const { setContext, currentContext } = useKeyManager({
-        context: "input",
-        handlers: {
-            ArrowDown: () => {
-                inputRef.current?.blur();
-                setContext("sidebar");
-            },
-            ArrowRight: () => {
-                if (query === "") {
-                    inputRef.current?.blur();
-                    setContext("list");
-                }
-            },
-        },
-    });
-
-    useKeyManager({
-        context: KeyManager.global,
-        handlers: {
-            f: withMeta(() => inputRef.current?.focus()),
-        },
-    });
-
     const { isPending, error, data } = useQuery<T[]>(queryConfig(query));
+    const { inputRef, currentContext, inputHandlers, listHandlers } =
+        useSidebar({ isPending, query, setQuery });
 
     if (isPending) {
         return <Loading />;
     }
 
     if (error) return "An error has occurred: " + error.message;
-
-    function onUp() {
-        inputRef.current?.focus();
-        setContext("input");
-    }
-
-    function onInput(event: FormEvent<HTMLInputElement>) {
-        setQuery((event.target as HTMLInputElement).value);
-    }
 
     function defaultRenderItem({
         item,
@@ -112,32 +77,25 @@ export default function Sidebar<T>({
     return (
         <div className={styles.view}>
             <input
-                autoFocus
                 ref={inputRef}
                 className={styles.input}
                 type="search"
                 placeholder={`Search ${label}`}
-                onInput={onInput}
-                onBlur={() => window.api.ui.inputBlur()}
-                onFocus={() => {
-                    setContext("input");
-                    window.api.ui.inputFocus();
-                }}
+                {...inputHandlers}
             />
             {!filteredItems.length ? (
                 <div className={styles.noResults}>No results for {query}</div>
             ) : (
                 <List
-                    onUp={onUp}
-                    onEnter={onEnter}
+                    context="sidebar"
                     className={styles.listWrapper}
                     items={filteredItems}
                     estimateSize={estimateSize}
                     paddingRight={0}
                     gap={0}
                     disableMultipleSelection
-                    onRight={() => setContext("list")}
-                    context="sidebar"
+                    onEnter={onEnter}
+                    {...listHandlers}
                     render={renderItem || defaultRenderItem}
                 />
             )}

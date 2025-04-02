@@ -1,11 +1,13 @@
 import { useNavigate } from "react-router";
-import ListCard from "@/renderer/components/ListCard";
-import List from "@/renderer/components/List";
-import Loading from "@/renderer/components/Loading";
 import { useKeyManager } from "@/renderer/hooks/useKeyboardManager";
 import useLatestArtists from "@/renderer/query/useLatestArtists";
+import useStore from "@/renderer/store";
 import { getArtistLink } from "@/lib/links";
 import { estimateListCardSize } from "@/lib/utils";
+import Loading from "@/renderer/components/Loading";
+import List from "@/renderer/components/List";
+import ListCard from "@/renderer/components/ListCard";
+
 import styles from "../Page.module.css";
 
 const columnsConfig = [
@@ -15,6 +17,7 @@ const columnsConfig = [
 
 export default function LatestArtists() {
     const navigate = useNavigate();
+    const { showSidebar } = useStore();
     const { setContext } = useKeyManager({});
     const {
         artists,
@@ -45,6 +48,7 @@ export default function LatestArtists() {
                 isFetchingNextPage={isFetchingNextPage}
                 onEnter={(artist) => navigate(getArtistLink(artist))}
                 onLeft={() => setContext("sidebar")}
+                shouldCallOnLeft={() => showSidebar}
                 render={({ item, ...rest }) => (
                     <ListCard
                         item={item}

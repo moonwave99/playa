@@ -94,7 +94,6 @@ export default function ReleaseList({
                     />
                 ) : (
                     <ReleaseWithTracklistView
-                        inList
                         release={
                             item as ReleaseWithArtistAndTracksAndSubreleases
                         }

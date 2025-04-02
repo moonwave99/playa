@@ -244,7 +244,9 @@ function init(): Init {
     }, [pathname]);
 
     useEffect(() => {
+        window.api.ui.inputBlur();
         setContext("list");
+
         const removeHandlers = [
             window.api.onToggleViewMode(toggleViewMode),
             window.api.onMutate(refetch),

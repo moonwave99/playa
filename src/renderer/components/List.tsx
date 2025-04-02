@@ -25,6 +25,7 @@ type ListProps<T> = {
     onUp?: () => void;
     onLeft?: () => void;
     onRight?: () => void;
+    shouldCallOnLeft?: () => boolean;
     context?: string;
     className?: string;
     columnsConfig?: ColumnsConfigEntry[];
@@ -65,6 +66,7 @@ export default function List<T>({
     onUp,
     onLeft,
     onRight,
+    shouldCallOnLeft = () => true,
     items,
     context = "list",
     className,
@@ -115,6 +117,10 @@ export default function List<T>({
         setSelection([currentIndex]);
     }, [currentIndex]);
 
+    useLayoutEffect(() => {
+        virtualizer.scrollToIndex(currentIndex);
+    }, [currentIndex]);
+
     useEffect(() => {
         onSelectionChange && onSelectionChange(selection);
     }, [selection]);
@@ -151,6 +157,9 @@ export default function List<T>({
                     onLeft &&
                     !event.metaKey
                 ) {
+                    if (!shouldCallOnLeft()) {
+                        return;
+                    }
                     setCurrentIndex(-1);
                     onLeft();
                     return;
@@ -182,9 +191,13 @@ export default function List<T>({
         },
     });
 
-    useLayoutEffect(() => {
-        virtualizer.scrollToIndex(currentIndex);
-    }, [currentIndex]);
+    useEffect(() => {
+        // console.log(currentContext, context, items);
+        if (currentContext !== context) {
+            return;
+        }
+        setCurrentIndex(0);
+    }, [context, currentContext]);
 
     const virtualizer = useVirtualizer({
         count: items.length,

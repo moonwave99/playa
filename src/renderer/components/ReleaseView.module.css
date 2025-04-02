@@ -1,4 +1,4 @@
-.view {
+.releaseView {
   background-color: var(--release-view-background-color);
   border-radius: 0.25rem;
   padding: .75rem;
@@ -7,6 +7,23 @@
   justify-content: space-between;
   gap: 0.75rem;
   color: black;
+
+  &:hover {
+    background-color: var(--release-view-background-color-light);
+  }
+
+  &.hasFocus {
+    background-color: var(--accent-color);
+
+    &:hover {
+      background-color: var(--accent-color-light);
+    }
+
+    .title,
+    .info {
+      color: var(--primary-color);
+    }
+  }
 }
 
 .view>* {
@@ -68,13 +85,4 @@
 
 .selected {
   background-color: var(--selected-no-focus-color);
-}
-
-.hasFocus {
-  background-color: var(--accent-color);
-
-  .title,
-  .info {
-    color: var(--primary-color);
-  }
 }
