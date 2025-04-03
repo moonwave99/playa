@@ -21,7 +21,8 @@
         "db:migrate": "npx prisma migrate dev --name init",
         "db:studio": "npx prisma studio",
         "db:dump": "pg_dump music > \"./dump/music-$(date +'%Y-%m-%d_%H-%M-%S').sql\"",
-        "test:renderer": "npx vitest --config vite.renderer.config.ts"
+        "test:renderer": "npx vitest --config vite.renderer.config.ts",
+        "coverage:renderer": "npx vitest run --coverage --config vite.renderer.config.ts"
     },
     "prisma": {
         "schema": "./src/main/db/schema.prisma"
@@ -49,6 +50,7 @@
         "@typescript-eslint/eslint-plugin": "^8.29.0",
         "@typescript-eslint/parser": "^8.29.0",
         "@vitejs/plugin-react": "^4.3.4",
+        "@vitest/coverage-istanbul": "^3.1.1",
         "electron": "35.0.1",
         "eslint": "^8.57.1",
         "eslint-import-resolver-typescript": "^4.2.2",
@@ -69,6 +71,7 @@
         "@react-router/serve": "^7.3.0",
         "@tanstack/react-query": "^5.68.0",
         "@tanstack/react-virtual": "^3.13.4",
+        "@testing-library/user-event": "^14.6.1",
         "clsx": "^2.1.1",
         "electron-settings": "^4.0.4",
         "electron-squirrel-startup": "^1.0.1",

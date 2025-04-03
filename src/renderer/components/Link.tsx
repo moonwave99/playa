@@ -8,6 +8,7 @@ export default function Link(props: LinkProps) {
             onClick={(event: MouseEvent<HTMLAnchorElement>) => {
                 if (event.metaKey) {
                     event.preventDefault();
+                    return;
                 }
                 if (props.onClick) {
                     props.onClick(event);

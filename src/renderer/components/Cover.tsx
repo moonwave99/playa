@@ -3,11 +3,9 @@ import type { DragEvent } from "react";
 import cx from "clsx";
 import { getCover } from "@/lib/links";
 import styles from "./Cover.module.css";
+import type { Release } from "@/types/types";
 
-type CoverProps = {
-    id: number;
-    title: string;
-    hash: string;
+type CoverProps = Pick<Release, "id" | "title" | "hash"> & {
     path?: string;
     className?: string;
     droppable?: boolean;
@@ -78,6 +76,7 @@ export default function Cover({
                 data-id={id}
                 className={cx(styles.cover, { [styles.loaded]: loaded })}
                 src={src}
+                alt={title}
                 loading="lazy"
                 onError={() => {
                     setError(true);
