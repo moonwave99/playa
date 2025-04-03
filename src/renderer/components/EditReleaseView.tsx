@@ -7,7 +7,7 @@ import type {
 } from "@/types/types";
 import cx from "clsx";
 import { MdInfoOutline } from "react-icons/md";
-import styles from "./RenameReleaseView.module.css";
+import styles from "./EditReleaseView.module.css";
 import formStyles from "../forms.module.css";
 
 const labelMap = {
@@ -31,17 +31,17 @@ type NewInfo = {
     newTitle?: string;
 };
 
-type RenameReleasesViewProps = {
+type EditReleasesViewProps = {
     release: ReleaseWithArtistAndSubreleases;
     onSave: () => void;
     onCancel: () => void;
 };
 
-export default function RenameReleasesView({
+export default function EditReleasesView({
     release,
     onSave,
     onCancel,
-}: RenameReleasesViewProps) {
+}: EditReleasesViewProps) {
     const refetch = useRefetch();
     const [folderInfo, setFolderInfo] = useState(
         [release, ...release.subReleases].map((x, index) => ({
@@ -85,8 +85,8 @@ export default function RenameReleasesView({
     }
 
     return (
-        <div className={styles.RenameReleaseView}>
-            <h2>Rename Release</h2>
+        <div className={styles.EditReleaseView}>
+            <h2>Edit Release</h2>
             <form onSubmit={onSubmit} className={formStyles.form}>
                 <ul className={styles.releaseList}>
                     {folderInfo.map((release, index) => (
@@ -110,7 +110,7 @@ export default function RenameReleasesView({
                 </div>
                 <div className={formStyles.actions}>
                     <button type="submit" className={formStyles.button}>
-                        Rename Release
+                        Edit Release
                     </button>
                     <button
                         type="button"

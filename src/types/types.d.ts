@@ -5,9 +5,17 @@ import * as search from '@/main/db/search';
 import * as release from '@/main/db/release';
 import * as artist from '@/main/db/artist';
 import * as collection from '@/main/db/collection';
-import { playback, downloadCover, startDrag, importCovers, renameRelease } from '@/main/system';
+import { playback, downloadCover, startDrag, importCovers, renameRelease, renameArtist } from '@/main/system';
 import { getSettings, setSettings } from '@/main/settings';
-import type { ReleaseWithArtist, Artist, Collection, SearchResult, Sidebars, ReleaseWithArtistAndSubreleases } from './types';
+import type {
+  Artist,
+  ReleaseWithArtist,
+  ArtistWithReleases,
+  Collection,
+  SearchResult,
+  Sidebars,
+  ReleaseWithArtistAndSubreleases
+} from './types';
 
 declare module "*.module.css";
 
@@ -20,7 +28,8 @@ const system = {
   downloadCover,
   startDrag,
   importCovers,
-  renameRelease
+  renameRelease,
+  renameArtist
 };
 
 const settings = { getSettings, setSettings };
@@ -53,7 +62,8 @@ declare global {
       onOpenSettings: (handler: () => void) => () => void;
       onCoverUpdate: (handler: (releases: Release[]) => void) => () => void;
       onOpenGroupDialog: (handler: (releases: Release[]) => void) => () => void;
-      onOpenRenameDialog: (handler: (release: ReleaseWithArtistAndSubreleases) => void) => () => void;
+      onOpenEditReleaseDialog: (handler: (release: ReleaseWithArtistAndSubreleases) => void) => () => void;
+      onOpenEditArtistDialog: (handler: (artist: ArtistWithReleases) => void) => () => void;
       state: {
         selectReleases: (selectedReleases: ReleaseWithArtistAndSubreleases[]) => void;
         setInputFocused: (inputFocused: boolean) => void;

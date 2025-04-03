@@ -8,9 +8,10 @@ import sha1 from 'sha1';
 import * as mm from 'music-metadata';
 import { dialog, shell } from 'electron';
 import { addTracksToRelease, renameReleases } from "./db/release";
+import { getArtist, updateArtist } from "./db/artist";
 import { searchCover, getImageFromURL } from "./discogs";
 import { mapSeries } from '../lib/utils';
-import type { Artist, Release, TrackWithRelease, ReleaseType, ReleaseWithArtist, TrackInfo } from "@/types/types";
+import type { Entities, Artist, Release, TrackWithRelease, ReleaseType, ReleaseWithArtist, TrackInfo } from "@/types/types";
 import { getSetting } from './settings';
 import { send } from './state';
 
@@ -56,7 +57,7 @@ export async function playback({ release_id, track_id }: PlaybackParams) {
     if (!track) {
       return;
     }
-    await run('open', ['-a', PLAYER_PATH, getEntityPath(track)]);
+    await run('open', ['-a', PLAYER_PATH, withLibraryPath(getEntityPath({ ...track, _type: 'track' }))]);
     return true;
   }
 
@@ -68,7 +69,7 @@ export async function playback({ release_id, track_id }: PlaybackParams) {
   if (!release) {
     return;
   }
-  await run('open', ['-a', PLAYER_PATH, getEntityPath(release)]);
+  await run('open', ['-a', PLAYER_PATH, withLibraryPath(getEntityPath({ ...release, _type: 'release' }))]);
   return true;
 }
 
@@ -87,7 +88,7 @@ export async function openTagger(release_id: number) {
 
   const TAGGER_PATH = getSetting('TAGGER_PATH') as string;
 
-  await run('open', ['-a', TAGGER_PATH, getEntityPath(release)]);
+  await run('open', ['-a', TAGGER_PATH, withLibraryPath(getEntityPath(release))]);
   return true;
 }
 
@@ -101,7 +102,7 @@ export async function revealEntityInFinder(entity: 'release' | 'artist', id: num
   if (!result) {
     return;
   }
-  return shell.openPath(getEntityPath({ ...result, _type: entity }));
+  return shell.openPath(withLibraryPath(getEntityPath({ ...result, _type: entity })));
 }
 
 export async function importCovers(releases: ReleaseWithArtist[]) {
@@ -115,9 +116,8 @@ export async function importCovers(releases: ReleaseWithArtist[]) {
 }
 
 export async function importMissingCovers(releases: ReleaseWithArtist[]) {
-  const COVERS_PATH = getSetting('COVERS_PATH') as string;
   const releasesWithoutCover = releases.filter(
-    ({ hash }) => !existsSync(path.join(COVERS_PATH, `${hash}-cover.jpg`))
+    ({ hash }) => !existsSync(withCoversPath(`${hash}-cover.jpg`))
   );
   return importCovers(releasesWithoutCover);
 }
@@ -188,6 +188,11 @@ async function getMetadata(filePath: string, index: number): Promise<TrackInfo> 
 export function withLibraryPath(folderPath: string) {
   const LIBRARY_PATH = getSetting('LIBRARY_PATH') as string;
   return path.join(LIBRARY_PATH, folderPath);
+}
+
+export function withCoversPath(folderPath: string) {
+  const COVERS_PATH = getSetting('COVERS_PATH') as string;
+  return path.join(COVERS_PATH, folderPath);
 }
 
 async function importSingleFolder(folder: string) {
@@ -296,9 +301,6 @@ type RenameParam = (
 )[];
 
 export async function renameRelease(infos: RenameParam) {
-  const LIBRARY_PATH = getSetting('LIBRARY_PATH') as string;
-  const COVERS_PATH = getSetting('COVERS_PATH') as string;
-
   const shouldJustRenameDiscs =
     infos.every(x => x.path === x.newPath)
     && infos.some(x => x.title !== x.newTitle || x.discTitle !== x.newDiscTitle);
@@ -322,7 +324,7 @@ export async function renameRelease(infos: RenameParam) {
       });
       return false;
     }
-    if (existsSync(path.join(LIBRARY_PATH, info.newPath))) {
+    if (existsSync(withLibraryPath(info.newPath))) {
       dialog.showMessageBoxSync(null, {
         message: 'Error while renaming',
         detail: `Path ${info.newPath} already exists`,
@@ -342,19 +344,19 @@ export async function renameRelease(infos: RenameParam) {
       discTitle: x.newDiscTitle,
     }));
 
+    const artist = await getArtist(infos[0].artist_id);
+
     Promise.all(infos.map(async (x, index) => {
-      await move(
-        path.join(LIBRARY_PATH, x.path),
-        path.join(LIBRARY_PATH, x.newPath),
-      );
-      const coverPath = path.join(COVERS_PATH, `${x.hash}-cover.jpg`);
-      if (!existsSync(coverPath)) {
+      const oldPath = withLibraryPath(getEntityPath(({ ...x, artist, _type: 'release' })));
+      const newPath = withLibraryPath(getEntityPath(({ ...x, artist, _type: 'release', path: x.newPath })));
+      await move(oldPath, newPath);
+
+      const oldCoverPath = withCoversPath(`${x.hash}-cover.jpg`);
+      const newCoverPath = withCoversPath(`${newInfos[index].hash}-cover.jpg`);
+      if (!existsSync(oldCoverPath)) {
         return;
       }
-      await move(
-        coverPath,
-        path.join(COVERS_PATH, `${newInfos[index].hash}-cover.jpg`),
-      );
+      await move(oldCoverPath, newCoverPath,);
     }));
 
     await renameReleases(newInfos);
@@ -370,6 +372,36 @@ export async function renameRelease(infos: RenameParam) {
     });
     return false;
   }
+}
+
+type RenameArtistParams = Artist & {
+  newPath: string;
+  newName: string;
+}
+
+export async function renameArtist(infos: RenameArtistParams) {
+  const shouldMoveArtist = infos.newPath !== infos.path;
+  if (shouldMoveArtist && existsSync(withLibraryPath(infos.newPath))) {
+    dialog.showMessageBoxSync(null, {
+      message: 'Error while renaming',
+      detail: `Path ${infos.newPath} already exists`,
+      type: 'error',
+      buttons: ['OK'],
+    });
+    return false;
+  }
+
+  if (shouldMoveArtist) {
+    await move(
+      withLibraryPath(infos.path),
+      withLibraryPath(infos.newPath),
+    );
+  }
+
+  return await updateArtist(infos.id, {
+    name: infos.newName,
+    path: infos.newPath
+  });
 }
 
 type ParseTitle = {
@@ -433,22 +465,23 @@ async function run(command: string, options: string[], cwd?: string): Promise<Ru
   })
 }
 
-function getEntityPath(entity: Artist | ReleaseWithArtist | TrackWithRelease) {
-  console.log(entity)
+type GetEntityPathParam = { _type: Entities, path: string } &
+  (Pick<ReleaseWithArtist, 'artist' | 'path' | 'type'>
+    | Pick<TrackWithRelease, 'release' | 'path'>);
+
+function getEntityPath(entity: GetEntityPathParam) {
   if (entity._type === 'artist') {
-    return withLibraryPath(entity.path);
+    return entity.path;
   }
   if (entity._type === 'release') {
-    return withLibraryPath(
-      path.join(entity.artist.path, `[${entity.type}]`, entity.path)
-    );
+    const release = entity as ReleaseWithArtist;
+    return path.join((release.artist).path, `[${release.type}]`, release.path);
   }
-  return withLibraryPath(
-    path.join(
-      entity.release.artist.path,
-      `[${entity.release.type}]`,
-      entity.release.path,
-      entity.path
-    )
+  const track = entity as TrackWithRelease;
+  return path.join(
+    track.release.artist.path,
+    `[${track.release.type}]`,
+    track.release.path,
+    track.path
   );
 }

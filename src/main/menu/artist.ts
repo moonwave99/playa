@@ -25,6 +25,10 @@ export const artistMenu = (artist: ArtistWithReleases) => {
         send('mutate', ['artists', artist.id]);
       }
     },
+    {
+      label: 'Edit Artist',
+      click: () => send('openEditArtistDialog', artist),
+    },
     { type: 'separator' },
     {
       label: `Search '${name}' on RYM`,

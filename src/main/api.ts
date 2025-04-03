@@ -4,7 +4,7 @@ import * as release from './db/release';
 import * as artist from './db/artist';
 import * as collection from './db/collection';
 import * as search from './db/search';
-import { playback, openTagger, refreshReleaseContents, downloadCover, startDrag, importCovers, renameRelease } from './system';
+import { playback, openTagger, refreshReleaseContents, downloadCover, startDrag, importCovers, renameRelease, renameArtist } from './system';
 import { getSettings, setSettings } from './settings';
 import { releaseMenu, artistMenu, collectionMenu, searchResultMenu } from './menu/menu';
 
@@ -21,7 +21,8 @@ const system = {
   downloadCover,
   startDrag,
   importCovers,
-  renameRelease
+  renameRelease,
+  renameArtist
 };
 
 const menu = {

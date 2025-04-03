@@ -118,6 +118,11 @@ export function setupMenu(win: BrowserWindow, state: StateManager) {
           send('coverUpdate', update);
         }
       },
+      {
+        label: 'Edit Artist',
+        accelerator: 'Shift+E',
+        click: () => send('openEditArtistDialog', state.getCurrentArtist()),
+      },
       { type: 'separator' },
       {
         label: 'Search Artist on Discogs',
@@ -171,10 +176,10 @@ export function setupMenu(win: BrowserWindow, state: StateManager) {
         click: () => searchReleaseOnRYM(state.getSelectedReleases()[0])
       },
       {
-        id: 'renameRelease',
-        label: `Rename Release`,
-        accelerator: 'Alt+Shift+R',
-        click: () => send('openRenameDialog', state.getSelectedReleases().at(0)),
+        id: 'editRelease',
+        label: `Edit Release`,
+        accelerator: 'Cmd+Shift+E',
+        click: () => send('openEditReleaseDialog', state.getSelectedReleases().at(0)),
       },
       {
         id: 'groupReleases',

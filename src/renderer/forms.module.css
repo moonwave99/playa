@@ -77,6 +77,12 @@
     background-color: var(--accent-color);
     color: var(--primary-color);
   }
+
+  &[disabled] {
+    cursor: not-allowed;
+    background-color: var(--tertiary-color);
+    opacity: .5;
+  }
 }
 
 .info {

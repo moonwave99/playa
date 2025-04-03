@@ -104,9 +104,14 @@ export const releaseMenu = async (
         }
       },
       {
-        id: 'renameRelease',
-        label: `Rename Release`,
-        click: () => send('openRenameDialog', release),
+        id: 'editRelease',
+        label: `Edit Release`,
+        click: () => send('openEditReleaseDialog', release),
+      },
+      {
+        id: 'editArtist',
+        label: `Edit Artist`,
+        click: () => send('openEditArtistDialog', release.artist),
       },
       getCoverReleaseEntry(release.id, context),
       (release.subReleases.length ? {

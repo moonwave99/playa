@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import type { ReleaseWithArtist, ReleaseWithArtistAndSubreleases, Sidebars } from "@/types/types";
+import type { Artist, ReleaseWithArtist, ReleaseWithArtistAndSubreleases, Sidebars } from "@/types/types";
 
 export function useClearSelection(callback: () => void) {
   useEffect(() => {
@@ -37,9 +37,18 @@ export function useOnOpenGroupDialog(callback: (selection: ReleaseWithArtist[]) 
   }, []);
 }
 
-export function useOnOpenRenameDialog(callback: (release: ReleaseWithArtistAndSubreleases) => void) {
+export function useOnOpenEditReleaseDialog(callback: (release: ReleaseWithArtistAndSubreleases) => void) {
   useEffect(() => {
-    const unsubscribe = window.api.onOpenRenameDialog(callback);
+    const unsubscribe = window.api.onOpenEditReleaseDialog(callback);
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+}
+
+export function useOnOpenEditArtistDialog(callback: (artist: Artist) => void) {
+  useEffect(() => {
+    const unsubscribe = window.api.onOpenEditArtistDialog(callback);
     return () => {
       unsubscribe();
     };

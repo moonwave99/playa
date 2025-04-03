@@ -16,7 +16,8 @@ import {
 import {
     useOnOpenSettings,
     useOnOpenGroupDialog,
-    useOnOpenRenameDialog,
+    useOnOpenEditReleaseDialog,
+    useOnOpenEditArtistDialog,
 } from "./hooks/ipc";
 import useRefetch from "./hooks/useRefetch";
 import useStore from "./store";
@@ -33,13 +34,15 @@ import Nav from "./components/Nav";
 import SidebarView from "./components/SidebarView";
 import SettingsView from "./components/SettingsView";
 import GroupReleasesView from "./components/GroupReleasesView";
-import RenameReleaseView from "./components/RenameReleaseView";
+import EditReleaseView from "./components/EditReleaseView";
+import EditArtistView from "./components/EditArtistView";
 
 import { MdOutlineSearch } from "react-icons/md";
 import cx from "clsx";
 import styles from "./Layout.module.css";
 import buttonStyles from "./buttons.module.css";
 import {
+    ArtistWithReleases,
     ReleaseWithArtist,
     ReleaseWithArtistAndSubreleases,
 } from "@/types/types";
@@ -142,11 +145,20 @@ export default function Layout() {
                         onCancel={() => setModalContents(null)}
                     />
                 )}
-                {modalContents?.name === "renameRelease" && (
-                    <RenameReleaseView
+                {modalContents?.name === "editRelease" && (
+                    <EditReleaseView
                         release={
                             modalContents.params
                                 .release as ReleaseWithArtistAndSubreleases
+                        }
+                        onSave={() => setModalContents(null)}
+                        onCancel={() => setModalContents(null)}
+                    />
+                )}
+                {modalContents?.name === "editArtist" && (
+                    <EditArtistView
+                        artist={
+                            modalContents.params.artist as ArtistWithReleases
                         }
                         onSave={() => setModalContents(null)}
                         onCancel={() => setModalContents(null)}
@@ -198,8 +210,11 @@ function init(): Init {
     useOnOpenGroupDialog((releases: ReleaseWithArtist[]) =>
         setModalContents({ name: "groupReleases", params: { releases } })
     );
-    useOnOpenRenameDialog((release: ReleaseWithArtistAndSubreleases) =>
-        setModalContents({ name: "renameRelease", params: { release } })
+    useOnOpenEditReleaseDialog((release: ReleaseWithArtistAndSubreleases) =>
+        setModalContents({ name: "editRelease", params: { release } })
+    );
+    useOnOpenEditArtistDialog((artist: ArtistWithReleases) =>
+        setModalContents({ name: "editArtist", params: { artist } })
     );
 
     const isDetailPage = !!(

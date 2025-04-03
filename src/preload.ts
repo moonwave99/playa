@@ -4,7 +4,7 @@ import * as search from "./main/db/search";
 import * as release from "./main/db/release";
 import * as artist from "./main/db/artist";
 import * as collection from "./main/db/collection";
-import { openTagger, refreshReleaseContents, playback, downloadCover, startDrag, importCovers, renameRelease } from "./main/system";
+import { openTagger, refreshReleaseContents, playback, downloadCover, startDrag, importCovers, renameRelease, renameArtist } from "./main/system";
 import { getSettings, setSettings } from "./main/settings";
 import type { ReleaseWithArtist, CollectionWithReleases, ArtistWithReleases, SearchResult, ReleaseWithArtistAndSubreleases } from "./types/types";
 
@@ -22,7 +22,8 @@ contextBridge.exposeInMainWorld('api', {
     downloadCover,
     startDrag,
     importCovers,
-    renameRelease
+    renameRelease,
+    renameArtist
   }),
   settings: getHandlers({ getSettings, setSettings }),
   menu: {
@@ -44,7 +45,8 @@ contextBridge.exposeInMainWorld('api', {
   onOpenSettings: getHandler('openSettings'),
   onCoverUpdate: getHandler('coverUpdate'),
   onOpenGroupDialog: getHandler('openGroupDialog'),
-  onOpenRenameDialog: getHandler('openRenameDialog'),
+  onOpenEditReleaseDialog: getHandler('openEditReleaseDialog'),
+  onOpenEditArtistDialog: getHandler('openEditArtistDialog'),
   state: {
     setInputFocused: (inputFocused: boolean) => ipc.send('state:setInputFocused', inputFocused),
     selectReleases: (selection: ReleaseWithArtistAndSubreleases[]) => ipc.send('state:selectReleases', selection),
