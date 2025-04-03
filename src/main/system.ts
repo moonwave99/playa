@@ -10,7 +10,7 @@ import { dialog, shell } from 'electron';
 import { addTracksToRelease, renameReleases } from "./db/release";
 import { searchCover, getImageFromURL } from "./discogs";
 import { mapSeries } from '../lib/utils';
-import type { Release, ReleaseType, ReleaseWithArtist, TrackInfo } from "@/types/types";
+import type { Artist, Release, TrackWithRelease, ReleaseType, ReleaseWithArtist, TrackInfo } from "@/types/types";
 import { getSetting } from './settings';
 import { send } from './state';
 
@@ -47,15 +47,16 @@ export async function playback({ release_id, track_id }: PlaybackParams) {
   if (track_id) {
     const track = await prisma.track.findFirst({
       where: { id: track_id },
-      include: { release: true }
+      include: {
+        release: {
+          include: { artist: true }
+        }
+      }
     });
     if (!track) {
       return;
     }
-    await run('open', ['-a', PLAYER_PATH, withLibraryPath(path.join(
-      track.release.path,
-      track.path
-    ))]);
+    await run('open', ['-a', PLAYER_PATH, getEntityPath(track)]);
     return true;
   }
 
@@ -67,8 +68,7 @@ export async function playback({ release_id, track_id }: PlaybackParams) {
   if (!release) {
     return;
   }
-
-  await run('open', ['-a', PLAYER_PATH, withLibraryPath(release.path)]);
+  await run('open', ['-a', PLAYER_PATH, getEntityPath(release)]);
   return true;
 }
 
@@ -87,17 +87,21 @@ export async function openTagger(release_id: number) {
 
   const TAGGER_PATH = getSetting('TAGGER_PATH') as string;
 
-  await run('open', ['-a', TAGGER_PATH, withLibraryPath(release.path)]);
+  await run('open', ['-a', TAGGER_PATH, getEntityPath(release)]);
   return true;
 }
 
 export async function revealEntityInFinder(entity: 'release' | 'artist', id: number) {
-  const result = await prisma[entity].findFirst({ where: { id } });
+  let result;
+  if (entity === 'release') {
+    result = await prisma.release.findFirst({ where: { id }, include: { artist: true } });
+  } else {
+    result = await prisma.artist.findFirst({ where: { id } });
+  }
   if (!result) {
     return;
   }
-
-  return shell.openPath(withLibraryPath(result.path));
+  return shell.openPath(getEntityPath({ ...result, _type: entity }));
 }
 
 export async function importCovers(releases: ReleaseWithArtist[]) {
@@ -427,4 +431,24 @@ async function run(command: string, options: string[], cwd?: string): Promise<Ru
       });
     });
   })
+}
+
+function getEntityPath(entity: Artist | ReleaseWithArtist | TrackWithRelease) {
+  console.log(entity)
+  if (entity._type === 'artist') {
+    return withLibraryPath(entity.path);
+  }
+  if (entity._type === 'release') {
+    return withLibraryPath(
+      path.join(entity.artist.path, `[${entity.type}]`, entity.path)
+    );
+  }
+  return withLibraryPath(
+    path.join(
+      entity.release.artist.path,
+      `[${entity.release.type}]`,
+      entity.release.path,
+      entity.path
+    )
+  );
 }

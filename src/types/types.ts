@@ -23,6 +23,7 @@ export type CollectionUpdate = { title: string, releases: number[] };
 export type ArtistUpdate = Pick<Artist, 'name' | 'path'>;
 export type TrackInfo = Pick<Track, 'path' | 'duration' | 'position' | 'title'>;
 export type ReleaseCountByType = Record<ReleaseType, number>;
+export type TrackWithRelease = Track & { release: ReleaseWithArtist };
 
 export type WithReleases = {
   releases: ReleaseWithArtist[];
