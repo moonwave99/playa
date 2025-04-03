@@ -20,7 +20,8 @@
         "db:generate": "npx prisma generate",
         "db:migrate": "npx prisma migrate dev --name init",
         "db:studio": "npx prisma studio",
-        "db:dump": "pg_dump music > \"./dump/music-$(date +'%Y-%m-%d_%H-%M-%S').sql\""
+        "db:dump": "pg_dump music > \"./dump/music-$(date +'%Y-%m-%d_%H-%M-%S').sql\"",
+        "test:renderer": "npx vitest --config vite.renderer.config.ts"
     },
     "prisma": {
         "schema": "./src/main/db/schema.prisma"
@@ -37,6 +38,8 @@
         "@electron-forge/plugin-vite": "^7.7.0",
         "@electron/fuses": "^1.8.0",
         "@react-router/dev": "^7.3.0",
+        "@testing-library/jest-dom": "^6.6.3",
+        "@testing-library/react": "^16.3.0",
         "@types/electron-squirrel-startup": "^1.0.2",
         "@types/lodash": "^4.17.16",
         "@types/react": "^19.0.10",
@@ -51,9 +54,11 @@
         "eslint-import-resolver-typescript": "^4.2.2",
         "eslint-plugin-import": "^2.31.0",
         "eslint-plugin-react-hooks": "^5.2.0",
+        "jsdom": "^26.0.0",
         "ts-node": "^10.9.2",
         "typescript": "^5.8.2",
-        "vite": "^5.4.14"
+        "vite": "^6.2.5",
+        "vitest": "^3.1.1"
     },
     "dependencies": {
         "@dnd-kit/core": "^6.3.1",
