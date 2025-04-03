@@ -63,6 +63,7 @@ contextBridge.exposeInMainWorld('api', {
 });
 
 function getHandlers(entity: Record<string, (...args: unknown[]) => unknown>) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   return Object.entries(entity).reduce(((memo, [name, handler]) => {
     return {
       ...memo,

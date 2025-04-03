@@ -9,7 +9,9 @@ export default function Link(props: LinkProps) {
                 if (event.metaKey) {
                     event.preventDefault();
                 }
-                props.onClick && props.onClick(event);
+                if (props.onClick) {
+                    props.onClick(event);
+                }
             }}
         />
     );

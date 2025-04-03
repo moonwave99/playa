@@ -111,9 +111,11 @@ export async function mapSeries<T, U>(array: T[], callback: (item: T, index: num
       const result = await callback(array[index], index);
       output.push(result);
       await wait(interval);
-      output.length === array.length
-        ? resolve(output)
-        : invoke(output.length);
+      if (output.length === array.length) {
+        resolve(output);
+        return;
+      }
+      invoke(output.length);
     }
     invoke(0);
   });

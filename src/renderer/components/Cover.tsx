@@ -25,6 +25,7 @@ async function getDropURL(event: DragEvent): Promise<string | null> {
                 url.startsWith("http") ? resolve(url) : reject(null)
             );
         } catch (error) {
+            console.log("getDropUrl", error);
             reject(null);
         }
     });
@@ -80,7 +81,9 @@ export default function Cover({
                 loading="lazy"
                 onError={() => {
                     setError(true);
-                    onError && onError();
+                    if (onError) {
+                        onError();
+                    }
                 }}
                 onLoad={(event) => {
                     if ((event.target as HTMLImageElement).src === emptyImg) {
@@ -88,7 +91,9 @@ export default function Cover({
                     }
                     setLoaded(true);
                     setError(false);
-                    onLoad && onLoad();
+                    if (onLoad) {
+                        onLoad();
+                    }
                 }}
                 onDragStart={
                     dragOutside

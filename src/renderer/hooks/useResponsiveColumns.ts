@@ -42,7 +42,9 @@ export default function useResponsiveColumns({
   useLayoutEffect(() => {
     const _onResize = throttle(() => {
       setColumns(getColumnCount(window.innerWidth, config));
-      onResize && onResize();
+      if (onResize) {
+        onResize();
+      }
     }, 150);
     window.addEventListener("resize", _onResize);
     return () => window.removeEventListener("resize", _onResize);

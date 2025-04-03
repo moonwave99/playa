@@ -53,9 +53,13 @@ export default function ListCard({
     );
 
     useEffect(() => {
-        onColorChange && onColorChange(useDarkText);
+        if (onColorChange) {
+            onColorChange(useDarkText);
+        }
         return () => {
-            onColorChange && onColorChange(false);
+            if (onColorChange) {
+                onColorChange(false);
+            }
         };
     }, [useDarkText]);
 

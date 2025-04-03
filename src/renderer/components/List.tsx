@@ -115,7 +115,9 @@ export default function List<T>({
             firstRender.current = false;
             return;
         }
-        onSelect && onSelect(items[currentIndex]);
+        if (onSelect) {
+            onSelect(items[currentIndex]);
+        }
         setSelection([currentIndex]);
     }, [currentIndex]);
 
@@ -124,7 +126,9 @@ export default function List<T>({
     }, [currentIndex]);
 
     useEffect(() => {
-        onSelectionChange && onSelectionChange(selection);
+        if (onSelectionChange) {
+            onSelectionChange(selection);
+        }
     }, [selection]);
 
     const isVertical = columnsConfig.length === 1 && columns === 1;

@@ -3,7 +3,7 @@ import type { IpcMainEvent } from 'electron';
 import path from "path";
 import { existsSync, move } from 'fs-extra';
 import prisma from "./db/prisma";
-import globby from "globby";
+import { globby } from "globby";
 import sha1 from 'sha1';
 import * as mm from 'music-metadata';
 import { dialog, shell } from 'electron';

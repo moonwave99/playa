@@ -7,11 +7,13 @@ export default function useRefetch(): UseRefetch {
   const queryClient = useQueryClient();
 
   function refetch(queryKey: QueryKey) {
-    Array.isArray(queryKey[0])
-      ? queryKey.forEach((q: QueryKey) =>
-        queryClient.refetchQueries({ queryKey: q })
-      )
-      : queryClient.refetchQueries({ queryKey });
+    if (!Array.isArray(queryKey[0])) {
+      queryClient.refetchQueries({ queryKey });
+      return;
+    }
+    queryKey.forEach((q: QueryKey) =>
+      queryClient.refetchQueries({ queryKey: q })
+    );
   }
 
   return refetch;
