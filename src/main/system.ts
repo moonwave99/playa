@@ -33,8 +33,8 @@ export async function importFolder(folder: string): Promise<ReleaseWithArtist[]>
   return releases;
 }
 
-export async function getFolderContents(release: Pick<Release, 'path'>): Promise<TrackInfo[]> {
-  const contents = await crawlFolder(release.path);
+export async function getFolderContents(release: ReleaseWithArtist): Promise<TrackInfo[]> {
+  const contents = await crawlFolder(getEntityPath({ ...release, _type: 'release' }));
   return Promise.all(contents.map(getMetadata));
 }
 
@@ -88,7 +88,7 @@ export async function openTagger(release_id: number) {
 
   const TAGGER_PATH = getSetting('TAGGER_PATH') as string;
 
-  await run('open', ['-a', TAGGER_PATH, withLibraryPath(getEntityPath(release))]);
+  await run('open', ['-a', TAGGER_PATH, withLibraryPath(getEntityPath({ ...release, _type: 'release' }))]);
   return true;
 }
 
