@@ -13,7 +13,8 @@ import { searchCover, getImageFromURL } from "./discogs";
 import { mapSeries } from '../lib/utils';
 import type { Entities, Artist, Release, TrackWithRelease, ReleaseType, ReleaseWithArtist, TrackInfo } from "@/types/types";
 import { getSetting } from './settings';
-import { send } from './state';
+import { send, getStateManager } from './state';
+import { capitalize } from 'lodash';
 
 export async function importFolder(folder: string): Promise<ReleaseWithArtist[]> {
   const folders = await globby("**", {
@@ -228,6 +229,7 @@ async function importSingleFolder(folder: string) {
   console.log('[importSingleFolder] upserted artist', artist);
 
   const releaseHash = hashRelease({ ...releaseData, artist_id: artist.id });
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { artist: artistData, ...releaseWithoutArtist } = releaseData;
   const release = await prisma.release.upsert({
     where: {
@@ -295,21 +297,34 @@ export function parsePath(path: string): ParsePath {
   };
 }
 
-type RenameParam = (
-  Pick<Release, 'id' | 'path' | 'hash' | 'title' | 'artist_id' | 'year' | 'type' | 'discTitle' | 'discNumber'>
-  & { newPath: string; newDiscTitle: string; newTitle: string }
-)[];
+type NewReleaseInfo = {
+  newPath: string;
+  newDiscTitle: string;
+  newTitle: string;
+  newType: ReleaseType;
+  newYear: number;
+}
 
-export async function renameRelease(infos: RenameParam) {
+type EditReleaseParam = (
+  Pick<Release, 'id' | 'path' | 'hash' | 'title' | 'artist_id' | 'year' | 'type' | 'discTitle' | 'discNumber'>
+  & NewReleaseInfo
+);
+
+export async function editRelease(infos: EditReleaseParam[]) {
   const shouldJustRenameDiscs =
     infos.every(x => x.path === x.newPath)
-    && infos.some(x => x.title !== x.newTitle || x.discTitle !== x.newDiscTitle);
+    && infos.some(
+      (x: EditReleaseParam) => ['path', 'discTitle', 'title', 'type', 'year']
+        .some(key => x[key as keyof EditReleaseParam] !== x[`new${capitalize(key)}` as keyof NewReleaseInfo])
+    );
 
   if (shouldJustRenameDiscs) {
     await renameReleases(infos.map(x => ({
       ...x,
       title: x.newTitle,
-      discTitle: x.newDiscTitle
+      discTitle: x.newDiscTitle,
+      type: x.newType,
+      year: x.newYear
     })));
     return true;
   }
@@ -338,17 +353,30 @@ export async function renameRelease(infos: RenameParam) {
   try {
     const newInfos = infos.map(x => ({
       ...x,
-      hash: hashRelease(x),
+      hash: hashRelease(({
+        ...x,
+        type: x.newType,
+        year: x.newYear
+      })),
       path: x.newPath,
       title: x.newTitle,
       discTitle: x.newDiscTitle,
+      type: x.newType,
+      year: x.newYear
     }));
 
     const artist = await getArtist(infos[0].artist_id);
 
     Promise.all(infos.map(async (x, index) => {
       const oldPath = withLibraryPath(getEntityPath(({ ...x, artist, _type: 'release' })));
-      const newPath = withLibraryPath(getEntityPath(({ ...x, artist, _type: 'release', path: x.newPath })));
+      const newPath = withLibraryPath(getEntityPath(({
+        ...x,
+        artist,
+        _type: 'release',
+        type: x.newType,
+        year: x.newYear,
+        path: x.newPath,
+      })));
       await move(oldPath, newPath);
 
       const oldCoverPath = withCoversPath(`${x.hash}-cover.jpg`);
@@ -374,12 +402,12 @@ export async function renameRelease(infos: RenameParam) {
   }
 }
 
-type RenameArtistParams = Artist & {
+type EditArtistParams = Artist & {
   newPath: string;
   newName: string;
 }
 
-export async function renameArtist(infos: RenameArtistParams) {
+export async function editArtist(infos: EditArtistParams) {
   const shouldMoveArtist = infos.newPath !== infos.path;
   if (shouldMoveArtist && existsSync(withLibraryPath(infos.newPath))) {
     dialog.showMessageBoxSync(null, {
@@ -398,10 +426,14 @@ export async function renameArtist(infos: RenameArtistParams) {
     );
   }
 
-  return await updateArtist(infos.id, {
+  const updatedArtist = await updateArtist(infos.id, {
     name: infos.newName,
     path: infos.newPath
   });
+
+  getStateManager().setCurrentArtist(updatedArtist);
+
+  return true;
 }
 
 type ParseTitle = {
@@ -466,7 +498,7 @@ async function run(command: string, options: string[], cwd?: string): Promise<Ru
 }
 
 type GetEntityPathParam = { _type: Entities, path: string } &
-  (Pick<ReleaseWithArtist, 'artist' | 'path' | 'type'>
+  (Pick<ReleaseWithArtist, 'artist' | 'path' | 'type' | 'year'>
     | Pick<TrackWithRelease, 'release' | 'path'>);
 
 function getEntityPath(entity: GetEntityPathParam) {
@@ -475,13 +507,13 @@ function getEntityPath(entity: GetEntityPathParam) {
   }
   if (entity._type === 'release') {
     const release = entity as ReleaseWithArtist;
-    return path.join((release.artist).path, `[${release.type}]`, release.path);
+    return path.join((release.artist).path, `[${release.type}]`, `${release.year} - ${release.path}`);
   }
   const track = entity as TrackWithRelease;
   return path.join(
     track.release.artist.path,
     `[${track.release.type}]`,
-    track.release.path,
+    `${track.release.year} - ${track.release.path}`,
     track.path
   );
 }

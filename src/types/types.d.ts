@@ -5,7 +5,7 @@ import * as search from '@/main/db/search';
 import * as release from '@/main/db/release';
 import * as artist from '@/main/db/artist';
 import * as collection from '@/main/db/collection';
-import { playback, downloadCover, startDrag, importCovers, renameRelease, renameArtist } from '@/main/system';
+import { playback, downloadCover, startDrag, importCovers, editRelease, editArtist } from '@/main/system';
 import { getSettings, setSettings } from '@/main/settings';
 import type {
   Artist,
@@ -28,8 +28,8 @@ const system = {
   downloadCover,
   startDrag,
   importCovers,
-  renameRelease,
-  renameArtist
+  editRelease,
+  editArtist
 };
 
 const settings = { getSettings, setSettings };

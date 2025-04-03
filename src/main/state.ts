@@ -67,7 +67,7 @@ export class StateManager {
 
 let manager: StateManager;
 
-export function initStateManager() {
+export function getStateManager() {
   if (!manager) {
     manager = new StateManager();
 

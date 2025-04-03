@@ -5,7 +5,7 @@ import started from 'electron-squirrel-startup';
 import registerApi from './api';
 import { setupMenu } from './menu/menu';
 import { initSettings, getSetting } from './settings';
-import { initStateManager } from './state';
+import { getStateManager } from './state';
 
 if (started) {
   app.quit();
@@ -57,7 +57,7 @@ const createWindow = async () => {
   });
 
   await initSettings();
-  const state = initStateManager();
+  const state = getStateManager();
   setupMenu(mainWindow, state);
   registerApi();
 };

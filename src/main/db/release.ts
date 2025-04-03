@@ -141,7 +141,7 @@ export async function unGroupRelease(release: Release & WithSubReleases) {
             data: {
                 title: info.title,
                 discNumber: null,
-                discTitle: null,
+                discTitle: '',
                 subReleases: {
                     set: []
                 },
@@ -157,7 +157,7 @@ export async function unGroupRelease(release: Release & WithSubReleases) {
                     mainReleaseId: null,
                     title: info.title,
                     discNumber: null,
-                    discTitle: null
+                    discTitle: ''
                 }
             })
         })
@@ -189,13 +189,15 @@ export async function getLatestReleases(
     };
 }
 
-export async function renameReleases(
-    infos: Pick<Release, 'id' | 'title' | 'path' | 'hash' | 'discTitle' | 'discNumber'>[]
-) {
+type RenameReleaseParam = Pick<Release,
+    'id' | 'title' | 'path' | 'hash' | 'discTitle' | 'discNumber' | 'type' | 'year'
+>[]
+
+export async function renameReleases(infos: RenameReleaseParam) {
     return prisma.$transaction(
-        infos.map(({ id, title, path, hash, discTitle, discNumber }) => prisma.release.update({
+        infos.map(({ id, title, path, hash, discTitle, discNumber, type, year }) => prisma.release.update({
             where: { id },
-            data: { title, path, hash, discTitle, discNumber }
+            data: { title, path, hash, discTitle, discNumber, type, year }
         }))
     );
 }

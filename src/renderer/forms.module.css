@@ -28,7 +28,8 @@
   text-align: right;
 }
 
-.input {
+.input,
+.select {
   flex: 1;
   border-radius: .25rem;
   border: 1px solid var(--tertiary-color);
@@ -111,4 +112,10 @@
   justify-content: end;
   gap: 1rem;
   user-select: none;
+}
+
+.horizontalGroup {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
 }

@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import useRefetch from "../hooks/useRefetch";
 import type {
+    ReleaseType,
     ReleaseWithArtist,
     ReleaseWithArtistAndSubreleases,
 } from "@/types/types";
@@ -23,12 +24,33 @@ const labelMap = {
         label: "New Path",
         placeholder: "Enter new path",
     },
+    newYear: {
+        label: "New Year",
+        placeholder: "Enter new year",
+    },
+    newType: {
+        label: "New Release Type",
+        placeholder: "Enter new release type",
+    },
 };
+
+const releaseTypes = [
+    "Album",
+    "EP",
+    "Single",
+    "Compilation",
+    "Bootleg",
+    "Various",
+    "Tribute",
+    "Soundtrack",
+] as ReleaseType[];
 
 type NewInfo = {
     newPath: string;
     newDiscTitle: string;
     newTitle?: string;
+    newType?: ReleaseType;
+    newYear?: number;
 };
 
 type EditReleasesViewProps = {
@@ -49,12 +71,14 @@ export default function EditReleasesView({
             newPath: x.path,
             newDiscTitle: x.discTitle || `Disc ${index + 1}`,
             newTitle: x.title,
+            newYear: x.year,
+            newType: x.type,
         }))
     );
 
     async function onSubmit(event: FormEvent) {
         event.preventDefault();
-        const success = await window.api.system.renameRelease(
+        const success = await window.api.system.editRelease(
             folderInfo
                 .filter(
                     (x) =>
@@ -62,7 +86,12 @@ export default function EditReleasesView({
                         x.discTitle !== x.newDiscTitle ||
                         x.title !== x.newTitle
                 )
-                .map((x) => ({ ...x, newTitle: folderInfo[0].newTitle }))
+                .map((x) => ({
+                    ...x,
+                    newTitle: folderInfo[0].newTitle,
+                    newType: folderInfo[0].newType,
+                    newYear: +folderInfo[0].newYear,
+                }))
         );
         if (!success) {
             return;
@@ -151,12 +180,23 @@ function FolderView({
         <article className={styles.release}>
             <h3 className={styles.releaseTitle}>{getTitle()}</h3>
             {isMainRelease ? (
-                <Field
-                    hasFocus
-                    name="newTitle"
-                    release={release}
-                    onInput={onInput}
-                />
+                <>
+                    <div className={formStyles.horizontalGroup}>
+                        <Field
+                            name="newYear"
+                            release={release}
+                            onInput={onInput}
+                            type="number"
+                        />
+                        <ReleaseTypeField release={release} onInput={onInput} />
+                    </div>
+                    <Field
+                        hasFocus
+                        name="newTitle"
+                        release={release}
+                        onInput={onInput}
+                    />
+                </>
             ) : null}
             <Field
                 hasFocus={hasFocus && !isMainRelease}
@@ -177,13 +217,21 @@ function FolderView({
 
 type FieldProps = Pick<FolderViewProps, "release" | "onInput" | "hasFocus"> & {
     name: keyof NewInfo;
+    type?: string;
 };
 
-function Field({ name, release, hasFocus, onInput }: FieldProps) {
+function Field({
+    name,
+    release,
+    hasFocus,
+    onInput,
+    type = "text",
+}: FieldProps) {
     return (
         <label className={cx(formStyles.label, styles.label)}>
             {labelMap[name].label}
             <input
+                type={type}
                 autoFocus={hasFocus}
                 className={cx(formStyles.input, styles.input)}
                 required
@@ -193,6 +241,33 @@ function Field({ name, release, hasFocus, onInput }: FieldProps) {
                     onInput(name, (event.target as HTMLInputElement).value)
                 }
             />
+        </label>
+    );
+}
+
+type ReleaseTypeFieldProps = Omit<FieldProps, "name">;
+
+function ReleaseTypeField({
+    release,
+    hasFocus,
+    onInput,
+}: ReleaseTypeFieldProps) {
+    return (
+        <label className={cx(formStyles.label, styles.label)}>
+            {labelMap.newType.label}
+            <select
+                className={cx(formStyles.select, styles.select)}
+                autoFocus={hasFocus}
+                required
+                value={release.newType}
+                onChange={(event: FormEvent) =>
+                    onInput("newType", (event.target as HTMLInputElement).value)
+                }
+            >
+                {releaseTypes.map((type) => (
+                    <option key={type}>{type}</option>
+                ))}
+            </select>
         </label>
     );
 }
