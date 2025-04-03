@@ -322,7 +322,7 @@ export async function editRelease(infos: EditReleaseParam[]) {
     await renameReleases(infos.map(x => ({
       ...x,
       title: x.newTitle,
-      discTitle: x.newDiscTitle,
+      discTitle: infos.length === 1 ? '' : x.newDiscTitle,
       type: x.newType,
       year: x.newYear
     })));
@@ -360,7 +360,7 @@ export async function editRelease(infos: EditReleaseParam[]) {
       })),
       path: x.newPath,
       title: x.newTitle,
-      discTitle: x.newDiscTitle,
+      discTitle: infos.length === 1 ? '' : x.newDiscTitle,
       type: x.newType,
       year: x.newYear
     }));
