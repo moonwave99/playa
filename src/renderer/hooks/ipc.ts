@@ -19,6 +19,15 @@ export function useNavigateSidebar(callback: (sidebar: Sidebars) => void) {
   }, []);
 }
 
+export function useOnSwipe(callback: (direction: 1 | -1) => void) {
+  useEffect(() => {
+    const unsubscribe = window.api.onSwipe(callback);
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+}
+
 export function useOnOpenSettings(callback: () => void) {
   useEffect(() => {
     const unsubscribe = window.api.onOpenSettings(callback);

@@ -54,6 +54,7 @@ declare global {
         searchResult: (result: SearchResult) => void;
       }
       onNavigate: (handler: (path: string) => void) => () => void;
+      onSwipe: (handler: (direction: 1 | -1) => void) => () => void;
       onNavigateSidebar: (handler: (sidebar: Sidebars) => void) => () => void;
       onMutate: (handler: (keys: QueryKey) => void) => () => void;
       onClearSelection: (handler: () => void) => () => void;

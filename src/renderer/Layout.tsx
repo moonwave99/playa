@@ -18,6 +18,7 @@ import {
     useOnOpenGroupDialog,
     useOnOpenEditReleaseDialog,
     useOnOpenEditArtistDialog,
+    useOnSwipe,
 } from "./hooks/ipc";
 import useRefetch from "./hooks/useRefetch";
 import useStore from "./store";
@@ -216,6 +217,7 @@ function init(): Init {
     useOnOpenEditArtistDialog((artist: ArtistWithReleases) =>
         setModalContents({ name: "editArtist", params: { artist } })
     );
+    useOnSwipe((direction) => navigate(direction));
 
     const isDetailPage = !!(
         matchPath("/releases/:id", pathname) ||

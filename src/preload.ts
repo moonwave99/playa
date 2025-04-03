@@ -38,6 +38,7 @@ contextBridge.exposeInMainWorld('api', {
   },
   onNavigateSidebar: getHandler('navigateSidebar'),
   onNavigate: getHandler('navigate'),
+  onSwipe: getHandler('swipe'),
   onMutate: getHandler('mutate'),
   onClearSelection: getHandler('clearSelection'),
   onToggleViewMode: getHandler('toggleViewMode'),

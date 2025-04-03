@@ -30,10 +30,10 @@ const createWindow = async () => {
       return;
     }
     if (direction === 'left' && mainWindow.webContents.navigationHistory.canGoBack()) {
-      mainWindow.webContents.navigationHistory.goBack();
+      mainWindow.webContents.send('swipe', -1);
     }
     if (direction === 'right' && mainWindow.webContents.navigationHistory.canGoForward()) {
-      mainWindow.webContents.navigationHistory.goForward();
+      mainWindow.webContents.send('swipe', 1);
     }
   })
 
