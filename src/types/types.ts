@@ -108,3 +108,16 @@ export function withEntityType<T>(item: T | T[], _type: Entities): (T & { _type:
   }
   return { ...item, _type }
 }
+
+export type NewReleaseInfo = {
+  newPath: string;
+  newDiscTitle: string;
+  newTitle: string;
+  newType: ReleaseType;
+  newYear: number;
+}
+
+export type EditReleaseParam = (
+  Pick<Release, 'id' | 'path' | 'hash' | 'title' | 'artist_id' | 'year' | 'type' | 'discTitle' | 'discNumber'>
+  & NewReleaseInfo
+);

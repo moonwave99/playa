@@ -5,7 +5,9 @@ import type {
     ReleaseType,
     ReleaseWithArtist,
     ReleaseWithArtistAndSubreleases,
+    NewReleaseInfo,
 } from "@/types/types";
+import { didReleaseInfoChange } from "@/lib/utils";
 import cx from "clsx";
 import { MdInfoOutline } from "react-icons/md";
 import styles from "./EditReleaseView.module.css";
@@ -45,14 +47,6 @@ const releaseTypes = [
     "Soundtrack",
 ] as ReleaseType[];
 
-type NewInfo = {
-    newPath: string;
-    newDiscTitle: string;
-    newTitle?: string;
-    newType?: ReleaseType;
-    newYear?: number;
-};
-
 type EditReleasesViewProps = {
     release: ReleaseWithArtistAndSubreleases;
     onSave: () => void;
@@ -69,7 +63,10 @@ export default function EditReleasesView({
         [release, ...release.subReleases].map((x, index) => ({
             ...x,
             newPath: x.path,
-            newDiscTitle: x.discTitle || `Disc ${index + 1}`,
+            newDiscTitle:
+                release.subReleases.length === 0
+                    ? x.discTitle
+                    : x.discTitle || `Disc ${index + 1}`,
             newTitle: x.title,
             newYear: x.year,
             newType: x.type,
@@ -90,7 +87,7 @@ export default function EditReleasesView({
                     ...x,
                     newTitle: folderInfo[0].newTitle,
                     newType: folderInfo[0].newType,
-                    newYear: +folderInfo[0].newYear,
+                    newYear: folderInfo[0].newYear,
                 }))
         );
         if (!success) {
@@ -107,10 +104,18 @@ export default function EditReleasesView({
         onSave();
     }
 
-    function updateInfo(index: number, key: keyof NewInfo, value: string) {
+    function updateInfo(
+        index: number,
+        key: keyof NewReleaseInfo,
+        value: string | number
+    ) {
         setFolderInfo((prev) =>
             prev.map((x, j) => (j === index ? { ...x, [key]: value } : x))
         );
+    }
+
+    function canSubmit() {
+        return didReleaseInfoChange(folderInfo, folderInfo.length === 1);
     }
 
     return (
@@ -138,7 +143,11 @@ export default function EditReleasesView({
                     Library.
                 </div>
                 <div className={formStyles.actions}>
-                    <button type="submit" className={formStyles.button}>
+                    <button
+                        type="submit"
+                        className={formStyles.button}
+                        disabled={!canSubmit()}
+                    >
                         Edit Release
                     </button>
                     <button
@@ -155,11 +164,11 @@ export default function EditReleasesView({
 }
 
 type FolderViewProps = {
-    release: NewInfo & Pick<ReleaseWithArtist, "title" | "discTitle">;
+    release: NewReleaseInfo & Pick<ReleaseWithArtist, "title" | "discTitle">;
     isMainRelease?: boolean;
     hasMultipleDiscs: boolean;
     hasFocus?: boolean;
-    onInput: (key: keyof NewInfo, value: string) => void;
+    onInput: (key: keyof NewReleaseInfo, value: string | number) => void;
 };
 
 function FolderView({
@@ -216,7 +225,7 @@ function FolderView({
 }
 
 type FieldProps = Pick<FolderViewProps, "release" | "onInput" | "hasFocus"> & {
-    name: keyof NewInfo;
+    name: keyof NewReleaseInfo;
     type?: string;
 };
 
@@ -237,9 +246,10 @@ function Field({
                 required
                 placeholder={labelMap[name].placeholder}
                 value={release[name]}
-                onInput={(event: FormEvent) =>
-                    onInput(name, (event.target as HTMLInputElement).value)
-                }
+                onInput={(event: FormEvent) => {
+                    const value = (event.target as HTMLInputElement).value;
+                    onInput(name, type === "number" ? +value : value);
+                }}
             />
         </label>
     );

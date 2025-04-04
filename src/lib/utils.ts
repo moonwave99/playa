@@ -1,4 +1,4 @@
-import { uniqBy } from 'lodash';
+import { capitalize, uniqBy } from 'lodash';
 import type { MouseEvent } from 'react';
 import type {
   ReleaseType,
@@ -179,4 +179,24 @@ export function getCoverRelease(item: Item) {
     return item;
   }
   return item.coverRelease || item.releases[0];
+}
+
+type NewReleaseInfo = {
+  newPath: string;
+  newDiscTitle: string;
+  newTitle: string;
+  newType: ReleaseType;
+  newYear: number;
+}
+
+type EditReleaseParam = (
+  Pick<Release, 'id' | 'path' | 'hash' | 'title' | 'artist_id' | 'year' | 'type' | 'discTitle' | 'discNumber'>
+  & NewReleaseInfo
+);
+
+export function didReleaseInfoChange(infos: EditReleaseParam[], excludeDiscTitle?: boolean) {
+  return infos.some(
+    (x: EditReleaseParam) => ['path', 'title', 'type', 'year', 'discTitle'].slice(0, excludeDiscTitle ? -1 : undefined)
+      .some(key => x[key as keyof EditReleaseParam] !== x[`new${capitalize(key)}` as keyof NewReleaseInfo])
+  );
 }
