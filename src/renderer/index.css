@@ -20,6 +20,7 @@
   --release-group-height: 6rem;
   --release-tracklist-single-cover-size: 9.5rem;
   --release-tracklist-list-cover-size: 8rem;
+  --multiple-covers-gap: .25rem;
   --search-results-size: 4rem;
   --tracklist-entry-alternate-background-color: #1e1d1d;
   --search-results-background-color: #34363b;

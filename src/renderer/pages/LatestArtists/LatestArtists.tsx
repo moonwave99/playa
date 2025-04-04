@@ -52,8 +52,12 @@ export default function LatestArtists() {
                 shouldCallOnLeft={() => showSidebar}
                 render={({ item, ...rest }) => (
                     <ListCard
+                        showMultipleCovers
                         item={item}
                         onContextMenu={() => window.api.menu.artist(item)}
+                        onCoverDoubleClick={(release_id) =>
+                            window.api.system.playback({ release_id })
+                        }
                         {...rest}
                     />
                 )}

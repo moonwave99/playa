@@ -33,6 +33,8 @@ type ListCardProps = {
     onDoubleClick?: () => void;
     onContextMenu?: () => void;
     onColorChange?: (useDarkText: boolean) => void;
+    showMultipleCovers?: boolean;
+    onCoverDoubleClick?: (release_id: number) => void;
 };
 
 export default function ListCard({
@@ -44,6 +46,8 @@ export default function ListCard({
     onClick,
     onContextMenu,
     onColorChange,
+    showMultipleCovers,
+    onCoverDoubleClick,
 }: ListCardProps) {
     const [loadCount, setLoadCount] = useState(0);
     const coverRelease = getCoverRelease(item);
@@ -101,6 +105,14 @@ export default function ListCard({
         );
     }
 
+    function onLoad() {
+        setLoadCount((prev) => prev + 1);
+    }
+
+    function onError() {
+        setLoadCount((prev) => prev + 1);
+    }
+
     return (
         <div
             className={cx(styles.listCard, {
@@ -115,16 +127,76 @@ export default function ListCard({
             onContextMenu={onContextMenu}
             style={{ background: color }}
         >
-            <Cover
-                {...coverRelease}
-                className={styles.cover}
-                title={`${coverRelease.artist.name} - ${getReleaseTitle(
-                    coverRelease
-                )}`}
-                onLoad={() => setLoadCount((prev) => prev + 1)}
-                onError={() => setLoadCount((prev) => prev + 1)}
-            />
+            {showMultipleCovers &&
+            (item as CollectionWithReleases | ArtistWithReleases).releases
+                .length > 1 ? (
+                <MultipleCovers
+                    item={item as CollectionWithReleases | ArtistWithReleases}
+                    onLoad={onLoad}
+                    onError={onError}
+                    onCoverDoubleClick={onCoverDoubleClick}
+                />
+            ) : (
+                <Cover
+                    {...coverRelease}
+                    className={styles.cover}
+                    title={`${coverRelease.artist.name} - ${getReleaseTitle(
+                        coverRelease
+                    )}`}
+                    onLoad={onLoad}
+                    onError={onError}
+                />
+            )}
             <div className={styles.content}>{getContent()}</div>
+        </div>
+    );
+}
+
+type MultipleCoversProps = {
+    item: CollectionWithReleases | ArtistWithReleases;
+    count?: number;
+    onLoad: () => void;
+    onError: () => void;
+    onCoverDoubleClick?: (release_id: number) => void;
+};
+
+function MultipleCovers({
+    item,
+    count = 6,
+    onLoad,
+    onError,
+    onCoverDoubleClick,
+}: MultipleCoversProps) {
+    const coverRelease = getCoverRelease(item);
+    const otherReleases = item.releases
+        .filter((x) => x.id !== coverRelease.id)
+        .slice(0, count - 1);
+
+    return (
+        <div className={styles.multipleCovers}>
+            <>
+                {otherReleases.map((release) => (
+                    <Cover
+                        key={release.id}
+                        {...release}
+                        className={styles.cover}
+                        title={`${release.artist.name} - ${getReleaseTitle(
+                            release
+                        )}`}
+                        onDoubleClick={() => onCoverDoubleClick(release.id)}
+                    />
+                ))}
+                <Cover
+                    {...coverRelease}
+                    className={styles.cover}
+                    title={`${coverRelease.artist.name} - ${getReleaseTitle(
+                        coverRelease
+                    )}`}
+                    onLoad={onLoad}
+                    onError={onError}
+                    onDoubleClick={() => onCoverDoubleClick(coverRelease.id)}
+                />
+            </>
         </div>
     );
 }

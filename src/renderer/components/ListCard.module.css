@@ -10,6 +10,15 @@
   &.loaded {
     opacity: 1;
   }
+
+  &:has(.multipleCovers:hover) {
+    overflow-x: auto;
+
+    .content {
+      transform: translateY(calc(var(--release-group-height) * -1));
+      transition-delay: 0s;
+    }
+  }
 }
 
 .content {
@@ -17,6 +26,8 @@
   flex-direction: column;
   justify-content: center;
   gap: .25rem;
+  transition: transform .3s ease-in-out;
+  transition-delay: .3s;
 }
 
 .title {
@@ -80,6 +91,95 @@
 }
 
 .hasFocus {
-  outline: 2px var(--accent-color) solid;
-  outline-offset: -2px;
+  box-shadow: var(--accent-color) 0px 0px 0px .25rem;
+}
+
+.multipleCovers {
+  height: var(--release-group-height);
+  position: relative;
+
+  .cover:hover {
+    opacity: .9;
+  }
+
+  .cover:not(:first-of-type) {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .cover:nth-child(1) {
+    scale: 1;
+    transition: scale .2s ease-in-out;
+  }
+
+  .cover:nth-child(2) {
+    transition: transform 0.2s ease-in-out, scale .2s ease-in-out;
+  }
+
+  .cover:nth-child(3) {
+    transition: transform 0.3s ease-in-out, scale .2s ease-in-out;
+  }
+
+  .cover:nth-child(4) {
+    transition: transform 0.4s ease-in-out, scale .2s ease-in-out;
+  }
+
+  .cover:nth-child(5) {
+    transition: transform 0.5s ease-in-out, scale .2s ease-in-out;
+  }
+
+  .cover:nth-child(6) {
+    transition: transform 0.6s ease-in-out, scale .2s ease-in-out;
+  }
+
+  .cover:nth-child(7) {
+    transition: transform 0.7s ease-in-out, scale .2s ease-in-out;
+  }
+
+  .cover:nth-child(8) {
+    transition: transform 0.8s ease-in-out, scale .2s ease-in-out;
+  }
+
+  &:hover {
+    .cover {
+      scale: .9;
+      border-radius: .15rem;
+    }
+
+    .cover:nth-child(2) {
+      transform: translateX(calc(var(--release-group-height) + var(--multiple-covers-gap)));
+      scale: .9;
+    }
+
+    .cover:nth-child(3) {
+      transform: translateX(calc(2 * (var(--release-group-height) + var(--multiple-covers-gap))));
+      scale: .9;
+    }
+
+    .cover:nth-child(4) {
+      transform: translateX(calc(3 * (var(--release-group-height) + var(--multiple-covers-gap))));
+      scale: .9;
+    }
+
+    .cover:nth-child(5) {
+      transform: translateX(calc(4 * (var(--release-group-height) + var(--multiple-covers-gap))));
+      scale: .9;
+    }
+
+    .cover:nth-child(6) {
+      transform: translateX(calc(5 * (var(--release-group-height) + var(--multiple-covers-gap))));
+      scale: .9;
+    }
+
+    .cover:nth-child(7) {
+      transform: translateX(calc(6 * (var(--release-group-height) + var(--multiple-covers-gap))));
+      scale: .9;
+    }
+
+    .cover:nth-child(8) {
+      transform: translateX(calc(7 * (var(--release-group-height) + var(--multiple-covers-gap))));
+      scale: .9;
+    }
+  }
 }

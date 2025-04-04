@@ -56,8 +56,12 @@ export default function LatestCollections() {
                 shouldCallOnLeft={() => showSidebar}
                 render={({ item, ...rest }) => (
                     <ListCard
+                        showMultipleCovers
                         item={item}
                         onContextMenu={() => window.api.menu.collection(item)}
+                        onCoverDoubleClick={(release_id) =>
+                            window.api.system.playback({ release_id })
+                        }
                         {...rest}
                     />
                 )}
