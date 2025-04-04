@@ -27,7 +27,7 @@
   justify-content: center;
   gap: .25rem;
   transition: transform .3s ease-in-out;
-  transition-delay: .3s;
+  transition-delay: .2s;
 }
 
 .title {
