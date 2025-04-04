@@ -16,7 +16,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: './vitest.setup.ts',
+    setupFiles: './src/test/vitest.setup.renderer.ts',
     coverage: {
       provider: 'istanbul',
       include: ['src/renderer'],
