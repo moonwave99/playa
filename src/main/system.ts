@@ -143,7 +143,7 @@ export async function downloadCover({ id, url }: { id: number, url: string }) {
 export async function refreshReleaseContents(id: number) {
   const release = await prisma.release.findFirst({
     where: { id },
-    include: { artist: true, subReleases: true }
+    include: { artist: true, subReleases: { include: { artist: true } } }
   });
 
   if (!release) {
