@@ -10,8 +10,9 @@ import useSidebar from "../hooks/useSidebar";
 import Loading from "./Loading";
 import Link from "./Link";
 import styles from "./Sidebar.module.css";
+import { HasId } from "@/types/types";
 
-type SidebarProps<T> = {
+type SidebarProps<T extends HasId> = {
     label: string;
     queryConfig: (query: string) => {
         queryKey: QueryKey;
@@ -26,7 +27,7 @@ type SidebarProps<T> = {
     renderItem?: (params: RenderParams<T>) => ReactNode;
 };
 
-export default function Sidebar<T>({
+export default function Sidebar<T extends HasId>({
     label,
     queryConfig,
     onEnter,
@@ -110,7 +111,7 @@ export default function Sidebar<T>({
     );
 }
 
-type DefaultEntryProps<T> = Pick<
+type DefaultEntryProps<T extends HasId> = Pick<
     SidebarProps<T>,
     "getLink" | "getEntryText" | "onContextMenu"
 > & {
@@ -120,7 +121,7 @@ type DefaultEntryProps<T> = Pick<
     currentContext: string;
 };
 
-function DefaultEntry<T>({
+function DefaultEntry<T extends HasId>({
     item,
     selected,
     getLink,
@@ -131,6 +132,7 @@ function DefaultEntry<T>({
 }: DefaultEntryProps<T>) {
     return (
         <Link
+            title={`[${item.id}]`}
             to={getLink(item)}
             className={cx(styles.listItem, {
                 [styles.selected]: selected,

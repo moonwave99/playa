@@ -90,11 +90,19 @@ export default function ListCard({
         return (
             <>
                 {item._type === "artist" ? (
-                    <Link className={styles.title} to={getArtistLink(item)}>
+                    <Link
+                        className={styles.title}
+                        to={getArtistLink(item)}
+                        title={`${item.name} [${item.id}]`}
+                    >
                         {item.name}
                     </Link>
                 ) : (
-                    <Link className={styles.title} to={getCollectionLink(item)}>
+                    <Link
+                        className={styles.title}
+                        to={getCollectionLink(item)}
+                        title={`${item.title} [${item.id}]`}
+                    >
                         {item.title}
                     </Link>
                 )}
