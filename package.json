@@ -23,7 +23,8 @@
         "db:dump": "pg_dump music > \"./dump/music-$(date +'%Y-%m-%d_%H-%M-%S').sql\"",
         "test:renderer": "npx vitest --config vite.renderer.config.ts",
         "test:main": "npx vitest --config vite.main.config.ts",
-        "coverage:renderer": "npx vitest run --coverage --config vite.renderer.config.ts"
+        "coverage:renderer": "npx vitest run --coverage --config vite.renderer.config.ts",
+        "coverage:main": "npx vitest run --coverage --config vite.main.config.ts"
     },
     "prisma": {
         "schema": "./src/main/db/schema.prisma"

@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { parsePath } from "./system";
 
 describe("parsePath function", () => {
-  it("renders correctly", () => {
+  it("Parses input correctly", () => {
     const output = parsePath('/A/Artist/[Album]/1999 - My Title');
     expect(output).toEqual({
       title: 'My Title',
@@ -14,5 +14,10 @@ describe("parsePath function", () => {
         name: 'Artist'
       }
     })
+  });
+
+  it("Returns null if path is malformed", () => {
+    const output = parsePath('/A/Artist/[Album]/1999 - My Title/More/Stuff');
+    expect(output).toEqual(null);
   });
 });
