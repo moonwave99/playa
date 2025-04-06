@@ -5,6 +5,7 @@ import type {
     Track,
     ReleaseWithArtistAndTracksAndSubreleases,
 } from "@/types/types";
+import { withStopPropagation } from "@/lib/utils";
 import List from "./List";
 import cx from "clsx";
 
@@ -14,12 +15,14 @@ type TracklistProps = {
     isNavigable?: boolean;
     release: ReleaseWithArtistAndTracksAndSubreleases;
     onDoubleClick?: (id: number) => void;
+    onContextMenu?: (id: number) => void;
 };
 
 export default function Tracklist({
     isNavigable = false,
     release,
     onDoubleClick,
+    onContextMenu,
 }: TracklistProps) {
     const { setContext } = useKeyManager();
 
@@ -55,6 +58,7 @@ export default function Tracklist({
                                         {...track}
                                         isEven={index % 2 === 0}
                                         onDoubleClick={onDoubleClick}
+                                        onContextMenu={() => onContextMenu(id)}
                                     />
                                 ))}
                             </Fragment>
@@ -95,6 +99,7 @@ export default function Tracklist({
                     {...item}
                     onClick={onClick}
                     onDoubleClick={onDoubleClick}
+                    onContextMenu={() => onContextMenu(item.releaseId)}
                     isEven={index % 2 === 0}
                     selected={selected}
                     discTitle={
@@ -112,6 +117,7 @@ type TrackEntryProps = Track & {
     isEven?: boolean;
     onClick?: (event: MouseEvent) => void;
     onDoubleClick: (id: number) => void;
+    onContextMenu: () => void;
 };
 
 function TrackEntry({
@@ -124,11 +130,17 @@ function TrackEntry({
     isEven,
     onClick,
     onDoubleClick,
+    onContextMenu,
 }: TrackEntryProps) {
     return (
         <>
             {discTitle ? (
-                <h2 className={styles.discTitle}>{discTitle}</h2>
+                <h2
+                    className={styles.discTitle}
+                    onContextMenu={withStopPropagation(onContextMenu)}
+                >
+                    {discTitle}
+                </h2>
             ) : null}
             <div
                 onClick={onClick}

@@ -47,6 +47,14 @@ export default function ReleaseWithTracklistView({
             <Tracklist
                 release={release}
                 isNavigable={isSingle}
+                onContextMenu={(id) =>
+                    window.api.menu.release(
+                        [release, ...release.subReleases].filter(
+                            (x) => x.id === id
+                        ),
+                        0
+                    )
+                }
                 onDoubleClick={(track_id) =>
                     window.api.system.playback({
                         release_id: id,

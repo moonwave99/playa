@@ -37,7 +37,7 @@ function getRemoveFromCollectionEntry(selection: Release[], collection: Collecti
 }
 
 function getGroupReleasesEntry(selection: ReleaseWithArtistAndSubreleases[]) {
-  if (selection.some(x => x.subReleases.length)) {
+  if (selection.some(x => x.subReleases?.length)) {
     return null;
   }
   return {
@@ -114,7 +114,7 @@ export const releaseMenu = async (
         click: () => send('openEditArtistDialog', release.artist),
       },
       getCoverReleaseEntry(release.id, context),
-      (release.subReleases.length ? {
+      (release.subReleases?.length ? {
         label: 'Ungroup Release',
         click: () => ungroupReleaseHandler(release)
       } : { type: 'separator' }),

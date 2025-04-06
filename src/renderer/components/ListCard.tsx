@@ -170,7 +170,7 @@ type MultipleCoversProps = {
 
 function MultipleCovers({
     item,
-    count = 6,
+    count = 5,
     onLoad,
     onError,
     onCoverDoubleClick,
