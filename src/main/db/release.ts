@@ -86,7 +86,8 @@ export async function addTracksToRelease(id: number, trackInfo: TrackInfo[]) {
             }
         },
         include: {
-            artist: true, tracks: {
+            artist: true,
+            tracks: {
                 orderBy: {
                     position: 'asc'
                 }

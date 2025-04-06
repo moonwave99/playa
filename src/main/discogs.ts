@@ -3,6 +3,7 @@ import download from "image-downloader";
 import type { Release, Artist } from '@/types/types';
 import { getSetting } from "./settings";
 import { deburr } from "lodash";
+import { log } from "./logger";
 import { wait } from "@/lib/utils";
 
 type SearchParams = {
@@ -65,13 +66,13 @@ export async function searchCover({ release, artist, outputPath }: SearchCoverPa
         year: release.year,
     });
     if (!response?.results?.length) {
-        console.log(`[searchCover] No response for: ${artistName} - ${title}`);
+        log(`[searchCover] No response for: ${artistName} - ${title}`);
         return null;
     }
     const { cover_image } = response.results[0];
-    console.log('[searchCover] Downloading:', artistName, title);
+    log('[searchCover] Downloading:', artistName, title);
     if (!cover_image || cover_image.endsWith('spacer.gif')) {
-        console.log(`[searchCover] No response for: ${artistName} - ${title}`);
+        log(`[searchCover] No response for: ${artistName} - ${title}`);
         return null;
     }
     const pic = `${release.hash}-cover.jpg`;
@@ -82,7 +83,7 @@ export async function searchCover({ release, artist, outputPath }: SearchCoverPa
     return pic;
 }
 
-type GetImageFromURLParams = {
+export type GetImageFromURLParams = {
     outputPath: string;
     hash: string;
     url: string;
@@ -90,8 +91,13 @@ type GetImageFromURLParams = {
 
 export async function getImageFromURL({ outputPath, hash, url }: GetImageFromURLParams) {
     const dest = path.join(outputPath, `${hash}-cover.jpg`);
-    await getImage({ url, dest });
-    return dest;
+    try {
+        await getImage({ url, dest });
+        return dest;
+    } catch (error) {
+        log('[getImageFromURL]', error);
+        return false;
+    }
 }
 
 type GetImageParams = {
@@ -100,7 +106,7 @@ type GetImageParams = {
 };
 
 async function getImage(options: GetImageParams) {
-    console.log('[getImage] Downloading:', options.url);
+    log('[getImage] Downloading:', options.url);
     await wait(500);
     await download.image(options);
 }

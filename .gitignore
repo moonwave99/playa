@@ -100,3 +100,6 @@ src/playground.ts
 
 # db dumps
 dump/
+
+# Test artifacts
+src/test/__mock-fs__

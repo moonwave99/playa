@@ -1,4 +1,3 @@
-import child_process from 'node:child_process';
 import path from "path";
 import { existsSync, move } from 'fs-extra';
 import prisma from "./db/prisma";
@@ -10,18 +9,21 @@ import { addTracksToRelease, updateReleases } from "./db/release";
 import { getArtist, updateArtist } from "./db/artist";
 import { searchCover, getImageFromURL } from "./discogs";
 import { mapSeries, didReleaseInfoChange } from '../lib/utils';
-import { type Entities, type Artist, type TrackWithRelease, type ReleaseType, type ReleaseWithArtist, type TrackInfo, type EditReleaseParam, type Release } from "@/types/types";
+import { type Entities, type Artist, type TrackWithRelease, type ReleaseType, type ReleaseWithArtist, type TrackInfo, type EditReleaseParam, type Release, type ReleaseWithArtistAndTracks } from "@/types/types";
 import { getSetting } from './settings';
 import { send, getStateManager } from './state';
+import { run } from './run';
+import { log } from './logger';
 
-export async function importFolder(folder: string): Promise<ReleaseWithArtist[]> {
+
+export async function importFolder(folder: string): Promise<ReleaseWithArtistAndTracks[]> {
   const folders = await globby("**", {
     onlyDirectories: true,
     cwd: folder,
   });
   if (!folders.length) {
     const release = await importSingleFolder(folder);
-    return [release];
+    return release ? [release] : [];
   }
 
   const releases = await Promise.all(
@@ -29,11 +31,12 @@ export async function importFolder(folder: string): Promise<ReleaseWithArtist[]>
       .filter((x) => !x.endsWith("]"))
       .map((f) => importSingleFolder(path.join(folder, f)))
   );
-  return releases;
+  return releases.filter((x: unknown) => !!x);
 }
 
 export async function getFolderContents(release: ReleaseWithArtist): Promise<TrackInfo[]> {
-  const contents = await crawlFolder(getEntityPath({ ...release, _type: 'release' }));
+  const folder = withLibraryPath(getEntityPath({ ...release, _type: 'release' }));
+  const contents = await crawlFolder(folder);
   return Promise.all(contents.map(getMetadata));
 }
 
@@ -54,7 +57,7 @@ export async function playback({ release_id, track_id }: PlaybackParams) {
       }
     });
     if (!track) {
-      return;
+      return false;
     }
     await run('open', ['-a', PLAYER_PATH, withLibraryPath(getEntityPath({ ...track, _type: 'track' }))]);
     return true;
@@ -66,7 +69,7 @@ export async function playback({ release_id, track_id }: PlaybackParams) {
   });
 
   if (!release) {
-    return;
+    return false;
   }
   await run('open', ['-a', PLAYER_PATH, withLibraryPath(getEntityPath({ ...release, _type: 'release' }))]);
   return true;
@@ -76,8 +79,7 @@ export async function openTagger(release_id: number) {
   const release = await prisma.release.findFirst({
     where: { id: release_id },
     include: {
-      artist: true,
-      tracks: { orderBy: { position: 'asc' } }
+      artist: true
     },
   });
 
@@ -101,7 +103,8 @@ export async function revealEntityInFinder(entity: 'release' | 'artist', id: num
   if (!result) {
     return;
   }
-  return shell.openPath(withLibraryPath(getEntityPath({ ...result, _type: entity })));
+  await shell.openPath(withLibraryPath(getEntityPath({ ...result, _type: entity })));
+  return true;
 }
 
 export async function importCovers(releases: ReleaseWithArtist[]) {
@@ -110,7 +113,6 @@ export async function importCovers(releases: ReleaseWithArtist[]) {
   const foundCovers = await mapSeries(releases,
     (release: ReleaseWithArtist) => searchCover({ release, artist: release.artist, outputPath: COVERS_PATH })
   );
-
   return releases.filter((_, index) => !!foundCovers[index]);
 }
 
@@ -138,6 +140,7 @@ export async function downloadCover({ id, url }: { id: number, url: string }) {
   if (success) {
     send('coverUpdate', [release]);
   }
+  return success;
 }
 
 export async function refreshReleaseContents(id: number) {
@@ -147,12 +150,12 @@ export async function refreshReleaseContents(id: number) {
   });
 
   if (!release) {
-    return;
+    return false;
   }
 
-  await Promise.all([release, ...release.subReleases].map(async (release) => {
+  return await Promise.all([release, ...release.subReleases].map(async (release) => {
     const tracks = await getFolderContents(release);
-    await addTracksToRelease(release.id, tracks);
+    return addTracksToRelease(release.id, tracks);
   }));
 }
 
@@ -165,17 +168,15 @@ export function startDrag(folderPath: string, event?: IpcMainEvent) {
 }
 
 async function crawlFolder(folder: string) {
-  const LIBRARY_PATH = getSetting('LIBRARY_PATH') as string;
   const files = await globby("*.{mp3,m4a,flac,wav,ogg,ape}", {
-    cwd: path.join(LIBRARY_PATH, folder),
+    cwd: folder,
     caseSensitiveMatch: false
   });
   return files.map(file => path.join(folder, file));
 }
 
 async function getMetadata(filePath: string, index: number): Promise<TrackInfo> {
-  const LIBRARY_PATH = getSetting('LIBRARY_PATH') as string;
-  const data = await mm.parseFile(path.join(LIBRARY_PATH, filePath));
+  const data = await mm.parseFile(filePath);
   return {
     path: path.basename(filePath),
     title: data.common.title || path.basename(filePath),
@@ -195,19 +196,21 @@ export function withCoversPath(folderPath: string) {
 }
 
 async function importSingleFolder(folder: string) {
-  console.log('[importSingleFolder] Crawling:', folder);
+  log('[importSingleFolder] Crawling:', folder);
   const contents = await crawlFolder(folder);
-  if (!contents) {
-    return;
+  if (!contents.length) {
+    return null;
   }
   const LIBRARY_PATH = getSetting('LIBRARY_PATH') as string;
   const releaseData = parsePath(folder.replace(LIBRARY_PATH, ""));
+
   if (!releaseData) {
-    return false;
+    return null;
   }
 
   const artistPath = releaseData.fullPath.split("/").slice(0, 2).join("/");
   const artistHash = hashArtistName(releaseData.artist.name);
+
   const artist = await prisma.artist.upsert({
     where: {
       hash: artistHash,
@@ -224,7 +227,7 @@ async function importSingleFolder(folder: string) {
     },
   });
 
-  console.log('[importSingleFolder] upserted artist', artist);
+  log('[importSingleFolder] upserted artist', artist);
 
   const releaseHash = hashRelease({ ...releaseData, artist_id: artist.id });
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -248,7 +251,7 @@ async function importSingleFolder(folder: string) {
   const trackInfo = await getFolderContents({ ...release, artist });
   const fullRelease = await addTracksToRelease(release.id, trackInfo);
 
-  console.log('[importSingleFolder] upserted release:', fullRelease);
+  log('[importSingleFolder] upserted release:', fullRelease);
 
   const COVERS_PATH = getSetting('COVERS_PATH') as string;
 
@@ -258,7 +261,7 @@ async function importSingleFolder(folder: string) {
     outputPath: COVERS_PATH,
   });
 
-  return release;
+  return fullRelease;
 }
 
 type ParsePath = Pick<Release, | 'type' | 'path' | 'year' | 'title'> & {
@@ -274,6 +277,10 @@ export function parsePath(path: string): ParsePath {
     path = path.slice(1);
   }
   const tokens = path.split("/");
+  if (tokens.length < 4) {
+    return null;
+  }
+
   const artist = tokens[1];
   const type = tokens[2] ? tokens[2].replace("[", "").replace("]", "") : 'Album';
   const rest = tokens.slice(4);
@@ -294,25 +301,25 @@ export function parsePath(path: string): ParsePath {
   };
 }
 
-
 export async function editRelease(infos: EditReleaseParam[]) {
   if (!infos.length) {
-    return true;
+    return [];
   }
 
   const shouldJustRenameDiscs =
     infos.every(x => x.path === x.newPath) && didReleaseInfoChange(infos);
 
   if (shouldJustRenameDiscs) {
-    await updateReleases(infos.map(x => ({
+    return await updateReleases(infos.map(x => ({
       ...x,
       discTitle: infos.length === 1 ? null : x.newDiscTitle,
       title: x.newTitle,
       type: x.newType,
       year: x.newYear
     })));
-    return true;
   }
+
+  const artist = await getArtist(infos[0].artist_id);
 
   for (const info of infos) {
     if (info.newPath.includes('../')) {
@@ -324,7 +331,8 @@ export async function editRelease(infos: EditReleaseParam[]) {
       });
       return false;
     }
-    if (existsSync(withLibraryPath(info.newPath))) {
+    const targetPath = withLibraryPath(getEntityPath({ ...info, _type: 'release', path: info.newPath, artist }));
+    if (existsSync(targetPath)) {
       dialog.showMessageBoxSync(null, {
         message: 'Error while renaming',
         detail: `Path ${info.newPath} already exists`,
@@ -350,9 +358,7 @@ export async function editRelease(infos: EditReleaseParam[]) {
       year: x.newYear
     }));
 
-    const artist = await getArtist(infos[0].artist_id);
-
-    Promise.all(infos.map(async (x, index) => {
+    await Promise.all(infos.map(async (x, index) => {
       const oldPath = withLibraryPath(getEntityPath(({ ...x, artist, _type: 'release' })));
       const newPath = withLibraryPath(getEntityPath(({
         ...x,
@@ -362,24 +368,32 @@ export async function editRelease(infos: EditReleaseParam[]) {
         year: x.newYear,
         path: x.newPath,
       })));
+
+
+      if (!existsSync(oldPath)) {
+        throw new Error(`Release ${x.id} not found at: ${oldPath}`);
+      }
+
       await move(oldPath, newPath);
 
       const oldCoverPath = withCoversPath(`${x.hash}-cover.jpg`);
       const newCoverPath = withCoversPath(`${newInfos[index].hash}-cover.jpg`);
+
       if (!existsSync(oldCoverPath)) {
-        return;
+        return true;
       }
-      await move(oldCoverPath, newCoverPath,);
+
+      await move(oldCoverPath, newCoverPath);
+      return true;
     }));
 
-    await updateReleases(newInfos);
-    return true;
+    return await updateReleases(newInfos);
   } catch (error) {
-    console.log('[renameRelease]', error);
-    console.log('[renameRelease]', infos);
+    log('[renameRelease]', error);
+    log('[renameRelease]', infos);
     dialog.showMessageBoxSync(null, {
       message: 'Error while renaming',
-      detail: `See console logs`,
+      detail: error.message,
       type: 'warning',
       buttons: ['OK'],
     });
@@ -416,17 +430,12 @@ export async function editArtist(infos: EditArtistParams) {
     path: infos.newPath
   });
 
-  getStateManager().setCurrentArtist(updatedArtist);
+  getStateManager()?.setCurrentArtist(updatedArtist);
 
   return true;
 }
 
-type ParseTitle = {
-  year: number;
-  title: string;
-};
-
-function parseTitle(title = ""): ParseTitle {
+function parseTitle(title = ""): Pick<Release, 'year' | 'title'> {
   const match = title.match(/^(\d{4}) - (.*)/);
   if (!match) {
     return {
@@ -448,41 +457,7 @@ function hashRelease({ title, artist_id, year, type, discNumber }: Pick<ReleaseW
   return sha1([title, artist_id, year, type, discNumber || 1].join("-")).slice(0, 16);
 }
 
-type RunResponse = {
-  code: number;
-  stdout: string[];
-  stderr: string[];
-}
-
-async function run(command: string, options: string[], cwd?: string): Promise<RunResponse> {
-  return new Promise((resolve) => {
-    const proc = child_process.spawn(command, options, cwd ? { cwd } : undefined);
-    const messages: Pick<RunResponse, 'stdout' | 'stderr'> = {
-      stdout: [],
-      stderr: []
-    };
-    proc.stdout.on('data', (data) => {
-      messages.stdout.push(`${data}`);
-      console.log('[run:stdout]', `${data}`);
-    });
-    proc.stderr.on('data', (data) => {
-      messages.stderr.push(`${data}`);
-      console.log('[run:stderr]', `${data}`);
-    });
-    proc.on('exit', async (code) => {
-      console.log('[run:exit]', {
-        command: `${command} ${options.join(' ')}`,
-        code
-      });
-      resolve({
-        ...messages,
-        code
-      });
-    });
-  })
-}
-
-type GetEntityPathParam = { _type: Entities, path: string } &
+type GetEntityPathParam = { _type: Entities } &
   (Pick<ReleaseWithArtist, 'artist' | 'path' | 'type' | 'year'>
     | Pick<TrackWithRelease, 'release' | 'path'>);
 
