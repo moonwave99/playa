@@ -14,7 +14,7 @@ export default function useCollections(): UseCollections {
   const queryClient = useQueryClient();
   const { isPending, error, data: collections } = useQuery({
     queryKey: ["collections", "latest"],
-    queryFn: () => window.api.data.getCollections({ take: pageSize }),
+    queryFn: () => window.api.collection.getCollections({ take: pageSize }),
   });
 
   function onSuccess() {
@@ -33,7 +33,7 @@ export default function useCollections(): UseCollections {
       ) {
         return;
       }
-      return window.api.data.deleteCollections(ids);
+      return window.api.collection.deleteCollections(ids);
     },
     onSuccess
   });

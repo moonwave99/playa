@@ -1,7 +1,7 @@
 import { afterEach } from 'vitest';
-import { cleanup } from '@testing-library/react';
 import path from 'path';
 import { getTrackPaths } from './utils';
+import { mockFsCleanup } from './mock-fs';
 
 vi.mock('electron', () => {
   return {
@@ -55,6 +55,10 @@ vi.mock('music-metadata', () => {
   }
 });
 
-afterEach(() => {
-  cleanup();
+beforeEach(async (context) => {
+  await mockFsCleanup(context.task.id);
+});
+
+afterEach(async (context) => {
+  await mockFsCleanup(context.task.id);
 });

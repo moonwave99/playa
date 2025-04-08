@@ -32,7 +32,7 @@ export default function EditArtistView({
     async function onSubmit(event: FormEvent) {
         event.preventDefault();
 
-        const success = await window.api.system.editArtist({
+        const success = await window.api.artist.editArtist({
             ...artist,
             ...artistInfo,
         });

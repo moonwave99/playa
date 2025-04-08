@@ -80,7 +80,7 @@ export default function SidebarView() {
                     getEntryText={({ name }: Artist) => name}
                     queryConfig={() => ({
                         queryKey: ["artists"],
-                        queryFn: window.api.data.getAllArtists,
+                        queryFn: window.api.artist.getAllArtists,
                     })}
                 />
             ) : null}
@@ -98,7 +98,7 @@ export default function SidebarView() {
                     getEntryText={({ title }: Collection) => title}
                     queryConfig={() => ({
                         queryKey: ["collections"],
-                        queryFn: window.api.data.getAllCollections,
+                        queryFn: window.api.collection.getAllCollections,
                     })}
                 />
             ) : null}

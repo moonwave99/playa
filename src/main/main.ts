@@ -2,10 +2,8 @@ import { app, BrowserWindow, shell, screen, protocol, net, dialog, ipcMain as ip
 import type { IpcMainEvent, OpenDialogSyncOptions } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
-import registerApi from './api';
-import { setupMenu } from './menu/menu';
-import { initSettings, getSetting } from './settings';
-import { getStateManager } from './state';
+import { getSetting } from './settings';
+import { init } from './init';
 
 if (started) {
   app.quit();
@@ -24,18 +22,6 @@ const createWindow = async () => {
     titleBarStyle: 'hidden',
     trafficLightPosition: { x: 10, y: 20 }
   });
-
-  mainWindow.on('swipe', (_, direction) => {
-    if (state.isInputFocused()) {
-      return;
-    }
-    if (direction === 'left' && mainWindow.webContents.navigationHistory.canGoBack()) {
-      mainWindow.webContents.send('swipe', -1);
-    }
-    if (direction === 'right' && mainWindow.webContents.navigationHistory.canGoForward()) {
-      mainWindow.webContents.send('swipe', 1);
-    }
-  })
 
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
     mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
@@ -56,10 +42,7 @@ const createWindow = async () => {
     return path?.at(0);
   });
 
-  await initSettings();
-  const state = getStateManager();
-  setupMenu(mainWindow, state);
-  registerApi();
+  init(mainWindow);
 };
 
 app.on('ready', createWindow);

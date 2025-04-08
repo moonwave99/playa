@@ -16,7 +16,7 @@ export default function useSearch(query: string): UseSearch {
       if (!query) {
         return [];
       }
-      return window.api.data.search(query, 100);
+      return window.api.search.search(query, 100);
     },
     staleTime: DEBOUNCE_MS,
     placeholderData: keepPreviousData,

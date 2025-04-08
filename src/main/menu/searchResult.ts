@@ -1,24 +1,21 @@
 import type { SearchResult } from "@/types/types";
-import { getArtist } from "../db/artist";
-import { getRelease } from "../db/release";
-import { getCollection } from "../db/collection";
-
 import { artistMenu } from "./artist";
 import { releaseMenu } from "./release";
 import { collectionMenu } from "./collection";
+import type { Controllers } from "../init";
 
-export const searchResultMenu = async (result: SearchResult) => {
+export const searchResultMenu = (controllers: Controllers) => async (result: SearchResult) => {
   if (result.type === 'artist') {
-    const artist = await getArtist(result.id);
-    return artistMenu(artist);
+    const artist = await controllers.artist.getArtist(result.id);
+    return artistMenu(controllers)(artist);
   }
   if (result.type === 'release') {
-    const release = await getRelease(result.id);
-    return releaseMenu([release], release.id);
+    const release = await controllers.release.getRelease(result.id);
+    return releaseMenu(controllers)([release], release.id);
   }
   if (result.type === 'collection') {
-    const collection = await getCollection(result.id);
-    return collectionMenu(collection);
+    const collection = await controllers.collection.getCollection(result.id);
+    return collectionMenu(controllers)(collection);
   }
   return true;
 }

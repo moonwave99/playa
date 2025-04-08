@@ -12,7 +12,7 @@ export default function useRelease(id: number): UseRelease {
   const firstRefresh = useRef(true);
   const { isPending, error, refetch, data: release } = useQuery({
     queryKey: ["releases", id],
-    queryFn: () => window.api.data.getRelease(id),
+    queryFn: () => window.api.release.getRelease(id),
   });
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export default function useRelease(id: number): UseRelease {
       return;
     }
     firstRefresh.current = false;
-    window.api.system.refreshReleaseContents(release.id).then(refetch);
+    window.api.release.refreshReleaseContents(release.id).then(() => refetch());
   }, [release]);
 
   return {

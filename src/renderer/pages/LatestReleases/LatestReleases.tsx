@@ -38,16 +38,12 @@ export default function LatestReleases() {
 
     if (error) return "An error has occurred: " + error.message;
 
-    function playback(release_id: number) {
-        window.api.system.playback({ release_id });
-    }
-
     function onEnter(
         release: ReleaseWithArtistAndSubreleases,
         event: KeyboardEvent
     ) {
         if (event.metaKey) {
-            playback(release.id);
+            window.api.system.playback({ release_id: release.id });
             return;
         }
         navigate(getReleaseLink(release));

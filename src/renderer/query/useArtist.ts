@@ -12,7 +12,7 @@ export default function useArtist(id: number): UseArtist {
   const queryClient = useQueryClient();
   const { isPending, error, data: artist } = useQuery({
     queryKey: ["artists", id],
-    queryFn: () => window.api.data.getArtist(id),
+    queryFn: () => window.api.artist.getArtist(id),
   });
 
   function onSuccess() {
@@ -31,7 +31,7 @@ export default function useArtist(id: number): UseArtist {
       ) {
         return;
       }
-      return window.api.data.deleteReleases(ids)
+      return window.api.release.deleteReleases(ids)
     },
     onSuccess
   });

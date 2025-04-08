@@ -56,7 +56,8 @@ export async function getCollection(id: number) {
       }
     },
   });
-  return withEntityType({ ...result, releases: withEntityType(result.releases, 'release') }, 'collection');
+  return result
+    ? withEntityType({ ...result, releases: withEntityType(result.releases, 'release') }, 'collection') : null;
 }
 
 export async function createCollection({ title, releases = [] }: CollectionCreate) {

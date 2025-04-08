@@ -1,6 +1,7 @@
 import { MemoryRouter } from "react-router";
 import type { ReactNode } from "react";
 import type { ReleaseWithArtist, Artist, Track } from "@/types/types";
+import path from "path";
 
 export function withRouter(children: ReactNode) {
     return <MemoryRouter>{children}</MemoryRouter>;
@@ -212,3 +213,22 @@ export const FULL_TRACKS = [
         hash: "cb763ce03c4bcb15",
     },
 ];
+
+const settings = {
+    PLAYER_PATH: "PLAYER_PATH",
+    TAGGER_PATH: "TAGGER_PATH",
+    DISCOGS_KEY: "DISCOGS_KEY",
+    DISCOGS_SECRET: "DISCOGS_SECRET",
+    LIBRARY_PATH: "LIBRARY_PATH",
+    COVERS_PATH: "COVERS_PATH",
+} as const;
+
+export function getSetting(key: keyof typeof settings) {
+    return settings[key];
+}
+
+export function withPath(key: keyof typeof settings, folderPath: string) {
+    return path.join(getSetting(key), folderPath);
+}
+
+export const send = vi.fn();

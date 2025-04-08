@@ -1,11 +1,6 @@
 import type { OpenDialogSyncOptions } from 'electron';
 import type { QueryKey } from '@tanstack/react-query';
 import { PrismaClient } from '@prisma/client';
-import * as search from '@/main/db/search';
-import * as release from '@/main/db/release';
-import * as artist from '@/main/db/artist';
-import * as collection from '@/main/db/collection';
-import { playback, downloadCover, startDrag, importCovers, editRelease, editArtist } from '@/main/system';
 import { getSettings, setSettings } from '@/main/settings';
 import type {
   Artist,
@@ -16,6 +11,12 @@ import type {
   Sidebars,
   ReleaseWithArtistAndSubreleases
 } from './types';
+
+import { artistController } from '@/main/controllers/artist';
+import { releaseController } from '@/main/controllers/release';
+import { collectionController } from '@/main/controllers/collection';
+import { systemController } from '@/main/controllers/system';
+import { searchController } from '@/main/controllers/search';
 
 declare module "*.module.css";
 
@@ -40,8 +41,11 @@ declare global {
   const prisma: PrismaClient | undefined;
   interface Window {
     api: {
-      data: typeof search & typeof release & typeof artist & typeof collection,
-      system: typeof system,
+      search: ReturnType<typeof searchController>,
+      release: ReturnType<typeof releaseController>,
+      artist: ReturnType<typeof artistController>,
+      collection: ReturnType<typeof collectionController>,
+      system: ReturnType<typeof systemController>,
       settings: typeof settings,
       menu: {
         release: (

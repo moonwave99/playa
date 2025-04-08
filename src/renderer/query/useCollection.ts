@@ -13,7 +13,7 @@ export default function useCollection(id: number): UseCollection {
   const queryClient = useQueryClient();
   const { isPending, error, data: collection } = useQuery({
     queryKey: ["collections", id],
-    queryFn: () => window.api.data.getCollection(id),
+    queryFn: () => window.api.collection.getCollection(id),
   });
 
   function onSuccess() {
@@ -25,7 +25,7 @@ export default function useCollection(id: number): UseCollection {
   }
 
   const updateTitle = useMutation({
-    mutationFn: (title: string) => window.api.data.updateCollection(id, {
+    mutationFn: (title: string) => window.api.collection.updateCollection(id, {
       title,
       releases: collection.releases.map(({ id }: HasId) => id),
     }),
@@ -42,7 +42,7 @@ export default function useCollection(id: number): UseCollection {
         return;
       }
       const ids = releases.map(({ id }) => id);
-      return window.api.data.updateCollection(id, {
+      return window.api.collection.updateCollection(id, {
         title: collection.title,
         releases: collection.releases
           .map(({ id }: HasId) => id)

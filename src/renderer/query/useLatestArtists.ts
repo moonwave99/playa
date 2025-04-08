@@ -23,7 +23,7 @@ export default function useLatestArtists(): UseLatestArtists {
   } = useInfiniteQuery({
     queryKey: ["artists", "latest"],
     queryFn: (context) =>
-      window.api.data.getLatestArtists({
+      window.api.artist.getLatestArtists({
         take: pageSize,
         skip: context.pageParam,
       }),

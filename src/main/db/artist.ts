@@ -135,7 +135,7 @@ export async function getAllArtists(): Promise<Artist[]> {
     orderBy: { name: "asc" },
     select: { id: true, name: true, hash: true, path: true },
   });
-  return withEntityType(result, 'artist');
+  return result ? withEntityType(result, 'artist') : null;
 }
 
 function withReleaseCount(artist: ArtistWithReleases) {
@@ -147,7 +147,7 @@ export async function updateArtist(id: number, { name, path }: ArtistUpdate) {
     where: { id },
     data: { name, path }
   });
-  return withEntityType(result, 'artist');
+  return result ? withEntityType(result, 'artist') : null;
 }
 
 export async function setArtistCoverRelease(artist_id: number, release_id: number) {
@@ -155,5 +155,5 @@ export async function setArtistCoverRelease(artist_id: number, release_id: numbe
     where: { id: artist_id },
     data: { coverReleaseId: release_id }
   });
-  return withEntityType(result, 'artist');
+  return result ? withEntityType(result, 'artist') : null;
 }

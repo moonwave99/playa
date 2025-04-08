@@ -1,21 +1,17 @@
 import type { Release, Collection, ReleaseWithArtistAndSubreleases, CollectionWithReleases, ArtistWithReleases } from "@/types/types";
-import { deleteRelease, unGroupRelease } from '../db/release';
-
-import { getAllCollections, createCollection, addReleasesToCollection, removeReleasesFromCollection } from "../db/collection";
 import { getCollectionLink } from '@/lib/links';
-import { playback, openTagger, refreshReleaseContents, revealEntityInFinder, importCovers } from '../system';
 import { buildMenu, getDeleteEntry, getCoverReleaseEntry } from './menu';
-import { send } from "../state";
 import { getReleaseTitle } from '@/lib/utils';
 import { searchReleaseOnDiscogs, searchReleaseOnRYM } from '@/lib/external_links';
+import { send, type Controllers } from "../init";
 
-function getAddToCollectionEntry(selection: Release[], collections: Collection[]) {
+function getAddToCollectionEntry(selection: Release[], collections: Collection[], controllers: Controllers) {
   return {
     label: `Add ${selection.length} Release(s) to Collection...`,
     submenu: collections.map(({ title, id }) => ({
       label: title,
       click: async () => {
-        await addReleasesToCollection(id, selection);
+        await controllers.collection.addReleasesToCollection(id, selection);
         send('mutate', [
           ['collections', 'latest'],
           ['collections', id]
@@ -25,11 +21,11 @@ function getAddToCollectionEntry(selection: Release[], collections: Collection[]
   }
 }
 
-function getRemoveFromCollectionEntry(selection: Release[], collection: Collection) {
+function getRemoveFromCollectionEntry(selection: Release[], collection: Collection, controllers: Controllers) {
   return {
     label: `Remove ${selection.length} Release(s) from Collection`,
     click: async () => {
-      await removeReleasesFromCollection(collection.id, selection);
+      await controllers.collection.removeReleasesFromCollection(collection.id, selection);
       send('mutate', [['collections', collection.id]]);
       send('clearSelection');
     }
@@ -46,23 +42,14 @@ function getGroupReleasesEntry(selection: ReleaseWithArtistAndSubreleases[]) {
   }
 }
 
-export async function ungroupReleaseHandler(release: ReleaseWithArtistAndSubreleases) {
-  await unGroupRelease(release);
-  send('mutate', [
-    ['releases', 'latest'],
-    ['artists', release.artist_id]
-  ]);
-  send('clearSelection');
-}
-
-export const releaseMenu = async (
+export const releaseMenu = (controllers: Controllers) => async (
   selection: ReleaseWithArtistAndSubreleases[],
   target_id: number,
   context?: CollectionWithReleases | ArtistWithReleases
 ) => {
-  const collections = await getAllCollections();
+  const collections = await controllers.collection.getAllCollections();
   const newCollectionHandler = async () => {
-    const newCollection = await createCollection({
+    const newCollection = await controllers.collection.createCollection({
       title: 'New Collection',
       releases: selection.map(({ id }) => id)
     });
@@ -76,27 +63,27 @@ export const releaseMenu = async (
     buildMenu([
       {
         label: `Playback Release`,
-        click: () => playback({ release_id: release.id })
+        click: () => controllers.system.playback({ release_id: release.id })
       },
       {
         label: `Open Release in Tagger`,
-        click: () => openTagger(release.id)
+        click: () => controllers.system.openTagger(release.id)
       },
       {
         label: `Reveal Release in Finder`,
-        click: () => revealEntityInFinder('release', release.id)
+        click: () => controllers.system.revealEntityInFinder('release', release.id)
       },
       {
         label: `Search Release Cover`,
         click: async () => {
-          const update = await importCovers([release]);
+          const update = await controllers.release.importCovers([release]);
           send('coverUpdate', update);
         }
       },
       {
         label: 'Refresh Folder Contents',
         click: async () => {
-          await refreshReleaseContents(release.id);
+          await controllers.release.refreshReleaseContents(release.id);
           send('mutate', [
             ['releases', release.id],
             [context?._type === 'collection' ? 'collections' : 'artists', context?.id]
@@ -113,19 +100,26 @@ export const releaseMenu = async (
         label: `Edit Artist`,
         click: () => send('openEditArtistDialog', release.artist),
       },
-      getCoverReleaseEntry(release.id, context),
+      getCoverReleaseEntry({ release_id: release.id, context, controllers }),
       (release.subReleases?.length ? {
         label: 'Ungroup Release',
-        click: () => ungroupReleaseHandler(release)
+        click: async () => {
+          await controllers.release.unGroupRelease(release);
+          send('mutate', [
+            ['releases', 'latest'],
+            ['artists', release.artist_id]
+          ]);
+          send('clearSelection');
+        }
       } : { type: 'separator' }),
       { type: 'separator' },
       {
         label: 'Add to New Collection',
         click: newCollectionHandler
       },
-      getAddToCollectionEntry(selection, collections),
+      getAddToCollectionEntry(selection, collections, controllers),
       context?._type === 'collection'
-        ? getRemoveFromCollectionEntry(selection, context as CollectionWithReleases)
+        ? getRemoveFromCollectionEntry(selection, context as CollectionWithReleases, controllers)
         : { type: 'separator' },
       { type: 'separator' },
       {
@@ -139,7 +133,7 @@ export const releaseMenu = async (
       { type: 'separator' },
       getDeleteEntry({
         title,
-        deleteFn: () => deleteRelease(release.id),
+        deleteFn: () => controllers.release.deleteRelease(release.id),
         queryKeys: [
           ['releases', 'latest'],
           ['releases', release.id],
@@ -155,13 +149,13 @@ export const releaseMenu = async (
       label: `Add ${selection.length} Release(s) to New Collection`,
       click: newCollectionHandler,
     },
-    getAddToCollectionEntry(selection, collections),
+    getAddToCollectionEntry(selection, collections, controllers),
     context?._type === 'collection'
-      ? getRemoveFromCollectionEntry(selection, context as CollectionWithReleases)
+      ? getRemoveFromCollectionEntry(selection, context as CollectionWithReleases, controllers)
       : { type: 'separator' },
     getDeleteEntry({
       title: `${selection.length} Releases`,
-      deleteFn: () => Promise.all(selection.map(({ id }) => deleteRelease(id))),
+      deleteFn: () => Promise.all(selection.map(({ id }) => controllers.release.deleteRelease(id))),
       queryKeys: [
         ['releases', 'latest'],
         ...selection.flatMap(({ id, artist }) => ([

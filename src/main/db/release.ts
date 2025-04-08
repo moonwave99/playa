@@ -11,8 +11,6 @@ import type {
     ReleaseWithArtistAndSubreleases,
 } from '@/types/types';
 
-import { parsePath } from "../system";
-
 export async function getRelease(id: number) {
     const result = await prisma.release.findFirst({
         where: { id },
@@ -35,7 +33,7 @@ export async function getRelease(id: number) {
             tracks: { orderBy: { position: 'asc' } }
         },
     });
-    return withEntityType(result, 'release');
+    return result ? withEntityType(result, 'release') : null;
 }
 
 export async function deleteRelease(id: number) {
@@ -133,14 +131,13 @@ export async function groupReleases({ mainRelease, discInfo }: GroupReleaseParam
 }
 
 export async function unGroupRelease(release: Release & WithSubReleases) {
-    const info = parsePath(release.path);
     await prisma.$transaction([
         prisma.release.update({
             where: {
                 id: release.id
             },
             data: {
-                title: info.title,
+                title: release.path,
                 discNumber: null,
                 discTitle: null,
                 subReleases: {
@@ -149,14 +146,13 @@ export async function unGroupRelease(release: Release & WithSubReleases) {
             }
         }),
         ...release.subReleases.map(({ id, path }) => {
-            const info = parsePath(path);
             return prisma.release.update({
                 where: {
                     id
                 },
                 data: {
                     mainReleaseId: null,
-                    title: info.title,
+                    title: path,
                     discNumber: null,
                     discTitle: null
                 }

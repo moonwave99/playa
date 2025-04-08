@@ -43,7 +43,7 @@ export default function Cover({
     onLoad,
     onError,
     droppable = true,
-    dragOutside = false,
+    dragOutside = true,
 }: CoverProps) {
     const [loaded, setLoaded] = useState(false);
     const [error, setError] = useState(false);
@@ -54,7 +54,7 @@ export default function Cover({
         if (!url) {
             return;
         }
-        const didUpdate = await window.api.system.downloadCover({ id, url });
+        const didUpdate = await window.api.release.downloadCover({ id, url });
         if (!didUpdate) {
             return;
         }
@@ -101,7 +101,7 @@ export default function Cover({
                               if (!path) {
                                   return;
                               }
-                              window.api.system.startDrag(path);
+                              window.api.system.startDrag(id);
                           }
                         : null
                 }

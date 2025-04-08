@@ -1,30 +1,29 @@
 import { contextBridge, ipcRenderer as ipc } from "electron";
 import type { IpcRendererEvent, OpenDialogSyncOptions } from "electron";
-import * as search from "./main/db/search";
-import * as release from "./main/db/release";
-import * as artist from "./main/db/artist";
-import * as collection from "./main/db/collection";
-import { openTagger, refreshReleaseContents, playback, downloadCover, startDrag, importCovers, editRelease, editArtist } from "./main/system";
 import { getSettings, setSettings } from "./main/settings";
 import type { ReleaseWithArtist, CollectionWithReleases, ArtistWithReleases, SearchResult, ReleaseWithArtistAndSubreleases } from "./types/types";
 
+import { actions as systemActions } from "./main/controllers/system";
+import { actions as artistActions } from "./main/controllers/artist";
+import { actions as releaseActions } from "./main/controllers/release";
+import { actions as collectionActions } from "./main/controllers/collection";
+import { actions as searchActions } from "./main/controllers/search";
+
+function getHandlersFromActions(controllerName: string, actionNames: string[]) {
+  return {
+    [controllerName]: actionNames.reduce((memo, name) => ({
+      ...memo,
+      [name]: (...params: unknown[]) => ipc.invoke(name, ...params)
+    }), {})
+  };
+}
+
 contextBridge.exposeInMainWorld('api', {
-  data: {
-    ...getHandlers(search),
-    ...getHandlers(release),
-    ...getHandlers(artist),
-    ...getHandlers(collection),
-  },
-  system: getHandlers({
-    openTagger,
-    refreshReleaseContents,
-    playback,
-    downloadCover,
-    startDrag,
-    importCovers,
-    editRelease,
-    editArtist
-  }),
+  ...getHandlersFromActions('artist', artistActions),
+  ...getHandlersFromActions('release', releaseActions),
+  ...getHandlersFromActions('collection', collectionActions),
+  ...getHandlersFromActions('search', searchActions),
+  ...getHandlersFromActions('system', systemActions),
   settings: getHandlers({ getSettings, setSettings }),
   menu: {
     'release': (

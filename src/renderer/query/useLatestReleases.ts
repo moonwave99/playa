@@ -23,7 +23,7 @@ export default function useLatestReleases(): UseLatestReleases {
   } = useInfiniteQuery({
     queryKey: ["releases", "latest"],
     queryFn: (context) =>
-      window.api.data.getLatestReleases({
+      window.api.release.getLatestReleases({
         take: pageSize,
         skip: context.pageParam,
       }),

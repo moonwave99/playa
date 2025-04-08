@@ -55,7 +55,7 @@ export default function GroupReleasesView({
     async function onSubmit(event: FormEvent) {
         event.preventDefault();
 
-        await window.api.data.groupReleases({
+        await window.api.release.groupReleases({
             mainRelease: {
                 title: (event.target as HTMLFormElement).mainReleaseTitle.value,
                 id: discInfo[0].id,

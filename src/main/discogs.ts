@@ -1,7 +1,6 @@
 import path from "path";
 import download from "image-downloader";
 import type { Release, Artist } from '@/types/types';
-import { getSetting } from "./settings";
 import { deburr } from "lodash";
 import { log } from "./logger";
 import { wait } from "@/lib/utils";
@@ -12,16 +11,18 @@ type SearchParams = {
     year: number;
 };
 
-export async function search({ artist, title, year }: SearchParams) {
-    const DISCOGS_KEY = getSetting('DISCOGS_KEY') as string;
-    const DISCOGS_SECRET = getSetting('DISCOGS_SECRET') as string;
+type DiscogSecrets = {
+    DISCOGS_KEY: string;
+    DISCOGS_SECRET: string;
+};
 
+export async function search({ artist, title, year }: SearchParams, secrets: DiscogSecrets) {
     const params = new URLSearchParams({
         artist: deburr(normalize(artist)),
         title: deburr(normalize(title)),
         year: `${year}`,
-        key: DISCOGS_KEY,
-        secret: DISCOGS_SECRET,
+        key: secrets.DISCOGS_KEY,
+        secret: secrets.DISCOGS_SECRET,
     });
     const response = await fetch(
         `https://api.discogs.com/database/search?${params}`,
@@ -57,14 +58,17 @@ type SearchCoverParams = {
     outputPath: string;
 };
 
-export async function searchCover({ release, artist, outputPath }: SearchCoverParams) {
+export async function searchCover(
+    { release, artist, outputPath }: SearchCoverParams,
+    secrets: DiscogSecrets
+) {
     const title = normalizeTitle(release.title);
     const artistName = normalizeArtist(artist.name);
     const response = await search({
         artist: artistName,
         title,
         year: release.year,
-    });
+    }, secrets);
     if (!response?.results?.length) {
         log(`[searchCover] No response for: ${artistName} - ${title}`);
         return null;

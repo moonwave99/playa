@@ -75,7 +75,7 @@ export default function EditReleasesView({
 
     async function onSubmit(event: FormEvent) {
         event.preventDefault();
-        const success = await window.api.system.editRelease(
+        const success = await window.api.release.editRelease(
             folderInfo
                 .filter(
                     (x) =>
