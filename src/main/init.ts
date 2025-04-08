@@ -54,8 +54,8 @@ export function init(mainWindow: BrowserWindow) {
 
   const menu = {
     'menu:release': releaseMenu(controllers),
-    'menu:artist': artistMenu,
-    'menu:collection': collectionMenu,
+    'menu:artist': artistMenu(controllers),
+    'menu:collection': collectionMenu(controllers),
     'menu:searchResult': searchResultMenu(controllers),
   };
 
