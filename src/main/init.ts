@@ -1,8 +1,7 @@
-import { BrowserWindow, ipcMain as ipc } from 'electron';
-import type { IpcMainEvent } from 'electron';
+import { BrowserWindow, ipcMain as ipc, type IpcMainEvent } from 'electron';
 import path from 'path';
 import { initSettings, getSetting, getSettings, setSettings } from "./settings";
-import { getStateManager } from './state';
+import { StateManager } from './state';
 import { initMenu, releaseMenu, artistMenu, collectionMenu, searchResultMenu } from './menu/menu';
 import { systemController } from "./controllers/system";
 import { artistController } from "./controllers/artist";
@@ -29,7 +28,7 @@ export function init(mainWindow: BrowserWindow) {
     return path.join(getSetting(key) as string, folderPath);
   }
 
-  const state = getStateManager();
+  const state = new StateManager();
   const system = systemController({ withPath, getSetting });
   const artist = artistController({ withPath, state });
   const release = releaseController({ withPath, getSetting, send, state, mainWindow });
@@ -75,6 +74,15 @@ export function init(mainWindow: BrowserWindow) {
       mainWindow.webContents.send('swipe', 1);
     }
   });
+
+
+  ipc.on('state:setInputFocused', (_, inputFocused) => state.setInputFocused(inputFocused));
+  ipc.on('state:selectReleases',
+    (_, selectedReleases) => state.setSelectedReleases(selectedReleases)
+  );
+  ipc.on('state:navigate', async (_, path: string) => state.setPath(path));
+  ipc.on('state:clearSelection', () => send('clearSelection'));
+  ipc.on('state:toggleSidebar', () => send('toggleSidebar'));
 }
 
 function registerHandlers(entity: Record<string, (...args: unknown[]) => unknown>) {

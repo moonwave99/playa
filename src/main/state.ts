@@ -1,4 +1,3 @@
-import { BrowserWindow, ipcMain as ipc } from 'electron'
 import { matchPath } from 'react-router';
 import type { ReleaseWithArtistAndSubreleases, ArtistWithReleasesFull } from '@/types/types';
 import { getArtist } from './db/artist';
@@ -18,8 +17,8 @@ export class StateManager {
       selectedReleases: [],
       currentArtist: null,
       isInputFocused: false,
-      path: ''
-    }
+      path: '',
+    };
   }
   getState(): State {
     return this.state;
@@ -38,15 +37,15 @@ export class StateManager {
   }
   setSelectedReleases(selectedReleases: ReleaseWithArtistAndSubreleases[]) {
     this.state.selectedReleases = selectedReleases;
-    this.handler(this.state);
+    this.onUpdate();
   }
   setCurrentArtist(currentArtist: ArtistWithReleasesFull) {
     this.state.currentArtist = currentArtist;
-    this.handler(this.state);
+    this.onUpdate();
   }
   setInputFocused(isInputFocused: boolean) {
     this.state.isInputFocused = isInputFocused;
-    this.handler(this.state);
+    this.onUpdate();
   }
   isSingleArtistPage() {
     const artistMatch = matchPath('/artists/:id', this.state.path);
@@ -61,27 +60,12 @@ export class StateManager {
     } else {
       this.state.currentArtist = null;
     }
+    this.onUpdate();
+  }
+  private onUpdate() {
+    if (!this.handler) {
+      return;
+    }
     this.handler(this.state);
   }
-}
-
-let manager: StateManager;
-
-export function getStateManager() {
-  if (!manager) {
-    manager = new StateManager();
-
-    ipc.on('state:setInputFocused', (_, inputFocused) => manager.setInputFocused(inputFocused));
-    ipc.on('state:selectReleases',
-      (_, selectedReleases) => manager.setSelectedReleases(selectedReleases)
-    );
-    ipc.on('state:navigate', async (_, path: string) => manager.setPath(path));
-    ipc.on('state:clearSelection', () => send('clearSelection'));
-    ipc.on('state:toggleSidebar', () => send('toggleSidebar'));
-  }
-  return manager;
-}
-
-export function send(channel: string, ...args: unknown[]) {
-  BrowserWindow.getAllWindows()[0].webContents.send(channel, ...args);
 }
