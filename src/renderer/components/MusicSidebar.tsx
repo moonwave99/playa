@@ -42,6 +42,13 @@ export default function MusicSidebar() {
             window.api.system.playback({ release_id: item.id });
             return;
         }
+        if (item.type === "track" && event.metaKey) {
+            window.api.system.playback({
+                release_id: item.coverRelease.id,
+                track_id: item.id,
+            });
+            return;
+        }
         navigate(item.links[item.type]);
     }
 
@@ -137,6 +144,35 @@ function SearchResultView({
         return <div className={styles.ghost}></div>;
     }
 
+    function renderContent() {
+        if (type === "track") {
+            return (
+                <>
+                    <Link to={getLink()} className={styles.title}>
+                        {getTitle()}
+                    </Link>
+                    <span className={styles.type}>
+                        Track by{" "}
+                        <Link
+                            to={item.links.artist}
+                            className={styles.trackArtist}
+                        >
+                            {artist}
+                        </Link>
+                    </span>
+                </>
+            );
+        }
+        return (
+            <>
+                <Link to={getLink()} className={styles.title}>
+                    {getTitle()}
+                </Link>
+                <span className={styles.type}>{description}</span>
+            </>
+        );
+    }
+
     return (
         <article
             onClick={onClick}
@@ -148,12 +184,7 @@ function SearchResultView({
             onContextMenu={onContextMenu}
         >
             {renderCover()}
-            <div className={styles.description}>
-                <Link to={getLink()} className={styles.title}>
-                    {getTitle()}
-                </Link>
-                <span className={styles.type}>{description}</span>
-            </div>
+            <div className={styles.description}>{renderContent()}</div>
         </article>
     );
 }

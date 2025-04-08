@@ -183,7 +183,7 @@ type Init = {
 function init(): Init {
     const firstRender = useRef(true);
     const navigate = useNavigate();
-    const { pathname } = useLocation();
+    const location = useLocation();
     const refetch = useRefetch();
     const {
         path,
@@ -220,8 +220,8 @@ function init(): Init {
     useOnSwipe((direction) => navigate(direction));
 
     const isDetailPage = !!(
-        matchPath("/releases/:id", pathname) ||
-        matchPath("/artists/:id", pathname)
+        matchPath("/releases/:id", location.pathname) ||
+        matchPath("/artists/:id", location.pathname)
     );
 
     const { setContext, currentContext } = useKeyManager({
@@ -262,9 +262,13 @@ function init(): Init {
         if (firstRender.current) {
             return;
         }
-        window.api.state.navigate(pathname);
-        setPath(pathname);
-    }, [pathname]);
+        const fullLocation = location.search
+            ? `${location.pathname}${location.search}`
+            : location.pathname;
+
+        window.api.state.navigate(fullLocation);
+        setPath(fullLocation);
+    }, [location]);
 
     useEffect(() => {
         window.api.state.setInputFocused(false);

@@ -138,3 +138,11 @@
   color: var(--primary-color);
   font-weight: normal;
 }
+
+.trackArtist {
+  color: var(--primary-color);
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

@@ -7,7 +7,7 @@ import styles from "../Page.module.css";
 export default function ReleasePage() {
     const { id } = useParams();
 
-    const { isPending, error, release } = useRelease(+id);
+    const { isPending, error, release, selectedTrackId } = useRelease(+id);
 
     if (isPending) {
         return <Loading />;
@@ -25,7 +25,11 @@ export default function ReleasePage() {
 
     return (
         <div className={styles.page} onContextMenu={onContextMenu}>
-            <ReleaseWithTracklistView isSingle release={release} />
+            <ReleaseWithTracklistView
+                isSingle
+                release={release}
+                selectedTrackId={selectedTrackId}
+            />
         </div>
     );
 }

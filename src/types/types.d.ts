@@ -33,8 +33,6 @@ const system = {
   editArtist
 };
 
-const settings = { getSettings, setSettings };
-
 declare global {
   const MAIN_WINDOW_VITE_DEV_SERVER_URL: string | undefined;
   const MAIN_WINDOW_VITE_NAME: string | undefined;
@@ -46,7 +44,10 @@ declare global {
       artist: ReturnType<typeof artistController>,
       collection: ReturnType<typeof collectionController>,
       system: ReturnType<typeof systemController>,
-      settings: typeof settings,
+      settings: {
+        getSettings: () => Promise<ReturnType<typeof getSettings>>,
+        setSettings: () => Promise<ReturnType<typeof setSettings>>,
+      },
       menu: {
         release: (
           selection: ReleaseWithArtist[],

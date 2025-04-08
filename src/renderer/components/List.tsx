@@ -46,6 +46,7 @@ type ListProps<T> = {
     fetchNextPage?: () => void;
     onSelectionChange?: (selection: number[]) => void;
     shouldPreventSpace?: boolean;
+    initialSelection?: number[];
 };
 
 function defaultEstimateSize(columns: number, _: number, showSidebar: boolean) {
@@ -85,9 +86,12 @@ export default function List<T>({
     fetchNextPage,
     onSelectionChange,
     shouldPreventSpace,
+    initialSelection = [],
 }: ListProps<T>) {
-    const [currentIndex, setCurrentIndex] = useState(-1);
-    const [selection, setSelection] = useState<number[]>([]);
+    const [currentIndex, setCurrentIndex] = useState(
+        initialSelection.length ? initialSelection[0] : -1
+    );
+    const [selection, setSelection] = useState<number[]>(initialSelection);
 
     const ref = useRef<HTMLDivElement>(null);
     const firstRender = useRef(true);

@@ -11,6 +11,7 @@ type ReleaseWithTracklistViewProps = {
     hasFocus?: boolean;
     isSingle?: boolean;
     release: ReleaseWithArtistAndTracksAndSubreleases;
+    selectedTrackId?: number;
     onContextMenu?: (
         selection: ReleaseWithArtistAndTracksAndSubreleases[],
         target_id: number
@@ -23,6 +24,7 @@ export default function ReleaseWithTracklistView({
     hasFocus,
     isSingle = false,
     release,
+    selectedTrackId,
     onContextMenu,
     onClick,
 }: ReleaseWithTracklistViewProps) {
@@ -57,6 +59,7 @@ export default function ReleaseWithTracklistView({
             />
             <Tracklist
                 release={release}
+                selectedTrackId={selectedTrackId}
                 isNavigable={isSingle}
                 onContextMenu={onDiscContextMenu}
                 onDoubleClick={(track_id) =>

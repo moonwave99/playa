@@ -1,6 +1,6 @@
 import { getReleaseTitle, sortByQueryPosition } from "@/lib/utils";
 import prisma from "./prisma";
-import type { SearchResult, HasTitle, ReleaseWithArtistAndSubreleases, CollectionWithReleases, ArtistWithReleases } from '@/types/types';
+import type { SearchResult, HasTitle, ReleaseWithArtistAndSubreleases, CollectionWithReleases, ArtistWithReleases, TrackWithRelease } from '@/types/types';
 
 export async function search(query: string, take = 20): Promise<SearchResult[]> {
   const releases = await prisma.release.findMany({
@@ -82,38 +82,84 @@ export async function search(query: string, take = 20): Promise<SearchResult[]> 
     },
   });
 
-  return [
-    ...collections.map(({ id, title, coverRelease, releases }: CollectionWithReleases) => ({
-      id,
-      title,
-      description: "Collection",
-      type: 'collection' as const,
-      links: {
-        collection: `/collections/${id}`
+  const tracks = await prisma.track.findMany({
+    take: 10,
+    where: {
+      title: {
+        contains: query,
+        mode: "insensitive",
       },
-      coverRelease: coverRelease || releases[0]
-    })).toSorted((a: HasTitle, b: HasTitle) => sortByQueryPosition(query, 'title', a, b)),
-    ...artists.map(({ id, name, coverRelease, releases }: ArtistWithReleases) => ({
-      id,
-      title: name,
-      description: 'Artist',
-      type: 'artist' as const,
-      links: {
-        artist: `/artists/${id}`
-      },
-      coverRelease: coverRelease || releases[0]
-    })).toSorted((a: HasTitle, b: HasTitle) => sortByQueryPosition(query, 'title', a, b)),
-    ...releases.map(({ id, title, artist, year, type, hash, subReleases }: ReleaseWithArtistAndSubreleases) => ({
-      id,
-      title: getReleaseTitle({ title, subReleases }),
-      hash,
-      artist: artist.name,
-      description: year ? `${type}, ${year}` : type,
-      type: 'release' as const,
-      links: {
-        release: `/releases/${id}`,
-        artist: `/artists/${artist.id}`
+    },
+    include: {
+      release: {
+        include: {
+          artist: true
+        }
       }
-    })).toSorted((a: HasTitle, b: HasTitle) => sortByQueryPosition(query, 'title', a, b)),
-  ];
+    },
+  });
+
+  return [
+    tracks.map(transformers.track),
+    collections.map(transformers.collection),
+    artists.map(transformers.artist),
+    releases.map(transformers.release),
+  ].flatMap(
+    x => x.toSorted((a: HasTitle, b: HasTitle) => sortByQueryPosition(query, 'title', a, b))
+  );
 }
+
+const transformers = {
+  artist: (
+    { id, name, coverRelease, releases }: ArtistWithReleases
+  ) => ({
+    id,
+    title: name,
+    description: 'Artist',
+    type: 'artist' as const,
+    links: {
+      artist: `/artists/${id}`
+    },
+    coverRelease: coverRelease || releases[0]
+  }),
+  release: (
+    { id, title, artist, year, type, hash, subReleases }: ReleaseWithArtistAndSubreleases
+  ) => ({
+    id,
+    title: getReleaseTitle({ title, subReleases }),
+    hash,
+    artist: artist.name,
+    description: year ? `${type}, ${year}` : type,
+    type: 'release' as const,
+    links: {
+      release: `/releases/${id}`,
+      artist: `/artists/${artist.id}`
+    }
+  }),
+  collection: (
+    { id, title, coverRelease, releases }: CollectionWithReleases
+  ) => ({
+    id,
+    title,
+    description: "Collection",
+    type: 'collection' as const,
+    links: {
+      collection: `/collections/${id}`
+    },
+    coverRelease: coverRelease || releases[0]
+  }),
+  track: (
+    { id, title, release }: TrackWithRelease
+  ) => ({
+    id,
+    title,
+    description: "Track",
+    type: 'track' as const,
+    artist: release.artist.name,
+    links: {
+      track: `/releases/${release.id}?track_id=${id}`,
+      artist: `/artists/${release.artist.id}`,
+    },
+    coverRelease: release
+  }),
+};

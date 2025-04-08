@@ -4,7 +4,6 @@ import path from 'node:path';
 import started from 'electron-squirrel-startup';
 import { getSetting } from './settings';
 import { init } from './init';
-import { log } from './logger';
 
 if (started) {
   app.quit();
@@ -52,7 +51,9 @@ async function createWindow() {
       return response;
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      log('cover not found:', url);
+      if (process.env.LOG_COVER_ERRORS) {
+        console.log('cover not found:', url);
+      }
     }
   });
 

@@ -13,6 +13,7 @@ import styles from "./Tracklist.module.css";
 
 type TracklistProps = {
     isNavigable?: boolean;
+    selectedTrackId?: number;
     release: ReleaseWithArtistAndTracksAndSubreleases;
     onDoubleClick?: (id: number) => void;
     onContextMenu?: (id: number) => void;
@@ -21,6 +22,7 @@ type TracklistProps = {
 export default function Tracklist({
     isNavigable = false,
     release,
+    selectedTrackId,
     onDoubleClick,
     onContextMenu,
 }: TracklistProps) {
@@ -87,6 +89,11 @@ export default function Tracklist({
                 })
             }
             items={allTracks}
+            initialSelection={
+                selectedTrackId
+                    ? [allTracks.findIndex((x) => x.id === selectedTrackId)]
+                    : []
+            }
             className={cx(styles.tracklist, styles.isNavigable)}
             estimateSize={(_: number, index: number) => ({
                 height:
