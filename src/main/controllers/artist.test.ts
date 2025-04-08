@@ -3,8 +3,11 @@ import { dialog } from 'electron';
 import path from 'path';
 import fsExtra, { existsSync } from 'fs-extra';
 import { artistController } from "./artist";
+import prisma from '../db/__mocks__/prisma';
 import { mockFs } from "@/test/mock-fs";
 import { StateManager } from "../state";
+
+vi.mock('../db/prisma');
 
 describe('artist - editArtist function', () => {
   it('shows a warning if the new path already exists', async (context) => {
@@ -38,7 +41,9 @@ describe('artist - editArtist function', () => {
   });
 
   it('updates the artist with the given information', async (context) => {
-    const directory = await mockFs({ '/LIBRARY_PATH/A/Artist': {} }, context?.task.id);
+    const artist = getFakeArtist(1);
+    prisma.artist.update.mockImplementation(({ data }) => data);
+    const directory = await mockFs({ '/LIBRARY_PATH/A/Artist': {} }, context.task.id);
     const state = { setCurrentArtist: vi.fn() } as unknown as StateManager;
     const { editArtist } = artistController({
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
@@ -46,7 +51,7 @@ describe('artist - editArtist function', () => {
     });
 
     const result = await editArtist({
-      ...getFakeArtist(1),
+      ...artist,
       newName: 'Artist New',
       newPath: 'A/Artist New',
     });

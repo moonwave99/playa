@@ -5,7 +5,7 @@ import prisma from '../db/__mocks__/prisma';
 import fsExtra, { existsSync } from 'fs-extra';
 import { releaseController } from "./release";
 import { mockFs } from "@/test/mock-fs";
-import { ArtistWithReleases, ReleaseType, ReleaseWithArtist, ReleaseWithArtistAndTracks } from "@/types/types";
+import { ArtistWithReleases, ReleaseType, ReleaseWithArtist, ReleaseWithArtistAndTracks, Track } from "@/types/types";
 import { StateManager } from "../state";
 
 vi.mock('../db/prisma');
@@ -50,7 +50,6 @@ describe('release - importFolder function', () => {
     expect(releases.length).toBe(1);
     expect(releases[0].tracks.length).toBe(5);
   });
-
 
   it('parses the given path, updates the db and returns the created releases', async () => {
     prisma.artist.upsert.mockImplementation(({ where }) => getFakeArtistByHash(where.hash));
@@ -120,8 +119,6 @@ describe('release - editRelease function', () => {
     });
     const spy = vi.spyOn(fsExtra, 'move');
     const release = getFakeRelease(1);
-
-    prisma.$transaction.mockImplementation((x: unknown) => Promise.resolve(x));
     prisma.release.update.mockImplementation(({ data }) => ({ ...release, ...data }));
 
     const newInfo = {
@@ -184,7 +181,7 @@ describe('release - editRelease function', () => {
   it('shows a warning if the new path exists', async (context) => {
     const directory = await mockFs({
       '/LIBRARY_PATH/A/Artist/[Album]/1999 - New Album Path': {}
-    }, context?.task.id);
+    }, context.task.id);
 
     const { editRelease } = releaseController({
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
@@ -228,7 +225,7 @@ describe('release - editRelease function', () => {
   it('shows a warning if the old path does not exist', async (context) => {
     const directory = await mockFs({
       '/LIBRARY_PATH': {}
-    }, context?.task.id);
+    }, context.task.id);
 
     const { editRelease } = releaseController({
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
@@ -277,7 +274,7 @@ describe('release - editRelease function', () => {
       '/COVERS_PATH': {
         'e6ff3253fb407e5f-cover.jpg': '',
       },
-    }, context?.task.id);
+    }, context.task.id);
 
     const { editRelease } = releaseController({
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
@@ -287,7 +284,6 @@ describe('release - editRelease function', () => {
       mainWindow: {} as BrowserWindow
     });
 
-    prisma.$transaction.mockImplementation((x: unknown) => Promise.resolve(x));
     prisma.artist.findFirst.mockResolvedValue({ ...getFakeArtist(1), releases: [] } as ArtistWithReleases);
     prisma.release.update.mockImplementation(({ data }) => ({ ...release, ...data }));
 
@@ -330,7 +326,7 @@ describe('release - editRelease function', () => {
         '01 - track 1.mp3': ''
       },
       '/LIBRARY_PATH/A/Artist/[EP]': {},
-    }, context?.task.id);
+    }, context.task.id);
 
     const { editRelease } = releaseController({
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
@@ -340,7 +336,6 @@ describe('release - editRelease function', () => {
       mainWindow: {} as BrowserWindow
     });
 
-    prisma.$transaction.mockImplementation((x: unknown) => Promise.resolve(x));
     prisma.artist.findFirst.mockResolvedValue(
       { ...getFakeArtist(1), releases: [] } as ArtistWithReleases
     );
@@ -398,7 +393,7 @@ describe('importMissingCovers function', () => {
   it('imports the covers of the releases without an existing cover file', async (context) => {
     const directory = await mockFs({
       'COVERS_PATH/e6ff3253fb407e5f-cover.jpg': '',
-    }, context?.task.id);
+    }, context.task.id);
     const send = vi.fn();
     const { importMissingCovers } = releaseController({
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
@@ -438,7 +433,7 @@ describe('release = downloadCover function', () => {
   });
 
   it('downloads the passed url and stores as the cover for the given release id', async (context) => {
-    const directory = await mockFs({ COVERS_PATH: {} }, context?.task.id);
+    const directory = await mockFs({ COVERS_PATH: {} }, context.task.id);
     const getSetting = ((key: string) => {
       if (key === 'LIBRARY_PATH' || key === 'COVERS_PATH') {
         return path.join(directory, key);
@@ -518,5 +513,129 @@ describe('refreshReleaseContents function', () => {
     const result = await refreshReleaseContents(1) as ReleaseWithArtistAndTracks[];
     expect(result[0]).toMatchObject(release);
     expect(result[0].tracks.length).toBe(5);
+  });
+});
+
+describe('refreshCurrentArtistReleases function', () => {
+  it('updates the track information for releases of the current selected artist', async () => {
+    const release = { ...getFakeRelease(1), subReleases: [] as ReleaseWithArtist[], tracks: [] as Track[] };
+    prisma.release.findFirst.mockResolvedValue(release);
+    prisma.track.create.mockImplementation(
+      ({ data }) => Promise.resolve(getTrackFromData(data))
+    );
+    prisma.release.update.mockResolvedValue({
+      ...release,
+      tracks: FULL_TRACKS
+    } as ReleaseWithArtistAndTracks);
+    const send = vi.fn();
+    const { refreshCurrentArtistReleases } = releaseController({
+      withPath,
+      getSetting,
+      send,
+      state: {
+        getCurrentArtist: () => ({
+          ...getFakeArtist(1),
+          releases: [release]
+        })
+      } as StateManager,
+      mainWindow: {} as BrowserWindow
+    });
+    await refreshCurrentArtistReleases();
+    expect(send).toHaveBeenCalledWith('mutate', ['artists', 1]);
+  });
+});
+
+describe('refreshEntityRelease function', () => {
+  it('updates the track information for releases of the passed entity', async () => {
+    const release = { ...getFakeRelease(1), subReleases: [] as ReleaseWithArtistAndTracks[], tracks: [] as Track[] };
+    const artist = { ...getFakeArtist(1), releases: [release] };
+    prisma.release.findFirst.mockResolvedValue(release);
+    prisma.track.create.mockImplementation(
+      ({ data }) => Promise.resolve(getTrackFromData(data))
+    );
+    prisma.release.update.mockResolvedValue({
+      ...release,
+      tracks: FULL_TRACKS
+    } as ReleaseWithArtistAndTracks);
+    const send = vi.fn();
+    const { refreshEntityRelease } = releaseController({
+      withPath,
+      getSetting,
+      send,
+      state: {} as StateManager,
+      mainWindow: {} as BrowserWindow
+    });
+    await refreshEntityRelease(artist);
+    expect(send).toHaveBeenCalledWith('mutate', ['artists', 1]);
+  });
+});
+
+describe('ungroupSelectedRelease function', () => {
+  it('does nothing if no release is selected', async () => {
+    const send = vi.fn();
+    const { ungroupSelectedRelease } = releaseController({
+      withPath,
+      getSetting,
+      send,
+      state: {
+        getSelectedReleases: () => []
+      } as StateManager,
+      mainWindow: {} as BrowserWindow
+    });
+    await ungroupSelectedRelease();
+    expect(send).not.toHaveBeenCalled();
+  });
+  it('ungroups the selected release', async () => {
+    prisma.release.update.mockImplementation(
+      ({ data }) => Promise.resolve(getTrackFromData(data))
+    );
+    const release = {
+      ...getFakeRelease(1),
+      subReleases: [
+        {
+          ...getFakeRelease(2),
+          mainReleaseId: 1
+        }
+      ]
+    }
+    const send = vi.fn();
+    const { ungroupSelectedRelease } = releaseController({
+      withPath,
+      getSetting,
+      send,
+      state: {
+        getSelectedReleases: () => [release]
+      } as StateManager,
+      mainWindow: {} as BrowserWindow
+    });
+    await ungroupSelectedRelease();
+    send('mutate', [
+      ['releases', 'latest'],
+      ['artists', release.artist_id]
+    ]);
+    expect(send).toHaveBeenCalledWith('mutate', [
+      ['releases', 'latest'],
+      ['artists', 1]
+    ]);
+    expect(send).toHaveBeenCalledWith('clearSelection');
+  });
+});
+
+describe('importFolderFromDialog function', () => {
+  it('imports the contents of the folder picked in the dialog', async () => {
+    const artist = getFakeArtist(1);
+    const send = vi.fn();
+    const { importFolderFromDialog } = releaseController({
+      withPath,
+      getSetting,
+      send,
+      state: {
+        getCurrentArtist: () => artist
+      } as StateManager,
+      mainWindow: {} as BrowserWindow
+    });
+
+    await importFolderFromDialog();
+    expect(send).toHaveBeenCalledWith('mutate', [['releases', 'latest']]);
   });
 });

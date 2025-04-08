@@ -1,6 +1,11 @@
 import { MemoryRouter } from "react-router";
 import type { ReactNode } from "react";
-import type { ReleaseWithArtist, Artist, Track } from "@/types/types";
+import type {
+    ReleaseWithArtist,
+    Artist,
+    Track,
+    ArtistWithReleases,
+} from "@/types/types";
 import path from "path";
 
 export function withRouter(children: ReactNode) {
@@ -21,7 +26,7 @@ const artistHashMap: Record<
     },
 };
 
-export function getFakeArtistByHash(hash: string): Artist {
+export function getFakeArtistByHash(hash: string): ArtistWithReleases {
     const id = artistHashMap[hash].id;
     if (!id) {
         return getFakeArtist(1);
@@ -29,12 +34,16 @@ export function getFakeArtistByHash(hash: string): Artist {
     return getFakeArtist(id, hash);
 }
 
-export function getFakeArtist(id: number, hash?: string): Artist {
+export function getFakeArtist(
+    id: number,
+    hash?: string,
+    overwrite?: Partial<ArtistWithReleases>
+): ArtistWithReleases {
     const foundHash = Object.keys(artistHashMap).find(
         (hash) => artistHashMap[hash]?.id === id
     );
 
-    const data = artistHashMap[foundHash] || ({} as Artist);
+    const data = artistHashMap[foundHash] || ({} as ArtistWithReleases);
 
     id = id || data.id || 1;
     return {
@@ -46,7 +55,9 @@ export function getFakeArtist(id: number, hash?: string): Artist {
         hash: hash || `artist-hash-${id}`,
         path: "artist-path",
         coverReleaseId: 1,
+        releases: [],
         ...data,
+        ...overwrite,
     };
 }
 
@@ -81,7 +92,8 @@ export function getFakeReleaseByHash(hash: string): ReleaseWithArtist {
 export function getFakeRelease(
     release_id: number,
     artist_id?: number,
-    hash?: string
+    hash?: string,
+    overwrite?: Partial<ReleaseWithArtist>
 ): ReleaseWithArtist {
     const foundHash = Object.keys(releaseHashMap).find(
         (hash) => releaseHashMap[hash]?.id === release_id
@@ -107,6 +119,7 @@ export function getFakeRelease(
         artist_id,
         artist: getFakeArtist(artist_id),
         ...data,
+        ...overwrite,
     };
 }
 
