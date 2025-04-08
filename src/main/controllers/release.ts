@@ -277,7 +277,7 @@ export function releaseController({
     const releasesWithoutCover = releases.filter(
       ({ hash }) => !existsSync(withPath('COVERS_PATH', `${hash}-cover.jpg`))
     );
-    return importCovers(releasesWithoutCover);
+    importCovers(releasesWithoutCover);
   }
 
   async function refreshReleaseContents(id: number) {

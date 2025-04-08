@@ -203,10 +203,7 @@ export function initMenu({ controllers, state, send }: InitMenuParams) {
       {
         label: 'Import missing Covers',
         accelerator: 'Cmd+Shift+C',
-        click: async () => {
-          const update = controllers.release.importMissingCovers(state.getCurrentArtist().releases);
-          send('coverUpdate', update);
-        }
+        click: () => controllers.release.importMissingCovers(state.getCurrentArtist().releases)
       },
       {
         label: 'Edit Artist',
@@ -314,10 +311,7 @@ export function initMenu({ controllers, state, send }: InitMenuParams) {
       ...randomMenu.map(({ label, accelerator, entity }) => ({
         label,
         accelerator,
-        click: async () => {
-          const stats = await getStats();
-          send('navigate', getRandomLink(stats, entity));
-        }
+        click: async () => send('navigate', getRandomLink(await getStats(), entity))
       })),
       { type: 'separator' },
       {
