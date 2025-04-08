@@ -28,6 +28,17 @@ export default function ReleaseWithTracklistView({
 }: ReleaseWithTracklistViewProps) {
     const { id } = release;
     const { setUseDarkText } = useStore();
+
+    function onDiscContextMenu(id: number) {
+        const foundRelease = [release, ...release.subReleases].find(
+            (x) => x.id === id
+        );
+        window.api.menu.release(
+            [{ ...foundRelease, artist: release.artist }],
+            0
+        );
+    }
+
     return (
         <article
             className={styles.releaseView}
@@ -47,14 +58,7 @@ export default function ReleaseWithTracklistView({
             <Tracklist
                 release={release}
                 isNavigable={isSingle}
-                onContextMenu={(id) =>
-                    window.api.menu.release(
-                        [release, ...release.subReleases].filter(
-                            (x) => x.id === id
-                        ),
-                        0
-                    )
-                }
+                onContextMenu={onDiscContextMenu}
                 onDoubleClick={(track_id) =>
                     window.api.system.playback({
                         release_id: id,

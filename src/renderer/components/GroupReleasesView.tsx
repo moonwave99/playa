@@ -97,6 +97,10 @@ export default function GroupReleasesView({
         );
     }
 
+    function getMainReleaseTitle() {
+        return discInfo[0].title.split(" CD").at(0);
+    }
+
     return (
         <DndContext
             sensors={sensors}
@@ -118,7 +122,7 @@ export default function GroupReleasesView({
                                 className={formStyles.input}
                                 required
                                 placeholder="Enter disc title"
-                                defaultValue={discInfo[0].title}
+                                defaultValue={getMainReleaseTitle()}
                             />
                             <button
                                 type="button"

@@ -48,7 +48,12 @@ export default function Tracklist({
                         ({ tracks, title, discTitle, id }) => (
                             <Fragment key={id}>
                                 {release.subReleases.length ? (
-                                    <h2 className={styles.discTitle}>
+                                    <h2
+                                        className={styles.discTitle}
+                                        onContextMenu={withStopPropagation(() =>
+                                            onContextMenu(id)
+                                        )}
+                                    >
                                         {discTitle || title}
                                     </h2>
                                 ) : null}
