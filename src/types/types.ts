@@ -1,3 +1,4 @@
+import { Controllers, send } from '@/main/init';
 // eslint-disable-next-line import/no-named-as-default
 import Prisma, { ReleaseType } from '@prisma/client-generated';
 
@@ -121,3 +122,8 @@ export type EditReleaseParam = (
   Pick<Release, 'id' | 'path' | 'hash' | 'title' | 'artist_id' | 'year' | 'type' | 'discTitle' | 'discNumber'>
   & NewReleaseInfo
 );
+
+export type MenuParams = {
+  controllers: Controllers;
+  send: typeof send;
+};

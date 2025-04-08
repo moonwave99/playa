@@ -53,10 +53,10 @@ export function init(mainWindow: BrowserWindow) {
   });
 
   const menu = {
-    'menu:release': releaseMenu(controllers),
-    'menu:artist': artistMenu(controllers),
-    'menu:collection': collectionMenu(controllers),
-    'menu:searchResult': searchResultMenu(controllers),
+    'menu:release': releaseMenu({ controllers, send }),
+    'menu:artist': artistMenu({ controllers, send }),
+    'menu:collection': collectionMenu({ controllers, send }),
+    'menu:searchResult': searchResultMenu({ controllers, send }),
   };
 
   const settings = { getSettings, setSettings };

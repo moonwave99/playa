@@ -1,11 +1,12 @@
 import { getFakeArtist, withPath, getSetting, getFakeRelease, getFakeArtistByHash, getTrackFromData, getFakeTrack, getFakeReleaseByHash, send, FULL_TRACKS } from "@/test/utils";
-import { dialog } from 'electron';
+import { BrowserWindow, dialog } from 'electron';
 import path from 'path';
 import prisma from '../db/__mocks__/prisma';
 import fsExtra, { existsSync } from 'fs-extra';
 import { releaseController } from "./release";
 import { mockFs } from "@/test/mock-fs";
 import { ArtistWithReleases, ReleaseType, ReleaseWithArtist, ReleaseWithArtistAndTracks } from "@/types/types";
+import { StateManager } from "../state";
 
 vi.mock('../db/prisma');
 vi.mock('../run');
@@ -13,13 +14,19 @@ vi.mock('../discogs');
 
 describe('release - importFolder function', () => {
   it('returns null if the folder has no tracks', async () => {
-    const { importFolder } = releaseController({ withPath, getSetting, send });
+    const { importFolder } = releaseController({
+      withPath, getSetting, send, state: {} as StateManager,
+      mainWindow: {} as BrowserWindow
+    });
     const releases = await importFolder('empty/folder');
     expect(releases).toEqual([]);
   });
 
   it('returns null if the folder is malformed', async () => {
-    const { importFolder } = releaseController({ withPath, getSetting, send });
+    const { importFolder } = releaseController({
+      withPath, getSetting, send, state: {} as StateManager,
+      mainWindow: {} as BrowserWindow
+    });
     const releases = await importFolder('malformed/folder');
     expect(releases).toEqual([]);
   });
@@ -35,7 +42,10 @@ describe('release - importFolder function', () => {
       tracks: data.tracks.connect.map(({ id }, index) => getFakeTrack(index, id, where.id))
     }));
 
-    const { importFolder } = releaseController({ withPath, getSetting, send });
+    const { importFolder } = releaseController({
+      withPath, getSetting, send, state: {} as StateManager,
+      mainWindow: {} as BrowserWindow
+    });
     const releases = await importFolder('A/Artist/[Album]/1999 - Single Folder');
     expect(releases.length).toBe(1);
     expect(releases[0].tracks.length).toBe(5);
@@ -55,7 +65,10 @@ describe('release - importFolder function', () => {
       })
     })
 
-    const { importFolder } = releaseController({ withPath, getSetting, send });
+    const { importFolder } = releaseController({
+      withPath, getSetting, send, state: {} as StateManager,
+      mainWindow: {} as BrowserWindow
+    });
     const releases = await importFolder('A/Artist/[Album]');
 
     expect(releases.length).toBe(2);
@@ -86,13 +99,25 @@ describe('release - importFolder function', () => {
 
 describe('release - editRelease function', () => {
   it('shows a warning if the new path already exists', async () => {
-    const { editRelease } = releaseController({ withPath, getSetting, send });
+    const { editRelease } = releaseController({
+      withPath,
+      getSetting,
+      send,
+      state: {} as StateManager,
+      mainWindow: {} as BrowserWindow
+    });
     const result = await editRelease([]);
     expect(result).toEqual([]);
   });
 
   it('updates the release info without moving the folder if the passed path is the old one', async () => {
-    const { editRelease } = releaseController({ withPath, getSetting, send });
+    const { editRelease } = releaseController({
+      withPath,
+      getSetting,
+      send,
+      state: {} as StateManager,
+      mainWindow: {} as BrowserWindow
+    });
     const spy = vi.spyOn(fsExtra, 'move');
     const release = getFakeRelease(1);
 
@@ -121,7 +146,13 @@ describe('release - editRelease function', () => {
   });
 
   it('shows a warning if the new path contains any ../ sequence', async () => {
-    const { editRelease } = releaseController({ withPath, getSetting, send });
+    const { editRelease } = releaseController({
+      withPath,
+      getSetting,
+      send,
+      state: {} as StateManager,
+      mainWindow: {} as BrowserWindow
+    });
     const moveSpy = vi.spyOn(fsExtra, 'move');
     const dialogSpy = vi.spyOn(dialog, 'showMessageBoxSync');
     const release = getFakeRelease(1);
@@ -158,7 +189,9 @@ describe('release - editRelease function', () => {
     const { editRelease } = releaseController({
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
       getSetting,
-      send
+      send,
+      state: {} as StateManager,
+      mainWindow: {} as BrowserWindow
     });
 
     prisma.artist.findFirst.mockResolvedValue(
@@ -200,7 +233,9 @@ describe('release - editRelease function', () => {
     const { editRelease } = releaseController({
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
       getSetting,
-      send
+      send,
+      state: {} as StateManager,
+      mainWindow: {} as BrowserWindow
     });
 
     prisma.artist.findFirst.mockResolvedValue({ ...getFakeArtist(1), releases: [] } as ArtistWithReleases);
@@ -247,7 +282,9 @@ describe('release - editRelease function', () => {
     const { editRelease } = releaseController({
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
       getSetting,
-      send
+      send,
+      state: {} as StateManager,
+      mainWindow: {} as BrowserWindow
     });
 
     prisma.$transaction.mockImplementation((x: unknown) => Promise.resolve(x));
@@ -298,7 +335,9 @@ describe('release - editRelease function', () => {
     const { editRelease } = releaseController({
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
       getSetting,
-      send
+      send,
+      state: {} as StateManager,
+      mainWindow: {} as BrowserWindow
     });
 
     prisma.$transaction.mockImplementation((x: unknown) => Promise.resolve(x));
@@ -334,18 +373,23 @@ describe('release - editRelease function', () => {
 
 describe('importCovers function', () => {
   it('searches the covers of the given releases and returns those with positive results', async () => {
+    const send = vi.fn();
     const { importCovers } = releaseController({
       withPath,
       getSetting,
-      send
+      send,
+      state: {} as StateManager,
+      mainWindow: {} as BrowserWindow
     });
     {
-      const results = await importCovers([getFakeRelease(1)]);
-      expect(results[0]).toMatchObject({ id: 1 });
+      const release = getFakeRelease(1);
+      await importCovers([release]);
+      expect(send).toHaveBeenCalledWith('coverUpdate', [release]);
     }
     {
-      const results = await importCovers([getFakeRelease(3)]);
-      expect(results.length).toBe(0);
+      const release = getFakeRelease(3);
+      await importCovers([release]);
+      expect(send).toHaveBeenCalledWith('coverUpdate', []);
     }
   });
 });
@@ -355,26 +399,26 @@ describe('importMissingCovers function', () => {
     const directory = await mockFs({
       'COVERS_PATH/e6ff3253fb407e5f-cover.jpg': '',
     }, context?.task.id);
-
+    const send = vi.fn();
     const { importMissingCovers } = releaseController({
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
       getSetting,
-      send
+      send,
+      state: {} as StateManager,
+      mainWindow: {} as BrowserWindow
     });
     {
       const releases = [getFakeRelease(1)];
-
-      const updatedReleases = await importMissingCovers(releases);
-      expect(updatedReleases.length).toBe(0);
+      await importMissingCovers(releases);
+      expect(send).toHaveBeenCalledWith('coverUpdate', []);
     }
     {
       const releases = [
         getFakeRelease(1),
         getFakeRelease(2),
       ];
-      const updatedReleases = await importMissingCovers(releases);
-      expect(updatedReleases.length).toBe(1);
-      expect(updatedReleases[0]).toMatchObject({ id: 2 });
+      await importMissingCovers(releases);
+      expect(send).toHaveBeenCalledWith('coverUpdate', [releases[1]]);
     }
   });
 });
@@ -384,7 +428,9 @@ describe('release = downloadCover function', () => {
     const { downloadCover } = releaseController({
       withPath,
       getSetting,
-      send
+      send,
+      state: {} as StateManager,
+      mainWindow: {} as BrowserWindow
     });
     prisma.release.findFirst.mockResolvedValue(null);
     const result = await downloadCover({ id: 1, url: 'https://example.com/pic.jpg' });
@@ -407,7 +453,9 @@ describe('release = downloadCover function', () => {
       const { downloadCover } = releaseController({
         withPath: (key, folderPath) => path.join(directory, key, folderPath),
         getSetting,
-        send
+        send,
+        state: {} as StateManager,
+        mainWindow: {} as BrowserWindow
       });
 
       const result = await downloadCover({ id: 1, url: 'https://example.com/pic.jpg' });
@@ -427,7 +475,9 @@ describe('release = downloadCover function', () => {
       const { downloadCover } = releaseController({
         withPath: (key, folderPath) => path.join(directory, key, folderPath),
         getSetting,
-        send
+        send,
+        state: {} as StateManager,
+        mainWindow: {} as BrowserWindow
       });
       const result = await downloadCover({ id: 2, url: 'https://example.com/not-found.jpg' });
       expect(result).toBe(false);
@@ -442,7 +492,11 @@ describe('release = downloadCover function', () => {
 describe('refreshReleaseContents function', () => {
   it('does nothing is no release if found', async () => {
     prisma.release.findFirst.mockResolvedValue(null);
-    const { refreshReleaseContents } = releaseController({ withPath, getSetting, send });
+    const { refreshReleaseContents } = releaseController({
+      withPath, getSetting, send,
+      state: {} as StateManager,
+      mainWindow: {} as BrowserWindow
+    });
     const result = await refreshReleaseContents(1);
     expect(result).toBeFalsy();
   });
@@ -457,7 +511,10 @@ describe('refreshReleaseContents function', () => {
       ...release,
       tracks: FULL_TRACKS
     } as ReleaseWithArtistAndTracks);
-    const { refreshReleaseContents } = releaseController({ withPath, getSetting, send });
+    const { refreshReleaseContents } = releaseController({
+      withPath, getSetting, send, state: {} as StateManager,
+      mainWindow: {} as BrowserWindow
+    });
     const result = await refreshReleaseContents(1) as ReleaseWithArtistAndTracks[];
     expect(result[0]).toMatchObject(release);
     expect(result[0].tracks.length).toBe(5);

@@ -1,11 +1,10 @@
-import type { Release, Collection, ReleaseWithArtistAndSubreleases, CollectionWithReleases, ArtistWithReleases } from "@/types/types";
+import type { Release, Collection, ReleaseWithArtistAndSubreleases, CollectionWithReleases, ArtistWithReleases, MenuParams } from "@/types/types";
 import { getCollectionLink } from '@/lib/links';
 import { buildMenu, getDeleteEntry, getCoverReleaseEntry } from './menu';
 import { getReleaseTitle } from '@/lib/utils';
 import { searchReleaseOnDiscogs, searchReleaseOnRYM } from '@/lib/external_links';
-import { send, type Controllers } from "../init";
 
-function getAddToCollectionEntry(selection: Release[], collections: Collection[], controllers: Controllers) {
+function getAddToCollectionEntry(selection: Release[], collections: Collection[], { controllers, send }: MenuParams) {
   return {
     label: `Add ${selection.length} Release(s) to Collection...`,
     submenu: collections.map(({ title, id }) => ({
@@ -21,7 +20,7 @@ function getAddToCollectionEntry(selection: Release[], collections: Collection[]
   }
 }
 
-function getRemoveFromCollectionEntry(selection: Release[], collection: Collection, controllers: Controllers) {
+function getRemoveFromCollectionEntry(selection: Release[], collection: Collection, { controllers, send }: MenuParams) {
   return {
     label: `Remove ${selection.length} Release(s) from Collection`,
     click: async () => {
@@ -32,7 +31,7 @@ function getRemoveFromCollectionEntry(selection: Release[], collection: Collecti
   }
 }
 
-function getGroupReleasesEntry(selection: ReleaseWithArtistAndSubreleases[]) {
+function getGroupReleasesEntry(selection: ReleaseWithArtistAndSubreleases[], { send }: MenuParams) {
   if (selection.some(x => x.subReleases?.length)) {
     return null;
   }
@@ -42,7 +41,7 @@ function getGroupReleasesEntry(selection: ReleaseWithArtistAndSubreleases[]) {
   }
 }
 
-export const releaseMenu = (controllers: Controllers) => async (
+export const releaseMenu = ({ controllers, send }: MenuParams) => async (
   selection: ReleaseWithArtistAndSubreleases[],
   target_id: number,
   context?: CollectionWithReleases | ArtistWithReleases
@@ -75,10 +74,7 @@ export const releaseMenu = (controllers: Controllers) => async (
       },
       {
         label: `Search Release Cover`,
-        click: async () => {
-          const update = await controllers.release.importCovers([release]);
-          send('coverUpdate', update);
-        }
+        click: () => controllers.release.importCovers([release]),
       },
       {
         label: 'Refresh Folder Contents',
@@ -86,7 +82,7 @@ export const releaseMenu = (controllers: Controllers) => async (
           await controllers.release.refreshReleaseContents(release.id);
           send('mutate', [
             ['releases', release.id],
-            [context?._type === 'collection' ? 'collections' : 'artists', context?.id]
+            [`${context?._type}s`, context?.id]
           ]);
         }
       },
@@ -117,9 +113,9 @@ export const releaseMenu = (controllers: Controllers) => async (
         label: 'Add to New Collection',
         click: newCollectionHandler
       },
-      getAddToCollectionEntry(selection, collections, controllers),
+      getAddToCollectionEntry(selection, collections, { controllers, send }),
       context?._type === 'collection'
-        ? getRemoveFromCollectionEntry(selection, context as CollectionWithReleases, controllers)
+        ? getRemoveFromCollectionEntry(selection, context as CollectionWithReleases, { controllers, send })
         : { type: 'separator' },
       { type: 'separator' },
       {
@@ -137,21 +133,22 @@ export const releaseMenu = (controllers: Controllers) => async (
         queryKeys: [
           ['releases', 'latest'],
           ['releases', release.id],
-          [context?._type === 'collection' ? 'collections' : 'artists', context?.id]]
+          [`${context?._type}s`, context?.id],
+        ]
       }),
     ]);
     return true;
   }
 
   buildMenu([
-    getGroupReleasesEntry(selection) || { type: 'separator' },
+    getGroupReleasesEntry(selection, { controllers, send }) || { type: 'separator' },
     {
       label: `Add ${selection.length} Release(s) to New Collection`,
       click: newCollectionHandler,
     },
-    getAddToCollectionEntry(selection, collections, controllers),
+    getAddToCollectionEntry(selection, collections, { controllers, send }),
     context?._type === 'collection'
-      ? getRemoveFromCollectionEntry(selection, context as CollectionWithReleases, controllers)
+      ? getRemoveFromCollectionEntry(selection, context as CollectionWithReleases, { controllers, send })
       : { type: 'separator' },
     getDeleteEntry({
       title: `${selection.length} Releases`,

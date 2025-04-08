@@ -249,10 +249,7 @@ export function initMenu({ controllers, state, send }: InitMenuParams) {
       {
         label: 'Search Release Cover',
         accelerator: 'Shift+C',
-        click: async () => {
-          const update = await controllers.release.importCovers(state.getSelectedReleases());
-          send('coverUpdate', update);
-        }
+        click: () => controllers.release.importCovers(state.getSelectedReleases()),
       },
       { type: 'separator' },
       {

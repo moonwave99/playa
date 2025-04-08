@@ -1,9 +1,8 @@
-import type { ArtistWithReleases } from "@/types/types";
+import type { ArtistWithReleases, MenuParams } from "@/types/types";
 import { buildMenu } from "./menu";
 import { searchArtistOnRYM, searchArtistOnDiscogs } from "@/lib/external_links";
-import { send, type Controllers } from "../init";
 
-export const artistMenu = (controllers: Controllers) => (artist: ArtistWithReleases) => {
+export const artistMenu = ({ controllers, send }: MenuParams) => (artist: ArtistWithReleases) => {
   const { id, name, releases } = artist;
   buildMenu([
     {
@@ -12,17 +11,11 @@ export const artistMenu = (controllers: Controllers) => (artist: ArtistWithRelea
     },
     {
       label: `Import '${name}' Covers`,
-      click: async () => {
-        const updatedReleases = await controllers.release.importCovers(releases);
-        send('coverUpdate', updatedReleases);
-      }
+      click: async () => controllers.release.importCovers(releases),
     },
     {
       label: `Refresh contents for all '${name}' Releases`,
-      click: async () => {
-        await Promise.all(releases.map(({ id }) => controllers.release.refreshReleaseContents(id)));
-        send('mutate', ['artists', artist.id]);
-      }
+      click: () => controllers.release.refreshEntityRelease(artist),
     },
     {
       label: 'Edit Artist',

@@ -3,7 +3,7 @@ import path from 'path';
 import prisma from "../db/prisma";
 import { type BrowserWindow, dialog } from 'electron';
 import { globby } from 'globby';
-import { EditReleaseParam, ReleaseWithArtist, ReleaseWithArtistAndTracks } from "@/types/types";
+import { ArtistWithReleases, CollectionWithReleases, EditReleaseParam, ReleaseWithArtist, ReleaseWithArtistAndTracks } from "@/types/types";
 import { didReleaseInfoChange, mapSeries } from '@/lib/utils';
 import {
   getRelease,
@@ -270,7 +270,7 @@ export function releaseController({
         DISCOGS_SECRET
       })
     );
-    return releases.filter((_, index) => !!foundCovers[index]);
+    send('coverUpdate', releases.filter((_, index) => !!foundCovers[index]))
   }
 
   async function importMissingCovers(releases: ReleaseWithArtist[]) {
@@ -303,6 +303,13 @@ export function releaseController({
         .map((x: ReleaseWithArtistAndTracks) => refreshReleaseContents(x.id))
     );
     send('mutate', ['artists', state.getCurrentArtist().id]);
+  }
+
+  async function refreshEntityRelease(entity: ArtistWithReleases | CollectionWithReleases) {
+    await Promise.all(
+      entity.releases.map((x) => refreshReleaseContents(x.id))
+    );
+    send('mutate', [`${entity._type}s`, entity.id]);
   }
 
   async function ungroupSelectedRelease() {
@@ -349,7 +356,8 @@ export function releaseController({
     refreshReleaseContents,
     refreshCurrentArtistReleases,
     ungroupSelectedRelease,
-    importFolderFromDialog
+    importFolderFromDialog,
+    refreshEntityRelease
   };
 }
 
@@ -369,5 +377,6 @@ export const actions = [
   'refreshReleaseContents',
   'refreshCurrentArtistReleases',
   'ungroupSelectedRelease',
-  'importFolderFromDialog'
+  'importFolderFromDialog',
+  'refreshEntityRelease'
 ];
