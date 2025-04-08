@@ -4,12 +4,13 @@ import path from 'node:path';
 import started from 'electron-squirrel-startup';
 import { getSetting } from './settings';
 import { init } from './init';
+import { log } from './logger';
 
 if (started) {
   app.quit();
 }
 
-const createWindow = async () => {
+async function createWindow() {
   const { height, width } = screen.getPrimaryDisplay().size;
   const mainWindow = new BrowserWindow({
     height,
@@ -42,23 +43,26 @@ const createWindow = async () => {
     return path?.at(0);
   });
 
+  const COVERS_PATH = getSetting('COVERS_PATH') as string;
+  const customProtocol = 'playa-cover';
+  protocol.handle(customProtocol, async ({ url }) => {
+    const { hostname } = new URL(url);
+    try {
+      const response = await net.fetch(`file://${path.join(COVERS_PATH, hostname)}`);
+      return response;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      log('cover not found:', url);
+    }
+  });
+
   init(mainWindow);
-};
+}
 
 app.on('ready', createWindow);
 app.on('window-all-closed', () => app.quit());
-
 app.on('activate', () => {
   if (!BrowserWindow.getAllWindows().length) {
     createWindow();
   }
 });
-
-app.whenReady().then(() => {
-  const COVERS_PATH = getSetting('COVERS_PATH') as string;
-  const customProtocol = 'playa-cover';
-  protocol.handle(customProtocol, ({ url }) => {
-    const { hostname } = new URL(url);
-    return net.fetch(`file://${path.join(COVERS_PATH, hostname)}`);
-  })
-})

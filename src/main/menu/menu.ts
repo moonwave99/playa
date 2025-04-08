@@ -83,7 +83,8 @@ export function getDeleteEntry({ title, deleteFn, queryKeys }: GetDeleteEntryPar
 function refreshMenu(menu: Menu, {
   isInputFocused,
   selectedReleases,
-  currentArtist
+  currentArtist,
+  isImporting
 }: State) {
   ['navigate', 'library'].forEach(id => {
     menu.items.find(x => x.id == id)
@@ -94,6 +95,10 @@ function refreshMenu(menu: Menu, {
     item => {
       if (isInputFocused) {
         item.enabled = false;
+        return;
+      }
+      if (item.id === 'refresh-releases') {
+        item.enabled = currentArtist && !isImporting;
         return;
       }
       item.enabled = !!currentArtist;
@@ -110,10 +115,8 @@ function refreshMenu(menu: Menu, {
     }
   );
 
-  const groupReleasesEntry =
-    menu.getMenuItemById('release').submenu.items.find(x => x.id === 'groupReleases');
-  const ungroupReleasesEntry =
-    menu.getMenuItemById('release').submenu.items.find(x => x.id === 'ungroupRelease');
+  const groupReleasesEntry = menu.getMenuItemById('groupReleases');
+  const ungroupReleasesEntry = menu.getMenuItemById('ungroupRelease');
   const isSomeReleaseMain = selectedReleases.some(x => x?.subReleases.length);
 
   if (isSomeReleaseMain) {
@@ -198,6 +201,7 @@ export function initMenu({ controllers, state, send }: InitMenuParams) {
       {
         label: 'Refresh Releases',
         accelerator: 'Cmd+Shift+A',
+        id: 'refresh-releases',
         click: controllers.release.refreshCurrentArtistReleases,
       },
       {

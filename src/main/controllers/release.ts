@@ -277,7 +277,7 @@ export function releaseController({
     const releasesWithoutCover = releases.filter(
       ({ hash }) => !existsSync(withPath('COVERS_PATH', `${hash}-cover.jpg`))
     );
-    importCovers(releasesWithoutCover);
+    await importCovers(releasesWithoutCover);
   }
 
   async function refreshReleaseContents(id: number) {
@@ -297,11 +297,13 @@ export function releaseController({
   }
 
   async function refreshCurrentArtistReleases() {
+    state.setImporting(true);
     await Promise.all(
       state.getCurrentArtist().releases
         .filter((x: ReleaseWithArtistAndTracks) => !x.tracks.length)
         .map((x: ReleaseWithArtistAndTracks) => refreshReleaseContents(x.id))
     );
+    state.setImporting(false);
     send('mutate', ['artists', state.getCurrentArtist().id]);
   }
 

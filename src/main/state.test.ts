@@ -12,6 +12,7 @@ describe('StateManager - constructor', () => {
       selectedReleases: [],
       currentArtist: null,
       isInputFocused: false,
+      isImporting: false,
       path: '',
     });
   });
@@ -58,6 +59,19 @@ describe('StateManager - setInputFocused / isInputFocused', () => {
     expect(state.isInputFocused()).toBe(true);
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({
       isInputFocused: true
+    }));
+  });
+});
+
+describe('StateManager - setImporting / isImporting', () => {
+  it('should set and get the corresponding value', () => {
+    const onChange = vi.fn();
+    const state = new StateManager();
+    state.onStateChange(onChange);
+    state.setImporting(true);
+    expect(state.isImporting()).toBe(true);
+    expect(onChange).toHaveBeenCalledWith(expect.objectContaining({
+      isImporting: true
     }));
   });
 });

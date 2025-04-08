@@ -533,11 +533,12 @@ describe('refreshCurrentArtistReleases function', () => {
       getSetting,
       send,
       state: {
+        setImporting: vi.fn(),
         getCurrentArtist: () => ({
           ...getFakeArtist(1),
           releases: [release]
-        })
-      } as StateManager,
+        }),
+      } as unknown as StateManager,
       mainWindow: {} as BrowserWindow
     });
     await refreshCurrentArtistReleases();

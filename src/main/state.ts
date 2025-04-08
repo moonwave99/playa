@@ -6,6 +6,7 @@ export type State = {
   selectedReleases: ReleaseWithArtistAndSubreleases[];
   currentArtist: ArtistWithReleasesFull;
   isInputFocused: boolean;
+  isImporting: boolean;
   path: string;
 }
 
@@ -17,6 +18,7 @@ export class StateManager {
       selectedReleases: [],
       currentArtist: null,
       isInputFocused: false,
+      isImporting: false,
       path: '',
     };
   }
@@ -32,6 +34,9 @@ export class StateManager {
   isInputFocused(): boolean {
     return this.state.isInputFocused;
   }
+  isImporting(): boolean {
+    return this.state.isImporting;
+  }
   onStateChange(handler: (state: State) => void) {
     this.handler = handler;
   }
@@ -45,6 +50,10 @@ export class StateManager {
   }
   setInputFocused(isInputFocused: boolean) {
     this.state.isInputFocused = isInputFocused;
+    this.onUpdate();
+  }
+  setImporting(isImporting: boolean) {
+    this.state.isImporting = isImporting;
     this.onUpdate();
   }
   isSingleArtistPage() {
