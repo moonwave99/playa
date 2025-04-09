@@ -20,7 +20,13 @@ export async function getArtist(id: number): Promise<ArtistWithReleasesFull> {
       },
       relatedArtists: {
         include: {
-          coverRelease: true
+          coverRelease: true,
+          releases: {
+            take: 1,
+            where: {
+              mainRelease: null
+            },
+          }
         },
         orderBy: {
           name: 'asc'
@@ -56,7 +62,8 @@ export async function getArtist(id: number): Promise<ArtistWithReleasesFull> {
   const { releases, ...artist } = result as ArtistWithReleasesFull;
   return withEntityType({
     ...result,
-    releases: withEntityType(sortReleasesByTypeAndYear(releases, artist), 'release')
+    releases: withEntityType(sortReleasesByTypeAndYear(releases, artist), 'release'),
+    relatedArtists: result.relatedArtists.map(withCoverRelease)
   }, 'artist');
 }
 
@@ -186,14 +193,18 @@ export async function searchArtists({ query, excludeArtistsRelatedTo, take = 50 
         }
       }
     },
-    select: {
-      id: true,
-      name: true,
-      coverRelease: true
+    include: {
+      coverRelease: true,
+      releases: {
+        take: 1,
+        where: {
+          mainRelease: null
+        },
+      }
     },
     orderBy: { name: "asc" },
   });
-  return result;
+  return result.map(withCoverRelease);
 }
 
 export async function addRelatedArtist(first_id: number, second_id: number) {
@@ -218,4 +229,11 @@ export async function removeRelatedArtist(first_id: number, second_id: number) {
     data: { relatedArtists: { disconnect: [{ id: first_id }] } },
   });
   return true;
+}
+
+function withCoverRelease(artist: ArtistWithReleases) {
+  return {
+    ...artist,
+    coverRelease: artist.coverRelease || artist.releases[0]
+  };
 }

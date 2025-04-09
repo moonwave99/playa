@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import useRefetch from "../hooks/useRefetch";
+import api from "../api";
 import type { ArtistWithReleases } from "@/types/types";
 import RelatedArtistsEditor from "./RelatedArtistsEditor";
 import cx from "clsx";
@@ -33,7 +34,7 @@ export default function EditArtistView({
     async function onSubmit(event: FormEvent) {
         event.preventDefault();
 
-        const success = await window.api.artist.editArtist({
+        const success = await api.artist.editArtist({
             ...artist,
             ...artistInfo,
         });

@@ -3,13 +3,14 @@ import type {
     ReleaseWithArtist,
     ReleaseWithArtistAndTracksAndSubreleases,
 } from "@/types/types";
-import { releaseColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
-import { useKeyManager } from "@/renderer/hooks/useKeyboardManager";
+import { releaseColumnsConfig } from "../hooks/useResponsiveColumns";
+import { useKeyManager } from "../hooks/useKeyboardManager";
+import api from "../api";
 import { getReleaseLink } from "@/lib/links";
 import { getReleaseWithTracklistHeight } from "@/lib/utils";
-import ReleaseView from "@/renderer/components/ReleaseView";
-import ReleaseWithTracklistView from "@/renderer/components/ReleaseWithTracklistView";
-import List from "@/renderer/components/List";
+import ReleaseView from "./ReleaseView";
+import ReleaseWithTracklistView from "./ReleaseWithTracklistView";
+import List from "./List";
 import useStore from "../store";
 import cx from "clsx";
 import styles from "./ReleaseList.module.css";
@@ -39,7 +40,7 @@ export default function ReleaseList({
         event: KeyboardEvent
     ) {
         if (event.metaKey) {
-            window.api.system.playback({ release_id: release.id });
+            api.system.playback({ release_id: release.id });
             return;
         }
         navigate(getReleaseLink(release));
@@ -70,7 +71,7 @@ export default function ReleaseList({
             shouldCallOnLeft={() => showSidebar}
             paddingRight={viewMode === "grid" ? 16 : 0}
             onSelectionChange={(selection) =>
-                window.api.state.selectReleases(
+                api.state.selectReleases(
                     selection.map((index) => releases[index])
                 )
             }

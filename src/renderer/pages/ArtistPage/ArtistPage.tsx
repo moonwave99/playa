@@ -1,6 +1,7 @@
 import { Navigate, useParams } from "react-router";
 import type { ReleaseWithArtist } from "@/types/types";
 import useArtist from "@/renderer/query/useArtist";
+import api from "@/renderer/api";
 import { useClearSelectionOnLeave } from "@/renderer/hooks/ipc";
 import { getReleaseContextMenuParams } from "@/lib/utils";
 import useStore from "@/renderer/store";
@@ -28,7 +29,7 @@ export default function ArtistPage() {
     }
 
     function onContextMenu(selection: ReleaseWithArtist[], target_id: number) {
-        window.api.menu.release(
+        api.menu.release(
             ...getReleaseContextMenuParams({
                 selection,
                 target_id,
@@ -47,7 +48,7 @@ export default function ArtistPage() {
     return (
         <div
             className={styles.page}
-            onContextMenu={() => window.api.menu.artist(artist)}
+            onContextMenu={() => api.menu.artist(artist)}
         >
             <ListCard isSingle item={artist} onColorChange={setUseDarkText} />
             <ReleaseList

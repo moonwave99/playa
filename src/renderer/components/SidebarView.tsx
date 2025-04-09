@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import api from "../api";
 import { useNavigateSidebar } from "../hooks/ipc";
 import {
     useKeyManager,
@@ -56,7 +57,7 @@ export default function SidebarView() {
 
     useEffect(() => {
         return () => {
-            window.api.state.setInputFocused(false);
+            api.state.setInputFocused(false);
         };
     }, []);
 
@@ -75,12 +76,12 @@ export default function SidebarView() {
                         filterFn(name, query)
                     }
                     onEnter={(artist) => navigate(getArtistLink(artist))}
-                    onContextMenu={window.api.menu.artist}
+                    onContextMenu={api.menu.artist}
                     getLink={getArtistLink}
                     getEntryText={({ name }: Artist) => name}
                     queryConfig={() => ({
                         queryKey: ["artists"],
-                        queryFn: window.api.artist.getAllArtists,
+                        queryFn: api.artist.getAllArtists,
                     })}
                 />
             ) : null}
@@ -93,12 +94,12 @@ export default function SidebarView() {
                     onEnter={(collection) =>
                         navigate(getCollectionLink(collection))
                     }
-                    onContextMenu={window.api.menu.collection}
+                    onContextMenu={api.menu.collection}
                     getLink={getCollectionLink}
                     getEntryText={({ title }: Collection) => title}
                     queryConfig={() => ({
                         queryKey: ["collections"],
-                        queryFn: window.api.collection.getAllCollections,
+                        queryFn: api.collection.getAllCollections,
                     })}
                 />
             ) : null}

@@ -1,5 +1,6 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import type { ArtistWithReleases } from "@/types/types";
+import api from '../api';
 
 type UseLatestArtists = {
   isPending: boolean;
@@ -23,7 +24,7 @@ export default function useLatestArtists(): UseLatestArtists {
   } = useInfiniteQuery({
     queryKey: ["artists", "latest"],
     queryFn: (context) =>
-      window.api.artist.getLatestArtists({
+      api.artist.getLatestArtists({
         take: pageSize,
         skip: context.pageParam,
       }),

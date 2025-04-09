@@ -1,9 +1,10 @@
 import { useRef, useState, type FormEvent, type Ref } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useDebounce } from "use-debounce";
 import useSearch from "./useSearch";
 import useArtist from "./useArtist";
+import api from '../api';
 import { Artist, ArtistWithRelatedArtists } from "@/types/types";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 type UseRelatedArtists = {
   query: string;
@@ -33,7 +34,7 @@ export default function useRelatedArtists(id: number): UseRelatedArtists {
     query: debouncedQuery,
     queryKey: ["artists", "search", debouncedQuery],
     queryFn: (query, take) =>
-      window.api.artist.searchArtists({ query, take, excludeArtistsRelatedTo: id }),
+      api.artist.searchArtists({ query, take, excludeArtistsRelatedTo: id }),
     take: 10,
   });
 
@@ -48,12 +49,12 @@ export default function useRelatedArtists(id: number): UseRelatedArtists {
   }
 
   const addRelatedArtist = useMutation({
-    mutationFn: (other_id: number) => window.api.artist.addRelatedArtist(id, other_id),
+    mutationFn: (other_id: number) => api.artist.addRelatedArtist(id, other_id),
     onSuccess
   });
 
   const removeRelatedArtist = useMutation({
-    mutationFn: (other_id: number) => window.api.artist.removeRelatedArtist(id, other_id),
+    mutationFn: (other_id: number) => api.artist.removeRelatedArtist(id, other_id),
     onSuccess
   });
 
@@ -62,8 +63,8 @@ export default function useRelatedArtists(id: number): UseRelatedArtists {
     inputRef,
     inputHandlers: {
       onInput: (event) => setQuery((event.target as HTMLInputElement).value),
-      onBlur: () => window.api.state.setInputFocused(false),
-      onFocus: () => window.api.state.setInputFocused(true),
+      onBlur: () => api.state.setInputFocused(false),
+      onFocus: () => api.state.setInputFocused(true),
     },
     addRelatedArtist: addRelatedArtist.mutate,
     removeRelatedArtist: removeRelatedArtist.mutate,

@@ -2,6 +2,7 @@ import { useNavigate } from "react-router";
 import { useState } from "react";
 import type { MouseEvent } from "react";
 import { useDebounce } from "use-debounce";
+import api from "../api";
 import useSearch from "../query/useSearch";
 import useSidebar from "../hooks/useSidebar";
 import { doContextsMatch } from "../hooks/useKeyboardManager";
@@ -31,7 +32,7 @@ export default function MusicSidebar() {
         take: 100,
         query: debouncedQuery,
         queryKey: ["search", debouncedQuery],
-        queryFn: window.api.search.search,
+        queryFn: api.search.search,
     });
     const { inputRef, currentContext, inputHandlers, listHandlers } =
         useSidebar({ isPending, setQuery });
@@ -44,11 +45,11 @@ export default function MusicSidebar() {
 
     function onEnter(item: SearchResult, event: KeyboardEvent) {
         if (item.type === "release" && event.metaKey) {
-            window.api.system.playback({ release_id: item.id });
+            api.system.playback({ release_id: item.id });
             return;
         }
         if (item.type === "track" && event.metaKey) {
-            window.api.system.playback({
+            api.system.playback({
                 release_id: item.coverRelease.id,
                 track_id: item.id,
             });
@@ -91,7 +92,7 @@ export default function MusicSidebar() {
                                 onClick={onClick}
                                 currentContext={currentContext}
                                 onContextMenu={() =>
-                                    window.api.menu.searchResult(item)
+                                    api.menu.searchResult(item)
                                 }
                             />
                         )}

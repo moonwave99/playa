@@ -4,6 +4,7 @@ import type {
     ReleaseWithArtistAndSubreleases,
     ReleaseWithArtistAndTracksAndSubreleases,
 } from "@/types/types";
+import api from "../../api";
 import { releaseColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
 import { useKeyManager } from "@/renderer/hooks/useKeyboardManager";
 import useLatestReleases from "@/renderer/query/useLatestReleases";
@@ -43,7 +44,7 @@ export default function LatestReleases() {
         event: KeyboardEvent
     ) {
         if (event.metaKey) {
-            window.api.system.playback({ release_id: release.id });
+            api.system.playback({ release_id: release.id });
             return;
         }
         navigate(getReleaseLink(release));
@@ -65,7 +66,7 @@ export default function LatestReleases() {
                 onLeft={() => setContext("sidebar")}
                 shouldCallOnLeft={() => showSidebar}
                 onSelectionChange={(selection) =>
-                    window.api.state.selectReleases(
+                    api.state.selectReleases(
                         selection.map((index) => releases[index])
                     )
                 }
@@ -76,7 +77,7 @@ export default function LatestReleases() {
                             item as ReleaseWithArtistAndTracksAndSubreleases
                         }
                         onContextMenu={() =>
-                            window.api.menu.release(
+                            api.menu.release(
                                 ...getReleaseContextMenuParams({
                                     selection: selection.map(
                                         (index) => releases[index]

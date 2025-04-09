@@ -1,14 +1,13 @@
 .placeholder {
+  display: flex;
   font-size: .8rem;
   color: var(--secondary-color);
-  line-height: 1.5rem;
+  height: calc(var(--related-artists-cover-size) + 3.2rem);
 }
 
 .artistListWrapper {
   width: 100%;
   overflow: auto;
-  position: relative;
-  z-index: 1;
   padding-top: 1.5rem;
   margin-top: -1.5rem;
 }

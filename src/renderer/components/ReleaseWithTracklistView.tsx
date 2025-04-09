@@ -1,4 +1,5 @@
 import type { MouseEvent } from "react";
+import api from "../api";
 import { ReleaseWithArtistAndTracksAndSubreleases } from "@/types/types";
 import Tracklist from "./Tracklist";
 import ListCard from "./ListCard";
@@ -35,10 +36,7 @@ export default function ReleaseWithTracklistView({
         const foundRelease = [release, ...release.subReleases].find(
             (x) => x.id === id
         );
-        window.api.menu.release(
-            [{ ...foundRelease, artist: release.artist }],
-            0
-        );
+        api.menu.release([{ ...foundRelease, artist: release.artist }], 0);
     }
 
     return (
@@ -63,7 +61,7 @@ export default function ReleaseWithTracklistView({
                 isNavigable={isSingle}
                 onContextMenu={onDiscContextMenu}
                 onDoubleClick={(track_id) =>
-                    window.api.system.playback({
+                    api.system.playback({
                         release_id: id,
                         track_id,
                     })

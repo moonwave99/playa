@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router";
 import { useKeyManager } from "@/renderer/hooks/useKeyboardManager";
+import api from "../../api";
 import useStore from "@/renderer/store";
 import { getCollectionLink } from "@/lib/links";
 import { estimateListCardSize } from "@/lib/utils";
@@ -58,9 +59,9 @@ export default function LatestCollections() {
                     <ListCard
                         showMultipleCovers
                         item={item}
-                        onContextMenu={() => window.api.menu.collection(item)}
+                        onContextMenu={() => api.menu.collection(item)}
                         onCoverDoubleClick={(release_id) =>
-                            window.api.system.playback({ release_id })
+                            api.system.playback({ release_id })
                         }
                         {...rest}
                     />

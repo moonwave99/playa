@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { CollectionWithReleases, HasId } from "@/types/types";
+import api from '../api';
 
 type UseCollection = {
   isPending: boolean;
@@ -13,7 +14,7 @@ export default function useCollection(id: number): UseCollection {
   const queryClient = useQueryClient();
   const { isPending, error, data: collection } = useQuery({
     queryKey: ["collections", id],
-    queryFn: () => window.api.collection.getCollection(id),
+    queryFn: () => api.collection.getCollection(id),
   });
 
   function onSuccess() {
@@ -25,7 +26,7 @@ export default function useCollection(id: number): UseCollection {
   }
 
   const updateTitle = useMutation({
-    mutationFn: (title: string) => window.api.collection.updateCollection(id, {
+    mutationFn: (title: string) => api.collection.updateCollection(id, {
       title,
       releases: collection.releases.map(({ id }: HasId) => id),
     }),
@@ -42,7 +43,7 @@ export default function useCollection(id: number): UseCollection {
         return;
       }
       const ids = releases.map(({ id }) => id);
-      return window.api.collection.updateCollection(id, {
+      return api.collection.updateCollection(id, {
         title: collection.title,
         releases: collection.releases
           .map(({ id }: HasId) => id)

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
+import api from "../api";
 import useRefetch from "../hooks/useRefetch";
 import {
     DndContext,
@@ -55,7 +56,7 @@ export default function GroupReleasesView({
     async function onSubmit(event: FormEvent) {
         event.preventDefault();
 
-        await window.api.release.groupReleases({
+        await api.release.groupReleases({
             mainRelease: {
                 title: (event.target as HTMLFormElement).mainReleaseTitle.value,
                 id: discInfo[0].id,
@@ -72,7 +73,7 @@ export default function GroupReleasesView({
             ["artists", discInfo[0].artist.id],
         ]);
 
-        window.api.state.clearSelection();
+        api.state.clearSelection();
         onSave();
     }
 

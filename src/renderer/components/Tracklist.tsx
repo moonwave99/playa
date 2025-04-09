@@ -1,5 +1,6 @@
 import { Fragment } from "react";
 import type { MouseEvent } from "react";
+import api from "../api";
 import { useKeyManager } from "../hooks/useKeyboardManager";
 import type {
     Track,
@@ -83,7 +84,7 @@ export default function Tracklist({
             disableMultipleSelection
             context="list"
             onEnter={(item) =>
-                window.api.system.playback({
+                api.system.playback({
                     release_id: release.id,
                     track_id: item.id,
                 })

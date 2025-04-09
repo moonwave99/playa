@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router';
 import { useQuery } from "@tanstack/react-query";
+import api from '../api';
 import type { ReleaseWithArtistAndTracksAndSubreleases } from "@/types/types";
 
 type UseRelease = {
@@ -16,16 +17,16 @@ export default function useRelease(id: number): UseRelease {
 
   const { isPending, error, refetch, data: release } = useQuery({
     queryKey: ["releases", id],
-    queryFn: () => window.api.release.getRelease(id),
+    queryFn: () => api.release.getRelease(id),
   });
 
   useEffect(() => {
-    window.api.state.selectReleases([release]);
+    api.state.selectReleases([release]);
     if (!firstRefresh.current || !release || hasTracks(release)) {
       return;
     }
     firstRefresh.current = false;
-    window.api.release.refreshReleaseContents(release.id).then(() => refetch());
+    api.release.refreshReleaseContents(release.id).then(() => refetch());
   }, [release]);
 
   return {

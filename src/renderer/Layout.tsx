@@ -20,6 +20,7 @@ import {
     useOnOpenEditArtistDialog,
     useOnSwipe,
 } from "./hooks/ipc";
+import api from "./api";
 import useRefetch from "./hooks/useRefetch";
 import useStore from "./store";
 import type { ModalContents } from "./store";
@@ -127,11 +128,11 @@ export default function Layout() {
                 onRequestClose={() => setModalContents(null)}
                 style={getModalStyle(modalContents?.name)}
                 onAfterOpen={() => {
-                    window.api.state.setInputFocused(true);
+                    api.state.setInputFocused(true);
                     setContext("modal");
                 }}
                 onAfterClose={() => {
-                    window.api.state.setInputFocused(false);
+                    api.state.setInputFocused(false);
                     setContext("list");
                 }}
             >
@@ -270,28 +271,28 @@ function init(): Init {
             ? `${location.pathname}${location.search}`
             : location.pathname;
 
-        window.api.state.navigate(fullLocation);
+        api.state.navigate(fullLocation);
         setPath(fullLocation);
     }, [location]);
 
     useEffect(() => {
-        window.api.state.setInputFocused(false);
+        api.state.setInputFocused(false);
         setContext("list");
 
         const removeHandlers = [
-            window.api.onToggleViewMode(toggleViewMode),
-            window.api.onMutate(refetch),
-            window.api.onNavigate((path: string) => {
+            api.onToggleViewMode(toggleViewMode),
+            api.onMutate(refetch),
+            api.onNavigate((path: string) => {
                 navigate(path);
                 setContext("list");
             }),
-            window.api.onCoverUpdate(refreshCovers),
-            window.api.onToggleSidebar((showSidebar: boolean) =>
+            api.onCoverUpdate(refreshCovers),
+            api.onToggleSidebar((showSidebar: boolean) =>
                 toggleSidebar(showSidebar)
             ),
         ];
 
-        window.api.settings.getSettings().then(setSettings);
+        api.settings.getSettings().then(setSettings);
 
         return () => {
             removeHandlers.forEach((removeHandler) => removeHandler());

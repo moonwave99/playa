@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
+import api from "../api";
 import useRefetch from "../hooks/useRefetch";
 import type {
     ReleaseType,
@@ -75,7 +76,7 @@ export default function EditReleasesView({
 
     async function onSubmit(event: FormEvent) {
         event.preventDefault();
-        const success = await window.api.release.editRelease(
+        const success = await api.release.editRelease(
             folderInfo
                 .filter(
                     (x) =>
@@ -100,7 +101,7 @@ export default function EditReleasesView({
             ["artists", release.artist_id],
         ]);
 
-        window.api.state.selectReleases([]);
+        api.state.selectReleases([]);
         onSave();
     }
 

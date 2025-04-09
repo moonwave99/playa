@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
+import api from '../api';
 import type { Artist, ReleaseWithArtist, ReleaseWithArtistAndSubreleases, Sidebars } from "@/types/types";
 
 export function useClearSelection(callback: () => void) {
   useEffect(() => {
-    const unsubscribe = window.api.onClearSelection(callback);
+    const unsubscribe = api.onClearSelection(callback);
     return () => {
       unsubscribe();
     };
@@ -12,7 +13,7 @@ export function useClearSelection(callback: () => void) {
 
 export function useNavigateSidebar(callback: (sidebar: Sidebars) => void) {
   useEffect(() => {
-    const unsubscribe = window.api.onNavigateSidebar(callback);
+    const unsubscribe = api.onNavigateSidebar(callback);
     return () => {
       unsubscribe();
     };
@@ -21,7 +22,7 @@ export function useNavigateSidebar(callback: (sidebar: Sidebars) => void) {
 
 export function useOnSwipe(callback: (direction: 1 | -1) => void) {
   useEffect(() => {
-    const unsubscribe = window.api.onSwipe(callback);
+    const unsubscribe = api.onSwipe(callback);
     return () => {
       unsubscribe();
     };
@@ -30,7 +31,7 @@ export function useOnSwipe(callback: (direction: 1 | -1) => void) {
 
 export function useOnOpenSettings(callback: () => void) {
   useEffect(() => {
-    const unsubscribe = window.api.onOpenSettings(callback);
+    const unsubscribe = api.onOpenSettings(callback);
     return () => {
       unsubscribe();
     };
@@ -39,7 +40,7 @@ export function useOnOpenSettings(callback: () => void) {
 
 export function useOnOpenGroupDialog(callback: (selection: ReleaseWithArtist[]) => void) {
   useEffect(() => {
-    const unsubscribe = window.api.onOpenGroupDialog(callback);
+    const unsubscribe = api.onOpenGroupDialog(callback);
     return () => {
       unsubscribe();
     };
@@ -48,7 +49,7 @@ export function useOnOpenGroupDialog(callback: (selection: ReleaseWithArtist[]) 
 
 export function useOnOpenEditReleaseDialog(callback: (release: ReleaseWithArtistAndSubreleases) => void) {
   useEffect(() => {
-    const unsubscribe = window.api.onOpenEditReleaseDialog(callback);
+    const unsubscribe = api.onOpenEditReleaseDialog(callback);
     return () => {
       unsubscribe();
     };
@@ -57,7 +58,7 @@ export function useOnOpenEditReleaseDialog(callback: (release: ReleaseWithArtist
 
 export function useOnOpenEditArtistDialog(callback: (artist: Artist) => void) {
   useEffect(() => {
-    const unsubscribe = window.api.onOpenEditArtistDialog(callback);
+    const unsubscribe = api.onOpenEditArtistDialog(callback);
     return () => {
       unsubscribe();
     };
@@ -67,7 +68,7 @@ export function useOnOpenEditArtistDialog(callback: (artist: Artist) => void) {
 export function useClearSelectionOnLeave() {
   useEffect(() => {
     return () => {
-      window.api.state.selectReleases([])
+      api.state.selectReleases([])
     };
   }, []);
 }

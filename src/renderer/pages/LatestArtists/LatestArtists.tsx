@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router";
 import { useKeyManager } from "@/renderer/hooks/useKeyboardManager";
 import useLatestArtists from "@/renderer/query/useLatestArtists";
+import api from "../../api";
 import useStore from "@/renderer/store";
 import { getArtistLink } from "@/lib/links";
 import { estimateListCardSize } from "@/lib/utils";
@@ -54,9 +55,9 @@ export default function LatestArtists() {
                     <ListCard
                         showMultipleCovers
                         item={item}
-                        onContextMenu={() => window.api.menu.artist(item)}
+                        onContextMenu={() => api.menu.artist(item)}
                         onCoverDoubleClick={(release_id) =>
-                            window.api.system.playback({ release_id })
+                            api.system.playback({ release_id })
                         }
                         {...rest}
                     />

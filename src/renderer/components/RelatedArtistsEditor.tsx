@@ -50,9 +50,13 @@ export default function RelatedArtistsEditor({
                     {...inputHandlers}
                 />
             </label>
-            {!results?.length && query ? (
+            {!results?.length ? (
                 <p className={styles.placeholder}>
-                    No results for <strong>{query}</strong>.
+                    {query && (
+                        <>
+                            No results for <strong>{query}</strong>.
+                        </>
+                    )}
                 </p>
             ) : (
                 results && (

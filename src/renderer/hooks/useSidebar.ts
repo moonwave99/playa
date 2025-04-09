@@ -1,12 +1,11 @@
 import { useEffect, useRef } from "react";
 import type { FormEvent, Ref } from "react";
-
+import api from '../api';
 import {
   useKeyManager,
   KeyManager,
   withMeta,
 } from "@/renderer/hooks/useKeyboardManager";
-
 
 type UseSidebarParams = {
   isPending: boolean;
@@ -41,7 +40,7 @@ export default function useSidebar({ isPending, setQuery }: UseSidebarParams): U
     context: 'sidebar:input',
     handlers: {
       '\\': withMeta(() => {
-        window.api.state.toggleSidebar(false);
+        api.state.toggleSidebar(false);
         setContext('list');
       }),
       ArrowLeft: withMeta(() => {
@@ -83,12 +82,12 @@ export default function useSidebar({ isPending, setQuery }: UseSidebarParams): U
   }
 
   function onBlur() {
-    window.api.state.setInputFocused(false);
+    api.state.setInputFocused(false);
   }
 
   function onFocus() {
     setContext("sidebar:input");
-    window.api.state.setInputFocused(true);
+    api.state.setInputFocused(true);
   }
 
   function onUp() {

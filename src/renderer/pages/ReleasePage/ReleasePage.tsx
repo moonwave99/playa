@@ -1,5 +1,6 @@
 import { Navigate, useParams } from "react-router";
 import useRelease from "@/renderer/query/useRelease";
+import api from "../../api";
 import ReleaseWithTracklistView from "@/renderer/components/ReleaseWithTracklistView";
 import Loading from "@/renderer/components/Loading";
 import styles from "../Page.module.css";
@@ -20,7 +21,7 @@ export default function ReleasePage() {
     }
 
     function onContextMenu() {
-        window.api.menu.release([release], release.id);
+        api.menu.release([release], release.id);
     }
 
     return (

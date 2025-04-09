@@ -1,4 +1,5 @@
 import { useState } from "react";
+import api from "../api";
 import type { DragEvent } from "react";
 import cx from "clsx";
 import { getCover } from "@/lib/links";
@@ -54,7 +55,7 @@ export default function Cover({
         if (!url) {
             return;
         }
-        const didUpdate = await window.api.release.downloadCover({ id, url });
+        const didUpdate = await api.release.downloadCover({ id, url });
         if (!didUpdate) {
             return;
         }
@@ -101,7 +102,7 @@ export default function Cover({
                               if (!path) {
                                   return;
                               }
-                              window.api.system.startDrag(id);
+                              api.system.startDrag(id);
                           }
                         : null
                 }

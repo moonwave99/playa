@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { OpenDialogSyncOptions } from "electron";
 import type { FormEvent } from "react";
+import api from "../api";
 import useStore from "../store";
 import Loading from "./Loading";
 import { isEmpty } from "@/lib/utils";
@@ -78,7 +79,7 @@ export default function SettingsView({ onSave, onCancel }: SettingsViewProps) {
 
     async function onSubmit(event: FormEvent) {
         event.preventDefault();
-        await window.api.settings.setSettings(copy);
+        await api.settings.setSettings(copy);
         setSettings(copy);
         onSave();
     }
@@ -91,7 +92,7 @@ export default function SettingsView({ onSave, onCancel }: SettingsViewProps) {
         key: string,
         options: Partial<OpenDialogSyncOptions>
     ) {
-        const path = await window.api.dialog.open(options);
+        const path = await api.dialog.open(options);
         if (!path) {
             return;
         }

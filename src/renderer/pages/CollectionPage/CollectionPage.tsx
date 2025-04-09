@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import type { FormEvent } from "react";
 import { useParams, useSearchParams, Navigate } from "react-router";
+import api from "../../api";
 import type {
     Collection,
     ReleaseWithArtistAndTracksAndSubreleases,
@@ -40,7 +41,7 @@ export default function CollectionPage() {
         selection: ReleaseWithArtistAndTracksAndSubreleases[],
         target_id: number
     ) {
-        window.api.menu.release(
+        api.menu.release(
             ...getReleaseContextMenuParams({
                 selection,
                 target_id,
@@ -91,7 +92,7 @@ function Header({ collection, onTitleUpdate, isFocused }: HeaderProps) {
             inputRef.current?.focus();
             return;
         }
-        window.api.state.setInputFocused(false);
+        api.state.setInputFocused(false);
         setContext("list");
     }, [isEditing]);
 
@@ -108,7 +109,7 @@ function Header({ collection, onTitleUpdate, isFocused }: HeaderProps) {
             <h1
                 onClick={() => setEditing(true)}
                 className={styles.header}
-                onContextMenu={() => window.api.menu.collection(collection)}
+                onContextMenu={() => api.menu.collection(collection)}
             >
                 <span tabIndex={0} onFocus={onTitleFocus} onBlur={onTitleBlur}>
                     {title}
@@ -139,11 +140,11 @@ function Header({ collection, onTitleUpdate, isFocused }: HeaderProps) {
                         return;
                     }
                     onTitleUpdate(title);
-                    window.api.state.setInputFocused(false);
+                    api.state.setInputFocused(false);
                 }}
                 onFocus={(event: FormEvent<HTMLInputElement>) => {
                     (event.target as HTMLInputElement).select();
-                    window.api.state.setInputFocused(true);
+                    api.state.setInputFocused(true);
                 }}
                 required
             />

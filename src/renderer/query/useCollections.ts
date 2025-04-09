@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { CollectionWithReleases } from "@/types/types";
+import api from '../api';
 
 type UseCollections = {
   isPending: boolean;
@@ -14,7 +15,7 @@ export default function useCollections(): UseCollections {
   const queryClient = useQueryClient();
   const { isPending, error, data: collections } = useQuery({
     queryKey: ["collections", "latest"],
-    queryFn: () => window.api.collection.getCollections({ take: pageSize }),
+    queryFn: () => api.collection.getCollections({ take: pageSize }),
   });
 
   function onSuccess() {
@@ -33,7 +34,7 @@ export default function useCollections(): UseCollections {
       ) {
         return;
       }
-      return window.api.collection.deleteCollections(ids);
+      return api.collection.deleteCollections(ids);
     },
     onSuccess
   });

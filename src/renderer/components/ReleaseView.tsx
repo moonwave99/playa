@@ -1,4 +1,5 @@
 import type { MouseEvent } from "react";
+import api from "../api";
 import cx from "clsx";
 import Cover from "./Cover";
 import Link from "./Link";
@@ -43,9 +44,7 @@ export default function ReleaseView({
                 {...release}
                 className={styles.coverWrapper}
                 title={`${artist.name} - ${releaseTitle}`}
-                onDoubleClick={() =>
-                    window.api.system.playback({ release_id: id })
-                }
+                onDoubleClick={() => api.system.playback({ release_id: id })}
             />
             <div className={styles.footer}>
                 <Link

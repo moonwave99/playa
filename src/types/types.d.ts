@@ -45,8 +45,8 @@ declare global {
       collection: ReturnType<typeof collectionController>,
       system: ReturnType<typeof systemController>,
       settings: {
-        getSettings: () => Promise<ReturnType<typeof getSettings>>,
-        setSettings: () => Promise<ReturnType<typeof setSettings>>,
+        getSettings: () => Promise<ReturnType<getSettings>>,
+        setSettings: (...params: Parameters<typeof setSettings>) => Promise<ReturnType<setSettings>>,
       },
       menu: {
         release: (
