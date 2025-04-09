@@ -4,7 +4,8 @@ slug: testing
 date: 2020-02-8T00:00:00.000Z
 published: true
 ---
-I have to be honest: I seldom tested my applications, at least not thoroughly. This time I wanted not only to strive for good coverage, but to use a **test-first** approach, at least for when the prototype reached an usable level.
+
+I have to be honest: I seldom tested my applications, at least not thoroughly. This time I wanted not only to strive for good coverage, but to use a **test-driven-development** approach, at least for when the prototype reached an usable level.
 
 I will talk about:
 
@@ -35,42 +36,37 @@ src
 
 The jest configuration instructs the following:
 
-- to transform the `.ts`/`.tsx` files to js;
-- to mock imported styles / images;
-- to map some modules to the corresponding mocks.
+-   to transform the `.ts`/`.tsx` files to js;
+-   to mock imported styles / images;
+-   to map some modules to the corresponding mocks.
 
 ```javascript
 // jest.config.js
 module.exports = {
-  roots: [
-    "<rootDir>/src"
-  ],
-  testMatch: [
-    "**/?(*.)+(test).+(ts|tsx|js)"
-  ],
-  transform: {
-    "^.+\\.(ts|tsx)$": "ts-jest"
-  },
-  setupFilesAfterEnv: [
-    "<rootDir>/test/testSetup.ts"
-  ],
-  moduleNameMapper: {
-    "\\.(css|less|sass|scss)$": "<rootDir>/test/__mocks__/styleMock.js",
-    "\\.(gif|ttf|eot|svg)$": "<rootDir>/test/__mocks__/fileMock.js",
-    "disconnect": "<rootDir>/test/__mocks__/disconnect.js",
-    "electron": "<rootDir>/test/__mocks__/electron.js",
-    "music-metadata": "<rootDir>/test/__mocks__/music-metadata.js",
-    "pouchdb": "<rootDir>/test/__mocks__/pouchdb.ts",
-    "@fortawesome/react-fontawesome": "<rootDir>/test/__mocks__/@fortawesome/react-fontawesome.tsx"
-  }
-}
+    roots: ["<rootDir>/src"],
+    testMatch: ["**/?(*.)+(test).+(ts|tsx|js)"],
+    transform: {
+        "^.+\\.(ts|tsx)$": "ts-jest",
+    },
+    setupFilesAfterEnv: ["<rootDir>/test/testSetup.ts"],
+    moduleNameMapper: {
+        "\\.(css|less|sass|scss)$": "<rootDir>/test/__mocks__/styleMock.js",
+        "\\.(gif|ttf|eot|svg)$": "<rootDir>/test/__mocks__/fileMock.js",
+        disconnect: "<rootDir>/test/__mocks__/disconnect.js",
+        electron: "<rootDir>/test/__mocks__/electron.js",
+        "music-metadata": "<rootDir>/test/__mocks__/music-metadata.js",
+        pouchdb: "<rootDir>/test/__mocks__/pouchdb.ts",
+        "@fortawesome/react-fontawesome":
+            "<rootDir>/test/__mocks__/@fortawesome/react-fontawesome.tsx",
+    },
+};
 ```
 
 In `testSetup.ts` there are the global mocks:
 
 ```typescript
-import React = require('react');
-import initI18n from '../src/renderer/initializers/initI18n';
+import React = require("react");
+import initI18n from "../src/renderer/initializers/initI18n";
 
 // disables useLayoutEffect for CSSTransition component
 React.useLayoutEffect = React.useEffect;
@@ -80,13 +76,14 @@ const globalAny: any = global;
 
 // yelds a second of white noise for the waveform generator
 globalAny.AudioContext = jest.fn().mockImplementation(() => ({
-  decodeAudioData: () => ({
-    duration: 1,
-    length: 44100,
-    numberOfChannels: 2,
-    sampleRate: 44100,
-    getChannelData: () => Array.from(Array(44100).keys()).map(() => Math.random())
-  })
+    decodeAudioData: () => ({
+        duration: 1,
+        length: 44100,
+        numberOfChannels: 2,
+        sampleRate: 44100,
+        getChannelData: () =>
+            Array.from(Array(44100).keys()).map(() => Math.random()),
+    }),
 }));
 
 // mocks HTTP fetch()
@@ -108,14 +105,14 @@ For simple components, it is definitely feasible:
 ```tsx
 // component
 const Label = ({ text }): ReactElement => {
-  return <span className="label">{text}</span>;
-}
+    return <span className="label">{text}</span>;
+};
 
 // test
-it('should render a .label', () => {
-  const wrapper = render(<Label text="hello"/>);
-  expect(wrapper.is('.label')).toBe(true);
-  expect(wrapper.text()).toBe('hello');
+it("should render a .label", () => {
+    const wrapper = render(<Label text="hello" />);
+    expect(wrapper.is(".label")).toBe(true);
+    expect(wrapper.text()).toBe("hello");
 });
 ```
 
@@ -131,15 +128,16 @@ Many components include `useDispatch`/`useSelector`, `useDrag/Drop`, `useHistory
 
 ```tsx
 const wrapper = render(
-  <Provider store={mockedStore}>
-    <AlbumView
-      currentTrackId={null}
-      album={albums[0]}
-      dragType={''}
-      albumActions={[]}
-      onContextMenu={jest.fn()}
-      onDoubleClick={jest.fn()}/> 
-  </Provider>
+    <Provider store={mockedStore}>
+        <AlbumView
+            currentTrackId={null}
+            album={albums[0]}
+            dragType={""}
+            albumActions={[]}
+            onContextMenu={jest.fn()}
+            onDoubleClick={jest.fn()}
+        />
+    </Provider>
 );
 ```
 
@@ -170,7 +168,7 @@ export const renderInRouter =
   (element: ReactElement) => wrap(Renderers.render, Wrappers.Router)(element);
 export const mountInRouter =
   (element: ReactElement) => wrap(Renderers.mount, Wrappers.Router)(element);
-  
+
 // composition order reflects the one of the real app,
 // i.e. the redux provider being the outermost
 export const shallowInAll = wrap(
@@ -204,14 +202,15 @@ Actions are one of the most vital parts of the application, because they glue to
 Let's have a look at `getAllPlaylistsRequest`:
 
 ```typescript
-export const getAllPlaylistsRequest = (): Function =>
-  async (dispatch: Function): Promise<void> => {
-    const playlists = await ipc.invoke(IPC_PLAYLIST_GET_ALL_REQUEST);
-    dispatch({
-      type: PLAYLIST_GET_ALL_RESPONSE,
-      playlists
-    });
-  }
+export const getAllPlaylistsRequest =
+    (): Function =>
+    async (dispatch: Function): Promise<void> => {
+        const playlists = await ipc.invoke(IPC_PLAYLIST_GET_ALL_REQUEST);
+        dispatch({
+            type: PLAYLIST_GET_ALL_RESPONSE,
+            playlists,
+        });
+    };
 ```
 
 Remember that the app uses [redux-thunk][redux-thunk] for handling **asynchronous actions**. This is why the function is returning _another `async` function_ that takes `dispatch` as an argument, and not a plain action (i.e. an object with type and params).
@@ -221,11 +220,11 @@ In plain redux in fact, we would just have checked the return value of the creat
 ```typescript
 // plain redux example, not part of the app
 const getAllPlaylistsResponse = (playlists) => {
-  return {
-    type: PLAYLIST_GET_ALL_RESPONSE,
-    playlists
-  }
-}
+    return {
+        type: PLAYLIST_GET_ALL_RESPONSE,
+        playlists,
+    };
+};
 
 const action = getAllPlaylistsResponse(playlists);
 expect(action.type).toBe(PLAYLIST_GET_ALL_RESPONSE);
@@ -236,27 +235,29 @@ In our case we must tackle the problem from a different angle: we should **spy**
 
 We need a little configuration in order to achieve this, namely:
 
-- to use [redux-mock-store][redux-mock-store];
-- to pass the `dispatch` function of the mocked store to the action creator we want to test;
-- to inspect the contents of `store.getActions()` after the action creator has been called.
+-   to use [redux-mock-store][redux-mock-store];
+-   to pass the `dispatch` function of the mocked store to the action creator we want to test;
+-   to inspect the contents of `store.getActions()` after the action creator has been called.
 
 ```typescript
-import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
+import configureStore from "redux-mock-store";
+import thunk from "redux-thunk";
 const mockStore = configureStore([thunk]);
 
-describe('getAllPlaylistsRequest', () => {
-  it('should dispatch PLAYLIST_GET_ALL_RESPONSE', async () => {
-    // we pass the empty object as the initial state, ymmv
-    const store = mockStore({});
-    
-    // always remember to await if the creator makes async calls!
-    await getAllPlaylistsRequest()(store.dispatch);
-    expect(store.getActions()).toEqual([{
-      type: PLAYLIST_GET_ALL_RESPONSE,
-      playlists
-    }]);
-  });
+describe("getAllPlaylistsRequest", () => {
+    it("should dispatch PLAYLIST_GET_ALL_RESPONSE", async () => {
+        // we pass the empty object as the initial state, ymmv
+        const store = mockStore({});
+
+        // always remember to await if the creator makes async calls!
+        await getAllPlaylistsRequest()(store.dispatch);
+        expect(store.getActions()).toEqual([
+            {
+                type: PLAYLIST_GET_ALL_RESPONSE,
+                playlists,
+            },
+        ]);
+    });
 });
 ```
 
@@ -267,59 +268,62 @@ describe('getAllPlaylistsRequest', () => {
 Let's make an example with a little more branching - a creator that fetches the playlist if not present in the store, and does nothing in case it is already present.
 
 ```typescript
-export const getSinglePlaylistsRequest = (id: string): Function =>
-  async (dispatch: Function, getState: Function): Promise<void> => {
-    const { playlists } = getState();
-    if (playlists.allById[id]) {
-      return;
-    }
-    const playlist = await ipc.invoke(IPC_PLAYLIST_GET_SINGLE_REQUEST, id);
-    dispatch({
-      type: PLAYLIST_GET_SINGLE_RESPONSE,
-      playlist
-    });
-  }
+export const getSinglePlaylistsRequest =
+    (id: string): Function =>
+    async (dispatch: Function, getState: Function): Promise<void> => {
+        const { playlists } = getState();
+        if (playlists.allById[id]) {
+            return;
+        }
+        const playlist = await ipc.invoke(IPC_PLAYLIST_GET_SINGLE_REQUEST, id);
+        dispatch({
+            type: PLAYLIST_GET_SINGLE_RESPONSE,
+            playlist,
+        });
+    };
 ```
 
 Notice how we are passing the `id` parameter to the creator this time - it will be available in the closure of the action itself. Another parameter is passed to the async function, the `getState` function of the store, that allows inspection on the current state.
 
-Of course one must know how the state is structured, in this case it is required to access the playlists from the `playlists.allById`  hashmap.
+Of course one must know how the state is structured, in this case it is required to access the playlists from the `playlists.allById` hashmap.
 
 Let's test the thing:
 
 ```typescript
-import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
+import configureStore from "redux-mock-store";
+import thunk from "redux-thunk";
 const mockStore = configureStore([thunk]);
 
-describe('getSinglePlaylistsRequest', () => {
-  it('should dispatch PLAYLIST_GET_SINGLE_RESPONSE if requested playlist is not in store', async () => {
-    // now we have to pass the proper initial state
-    const store = mockStore({
-      playlists: {
-        allById: {}
-      }
+describe("getSinglePlaylistsRequest", () => {
+    it("should dispatch PLAYLIST_GET_SINGLE_RESPONSE if requested playlist is not in store", async () => {
+        // now we have to pass the proper initial state
+        const store = mockStore({
+            playlists: {
+                allById: {},
+            },
+        });
+        // we pass '1' as playlist id
+        await getSinglePlaylistsRequest("1")(store.dispatch);
+        expect(store.getActions()).toEqual([
+            {
+                type: PLAYLIST_GET_SINGLE_RESPONSE,
+                playlist: someExpectedMockedValue,
+            },
+        ]);
     });
-    // we pass '1' as playlist id
-    await getSinglePlaylistsRequest('1')(store.dispatch);
-    expect(store.getActions()).toEqual([{
-      type: PLAYLIST_GET_SINGLE_RESPONSE,
-      playlist: someExpectedMockedValue
-    }]);
-  });
-  
-  it('should dispatch nothing if requested playlist is in store', async () => {
-    // now we have to pass the proper initial state
-    const store = mockStore({
-      playlists: {
-        allById: {
-          '1': someMockedValue
-        }
-      }
+
+    it("should dispatch nothing if requested playlist is in store", async () => {
+        // now we have to pass the proper initial state
+        const store = mockStore({
+            playlists: {
+                allById: {
+                    "1": someMockedValue,
+                },
+            },
+        });
+        await getSinglePlaylistsRequest("1")(store.dispatch);
+        expect(store.getActions()).toEqual([]);
     });
-    await getSinglePlaylistsRequest('1')(store.dispatch);
-    expect(store.getActions()).toEqual([]);
-  });  
 });
 ```
 
@@ -343,7 +347,7 @@ export default function reducer(
   state: PlaylistState = INITIAL_STATE,
   action: PlaylistActionTypes
 ): PlaylistState {
-  switch (action.type) {    
+  switch (action.type) {
     case PLAYLIST_GET_ALL_RESPONSE:
       return {
         ...state,
@@ -391,59 +395,59 @@ This way the tests are used as a playground: for instance, I had to impement `ge
 
 ```typescript
 // tracklistUtils.test.ts
-import { getNextTrack, getPrevTrack } from './tracklistUtils';
+import { getNextTrack, getPrevTrack } from "./tracklistUtils";
 
 const albums = [
-  {
-    _id: 'a',
-    tracks: ['ta1', 'ta2', 'ta3']
-  },
-  {
-    _id: 'b',
-    tracks: ['tb1', 'tb2', 'tb3']
-  },
-  {
-    _id: 'c',
-    tracks: ['tc1', 'tc2', 'tc3']
-  }
+    {
+        _id: "a",
+        tracks: ["ta1", "ta2", "ta3"],
+    },
+    {
+        _id: "b",
+        tracks: ["tb1", "tb2", "tb3"],
+    },
+    {
+        _id: "c",
+        tracks: ["tc1", "tc2", "tc3"],
+    },
 ];
 
-describe('getNextTrack', () => {
-  it('should return { null, null } if track is not found', () => {
-    expect(getNextTrack('td1', albums)).toEqual({
-      albumId: null,
-      trackId: null
+describe("getNextTrack", () => {
+    it("should return { null, null } if track is not found", () => {
+        expect(getNextTrack("td1", albums)).toEqual({
+            albumId: null,
+            trackId: null,
+        });
     });
-  });
 
-  it('should return next track in the same album if track is not the last of album', () => {
-    expect(getNextTrack('ta1', albums)).toEqual({
-      albumId: 'a',
-      trackId: 'ta2'
+    it("should return next track in the same album if track is not the last of album", () => {
+        expect(getNextTrack("ta1", albums)).toEqual({
+            albumId: "a",
+            trackId: "ta2",
+        });
     });
-  });
 
-  it('should return first track of next album if track was the last of its album', () => {
-    expect(getNextTrack('ta3', albums)).toEqual({
-      albumId: 'b',
-      trackId: 'tb1'
+    it("should return first track of next album if track was the last of its album", () => {
+        expect(getNextTrack("ta3", albums)).toEqual({
+            albumId: "b",
+            trackId: "tb1",
+        });
     });
-  });
 
-  it('should return { null, null } if track is last of last album', () => {
-    expect(getNextTrack('tc3', albums)).toEqual({
-      albumId: null,
-      trackId: null
+    it("should return { null, null } if track is last of last album", () => {
+        expect(getNextTrack("tc3", albums)).toEqual({
+            albumId: null,
+            trackId: null,
+        });
     });
-  });
 
-  it('should give the identity if composed with getPrevTrack', () => {
-    const { trackId } = getNextTrack('ta1', albums);
-    expect(getPrevTrack(trackId, albums)).toEqual({
-      albumId: 'a',
-      trackId: 'ta1'
+    it("should give the identity if composed with getPrevTrack", () => {
+        const { trackId } = getNextTrack("ta1", albums);
+        expect(getPrevTrack(trackId, albums)).toEqual({
+            albumId: "a",
+            trackId: "ta1",
+        });
     });
-  });
 });
 ```
 
