@@ -16,7 +16,7 @@ describe('search - search function', () => {
     getFakeRelease(4, 1, undefined, { title: 'I Hate You', artist: artists[0] }),
   ];
 
-  it('shows a warning if the new path already exists', async () => {
+  it('returns the results for the given query string', async () => {
     prisma.release.findMany.mockImplementation(({ where }) => {
       return releases.filter(
         x => {
@@ -31,6 +31,7 @@ describe('search - search function', () => {
       );
     })
     prisma.collection.findMany.mockResolvedValue([]);
+    prisma.track.findMany.mockResolvedValue([]);
 
     const { search } = searchController();
     const results = await search('love');
