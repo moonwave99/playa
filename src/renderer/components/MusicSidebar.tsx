@@ -27,7 +27,12 @@ export default function MusicSidebar() {
     const [debouncedQuery] = useDebounce(query, DEBOUNCE_MS, {
         leading: false,
     });
-    const { isPending, error, results } = useSearch(debouncedQuery);
+    const { isPending, error, results } = useSearch({
+        take: 100,
+        query: debouncedQuery,
+        queryKey: ["search", debouncedQuery],
+        queryFn: window.api.search.search,
+    });
     const { inputRef, currentContext, inputHandlers, listHandlers } =
         useSidebar({ isPending, setQuery });
 
@@ -58,7 +63,7 @@ export default function MusicSidebar() {
                 ref={inputRef}
                 className={styles.input}
                 type="search"
-                placeholder={`Search music`}
+                placeholder="Search music"
                 {...inputHandlers}
             />
             {!results.length ? (

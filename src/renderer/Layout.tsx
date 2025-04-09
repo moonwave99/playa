@@ -48,21 +48,25 @@ import {
     ReleaseWithArtistAndSubreleases,
 } from "@/types/types";
 
-const modalStyle = {
-    overlay: {
-        background: "rgba(100,100,100, 0.1)",
-        backdropFilter: "blur(3px)",
-        zIndex: 2,
-    },
-    content: {
-        background: "black",
-        width: "max(40vw, 600px)",
-        height: "min-content",
-        margin: "auto",
-        borderColor: "var(--tertiary-color)",
-        borderRadius: ".5rem",
-    },
-};
+function getModalStyle(name: string) {
+    const modalStyle = {
+        overlay: {
+            background: "rgba(100,100,100, 0.1)",
+            backdropFilter: "blur(3px)",
+            zIndex: 2,
+        },
+        content: {
+            background: "black",
+            width:
+                name === "editArtist" ? "max(60vw, 800px)" : "max(40vw, 600px)",
+            height: "min-content",
+            margin: "auto",
+            borderColor: "var(--tertiary-color)",
+            borderRadius: ".5rem",
+        },
+    };
+    return modalStyle;
+}
 
 Modal.setAppElement("#root");
 
@@ -121,7 +125,7 @@ export default function Layout() {
             <Modal
                 isOpen={!!modalContents}
                 onRequestClose={() => setModalContents(null)}
-                style={modalStyle}
+                style={getModalStyle(modalContents?.name)}
                 onAfterOpen={() => {
                     window.api.state.setInputFocused(true);
                     setContext("modal");

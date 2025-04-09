@@ -3,6 +3,7 @@ import type { MouseEvent } from "react";
 import cx from "clsx";
 import Cover from "./Cover";
 import Link from "./Link";
+import RelatedArtistsList from "./RelatedArtistsList";
 import useDominantColor from "../hooks/useDominantColor";
 import { getDiscInfo, getReleaseTitle, getCoverRelease } from "@/lib/utils";
 import {
@@ -87,9 +88,9 @@ export default function ListCard({
             );
         }
 
-        return (
-            <>
-                {item._type === "artist" ? (
+        if (item._type === "artist") {
+            return (
+                <>
                     <Link
                         className={styles.title}
                         to={getArtistLink(item)}
@@ -97,15 +98,29 @@ export default function ListCard({
                     >
                         {item.name}
                     </Link>
-                ) : (
-                    <Link
-                        className={styles.title}
-                        to={getCollectionLink(item)}
-                        title={`${item.title} [${item.id}]`}
-                    >
-                        {item.title}
-                    </Link>
-                )}
+
+                    <div className={styles.info}>
+                        {item.releases.length} releases
+                    </div>
+                    {isSingle && (
+                        <RelatedArtistsList
+                            useDarkText={useDarkText}
+                            id={item.id}
+                        />
+                    )}
+                </>
+            );
+        }
+
+        return (
+            <>
+                <Link
+                    className={styles.title}
+                    to={getCollectionLink(item)}
+                    title={`${item.title} [${item.id}]`}
+                >
+                    {item.title}
+                </Link>
                 <div className={styles.info}>
                     {item.releases.length} releases
                 </div>

@@ -1,0 +1,61 @@
+.placeholder {
+  font-size: .8rem;
+  color: var(--secondary-color);
+  line-height: 1.5rem;
+}
+
+.artistListWrapper {
+  width: 100%;
+  overflow: auto;
+  position: relative;
+  z-index: 1;
+  padding-top: 1.5rem;
+  margin-top: -1.5rem;
+}
+
+.artistList {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+}
+
+.ArtistCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  align-items: center;
+  text-align: center;
+  border-radius: .25rem;
+  padding: .5rem;
+  background-color: var(--tertiary-color);
+  font-size: .7rem;
+  height: 100%;
+  width: min-content;
+}
+
+.ArtistCardButton {
+  --button-size: 1.5rem;
+  position: absolute;
+  top: calc(-1 * var(--button-size) / 2);
+  right: calc(-1 * var(--button-size) / 2);
+  width: var(--button-size);
+  height: var(--button-size);
+  font-size: calc(var(--button-size));
+  background-color: transparent;
+  border: none;
+  appearance: none;
+  z-index: 2;
+  color: var(--accent-color);
+  transition: scale .2s ease-in-out, opacity .2s ease-in-out;
+
+  &:hover {
+    scale: 1.1;
+    opacity: .9;
+  }
+}
+
+.ArtistCardCover {
+  width: var(--related-artists-cover-size);
+  height: var(--related-artists-cover-size);
+}

@@ -6,7 +6,10 @@ import {
   getAllArtists,
   getLatestArtists,
   updateArtist,
-  setArtistCoverRelease
+  setArtistCoverRelease,
+  searchArtists,
+  addRelatedArtist,
+  removeRelatedArtist
 } from '../db/artist';
 import { StateManager } from "../state";
 
@@ -57,7 +60,10 @@ export function artistController({ withPath, state }: ArtistControllerParams) {
     getLatestArtists,
     updateArtist,
     editArtist,
-    setArtistCoverRelease
+    setArtistCoverRelease,
+    searchArtists,
+    addRelatedArtist,
+    removeRelatedArtist
   };
 }
 
@@ -67,5 +73,8 @@ export const actions = [
   'getLatestArtists',
   'updateArtist',
   'editArtist',
-  'setArtistCoverRelease'
+  'setArtistCoverRelease',
+  'searchArtists',
+  'addRelatedArtist',
+  'removeRelatedArtist'
 ];

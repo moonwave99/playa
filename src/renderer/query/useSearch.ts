@@ -1,22 +1,35 @@
-import { useQuery, keepPreviousData } from "@tanstack/react-query";
-import type { SearchResult } from "@/types/types";
+import { useQuery, keepPreviousData, type QueryKey } from "@tanstack/react-query";
 
-type UseSearch = {
+type UseSearchParams<T> = {
+  query: string;
+  minLength?: number;
+  take: number;
+  queryKey: QueryKey;
+  queryFn: (query: string, take?: number) => Promise<T[]>;
+}
+
+type UseSearch<T> = {
   isPending: boolean;
   error: Error;
-  results: SearchResult[];
+  results: T[];
 };
 
 const DEBOUNCE_MS = 300;
 
-export default function useSearch(query: string): UseSearch {
+export default function useSearch<T>({
+  query,
+  minLength = 3,
+  take = 50,
+  queryKey,
+  queryFn,
+}: UseSearchParams<T>): UseSearch<T> {
   const { isPending, error, data: results } = useQuery({
-    queryKey: ["search", query],
+    queryKey,
     queryFn: async () => {
-      if (!query) {
+      if (query?.length < minLength) {
         return [];
       }
-      return window.api.search.search(query, 100);
+      return queryFn(query, take);
     },
     staleTime: DEBOUNCE_MS,
     placeholderData: keepPreviousData,

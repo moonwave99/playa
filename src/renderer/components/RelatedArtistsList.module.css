@@ -1,0 +1,29 @@
+.RelatedArtistsList {
+  display: flex;
+  gap: .25rem;
+  font-size: .75rem;
+  font-weight: 300;
+  color: var(--primary-color);
+
+  &.useDarkText {
+    color: black;
+  }
+
+  ul {
+    list-style: none;
+    display: flex;
+    gap: .25rem;
+
+    li a {
+      font-weight: 700;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    li:not(:last-child)::after {
+      content: ','
+    }
+  }
+}

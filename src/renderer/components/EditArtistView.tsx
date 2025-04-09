@@ -1,7 +1,8 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import useRefetch from "../hooks/useRefetch";
-import type { Artist } from "@/types/types";
+import type { ArtistWithReleases } from "@/types/types";
+import RelatedArtistsEditor from "./RelatedArtistsEditor";
 import cx from "clsx";
 import { MdInfoOutline } from "react-icons/md";
 import styles from "./EditArtistView.module.css";
@@ -13,7 +14,7 @@ type NewInfo = {
 };
 
 type EditArtistViewProps = {
-    artist: Artist;
+    artist: ArtistWithReleases;
     onSave: () => void;
     onCancel: () => void;
 };
@@ -58,60 +59,64 @@ export default function EditArtistView({
 
     return (
         <div className={styles.EditArtistView}>
-            <h2>Edit Artist</h2>
-            <form onSubmit={onSubmit} className={formStyles.form}>
-                <label className={cx(formStyles.label, styles.label)}>
-                    New Name
-                    <input
-                        autoFocus
-                        className={cx(formStyles.input, styles.input)}
-                        required
-                        placeholder="Enter the artist name"
-                        value={artistInfo.newName}
-                        onInput={(event: FormEvent) =>
-                            updateInfo(
-                                "newName",
-                                (event.target as HTMLInputElement).value
-                            )
-                        }
-                    />
-                </label>
-                <label className={cx(formStyles.label, styles.label)}>
-                    New Path
-                    <input
-                        className={cx(formStyles.input, styles.input)}
-                        required
-                        placeholder="Enter the artist path"
-                        value={artistInfo.newPath}
-                        onInput={(event: FormEvent) =>
-                            updateInfo(
-                                "newPath",
-                                (event.target as HTMLInputElement).value
-                            )
-                        }
-                    />
-                </label>
-                <div className={formStyles.info}>
-                    <MdInfoOutline />
-                    This will physically move the Artist folder in your Library.
-                </div>
-                <div className={formStyles.actions}>
-                    <button
-                        type="submit"
-                        className={formStyles.button}
-                        disabled={!canSubmit()}
-                    >
-                        Edit Artist
-                    </button>
-                    <button
-                        type="button"
-                        className={formStyles.button}
-                        onClick={onCancel}
-                    >
-                        Cancel
-                    </button>
-                </div>
-            </form>
+            <div className={formStyles.container}>
+                <h2>Edit Artist</h2>
+                <form onSubmit={onSubmit} className={formStyles.form}>
+                    <label className={cx(formStyles.label, styles.label)}>
+                        New Name
+                        <input
+                            autoFocus
+                            className={cx(formStyles.input, styles.input)}
+                            required
+                            placeholder="Enter the artist name"
+                            value={artistInfo.newName}
+                            onInput={(event: FormEvent) =>
+                                updateInfo(
+                                    "newName",
+                                    (event.target as HTMLInputElement).value
+                                )
+                            }
+                        />
+                    </label>
+                    <label className={cx(formStyles.label, styles.label)}>
+                        New Path
+                        <input
+                            className={cx(formStyles.input, styles.input)}
+                            required
+                            placeholder="Enter the artist path"
+                            value={artistInfo.newPath}
+                            onInput={(event: FormEvent) =>
+                                updateInfo(
+                                    "newPath",
+                                    (event.target as HTMLInputElement).value
+                                )
+                            }
+                        />
+                    </label>
+                    <div className={formStyles.info}>
+                        <MdInfoOutline />
+                        This will physically move the Artist folder in your
+                        Library.
+                    </div>
+                    <div className={formStyles.actions}>
+                        <button
+                            type="submit"
+                            className={formStyles.button}
+                            disabled={!canSubmit()}
+                        >
+                            Edit Artist
+                        </button>
+                        <button
+                            type="button"
+                            className={formStyles.button}
+                            onClick={onCancel}
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <RelatedArtistsEditor id={artist.id} />
         </div>
     );
 }

@@ -104,5 +104,5 @@
 
 .hasHeaderWithCover {
   padding: 1rem 0 0 0;
-  max-height: calc(100vh - var(--release-tracklist-single-cover-size));
+  max-height: calc(100vh - 1px - var(--release-tracklist-single-cover-size));
 }

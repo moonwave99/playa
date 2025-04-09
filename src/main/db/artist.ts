@@ -18,6 +18,14 @@ export async function getArtist(id: number): Promise<ArtistWithReleasesFull> {
           artist: true
         }
       },
+      relatedArtists: {
+        include: {
+          coverRelease: true
+        },
+        orderBy: {
+          name: 'asc'
+        }
+      },
       releases: {
         where: {
           mainRelease: null
@@ -156,4 +164,58 @@ export async function setArtistCoverRelease(artist_id: number, release_id: numbe
     data: { coverReleaseId: release_id }
   });
   return result ? withEntityType(result, 'artist') : null;
+}
+
+type SearchArtistsParams = {
+  query: string;
+  excludeArtistsRelatedTo?: number;
+  take?: number;
+};
+
+export async function searchArtists({ query, excludeArtistsRelatedTo, take = 50 }: SearchArtistsParams): Promise<Artist[]> {
+  const result = await prisma.artist.findMany({
+    take,
+    where: {
+      name: {
+        contains: query,
+        mode: "insensitive",
+      },
+      relatedArtists: {
+        none: {
+          id: excludeArtistsRelatedTo
+        }
+      }
+    },
+    select: {
+      id: true,
+      name: true,
+      coverRelease: true
+    },
+    orderBy: { name: "asc" },
+  });
+  return result;
+}
+
+export async function addRelatedArtist(first_id: number, second_id: number) {
+  await prisma.artist.update({
+    where: { id: first_id },
+    data: { relatedArtists: { connect: [{ id: second_id }] } },
+  });
+  await prisma.artist.update({
+    where: { id: second_id },
+    data: { relatedArtists: { connect: [{ id: first_id }] } },
+  });
+  return true;
+}
+
+export async function removeRelatedArtist(first_id: number, second_id: number) {
+  await prisma.artist.update({
+    where: { id: first_id },
+    data: { relatedArtists: { disconnect: [{ id: second_id }] } },
+  });
+  await prisma.artist.update({
+    where: { id: second_id },
+    data: { relatedArtists: { disconnect: [{ id: first_id }] } },
+  });
+  return true;
 }

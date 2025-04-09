@@ -3,6 +3,7 @@
   --secondary-color: #b3b3b3;
   --tertiary-color: #4f4d4d;
   --background-color: #121212;
+  --background-color-light: #2c2c2c9b;
   --accent-color: #4361ee;
   --accent-color-light: #627be9;
   --accent-color-dark: #183ee6;
@@ -26,6 +27,7 @@
   --search-results-background-color: #34363b;
   --search-results-background-color-light: #61646d;
   --neutral-border-color: rgba(120, 120, 120, 0.3);
+  --related-artists-cover-size: 6rem;
 }
 
 * {
