@@ -1,7 +1,7 @@
 import { existsSync, move } from 'fs-extra';
 import path from 'path';
 import prisma from "../db/prisma";
-import { type BrowserWindow, dialog } from 'electron';
+import { dialog } from 'electron';
 import { globby } from 'globby';
 import { ArtistWithReleases, CollectionWithReleases, EditReleaseParam, ReleaseWithArtist, ReleaseWithArtistAndTracks } from "@/types/types";
 import { didReleaseInfoChange, mapSeries } from '@/lib/utils';
@@ -34,11 +34,11 @@ type ReleaseControllerParams = {
   getSetting: (key: string) => ReturnType<typeof getSetting>;
   send: (channel: string, ...args: unknown[]) => void;
   state: StateManager;
-  mainWindow: BrowserWindow;
+  openFolderDialog: (defaultPath: string) => string[];
 }
 
 export function releaseController({
-  withPath, getSetting, send, state, mainWindow
+  withPath, getSetting, send, state, openFolderDialog
 }: ReleaseControllerParams) {
 
   async function editRelease(infos: EditReleaseParam[]) {
@@ -155,6 +155,7 @@ export function releaseController({
       onlyDirectories: true,
       cwd: folder,
     });
+
     if (!folders.length) {
       const release = await importSingleFolder(folder);
       return release ? [release] : [];
@@ -270,6 +271,7 @@ export function releaseController({
         DISCOGS_SECRET
       })
     );
+
     send('coverUpdate', releases.filter((_, index) => !!foundCovers[index]))
   }
 
@@ -328,14 +330,14 @@ export function releaseController({
   }
 
   async function importFolderFromDialog() {
-    const folders = dialog.showOpenDialogSync(mainWindow, {
-      properties: ['openDirectory', 'multiSelections'],
-      defaultPath: withPath('LIBRARY_PATH', state.getCurrentArtist()?.path || '')
-    });
+    const folders = openFolderDialog(
+      withPath('LIBRARY_PATH', state.getCurrentArtist()?.path || '')
+    );
     if (!folders) {
       return;
     }
     const releases = await Promise.all(folders.map(importFolder));
+
     send('mutate', [
       ['releases', 'latest'],
       ...releases.flat().map(x => (['artists', x.artist_id]))

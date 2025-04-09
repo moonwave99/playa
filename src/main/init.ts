@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain as ipc, type IpcMainEvent } from 'electron';
+import { BrowserWindow, ipcMain as ipc, type IpcMainEvent, dialog } from 'electron';
 import path from 'path';
 import { initSettings, getSetting, getSettings, setSettings } from "./settings";
 import { StateManager } from './state';
@@ -28,10 +28,18 @@ export function init(mainWindow: BrowserWindow) {
     return path.join(getSetting(key) as string, folderPath);
   }
 
+  function openFolderDialog(defaultPath: string) {
+    const folders = dialog.showOpenDialogSync(mainWindow, {
+      properties: ['openDirectory', 'multiSelections'],
+      defaultPath,
+    });
+    return folders;
+  }
+
   const state = new StateManager();
   const system = systemController({ withPath, getSetting });
   const artist = artistController({ withPath, state });
-  const release = releaseController({ withPath, getSetting, send, state, mainWindow });
+  const release = releaseController({ withPath, getSetting, send, state, openFolderDialog });
   const collection = collectionController();
   const search = searchController();
 

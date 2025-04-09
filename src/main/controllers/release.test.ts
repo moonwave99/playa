@@ -1,5 +1,5 @@
 import { getFakeArtist, withPath, getSetting, getFakeRelease, getFakeArtistByHash, getTrackFromData, getFakeTrack, getFakeReleaseByHash, send, FULL_TRACKS } from "@/test/utils";
-import { BrowserWindow, dialog } from 'electron';
+import { dialog } from 'electron';
 import path from 'path';
 import prisma from '../db/__mocks__/prisma';
 import fsExtra, { existsSync } from 'fs-extra';
@@ -12,21 +12,23 @@ vi.mock('../db/prisma');
 vi.mock('../run');
 vi.mock('../discogs');
 
+const defaultParams = {
+  withPath,
+  getSetting,
+  send,
+  state: {} as StateManager,
+  openFolderDialog: vi.fn(),
+};
+
 describe('release - importFolder function', () => {
   it('returns null if the folder has no tracks', async () => {
-    const { importFolder } = releaseController({
-      withPath, getSetting, send, state: {} as StateManager,
-      mainWindow: {} as BrowserWindow
-    });
+    const { importFolder } = releaseController(defaultParams);
     const releases = await importFolder('empty/folder');
     expect(releases).toEqual([]);
   });
 
   it('returns null if the folder is malformed', async () => {
-    const { importFolder } = releaseController({
-      withPath, getSetting, send, state: {} as StateManager,
-      mainWindow: {} as BrowserWindow
-    });
+    const { importFolder } = releaseController(defaultParams);
     const releases = await importFolder('malformed/folder');
     expect(releases).toEqual([]);
   });
@@ -42,10 +44,7 @@ describe('release - importFolder function', () => {
       tracks: data.tracks.connect.map(({ id }, index) => getFakeTrack(index, id, where.id))
     }));
 
-    const { importFolder } = releaseController({
-      withPath, getSetting, send, state: {} as StateManager,
-      mainWindow: {} as BrowserWindow
-    });
+    const { importFolder } = releaseController(defaultParams);
     const releases = await importFolder('A/Artist/[Album]/1999 - Single Folder');
     expect(releases.length).toBe(1);
     expect(releases[0].tracks.length).toBe(5);
@@ -64,10 +63,7 @@ describe('release - importFolder function', () => {
       })
     })
 
-    const { importFolder } = releaseController({
-      withPath, getSetting, send, state: {} as StateManager,
-      mainWindow: {} as BrowserWindow
-    });
+    const { importFolder } = releaseController(defaultParams);
     const releases = await importFolder('A/Artist/[Album]');
 
     expect(releases.length).toBe(2);
@@ -98,25 +94,13 @@ describe('release - importFolder function', () => {
 
 describe('release - editRelease function', () => {
   it('shows a warning if the new path already exists', async () => {
-    const { editRelease } = releaseController({
-      withPath,
-      getSetting,
-      send,
-      state: {} as StateManager,
-      mainWindow: {} as BrowserWindow
-    });
+    const { editRelease } = releaseController(defaultParams);
     const result = await editRelease([]);
     expect(result).toEqual([]);
   });
 
   it('updates the release info without moving the folder if the passed path is the old one', async () => {
-    const { editRelease } = releaseController({
-      withPath,
-      getSetting,
-      send,
-      state: {} as StateManager,
-      mainWindow: {} as BrowserWindow
-    });
+    const { editRelease } = releaseController(defaultParams);
     const spy = vi.spyOn(fsExtra, 'move');
     const release = getFakeRelease(1);
     prisma.release.update.mockImplementation(({ data }) => ({ ...release, ...data }));
@@ -143,13 +127,7 @@ describe('release - editRelease function', () => {
   });
 
   it('shows a warning if the new path contains any ../ sequence', async () => {
-    const { editRelease } = releaseController({
-      withPath,
-      getSetting,
-      send,
-      state: {} as StateManager,
-      mainWindow: {} as BrowserWindow
-    });
+    const { editRelease } = releaseController(defaultParams);
     const moveSpy = vi.spyOn(fsExtra, 'move');
     const dialogSpy = vi.spyOn(dialog, 'showMessageBoxSync');
     const release = getFakeRelease(1);
@@ -184,11 +162,8 @@ describe('release - editRelease function', () => {
     }, context.task.id);
 
     const { editRelease } = releaseController({
+      ...defaultParams,
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
-      getSetting,
-      send,
-      state: {} as StateManager,
-      mainWindow: {} as BrowserWindow
     });
 
     prisma.artist.findFirst.mockResolvedValue(
@@ -228,11 +203,8 @@ describe('release - editRelease function', () => {
     }, context.task.id);
 
     const { editRelease } = releaseController({
+      ...defaultParams,
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
-      getSetting,
-      send,
-      state: {} as StateManager,
-      mainWindow: {} as BrowserWindow
     });
 
     prisma.artist.findFirst.mockResolvedValue({ ...getFakeArtist(1), releases: [] } as ArtistWithReleases);
@@ -277,11 +249,8 @@ describe('release - editRelease function', () => {
     }, context.task.id);
 
     const { editRelease } = releaseController({
+      ...defaultParams,
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
-      getSetting,
-      send,
-      state: {} as StateManager,
-      mainWindow: {} as BrowserWindow
     });
 
     prisma.artist.findFirst.mockResolvedValue({ ...getFakeArtist(1), releases: [] } as ArtistWithReleases);
@@ -329,11 +298,8 @@ describe('release - editRelease function', () => {
     }, context.task.id);
 
     const { editRelease } = releaseController({
+      ...defaultParams,
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
-      getSetting,
-      send,
-      state: {} as StateManager,
-      mainWindow: {} as BrowserWindow
     });
 
     prisma.artist.findFirst.mockResolvedValue(
@@ -369,13 +335,7 @@ describe('release - editRelease function', () => {
 describe('importCovers function', () => {
   it('searches the covers of the given releases and returns those with positive results', async () => {
     const send = vi.fn();
-    const { importCovers } = releaseController({
-      withPath,
-      getSetting,
-      send,
-      state: {} as StateManager,
-      mainWindow: {} as BrowserWindow
-    });
+    const { importCovers } = releaseController({ ...defaultParams, send });
     {
       const release = getFakeRelease(1);
       await importCovers([release]);
@@ -396,11 +356,9 @@ describe('importMissingCovers function', () => {
     }, context.task.id);
     const send = vi.fn();
     const { importMissingCovers } = releaseController({
-      withPath: (key, folderPath) => path.join(directory, key, folderPath),
-      getSetting,
+      ...defaultParams,
       send,
-      state: {} as StateManager,
-      mainWindow: {} as BrowserWindow
+      withPath: (key, folderPath) => path.join(directory, key, folderPath),
     });
     {
       const releases = [getFakeRelease(1)];
@@ -420,13 +378,7 @@ describe('importMissingCovers function', () => {
 
 describe('release = downloadCover function', () => {
   it('does nothing is no release if found', async () => {
-    const { downloadCover } = releaseController({
-      withPath,
-      getSetting,
-      send,
-      state: {} as StateManager,
-      mainWindow: {} as BrowserWindow
-    });
+    const { downloadCover } = releaseController(defaultParams);
     prisma.release.findFirst.mockResolvedValue(null);
     const result = await downloadCover({ id: 1, url: 'https://example.com/pic.jpg' });
     expect(result).toBeFalsy();
@@ -446,11 +398,10 @@ describe('release = downloadCover function', () => {
       prisma.release.findFirst.mockResolvedValue(release);
 
       const { downloadCover } = releaseController({
-        withPath: (key, folderPath) => path.join(directory, key, folderPath),
-        getSetting,
+        ...defaultParams,
         send,
-        state: {} as StateManager,
-        mainWindow: {} as BrowserWindow
+        getSetting,
+        withPath: (key, folderPath) => path.join(directory, key, folderPath),
       });
 
       const result = await downloadCover({ id: 1, url: 'https://example.com/pic.jpg' });
@@ -468,11 +419,8 @@ describe('release = downloadCover function', () => {
       const release = getFakeRelease(2);
       prisma.release.findFirst.mockResolvedValue(release);
       const { downloadCover } = releaseController({
+        ...defaultParams,
         withPath: (key, folderPath) => path.join(directory, key, folderPath),
-        getSetting,
-        send,
-        state: {} as StateManager,
-        mainWindow: {} as BrowserWindow
       });
       const result = await downloadCover({ id: 2, url: 'https://example.com/not-found.jpg' });
       expect(result).toBe(false);
@@ -487,11 +435,7 @@ describe('release = downloadCover function', () => {
 describe('refreshReleaseContents function', () => {
   it('does nothing is no release if found', async () => {
     prisma.release.findFirst.mockResolvedValue(null);
-    const { refreshReleaseContents } = releaseController({
-      withPath, getSetting, send,
-      state: {} as StateManager,
-      mainWindow: {} as BrowserWindow
-    });
+    const { refreshReleaseContents } = releaseController(defaultParams);
     const result = await refreshReleaseContents(1);
     expect(result).toBeFalsy();
   });
@@ -506,10 +450,7 @@ describe('refreshReleaseContents function', () => {
       ...release,
       tracks: FULL_TRACKS
     } as ReleaseWithArtistAndTracks);
-    const { refreshReleaseContents } = releaseController({
-      withPath, getSetting, send, state: {} as StateManager,
-      mainWindow: {} as BrowserWindow
-    });
+    const { refreshReleaseContents } = releaseController(defaultParams);
     const result = await refreshReleaseContents(1) as ReleaseWithArtistAndTracks[];
     expect(result[0]).toMatchObject(release);
     expect(result[0].tracks.length).toBe(5);
@@ -529,8 +470,7 @@ describe('refreshCurrentArtistReleases function', () => {
     } as ReleaseWithArtistAndTracks);
     const send = vi.fn();
     const { refreshCurrentArtistReleases } = releaseController({
-      withPath,
-      getSetting,
+      ...defaultParams,
       send,
       state: {
         setImporting: vi.fn(),
@@ -539,7 +479,6 @@ describe('refreshCurrentArtistReleases function', () => {
           releases: [release]
         }),
       } as unknown as StateManager,
-      mainWindow: {} as BrowserWindow
     });
     await refreshCurrentArtistReleases();
     expect(send).toHaveBeenCalledWith('mutate', ['artists', 1]);
@@ -559,13 +498,7 @@ describe('refreshEntityRelease function', () => {
       tracks: FULL_TRACKS
     } as ReleaseWithArtistAndTracks);
     const send = vi.fn();
-    const { refreshEntityRelease } = releaseController({
-      withPath,
-      getSetting,
-      send,
-      state: {} as StateManager,
-      mainWindow: {} as BrowserWindow
-    });
+    const { refreshEntityRelease } = releaseController({ ...defaultParams, send });
     await refreshEntityRelease(artist);
     expect(send).toHaveBeenCalledWith('mutate', ['artists', 1]);
   });
@@ -575,13 +508,11 @@ describe('ungroupSelectedRelease function', () => {
   it('does nothing if no release is selected', async () => {
     const send = vi.fn();
     const { ungroupSelectedRelease } = releaseController({
-      withPath,
-      getSetting,
+      ...defaultParams,
       send,
       state: {
         getSelectedReleases: () => []
       } as StateManager,
-      mainWindow: {} as BrowserWindow
     });
     await ungroupSelectedRelease();
     expect(send).not.toHaveBeenCalled();
@@ -601,13 +532,11 @@ describe('ungroupSelectedRelease function', () => {
     }
     const send = vi.fn();
     const { ungroupSelectedRelease } = releaseController({
-      withPath,
-      getSetting,
+      ...defaultParams,
       send,
       state: {
         getSelectedReleases: () => [release]
       } as StateManager,
-      mainWindow: {} as BrowserWindow
     });
     await ungroupSelectedRelease();
     send('mutate', [
@@ -623,17 +552,31 @@ describe('ungroupSelectedRelease function', () => {
 });
 
 describe('importFolderFromDialog function', () => {
+  it('does nothing if no folder is picked', async () => {
+    const send = vi.fn();
+    const { importFolderFromDialog } = releaseController({
+      ...defaultParams,
+      openFolderDialog: vi.fn(),
+      send,
+      state: {
+        getCurrentArtist: () => null
+      } as StateManager,
+    });
+
+    await importFolderFromDialog();
+    expect(send).not.toHaveBeenCalled();
+  });
+
   it('imports the contents of the folder picked in the dialog', async () => {
     const artist = getFakeArtist(1);
     const send = vi.fn();
     const { importFolderFromDialog } = releaseController({
-      withPath,
-      getSetting,
+      ...defaultParams,
+      openFolderDialog: (folder) => [folder],
       send,
       state: {
         getCurrentArtist: () => artist
       } as StateManager,
-      mainWindow: {} as BrowserWindow
     });
 
     await importFolderFromDialog();

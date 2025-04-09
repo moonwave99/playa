@@ -5,6 +5,7 @@ import type {
     Artist,
     Track,
     ArtistWithReleases,
+    CollectionWithReleases,
 } from "@/types/types";
 import path from "path";
 
@@ -25,6 +26,20 @@ const artistHashMap: Record<
         coverReleaseId: 1,
     },
 };
+
+export function getFakeCollection(
+    id: number,
+    overwrite?: Partial<CollectionWithReleases>
+) {
+    return {
+        _type: "collection",
+        id,
+        title: "My Collection",
+        createdAt: timestamp,
+        updatedAt: timestamp,
+        ...overwrite,
+    };
+}
 
 export function getFakeArtistByHash(hash: string): ArtistWithReleases {
     const id = artistHashMap[hash].id;
