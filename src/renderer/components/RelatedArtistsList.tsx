@@ -1,7 +1,5 @@
-import Link from "./Link";
 import useArtist from "../query/useArtist";
-import cx from "clsx";
-import styles from "./RelatedArtistsList.module.css";
+import EntityList from "./EntityList";
 
 type RelatedArtistsListProps = {
     id: number;
@@ -17,21 +15,10 @@ export default function RelatedArtistsList({
         return null;
     }
     return (
-        <div
-            className={cx(styles.RelatedArtistsList, {
-                [styles.useDarkText]: useDarkText,
-            })}
-        >
-            Related Artists:
-            <ul>
-                {artist.relatedArtists.map(({ id, name }) => (
-                    <li key={id}>
-                        <Link title={`[${id}]`} to={`/artists/${id}`}>
-                            {name}
-                        </Link>
-                    </li>
-                ))}
-            </ul>
-        </div>
+        <EntityList
+            items={artist.relatedArtists}
+            label="Related artists:"
+            useDarkText={useDarkText}
+        />
     );
 }

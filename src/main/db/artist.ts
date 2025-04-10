@@ -63,7 +63,7 @@ export async function getArtist(id: number): Promise<ArtistWithReleasesFull> {
   return withEntityType({
     ...result,
     releases: withEntityType(sortReleasesByTypeAndYear(releases, artist), 'release'),
-    relatedArtists: result.relatedArtists.map(withCoverRelease)
+    relatedArtists: withEntityType(result.relatedArtists.map(withCoverRelease), 'artist')
   }, 'artist');
 }
 

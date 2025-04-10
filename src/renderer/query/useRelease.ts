@@ -2,12 +2,14 @@ import { useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router';
 import { useQuery } from "@tanstack/react-query";
 import api from '../api';
-import type { ReleaseWithArtistAndTracksAndSubreleases } from "@/types/types";
+import type {
+  ReleaseWithArtistAndTracksAndSubreleases, ReleaseWithArtistAndTracksAndSubreleasesAndCollections
+} from "@/types/types";
 
 type UseRelease = {
   isPending: boolean;
   error: Error;
-  release: ReleaseWithArtistAndTracksAndSubreleases;
+  release: ReleaseWithArtistAndTracksAndSubreleasesAndCollections;
   selectedTrackId: number;
 };
 

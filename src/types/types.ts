@@ -46,6 +46,10 @@ type WithTracks = {
   tracks: Track[];
 }
 
+type WithCollections = {
+  collections: Collection[];
+}
+
 export type WithRelatedArtists = {
   relatedArtists: Artist[];
 }
@@ -58,6 +62,7 @@ export type ReleaseWithArtist = Release & WithArtist;
 export type ReleaseWithArtistAndSubreleases = Release & WithArtist & WithSubReleases;
 export type ReleaseWithArtistAndTracks = Release & WithArtist & WithTracks;
 export type ReleaseWithArtistAndTracksAndSubreleases = Release & WithArtist & WithTracks & WithSubReleases;
+export type ReleaseWithArtistAndTracksAndSubreleasesAndCollections = Release & WithArtist & WithTracks & WithSubReleases & WithCollections;
 export type ArtistWithReleaseCount = ArtistWithReleases & {
   releaseCount: ReleaseCountByType
 };

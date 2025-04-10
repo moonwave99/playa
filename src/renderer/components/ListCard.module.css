@@ -65,6 +65,10 @@
     width: var(--release-tracklist-single-cover-size);
     height: var(--release-tracklist-single-cover-size);
   }
+
+  /* .content {
+    margin-top: 1.5rem;
+  } */
 }
 
 .info {
@@ -72,6 +76,9 @@
   font-size: .8rem;
   font-weight: 300;
   user-select: none;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
 }
 
 .useDarkText {

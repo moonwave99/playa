@@ -1,7 +1,7 @@
-.RelatedArtistsList {
+.EntityList {
   display: flex;
   gap: .25rem;
-  font-size: .75rem;
+  font-size: .8rem;
   font-weight: 300;
   color: var(--primary-color);
 

@@ -30,7 +30,14 @@ export async function getRelease(id: number) {
                 }
             },
             mainRelease: true,
-            tracks: { orderBy: { position: 'asc' } }
+            tracks: { orderBy: { position: 'asc' } },
+            collections: {
+                select: {
+                    id: true,
+                    title: true
+                },
+                orderBy: { title: 'asc' }
+            }
         },
     });
     return result ? withEntityType(result, 'release') : null;

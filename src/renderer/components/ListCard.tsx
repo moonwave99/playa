@@ -4,6 +4,7 @@ import cx from "clsx";
 import Cover from "./Cover";
 import Link from "./Link";
 import RelatedArtistsList from "./RelatedArtistsList";
+import ContainingCollectionsList from "./ContainingCollectionsList";
 import useDominantColor from "../hooks/useDominantColor";
 import { getDiscInfo, getReleaseTitle, getCoverRelease } from "@/lib/utils";
 import {
@@ -83,6 +84,15 @@ export default function ListCard({
                     </Link>
                     <div className={styles.info}>
                         {item.type}, {item.year} {getDiscInfo(item)}
+                        {isSingle && (
+                            <>
+                                <span>|</span>
+                                <ContainingCollectionsList
+                                    useDarkText={useDarkText}
+                                    id={item.id}
+                                />
+                            </>
+                        )}
                     </div>
                 </>
             );
