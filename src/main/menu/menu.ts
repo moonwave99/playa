@@ -11,7 +11,7 @@ import {
   searchArtistOnRYM
 } from '@/lib/external_links';
 
-import type { Controllers } from '../init';
+import type { Controllers } from '../controllers/init';
 
 import { releaseMenu } from './release';
 import { artistMenu } from './artist';
@@ -19,7 +19,7 @@ import { collectionMenu } from './collection';
 import { searchResultMenu } from './searchResult';
 import { capitalize } from 'lodash';
 import type { StateManager, State } from '../state';
-import { send } from '../init';
+import { send } from '../controllers/init';
 
 export { releaseMenu, artistMenu, collectionMenu, searchResultMenu };
 

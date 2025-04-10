@@ -1,13 +1,13 @@
 import { BrowserWindow, ipcMain as ipc, type IpcMainEvent, dialog } from 'electron';
 import path from 'path';
-import { initSettings, getSetting, getSettings, setSettings } from "./settings";
-import { StateManager } from './state';
-import { initMenu, releaseMenu, artistMenu, collectionMenu, searchResultMenu } from './menu/menu';
-import { systemController } from "./controllers/system";
-import { artistController } from "./controllers/artist";
-import { releaseController } from "./controllers/release";
-import { collectionController } from "./controllers/collection";
-import { searchController } from "./controllers/search";
+import { initSettings, getSetting, getSettings, setSettings } from "../settings";
+import { StateManager } from '../state';
+import { initMenu, releaseMenu, artistMenu, collectionMenu, searchResultMenu } from '../menu/menu';
+import { systemController } from "./system";
+import { artistController } from "./artist";
+import { releaseController } from "./release";
+import { collectionController } from "./collection";
+import { searchController } from "./search";
 
 export type Controllers = {
   system: ReturnType<typeof systemController>;
@@ -70,7 +70,6 @@ export function init(mainWindow: BrowserWindow) {
 
   [system, search, artist, release, collection, menu, settings].forEach(registerHandlers);
 
-  mainWindow.webContents.on('did-finish-load', () => refreshMenu(state.getState()));
   mainWindow.on('swipe', (_, direction) => {
     if (state.isInputFocused()) {
       return;
@@ -91,6 +90,7 @@ export function init(mainWindow: BrowserWindow) {
   ipc.on('state:navigate', async (_, path: string) => state.setPath(path));
   ipc.on('state:clearSelection', () => send('clearSelection'));
   ipc.on('state:toggleSidebar', () => send('toggleSidebar'));
+  ipc.on('state:refreshMenu', () => refreshMenu(state.getState()));
 }
 
 function registerHandlers(entity: Record<string, (...args: unknown[]) => unknown>) {

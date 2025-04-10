@@ -75,6 +75,7 @@ declare global {
         setInputFocused: (inputFocused: boolean) => void;
         navigate: (path: string) => void;
         clearSelection: () => void;
+        refreshMenu: () => void;
         toggleSidebar: (showSidebar?: boolean) => void;
       },
       dialog: {

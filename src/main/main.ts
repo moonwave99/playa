@@ -3,7 +3,7 @@ import type { IpcMainEvent, OpenDialogSyncOptions } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
 import { getSetting } from './settings';
-import { init } from './init';
+import { init } from './controllers/init';
 
 if (started) {
   app.quit();

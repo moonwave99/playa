@@ -1,4 +1,4 @@
-import { Controllers, send } from '@/main/init';
+import { Controllers, send } from '@/main/controllers/init';
 // eslint-disable-next-line import/no-named-as-default
 import Prisma, { ReleaseType } from '@prisma/client-generated';
 
