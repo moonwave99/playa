@@ -53,7 +53,7 @@ export default function ReleaseWithTracklistView({
                 selected={selected}
                 hasFocus={hasFocus}
                 isSingle={isSingle}
-                onColorChange={setUseDarkText}
+                onColorChange={isSingle ? setUseDarkText : null}
             />
             <Tracklist
                 release={release}
