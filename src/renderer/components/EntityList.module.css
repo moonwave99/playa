@@ -16,6 +16,7 @@
 
     li a {
       font-weight: 700;
+      letter-spacing: -.035rem;
 
       &:hover {
         text-decoration: underline;
@@ -23,7 +24,12 @@
     }
 
     li:not(:last-child)::after {
-      content: ','
+      content: ',';
     }
   }
+}
+
+.separator::after {
+  content: '|';
+  font-family: Courier, monospace;
 }

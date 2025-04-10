@@ -48,6 +48,7 @@
   color: var(--primary-color);
   font-size: .8rem;
   font-weight: bold;
+  letter-spacing: -.035rem;
   text-overflow: ellipsis;
   display: inline-block;
   white-space: nowrap;

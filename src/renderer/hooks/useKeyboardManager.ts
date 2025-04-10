@@ -86,7 +86,7 @@ export function KeyManagerProvider(props: PropsWithChildren) {
   });
 }
 
-type KeyHandler = (event: KeyboardEvent) => void;
+type KeyHandler = (event: KeyboardEvent, ...params: unknown[]) => void;
 
 type KeyHandlers = Record<string, KeyHandler>;
 
@@ -100,9 +100,9 @@ export function withMeta(handler: KeyHandler): KeyHandler {
 }
 
 export function withPrevent(handler: KeyHandler): KeyHandler {
-  return (event: KeyboardEvent) => {
+  return (event: KeyboardEvent, ...params: unknown[]) => {
     event.preventDefault();
-    handler(event);
+    handler(event, ...params);
   };
 }
 

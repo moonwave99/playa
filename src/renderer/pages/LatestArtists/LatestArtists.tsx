@@ -39,6 +39,7 @@ export default function LatestArtists() {
         <div className={styles.page}>
             <h1 className={styles.header}>Latest Artists</h1>
             <List
+                shouldPreventSpace
                 disableMultipleSelection
                 items={artists}
                 className={styles.list}

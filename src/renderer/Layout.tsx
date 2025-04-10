@@ -38,6 +38,7 @@ import SettingsView from "./components/SettingsView";
 import GroupReleasesView from "./components/GroupReleasesView";
 import EditReleaseView from "./components/EditReleaseView";
 import EditArtistView from "./components/EditArtistView";
+import CoverLightbox from "./components/CoverLightbox";
 
 import { MdOutlineSearch } from "react-icons/md";
 import cx from "clsx";
@@ -45,6 +46,7 @@ import styles from "./Layout.module.css";
 import buttonStyles from "./buttons.module.css";
 import {
     ArtistWithReleases,
+    Release,
     ReleaseWithArtist,
     ReleaseWithArtistAndSubreleases,
 } from "@/types/types";
@@ -64,6 +66,7 @@ function getModalStyle(name: string) {
             margin: "auto",
             borderColor: "var(--tertiary-color)",
             borderRadius: ".5rem",
+            padding: name === "lightbox" ? 0 : "1.5rem",
         },
     };
     return modalStyle;
@@ -77,7 +80,7 @@ export default function Layout() {
         useDarkText,
         toggleSidebar,
         modalContents,
-        setModalContents,
+        closeModal,
         setContext,
         isDetailPage,
     } = init();
@@ -125,7 +128,7 @@ export default function Layout() {
             </div>
             <Modal
                 isOpen={!!modalContents}
-                onRequestClose={() => setModalContents(null)}
+                onRequestClose={closeModal}
                 style={getModalStyle(modalContents?.name)}
                 onAfterOpen={() => {
                     api.state.setInputFocused(true);
@@ -137,18 +140,15 @@ export default function Layout() {
                 }}
             >
                 {modalContents?.name === "settings" && (
-                    <SettingsView
-                        onSave={() => setModalContents(null)}
-                        onCancel={() => setModalContents(null)}
-                    />
+                    <SettingsView onSave={closeModal} onCancel={closeModal} />
                 )}
                 {modalContents?.name === "groupReleases" && (
                     <GroupReleasesView
                         releases={
                             modalContents.params.releases as ReleaseWithArtist[]
                         }
-                        onSave={() => setModalContents(null)}
-                        onCancel={() => setModalContents(null)}
+                        onSave={closeModal}
+                        onCancel={closeModal}
                     />
                 )}
                 {modalContents?.name === "editRelease" && (
@@ -157,8 +157,8 @@ export default function Layout() {
                             modalContents.params
                                 .release as ReleaseWithArtistAndSubreleases
                         }
-                        onSave={() => setModalContents(null)}
-                        onCancel={() => setModalContents(null)}
+                        onSave={closeModal}
+                        onCancel={closeModal}
                     />
                 )}
                 {modalContents?.name === "editArtist" && (
@@ -166,8 +166,14 @@ export default function Layout() {
                         artist={
                             modalContents.params.artist as ArtistWithReleases
                         }
-                        onSave={() => setModalContents(null)}
-                        onCancel={() => setModalContents(null)}
+                        onSave={closeModal}
+                        onCancel={closeModal}
+                    />
+                )}
+                {modalContents?.name === "lightbox" && (
+                    <CoverLightbox
+                        onClose={closeModal}
+                        release={modalContents.params.release as Release}
                     />
                 )}
             </Modal>
@@ -179,7 +185,7 @@ type Init = {
     showSidebar: boolean;
     useDarkText: boolean;
     modalContents: ModalContents;
-    setModalContents: (modalContents: ModalContents) => void;
+    closeModal: () => void;
     setContext: (context: string) => void;
     toggleSidebar: () => void;
     isDetailPage: boolean;
@@ -300,12 +306,16 @@ function init(): Init {
         };
     }, []);
 
+    function closeModal() {
+        setModalContents(null);
+    }
+
     return {
         showSidebar,
         useDarkText,
         toggleSidebar,
         modalContents,
-        setModalContents,
+        closeModal,
         setContext,
         isDetailPage,
     };

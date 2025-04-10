@@ -47,6 +47,10 @@ type ListProps<T> = {
     onSelectionChange?: (selection: number[]) => void;
     shouldPreventSpace?: boolean;
     initialSelection?: number[];
+    keyHandlers?: Record<
+        string,
+        (event: KeyboardEvent, selection: T[]) => void
+    >;
 };
 
 function defaultEstimateSize(columns: number, _: number, showSidebar: boolean) {
@@ -87,6 +91,7 @@ export default function List<T>({
     onSelectionChange,
     shouldPreventSpace,
     initialSelection = [],
+    keyHandlers = {},
 }: ListProps<T>) {
     const [currentIndex, setCurrentIndex] = useState(
         initialSelection.length ? initialSelection[0] : -1
@@ -208,6 +213,17 @@ export default function List<T>({
             },
             " ": (event: KeyboardEvent) =>
                 shouldPreventSpace && event.preventDefault(),
+            ...Object.entries(keyHandlers).reduce(
+                (memo, [key, handler]) => ({
+                    ...memo,
+                    [key]: (event: KeyboardEvent) =>
+                        handler(
+                            event,
+                            selection.map((index) => items[index])
+                        ),
+                }),
+                {}
+            ),
         },
     });
 

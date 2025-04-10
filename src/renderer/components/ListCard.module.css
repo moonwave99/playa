@@ -31,9 +31,10 @@
 }
 
 .title {
-  font-size: 1rem;
+  font-size: .9rem;
   color: var(--primary-color);
   font-weight: bold;
+  letter-spacing: -.035rem;
 
   &:hover {
     text-decoration: underline;
@@ -41,8 +42,9 @@
 }
 
 .artist {
-  font-size: 1rem;
-  color: var(--secondary-color);
+  font-size: .9rem;
+  line-height: .9rem;
+  color: var(--primary-color);
 
   &:hover {
     text-decoration: underline;
@@ -65,10 +67,6 @@
     width: var(--release-tracklist-single-cover-size);
     height: var(--release-tracklist-single-cover-size);
   }
-
-  /* .content {
-    margin-top: 1.5rem;
-  } */
 }
 
 .info {
@@ -78,7 +76,7 @@
   user-select: none;
   display: flex;
   align-items: center;
-  gap: .5rem;
+  gap: .25rem;
 }
 
 .useDarkText {

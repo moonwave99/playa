@@ -6,7 +6,12 @@ import Link from "./Link";
 import RelatedArtistsList from "./RelatedArtistsList";
 import ContainingCollectionsList from "./ContainingCollectionsList";
 import useDominantColor from "../hooks/useDominantColor";
-import { getDiscInfo, getReleaseTitle, getCoverRelease } from "@/lib/utils";
+import {
+    getDiscInfo,
+    getReleaseTitle,
+    getCoverRelease,
+    withStopPropagation,
+} from "@/lib/utils";
 import {
     getCover,
     getArtistLink,
@@ -32,6 +37,7 @@ type ListCardProps = {
     hasFocus?: boolean;
     isSingle?: boolean;
     onClick?: (event: MouseEvent) => void;
+    onCoverClick?: () => void;
     onDoubleClick?: () => void;
     onContextMenu?: () => void;
     onColorChange?: (useDarkText: boolean) => void;
@@ -46,6 +52,7 @@ export default function ListCard({
     hasFocus,
     isSingle,
     onClick,
+    onCoverClick,
     onContextMenu,
     onColorChange,
     showMultipleCovers,
@@ -76,10 +83,15 @@ export default function ListCard({
                     <Link
                         className={styles.artist}
                         to={getArtistLink(item.artist)}
+                        title={`[${item.artist.id}]`}
                     >
                         {item.artist.name}
                     </Link>
-                    <Link className={styles.title} to={getReleaseLink(item)}>
+                    <Link
+                        className={styles.title}
+                        to={getReleaseLink(item)}
+                        title={`[${item.id}]`}
+                    >
                         {getReleaseTitle(item)}
                     </Link>
                     <div className={styles.info}>
@@ -104,7 +116,7 @@ export default function ListCard({
                     <Link
                         className={styles.title}
                         to={getArtistLink(item)}
-                        title={`${item.name} [${item.id}]`}
+                        title={`[${item.id}]`}
                     >
                         {item.name}
                     </Link>
@@ -127,7 +139,7 @@ export default function ListCard({
                 <Link
                     className={styles.title}
                     to={getCollectionLink(item)}
-                    title={`${item.title} [${item.id}]`}
+                    title={`[${item.id}]`}
                 >
                     {item.title}
                 </Link>
@@ -157,7 +169,9 @@ export default function ListCard({
                 className,
             })}
             onClick={onClick}
-            onContextMenu={onContextMenu}
+            onContextMenu={
+                isSingle ? onContextMenu : withStopPropagation(onContextMenu)
+            }
             style={{ background: color }}
         >
             {showMultipleCovers &&
@@ -172,6 +186,7 @@ export default function ListCard({
             ) : (
                 <Cover
                     {...coverRelease}
+                    onClick={onCoverClick}
                     className={styles.cover}
                     title={`${coverRelease.artist.name} - ${getReleaseTitle(
                         coverRelease

@@ -1,5 +1,6 @@
 import useRelease from "../query/useRelease";
 import EntityList from "./EntityList";
+import styles from "./EntityList.module.css";
 
 type ContainingCollectionsListProps = {
     id: number;
@@ -18,7 +19,7 @@ export default function ContainingCollectionsList({
     }
     return (
         <>
-            {prependSeparator && <span>|</span>}
+            {prependSeparator && <span className={styles.separator} />}
             <EntityList
                 items={release.collections}
                 label="Appears in:"

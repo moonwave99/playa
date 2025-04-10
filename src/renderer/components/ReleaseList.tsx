@@ -1,16 +1,22 @@
 import { useNavigate } from "react-router";
 import type {
+    Release,
     ReleaseWithArtist,
     ReleaseWithArtistAndTracksAndSubreleases,
+    ViewMode,
 } from "@/types/types";
 import { releaseColumnsConfig } from "../hooks/useResponsiveColumns";
-import { useKeyManager } from "../hooks/useKeyboardManager";
+import { useKeyManager, withPrevent } from "../hooks/useKeyboardManager";
 import api from "../api";
 import { getReleaseLink } from "@/lib/links";
-import { getReleaseWithTracklistHeight } from "@/lib/utils";
+import {
+    estimateListCardSize,
+    getReleaseWithTracklistHeight,
+} from "@/lib/utils";
 import ReleaseView from "./ReleaseView";
 import ReleaseWithTracklistView from "./ReleaseWithTracklistView";
-import List from "./List";
+import List, { type RenderParams } from "./List";
+import ListCard from "./ListCard";
 import useStore from "../store";
 import cx from "clsx";
 import styles from "./ReleaseList.module.css";
@@ -32,7 +38,7 @@ export default function ReleaseList({
     className,
 }: ReleaseListProps) {
     const navigate = useNavigate();
-    const { viewMode, showSidebar } = useStore();
+    const { viewMode, showSidebar, setModalContents } = useStore();
     const { setContext } = useKeyManager();
 
     function onEnter(
@@ -46,68 +52,101 @@ export default function ReleaseList({
         navigate(getReleaseLink(release));
     }
 
+    function _onContextMenu(selection: number[], index: number) {
+        onContextMenu(
+            selection.map((index: number) => releases[index]),
+            releases[index].id
+        );
+    }
+
+    function getListConfig(viewMode: ViewMode) {
+        if (viewMode === "grid") {
+            return {
+                columnsConfig: releaseColumnsConfig,
+                paddingRight: 16,
+                render: ({
+                    item,
+                    index,
+                    selection,
+                    ...rest
+                }: RenderParams<ReleaseWithArtistAndTracksAndSubreleases>) => (
+                    <ReleaseView
+                        {...rest}
+                        release={item}
+                        onContextMenu={() => _onContextMenu(selection, index)}
+                    />
+                ),
+            };
+        }
+        if (viewMode === "list") {
+            return {
+                estimateSize: (_: number, index: number) => ({
+                    width: "100%",
+                    height: getReleaseWithTracklistHeight(releases[index]),
+                }),
+                render: ({
+                    item,
+                    index,
+                    selection,
+                    ...rest
+                }: RenderParams<ReleaseWithArtistAndTracksAndSubreleases>) => (
+                    <ReleaseWithTracklistView
+                        {...rest}
+                        release={item}
+                        onContextMenu={() => _onContextMenu(selection, index)}
+                    />
+                ),
+            };
+        }
+        if (viewMode === "compact") {
+            return {
+                columnsConfig: [
+                    { count: 3, width: 900 },
+                    { count: 2, width: 600 },
+                ],
+                estimateSize: estimateListCardSize,
+                render: ({
+                    item,
+                    index,
+                    selection,
+                    ...rest
+                }: RenderParams<ReleaseWithArtistAndTracksAndSubreleases>) => (
+                    <ListCard
+                        {...rest}
+                        item={item}
+                        onContextMenu={() => _onContextMenu(selection, index)}
+                    />
+                ),
+            };
+        }
+    }
+
     return (
         <List
             shouldPreventSpace
             key={`${viewMode}-${getTotalTracks(releases)}`}
             items={releases}
             className={cx(styles.list, styles[viewMode], className)}
-            columnsConfig={
-                viewMode === "grid" ? releaseColumnsConfig : undefined
-            }
             onEnter={onEnter}
             onBackspace={onDelete}
-            estimateSize={
-                viewMode === "grid"
-                    ? undefined
-                    : (_, index) => ({
-                          width: "100%",
-                          height: getReleaseWithTracklistHeight(
-                              releases[index]
-                          ),
-                      })
-            }
             onLeft={() => setContext("sidebar")}
             shouldCallOnLeft={() => showSidebar}
-            paddingRight={viewMode === "grid" ? 16 : 0}
             onSelectionChange={(selection) =>
                 api.state.selectReleases(
                     selection.map((index) => releases[index])
                 )
             }
-            render={({ item, index, selected, hasFocus, selection, onClick }) =>
-                viewMode === "grid" ? (
-                    <ReleaseView
-                        release={
-                            item as ReleaseWithArtistAndTracksAndSubreleases
-                        }
-                        selected={selected}
-                        hasFocus={hasFocus}
-                        onClick={onClick}
-                        onContextMenu={() =>
-                            onContextMenu(
-                                selection.map((index) => releases[index]),
-                                releases[index].id
-                            )
-                        }
-                    />
-                ) : (
-                    <ReleaseWithTracklistView
-                        release={
-                            item as ReleaseWithArtistAndTracksAndSubreleases
-                        }
-                        selected={selected}
-                        hasFocus={hasFocus}
-                        onClick={onClick}
-                        onContextMenu={() =>
-                            onContextMenu(
-                                selection.map((index) => releases[index]),
-                                releases[index].id
-                            )
-                        }
-                    />
-                )
-            }
+            {...getListConfig(viewMode)}
+            keyHandlers={{
+                " ": withPrevent(
+                    (_event: KeyboardEvent, selection: Release[]) => {
+                        setModalContents({
+                            name: "lightbox",
+                            params: { release: selection[0] },
+                        });
+                    }
+                ),
+            }}
         />
     );
 }

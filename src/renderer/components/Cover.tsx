@@ -12,6 +12,7 @@ type CoverProps = Pick<Release, "id" | "title" | "hash"> & {
     droppable?: boolean;
     dragOutside?: boolean;
     onContextMenu?: () => void;
+    onClick?: () => void;
     onDoubleClick?: () => void;
     onLoad?: () => void;
     onError?: () => void;
@@ -40,6 +41,7 @@ export default function Cover({
     path,
     className,
     onContextMenu,
+    onClick,
     onDoubleClick,
     onLoad,
     onError,
@@ -72,6 +74,7 @@ export default function Cover({
             title={`${title} [${id}]`}
             onContextMenu={onContextMenu}
             onDoubleClick={onDoubleClick}
+            onClick={onClick}
         >
             <img
                 data-id={id}

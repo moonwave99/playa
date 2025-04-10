@@ -4,6 +4,13 @@ import type { ViewMode, Settings } from '@/types/types';
 
 export type ModalContents = { name: string; params?: Record<string, unknown> };
 
+const viewModes = ['grid', 'list', 'compact'] as ViewMode[];
+
+function getNextViewMode(current: ViewMode): ViewMode {
+  const currentIndex = viewModes.indexOf(current);
+  return viewModes[(currentIndex + 1) % viewModes.length];
+}
+
 type Store = {
   viewMode: ViewMode;
   showSidebar: boolean;
@@ -32,7 +39,7 @@ const useStore = create<Store>()(
       toggleSidebar: (showSidebar?: boolean) => set(
         (prev) => ({ showSidebar: showSidebar === undefined ? !prev.showSidebar : showSidebar })
       ),
-      toggleViewMode: () => set((prev) => ({ viewMode: prev.viewMode === 'grid' ? 'list' : 'grid' })),
+      toggleViewMode: () => set(({ viewMode }) => ({ viewMode: getNextViewMode(viewMode) })),
       setUseDarkText: (useDarkText) => set(({ useDarkText })),
       setPath: (path) => set(({ path })),
       setModalContents: (modalContents) => set(({ modalContents }))

@@ -1,12 +1,16 @@
 import { useNavigate } from "react-router";
 import type {
     HasId,
+    Release,
     ReleaseWithArtistAndSubreleases,
     ReleaseWithArtistAndTracksAndSubreleases,
 } from "@/types/types";
 import api from "../../api";
 import { releaseColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
-import { useKeyManager } from "@/renderer/hooks/useKeyboardManager";
+import {
+    useKeyManager,
+    withPrevent,
+} from "@/renderer/hooks/useKeyboardManager";
 import useLatestReleases from "@/renderer/query/useLatestReleases";
 import { useClearSelectionOnLeave } from "@/renderer/hooks/ipc";
 import useStore from "@/renderer/store";
@@ -20,7 +24,7 @@ import styles from "../Page.module.css";
 
 export default function LatestReleases() {
     const navigate = useNavigate();
-    const { showSidebar } = useStore();
+    const { showSidebar, setModalContents } = useStore();
     const { setContext } = useKeyManager();
     const {
         releases,
@@ -70,6 +74,16 @@ export default function LatestReleases() {
                         selection.map((index) => releases[index])
                     )
                 }
+                keyHandlers={{
+                    " ": withPrevent(
+                        (_event: KeyboardEvent, selection: Release[]) => {
+                            setModalContents({
+                                name: "lightbox",
+                                params: { release: selection[0] },
+                            });
+                        }
+                    ),
+                }}
                 render={({ item, selection, ...rest }) => (
                     <ReleaseView
                         {...rest}

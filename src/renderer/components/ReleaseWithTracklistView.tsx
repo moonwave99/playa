@@ -30,7 +30,7 @@ export default function ReleaseWithTracklistView({
     onClick,
 }: ReleaseWithTracklistViewProps) {
     const { id } = release;
-    const { setUseDarkText } = useStore();
+    const { setUseDarkText, setModalContents } = useStore();
 
     function onDiscContextMenu(id: number) {
         const foundRelease = [release, ...release.subReleases].find(
@@ -53,6 +53,9 @@ export default function ReleaseWithTracklistView({
                 selected={selected}
                 hasFocus={hasFocus}
                 isSingle={isSingle}
+                onCoverClick={() =>
+                    setModalContents({ name: "lightbox", params: { release } })
+                }
                 onColorChange={isSingle ? setUseDarkText : null}
             />
             <Tracklist
