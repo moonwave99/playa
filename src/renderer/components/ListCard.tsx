@@ -86,8 +86,8 @@ export default function ListCard({
                         {item.type}, {item.year} {getDiscInfo(item)}
                         {isSingle && (
                             <>
-                                <span>|</span>
                                 <ContainingCollectionsList
+                                    prependSeparator
                                     useDarkText={useDarkText}
                                     id={item.id}
                                 />
