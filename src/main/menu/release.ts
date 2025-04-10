@@ -1,22 +1,24 @@
-import type { Release, Collection, ReleaseWithArtistAndSubreleases, CollectionWithReleases, ArtistWithReleases, MenuParams } from "@/types/types";
+import type { Release, ReleaseWithArtistAndSubreleases, CollectionWithReleases, ArtistWithReleases, MenuParams, Collection } from "@/types/types";
 import { getCollectionLink } from '@/lib/links';
 import { buildMenu, getDeleteEntry, getCoverReleaseEntry } from './menu';
 import { getReleaseTitle } from '@/lib/utils';
 import { searchReleaseOnDiscogs, searchReleaseOnRYM } from '@/lib/external_links';
 
-function getAddToCollectionEntry(selection: Release[], collections: Collection[], { controllers, send }: MenuParams) {
+function getAddToCollectionEntry(selection: Release[], collections: CollectionWithReleases[], { controllers, send }: MenuParams) {
   return {
     label: `Add ${selection.length} Release(s) to Collection...`,
-    submenu: collections.map(({ title, id }) => ({
-      label: title,
-      click: async () => {
-        await controllers.collection.addReleasesToCollection(id, selection);
-        send('mutate', [
-          ['collections', 'latest'],
-          ['collections', id]
-        ]);
-      }
-    }))
+    submenu: collections
+      .filter(c => !c.releases.find(r => r.id === selection[0].id))
+      .map(({ title, id }) => ({
+        label: title,
+        click: async () => {
+          await controllers.collection.addReleasesToCollection(id, selection);
+          send('mutate', [
+            ['collections', 'latest'],
+            ['collections', id]
+          ]);
+        }
+      }))
   }
 }
 

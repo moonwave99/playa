@@ -30,7 +30,13 @@ export async function getCollections({ take = 50 }: PaginationParams) {
 export async function getAllCollections() {
   const result = await prisma.collection.findMany({
     orderBy: { title: "asc" },
-    select: { id: true, title: true },
+    include: {
+      releases: {
+        select: {
+          id: true
+        }
+      }
+    }
   });
   return withEntityType(result, 'collection');
 }
