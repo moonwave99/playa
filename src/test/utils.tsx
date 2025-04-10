@@ -1,16 +1,28 @@
-import { MemoryRouter } from "react-router";
 import type { ReactNode } from "react";
+import { MemoryRouter } from "react-router";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type {
     ReleaseWithArtist,
     Artist,
     Track,
     ArtistWithReleases,
     CollectionWithReleases,
+    WithRelatedArtists,
 } from "@/types/types";
 import path from "path";
 
 export function withRouter(children: ReactNode) {
     return <MemoryRouter>{children}</MemoryRouter>;
+}
+
+const queryClient = new QueryClient();
+
+export function withQueryClientProvider(children: ReactNode) {
+    return (
+        <QueryClientProvider client={queryClient}>
+            {children}
+        </QueryClientProvider>
+    );
 }
 
 const timestamp = new Date("2025-04-04T14:52:56.879Z");
@@ -53,7 +65,7 @@ export function getFakeArtist(
     id: number,
     hash?: string,
     overwrite?: Partial<ArtistWithReleases>
-): ArtistWithReleases {
+): ArtistWithReleases & WithRelatedArtists {
     const foundHash = Object.keys(artistHashMap).find(
         (hash) => artistHashMap[hash]?.id === id
     );
@@ -71,6 +83,7 @@ export function getFakeArtist(
         path: "artist-path",
         coverReleaseId: 1,
         releases: [],
+        relatedArtists: [],
         ...data,
         ...overwrite,
     };

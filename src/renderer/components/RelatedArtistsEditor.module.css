@@ -1,18 +1,17 @@
-.placeholder {
-  display: flex;
+.Placeholder {
   font-size: .8rem;
   color: var(--secondary-color);
-  height: calc(var(--related-artists-cover-size) + 3.2rem);
+  height: calc(var(--related-artists-cover-size) + 3.5rem);
 }
 
-.artistListWrapper {
+.ArtistListWrapper {
   width: 100%;
   overflow: auto;
   padding-top: 1.5rem;
   margin-top: -1.5rem;
 }
 
-.artistList {
+.ArtistList {
   list-style: none;
   display: flex;
   gap: 1rem;
@@ -28,9 +27,14 @@
   border-radius: .25rem;
   padding: .5rem;
   background-color: var(--tertiary-color);
-  font-size: .7rem;
   height: 100%;
   width: min-content;
+}
+
+.ArtistCardTitle {
+  font-size: .7rem;
+  line-height: 1rem;
+  height: 2rem;
 }
 
 .ArtistCardButton {

@@ -1,5 +1,5 @@
 import prisma from "./prisma";
-import { countReleasesByType, sortReleasesByTypeAndYear } from '@/lib/utils';
+import { countReleasesByType, sortReleasesByTypeAndYear, withCoverRelease } from '@/lib/utils';
 import { withEntityType } from "@/types/types";
 import type {
   Artist,
@@ -191,6 +191,9 @@ export async function searchArtists({ query, excludeArtistsRelatedTo, take = 50 
         none: {
           id: excludeArtistsRelatedTo
         }
+      },
+      id: {
+        not: excludeArtistsRelatedTo
       }
     },
     include: {
@@ -229,11 +232,4 @@ export async function removeRelatedArtist(first_id: number, second_id: number) {
     data: { relatedArtists: { disconnect: [{ id: first_id }] } },
   });
   return true;
-}
-
-function withCoverRelease(artist: ArtistWithReleases) {
-  return {
-    ...artist,
-    coverRelease: artist.coverRelease || artist.releases[0]
-  };
 }

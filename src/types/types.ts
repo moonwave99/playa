@@ -46,7 +46,7 @@ type WithTracks = {
   tracks: Track[];
 }
 
-type WithRelatedArtists = {
+export type WithRelatedArtists = {
   relatedArtists: Artist[];
 }
 

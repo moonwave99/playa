@@ -4,7 +4,10 @@ import LoadingIcon from "../../assets/loading.svg?react";
 export default function Loading() {
     return (
         <div className={styles.Loading}>
-            <LoadingIcon className={styles.LoadingIcon} />
+            <LoadingIcon
+                className={styles.LoadingIcon}
+                aria-label="Loading..."
+            />
         </div>
     );
 }

@@ -6,6 +6,7 @@ import cx from "clsx";
 import { MdRemoveCircle, MdAddCircle } from "react-icons/md";
 import styles from "./RelatedArtistsEditor.module.css";
 import formStyles from "../forms.module.css";
+import { capitalize } from "lodash";
 
 type RelatedArtistsEditorProps = {
     id: number;
@@ -32,7 +33,7 @@ export default function RelatedArtistsEditor({
         <div className={formStyles.container}>
             <h2>Related Artists</h2>
             {!artist.relatedArtists.length ? (
-                <p className={styles.placeholder}>No related artists yet.</p>
+                <p className={styles.Placeholder}>No related artists yet.</p>
             ) : (
                 <ArtistList
                     artists={artist.relatedArtists}
@@ -51,7 +52,7 @@ export default function RelatedArtistsEditor({
                 />
             </label>
             {!results?.length ? (
-                <p className={styles.placeholder}>
+                <p className={styles.Placeholder}>
                     {query && (
                         <>
                             No results for <strong>{query}</strong>.
@@ -79,8 +80,8 @@ type ArtistListProps = {
 
 function ArtistList({ artists, type, onClick }: ArtistListProps) {
     return (
-        <div className={styles.artistListWrapper}>
-            <ul className={styles.artistList}>
+        <div className={styles.ArtistListWrapper}>
+            <ul className={styles.ArtistList}>
                 {artists.map((artist: Artist) => (
                     <li key={artist.id}>
                         <ArtistCard
@@ -97,29 +98,25 @@ function ArtistList({ artists, type, onClick }: ArtistListProps) {
 
 type ArtistCardProps = {
     artist: Artist;
-    type: "add" | "remove";
+    type: ArtistListProps["type"];
     onClick: () => void;
 };
 
 function ArtistCard({ artist, type, onClick }: ArtistCardProps) {
+    const { name, coverRelease, id } = artist;
     return (
         <article className={styles.ArtistCard}>
             <button
                 className={styles.ArtistCardButton}
                 onClick={onClick}
-                aria-label={
-                    type == "add"
-                        ? "Add related Artist"
-                        : "Remove related Artist"
-                }
+                aria-label={`${capitalize(type)} related artist: ${name}`}
             >
                 {type === "add" ? <MdAddCircle /> : <MdRemoveCircle />}
             </button>
-            <Cover
-                className={styles.ArtistCardCover}
-                {...artist.coverRelease}
-            />
-            <span title={`[${artist.id}]`}>{artist.name}</span>
+            <Cover className={styles.ArtistCardCover} {...coverRelease} />
+            <span className={styles.ArtistCardTitle} title={`[${id}]`}>
+                {name}
+            </span>
         </article>
     );
 }

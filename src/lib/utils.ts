@@ -200,3 +200,10 @@ export function didReleaseInfoChange(infos: EditReleaseParam[], excludeDiscTitle
       .some(key => x[key as keyof EditReleaseParam] !== x[`new${capitalize(key)}` as keyof NewReleaseInfo])
   );
 }
+
+export function withCoverRelease(artist: ArtistWithReleases) {
+  return {
+    ...artist,
+    coverRelease: artist.coverRelease || artist.releases[0]
+  };
+}
