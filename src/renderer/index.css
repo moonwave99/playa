@@ -28,6 +28,7 @@
   --search-results-background-color-light: #61646d;
   --neutral-border-color: rgba(120, 120, 120, 0.3);
   --related-artists-cover-size: 6rem;
+  --loading-icon-size: 3rem;
 }
 
 * {

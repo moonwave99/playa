@@ -1,6 +1,11 @@
-.loading {
+.Loading {
   display: flex;
   justify-content: center;
   align-items: center;
   flex: 1;
+}
+
+.LoadingIcon {
+  width: var(--loading-icon-size);
+  height: var(--loading-icon-size);
 }
