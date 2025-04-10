@@ -7,6 +7,11 @@ import { Artist, ArtistWithReleasesFull } from "@/types/types";
 
 vi.mock("../api");
 
+const relatedArtists = ["North", "South", "East", "West"].map((name, i) => ({
+    ...getFakeArtist(i + 2),
+    name,
+})) as Artist[];
+
 describe("RelatedArtistsEditor component", () => {
     it("renders correctly", async () => {
         api.artist.getArtist.mockResolvedValue({
@@ -22,12 +27,6 @@ describe("RelatedArtistsEditor component", () => {
     });
 
     it("renders the current related artists in the list", async () => {
-        const relatedArtists = [getFakeArtist(2), getFakeArtist(3)].map(
-            (x) => ({
-                ...x,
-                name: `Artist ${x.id}`,
-            })
-        ) as Artist[];
         api.artist.getArtist.mockResolvedValue({
             ...getFakeArtist(1, undefined),
             relatedArtists,
@@ -35,8 +34,8 @@ describe("RelatedArtistsEditor component", () => {
 
         render(withQueryClientProvider(<RelatedArtistsEditor id={1} />));
         await Promise.all(
-            relatedArtists.map(async (x) => {
-                const artist = await screen.findByText(`Artist ${x.id}`);
+            relatedArtists.map(async ({ name }) => {
+                const artist = await screen.findByText(name);
                 expect(artist).toBeInTheDocument();
             })
         );
@@ -44,35 +43,72 @@ describe("RelatedArtistsEditor component", () => {
 
     it("removes the artist from the list when clicking on the remove button", async () => {
         let clicked = false;
-        const relatedArtists = [getFakeArtist(2), getFakeArtist(3)].map(
-            (x) => ({
-                ...x,
-                name: `Artist ${x.id}`,
-            })
-        ) as Artist[];
-        api.artist.getArtist.mockImplementation(() => {
-            return Promise.resolve({
+
+        api.artist.getArtist.mockImplementation(() =>
+            Promise.resolve({
                 ...getFakeArtist(1, undefined),
                 relatedArtists: relatedArtists.filter((x) =>
-                    clicked ? x.id !== 2 : true
+                    clicked ? x.id !== relatedArtists[0].id : true
                 ),
-            } as ArtistWithReleasesFull);
-        });
-        api.artist.removeRelatedArtist.mockImplementation(() => {
-            clicked = true;
-            return Promise.resolve(true);
-        });
+            } as ArtistWithReleasesFull)
+        );
+        api.artist.removeRelatedArtist.mockImplementation(() =>
+            Promise.resolve((clicked = true))
+        );
 
         render(withQueryClientProvider(<RelatedArtistsEditor id={1} />));
-        const artist = await screen.findByText(
-            `Artist ${relatedArtists[0].id}`
-        );
+
+        const artist = await screen.findByText(relatedArtists[0].name);
         expect(artist).toBeInTheDocument();
+
         await userEvent.click(
             screen.getByLabelText(
                 `Remove related artist: ${relatedArtists[0].name}`
             )
         );
         expect(artist).not.toBeInTheDocument();
+    });
+
+    it("adds the artist to the list when clicking on the add button", async () => {
+        const user = userEvent.setup();
+        let clicked = false;
+
+        api.artist.getArtist.mockImplementation(() =>
+            Promise.resolve({
+                ...getFakeArtist(1, undefined),
+                relatedArtists: clicked
+                    ? [relatedArtists[0], relatedArtists[1], relatedArtists[2]]
+                    : [relatedArtists[0], relatedArtists[1]],
+            } as ArtistWithReleasesFull)
+        );
+        api.artist.addRelatedArtist.mockImplementation(() =>
+            Promise.resolve((clicked = true))
+        );
+        api.artist.searchArtists.mockImplementation(({ query }) =>
+            Promise.resolve(
+                (clicked
+                    ? [relatedArtists[3]]
+                    : [relatedArtists[2], relatedArtists[3]]
+                ).filter(({ name }) => name.includes(query))
+            )
+        );
+
+        render(withQueryClientProvider(<RelatedArtistsEditor id={1} />));
+        const artist = await screen.findByText(relatedArtists[0].name);
+        expect(artist).toBeInTheDocument();
+        user.click(screen.getByLabelText("Lookup Related Artists"));
+        await user.keyboard("East");
+
+        const suggestion = await screen.findByText("East");
+        expect(suggestion).toBeInTheDocument();
+
+        await userEvent.click(
+            await screen.findByLabelText("Add related artist: East")
+        );
+
+        expect(suggestion).not.toBeInTheDocument();
+        const addedArtist = await screen.findByTitle("[3]");
+
+        expect(addedArtist).toBeInTheDocument();
     });
 });
