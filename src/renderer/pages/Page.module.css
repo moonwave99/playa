@@ -106,3 +106,12 @@
   padding: 1rem 0 0 0;
   max-height: calc(100vh - 1px - var(--release-tracklist-single-cover-size));
 }
+
+.placeholder {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--secondary-color);
+  font-size: 1.2rem;
+}

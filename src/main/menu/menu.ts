@@ -1,6 +1,6 @@
 import { Menu, MenuItem, dialog } from 'electron';
 import type { MenuItemConstructorOptions } from 'electron';
-import type { Entities, CollectionWithReleases, ArtistWithReleases } from '@/types/types';
+import type { Entities, CollectionWithReleases, ArtistWithReleases, GroupWithArtists } from '@/types/types';
 import type { QueryKey } from '@tanstack/react-query';
 import { getArtistLink, getRandomLink } from '@/lib/links';
 import { getStats } from '../db/stats';
@@ -16,12 +16,13 @@ import type { Controllers } from '../controllers/init';
 import { releaseMenu } from './release';
 import { artistMenu } from './artist';
 import { collectionMenu } from './collection';
+import { groupMenu } from './group';
 import { searchResultMenu } from './searchResult';
 import { capitalize } from 'lodash';
 import type { StateManager, State } from '../state';
 import { send } from '../controllers/init';
 
-export { releaseMenu, artistMenu, collectionMenu, searchResultMenu };
+export { releaseMenu, artistMenu, collectionMenu, groupMenu, searchResultMenu };
 
 export function buildMenu(params: (MenuItemConstructorOptions | MenuItem)[]) {
   const menu = Menu.buildFromTemplate(params);
@@ -29,25 +30,42 @@ export function buildMenu(params: (MenuItemConstructorOptions | MenuItem)[]) {
   return true;
 }
 
-type GetCoverReleaseEntry = {
-  release_id: number;
-  context: CollectionWithReleases | ArtistWithReleases;
+type GetCoverEntityEntry = {
+  selection_id: number;
+  context: CollectionWithReleases | ArtistWithReleases | GroupWithArtists;
   controllers: Controllers;
 };
 
-export function getCoverReleaseEntry({ release_id, context, controllers }: GetCoverReleaseEntry): MenuItemConstructorOptions {
-  if (!context?._type || context?.releases.length <= 1) {
+function shouldDisplayCoverEntityEntry(context: GetCoverEntityEntry["context"]) {
+  if (!context) {
+    return false;
+  }
+  if (context?._type === 'group') {
+    return context?.artists.length > 1;
+  }
+  return context?.releases.length > 1;
+}
+
+export function getCoverEntityEntry({ selection_id, context, controllers }: GetCoverEntityEntry): MenuItemConstructorOptions {
+  if (!shouldDisplayCoverEntityEntry(context)) {
     return { type: 'separator' };
   }
   return {
     label: `Set as ${capitalize(context._type)} Cover`,
     click: async () => {
       if (context._type === 'artist') {
-        await controllers.artist.setArtistCoverRelease(context.id, release_id);
+        await controllers.artist.setArtistCoverRelease(context.id, selection_id);
         send('mutate', [['artists', 'latest'], ['artists', context.id]]);
         return;
       }
-      await controllers.collection.setCollectionCoverRelease(context.id, release_id);
+
+      if (context._type === 'group') {
+        await controllers.group.setGroupCoverArtist(context.id, selection_id);
+        send('mutate', [['group', 'latest'], ['group', context.id]]);
+        return;
+      }
+
+      await controllers.collection.setCollectionCoverRelease(context.id, selection_id);
       send('mutate', [['collections', 'latest'], ['collections', context.id]]);
     }
   };
@@ -159,6 +177,11 @@ const navigateMenu: (MenuEntry & { link: string })[] = [
     label: 'Latest Collections',
     accelerator: 'Cmd+3',
     link: '/collections'
+  },
+  {
+    label: 'Latest Groups',
+    accelerator: 'Cmd+4',
+    link: '/groups'
   },
 ];
 

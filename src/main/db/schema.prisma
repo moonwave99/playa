@@ -20,6 +20,8 @@ model Artist {
   coverRelease            Release?  @relation("ArtistCover", fields: [coverReleaseId], references: [id])
   relatedArtists          Artist[]  @relation("RelatedArtists")
   symmetricRelatedArtists Artist[]  @relation("RelatedArtists")
+  groups                  Group[]   @relation("GroupToArtist")
+  coverGroups             Group[]   @relation("GroupCover")
 
   @@index([hash], type: Hash)
 }
@@ -71,6 +73,17 @@ model Collection {
   releases       Release[] @relation("CollectionToRelease")
   coverReleaseId Int?
   coverRelease   Release?  @relation("CollectionCover", fields: [coverReleaseId], references: [id])
+}
+
+model Group {
+  id            Int      @id @default(autoincrement())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  title         String   @db.VarChar(255)
+  description   String?
+  artists       Artist[] @relation("GroupToArtist")
+  coverArtistId Int?
+  coverArtist   Artist?  @relation("GroupCover", fields: [coverArtistId], references: [id])
 }
 
 enum ReleaseType {

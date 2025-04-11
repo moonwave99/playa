@@ -8,6 +8,8 @@ import type {
     ArtistWithReleases,
     CollectionWithReleases,
     WithRelatedArtists,
+    GroupWithArtists,
+    WithGroups,
 } from "@/types/types";
 import path from "path";
 
@@ -53,6 +55,20 @@ export function getFakeCollection(
     };
 }
 
+export function getFakeGroup(
+    id: number,
+    overwrite?: Partial<GroupWithArtists>
+) {
+    return {
+        _type: "group",
+        id,
+        title: "My Group",
+        createdAt: timestamp,
+        updatedAt: timestamp,
+        ...overwrite,
+    };
+}
+
 export function getFakeArtistByHash(hash: string): ArtistWithReleases {
     const id = artistHashMap[hash].id;
     if (!id) {
@@ -65,7 +81,7 @@ export function getFakeArtist(
     id: number,
     hash?: string,
     overwrite?: Partial<ArtistWithReleases>
-): ArtistWithReleases & WithRelatedArtists {
+): ArtistWithReleases & WithRelatedArtists & WithGroups {
     const foundHash = Object.keys(artistHashMap).find(
         (hash) => artistHashMap[hash]?.id === id
     );
@@ -84,6 +100,7 @@ export function getFakeArtist(
         coverReleaseId: 1,
         releases: [],
         relatedArtists: [],
+        groups: [],
         ...data,
         ...overwrite,
     };

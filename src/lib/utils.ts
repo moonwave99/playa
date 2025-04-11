@@ -12,6 +12,7 @@ import type {
   WithReleases,
   CollectionWithReleases,
   ArtistWithReleases,
+  GroupWithArtists,
 
 } from "@/types/types";
 import { getCover } from './links';
@@ -141,13 +142,12 @@ export function getReleaseContextMenuParams({
   selection: ReleaseWithArtist[];
   target_id: number;
   context: WithReleases;
-}): [ReleaseWithArtist[], number, WithReleases] {
+}): [ReleaseWithArtist[], WithReleases] {
   const target = context.releases.find(({ id }: HasId) => id === target_id);
   const isTargetSelected = !!selection.find((x) => x.id === target_id);
 
   return [
     !isTargetSelected || !selection.length ? [target] : selection,
-    target_id,
     context,
   ];
 }
@@ -172,13 +172,17 @@ export function withStopPropagation(handler: (event: MouseEvent) => void) {
   };
 }
 
-type Item = CollectionWithReleases | ArtistWithReleases | ReleaseWithArtistAndSubreleases;
+type Item = CollectionWithReleases | ArtistWithReleases | ReleaseWithArtistAndSubreleases | GroupWithArtists;
 
-export function getCoverRelease(item: Item) {
+export function getCoverRelease(item: Item): ReleaseWithArtistAndSubreleases | null {
   if (item._type === "release") {
     return item;
   }
-  return item.coverRelease || item.releases[0];
+  if (item._type === 'group') {
+    const coverArtist = item.coverArtist || item.artists[0];
+    return coverArtist ? getCoverRelease(coverArtist) : null;
+  }
+  return item.coverRelease || item.releases[0] || null;
 }
 
 type NewReleaseInfo = {

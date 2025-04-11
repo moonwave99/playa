@@ -1,10 +1,10 @@
 import { getFakeArtist, getFakeRelease } from "@/test/utils";
-import { searchController } from "./search";
+import { searchResultController } from "./searchResult";
 import prisma from '../db/__mocks__/prisma';
 
 vi.mock('../db/prisma');
 
-describe('search - search function', () => {
+describe('searchResult - search function', () => {
   const artists = [
     getFakeArtist(1, undefined, { name: 'The Lovers', releases: [] }),
     getFakeArtist(2, undefined, { name: 'The Haters', releases: [] })
@@ -33,8 +33,8 @@ describe('search - search function', () => {
     prisma.collection.findMany.mockResolvedValue([]);
     prisma.track.findMany.mockResolvedValue([]);
 
-    const { search } = searchController();
-    const results = await search('love');
+    const { getSearchResults } = searchResultController();
+    const results = await getSearchResults('love');
     expect(results).toMatchObject([
       { id: 1, type: 'artist', links: { artist: '/artists/1' } },
       { id: 4, type: 'release', links: { artist: '/artists/1', release: '/releases/4' } },

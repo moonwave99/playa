@@ -9,14 +9,16 @@ import type {
   Collection,
   SearchResult,
   Sidebars,
-  ReleaseWithArtistAndSubreleases
+  ReleaseWithArtistAndSubreleases,
+  GroupWithArtists
 } from './types';
 
 import { artistController } from '@/main/controllers/artist';
 import { releaseController } from '@/main/controllers/release';
 import { collectionController } from '@/main/controllers/collection';
+import { groupController } from '@/main/controllers/group';
 import { systemController } from '@/main/controllers/system';
-import { searchController } from '@/main/controllers/search';
+import { searchResultController } from '@/main/controllers/searchResult';
 
 declare module "*.module.css";
 
@@ -39,10 +41,11 @@ declare global {
   const prisma: PrismaClient | undefined;
   interface Window {
     api: {
-      search: ReturnType<typeof searchController>,
+      searchResult: ReturnType<typeof searchResultController>,
       release: ReturnType<typeof releaseController>,
       artist: ReturnType<typeof artistController>,
       collection: ReturnType<typeof collectionController>,
+      group: ReturnType<typeof groupController>,
       system: ReturnType<typeof systemController>,
       settings: {
         getSettings: () => Promise<ReturnType<getSettings>>,
@@ -51,11 +54,11 @@ declare global {
       menu: {
         release: (
           selection: ReleaseWithArtist[],
-          targetIndex: number,
           context?: CollectionWithReleases | ArtistWithReleases
         ) => void;
-        artist: (artist: Artist) => void;
+        artist: (artist: Artist, context?: GroupWithArtists) => void;
         collection: (collection: Collection) => void;
+        group: (group: Group) => void;
         searchResult: (result: SearchResult) => void;
       }
       onNavigate: (handler: (path: string) => void) => () => void;

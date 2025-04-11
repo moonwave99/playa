@@ -1,13 +1,14 @@
 import { contextBridge, ipcRenderer as ipc } from "electron";
 import type { IpcRendererEvent, OpenDialogSyncOptions } from "electron";
 import { getSettings, setSettings } from "./main/settings";
-import type { ReleaseWithArtist, CollectionWithReleases, ArtistWithReleases, SearchResult, ReleaseWithArtistAndSubreleases } from "./types/types";
+import type { ReleaseWithArtist, CollectionWithReleases, ArtistWithReleases, SearchResult, ReleaseWithArtistAndSubreleases, GroupWithArtists } from "./types/types";
 
 import { actions as systemActions } from "./main/controllers/system";
 import { actions as artistActions } from "./main/controllers/artist";
 import { actions as releaseActions } from "./main/controllers/release";
 import { actions as collectionActions } from "./main/controllers/collection";
-import { actions as searchActions } from "./main/controllers/search";
+import { actions as groupActions } from "./main/controllers/group";
+import { actions as searchResultActions } from "./main/controllers/searchResult";
 
 function getHandlersFromActions(controllerName: string, actionNames: string[]) {
   return {
@@ -22,17 +23,23 @@ contextBridge.exposeInMainWorld('api', {
   ...getHandlersFromActions('artist', artistActions),
   ...getHandlersFromActions('release', releaseActions),
   ...getHandlersFromActions('collection', collectionActions),
-  ...getHandlersFromActions('search', searchActions),
+  ...getHandlersFromActions('group', groupActions),
+  ...getHandlersFromActions('searchResult', searchResultActions),
   ...getHandlersFromActions('system', systemActions),
   settings: getHandlers({ getSettings, setSettings }),
   menu: {
     'release': (
       selection: ReleaseWithArtist[],
-      target_id: number,
       context?: CollectionWithReleases | ArtistWithReleases
-    ) => ipc.invoke('menu:release', selection, target_id, context),
-    'artist': (artist: ArtistWithReleases) => ipc.invoke('menu:artist', artist),
-    'collection': (collection: CollectionWithReleases) => ipc.invoke('menu:collection', collection),
+    ) => ipc.invoke('menu:release', selection, context),
+    'artist': (
+      artist: ArtistWithReleases,
+      context?: GroupWithArtists
+    ) => ipc.invoke('menu:artist', artist, context),
+    'collection': (
+      collection: CollectionWithReleases
+    ) => ipc.invoke('menu:collection', collection),
+    'group': (group: GroupWithArtists) => ipc.invoke('menu:group', group),
     'searchResult': (result: SearchResult) => ipc.invoke('menu:searchResult', result),
   },
   onNavigateSidebar: getHandler('navigateSidebar'),

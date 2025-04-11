@@ -32,6 +32,13 @@ export async function getArtist(id: number): Promise<ArtistWithReleasesFull> {
           name: 'asc'
         }
       },
+      groups: {
+        select: {
+          id: true,
+          title: true
+        },
+        orderBy: { title: 'asc' }
+      },
       releases: {
         where: {
           mainRelease: null
@@ -63,7 +70,8 @@ export async function getArtist(id: number): Promise<ArtistWithReleasesFull> {
   return withEntityType({
     ...result,
     releases: withEntityType(sortReleasesByTypeAndYear(releases, artist), 'release'),
-    relatedArtists: withEntityType(result.relatedArtists.map(withCoverRelease), 'artist')
+    relatedArtists: withEntityType(result.relatedArtists.map(withCoverRelease), 'artist'),
+    groups: withEntityType(result.groups, 'group')
   }, 'artist');
 }
 

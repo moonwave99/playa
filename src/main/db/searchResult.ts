@@ -2,7 +2,7 @@ import { getReleaseTitle, sortByQueryPosition } from "@/lib/utils";
 import prisma from "./prisma";
 import type { SearchResult, HasTitle, ReleaseWithArtistAndSubreleases, CollectionWithReleases, ArtistWithReleases, TrackWithRelease } from '@/types/types';
 
-export async function search(query: string, take = 20): Promise<SearchResult[]> {
+export async function getSearchResults(query: string, take = 20): Promise<SearchResult[]> {
   const releases = await prisma.release.findMany({
     take,
     where: {

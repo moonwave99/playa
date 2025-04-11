@@ -36,7 +36,7 @@ export default function ReleaseWithTracklistView({
         const foundRelease = [release, ...release.subReleases].find(
             (x) => x.id === id
         );
-        api.menu.release([{ ...foundRelease, artist: release.artist }], 0);
+        api.menu.release([{ ...foundRelease, artist: release.artist }]);
     }
 
     return (

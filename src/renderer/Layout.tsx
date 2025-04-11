@@ -26,12 +26,13 @@ import useStore from "./store";
 import type { ModalContents } from "./store";
 import { refreshCovers } from "@/lib/utils";
 
-import LatestReleases from "./pages/LatestReleases/LatestReleases";
-import LatestArtists from "./pages/LatestArtists/LatestArtists";
-import LatestCollections from "./pages/LatestCollections/LatestCollections";
-import ReleasePage from "./pages/ReleasePage/ReleasePage";
-import ArtistPage from "./pages/ArtistPage/ArtistPage";
-import CollectionPage from "./pages/CollectionPage/CollectionPage";
+import LatestReleases from "./pages/LatestReleases";
+import LatestArtists from "./pages/LatestArtists";
+import LatestCollections from "./pages/LatestCollections";
+import ReleasePage from "./pages/ReleasePage";
+import ArtistPage from "./pages/ArtistPage";
+import CollectionPage from "./pages/CollectionPage";
+import LatestGroups from "./pages/LatestGroups";
 import Nav from "./components/Nav";
 import SidebarView from "./components/SidebarView";
 import SettingsView from "./components/SettingsView";
@@ -50,6 +51,7 @@ import {
     ReleaseWithArtist,
     ReleaseWithArtistAndSubreleases,
 } from "@/types/types";
+import GroupPage from "./pages/GroupPage";
 
 function getModalStyle(name: string) {
     const modalStyle = {
@@ -121,6 +123,8 @@ export default function Layout() {
                             path="/collections/:id"
                             element={<CollectionPage />}
                         />
+                        <Route path="/groups" element={<LatestGroups />} />
+                        <Route path="/groups/:id" element={<GroupPage />} />
                         <Route path="/artists" element={<LatestArtists />} />
                         <Route path="/artists/:id" element={<ArtistPage />} />
                     </Routes>

@@ -1,6 +1,6 @@
 import type { Release, ReleaseWithArtistAndSubreleases, CollectionWithReleases, ArtistWithReleases, MenuParams, Collection } from "@/types/types";
 import { getCollectionLink } from '@/lib/links';
-import { buildMenu, getDeleteEntry, getCoverReleaseEntry } from './menu';
+import { buildMenu, getDeleteEntry, getCoverEntityEntry } from './menu';
 import { getReleaseTitle } from '@/lib/utils';
 import { searchReleaseOnDiscogs, searchReleaseOnRYM } from '@/lib/external_links';
 
@@ -45,7 +45,6 @@ function getGroupReleasesEntry(selection: ReleaseWithArtistAndSubreleases[], { s
 
 export const releaseMenu = ({ controllers, send }: MenuParams) => async (
   selection: ReleaseWithArtistAndSubreleases[],
-  target_id: number,
   context?: CollectionWithReleases | ArtistWithReleases
 ) => {
   const collections = await controllers.collection.getAllCollections();
@@ -98,7 +97,7 @@ export const releaseMenu = ({ controllers, send }: MenuParams) => async (
         label: `Edit Artist`,
         click: () => send('openEditArtistDialog', release.artist),
       },
-      getCoverReleaseEntry({ release_id: release.id, context, controllers }),
+      getCoverEntityEntry({ selection_id: release.id, context, controllers }),
       (release.subReleases?.length ? {
         label: 'Ungroup Release',
         click: async () => {
@@ -115,7 +114,9 @@ export const releaseMenu = ({ controllers, send }: MenuParams) => async (
         label: 'Add to New Collection',
         click: newCollectionHandler
       },
-      getAddToCollectionEntry(selection, collections, { controllers, send }),
+      collections.length
+        ? getAddToCollectionEntry(selection, collections, { controllers, send })
+        : { type: 'separator' },
       context?._type === 'collection'
         ? getRemoveFromCollectionEntry(selection, context as CollectionWithReleases, { controllers, send })
         : { type: 'separator' },

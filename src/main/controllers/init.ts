@@ -2,19 +2,21 @@ import { BrowserWindow, ipcMain as ipc, type IpcMainEvent, dialog } from 'electr
 import path from 'path';
 import { initSettings, getSetting, getSettings, setSettings } from "../settings";
 import { StateManager } from '../state';
-import { initMenu, releaseMenu, artistMenu, collectionMenu, searchResultMenu } from '../menu/menu';
+import { initMenu, releaseMenu, artistMenu, collectionMenu, groupMenu, searchResultMenu } from '../menu/menu';
 import { systemController } from "./system";
 import { artistController } from "./artist";
 import { releaseController } from "./release";
 import { collectionController } from "./collection";
-import { searchController } from "./search";
+import { groupController } from "./group";
+import { searchResultController } from "./searchResult";
 
 export type Controllers = {
   system: ReturnType<typeof systemController>;
   release: ReturnType<typeof releaseController>;
   artist: ReturnType<typeof artistController>;
   collection: ReturnType<typeof collectionController>;
-  search: ReturnType<typeof searchController>;
+  group: ReturnType<typeof groupController>;
+  searchResult: ReturnType<typeof searchResultController>;
 };
 
 export function send(channel: string, ...args: unknown[]) {
@@ -41,7 +43,8 @@ export function init(mainWindow: BrowserWindow) {
   const artist = artistController({ withPath, state });
   const release = releaseController({ withPath, getSetting, send, state, openFolderDialog });
   const collection = collectionController();
-  const search = searchController();
+  const group = groupController();
+  const searchResult = searchResultController();
 
   state.onStateChange((state) => refreshMenu(state));
 
@@ -50,7 +53,8 @@ export function init(mainWindow: BrowserWindow) {
     artist,
     release,
     collection,
-    search
+    group,
+    searchResult
   };
 
   const { refreshMenu } = initMenu({
@@ -63,12 +67,13 @@ export function init(mainWindow: BrowserWindow) {
     'menu:release': releaseMenu({ controllers, send }),
     'menu:artist': artistMenu({ controllers, send }),
     'menu:collection': collectionMenu({ controllers, send }),
+    'menu:group': groupMenu({ controllers, send }),
     'menu:searchResult': searchResultMenu({ controllers, send }),
   };
 
   const settings = { getSettings, setSettings };
 
-  [system, search, artist, release, collection, menu, settings].forEach(registerHandlers);
+  [system, searchResult, artist, release, collection, group, menu, settings].forEach(registerHandlers);
 
   mainWindow.on('swipe', (_, direction) => {
     if (state.isInputFocused()) {

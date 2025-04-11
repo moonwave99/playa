@@ -27,6 +27,10 @@ export function getCollectionLink({ id }: HasId) {
   return `/collections/${id}`;
 }
 
+export function getGroupLink({ id }: HasId) {
+  return `/groups/${id}`;
+}
+
 export function getArtistLink({ id }: HasId) {
   return `/artists/${id}`;
 }

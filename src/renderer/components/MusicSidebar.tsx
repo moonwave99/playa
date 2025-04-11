@@ -32,7 +32,7 @@ export default function MusicSidebar() {
         take: 100,
         query: debouncedQuery,
         queryKey: ["search", debouncedQuery],
-        queryFn: api.search.search,
+        queryFn: api.searchResult.getSearchResults,
     });
     const { inputRef, currentContext, inputHandlers, listHandlers } =
         useSidebar({ isPending, setQuery });

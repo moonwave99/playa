@@ -5,6 +5,7 @@ import Cover from "./Cover";
 import Link from "./Link";
 import RelatedArtistsList from "./RelatedArtistsList";
 import ContainingCollectionsList from "./ContainingCollectionsList";
+import ContainingGroupsList from "./ContainingGroupsList";
 import useDominantColor from "../hooks/useDominantColor";
 import {
     getDiscInfo,
@@ -17,18 +18,21 @@ import {
     getArtistLink,
     getReleaseLink,
     getCollectionLink,
+    getGroupLink,
 } from "@/lib/links";
 import type {
     ArtistWithReleases,
     ReleaseWithArtistAndSubreleases,
     CollectionWithReleases,
+    GroupWithArtists,
 } from "@/types/types";
 import styles from "./ListCard.module.css";
 
 type Item =
     | CollectionWithReleases
     | ArtistWithReleases
-    | ReleaseWithArtistAndSubreleases;
+    | ReleaseWithArtistAndSubreleases
+    | GroupWithArtists;
 
 type ListCardProps = {
     item: Item;
@@ -125,11 +129,33 @@ export default function ListCard({
                         {item.releases.length} releases
                     </div>
                     {isSingle && (
-                        <RelatedArtistsList
-                            useDarkText={useDarkText}
-                            id={item.id}
-                        />
+                        <>
+                            <RelatedArtistsList
+                                useDarkText={useDarkText}
+                                id={item.id}
+                            />
+                            <ContainingGroupsList
+                                useDarkText={useDarkText}
+                                id={item.id}
+                            />
+                        </>
                     )}
+                </>
+            );
+        }
+        if (item._type === "group") {
+            return (
+                <>
+                    <Link
+                        className={styles.title}
+                        to={getGroupLink(item)}
+                        title={`[${item.id}]`}
+                    >
+                        {item.title}
+                    </Link>
+                    <div className={styles.info}>
+                        {item.artists.length} artists
+                    </div>
                 </>
             );
         }
@@ -175,6 +201,7 @@ export default function ListCard({
             style={{ background: color }}
         >
             {showMultipleCovers &&
+            (item._type === "artist" || item._type === "collection") &&
             (item as CollectionWithReleases | ArtistWithReleases).releases
                 .length > 1 ? (
                 <MultipleCovers
@@ -183,7 +210,7 @@ export default function ListCard({
                     onError={onError}
                     onCoverDoubleClick={onCoverDoubleClick}
                 />
-            ) : (
+            ) : coverRelease ? (
                 <Cover
                     {...coverRelease}
                     onClick={onCoverClick}
@@ -194,7 +221,7 @@ export default function ListCard({
                     onLoad={onLoad}
                     onError={onError}
                 />
-            )}
+            ) : null}
             <div className={styles.content}>{getContent()}</div>
         </div>
     );

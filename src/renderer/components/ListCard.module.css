@@ -55,6 +55,10 @@
   border-radius: 0;
   border-bottom: .5px solid var(--neutral-border-color);
 
+  .content {
+    margin-top: 1rem;
+  }
+
   .title {
     font-size: 1.2rem;
   }

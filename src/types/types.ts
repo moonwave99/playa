@@ -11,16 +11,22 @@ type Collection = Prisma.Collection & {
   _type: 'collection',
   coverRelease?: ReleaseWithArtistAndSubreleases
 };
+type Group = Prisma.Group & {
+  _type: 'group',
+  coverArtist?: ArtistWithReleases;
+};
 type Track = Prisma.Track & { _type: 'track' };
 
-export type { Artist, Release, Collection, Track, ReleaseType };
+export type { Artist, Release, Collection, Track, ReleaseType, Group };
 
-export type Entities = 'collection' | 'release' | 'artist' | 'searchResult' | 'track';
+export type Entities = 'collection' | 'release' | 'artist' | 'searchResult' | 'track' | 'group';
 export type HasId = { id: number; };
 export type HasTitle = { title: string; };
 
 export type CollectionCreate = { title: string, releases?: number[] };
 export type CollectionUpdate = { title: string, releases: number[] };
+export type GroupCreate = { title: string, artists?: number[] };
+export type GroupUpdate = { title: string, artists: number[] };
 export type ArtistUpdate = Pick<Artist, 'name' | 'path'>;
 export type TrackInfo = Pick<Track, 'path' | 'duration' | 'position' | 'title'>;
 export type ReleaseCountByType = Record<ReleaseType, number>;
@@ -42,6 +48,10 @@ type WithArtist = {
   artist: Artist;
 }
 
+type WithArtistsAndReleases = {
+  artists: ArtistWithReleases[];
+}
+
 type WithTracks = {
   tracks: Track[];
 }
@@ -50,13 +60,17 @@ type WithCollections = {
   collections: Collection[];
 }
 
+type WithGroups = {
+  groups: Group[];
+}
+
 export type WithRelatedArtists = {
   relatedArtists: Artist[];
 }
 
 export type ArtistWithRelatedArtists = Artist & WithRelatedArtists;
 export type ArtistWithReleases = Artist & WithReleasesAndSubreleases;
-export type ArtistWithReleasesFull = Artist & WithRelatedArtists & WithReleasesAndSubreleasesAndTracks;
+export type ArtistWithReleasesFull = Artist & WithRelatedArtists & WithReleasesAndSubreleasesAndTracks & WithGroups;
 export type CollectionWithReleases = Collection & WithReleasesAndSubreleasesAndTracks;
 export type ReleaseWithArtist = Release & WithArtist;
 export type ReleaseWithArtistAndSubreleases = Release & WithArtist & WithSubReleases;
@@ -66,6 +80,7 @@ export type ReleaseWithArtistAndTracksAndSubreleasesAndCollections = Release & W
 export type ArtistWithReleaseCount = ArtistWithReleases & {
   releaseCount: ReleaseCountByType
 };
+export type GroupWithArtists = Group & WithArtistsAndReleases;
 
 export type WithSubReleases = {
   subReleases: ReleaseWithArtistAndTracks[];

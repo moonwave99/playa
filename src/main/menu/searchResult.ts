@@ -10,7 +10,7 @@ export const searchResultMenu = ({ controllers, send }: MenuParams) => async (re
   }
   if (result.type === 'release') {
     const release = await controllers.release.getRelease(result.id);
-    return releaseMenu({ controllers, send })([release], release.id);
+    return releaseMenu({ controllers, send })([release]);
   }
   if (result.type === 'collection') {
     const collection = await controllers.collection.getCollection(result.id);

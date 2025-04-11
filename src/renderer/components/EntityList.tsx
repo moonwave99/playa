@@ -1,10 +1,10 @@
 import Link from "./Link";
 import cx from "clsx";
 import styles from "./EntityList.module.css";
-import { Artist, Collection } from "@/types/types";
+import { Artist, Collection, Group } from "@/types/types";
 
 type EntityListProps = {
-    items: (Artist | Collection)[];
+    items: (Artist | Collection | Group)[];
     label: string;
     useDarkText?: boolean;
 };
@@ -14,7 +14,7 @@ export default function EntityList({
     label,
     useDarkText,
 }: EntityListProps) {
-    function getLink(item: Artist | Collection) {
+    function getLink(item: Artist | Collection | Group) {
         if (item._type === "artist") {
             return (
                 <Link title={`[${item.id}]`} to={`/artists/${item.id}`}>
@@ -23,7 +23,7 @@ export default function EntityList({
             );
         }
         return (
-            <Link title={`[${item.id}]`} to={`/collections/${item.id}`}>
+            <Link title={`[${item.id}]`} to={`/${item._type}s/${item.id}`}>
                 {item.title}
             </Link>
         );
