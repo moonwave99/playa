@@ -60,7 +60,7 @@ type WithCollections = {
   collections: Collection[];
 }
 
-type WithGroups = {
+export type WithGroups = {
   groups: Group[];
 }
 

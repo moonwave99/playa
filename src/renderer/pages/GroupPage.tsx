@@ -66,7 +66,6 @@ export default function GroupPage() {
             ) : (
                 <List
                     shouldPreventSpace
-                    disableMultipleSelection
                     items={group.artists}
                     className={styles.list}
                     columnsConfig={columnsConfig}
