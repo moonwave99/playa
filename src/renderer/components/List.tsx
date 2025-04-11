@@ -211,8 +211,15 @@ export default function List<T>({
                 );
                 setSelection([]);
             },
-            " ": (event: KeyboardEvent) =>
-                shouldPreventSpace && event.preventDefault(),
+            " ": (event: KeyboardEvent) => {
+                if (!shouldPreventSpace) {
+                    return;
+                }
+                if ((event.target as HTMLElement).tagName === "INPUT") {
+                    return;
+                }
+                event.preventDefault();
+            },
             ...Object.entries(keyHandlers).reduce(
                 (memo, [key, handler]) => ({
                     ...memo,
