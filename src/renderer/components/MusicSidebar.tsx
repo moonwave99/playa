@@ -11,10 +11,11 @@ import List from "@/renderer/components/List";
 import Link from "@/renderer/components/Link";
 import Cover from "@/renderer/components/Cover";
 import Loading from "./Loading";
+import ErrorView from "./ErrorView";
+import Draggable from "./Draggable";
 
 import cx from "clsx";
 import styles from "./MusicSidebar.module.css";
-import Draggable from "./Draggable";
 
 const DEBOUNCE_MS = 300;
 
@@ -42,7 +43,9 @@ export default function MusicSidebar() {
         return <Loading />;
     }
 
-    if (error) return "An error has occurred: " + error.message;
+    if (error) {
+        return <ErrorView error={error} />;
+    }
 
     function onEnter(item: SearchResult, event: KeyboardEvent) {
         if (item.type === "release" && event.metaKey) {

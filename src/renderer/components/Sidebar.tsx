@@ -9,7 +9,9 @@ import type { RenderParams } from "@/renderer/components/List";
 import { doContextsMatch } from "../hooks/useKeyboardManager";
 import useSidebar from "../hooks/useSidebar";
 import Loading from "./Loading";
+import ErrorView from "./ErrorView";
 import Link from "./Link";
+
 import cx from "clsx";
 import styles from "./Sidebar.module.css";
 
@@ -53,7 +55,9 @@ export default function Sidebar({
         return <Loading />;
     }
 
-    if (error) return "An error has occurred: " + error.message;
+    if (error) {
+        return <ErrorView error={error} />;
+    }
 
     function defaultRenderItem({
         item,
