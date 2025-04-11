@@ -189,7 +189,7 @@ const transformers = {
     links: {
       group: `/groups/${id}`
     },
-    coverRelease: getCoverRelease(coverArtist)
+    coverRelease: coverArtist ? getCoverRelease(coverArtist) : null
   }),
   track: (
     { id, title, release }: TrackWithRelease
