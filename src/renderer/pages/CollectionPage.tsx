@@ -6,8 +6,9 @@ import useCollection from "@/renderer/query/useCollection";
 import { useClearSelectionOnLeave } from "@/renderer/hooks/ipc";
 import ReleaseList from "@/renderer/components/ReleaseList";
 import EditableHeader from "../components/EditableHeader";
-import Loading from "@/renderer/components/Loading";
 import Droppable from "../components/Droppable";
+import Loading from "@/renderer/components/Loading";
+import ErrorView from "../components/ErrorView";
 import styles from "./Page.module.css";
 
 export default function CollectionPage() {
@@ -27,7 +28,9 @@ export default function CollectionPage() {
         return <Loading />;
     }
 
-    if (error) return "An error has occurred: " + error.message;
+    if (error) {
+        return <ErrorView error={error} />;
+    }
 
     if (!collection) {
         return <Navigate replace to="/collections" />;

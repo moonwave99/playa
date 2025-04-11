@@ -17,6 +17,7 @@ import useStore from "@/renderer/store";
 import { getReleaseLink } from "@/lib/links";
 import { getReleaseContextMenuParams } from "@/lib/utils";
 import Loading from "@/renderer/components/Loading";
+import ErrorView from "../components/ErrorView";
 import List from "@/renderer/components/List";
 import ReleaseView from "@/renderer/components/ReleaseView";
 
@@ -41,7 +42,9 @@ export default function LatestReleases() {
         return <Loading />;
     }
 
-    if (error) return "An error has occurred: " + error.message;
+    if (error) {
+        return <ErrorView error={error} />;
+    }
 
     function onEnter(
         release: ReleaseWithArtistAndSubreleases,

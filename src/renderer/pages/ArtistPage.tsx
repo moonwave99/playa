@@ -8,6 +8,8 @@ import useStore from "@/renderer/store";
 import ReleaseList from "@/renderer/components/ReleaseList";
 import ListCard from "@/renderer/components/ListCard";
 import Loading from "@/renderer/components/Loading";
+import ErrorView from "@/renderer/components/ErrorView";
+
 import styles from "./Page.module.css";
 
 export default function ArtistPage() {
@@ -22,7 +24,9 @@ export default function ArtistPage() {
         return <Loading />;
     }
 
-    if (error) return "An error has occurred: " + error.message;
+    if (error) {
+        return <ErrorView error={error} />;
+    }
 
     if (!artist) {
         return <Navigate replace to="/" />;

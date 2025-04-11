@@ -7,6 +7,7 @@ import { estimateListCardSize } from "@/lib/utils";
 import useGroups from "@/renderer/query/useGroups";
 import { GroupWithArtists } from "@/types/types";
 import Loading from "@/renderer/components/Loading";
+import ErrorView from "../components/ErrorView";
 import List from "@/renderer/components/List";
 import ListCard from "@/renderer/components/ListCard";
 
@@ -27,7 +28,9 @@ export default function LatestGroups() {
         return <Loading />;
     }
 
-    if (error) return "An error has occurred: " + error.message;
+    if (error) {
+        return <ErrorView error={error} />;
+    }
 
     function onDelete(selection: GroupWithArtists[], event: KeyboardEvent) {
         if (!event.metaKey) {

@@ -7,6 +7,7 @@ import { estimateListCardSize } from "@/lib/utils";
 import useCollections from "@/renderer/query/useCollections";
 import { CollectionWithReleases } from "@/types/types";
 import Loading from "@/renderer/components/Loading";
+import ErrorView from "../components/ErrorView";
 import List from "@/renderer/components/List";
 import ListCard from "@/renderer/components/ListCard";
 
@@ -28,7 +29,9 @@ export default function LatestCollections() {
         return <Loading />;
     }
 
-    if (error) return "An error has occurred: " + error.message;
+    if (error) {
+        return <ErrorView error={error} />;
+    }
 
     function onDelete(
         selection: CollectionWithReleases[],

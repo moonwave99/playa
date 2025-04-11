@@ -2,7 +2,9 @@ import { Navigate, useParams } from "react-router";
 import useRelease from "@/renderer/query/useRelease";
 import api from "../api";
 import ReleaseWithTracklistView from "@/renderer/components/ReleaseWithTracklistView";
+import ErrorView from "../components/ErrorView";
 import Loading from "@/renderer/components/Loading";
+
 import styles from "./Page.module.css";
 
 export default function ReleasePage() {
@@ -14,7 +16,9 @@ export default function ReleasePage() {
         return <Loading />;
     }
 
-    if (error) return "An error has occurred: " + error.message;
+    if (error) {
+        return <ErrorView error={error} />;
+    }
 
     if (!release) {
         return <Navigate replace to="/" />;

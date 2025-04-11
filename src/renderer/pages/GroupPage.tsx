@@ -12,11 +12,13 @@ import { useKeyManager } from "@/renderer/hooks/useKeyboardManager";
 import { useClearSelectionOnLeave } from "@/renderer/hooks/ipc";
 import { getArtistLink } from "@/lib/links";
 import { estimateListCardSize } from "@/lib/utils";
-import Loading from "@/renderer/components/Loading";
 import List from "../components/List";
 import ListCard from "../components/ListCard";
 import EditableHeader from "../components/EditableHeader";
+import Loading from "@/renderer/components/Loading";
+import ErrorView from "../components/ErrorView";
 import Droppable from "../components/Droppable";
+
 import styles from "./Page.module.css";
 
 const columnsConfig = [
@@ -39,7 +41,9 @@ export default function GroupPage() {
         return <Loading />;
     }
 
-    if (error) return "An error has occurred: " + error.message;
+    if (error) {
+        return <ErrorView error={error} />;
+    }
 
     if (!group) {
         return <Navigate replace to="/groups" />;

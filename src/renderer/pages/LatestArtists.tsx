@@ -5,6 +5,7 @@ import api from "../api";
 import useStore from "@/renderer/store";
 import { getArtistLink } from "@/lib/links";
 import { estimateListCardSize } from "@/lib/utils";
+import ErrorView from "@/renderer/components/ErrorView";
 import Loading from "@/renderer/components/Loading";
 import List from "@/renderer/components/List";
 import ListCard from "@/renderer/components/ListCard";
@@ -33,7 +34,9 @@ export default function LatestArtists() {
         return <Loading />;
     }
 
-    if (error) return "An error has occurred: " + error.message;
+    if (error) {
+        return <ErrorView error={error} />;
+    }
 
     return (
         <div className={styles.page}>
