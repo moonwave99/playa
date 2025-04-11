@@ -211,3 +211,7 @@ export function withCoverRelease(artist: ArtistWithReleases) {
     coverRelease: artist.coverRelease || artist.releases[0]
   };
 }
+
+export function lowerCaseCompare(a: string, b: string) {
+  return a.toLowerCase().includes(b.toLowerCase());
+}

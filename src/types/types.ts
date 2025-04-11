@@ -118,7 +118,7 @@ export type SearchResult = {
   coverRelease?: ReleaseWithArtist;
 }
 
-export type Sidebars = "music" | "artists" | "collections";
+export type Sidebars = "music" | "artists" | "collections" | "groups";
 
 export type Entries<T> = {
   [K in keyof T]: [K, T[K]];

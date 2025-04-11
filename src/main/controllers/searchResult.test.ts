@@ -1,6 +1,7 @@
 import { getFakeArtist, getFakeRelease } from "@/test/utils";
 import { searchResultController } from "./searchResult";
 import prisma from '../db/__mocks__/prisma';
+import { lowerCaseCompare } from "@/lib/utils";
 
 vi.mock('../db/prisma');
 
@@ -20,8 +21,10 @@ describe('searchResult - search function', () => {
     prisma.release.findMany.mockImplementation(({ where }) => {
       return releases.filter(
         x => {
-          return x.title.toLowerCase().includes(where.OR.at(0).title.contains.toLowerCase())
-            || x.artist.name.toLowerCase().includes(where.OR.at(1).artist.name.contains.toLowerCase())
+          return lowerCaseCompare(
+            x.title,
+            where.OR.at(0).title.contains
+          ) || lowerCaseCompare(x.artist.name, where.OR.at(1).artist.name.contains);
         }
       );
     })
@@ -32,6 +35,7 @@ describe('searchResult - search function', () => {
     })
     prisma.collection.findMany.mockResolvedValue([]);
     prisma.track.findMany.mockResolvedValue([]);
+    prisma.group.findMany.mockResolvedValue([]);
 
     const { getSearchResults } = searchResultController();
     const results = await getSearchResults('love');

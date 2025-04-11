@@ -7,11 +7,12 @@ import {
     KeyManager,
     withPrevent,
 } from "../hooks/useKeyboardManager";
-import type { Artist, Collection, Sidebars } from "@/types/types";
+import type { Artist, Collection, Group, Sidebars } from "@/types/types";
 import SearchToggler from "./SearchToggler";
 import Sidebar from "./Sidebar";
 import MusicSidebar from "./MusicSidebar";
-import { getArtistLink, getCollectionLink } from "@/lib/links";
+import { getArtistLink, getCollectionLink, getGroupLink } from "@/lib/links";
+import { lowerCaseCompare } from "@/lib/utils";
 
 export const sidebarsMap: {
     sidebar: Sidebars;
@@ -32,6 +33,11 @@ export const sidebarsMap: {
         sidebar: "collections",
         label: "Collections",
         accelerator: "#",
+    },
+    {
+        sidebar: "groups",
+        label: "Groups",
+        accelerator: "$",
     },
 ];
 
@@ -73,7 +79,7 @@ export default function SidebarView() {
                 <Sidebar
                     label="artists"
                     filterFn={({ name }: Artist, query) =>
-                        filterFn(name, query)
+                        lowerCaseCompare(name, query)
                     }
                     onEnter={(artist) => navigate(getArtistLink(artist))}
                     onContextMenu={api.menu.artist}
@@ -89,7 +95,7 @@ export default function SidebarView() {
                 <Sidebar
                     label="collections"
                     filterFn={({ title }: Collection, query) =>
-                        filterFn(title, query)
+                        lowerCaseCompare(title, query)
                     }
                     onEnter={(collection) =>
                         navigate(getCollectionLink(collection))
@@ -103,10 +109,22 @@ export default function SidebarView() {
                     })}
                 />
             ) : null}
+            {currentSidebar === "groups" ? (
+                <Sidebar
+                    label="groups"
+                    filterFn={({ title }: Collection, query) =>
+                        lowerCaseCompare(title, query)
+                    }
+                    onEnter={(collection) => navigate(getGroupLink(collection))}
+                    onContextMenu={api.menu.group}
+                    getLink={getGroupLink}
+                    getEntryText={({ title }: Group) => title}
+                    queryConfig={() => ({
+                        queryKey: ["groups"],
+                        queryFn: api.group.getAllGroups,
+                    })}
+                />
+            ) : null}
         </>
     );
-}
-
-function filterFn(key: string, query: string) {
-    return key.toLowerCase().includes(query.toLowerCase());
 }

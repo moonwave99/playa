@@ -277,9 +277,10 @@ function init(): Init {
         if (firstRender.current) {
             return;
         }
-        const fullLocation = location.search
-            ? `${location.pathname}${location.search}`
-            : location.pathname;
+        const fullLocation =
+            location.search && !location.search.includes("new=true")
+                ? `${location.pathname}${location.search}`
+                : location.pathname;
 
         api.state.navigate(fullLocation);
         setPath(fullLocation);

@@ -1,6 +1,6 @@
-import { getReleaseTitle, sortByQueryPosition } from "@/lib/utils";
+import { getCoverRelease, getReleaseTitle, sortByQueryPosition } from "@/lib/utils";
 import prisma from "./prisma";
-import type { SearchResult, HasTitle, ReleaseWithArtistAndSubreleases, CollectionWithReleases, ArtistWithReleases, TrackWithRelease } from '@/types/types';
+import type { SearchResult, HasTitle, ReleaseWithArtistAndSubreleases, CollectionWithReleases, ArtistWithReleases, TrackWithRelease, GroupWithArtists } from '@/types/types';
 
 export async function getSearchResults(query: string, take = 20): Promise<SearchResult[]> {
   const releases = await prisma.release.findMany({
@@ -82,6 +82,36 @@ export async function getSearchResults(query: string, take = 20): Promise<Search
     },
   });
 
+  const groups = await prisma.group.findMany({
+    take,
+    where: {
+      title: {
+        contains: query,
+        mode: "insensitive",
+      },
+    },
+    include: {
+      coverArtist: {
+        include: {
+          coverRelease: {
+            include: {
+              artist: true
+            }
+          },
+          releases: {
+            take: 1,
+            where: {
+              mainRelease: null
+            },
+            include: {
+              artist: true
+            }
+          }
+        }
+      },
+    },
+  });
+
   const tracks = await prisma.track.findMany({
     take: 10,
     where: {
@@ -102,6 +132,7 @@ export async function getSearchResults(query: string, take = 20): Promise<Search
   return [
     tracks.map(transformers.track),
     collections.map(transformers.collection),
+    groups.map(transformers.group),
     artists.map(transformers.artist),
     releases.map(transformers.release),
   ].flatMap(
@@ -147,6 +178,18 @@ const transformers = {
       collection: `/collections/${id}`
     },
     coverRelease: coverRelease || releases[0]
+  }),
+  group: (
+    { id, title, coverArtist }: GroupWithArtists
+  ) => ({
+    id,
+    title,
+    description: "Group",
+    type: 'group' as const,
+    links: {
+      group: `/groups/${id}`
+    },
+    coverRelease: getCoverRelease(coverArtist)
   }),
   track: (
     { id, title, release }: TrackWithRelease
