@@ -5,20 +5,20 @@ import { UseRefetch } from "./hooks/useRefetch";
 
 export async function handleDropEnd(event: DragEndEvent, refetch: UseRefetch) {
   const { active, over } = event;
-  if (!over) {
-    return;
-  }
   if (
-    !over.data.current.accepts.includes(active.data.current._type) &&
-    !over.data.current.accepts.includes(active.data.current.type)
+    !over || (
+      !over.data.current.accepts.includes(active.data.current._type) &&
+      !over.data.current.accepts.includes(active.data.current.type)
+    )
   ) {
     return;
   }
+
   let queryKey;
-  if (event.over.id === "group") {
+  if (`${over.id}`.startsWith("group")) {
     queryKey = await onGroupDrop(event);
   }
-  if (event.over.id === "collection") {
+  if (`${over.id}`.startsWith("collection")) {
     queryKey = await onCollectionDrop(event);
   }
   if (queryKey) {
@@ -36,7 +36,10 @@ async function onGroupDrop({ active, over }: DragEndEvent) {
 
   await api.group.addArtistsToGroup(group.id, [artist]);
 
-  return ["groups", group.id];
+  return [
+    ["groups", "latest"],
+    ["groups", group.id]
+  ];
 }
 
 async function onCollectionDrop({ active, over }: DragEndEvent) {
@@ -49,5 +52,8 @@ async function onCollectionDrop({ active, over }: DragEndEvent) {
 
   await api.collection.addReleasesToCollection(collection.id, [release]);
 
-  return ["collections", collection.id];
+  return [
+    ["collections", "latest"],
+    ["collections", collection.id]
+  ];
 }

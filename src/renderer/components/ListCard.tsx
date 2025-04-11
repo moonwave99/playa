@@ -1,12 +1,7 @@
 import { useState, useEffect } from "react";
-import type { MouseEvent } from "react";
-import cx from "clsx";
-import Cover from "./Cover";
-import Link from "./Link";
-import RelatedArtistsList from "./RelatedArtistsList";
-import ContainingCollectionsList from "./ContainingCollectionsList";
-import ContainingGroupsList from "./ContainingGroupsList";
+import type { MouseEvent, ReactNode } from "react";
 import useDominantColor from "../hooks/useDominantColor";
+import useHover from "../hooks/useHover";
 import {
     getDiscInfo,
     getReleaseTitle,
@@ -26,6 +21,15 @@ import type {
     CollectionWithReleases,
     GroupWithArtists,
 } from "@/types/types";
+
+import Cover from "./Cover";
+import Link from "./Link";
+import RelatedArtistsList from "./RelatedArtistsList";
+import ContainingCollectionsList from "./ContainingCollectionsList";
+import ContainingGroupsList from "./ContainingGroupsList";
+import Droppable from "./Droppable";
+
+import cx from "clsx";
 import styles from "./ListCard.module.css";
 
 type Item =
@@ -76,6 +80,8 @@ export default function ListCard({
         onColorChange(useDarkText);
         return () => onColorChange(false);
     }, [useDarkText]);
+
+    const { onMouseEnter, onMouseLeave, isHover } = useHover();
 
     function getContent() {
         if (item._type === "release") {
@@ -191,66 +197,81 @@ export default function ListCard({
     }
 
     return (
-        <div
-            className={cx(styles.listCard, {
-                [styles.loaded]: loaded,
-                [styles.isSingle]: isSingle,
-                [styles.selected]: selected,
-                [styles.hasFocus]: selected && hasFocus,
-                [styles.useDarkText]: useDarkText,
-                className,
-            })}
-            onClick={onClick}
-            onContextMenu={
-                isSingle ? onContextMenu : withStopPropagation(onContextMenu)
-            }
-            style={{ background: color }}
-        >
-            {shouldDisplayMultipleCovers() ? (
-                <MultipleCovers
-                    item={item as MultipleCoversProps["item"]}
-                    onLoad={onLoad}
-                    onError={onError}
-                    onCoverDoubleClick={onCoverDoubleClick}
-                />
-            ) : coverRelease ? (
-                <Cover
-                    {...coverRelease}
-                    onClick={onCoverClick}
-                    className={styles.cover}
-                    title={`${coverRelease.artist.name} - ${getReleaseTitle(
-                        coverRelease
-                    )}`}
-                    onLoad={onLoad}
-                    onError={onError}
-                />
-            ) : (
-                <div className={styles.ghost} />
-            )}
-            <div className={styles.content}>{getContent()}</div>
-        </div>
+        <MaybeDroppable item={item}>
+            <div
+                onMouseLeave={onMouseLeave}
+                className={cx(styles.listCard, {
+                    [styles.loaded]: loaded,
+                    [styles.isSingle]: isSingle,
+                    [styles.selected]: selected,
+                    [styles.hasFocus]: selected && hasFocus,
+                    [styles.useDarkText]: useDarkText,
+                    [styles.isHover]: isHover,
+                    className,
+                })}
+                onClick={onClick}
+                onContextMenu={
+                    isSingle
+                        ? onContextMenu
+                        : withStopPropagation(onContextMenu)
+                }
+                style={{ background: color }}
+            >
+                {shouldDisplayMultipleCovers() ? (
+                    <MultipleCovers
+                        item={item as MultipleCoversProps["item"]}
+                        onLoad={onLoad}
+                        onError={onError}
+                        onCoverDoubleClick={onCoverDoubleClick}
+                        onMouseEnter={onMouseEnter}
+                        isHover={isHover}
+                    />
+                ) : coverRelease ? (
+                    <Cover
+                        {...coverRelease}
+                        onClick={onCoverClick}
+                        className={styles.cover}
+                        title={`${coverRelease.artist.name} - ${getReleaseTitle(
+                            coverRelease
+                        )}`}
+                        onLoad={onLoad}
+                        onError={onError}
+                    />
+                ) : (
+                    <div className={styles.ghost} />
+                )}
+                <div className={styles.content}>{getContent()}</div>
+            </div>
+        </MaybeDroppable>
     );
 }
 
 type MultipleCoversProps = {
     item: CollectionWithReleases | ArtistWithReleases | GroupWithArtists;
     count?: number;
+    isHover: boolean;
     onLoad: () => void;
     onError: () => void;
     onCoverDoubleClick?: (release_id: number) => void;
+    onMouseEnter: () => void;
 };
 
 function MultipleCovers({
     item,
     count = 5,
+    isHover,
     onLoad,
     onError,
     onCoverDoubleClick,
+    onMouseEnter,
 }: MultipleCoversProps) {
     const { coverRelease, otherReleases } = getCovers(item, count);
 
     return (
-        <div className={styles.multipleCovers}>
+        <div
+            onMouseEnter={onMouseEnter}
+            className={cx(styles.multipleCovers, { [styles.isHover]: isHover })}
+        >
             <>
                 {otherReleases.map((release) => (
                     <Cover
@@ -300,4 +321,16 @@ function getCovers(item: MultipleCoversProps["item"], count = 5): GetCovers {
         coverRelease,
         otherReleases,
     };
+}
+
+type MaybeDroppableProps = {
+    item: Item;
+    children: ReactNode;
+};
+
+function MaybeDroppable({ item, children }: MaybeDroppableProps) {
+    if (item._type === "group" || item._type === "collection") {
+        return <Droppable item={item}>{children}</Droppable>;
+    }
+    return children;
 }

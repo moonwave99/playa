@@ -28,7 +28,7 @@ export default function Droppable({
 }: DraggableProps) {
     const { id, accepts } = configMap[item._type];
     const { setNodeRef, isOver, active } = useDroppable({
-        id,
+        id: `${id}-${item.id}`,
         data: {
             ...item,
             accepts,

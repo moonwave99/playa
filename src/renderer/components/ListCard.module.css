@@ -11,7 +11,7 @@
     opacity: 1;
   }
 
-  &:has(.multipleCovers:hover) {
+  &:has(.multipleCovers.isHover) {
     overflow-x: auto;
 
     .content {
@@ -108,10 +108,6 @@
   height: var(--release-group-height);
   position: relative;
 
-  .cover:hover {
-    opacity: .9;
-  }
-
   .cover:not(:first-of-type) {
     position: absolute;
     top: 0;
@@ -151,10 +147,14 @@
     transition: transform 0.8s ease-in-out, scale .2s ease-in-out;
   }
 
-  &:hover {
+  &.isHover {
     .cover {
       scale: .9;
       border-radius: .15rem;
+
+      &:hover {
+        opacity: .9;
+      }
     }
 
     .cover:nth-child(2) {
