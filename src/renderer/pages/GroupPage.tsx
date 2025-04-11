@@ -61,7 +61,7 @@ export default function GroupPage() {
             />
             {!group?.artists.length ? (
                 <div className={styles.placeholder}>
-                    No artists in this group yet
+                    There are no artists in this group yet.
                 </div>
             ) : (
                 <List

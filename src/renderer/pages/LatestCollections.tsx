@@ -44,7 +44,9 @@ export default function LatestCollections() {
         <div className={styles.page}>
             <h1 className={styles.header}>Latest Collections</h1>
             {!collections?.length ? (
-                <div className={styles.placeholder}>No collections yet</div>
+                <div className={styles.placeholder}>
+                    There are no collections yet.
+                </div>
             ) : (
                 <List
                     shouldPreventSpace

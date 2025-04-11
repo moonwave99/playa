@@ -39,7 +39,9 @@ export default function LatestArtists() {
         <div className={styles.page}>
             <h1 className={styles.header}>Latest Artists</h1>
             {!artists?.length ? (
-                <div className={styles.placeholder}>No artists yet</div>
+                <div className={styles.placeholder}>
+                    There are no artists yet.
+                </div>
             ) : (
                 <List
                     shouldPreventSpace

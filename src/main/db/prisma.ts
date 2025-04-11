@@ -1,8 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { PrismaClient } from '@prisma/client-generated';
 
-const prisma = (global as any).prisma || new PrismaClient();
+function getPrisma() {
+  return typeof window === 'undefined' ? new PrismaClient() : null;
+}
 
-if (process.env.NODE_ENV === 'development') (global as any).prisma = prisma;
+const prisma = (global as any).prisma || getPrisma();
+
+if (process.env.NODE_ENV === 'development') {
+  (global as any).prisma = prisma;
+}
 
 export default prisma;

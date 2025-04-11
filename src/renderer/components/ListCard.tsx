@@ -65,19 +65,16 @@ export default function ListCard({
     const [loadCount, setLoadCount] = useState(0);
     const coverRelease = getCoverRelease(item);
     const { color, useDarkText, loaded } = useDominantColor(
-        getCover(coverRelease.hash),
+        coverRelease ? getCover(coverRelease.hash) : null,
         loadCount
     );
 
     useEffect(() => {
-        if (onColorChange) {
-            onColorChange(useDarkText);
+        if (!onColorChange) {
+            return;
         }
-        return () => {
-            if (onColorChange) {
-                onColorChange(false);
-            }
-        };
+        onColorChange(useDarkText);
+        return () => onColorChange(false);
     }, [useDarkText]);
 
     function getContent() {
@@ -184,6 +181,15 @@ export default function ListCard({
         setLoadCount((prev) => prev + 1);
     }
 
+    function shouldDisplayMultipleCovers() {
+        if (!showMultipleCovers || item._type === "release") {
+            return false;
+        }
+        return item._type === "group"
+            ? item.artists.length > 1
+            : item.releases.length > 1;
+    }
+
     return (
         <div
             className={cx(styles.listCard, {
@@ -200,12 +206,9 @@ export default function ListCard({
             }
             style={{ background: color }}
         >
-            {showMultipleCovers &&
-            (item._type === "artist" || item._type === "collection") &&
-            (item as CollectionWithReleases | ArtistWithReleases).releases
-                .length > 1 ? (
+            {shouldDisplayMultipleCovers() ? (
                 <MultipleCovers
-                    item={item as CollectionWithReleases | ArtistWithReleases}
+                    item={item as MultipleCoversProps["item"]}
                     onLoad={onLoad}
                     onError={onError}
                     onCoverDoubleClick={onCoverDoubleClick}
@@ -221,14 +224,16 @@ export default function ListCard({
                     onLoad={onLoad}
                     onError={onError}
                 />
-            ) : null}
+            ) : (
+                <div className={styles.ghost} />
+            )}
             <div className={styles.content}>{getContent()}</div>
         </div>
     );
 }
 
 type MultipleCoversProps = {
-    item: CollectionWithReleases | ArtistWithReleases;
+    item: CollectionWithReleases | ArtistWithReleases | GroupWithArtists;
     count?: number;
     onLoad: () => void;
     onError: () => void;
@@ -242,10 +247,7 @@ function MultipleCovers({
     onError,
     onCoverDoubleClick,
 }: MultipleCoversProps) {
-    const coverRelease = getCoverRelease(item);
-    const otherReleases = item.releases
-        .filter((x) => x.id !== coverRelease.id)
-        .slice(0, count - 1);
+    const { coverRelease, otherReleases } = getCovers(item, count);
 
     return (
         <div className={styles.multipleCovers}>
@@ -274,4 +276,28 @@ function MultipleCovers({
             </>
         </div>
     );
+}
+
+type GetCovers = {
+    coverRelease: ReleaseWithArtistAndSubreleases;
+    otherReleases: ReleaseWithArtistAndSubreleases[];
+};
+
+function getCovers(item: MultipleCoversProps["item"], count = 5): GetCovers {
+    const coverRelease = getCoverRelease(item);
+    let otherReleases;
+    if (item._type === "group") {
+        otherReleases = item.artists
+            .map(getCoverRelease)
+            .filter((x) => x.id !== coverRelease.id)
+            .slice(0, count - 1);
+    } else {
+        otherReleases = item.releases
+            .filter((x) => x.id !== coverRelease.id)
+            .slice(0, count - 1);
+    }
+    return {
+        coverRelease,
+        otherReleases,
+    };
 }

@@ -92,7 +92,8 @@
   }
 }
 
-.cover {
+.cover,
+.ghost {
   width: var(--release-group-height);
   height: var(--release-group-height);
   border-right: 1px solid var(--neutral-border-color);

@@ -51,12 +51,18 @@ export default function ArtistPage() {
             onContextMenu={() => api.menu.artist(artist)}
         >
             <ListCard isSingle item={artist} onColorChange={setUseDarkText} />
-            <ReleaseList
-                releases={artist.releases}
-                onContextMenu={onContextMenu}
-                onDelete={onDelete}
-                className={styles.hasHeaderWithCover}
-            />
+            {!artist?.releases.length ? (
+                <div className={styles.placeholder}>
+                    There are no releases for this artist yet.
+                </div>
+            ) : (
+                <ReleaseList
+                    releases={artist.releases}
+                    onContextMenu={onContextMenu}
+                    onDelete={onDelete}
+                    className={styles.hasHeaderWithCover}
+                />
+            )}
         </div>
     );
 }

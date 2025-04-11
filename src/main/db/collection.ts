@@ -118,7 +118,7 @@ export async function addReleasesToCollection(id: number, releases: Release[]) {
 }
 
 export async function removeReleasesFromCollection(id: number, releases: Release[]) {
-  const result = await prisma.collection.update({
+  let result = await prisma.collection.update({
     where: {
       id
     },
@@ -126,8 +126,23 @@ export async function removeReleasesFromCollection(id: number, releases: Release
       releases: {
         disconnect: releases.map(({ id }) => ({ id }))
       }
+    },
+    include: {
+      releases: {
+        select: {
+          id: true
+        }
+      }
     }
   });
+  if (!result.releases.length) {
+    result = await prisma.collection.update({
+      where: { id },
+      data: {
+        coverReleaseId: null
+      }
+    });
+  }
   return withEntityType(result, 'collection');
 }
 

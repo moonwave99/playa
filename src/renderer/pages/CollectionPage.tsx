@@ -52,12 +52,18 @@ export default function CollectionPage() {
                 onTitleUpdate={updateTitle}
                 isFocused={!!searchParams.get("new")}
             />
-            <ReleaseList
-                releases={collection.releases}
-                onDelete={deleteReleasesFromCollection}
-                onContextMenu={onContextMenu}
-                className={styles.list}
-            />
+            {!collection?.releases.length ? (
+                <div className={styles.placeholder}>
+                    There are no releases in this collection yet.
+                </div>
+            ) : (
+                <ReleaseList
+                    releases={collection.releases}
+                    onDelete={deleteReleasesFromCollection}
+                    onContextMenu={onContextMenu}
+                    className={styles.list}
+                />
+            )}
         </div>
     );
 }

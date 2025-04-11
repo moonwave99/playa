@@ -66,6 +66,7 @@ export async function getArtist(id: number): Promise<ArtistWithReleasesFull> {
   if (!result) {
     return null;
   }
+
   const { releases, ...artist } = result as ArtistWithReleasesFull;
   return withEntityType({
     ...result,

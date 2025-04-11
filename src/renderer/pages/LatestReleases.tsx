@@ -58,7 +58,9 @@ export default function LatestReleases() {
         <div className={styles.page}>
             <h1 className={styles.header}>Latest Releases</h1>
             {!releases?.length ? (
-                <div className={styles.placeholder}>No releases yet</div>
+                <div className={styles.placeholder}>
+                    There are no releases yet.
+                </div>
             ) : (
                 <List
                     shouldPreventSpace

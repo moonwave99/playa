@@ -6,7 +6,7 @@ export default function useDominantColor(url: string, count = 0): ColorInfo {
   const [color, setColor] = useState({
     color: "black",
     useDarkText: false,
-    loaded: false,
+    loaded: !url,
   });
 
   useEffect(() => {
