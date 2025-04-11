@@ -1,7 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import type { QueryKey } from "@tanstack/react-query";
 
-type UseRefetch = (queryKey: QueryKey) => void;
+export type UseRefetch = (queryKey: QueryKey) => void;
 
 export default function useRefetch(): UseRefetch {
   const queryClient = useQueryClient();

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
     Routes,
     Route,
@@ -8,6 +8,12 @@ import {
 } from "react-router";
 import { useMediaQuery } from "react-responsive";
 import Modal from "react-modal";
+import {
+    DndContext,
+    DragOverlay,
+    type DragEndEvent,
+    type DragStartEvent,
+} from "@dnd-kit/core";
 import {
     useKeyManager,
     withMeta,
@@ -25,6 +31,7 @@ import useRefetch from "./hooks/useRefetch";
 import useStore from "./store";
 import type { ModalContents } from "./store";
 import { refreshCovers } from "@/lib/utils";
+import { handleDropEnd } from "./dnd";
 
 import LatestReleases from "./pages/LatestReleases";
 import LatestArtists from "./pages/LatestArtists";
@@ -32,6 +39,7 @@ import LatestCollections from "./pages/LatestCollections";
 import ReleasePage from "./pages/ReleasePage";
 import ArtistPage from "./pages/ArtistPage";
 import CollectionPage from "./pages/CollectionPage";
+import GroupPage from "./pages/GroupPage";
 import LatestGroups from "./pages/LatestGroups";
 import Nav from "./components/Nav";
 import SidebarView from "./components/SidebarView";
@@ -45,13 +53,14 @@ import { MdOutlineSearch } from "react-icons/md";
 import cx from "clsx";
 import styles from "./Layout.module.css";
 import buttonStyles from "./buttons.module.css";
+import dragStyles from "./dnd.module.css";
 import {
+    Artist,
     ArtistWithReleases,
     Release,
     ReleaseWithArtist,
     ReleaseWithArtistAndSubreleases,
 } from "@/types/types";
-import GroupPage from "./pages/GroupPage";
 
 function getModalStyle(name: string) {
     const modalStyle = {
@@ -85,103 +94,129 @@ export default function Layout() {
         closeModal,
         setContext,
         isDetailPage,
+        onDragStart,
+        onDragEnd,
+        draggedItem,
     } = init();
 
     return (
-        <div
-            className={cx(styles.main, {
-                [styles.showSidebar]: showSidebar,
-                [styles.isDetailPage]: isDetailPage,
-            })}
-        >
-            <button
-                aria-label="Toggle Sidebar"
-                onClick={() => toggleSidebar()}
-                className={cx(buttonStyles.button, styles.toggleSidebarButton, {
+        <DndContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
+            <div
+                className={cx(styles.main, {
                     [styles.showSidebar]: showSidebar,
-                    [buttonStyles.useDarkText]: useDarkText,
+                    [styles.isDetailPage]: isDetailPage,
                 })}
             >
-                <MdOutlineSearch />
-            </button>
-            <Nav />
-            <div className={styles.page}>
-                {showSidebar && (
-                    <div className={styles.sidebar}>
-                        <SidebarView />
-                    </div>
-                )}
-                <main className={styles.main}>
-                    <Routes>
-                        <Route path="/" element={<LatestReleases />} />
-                        <Route path="/releases/:id" element={<ReleasePage />} />
-                        <Route
-                            path="/collections"
-                            element={<LatestCollections />}
+                <button
+                    aria-label="Toggle Sidebar"
+                    onClick={() => toggleSidebar()}
+                    className={cx(
+                        buttonStyles.button,
+                        styles.toggleSidebarButton,
+                        {
+                            [styles.showSidebar]: showSidebar,
+                            [buttonStyles.useDarkText]: useDarkText,
+                        }
+                    )}
+                >
+                    <MdOutlineSearch />
+                </button>
+                <Nav />
+                <div className={styles.page}>
+                    {showSidebar && (
+                        <div className={styles.sidebar}>
+                            <SidebarView />
+                        </div>
+                    )}
+                    <main className={styles.main}>
+                        <Routes>
+                            <Route path="/" element={<LatestReleases />} />
+                            <Route
+                                path="/releases/:id"
+                                element={<ReleasePage />}
+                            />
+                            <Route
+                                path="/collections"
+                                element={<LatestCollections />}
+                            />
+                            <Route
+                                path="/collections/:id"
+                                element={<CollectionPage />}
+                            />
+                            <Route path="/groups" element={<LatestGroups />} />
+                            <Route path="/groups/:id" element={<GroupPage />} />
+                            <Route
+                                path="/artists"
+                                element={<LatestArtists />}
+                            />
+                            <Route
+                                path="/artists/:id"
+                                element={<ArtistPage />}
+                            />
+                        </Routes>
+                    </main>
+                </div>
+                <Modal
+                    isOpen={!!modalContents}
+                    onRequestClose={closeModal}
+                    style={getModalStyle(modalContents?.name)}
+                    onAfterOpen={() => {
+                        api.state.setInputFocused(true);
+                        setContext("modal");
+                    }}
+                    onAfterClose={() => {
+                        api.state.setInputFocused(false);
+                        setContext("list");
+                    }}
+                >
+                    {modalContents?.name === "settings" && (
+                        <SettingsView
+                            onSave={closeModal}
+                            onCancel={closeModal}
                         />
-                        <Route
-                            path="/collections/:id"
-                            element={<CollectionPage />}
+                    )}
+                    {modalContents?.name === "groupReleases" && (
+                        <GroupReleasesView
+                            releases={
+                                modalContents.params
+                                    .releases as ReleaseWithArtist[]
+                            }
+                            onSave={closeModal}
+                            onCancel={closeModal}
                         />
-                        <Route path="/groups" element={<LatestGroups />} />
-                        <Route path="/groups/:id" element={<GroupPage />} />
-                        <Route path="/artists" element={<LatestArtists />} />
-                        <Route path="/artists/:id" element={<ArtistPage />} />
-                    </Routes>
-                </main>
+                    )}
+                    {modalContents?.name === "editRelease" && (
+                        <EditReleaseView
+                            release={
+                                modalContents.params
+                                    .release as ReleaseWithArtistAndSubreleases
+                            }
+                            onSave={closeModal}
+                            onCancel={closeModal}
+                        />
+                    )}
+                    {modalContents?.name === "editArtist" && (
+                        <EditArtistView
+                            artist={
+                                modalContents.params
+                                    .artist as ArtistWithReleases
+                            }
+                            onSave={closeModal}
+                            onCancel={closeModal}
+                        />
+                    )}
+                    {modalContents?.name === "lightbox" && (
+                        <CoverLightbox
+                            onClose={closeModal}
+                            release={modalContents.params.release as Release}
+                        />
+                    )}
+                </Modal>
             </div>
-            <Modal
-                isOpen={!!modalContents}
-                onRequestClose={closeModal}
-                style={getModalStyle(modalContents?.name)}
-                onAfterOpen={() => {
-                    api.state.setInputFocused(true);
-                    setContext("modal");
-                }}
-                onAfterClose={() => {
-                    api.state.setInputFocused(false);
-                    setContext("list");
-                }}
-            >
-                {modalContents?.name === "settings" && (
-                    <SettingsView onSave={closeModal} onCancel={closeModal} />
-                )}
-                {modalContents?.name === "groupReleases" && (
-                    <GroupReleasesView
-                        releases={
-                            modalContents.params.releases as ReleaseWithArtist[]
-                        }
-                        onSave={closeModal}
-                        onCancel={closeModal}
-                    />
-                )}
-                {modalContents?.name === "editRelease" && (
-                    <EditReleaseView
-                        release={
-                            modalContents.params
-                                .release as ReleaseWithArtistAndSubreleases
-                        }
-                        onSave={closeModal}
-                        onCancel={closeModal}
-                    />
-                )}
-                {modalContents?.name === "editArtist" && (
-                    <EditArtistView
-                        artist={
-                            modalContents.params.artist as ArtistWithReleases
-                        }
-                        onSave={closeModal}
-                        onCancel={closeModal}
-                    />
-                )}
-                {modalContents?.name === "lightbox" && (
-                    <CoverLightbox
-                        onClose={closeModal}
-                        release={modalContents.params.release as Release}
-                    />
-                )}
-            </Modal>
-        </div>
+            <DragOverlay>
+                {draggedItem && <div className={dragStyles.DragOverlay}>1</div>}
+            </DragOverlay>
+        </DndContext>
     );
 }
 
@@ -193,6 +228,9 @@ type Init = {
     setContext: (context: string) => void;
     toggleSidebar: () => void;
     isDetailPage: boolean;
+    draggedItem: Artist | Release | null;
+    onDragStart: (event: DragStartEvent) => void;
+    onDragEnd: (event: DragEndEvent) => void;
 };
 
 function init(): Init {
@@ -215,6 +253,8 @@ function init(): Init {
     const isSmallScreen = useMediaQuery({
         query: "(max-width: 900px)",
     });
+
+    const [draggedItem, setDraggedItem] = useState<Artist | Release>(null);
 
     useEffect(() => {
         if (isSmallScreen) {
@@ -315,13 +355,25 @@ function init(): Init {
         setModalContents(null);
     }
 
+    function onDragStart(event: DragStartEvent) {
+        setDraggedItem(event.active.data.current as Artist | Release);
+    }
+
+    async function onDragEnd(event: DragEndEvent) {
+        await handleDropEnd(event, refetch);
+        setDraggedItem(null);
+    }
+
     return {
         showSidebar,
         useDarkText,
         toggleSidebar,
+        draggedItem,
         modalContents,
         closeModal,
         setContext,
         isDetailPage,
+        onDragStart,
+        onDragEnd,
     };
 }

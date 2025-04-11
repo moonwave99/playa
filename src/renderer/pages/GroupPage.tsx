@@ -7,16 +7,17 @@ import {
 import api from "../api";
 import type { ArtistWithReleases } from "@/types/types";
 import useGroup from "../query/useGroup";
+import useStore from "../store";
 import { useKeyManager } from "@/renderer/hooks/useKeyboardManager";
 import { useClearSelectionOnLeave } from "@/renderer/hooks/ipc";
-import Loading from "@/renderer/components/Loading";
-import styles from "./Page.module.css";
-import List from "../components/List";
 import { getArtistLink } from "@/lib/links";
 import { estimateListCardSize } from "@/lib/utils";
+import Loading from "@/renderer/components/Loading";
+import List from "../components/List";
 import ListCard from "../components/ListCard";
 import EditableHeader from "../components/EditableHeader";
-import useStore from "../store";
+import Droppable from "../components/Droppable";
+import styles from "./Page.module.css";
 
 const columnsConfig = [
     { count: 3, width: 900 },
@@ -59,36 +60,40 @@ export default function GroupPage() {
                 isFocused={!!searchParams.get("new")}
                 onContextMenu={() => api.menu.group(group)}
             />
-            {!group?.artists.length ? (
-                <div className={styles.placeholder}>
-                    There are no artists in this group yet.
-                </div>
-            ) : (
-                <List
-                    shouldPreventSpace
-                    items={group.artists}
-                    className={styles.list}
-                    columnsConfig={columnsConfig}
-                    estimateSize={estimateListCardSize}
-                    onEnter={(artist: ArtistWithReleases) =>
-                        navigate(getArtistLink(artist))
-                    }
-                    onBackspace={onDelete}
-                    onLeft={() => setContext("sidebar")}
-                    shouldCallOnLeft={() => showSidebar}
-                    render={({ item, ...rest }) => (
-                        <ListCard
-                            showMultipleCovers
-                            item={item}
-                            onContextMenu={() => api.menu.artist(item, group)}
-                            onCoverDoubleClick={(release_id) =>
-                                api.system.playback({ release_id })
-                            }
-                            {...rest}
-                        />
-                    )}
-                />
-            )}
+            <Droppable item={group}>
+                {!group?.artists.length ? (
+                    <div className={styles.placeholder}>
+                        There are no artists in this group yet.
+                    </div>
+                ) : (
+                    <List
+                        shouldPreventSpace
+                        items={group.artists}
+                        className={styles.list}
+                        columnsConfig={columnsConfig}
+                        estimateSize={estimateListCardSize}
+                        onEnter={(artist: ArtistWithReleases) =>
+                            navigate(getArtistLink(artist))
+                        }
+                        onBackspace={onDelete}
+                        onLeft={() => setContext("sidebar")}
+                        shouldCallOnLeft={() => showSidebar}
+                        render={({ item, ...rest }) => (
+                            <ListCard
+                                showMultipleCovers
+                                item={item}
+                                onContextMenu={() =>
+                                    api.menu.artist(item, group)
+                                }
+                                onCoverDoubleClick={(release_id) =>
+                                    api.system.playback({ release_id })
+                                }
+                                {...rest}
+                            />
+                        )}
+                    />
+                )}
+            </Droppable>
         </div>
     );
 }

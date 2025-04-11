@@ -1,6 +1,7 @@
 import { getCoverRelease, getReleaseTitle, sortByQueryPosition } from "@/lib/utils";
 import prisma from "./prisma";
 import type { SearchResult, HasTitle, ReleaseWithArtistAndSubreleases, CollectionWithReleases, ArtistWithReleases, TrackWithRelease, GroupWithArtists } from '@/types/types';
+import { withEntityType } from "@/types/types";
 
 export async function getSearchResults(query: string, take = 20): Promise<SearchResult[]> {
   const releases = await prisma.release.findMany({
@@ -129,7 +130,7 @@ export async function getSearchResults(query: string, take = 20): Promise<Search
     },
   });
 
-  return [
+  return withEntityType([
     tracks.map(transformers.track),
     collections.map(transformers.collection),
     groups.map(transformers.group),
@@ -137,7 +138,7 @@ export async function getSearchResults(query: string, take = 20): Promise<Search
     releases.map(transformers.release),
   ].flatMap(
     x => x.toSorted((a: HasTitle, b: HasTitle) => sortByQueryPosition(query, 'title', a, b))
-  );
+  ), 'searchResult');
 }
 
 const transformers = {

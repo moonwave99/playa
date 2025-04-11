@@ -5,6 +5,7 @@ export default function Link(props: LinkProps) {
     return (
         <RouterLink
             {...props}
+            onDragStart={(event) => event.preventDefault()}
             onClick={(event: MouseEvent<HTMLAnchorElement>) => {
                 if (event.metaKey) {
                     event.preventDefault();

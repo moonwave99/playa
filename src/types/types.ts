@@ -108,6 +108,7 @@ export type PaginationParams = {
 export type SearchParams = Record<string, string>;
 
 export type SearchResult = {
+  _type: 'searchResult',
   id: number;
   type: Entities;
   title: string;

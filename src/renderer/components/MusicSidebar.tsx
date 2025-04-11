@@ -14,6 +14,7 @@ import Loading from "./Loading";
 
 import cx from "clsx";
 import styles from "./MusicSidebar.module.css";
+import Draggable from "./Draggable";
 
 const DEBOUNCE_MS = 300;
 
@@ -58,6 +59,10 @@ export default function MusicSidebar() {
         navigate(item.links[item.type]);
     }
 
+    function isDraggable(item: SearchResult) {
+        return ["release", "artist", "searchResult"].includes(item.type);
+    }
+
     return (
         <div className={styles.view}>
             <input
@@ -87,6 +92,7 @@ export default function MusicSidebar() {
                         {...listHandlers}
                         render={({ item, selected, onClick }) => (
                             <SearchResultView
+                                isDraggable={isDraggable(item)}
                                 item={item}
                                 selected={selected}
                                 onClick={onClick}
@@ -101,7 +107,7 @@ export default function MusicSidebar() {
                         Showing
                         <strong className={styles.count}>
                             {results.length}
-                        </strong>{" "}
+                        </strong>
                         results
                     </footer>
                 </>
@@ -116,6 +122,7 @@ type SearchResultViewProps = {
     onClick: (event: MouseEvent) => void;
     currentContext: string;
     onContextMenu?: () => void;
+    isDraggable?: boolean;
 };
 
 function SearchResultView({
@@ -124,6 +131,7 @@ function SearchResultView({
     onContextMenu,
     onClick,
     currentContext,
+    isDraggable = false,
 }: SearchResultViewProps) {
     const { title, type, artist, links, description, coverRelease } = item;
 
@@ -183,6 +191,7 @@ function SearchResultView({
         <article
             onClick={onClick}
             className={cx(styles.listItem, {
+                [styles.isDraggable]: isDraggable,
                 [styles.selected]: selected,
                 [styles.hasFocus]:
                     selected && doContextsMatch(currentContext, "sidebar"),
@@ -191,6 +200,9 @@ function SearchResultView({
         >
             {renderCover()}
             <div className={styles.description}>{renderContent()}</div>
+            {isDraggable && (
+                <Draggable className={styles.dragHandle} item={item} />
+            )}
         </article>
     );
 }

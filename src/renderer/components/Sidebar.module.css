@@ -52,6 +52,10 @@
     background-color: var(--sidebar-secondary-color);
   }
 
+  &.isDraggable {
+    padding-right: 0
+  }
+
   &.selected {
     background-color: var(--selected-no-focus-color);
   }
@@ -62,6 +66,10 @@
     &:hover {
       background-color: var(--accent-color-light);
     }
+  }
+
+  a {
+    flex: 1;
   }
 }
 
@@ -93,4 +101,9 @@
 .count {
   color: var(--primary-color);
   font-weight: normal;
+}
+
+.dragHandle {
+  margin-left: auto;
+  font-size: .8rem;
 }

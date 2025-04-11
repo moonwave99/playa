@@ -29,6 +29,7 @@
   --neutral-border-color: rgba(120, 120, 120, 0.3);
   --related-artists-cover-size: 6rem;
   --loading-icon-size: 3rem;
+  --drop-area-background-color: #0f227b;
 }
 
 * {

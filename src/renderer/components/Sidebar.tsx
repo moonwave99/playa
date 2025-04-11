@@ -2,32 +2,35 @@ import { useState } from "react";
 import type { MouseEvent, ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { QueryKey } from "@tanstack/react-query";
-import cx from "clsx";
+import { Artist, Release } from "@/types/types";
 import List from "@/renderer/components/List";
+import Draggable from "@/renderer/components/Draggable";
 import type { RenderParams } from "@/renderer/components/List";
 import { doContextsMatch } from "../hooks/useKeyboardManager";
 import useSidebar from "../hooks/useSidebar";
 import Loading from "./Loading";
 import Link from "./Link";
+import cx from "clsx";
 import styles from "./Sidebar.module.css";
-import { HasId } from "@/types/types";
 
-type SidebarProps<T extends HasId> = {
+type Item = Artist | Release;
+
+type SidebarProps = {
     label: string;
     queryConfig: (query: string) => {
         queryKey: QueryKey;
-        queryFn: () => Promise<T[]>;
+        queryFn: () => Promise<Item[]>;
     };
-    onEnter: (entry: T) => void;
-    onContextMenu?: (entry: T) => void;
-    filterFn: (entry: T, query: string) => boolean;
-    getLink: (entry: T) => string;
-    getEntryText: (entry: T) => string;
+    onEnter: (entry: Item) => void;
+    onContextMenu?: (entry: Item) => void;
+    filterFn: (entry: Item, query: string) => boolean;
+    getLink: (entry: Item) => string;
+    getEntryText: (entry: Item) => string;
     estimateSize?: () => { width: number; height: number };
-    renderItem?: (params: RenderParams<T>) => ReactNode;
+    renderItem?: (params: RenderParams<Item>) => ReactNode;
 };
 
-export default function Sidebar<T extends HasId>({
+export default function Sidebar({
     label,
     queryConfig,
     onEnter,
@@ -40,9 +43,9 @@ export default function Sidebar<T extends HasId>({
         height: 32,
     }),
     renderItem,
-}: SidebarProps<T>) {
+}: SidebarProps) {
     const [query, setQuery] = useState("");
-    const { isPending, error, data } = useQuery<T[]>(queryConfig(query));
+    const { isPending, error, data } = useQuery<Item[]>(queryConfig(query));
     const { inputRef, currentContext, inputHandlers, listHandlers } =
         useSidebar({ isPending, setQuery });
 
@@ -57,7 +60,7 @@ export default function Sidebar<T extends HasId>({
         selected,
         onClick,
     }: {
-        item: T;
+        item: Item;
         selected: boolean;
         onClick: (event: MouseEvent) => void;
     }) {
@@ -70,6 +73,7 @@ export default function Sidebar<T extends HasId>({
                 getEntryText={getEntryText}
                 onClick={onClick}
                 onContextMenu={onContextMenu}
+                isDraggable={item._type === "artist"}
             />
         );
     }
@@ -111,17 +115,18 @@ export default function Sidebar<T extends HasId>({
     );
 }
 
-type DefaultEntryProps<T extends HasId> = Pick<
-    SidebarProps<T>,
+type DefaultEntryProps = Pick<
+    SidebarProps,
     "getLink" | "getEntryText" | "onContextMenu"
 > & {
     selected: boolean;
-    item: T;
+    item: Item;
     onClick: (event: MouseEvent) => void;
     currentContext: string;
+    isDraggable?: boolean;
 };
 
-function DefaultEntry<T extends HasId>({
+function DefaultEntry({
     item,
     selected,
     getLink,
@@ -129,20 +134,28 @@ function DefaultEntry<T extends HasId>({
     onContextMenu,
     onClick,
     currentContext,
-}: DefaultEntryProps<T>) {
+    isDraggable = false,
+}: DefaultEntryProps) {
     return (
-        <Link
-            title={`[${item.id}]`}
-            to={getLink(item)}
+        <div
             className={cx(styles.listItem, {
+                [styles.isDraggable]: isDraggable,
                 [styles.selected]: selected,
                 [styles.hasFocus]:
                     selected && doContextsMatch(currentContext, "sidebar"),
             })}
-            onClick={onClick}
-            onContextMenu={() => onContextMenu && onContextMenu(item)}
         >
-            {getEntryText(item)}
-        </Link>
+            <Link
+                title={`[${item.id}]`}
+                to={getLink(item)}
+                onClick={onClick}
+                onContextMenu={() => onContextMenu && onContextMenu(item)}
+            >
+                {getEntryText(item)}
+            </Link>
+            {isDraggable && (
+                <Draggable className={styles.dragHandle} item={item} />
+            )}
+        </div>
     );
 }

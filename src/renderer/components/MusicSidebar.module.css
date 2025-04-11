@@ -35,11 +35,15 @@
   margin: 0 1rem;
   background-color: var(--search-results-background-color);
   border-radius: .25rem;
-  overflow: hidden;
   padding-right: 1rem;
+  overflow: hidden;
 
   &:hover {
     background-color: var(--search-results-background-color-light);
+  }
+
+  &.isDraggable {
+    padding-right: 0
   }
 
   &.selected {
@@ -145,4 +149,9 @@
   &:hover {
     text-decoration: underline;
   }
+}
+
+.dragHandle {
+  margin-left: auto;
+  flex-shrink: 0;
 }

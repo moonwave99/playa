@@ -7,6 +7,7 @@ import { useClearSelectionOnLeave } from "@/renderer/hooks/ipc";
 import ReleaseList from "@/renderer/components/ReleaseList";
 import EditableHeader from "../components/EditableHeader";
 import Loading from "@/renderer/components/Loading";
+import Droppable from "../components/Droppable";
 import styles from "./Page.module.css";
 
 export default function CollectionPage() {
@@ -52,18 +53,20 @@ export default function CollectionPage() {
                 onTitleUpdate={updateTitle}
                 isFocused={!!searchParams.get("new")}
             />
-            {!collection?.releases.length ? (
-                <div className={styles.placeholder}>
-                    There are no releases in this collection yet.
-                </div>
-            ) : (
-                <ReleaseList
-                    releases={collection.releases}
-                    onDelete={deleteReleasesFromCollection}
-                    onContextMenu={onContextMenu}
-                    className={styles.list}
-                />
-            )}
+            <Droppable item={collection}>
+                {!collection?.releases.length ? (
+                    <div className={styles.placeholder}>
+                        There are no releases in this collection yet.
+                    </div>
+                ) : (
+                    <ReleaseList
+                        releases={collection.releases}
+                        onDelete={deleteReleasesFromCollection}
+                        onContextMenu={onContextMenu}
+                        className={styles.list}
+                    />
+                )}
+            </Droppable>
         </div>
     );
 }
