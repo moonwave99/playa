@@ -136,6 +136,7 @@ export default function ReleaseList({
                     selection.map((index) => releases[index])
                 )
             }
+            scrollBehavior={{ align: "start" }}
             {...getListConfig(viewMode)}
             keyHandlers={{
                 " ": withPrevent(

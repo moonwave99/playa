@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useLayoutEffect } from "react";
 import type { MouseEvent, ReactNode } from "react";
-import { useVirtualizer } from "@tanstack/react-virtual";
+import { useVirtualizer, type ScrollToOptions } from "@tanstack/react-virtual";
 import useStore from "../store";
 import { useKeyManager, withPrevent } from "../hooks/useKeyboardManager";
 import useResponsiveColumns from "../hooks/useResponsiveColumns";
@@ -47,6 +47,7 @@ type ListProps<T> = {
     onSelectionChange?: (selection: number[]) => void;
     shouldPreventSpace?: boolean;
     initialSelection?: number[];
+    scrollBehavior?: ScrollToOptions;
     keyHandlers?: Record<
         string,
         (event: KeyboardEvent, selection: T[]) => void
@@ -92,6 +93,7 @@ export default function List<T>({
     shouldPreventSpace,
     initialSelection = [],
     keyHandlers = {},
+    scrollBehavior,
 }: ListProps<T>) {
     const [currentIndex, setCurrentIndex] = useState(
         initialSelection.length ? initialSelection[0] : -1
@@ -131,8 +133,8 @@ export default function List<T>({
     }, [currentIndex]);
 
     useLayoutEffect(() => {
-        virtualizer.scrollToIndex(currentIndex);
-    }, [currentIndex]);
+        virtualizer.scrollToIndex(currentIndex, scrollBehavior);
+    }, [currentIndex, scrollBehavior]);
 
     useEffect(() => {
         if (onSelectionChange) {
