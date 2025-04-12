@@ -63,6 +63,20 @@ import {
     ReleaseWithArtistAndSubreleases,
 } from "@/types/types";
 
+function getModalOverrides(name: string) {
+    if (name === "editArtist") {
+        return {
+            width: "max(60vw, 800px)",
+        };
+    }
+    if (name === "lightbox") {
+        return {
+            width: "min(70vw, 80vh)",
+        };
+    }
+    return {};
+}
+
 function getModalStyle(name: string) {
     const modalStyle = {
         overlay: {
@@ -72,13 +86,13 @@ function getModalStyle(name: string) {
         },
         content: {
             background: "black",
-            width:
-                name === "editArtist" ? "max(60vw, 800px)" : "max(40vw, 600px)",
+            width: "max(40vw, 600px)",
             height: "min-content",
             margin: "auto",
             borderColor: "var(--tertiary-color)",
             borderRadius: ".5rem",
             padding: name === "lightbox" ? 0 : "1.5rem",
+            ...getModalOverrides(name),
         },
     };
     return modalStyle;

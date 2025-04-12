@@ -44,6 +44,7 @@ type ListCardProps = {
     selected?: boolean;
     hasFocus?: boolean;
     isSingle?: boolean;
+    hideCover?: boolean;
     onClick?: (event: MouseEvent) => void;
     onCoverClick?: () => void;
     onDoubleClick?: () => void;
@@ -59,6 +60,7 @@ export default function ListCard({
     selected,
     hasFocus,
     isSingle,
+    hideCover,
     onClick,
     onCoverClick,
     onContextMenu,
@@ -196,6 +198,39 @@ export default function ListCard({
             : item.releases.length > 1;
     }
 
+    function renderCover() {
+        if (hideCover) {
+            return null;
+        }
+        if (shouldDisplayMultipleCovers()) {
+            return (
+                <MultipleCovers
+                    item={item as MultipleCoversProps["item"]}
+                    onLoad={onLoad}
+                    onError={onError}
+                    onCoverDoubleClick={onCoverDoubleClick}
+                    onMouseEnter={onMouseEnter}
+                    isHover={isHover}
+                />
+            );
+        }
+        if (coverRelease) {
+            return (
+                <Cover
+                    {...coverRelease}
+                    onClick={onCoverClick}
+                    className={styles.cover}
+                    title={`${coverRelease.artist.name} - ${getReleaseTitle(
+                        coverRelease
+                    )}`}
+                    onLoad={onLoad}
+                    onError={onError}
+                />
+            );
+        }
+        return <div className={styles.ghost} />;
+    }
+
     return (
         <MaybeDroppable
             item={item}
@@ -210,6 +245,7 @@ export default function ListCard({
                         [styles.useDarkText]: useDarkText,
                         [styles.isHover]: isHover,
                         [styles.canDrop]: canDrop,
+                        [styles.hideCover]: hideCover,
                         className,
                     })}
                     onClick={onClick}
@@ -220,29 +256,7 @@ export default function ListCard({
                     }
                     style={canDrop ? null : { background: color }}
                 >
-                    {shouldDisplayMultipleCovers() ? (
-                        <MultipleCovers
-                            item={item as MultipleCoversProps["item"]}
-                            onLoad={onLoad}
-                            onError={onError}
-                            onCoverDoubleClick={onCoverDoubleClick}
-                            onMouseEnter={onMouseEnter}
-                            isHover={isHover}
-                        />
-                    ) : coverRelease ? (
-                        <Cover
-                            {...coverRelease}
-                            onClick={onCoverClick}
-                            className={styles.cover}
-                            title={`${
-                                coverRelease.artist.name
-                            } - ${getReleaseTitle(coverRelease)}`}
-                            onLoad={onLoad}
-                            onError={onError}
-                        />
-                    ) : (
-                        <div className={styles.ghost} />
-                    )}
+                    {renderCover()}
                     <div className={styles.content}>{getContent()}</div>
                 </div>
             )}
