@@ -12,11 +12,13 @@ import { throttle } from 'lodash';
 
 export const KeyManagerContext = createContext<{
   register: (context: string, handlers: KeyHandlers) => void;
+  unregister: (context: string) => void;
   setContext: (context: string) => void;
   toggleGlobal: (toggle?: boolean) => void;
   currentContext: string;
 }>({
   register: () => void (0),
+  unregister: () => void (0),
   setContext: () => void (0),
   toggleGlobal: () => void (0),
   currentContext: ''
@@ -34,7 +36,7 @@ type UseKeyManager = {
 };
 
 export function useKeyManager(params?: UseKeyManagerParams): UseKeyManager {
-  const { register, setContext, toggleGlobal, currentContext } = useContext(KeyManagerContext);
+  const { register, unregister, setContext, toggleGlobal, currentContext } = useContext(KeyManagerContext);
   const {
     context,
     handlers,
@@ -43,6 +45,7 @@ export function useKeyManager(params?: UseKeyManagerParams): UseKeyManager {
     if (context && handlers) {
       register(context, handlers);
     }
+    return () => unregister(context);
   }, [context, handlers]);
   return { setContext, toggleGlobal, currentContext };
 }
@@ -63,6 +66,10 @@ export function KeyManagerProvider(props: PropsWithChildren) {
     keyManagerRef.current?.register(context, handlers);
   }
 
+  function unregister(context: string) {
+    keyManagerRef.current?.unregister(context);
+  }
+
   function toggleGlobal(toggle?: boolean) {
     keyManagerRef.current?.toggleGlobal(toggle);
   }
@@ -80,6 +87,7 @@ export function KeyManagerProvider(props: PropsWithChildren) {
     value: {
       currentContext: context,
       register,
+      unregister,
       setContext,
       toggleGlobal,
     },
@@ -143,6 +151,9 @@ export class KeyManager {
       return;
     }
     this.handlers[context] = handlers;
+  }
+  unregister(context: string) {
+    delete this.handlers[context];
   }
   setContext(context: string) {
     this.currentContext = context;
