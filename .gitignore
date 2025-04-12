@@ -103,3 +103,5 @@ dump/
 
 # Test artifacts
 src/test/__mock-fs__
+
+discogs/

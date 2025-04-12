@@ -4,33 +4,33 @@ import type { Release, Artist } from '@/types/types';
 import { deburr } from "lodash";
 import { log } from "./logger";
 import { wait } from "@/lib/utils";
+import { version } from '../../package.json';
 
 type SearchParams = {
     artist: string;
     title: string;
-    year: number;
+    year?: number;
 };
 
-type DiscogSecrets = {
+type DiscogsSecrets = {
     DISCOGS_KEY: string;
     DISCOGS_SECRET: string;
 };
 
-export async function search({ artist, title, year }: SearchParams, secrets: DiscogSecrets) {
+const THROTTLE_INTERVAL = 500;
+
+export async function search({ artist, title }: SearchParams, secrets: DiscogsSecrets) {
     const params = new URLSearchParams({
         artist: deburr(normalize(artist)),
         title: deburr(normalize(title)),
-        year: `${year}`,
         key: secrets.DISCOGS_KEY,
         secret: secrets.DISCOGS_SECRET,
     });
+    const url = `https://api.discogs.com/database/search?${params}`;
+    log('[discogs:search]', url);
     const response = await fetch(
-        `https://api.discogs.com/database/search?${params}`,
-        {
-            headers: {
-                "User-Agent": "playa-web/0.1",
-            },
-        }
+        url,
+        { headers: { "User-Agent": `playa/${version}` } }
     );
     const data = await response.json();
     return data;
@@ -60,7 +60,7 @@ type SearchCoverParams = {
 
 export async function searchCover(
     { release, artist, outputPath }: SearchCoverParams,
-    secrets: DiscogSecrets
+    secrets: DiscogsSecrets
 ) {
     const title = normalizeTitle(release.title);
     const artistName = normalizeArtist(artist.name);
@@ -70,13 +70,13 @@ export async function searchCover(
         year: release.year,
     }, secrets);
     if (!response?.results?.length) {
-        log(`[searchCover] No response for: ${artistName} - ${title}`);
+        log(`[discogs:searchCover] No response for: ${artistName} - ${title}`);
         return null;
     }
     const { cover_image } = response.results[0];
-    log('[searchCover] Downloading:', artistName, title);
+    log('[discogs:searchCover] Downloading:', artistName, title);
     if (!cover_image || cover_image.endsWith('spacer.gif')) {
-        log(`[searchCover] No response for: ${artistName} - ${title}`);
+        log(`[discogs:searchCover] No response for: ${artistName} - ${title}`);
         return null;
     }
     const pic = `${release.hash}-cover.jpg`;
@@ -99,7 +99,7 @@ export async function getImageFromURL({ outputPath, hash, url }: GetImageFromURL
         await getImage({ url, dest });
         return dest;
     } catch (error) {
-        log('[getImageFromURL]', error);
+        log('[discogs:getImageFromURL]', error);
         return false;
     }
 }
@@ -110,11 +110,15 @@ type GetImageParams = {
 };
 
 async function getImage(options: GetImageParams) {
-    log('[getImage] Downloading:', options.url);
-    await wait(500);
+    log('[discogs:getImage] Downloading:', options.url);
+    await wait(THROTTLE_INTERVAL);
     await download.image(options);
 }
 
 function normalize(input: string) {
-    return input.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    return input
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/\((\d+)\)$/, '')
+        .trim();
 }

@@ -277,7 +277,7 @@ function init(): Init {
     useOnOpenEditArtistDialog((artist: ArtistWithReleases) =>
         setModalContents({ name: "editArtist", params: { artist } })
     );
-    useOnSwipe((direction) => navigate(direction));
+    useOnSwipe(navigate);
 
     const isDetailPage = !!(
         matchPath("/releases/:id", location.pathname) ||
@@ -344,15 +344,13 @@ function init(): Init {
                 setContext("list");
             }),
             api.onCoverUpdate(refreshCovers),
-            api.onToggleSidebar((showSidebar: boolean) =>
-                toggleSidebar(showSidebar)
-            ),
+            api.onToggleSidebar(toggleSidebar),
         ];
 
         api.settings.getSettings().then(setSettings);
 
         return () => {
-            removeHandlers.forEach((removeHandler) => removeHandler());
+            removeHandlers.forEach((x) => x());
         };
     }, []);
 

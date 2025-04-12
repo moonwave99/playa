@@ -265,14 +265,21 @@ export function releaseController({
     const DISCOGS_KEY = getSetting('DISCOGS_KEY') as string;
     const DISCOGS_SECRET = getSetting('DISCOGS_SECRET') as string;
 
-    const foundCovers = await mapSeries(releases,
-      (release: ReleaseWithArtist) => searchCover({ release, artist: release.artist, outputPath: COVERS_PATH }, {
-        DISCOGS_KEY,
-        DISCOGS_SECRET
-      })
+    return await mapSeries(releases,
+      async (release: ReleaseWithArtist) => {
+        const pic = await searchCover({
+          release, artist: release.artist, outputPath: COVERS_PATH
+        }, {
+          DISCOGS_KEY,
+          DISCOGS_SECRET
+        });
+        if (!pic) {
+          return null;
+        }
+        send('coverUpdate', [release]);
+        return pic;
+      }
     );
-
-    send('coverUpdate', releases.filter((_, index) => !!foundCovers[index]))
   }
 
   async function importMissingCovers(releases: ReleaseWithArtist[]) {

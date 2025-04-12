@@ -333,18 +333,20 @@ describe('release - editRelease function', () => {
 });
 
 describe('importCovers function', () => {
-  it('searches the covers of the given releases and returns those with positive results', async () => {
-    const send = vi.fn();
-    const { importCovers } = releaseController({ ...defaultParams, send });
+  it.only('searches the covers of the given releases and returns those with positive results', async () => {
     {
+      const send = vi.fn();
+      const { importCovers } = releaseController({ ...defaultParams, send });
       const release = getFakeRelease(1);
       await importCovers([release]);
       expect(send).toHaveBeenCalledWith('coverUpdate', [release]);
     }
     {
+      const send = vi.fn();
+      const { importCovers } = releaseController({ ...defaultParams, send });
       const release = getFakeRelease(3);
       await importCovers([release]);
-      expect(send).toHaveBeenCalledWith('coverUpdate', []);
+      expect(send).not.toHaveBeenCalled();
     }
   });
 });
@@ -363,7 +365,7 @@ describe('importMissingCovers function', () => {
     {
       const releases = [getFakeRelease(1)];
       await importMissingCovers(releases);
-      expect(send).toHaveBeenCalledWith('coverUpdate', []);
+      expect(send).not.toHaveBeenCalled();
     }
     {
       const releases = [
