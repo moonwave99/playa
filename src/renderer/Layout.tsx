@@ -14,6 +14,7 @@ import {
     type DragEndEvent,
     type DragStartEvent,
 } from "@dnd-kit/core";
+import { snapCenterToCursor } from "@dnd-kit/modifiers";
 import {
     useKeyManager,
     withMeta,
@@ -31,7 +32,7 @@ import useRefetch from "./hooks/useRefetch";
 import useStore from "./store";
 import type { ModalContents } from "./store";
 import { refreshCovers } from "@/lib/utils";
-import { handleDropEnd } from "./dnd";
+import { handleDropEnd, fixCursorSnapOffset } from "./dnd";
 
 import LatestReleases from "./pages/LatestReleases";
 import LatestArtists from "./pages/LatestArtists";
@@ -100,7 +101,11 @@ export default function Layout() {
     } = init();
 
     return (
-        <DndContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
+        <DndContext
+            onDragStart={onDragStart}
+            onDragEnd={onDragEnd}
+            collisionDetection={fixCursorSnapOffset}
+        >
             <div
                 className={cx(styles.main, {
                     [styles.showSidebar]: showSidebar,
@@ -213,7 +218,7 @@ export default function Layout() {
                     )}
                 </Modal>
             </div>
-            <DragOverlay>
+            <DragOverlay modifiers={[snapCenterToCursor]}>
                 {draggedItem && <div className={dragStyles.DragOverlay}>1</div>}
             </DragOverlay>
         </DndContext>

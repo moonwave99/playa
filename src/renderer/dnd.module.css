@@ -1,17 +1,22 @@
 .Droppable {
   transition: background .2s ease-in-out;
 
-  &.isOver {
+  &.canDrop {
     background-color: var(--drop-area-background-color);
   }
 }
 
 .Draggable {
-  width: 1.5rem;
+  width: 3rem;
   font-size: 1rem;
   display: flex;
   align-items: center;
+  justify-content: center;
   height: 100%;
+
+  &:focus {
+    outline-color: var(--accent-color);
+  }
 
   &:hover {
     cursor: grab;
@@ -33,4 +38,5 @@
   font-size: .8rem;
   font-weight: bold;
   cursor: grabbing;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgb(209, 213, 219) 0px 0px 0px 1px inset;
 }

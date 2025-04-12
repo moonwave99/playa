@@ -19,6 +19,34 @@
       transition-delay: 0s;
     }
   }
+
+  &.canDrop {
+    background-color: var(--accent-color-light);
+    position: relative;
+
+    &::after {
+      content: ' ';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 100%;
+      background-repeat: no-repeat;
+      background-image: linear-gradient(90deg, transparent 0%, var(--droppable-glow-color) 50%, transparent 100%);
+      transform: translateX(-100%);
+      animation-name: canDrop;
+      animation-direction: normal;
+      animation-duration: 1.5s;
+      animation-timing-function: ease-in-out;
+      animation-iteration-count: infinite;
+    }
+  }
+}
+
+@keyframes canDrop {
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 .content {
@@ -98,6 +126,7 @@
   height: var(--release-group-height);
   border-right: 1px solid var(--neutral-border-color);
   border-radius: 0;
+  z-index: 1;
 }
 
 .hasFocus {

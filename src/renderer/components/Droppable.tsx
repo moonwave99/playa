@@ -4,10 +4,19 @@ import { Collection, Group } from "@/types/types";
 import cx from "clsx";
 import styles from "../dnd.module.css";
 
-type DraggableProps = {
+export type DroppableRender = ({
+    isOver,
+    canDrop,
+}: {
+    isOver: boolean;
+    canDrop: boolean;
+}) => ReactNode;
+
+type DroppableProps = {
     item: Collection | Group;
-    children: ReactNode;
+    children?: ReactNode;
     className?: string;
+    render?: DroppableRender;
 };
 
 const configMap = {
@@ -23,9 +32,10 @@ const configMap = {
 
 export default function Droppable({
     className,
+    render,
     item,
     children,
-}: DraggableProps) {
+}: DroppableProps) {
     const { id, accepts } = configMap[item._type];
     const { setNodeRef, isOver, active } = useDroppable({
         id: `${id}-${item.id}`,
@@ -35,22 +45,20 @@ export default function Droppable({
         },
     });
 
-    function canDrop() {
-        return (
-            isOver &&
-            (accepts.includes(active.data.current.type) ||
-                accepts.includes(active.data.current._type))
-        );
-    }
+    const canDrop =
+        isOver &&
+        (accepts.includes(active.data.current.type) ||
+            accepts.includes(active.data.current._type));
 
     return (
         <div
             ref={setNodeRef}
             className={cx(styles.Droppable, className, {
-                [styles.isOver]: canDrop(),
+                [styles.isOver]: isOver,
+                [styles.canDrop]: canDrop,
             })}
         >
-            {children}
+            {render ? render({ isOver, canDrop }) : children}
         </div>
     );
 }
