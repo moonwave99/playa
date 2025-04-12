@@ -16,7 +16,8 @@ export default function ArtistPage() {
     const { id } = useParams();
     const { setUseDarkText } = useStore();
 
-    const { isPending, error, artist, deleteReleases } = useArtist(+id);
+    const { isPending, error, artist, deleteReleases, setArtistCover } =
+        useArtist(+id);
 
     useClearSelectionOnLeave();
 
@@ -49,6 +50,11 @@ export default function ArtistPage() {
         deleteReleases(selection.map(({ id }) => id));
     }
 
+    const keyHandlers = {
+        c: (_event: KeyboardEvent, selection: ReleaseWithArtist[]) =>
+            setArtistCover(selection[0].id),
+    };
+
     return (
         <div
             className={styles.page}
@@ -65,6 +71,7 @@ export default function ArtistPage() {
                     onContextMenu={onContextMenu}
                     onDelete={onDelete}
                     className={styles.hasHeaderWithCover}
+                    keyHandlers={keyHandlers}
                 />
             )}
         </div>

@@ -6,7 +6,8 @@ type UseArtist = {
   isPending: boolean;
   error: Error;
   artist: ArtistWithReleasesFull;
-  deleteReleases: (ids: number[]) => void;
+  deleteReleases: (release_ids: number[]) => void;
+  setArtistCover: (release_id: number) => void;
 };
 
 export default function useArtist(id: number): UseArtist {
@@ -20,27 +21,34 @@ export default function useArtist(id: number): UseArtist {
     [
       ["releases", "latest"],
       ["artists", id],
+      ...artist.groups.map(x => ['groups', x.id]),
     ].forEach(queryKey => queryClient.invalidateQueries({ queryKey }));
   }
 
   const deleteReleases = useMutation({
-    mutationFn: (ids: number[]) => {
+    mutationFn: (release_ids: number[]) => {
       if (
         !window.confirm(
-          `Are you sure to remove ${ids.length} Releases from Library?`
+          `Are you sure to remove ${release_ids.length} Releases from Library?`
         )
       ) {
         return;
       }
-      return api.release.deleteReleases(ids)
+      return api.release.deleteReleases(release_ids);
     },
     onSuccess
   });
+
+  const setArtistCover = useMutation({
+    mutationFn: (release_id: number) => api.artist.setArtistCoverRelease(id, release_id),
+    onSuccess
+  })
 
   return {
     artist,
     isPending,
     error,
-    deleteReleases: deleteReleases.mutate
+    deleteReleases: deleteReleases.mutate,
+    setArtistCover: setArtistCover.mutate,
   }
 }

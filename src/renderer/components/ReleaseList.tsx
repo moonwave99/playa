@@ -15,7 +15,7 @@ import {
 } from "@/lib/utils";
 import ReleaseView from "./ReleaseView";
 import ReleaseWithTracklistView from "./ReleaseWithTracklistView";
-import List, { type RenderParams } from "./List";
+import List, { type RenderParams, type ListKeyHandler } from "./List";
 import ListCard from "./ListCard";
 import useStore from "../store";
 import cx from "clsx";
@@ -29,6 +29,7 @@ type ReleaseListProps = {
         target_id: number
     ) => void;
     className?: string;
+    keyHandlers?: Record<string, ListKeyHandler<ReleaseWithArtist>>;
 };
 
 export default function ReleaseList({
@@ -36,6 +37,7 @@ export default function ReleaseList({
     onDelete,
     onContextMenu,
     className,
+    keyHandlers = {},
 }: ReleaseListProps) {
     const navigate = useNavigate();
     const { viewMode, showSidebar, setModalContents } = useStore();
@@ -139,6 +141,7 @@ export default function ReleaseList({
             scrollBehavior={{ align: "start" }}
             {...getListConfig(viewMode)}
             keyHandlers={{
+                ...keyHandlers,
                 " ": withPrevent(
                     (_event: KeyboardEvent, selection: Release[]) => {
                         setModalContents({

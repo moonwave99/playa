@@ -17,6 +17,8 @@ export type RenderParams<T> = {
     onClick: (event: MouseEvent) => void;
 };
 
+export type ListKeyHandler<T> = (event: KeyboardEvent, selection: T[]) => void;
+
 type ListProps<T> = {
     items: T[];
     onEnter?: (item: T, event: KeyboardEvent) => void;
@@ -48,10 +50,7 @@ type ListProps<T> = {
     shouldPreventSpace?: boolean;
     initialSelection?: number[];
     scrollBehavior?: ScrollToOptions;
-    keyHandlers?: Record<
-        string,
-        (event: KeyboardEvent, selection: T[]) => void
-    >;
+    keyHandlers?: Record<string, ListKeyHandler<T>>;
 };
 
 function defaultEstimateSize(columns: number, _: number, showSidebar: boolean) {
