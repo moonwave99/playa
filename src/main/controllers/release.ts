@@ -299,14 +299,22 @@ export function releaseController({
   }
 
   async function refreshCurrentArtistReleases() {
+    const releasesToRefresh = state.getCurrentArtist().releases
+      .filter((x: ReleaseWithArtistAndTracks) => !x.tracks.length);
+    if (!releasesToRefresh.length) {
+      return;
+    }
     state.setImporting(true);
-    await Promise.all(
-      state.getCurrentArtist().releases
-        .filter((x: ReleaseWithArtistAndTracks) => !x.tracks.length)
-        .map((x: ReleaseWithArtistAndTracks) => refreshReleaseContents(x.id))
-    );
+    try {
+      await Promise.all(
+        releasesToRefresh
+          .map((x: ReleaseWithArtistAndTracks) => refreshReleaseContents(x.id))
+      );
+      send('mutate', ['artists', state.getCurrentArtist().id]);
+    } catch (error) {
+      console.log('[refreshCurrentArtistReleases]', error);
+    }
     state.setImporting(false);
-    send('mutate', ['artists', state.getCurrentArtist().id]);
   }
 
   async function refreshEntityRelease(entity: ArtistWithReleases | CollectionWithReleases) {

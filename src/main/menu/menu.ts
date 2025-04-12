@@ -222,13 +222,13 @@ export function initMenu({ controllers, state, send }: InitMenuParams) {
         click: () => controllers.system.revealEntityInFinder('artist', state.getCurrentArtist().id)
       },
       {
-        label: 'Refresh Releases',
+        label: 'Refresh release contents',
         accelerator: 'Cmd+Shift+A',
         id: 'refresh-releases',
         click: controllers.release.refreshCurrentArtistReleases,
       },
       {
-        label: 'Import missing Covers',
+        label: 'Import missing covers',
         accelerator: 'Cmd+Shift+C',
         click: () => controllers.release.importMissingCovers(state.getCurrentArtist().releases)
       },
