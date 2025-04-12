@@ -1,4 +1,4 @@
-import { existsSync, move } from 'fs-extra';
+import { existsSync, move, unlink } from 'fs-extra';
 import path from 'path';
 import prisma from "../db/prisma";
 import { dialog } from 'electron';
@@ -289,6 +289,13 @@ export function releaseController({
     await importCovers(releasesWithoutCover);
   }
 
+  async function deleteCover(release: ReleaseWithArtist) {
+    const cover = withPath('COVERS_PATH', `${release.hash}-cover.jpg`);
+    await unlink(cover);
+    send('coverUpdate', [release]);
+    return true;
+  }
+
   async function refreshReleaseContents(id: number) {
     const release = await prisma.release.findFirst({
       where: { id },
@@ -372,6 +379,7 @@ export function releaseController({
     downloadCover,
     importCovers,
     importMissingCovers,
+    deleteCover,
     refreshReleaseContents,
     refreshCurrentArtistReleases,
     ungroupSelectedRelease,
@@ -393,6 +401,7 @@ export const actions = [
   'downloadCover',
   'importCovers',
   'importMissingCovers',
+  'deleteCover',
   'refreshReleaseContents',
   'refreshCurrentArtistReleases',
   'ungroupSelectedRelease',

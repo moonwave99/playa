@@ -78,6 +78,10 @@ export const releaseMenu = ({ controllers, send }: MenuParams) => async (
         click: () => controllers.release.importCovers([release]),
       },
       {
+        label: `Delete Release Cover`,
+        click: () => controllers.release.deleteCover(release),
+      },
+      {
         label: 'Refresh Folder Contents',
         click: async () => {
           await controllers.release.refreshReleaseContents(release.id);

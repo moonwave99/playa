@@ -333,7 +333,7 @@ describe('release - editRelease function', () => {
 });
 
 describe('importCovers function', () => {
-  it.only('searches the covers of the given releases and returns those with positive results', async () => {
+  it('searches the covers of the given releases and returns those with positive results', async () => {
     {
       const send = vi.fn();
       const { importCovers } = releaseController({ ...defaultParams, send });
@@ -378,7 +378,26 @@ describe('importMissingCovers function', () => {
   });
 });
 
-describe('release = downloadCover function', () => {
+describe('deleteCover function', () => {
+  it('deletes the coves of the given release', async (context) => {
+    const directory = await mockFs({
+      'COVERS_PATH/e6ff3253fb407e5f-cover.jpg': '',
+    }, context.task.id);
+    const send = vi.fn();
+    const { deleteCover } = releaseController({
+      ...defaultParams,
+      send,
+      withPath: (key, folderPath) => path.join(directory, key, folderPath),
+    });
+
+    const release = getFakeRelease(1);
+    await deleteCover(release);
+    expect(send).toHaveBeenCalledWith('coverUpdate', [release]);
+    expect(existsSync(withPath('COVERS_PATH', 'e6ff3253fb407e5f-cover.jpg'))).toBe(false);
+  });
+});
+
+describe('downloadCover function', () => {
   it('does nothing is no release if found', async () => {
     const { downloadCover } = releaseController(defaultParams);
     prisma.release.findFirst.mockResolvedValue(null);
