@@ -6,6 +6,12 @@ import type {
   ReleaseWithArtistAndTracksAndSubreleases, ReleaseWithArtistAndTracksAndSubreleasesAndCollections
 } from "@/types/types";
 
+type UseReleaseParams = {
+  id: number;
+  refreshOnLoad?: boolean;
+  selectOnLoad?: boolean;
+};
+
 type UseRelease = {
   isPending: boolean;
   error: Error;
@@ -13,7 +19,11 @@ type UseRelease = {
   selectedTrackId: number;
 };
 
-export default function useRelease(id: number): UseRelease {
+export default function useRelease({
+  id,
+  refreshOnLoad,
+  selectOnLoad
+}: UseReleaseParams): UseRelease {
   const firstRefresh = useRef(true);
   const [params] = useSearchParams();
 
@@ -23,13 +33,19 @@ export default function useRelease(id: number): UseRelease {
   });
 
   useEffect(() => {
+    if (!selectOnLoad) {
+      return;
+    }
     api.state.selectReleases([release]);
-    if (!firstRefresh.current || !release || hasTracks(release)) {
+  }, [release, selectOnLoad])
+
+  useEffect(() => {
+    if (!refreshOnLoad || !firstRefresh.current || !release || hasTracks(release)) {
       return;
     }
     firstRefresh.current = false;
     api.release.refreshReleaseContents(release.id).then(() => refetch());
-  }, [release]);
+  }, [release, refreshOnLoad]);
 
   return {
     release,

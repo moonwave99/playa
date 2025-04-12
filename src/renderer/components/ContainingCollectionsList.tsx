@@ -13,7 +13,7 @@ export default function ContainingCollectionsList({
     useDarkText,
     prependSeparator,
 }: ContainingCollectionsListProps) {
-    const { release } = useRelease(id);
+    const { release } = useRelease({ id });
     if (!release?.collections.length) {
         return null;
     }

@@ -10,7 +10,11 @@ import styles from "./Page.module.css";
 export default function ReleasePage() {
     const { id } = useParams();
 
-    const { isPending, error, release, selectedTrackId } = useRelease(+id);
+    const { isPending, error, release, selectedTrackId } = useRelease({
+        id: +id,
+        selectOnLoad: true,
+        refreshOnLoad: true,
+    });
 
     if (isPending) {
         return <Loading />;
