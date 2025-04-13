@@ -14,7 +14,8 @@ function getAddToGroupEntry(artist: Artist, groups: GroupWithArtists[], { contro
           await controllers.group.addArtistsToGroup(id, [artist]);
           send('mutate', [
             ['groups', 'latest'],
-            ['groups', id]
+            ['groups', id],
+            ['artists', artist.id]
           ]);
         }
       }))
@@ -25,8 +26,8 @@ function getRemoveFromGroupEntry(artist: Artist, group: Group, { controllers, se
   return {
     label: 'Remove Artist from Group',
     click: async () => {
-      await controllers.group.removeArtistsFromGroup(group.id, [artist]);
-      send('mutate', [['groups', group.id]]);
+      await controllers.group.removeArtistsFromGroup(group.id, [artist.id]);
+      send('mutate', [['groups', group.id], ['artists', artist.id]]);
       send('clearSelection');
     }
   }

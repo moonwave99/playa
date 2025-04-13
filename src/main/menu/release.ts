@@ -15,7 +15,8 @@ function getAddToCollectionEntry(selection: Release[], collections: CollectionWi
           await controllers.collection.addReleasesToCollection(id, selection);
           send('mutate', [
             ['collections', 'latest'],
-            ['collections', id]
+            ['collections', id],
+            ['releases', selection[0].id]
           ]);
         }
       }))
@@ -27,7 +28,10 @@ function getRemoveFromCollectionEntry(selection: Release[], collection: Collecti
     label: `Remove ${selection.length} Release(s) from Collection`,
     click: async () => {
       await controllers.collection.removeReleasesFromCollection(collection.id, selection.map(x => x.id));
-      send('mutate', [['collections', collection.id]]);
+      send('mutate', [
+        ['collections', collection.id],
+        ...selection.map(x => ['releases', x.id])
+      ]);
       send('clearSelection');
     }
   }
