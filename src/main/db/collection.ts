@@ -117,17 +117,18 @@ export async function addReleasesToCollection(id: number, releases: Release[]) {
   return withEntityType(result, 'collection');
 }
 
-export async function removeReleasesFromCollection(id: number, releases: Release[]) {
+export async function removeReleasesFromCollection(id: number, release_ids: number[]) {
   let result = await prisma.collection.update({
     where: {
       id
     },
     data: {
       releases: {
-        disconnect: releases.map(({ id }) => ({ id }))
+        disconnect: release_ids.map(id => ({ id }))
       }
     },
     include: {
+      coverReleaseId: true,
       releases: {
         select: {
           id: true
@@ -135,7 +136,7 @@ export async function removeReleasesFromCollection(id: number, releases: Release
       }
     }
   });
-  if (!result.releases.length) {
+  if (release_ids.includes(result.coverReleaseId)) {
     result = await prisma.collection.update({
       where: { id },
       data: {

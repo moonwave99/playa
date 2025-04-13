@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { CollectionWithReleases, HasId } from "@/types/types";
+import type { CollectionWithReleases, Release } from "@/types/types";
 import api from '../api';
 
 type UseCollection = {
@@ -7,12 +7,12 @@ type UseCollection = {
   error: Error;
   collection: CollectionWithReleases;
   updateTitle: (title: string) => void;
-  deleteReleasesFromCollection: (releases: HasId[]) => void;
+  removeReleasesFromCollection: (releases: Release[]) => void;
 };
 
 export default function useCollection(id: number): UseCollection {
   const queryClient = useQueryClient();
-  const { isPending, error, data: collection } = useQuery({
+  const { isPending, error, data: collection } = useQuery<CollectionWithReleases>({
     queryKey: ["collections", id],
     queryFn: () => api.collection.getCollection(id),
   });
@@ -28,28 +28,14 @@ export default function useCollection(id: number): UseCollection {
   const updateTitle = useMutation({
     mutationFn: (title: string) => api.collection.updateCollection(id, {
       title,
-      releases: collection.releases.map(({ id }: HasId) => id),
+      releases: collection.releases.map(x => x.id),
     }),
     onSuccess
   });
 
-  const deleteReleasesFromCollection = useMutation({
-    mutationFn: async (releases: HasId[]) => {
-      if (
-        !window.confirm(
-          `Are you sure to remove ${releases.length} Releases from Collection?`
-        )
-      ) {
-        return;
-      }
-      const ids = releases.map(({ id }) => id);
-      return api.collection.updateCollection(id, {
-        title: collection.title,
-        releases: collection.releases
-          .map(({ id }: HasId) => id)
-          .filter((id: number) => !ids.includes(id)),
-      });
-    },
+  const removeReleasesFromCollection = useMutation({
+    mutationFn: async (releases: Release[]) =>
+      api.collection.removeReleasesFromCollection(id, releases.map(x => x.id)),
     onSuccess
   });
 
@@ -58,6 +44,6 @@ export default function useCollection(id: number): UseCollection {
     isPending,
     error,
     updateTitle: updateTitle.mutate,
-    deleteReleasesFromCollection: deleteReleasesFromCollection.mutate
+    removeReleasesFromCollection: removeReleasesFromCollection.mutate
   }
 }

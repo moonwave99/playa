@@ -32,7 +32,7 @@ export default function GroupPage() {
     const { id } = useParams();
     const [searchParams] = useSearchParams();
     const { setContext } = useKeyManager();
-    const { group, isPending, error, updateTitle, deleteArtistsFromGroup } =
+    const { group, isPending, error, updateTitle, removeArtistsFromGroup } =
         useGroup(+id);
 
     useClearSelectionOnLeave();
@@ -53,7 +53,7 @@ export default function GroupPage() {
         if (!event.metaKey) {
             return;
         }
-        deleteArtistsFromGroup(selection);
+        removeArtistsFromGroup(selection);
     }
 
     return (

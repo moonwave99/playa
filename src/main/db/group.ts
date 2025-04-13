@@ -147,15 +147,16 @@ export async function addArtistsToGroup(id: number, artists: Artist[]) {
   return withEntityType(result, 'group');
 }
 
-export async function removeArtistsFromGroup(id: number, artists: Artist[]) {
+export async function removeArtistsFromGroup(id: number, artist_ids: number[]) {
   let result = await prisma.group.update({
     where: { id },
     data: {
       artists: {
-        disconnect: artists.map(({ id }) => ({ id }))
+        disconnect: artist_ids.map(id => ({ id }))
       }
     },
     include: {
+      coverArtistId: true,
       artists: {
         select: {
           id: true
@@ -164,7 +165,7 @@ export async function removeArtistsFromGroup(id: number, artists: Artist[]) {
     }
   });
 
-  if (!result.artists.length) {
+  if (artist_ids.includes(result.coverArtistId)) {
     result = await prisma.group.update({
       where: { id },
       data: {

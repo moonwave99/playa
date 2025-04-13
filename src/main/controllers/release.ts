@@ -3,7 +3,14 @@ import path from 'path';
 import prisma from "../db/prisma";
 import { dialog } from 'electron';
 import { globby } from 'globby';
-import { ArtistWithReleases, CollectionWithReleases, EditReleaseParam, ReleaseWithArtist, ReleaseWithArtistAndTracks } from "@/types/types";
+import {
+  ArtistWithReleases,
+  CollectionWithReleases,
+  EditReleaseParam,
+  ReleaseWithArtist,
+  ReleaseWithArtistAndTracks,
+  Context,
+} from "@/types/types";
 import { didReleaseInfoChange, mapSeries } from '@/lib/utils';
 import {
   getRelease,
@@ -12,7 +19,6 @@ import {
   groupReleases,
   unGroupRelease,
   deleteRelease,
-  deleteReleases,
   addTracksToRelease
 } from '../db/release';
 import { getArtist } from '../db/artist';
@@ -296,7 +302,7 @@ export function releaseController({
     return true;
   }
 
-  async function refreshReleaseContents(id: number) {
+  async function refreshReleaseContents(id: number, context?: Context) {
     const release = await prisma.release.findFirst({
       where: { id },
       include: { artist: true, subReleases: { include: { artist: true } } }
@@ -306,10 +312,17 @@ export function releaseController({
       return false;
     }
 
-    return await Promise.all([release, ...release.subReleases].map(async (release) => {
+    const updatedRelease = await Promise.all([release, ...release.subReleases].map(async (release) => {
       const tracks = await getFolderContents(release, getSetting('LIBRARY_PATH') as string);
       return addTracksToRelease(release.id, tracks);
     }));
+
+    send('mutate', [
+      ['releases', release.id],
+      [`${context?._type}s`, context?.id]
+    ]);
+
+    return updatedRelease;
   }
 
   async function refreshCurrentArtistReleases() {
@@ -364,6 +377,27 @@ export function releaseController({
       ['releases', 'latest'],
       ...releases.flat().map(x => (['artists', x.artist_id]))
     ]);
+  }
+
+  async function deleteReleases(release_ids: number[]) {
+    const cancel = dialog.showMessageBoxSync(null, {
+      message: `Are you sure to delete ${release_ids.length} Releases from library?`,
+      detail: 'This action is not reversible!',
+      type: 'warning',
+      buttons: ['OK', 'Cancel'],
+      defaultId: 1,
+    });
+
+    if (cancel) {
+      return;
+    }
+
+    await Promise.all(release_ids.map(deleteRelease));
+    send('mutate', [
+      ['releases', 'latest'],
+      ...release_ids.map(id => ['releases', id])
+    ]);
+    send('clearSelection');
   }
 
   return {

@@ -7,7 +7,7 @@ type UseGroup = {
   error: Error;
   group: GroupWithArtists;
   updateTitle: (title: string) => void;
-  deleteArtistsFromGroup: (artists: HasId[]) => void;
+  removeArtistsFromGroup: (artists: HasId[]) => void;
 };
 
 export default function useGroup(id: number): UseGroup {
@@ -33,7 +33,7 @@ export default function useGroup(id: number): UseGroup {
     onSuccess
   });
 
-  const deleteArtistsFromGroup = useMutation({
+  const removeArtistsFromGroup = useMutation({
     mutationFn: async (artists: HasId[]) => {
       if (
         !window.confirm(
@@ -58,6 +58,6 @@ export default function useGroup(id: number): UseGroup {
     isPending,
     error,
     updateTitle: updateTitle.mutate,
-    deleteArtistsFromGroup: deleteArtistsFromGroup.mutate
+    removeArtistsFromGroup: removeArtistsFromGroup.mutate
   }
 }

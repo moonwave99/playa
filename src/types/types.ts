@@ -153,3 +153,5 @@ export type MenuParams = {
   controllers: Controllers;
   send: typeof send;
 };
+
+export type Context = CollectionWithReleases | ArtistWithReleases | GroupWithArtists;

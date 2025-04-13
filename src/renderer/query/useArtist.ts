@@ -26,16 +26,7 @@ export default function useArtist(id: number): UseArtist {
   }
 
   const deleteReleases = useMutation({
-    mutationFn: (release_ids: number[]) => {
-      if (
-        !window.confirm(
-          `Are you sure to remove ${release_ids.length} Releases from Library?`
-        )
-      ) {
-        return;
-      }
-      return api.release.deleteReleases(release_ids);
-    },
+    mutationFn: api.release.deleteReleases,
     onSuccess
   });
 

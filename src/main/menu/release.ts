@@ -26,7 +26,7 @@ function getRemoveFromCollectionEntry(selection: Release[], collection: Collecti
   return {
     label: `Remove ${selection.length} Release(s) from Collection`,
     click: async () => {
-      await controllers.collection.removeReleasesFromCollection(collection.id, selection);
+      await controllers.collection.removeReleasesFromCollection(collection.id, selection.map(x => x.id));
       send('mutate', [['collections', collection.id]]);
       send('clearSelection');
     }
@@ -83,13 +83,7 @@ export const releaseMenu = ({ controllers, send }: MenuParams) => async (
       },
       {
         label: 'Refresh Folder Contents',
-        click: async () => {
-          await controllers.release.refreshReleaseContents(release.id);
-          send('mutate', [
-            ['releases', release.id],
-            [`${context?._type}s`, context?.id]
-          ]);
-        }
+        click: () => controllers.release.refreshReleaseContents(release.id)
       },
       {
         id: 'editRelease',
@@ -157,17 +151,10 @@ export const releaseMenu = ({ controllers, send }: MenuParams) => async (
     context?._type === 'collection'
       ? getRemoveFromCollectionEntry(selection, context as CollectionWithReleases, { controllers, send })
       : { type: 'separator' },
-    getDeleteEntry({
-      title: `${selection.length} Releases`,
-      deleteFn: () => Promise.all(selection.map(({ id }) => controllers.release.deleteRelease(id))),
-      queryKeys: [
-        ['releases', 'latest'],
-        ...selection.flatMap(({ id, artist }) => ([
-          ['releases', id],
-          ['artists', artist.id]
-        ]))
-      ]
-    }),
+    {
+      label: `${selection.length} Releases`,
+      click: () => controllers.release.deleteReleases(selection.map(x => x.id))
+    },
   ]);
   return true;
 }

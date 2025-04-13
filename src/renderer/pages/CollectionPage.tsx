@@ -19,7 +19,7 @@ export default function CollectionPage() {
         isPending,
         error,
         updateTitle,
-        deleteReleasesFromCollection,
+        removeReleasesFromCollection,
     } = useCollection(+id);
 
     useClearSelectionOnLeave();
@@ -64,7 +64,7 @@ export default function CollectionPage() {
                 ) : (
                     <ReleaseList
                         releases={collection.releases}
-                        onDelete={deleteReleasesFromCollection}
+                        onDelete={removeReleasesFromCollection}
                         onContextMenu={onContextMenu}
                         className={styles.list}
                     />

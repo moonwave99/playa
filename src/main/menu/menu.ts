@@ -1,6 +1,6 @@
 import { Menu, MenuItem, dialog } from 'electron';
 import type { MenuItemConstructorOptions } from 'electron';
-import type { Entities, CollectionWithReleases, ArtistWithReleases, GroupWithArtists } from '@/types/types';
+import type { Context, Entities, } from '@/types/types';
 import type { QueryKey } from '@tanstack/react-query';
 import { getArtistLink, getRandomLink } from '@/lib/links';
 import { getStats } from '../db/stats';
@@ -32,11 +32,11 @@ export function buildMenu(params: (MenuItemConstructorOptions | MenuItem)[]) {
 
 type GetCoverEntityEntry = {
   selection_id: number;
-  context: CollectionWithReleases | ArtistWithReleases | GroupWithArtists;
+  context: Context;
   controllers: Controllers;
 };
 
-function shouldDisplayCoverEntityEntry(context: GetCoverEntityEntry["context"]) {
+function shouldDisplayCoverEntityEntry(context: Context) {
   if (!context) {
     return false;
   }
@@ -46,7 +46,9 @@ function shouldDisplayCoverEntityEntry(context: GetCoverEntityEntry["context"]) 
   return context?.releases.length > 1;
 }
 
-export function getCoverEntityEntry({ selection_id, context, controllers }: GetCoverEntityEntry): MenuItemConstructorOptions {
+export function getCoverEntityEntry(
+  { selection_id, context, controllers }: GetCoverEntityEntry
+): MenuItemConstructorOptions {
   if (!shouldDisplayCoverEntityEntry(context)) {
     return { type: 'separator' };
   }
