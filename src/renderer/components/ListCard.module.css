@@ -95,7 +95,8 @@
     font-size: 1.2rem;
   }
 
-  .cover {
+  .cover,
+  .ghost {
     width: var(--release-tracklist-single-cover-size);
     height: var(--release-tracklist-single-cover-size);
   }
