@@ -1,0 +1,49 @@
+.CoverLightbox {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.title {
+  font-size: 1rem;
+  line-height: 2rem;
+  font-weight: 300;
+}
+
+.cover {
+  box-shadow: rgba(61, 61, 61, 0.15) 1.95px 1.95px 2.6px;
+  border: .5px solid var(--tertiary-color);
+}
+
+.button {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  --width: 3rem;
+  z-index: 1000;
+  width: var(--width);
+  appearance: none;
+  border: none;
+  background-color: transparent;
+  font-size: 3rem;
+  color: var(--primary-color);
+  transition: color .2s ease-in-out;
+
+  &:hover {
+    color: var(--accent-color);
+  }
+
+  &:focus {
+    outline-color: var(--accent-color);
+  }
+
+  &.prev {
+    left: calc(-1* var(--width));
+  }
+
+  &.next {
+    right: calc(-1*var(--width));
+  }
+}

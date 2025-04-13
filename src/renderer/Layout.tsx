@@ -72,6 +72,9 @@ function getModalOverrides(name: string) {
     if (name === "lightbox") {
         return {
             width: "min(70vw, 80vh)",
+            overflow: "visible",
+            border: "none",
+            background: "transparent",
         };
     }
     return {};
@@ -227,8 +230,14 @@ export default function Layout() {
                     {modalContents?.name === "lightbox" && (
                         <CoverLightbox
                             onClose={closeModal}
-                            release={modalContents.params.release as Release}
-                            context={modalContents.params.context as Release[]}
+                            release={
+                                modalContents.params
+                                    .release as ReleaseWithArtist
+                            }
+                            context={
+                                modalContents.params
+                                    .context as ReleaseWithArtist[]
+                            }
                         />
                     )}
                 </Modal>
