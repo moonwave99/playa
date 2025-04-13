@@ -4,7 +4,6 @@ import prisma from '../db/__mocks__/prisma';
 import { HasId, ReleaseWithArtistAndTracksAndSubreleases } from "@/types/types";
 
 vi.mock('../db/prisma');
-vi
 
 const collections = Array.from({ length: 55 }, (_, i) => getFakeCollection(i + 1));
 
