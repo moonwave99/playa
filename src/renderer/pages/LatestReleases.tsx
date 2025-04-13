@@ -87,7 +87,10 @@ export default function LatestReleases() {
                             (_event: KeyboardEvent, selection: Release[]) => {
                                 setModalContents({
                                     name: "lightbox",
-                                    params: { release: selection[0] },
+                                    params: {
+                                        release: selection[0],
+                                        context: releases,
+                                    },
                                 });
                             }
                         ),

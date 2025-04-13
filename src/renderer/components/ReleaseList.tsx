@@ -146,7 +146,10 @@ export default function ReleaseList({
                     (_event: KeyboardEvent, selection: Release[]) => {
                         setModalContents({
                             name: "lightbox",
-                            params: { release: selection[0] },
+                            params: {
+                                release: selection[0],
+                                context: releases,
+                            },
                         });
                     }
                 ),

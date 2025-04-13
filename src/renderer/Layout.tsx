@@ -228,6 +228,7 @@ export default function Layout() {
                         <CoverLightbox
                             onClose={closeModal}
                             release={modalContents.params.release as Release}
+                            context={modalContents.params.context as Release[]}
                         />
                     )}
                 </Modal>
