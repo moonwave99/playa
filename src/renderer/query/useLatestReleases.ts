@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { ReleaseWithArtistAndSubreleases } from "@/types/types";
 import api from '../api';
 
@@ -9,11 +9,13 @@ type UseLatestReleases = {
   isFetchingNextPage: boolean;
   hasNextPage: boolean;
   fetchNextPage: () => void;
+  hideRelease: (release_id: number) => void;
 };
 
 const pageSize = 50;
 
 export default function useLatestReleases(): UseLatestReleases {
+  const queryClient = useQueryClient();
   const {
     data,
     error,
@@ -32,12 +34,19 @@ export default function useLatestReleases(): UseLatestReleases {
     initialPageParam: 0,
   });
 
+
+  const hideRelease = useMutation({
+    mutationFn: (release_id: number) => api.release.hideRelease(release_id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["releases", "latest"] }),
+  });
+
   return {
     releases: data ? data.pages.flatMap((page) => page.results) : [],
     isPending,
     error,
     isFetchingNextPage,
     hasNextPage,
-    fetchNextPage
+    fetchNextPage,
+    hideRelease: hideRelease.mutate
   }
 }

@@ -19,7 +19,8 @@ import {
   groupReleases,
   unGroupRelease,
   deleteRelease,
-  addTracksToRelease
+  addTracksToRelease,
+  hideRelease
 } from '../db/release';
 import { getArtist } from '../db/artist';
 import {
@@ -423,7 +424,8 @@ export function releaseController({
     refreshCurrentArtistReleases,
     ungroupSelectedRelease,
     importFolderFromDialog,
-    refreshEntityRelease
+    refreshEntityRelease,
+    hideRelease
   };
 }
 
@@ -445,5 +447,6 @@ export const actions = [
   'refreshCurrentArtistReleases',
   'ungroupSelectedRelease',
   'importFolderFromDialog',
-  'refreshEntityRelease'
+  'refreshEntityRelease',
+  'hideRelease'
 ];

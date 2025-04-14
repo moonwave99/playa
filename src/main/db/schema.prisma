@@ -37,6 +37,7 @@ model Release {
   year             Int?
   discTitle        String?      @db.VarChar(255)
   discNumber       Int?         @default(1)
+  hideOnHomepage   Boolean?     @default(false)
   artist_id        Int
   artist           Artist       @relation(fields: [artist_id], references: [id])
   tracks           Track[]

@@ -34,6 +34,7 @@ export default function LatestReleases() {
         isFetchingNextPage,
         hasNextPage,
         fetchNextPage,
+        hideRelease,
     } = useLatestReleases();
 
     useClearSelectionOnLeave();
@@ -56,6 +57,20 @@ export default function LatestReleases() {
         }
         navigate(getReleaseLink(release));
     }
+
+    const keyHandlers = {
+        h: (_event: KeyboardEvent, selection: Release[]) =>
+            hideRelease(selection[0].id),
+        " ": withPrevent((_event: KeyboardEvent, selection: Release[]) => {
+            setModalContents({
+                name: "lightbox",
+                params: {
+                    release: selection[0],
+                    context: releases,
+                },
+            });
+        }),
+    };
 
     return (
         <div className={styles.page}>
@@ -82,19 +97,7 @@ export default function LatestReleases() {
                             selection.map((index) => releases[index])
                         )
                     }
-                    keyHandlers={{
-                        " ": withPrevent(
-                            (_event: KeyboardEvent, selection: Release[]) => {
-                                setModalContents({
-                                    name: "lightbox",
-                                    params: {
-                                        release: selection[0],
-                                        context: releases,
-                                    },
-                                });
-                            }
-                        ),
-                    }}
+                    keyHandlers={keyHandlers}
                     render={({ item, selection, ...rest }) => (
                         <ReleaseView
                             {...rest}

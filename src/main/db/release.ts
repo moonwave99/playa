@@ -181,7 +181,8 @@ export async function getLatestReleases(
             orderBy: { createdAt: "desc" },
             include: { artist: true, subReleases: true, mainRelease: true },
             where: {
-                mainRelease: null
+                mainRelease: null,
+                hideOnHomepage: false
             }
         }),
         prisma.release.count()
@@ -207,4 +208,13 @@ export async function updateReleases(infos: RenameReleaseParam) {
             data: { title, path, hash, discTitle, discNumber, type, year }
         }))
     );
+}
+
+export async function hideRelease(id: number) {
+    return prisma.release.update({
+        where: { id },
+        data: {
+            hideOnHomepage: true
+        }
+    });
 }
