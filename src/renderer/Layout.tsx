@@ -109,7 +109,9 @@ export default function Layout() {
         useDarkText,
         toggleSidebar,
         modalContents,
+        clearModalContents,
         closeModal,
+        isModalOpen,
         setContext,
         isDetailPage,
         onDragStart,
@@ -179,7 +181,8 @@ export default function Layout() {
                     </main>
                 </div>
                 <Modal
-                    isOpen={!!modalContents}
+                    closeTimeoutMS={300}
+                    isOpen={isModalOpen}
                     onRequestClose={closeModal}
                     style={getModalStyle(modalContents?.name)}
                     onAfterOpen={() => {
@@ -189,6 +192,7 @@ export default function Layout() {
                     onAfterClose={() => {
                         api.state.setInputFocused(false);
                         setContext("list");
+                        clearModalContents();
                     }}
                 >
                     {modalContents?.name === "settings" && (
@@ -253,7 +257,9 @@ type Init = {
     showSidebar: boolean;
     useDarkText: boolean;
     modalContents: ModalContents;
+    isModalOpen: boolean;
     closeModal: () => void;
+    clearModalContents: () => void;
     setContext: (context: string) => void;
     toggleSidebar: () => void;
     isDetailPage: boolean;
@@ -284,6 +290,7 @@ function init(): Init {
     });
 
     const [draggedItem, setDraggedItem] = useState<Artist | Release>(null);
+    const [isModalOpen, setModalOpen] = useState(false);
 
     useEffect(() => {
         if (isSmallScreen) {
@@ -378,7 +385,15 @@ function init(): Init {
         };
     }, []);
 
+    useEffect(() => {
+        setModalOpen(!!modalContents);
+    }, [modalContents]);
+
     function closeModal() {
+        setModalOpen(false);
+    }
+
+    function clearModalContents() {
         setModalContents(null);
     }
 
@@ -397,7 +412,9 @@ function init(): Init {
         toggleSidebar,
         draggedItem,
         modalContents,
+        isModalOpen,
         closeModal,
+        clearModalContents,
         setContext,
         isDetailPage,
         onDragStart,
