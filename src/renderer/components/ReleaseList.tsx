@@ -5,8 +5,10 @@ import type {
     ReleaseWithArtistAndTracksAndSubreleases,
     ViewMode,
 } from "@/types/types";
+import type { ScrollToOptions } from "@tanstack/react-virtual";
 import { releaseColumnsConfig } from "../hooks/useResponsiveColumns";
 import { useKeyManager, withPrevent } from "../hooks/useKeyboardManager";
+import useStore from "../store";
 import api from "../api";
 import { getReleaseLink } from "@/lib/links";
 import {
@@ -17,7 +19,6 @@ import ReleaseView from "./ReleaseView";
 import ReleaseWithTracklistView from "./ReleaseWithTracklistView";
 import List, { type RenderParams, type ListKeyHandler } from "./List";
 import ListCard from "./ListCard";
-import useStore from "../store";
 import cx from "clsx";
 import styles from "./ReleaseList.module.css";
 
@@ -82,7 +83,7 @@ export default function ReleaseList({
         }
         if (viewMode === "list") {
             return {
-                scrollBehavior: { align: "start" },
+                scrollBehavior: { align: "start" } as ScrollToOptions,
                 estimateSize: (_: number, index: number) => ({
                     width: "100%",
                     height: getReleaseWithTracklistHeight(releases[index]),
