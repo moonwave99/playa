@@ -77,4 +77,10 @@ export class StateManager {
     }
     this.handler(this.state);
   }
+  async refreshCurrentArtist() {
+    if (!this.state.currentArtist?.id) {
+      return;
+    }
+    this.setCurrentArtist(await getArtist(this.state.currentArtist.id));
+  }
 }

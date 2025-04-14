@@ -59,6 +59,7 @@ contextBridge.exposeInMainWorld('api', {
     selectReleases: (selection: ReleaseWithArtistAndSubreleases[]) => ipc.send('state:selectReleases', selection),
     navigate: (path: string) => ipc.send('state:navigate', path),
     clearSelection: () => ipc.send('state:clearSelection'),
+    refreshCurrentArtist: () => ipc.send('state:refreshCurrentArtist'),
     toggleSidebar: (showSidebar?: boolean) => ipc.send('state:toggleSidebar', showSidebar),
     refreshMenu: () => ipc.send('state:refreshMenu'),
   },

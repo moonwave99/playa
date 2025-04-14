@@ -102,6 +102,7 @@ export default function EditReleasesView({
         ]);
 
         api.state.selectReleases([]);
+        api.state.refreshCurrentArtist();
         onSave();
     }
 

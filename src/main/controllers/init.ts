@@ -96,6 +96,7 @@ export function init(mainWindow: BrowserWindow) {
   ipc.on('state:clearSelection', () => send('clearSelection'));
   ipc.on('state:toggleSidebar', () => send('toggleSidebar'));
   ipc.on('state:refreshMenu', () => refreshMenu(state.getState()));
+  ipc.on('state:refreshCurrentArtist', () => state.refreshCurrentArtist());
 }
 
 function registerHandlers(entity: Record<string, (...args: unknown[]) => unknown>) {
