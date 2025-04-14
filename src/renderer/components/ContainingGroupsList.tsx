@@ -13,7 +13,7 @@ export default function ContainingGroupsList({
     useDarkText,
     prependSeparator,
 }: ContainingGroupsListProps) {
-    const { artist } = useArtist(id);
+    const { artist, removeFromGroup } = useArtist(id);
     if (!artist?.groups.length) {
         return null;
     }
@@ -24,6 +24,7 @@ export default function ContainingGroupsList({
                 items={artist.groups}
                 label="Appears in:"
                 useDarkText={useDarkText}
+                onDelete={removeFromGroup}
             />
         </>
     );

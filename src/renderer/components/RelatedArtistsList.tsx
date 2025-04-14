@@ -10,7 +10,7 @@ export default function RelatedArtistsList({
     id,
     useDarkText,
 }: RelatedArtistsListProps) {
-    const { artist } = useArtist(id);
+    const { artist, removeRelatedArtist } = useArtist(id);
     if (!artist?.relatedArtists.length) {
         return null;
     }
@@ -19,6 +19,7 @@ export default function RelatedArtistsList({
             items={artist.relatedArtists}
             label="Related artists:"
             useDarkText={useDarkText}
+            onDelete={removeRelatedArtist}
         />
     );
 }

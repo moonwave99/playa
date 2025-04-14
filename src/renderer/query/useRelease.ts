@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from '../api';
 import type {
+  HasId,
   ReleaseWithArtistAndTracksAndSubreleases, ReleaseWithArtistAndTracksAndSubreleasesAndCollections
 } from "@/types/types";
 
@@ -18,6 +19,7 @@ type UseRelease = {
   release: ReleaseWithArtistAndTracksAndSubreleasesAndCollections;
   selectedTrackId: number;
   gotoArtistPage: () => void;
+  removeFromCollection: (collection_id: number) => void;
 };
 
 export default function useRelease({
@@ -26,6 +28,7 @@ export default function useRelease({
   selectOnLoad
 }: UseReleaseParams): UseRelease {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const firstRefresh = useRef(true);
   const [params] = useSearchParams();
 
@@ -53,12 +56,25 @@ export default function useRelease({
     navigate(`/artists/${release.artist.id}`);
   }
 
+  function onSuccess() {
+    [
+      ["releases", id],
+      ...release.collections.map((x: HasId) => ['collections', x.id]),
+    ].forEach(queryKey => queryClient.invalidateQueries({ queryKey }));
+  }
+
+  const removeFromCollection = useMutation({
+    mutationFn: (collection_id: number) => api.collection.removeReleasesFromCollection(collection_id, [id]),
+    onSuccess
+  });
+
   return {
     release,
     isPending,
     error,
     selectedTrackId: +params.get('track_id'),
-    gotoArtistPage
+    gotoArtistPage,
+    removeFromCollection: removeFromCollection.mutate
   }
 }
 

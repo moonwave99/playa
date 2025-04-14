@@ -13,7 +13,7 @@ export default function ContainingCollectionsList({
     useDarkText,
     prependSeparator,
 }: ContainingCollectionsListProps) {
-    const { release } = useRelease({ id });
+    const { release, removeFromCollection } = useRelease({ id });
     if (!release?.collections.length) {
         return null;
     }
@@ -24,6 +24,7 @@ export default function ContainingCollectionsList({
                 items={release.collections}
                 label="Appears in:"
                 useDarkText={useDarkText}
+                onDelete={removeFromCollection}
             />
         </>
     );

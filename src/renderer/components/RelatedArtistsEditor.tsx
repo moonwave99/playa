@@ -6,6 +6,7 @@ import cx from "clsx";
 import { MdRemoveCircle, MdAddCircle } from "react-icons/md";
 import styles from "./RelatedArtistsEditor.module.css";
 import formStyles from "../forms.module.css";
+import buttonStyles from "../buttons.module.css";
 import { capitalize } from "lodash";
 
 type RelatedArtistsEditorProps = {
@@ -107,7 +108,7 @@ function ArtistCard({ artist, type, onClick }: ArtistCardProps) {
     return (
         <article className={styles.ArtistCard}>
             <button
-                className={styles.ArtistCardButton}
+                className={buttonStyles.CornerActionButton}
                 onClick={onClick}
                 aria-label={`${capitalize(type)} related artist: ${name}`}
             >

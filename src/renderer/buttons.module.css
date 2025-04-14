@@ -29,3 +29,33 @@
     }
   }
 }
+
+.CornerActionButton {
+  --button-size: 1.5rem;
+  position: absolute;
+  top: calc(-1 * var(--button-size) / 2);
+  right: calc(-1 * var(--button-size) / 2);
+  width: var(--button-size);
+  height: var(--button-size);
+  font-size: calc(var(--button-size));
+  background-color: transparent;
+  border: none;
+  appearance: none;
+  z-index: 2;
+  color: var(--accent-color);
+  transition: scale .2s ease-in-out, opacity .2s ease-in-out;
+
+  svg {
+    border-radius: 50%;
+    border: 1px solid var(--secondary-color);
+  }
+
+  &:hover {
+    scale: 1.1;
+    opacity: .9;
+  }
+
+  &.mini {
+    --button-size: 1rem;
+  }
+}

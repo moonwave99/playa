@@ -156,7 +156,6 @@ export async function removeArtistsFromGroup(id: number, artist_ids: number[]) {
       }
     },
     include: {
-      coverArtistId: true,
       artists: {
         select: {
           id: true

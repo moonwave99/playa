@@ -344,7 +344,7 @@ export function releaseController({
       );
       send('mutate', ['artists', state.getCurrentArtist().id]);
     } catch (error) {
-      console.log('release:refreshCurrentArtistRelease]', error);
+      log('release:refreshCurrentArtistRelease]', error);
     }
     state.setImporting(false);
   }

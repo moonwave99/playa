@@ -40,7 +40,10 @@ export async function getRelease(id: number) {
             }
         },
     });
-    return result ? withEntityType(result, 'release') : null;
+    return result ? withEntityType({
+        ...result,
+        collections: withEntityType(result.collections, 'collection')
+    }, 'release') : null;
 }
 
 export async function deleteRelease(id: number) {

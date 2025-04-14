@@ -1,6 +1,6 @@
 import prisma from "./prisma";
 import { withEntityType } from "@/types/types";
-import type { CollectionCreate, CollectionUpdate, HasId, PaginationParams, Release } from '@/types/types';
+import type { CollectionCreate, CollectionUpdate, CollectionWithReleases, HasId, PaginationParams, Release } from '@/types/types';
 
 export async function getCollections({ take = 50 }: PaginationParams) {
   const results = await prisma.collection.findMany({
@@ -117,7 +117,7 @@ export async function addReleasesToCollection(id: number, releases: Release[]) {
   return withEntityType(result, 'collection');
 }
 
-export async function removeReleasesFromCollection(id: number, release_ids: number[]) {
+export async function removeReleasesFromCollection(id: number, release_ids: number[]): Promise<CollectionWithReleases> {
   let result = await prisma.collection.update({
     where: {
       id
@@ -128,7 +128,6 @@ export async function removeReleasesFromCollection(id: number, release_ids: numb
       }
     },
     include: {
-      coverReleaseId: true,
       releases: {
         select: {
           id: true

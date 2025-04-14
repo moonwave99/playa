@@ -4,6 +4,7 @@
   font-size: .8rem;
   font-weight: 300;
   color: var(--primary-color);
+  line-height: 1rem;
 
   &.useDarkText {
     color: black;
@@ -14,17 +15,33 @@
     display: flex;
     gap: .25rem;
 
-    li a {
-      font-weight: 700;
-      letter-spacing: -.035rem;
+    li {
+      display: flex;
+      align-items: center;
 
-      &:hover {
-        text-decoration: underline;
+      .CornerActionButton {
+        display: none;
+        position: static;
+        color: var(--secondary-color);
+        margin: 0 .25rem;
       }
-    }
 
-    li:not(:last-child)::after {
-      content: ',';
+      &:hover .CornerActionButton {
+        display: initial;
+      }
+
+      &:not(:last-child)::after {
+        content: ',';
+      }
+
+      a {
+        font-weight: 700;
+        letter-spacing: -.035rem;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
     }
   }
 }
