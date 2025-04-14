@@ -104,4 +104,8 @@ dump/
 # Test artifacts
 src/test/__mock-fs__
 
+# Discogs API debug output
 discogs/
+
+# Logger config
+logger.json
