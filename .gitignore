@@ -108,4 +108,4 @@ src/test/__mock-fs__
 discogs/
 
 # Logger config
-logger.json
+loggerConfig.json
