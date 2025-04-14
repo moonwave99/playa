@@ -4,6 +4,7 @@ import path from 'node:path';
 import started from 'electron-squirrel-startup';
 import { getSetting } from './settings';
 import { init } from './controllers/init';
+import { log } from './logger';
 
 if (started) {
   app.quit();
@@ -47,13 +48,10 @@ async function createWindow() {
   protocol.handle(customProtocol, async ({ url }) => {
     const { hostname } = new URL(url);
     try {
-      const response = await net.fetch(`file://${path.join(COVERS_PATH, hostname)}`);
-      return response;
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      return await net.fetch(`file://${path.join(COVERS_PATH, hostname)}`);
     } catch (error) {
-      if (process.env.LOG_COVER_ERRORS) {
-        console.log('cover not found:', url);
-      }
+      log('covers', 'cover not found:', url);
+      log('covers', error);
     }
   });
 

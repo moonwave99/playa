@@ -82,6 +82,7 @@ export default function ReleaseList({
         }
         if (viewMode === "list") {
             return {
+                scrollBehavior: { align: "start" },
                 estimateSize: (_: number, index: number) => ({
                     width: "100%",
                     height: getReleaseWithTracklistHeight(releases[index]),
@@ -138,7 +139,6 @@ export default function ReleaseList({
                     selection.map((index) => releases[index])
                 )
             }
-            scrollBehavior={{ align: "start" }}
             {...getListConfig(viewMode)}
             keyHandlers={{
                 ...keyHandlers,

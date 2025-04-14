@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useSearchParams } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 import { useQuery } from "@tanstack/react-query";
 import api from '../api';
 import type {
@@ -17,6 +17,7 @@ type UseRelease = {
   error: Error;
   release: ReleaseWithArtistAndTracksAndSubreleasesAndCollections;
   selectedTrackId: number;
+  gotoArtistPage: () => void;
 };
 
 export default function useRelease({
@@ -24,6 +25,7 @@ export default function useRelease({
   refreshOnLoad,
   selectOnLoad
 }: UseReleaseParams): UseRelease {
+  const navigate = useNavigate();
   const firstRefresh = useRef(true);
   const [params] = useSearchParams();
 
@@ -47,11 +49,16 @@ export default function useRelease({
     api.release.refreshReleaseContents(release.id).then(() => refetch());
   }, [release, refreshOnLoad]);
 
+  function gotoArtistPage() {
+    navigate(`/artists/${release.artist.id}`);
+  }
+
   return {
     release,
     isPending,
     error,
-    selectedTrackId: +params.get('track_id')
+    selectedTrackId: +params.get('track_id'),
+    gotoArtistPage
   }
 }
 

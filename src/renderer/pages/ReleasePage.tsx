@@ -1,5 +1,6 @@
 import { Navigate, useParams } from "react-router";
 import useRelease from "@/renderer/query/useRelease";
+import { useKeyManager } from "../hooks/useKeyboardManager";
 import api from "../api";
 import ReleaseWithTracklistView from "@/renderer/components/ReleaseWithTracklistView";
 import ErrorView from "../components/ErrorView";
@@ -10,10 +11,18 @@ import styles from "./Page.module.css";
 export default function ReleasePage() {
     const { id } = useParams();
 
-    const { isPending, error, release, selectedTrackId } = useRelease({
-        id: +id,
-        selectOnLoad: true,
-        refreshOnLoad: true,
+    const { isPending, error, release, selectedTrackId, gotoArtistPage } =
+        useRelease({
+            id: +id,
+            selectOnLoad: true,
+            refreshOnLoad: true,
+        });
+
+    useKeyManager({
+        context: "list:release",
+        handlers: {
+            a: gotoArtistPage,
+        },
     });
 
     if (isPending) {

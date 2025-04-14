@@ -1,6 +1,12 @@
-export function log(...params: unknown[]) {
-  if (!process.env.LOG_LEVEL) {
+import logConfig from '../../logConfig.json';
+
+export function log(key: string, ...params: unknown[]) {
+  if (process.env.TEST) {
     return;
   }
-  console.log(...params);
+  const tokens = key.split(':');
+  if (!(logConfig as Record<string, boolean>)[tokens[0]]) {
+    return;
+  }
+  console.log(key, ...params);
 }

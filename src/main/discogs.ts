@@ -1,10 +1,8 @@
-import path from "path";
-import download from "image-downloader";
 import type { Release, Artist } from '@/types/types';
 import { deburr } from "lodash";
 import { log } from "./logger";
-import { wait } from "@/lib/utils";
 import { version } from '../../package.json';
+import { getImageFromURL } from "./image";
 
 type SearchParams = {
     artist: string;
@@ -17,17 +15,15 @@ type DiscogsSecrets = {
     DISCOGS_SECRET: string;
 };
 
-const THROTTLE_INTERVAL = 500;
-
 export async function search({ artist, title }: SearchParams, secrets: DiscogsSecrets) {
     const params = new URLSearchParams({
-        artist: deburr(normalize(artist)),
-        title: deburr(normalize(title)),
+        artist: normalizeSearchParam(artist),
+        title: normalizeSearchParam(title),
         key: secrets.DISCOGS_KEY,
         secret: secrets.DISCOGS_SECRET,
     });
     const url = `https://api.discogs.com/database/search?${params}`;
-    log('[discogs:search]', url);
+    log('discogs:search', url);
     const response = await fetch(
         url,
         { headers: { "User-Agent": `playa/${version}` } }
@@ -70,55 +66,34 @@ export async function searchCover(
         year: release.year,
     }, secrets);
     if (!response?.results?.length) {
-        log(`[discogs:searchCover] No response for: ${artistName} - ${title}`);
+        log(`discogs:searchCover', 'No response for: ${artistName} - ${title}`);
         return null;
     }
     const { cover_image } = response.results[0];
-    log('[discogs:searchCover] Downloading:', artistName, title);
+    log('discogs:searchCover', 'Downloading:', artistName, title);
     if (!cover_image || cover_image.endsWith('spacer.gif')) {
-        log(`[discogs:searchCover] No response for: ${artistName} - ${title}`);
+        log('discogs:searchCover', 'No response for:', artistName, title);
         return null;
     }
-    const pic = `${release.hash}-cover.jpg`;
-    await getImage({
-        url: cover_image,
-        dest: path.join(outputPath, pic),
-    });
-    return pic;
-}
-
-export type GetImageFromURLParams = {
-    outputPath: string;
-    hash: string;
-    url: string;
-};
-
-export async function getImageFromURL({ outputPath, hash, url }: GetImageFromURLParams) {
-    const dest = path.join(outputPath, `${hash}-cover.jpg`);
+    log('discogs:getImage', 'Downloading:', cover_image);
     try {
-        await getImage({ url, dest });
-        return dest;
+        return await getImageFromURL({
+            outputPath,
+            hash: release.hash,
+            url: cover_image,
+        });
     } catch (error) {
-        log('[discogs:getImageFromURL]', error);
+        log('discogs:searchCover', error);
         return false;
     }
 }
 
-type GetImageParams = {
-    url: string;
-    dest: string;
-};
-
-async function getImage(options: GetImageParams) {
-    log('[discogs:getImage] Downloading:', options.url);
-    await wait(THROTTLE_INTERVAL);
-    await download.image(options);
-}
-
-function normalize(input: string) {
-    return input
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/\((\d+)\)$/, '')
-        .trim();
+function normalizeSearchParam(input: string) {
+    return deburr(
+        input
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/\((\d+)\)$/, '')
+            .trim()
+    );
 }

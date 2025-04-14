@@ -1,6 +1,7 @@
 import settings from 'electron-settings';
 import { isEmpty } from '@/lib/utils';
 import { readJSONSync } from 'fs-extra';
+import { log } from './logger';
 
 export function initSettings() {
   let currentSettings = settings.getSync();
@@ -8,7 +9,7 @@ export function initSettings() {
     currentSettings = readJSONSync('../../settings.json');
     settings.setSync(currentSettings);
   }
-  console.log('Settings loaded:', currentSettings);
+  log('settings:initSettings', currentSettings);
 }
 
 export function getSetting(key: string) {

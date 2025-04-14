@@ -16,14 +16,14 @@ export async function run(command: string, options: string[], cwd?: string): Pro
     };
     proc.stdout.on('data', (data) => {
       messages.stdout.push(`${data}`);
-      log('[run:stdout]', `${data}`);
+      log('run:stdout', `${data}`);
     });
     proc.stderr.on('data', (data) => {
       messages.stderr.push(`${data}`);
-      log('[run:stderr]', `${data}`);
+      log('run:stderr', `${data}`);
     });
     proc.on('exit', async (code) => {
-      log('[run:exit]', {
+      log('run:exit', {
         command: `${command} ${options.join(' ')}`,
         code
       });

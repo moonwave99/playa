@@ -30,7 +30,8 @@ import {
   getFolderContents,
   parsePath
 } from '../utils';
-import { getImageFromURL, searchCover } from '../discogs';
+import { searchCover } from '../discogs';
+import { getImageFromURL } from '../image';
 import { log } from '../logger';
 import { getSetting } from '../settings';
 import { type StateManager } from '../state';
@@ -144,8 +145,8 @@ export function releaseController({
 
       return await updateReleases(newInfos);
     } catch (error) {
-      log('[renameRelease]', error);
-      log('[renameRelease]', infos);
+      log('release:renameRelease', error);
+      log('release:renameRelease', infos);
       dialog.showMessageBoxSync(null, {
         message: 'Error while renaming',
         detail: error.message,
@@ -176,7 +177,7 @@ export function releaseController({
   }
 
   async function importSingleFolder(folder: string) {
-    log('[importSingleFolder] Crawling:', folder);
+    log('release:importSingleFolder', 'Crawling:', folder);
     const contents = await crawlFolder(folder);
     if (!contents.length) {
       return null;
@@ -207,7 +208,7 @@ export function releaseController({
       },
     });
 
-    log('[importSingleFolder] upserted artist', artist);
+    log('release:importSingleFolder', 'upserted artist', artist);
 
     const releaseHash = hashRelease({ ...releaseData, artist_id: artist.id });
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -231,7 +232,7 @@ export function releaseController({
     const trackInfo = await getFolderContents({ ...release, artist }, getSetting('LIBRARY_PATH') as string);
     const fullRelease = await addTracksToRelease(release.id, trackInfo);
 
-    log('[importSingleFolder] upserted release:', fullRelease);
+    log('release:importSingleFolder', 'upserted release:', fullRelease);
 
     const COVERS_PATH = getSetting('COVERS_PATH') as string;
 
@@ -266,6 +267,8 @@ export function releaseController({
     return success;
   }
 
+  const THROTTLE_INTERVAL = 500;
+
   async function importCovers(releases: ReleaseWithArtist[]) {
     const COVERS_PATH = getSetting('COVERS_PATH') as string;
     const DISCOGS_KEY = getSetting('DISCOGS_KEY') as string;
@@ -285,7 +288,7 @@ export function releaseController({
         send('coverUpdate', [release]);
         return pic;
       }
-    );
+      , THROTTLE_INTERVAL);
   }
 
   async function importMissingCovers(releases: ReleaseWithArtist[]) {
@@ -312,8 +315,10 @@ export function releaseController({
       return false;
     }
 
+    log('release:refreshReleaseContents', release);
     const updatedRelease = await Promise.all([release, ...release.subReleases].map(async (release) => {
       const tracks = await getFolderContents(release, getSetting('LIBRARY_PATH') as string);
+      log('release:refreshReleaseContents', 'tracks', tracks);
       return addTracksToRelease(release.id, tracks);
     }));
 
@@ -339,7 +344,7 @@ export function releaseController({
       );
       send('mutate', ['artists', state.getCurrentArtist().id]);
     } catch (error) {
-      console.log('[refreshCurrentArtistReleases]', error);
+      console.log('release:refreshCurrentArtistRelease]', error);
     }
     state.setImporting(false);
   }

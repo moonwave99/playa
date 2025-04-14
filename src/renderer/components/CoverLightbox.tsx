@@ -46,7 +46,7 @@ export default function CoverLightbox({
 
     return (
         <div className={styles.CoverLightbox}>
-            {context && (
+            {context?.length > 1 && (
                 <button
                     className={cx(styles.button, styles.prev)}
                     aria-label="See previous Release Cover"
@@ -59,7 +59,7 @@ export default function CoverLightbox({
             <h3 className={styles.title}>
                 {currentRelease.artist.name} - {currentRelease.title}
             </h3>
-            {context && (
+            {context?.length > 1 && (
                 <button
                     className={cx(styles.button, styles.next)}
                     aria-label="See next Release Cover"
