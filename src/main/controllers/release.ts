@@ -20,7 +20,9 @@ import {
   unGroupRelease,
   deleteRelease,
   addTracksToRelease,
-  hideRelease
+  hideRelease,
+  addAdditionalArtist as _addAdditionalArtist,
+  removeAdditionalArtist as _removeAdditionalArtist
 } from '../db/release';
 import { getArtist } from '../db/artist';
 import {
@@ -406,6 +408,24 @@ export function releaseController({
     send('clearSelection');
   }
 
+  async function addAdditionalArtist(release_id: number, artist_id: number) {
+    const result = await _addAdditionalArtist(release_id, artist_id);
+    send('mutate', [
+      ['release', release_id],
+      ['artists', result.artist.id],
+      ['artists', artist_id],
+    ]);
+  }
+
+  async function removeAdditionalArtist(release_id: number, artist_id: number) {
+    const result = await _removeAdditionalArtist(release_id, artist_id);
+    send('mutate', [
+      ['release', release_id],
+      ['artists', result.artist.id],
+      ['artists', artist_id],
+    ]);
+  }
+
   return {
     getRelease,
     getLatestReleases,
@@ -425,7 +445,9 @@ export function releaseController({
     ungroupSelectedRelease,
     importFolderFromDialog,
     refreshEntityRelease,
-    hideRelease
+    hideRelease,
+    addAdditionalArtist,
+    removeAdditionalArtist
   };
 }
 
@@ -448,5 +470,7 @@ export const actions = [
   'ungroupSelectedRelease',
   'importFolderFromDialog',
   'refreshEntityRelease',
-  'hideRelease'
+  'hideRelease',
+  'addAdditionalArtist',
+  'removeAdditionalArtist'
 ];

@@ -20,6 +20,8 @@ type UseRelease = {
   selectedTrackId: number;
   gotoArtistPage: () => void;
   removeFromCollection: (collection_id: number) => void;
+  addAdditionalArtist: (artist_id: number) => void;
+  removeAdditionalArtist: (artist_id: number) => void;
 };
 
 export default function useRelease({
@@ -59,12 +61,27 @@ export default function useRelease({
   function onSuccess() {
     [
       ["releases", id],
+      ["artists", release.artist.id],
       ...release.collections.map((x: HasId) => ['collections', x.id]),
     ].forEach(queryKey => queryClient.invalidateQueries({ queryKey }));
+
+    queryClient.invalidateQueries({
+      predicate: ({ queryKey }) => queryKey.join(':').startsWith('artists:search')
+    });
   }
 
   const removeFromCollection = useMutation({
     mutationFn: (collection_id: number) => api.collection.removeReleasesFromCollection(collection_id, [id]),
+    onSuccess
+  });
+
+  const addAdditionalArtist = useMutation({
+    mutationFn: (artist_id: number) => api.release.addAdditionalArtist(id, artist_id),
+    onSuccess
+  });
+
+  const removeAdditionalArtist = useMutation({
+    mutationFn: (artist_id: number) => api.release.removeAdditionalArtist(id, artist_id),
     onSuccess
   });
 
@@ -74,7 +91,9 @@ export default function useRelease({
     error,
     selectedTrackId: +params.get('track_id'),
     gotoArtistPage,
-    removeFromCollection: removeFromCollection.mutate
+    removeFromCollection: removeFromCollection.mutate,
+    addAdditionalArtist: addAdditionalArtist.mutate,
+    removeAdditionalArtist: removeAdditionalArtist.mutate,
   }
 }
 

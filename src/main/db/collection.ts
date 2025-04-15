@@ -16,6 +16,7 @@ export async function getCollections({ take = 50 }: PaginationParams) {
       releases: {
         include: {
           artist: true,
+          additionalArtists: true,
           subReleases: true,
           tracks: {
             orderBy: { position: "asc" },
@@ -48,6 +49,7 @@ export async function getCollection(id: number) {
       releases: {
         include: {
           artist: true,
+          additionalArtists: true,
           subReleases: {
             include: {
               tracks: {

@@ -1,4 +1,4 @@
-import { useRef, useState, type FormEvent, type Ref } from "react";
+import { useState, type FormEvent } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useDebounce } from "use-debounce";
 import useSearch from "./useSearch";
@@ -10,7 +10,6 @@ type UseRelatedArtists = {
   query: string;
   results: Artist[];
   artist: ArtistWithRelatedArtists;
-  inputRef: Ref<HTMLInputElement>,
   inputHandlers: {
     onInput: (event: FormEvent) => void;
     onBlur: () => void;
@@ -24,7 +23,6 @@ const DEBOUNCE_MS = 300;
 
 export default function useRelatedArtists(id: number): UseRelatedArtists {
   const queryClient = useQueryClient();
-  const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState('');
   const [debouncedQuery] = useDebounce(query, DEBOUNCE_MS, {
     leading: false,
@@ -34,7 +32,7 @@ export default function useRelatedArtists(id: number): UseRelatedArtists {
     query: debouncedQuery,
     queryKey: ["artists", "search", debouncedQuery],
     queryFn: (query, take) =>
-      api.artist.searchArtists({ query, take, excludeArtistsRelatedTo: id }),
+      api.artist.searchArtists({ query, take, exclude: { key: 'relatedArtists', artist_id: id } }),
     take: 10,
   });
 
@@ -60,7 +58,6 @@ export default function useRelatedArtists(id: number): UseRelatedArtists {
 
   return {
     query: debouncedQuery,
-    inputRef,
     inputHandlers: {
       onInput: (event) => setQuery((event.target as HTMLInputElement).value),
       onBlur: () => api.state.setInputFocused(false),

@@ -9,6 +9,7 @@ import type {
     NewReleaseInfo,
 } from "@/types/types";
 import { didReleaseInfoChange } from "@/lib/utils";
+import AdditionalArtistsEditor from "./AdditionalArtistsEditor";
 import cx from "clsx";
 import { MdInfoOutline } from "react-icons/md";
 import styles from "./EditReleaseView.module.css";
@@ -144,6 +145,7 @@ export default function EditReleasesView({
                     This will physically move the Release folder in your
                     Library.
                 </div>
+                <AdditionalArtistsEditor releaseId={release.id} />
                 <div className={formStyles.actions}>
                     <button
                         type="submit"

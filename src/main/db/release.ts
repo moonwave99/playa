@@ -16,6 +16,7 @@ export async function getRelease(id: number) {
         where: { id },
         include: {
             artist: true,
+            additionalArtists: true,
             subReleases: {
                 include: {
                     artist: true,
@@ -179,7 +180,7 @@ export async function getLatestReleases(
             take,
             skip,
             orderBy: { createdAt: "desc" },
-            include: { artist: true, subReleases: true, mainRelease: true },
+            include: { artist: true, subReleases: true, mainRelease: true, additionalArtists: true },
             where: {
                 mainRelease: null,
                 hideOnHomepage: false
@@ -215,6 +216,34 @@ export async function hideRelease(id: number) {
         where: { id },
         data: {
             hideOnHomepage: true
+        }
+    });
+}
+
+export async function addAdditionalArtist(release_id: number, artist_id: number) {
+    return prisma.release.update({
+        where: { id: release_id },
+        data: {
+            additionalArtists: {
+                connect: { id: artist_id }
+            }
+        },
+        include: {
+            artist: true
+        }
+    });
+}
+
+export async function removeAdditionalArtist(release_id: number, artist_id: number) {
+    return prisma.release.update({
+        where: { id: release_id },
+        data: {
+            additionalArtists: {
+                disconnect: { id: artist_id }
+            }
+        },
+        include: {
+            artist: true
         }
     });
 }

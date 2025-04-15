@@ -77,7 +77,7 @@ export function isEmpty(obj: object) {
   return Object.keys(obj).length === 0;
 }
 
-export function sortReleasesByTypeAndYear(releases: ReleaseWithArtist[], artist: Artist) {
+export function sortReleasesByTypeAndYear(releases: ReleaseWithArtist[]) {
   return releaseTypes
     .flatMap(type => releases
       .filter(x => x.type === type)
@@ -90,7 +90,7 @@ export function sortReleasesByTypeAndYear(releases: ReleaseWithArtist[], artist:
         }
         return Math.sign(a.year - b.year)
       })
-    ).map((x) => ({ ...x, artist }))
+    )
 }
 
 export function getReleaseWithTracklistHeight(release: ReleaseWithArtistAndTracksAndSubreleases): number {

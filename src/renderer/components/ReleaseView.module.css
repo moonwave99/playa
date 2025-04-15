@@ -87,3 +87,16 @@
 .selected {
   background-color: var(--selected-no-focus-color);
 }
+
+.ArtistLabel {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: .25rem;
+  line-height: 1rem;
+
+  li:not(:last-child)::after {
+    color: var(--primary-color);
+    content: ' ';
+  }
+}

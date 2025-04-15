@@ -10,6 +10,7 @@ import type {
     WithRelatedArtists,
     GroupWithArtists,
     WithGroups,
+    WithAppearances,
 } from "@/types/types";
 import path from "path";
 
@@ -81,7 +82,7 @@ export function getFakeArtist(
     id: number,
     hash?: string,
     overwrite?: Partial<ArtistWithReleases>
-): ArtistWithReleases & WithRelatedArtists & WithGroups {
+): ArtistWithReleases & WithRelatedArtists & WithGroups & WithAppearances {
     const foundHash = Object.keys(artistHashMap).find(
         (hash) => artistHashMap[hash]?.id === id
     );
@@ -101,6 +102,7 @@ export function getFakeArtist(
         releases: [],
         relatedArtists: [],
         groups: [],
+        appearsIn: [],
         ...data,
         ...overwrite,
     };
@@ -158,11 +160,13 @@ export function getFakeRelease(
         hash: hash || foundHash || `release-hash-${release_id}`,
         year: 1999,
         type: "Album",
+        hideOnHomepage: false,
         discTitle: null,
         discNumber: 1,
         mainReleaseId: null,
         artist_id,
         artist: getFakeArtist(artist_id),
+        additionalArtists: [],
         ...data,
         ...overwrite,
     };

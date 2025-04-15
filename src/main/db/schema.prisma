@@ -22,31 +22,33 @@ model Artist {
   symmetricRelatedArtists Artist[]  @relation("RelatedArtists")
   groups                  Group[]   @relation("GroupToArtist")
   coverGroups             Group[]   @relation("GroupCover")
+  appearsIn               Release[] @relation("AppearsInRelease")
 
   @@index([hash], type: Hash)
 }
 
 model Release {
-  id               Int          @id @default(autoincrement())
-  createdAt        DateTime     @default(now())
-  updatedAt        DateTime     @updatedAt
-  title            String       @db.VarChar(255)
-  hash             String       @unique @db.VarChar(16)
-  path             String       @db.VarChar(255)
-  type             ReleaseType  @default(Album)
-  year             Int?
-  discTitle        String?      @db.VarChar(255)
-  discNumber       Int?         @default(1)
-  hideOnHomepage   Boolean?     @default(false)
-  artist_id        Int
-  artist           Artist       @relation(fields: [artist_id], references: [id])
-  tracks           Track[]
-  collections      Collection[] @relation("CollectionToRelease")
-  mainReleaseId    Int?
-  mainRelease      Release?     @relation("ReleaseGroup", fields: [mainReleaseId], references: [id])
-  subReleases      Release[]    @relation("ReleaseGroup")
-  coverCollections Collection[] @relation("CollectionCover")
-  coverArtist      Artist?      @relation("ArtistCover")
+  id                Int          @id @default(autoincrement())
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  title             String       @db.VarChar(255)
+  hash              String       @unique @db.VarChar(16)
+  path              String       @db.VarChar(255)
+  type              ReleaseType  @default(Album)
+  year              Int?
+  discTitle         String?      @db.VarChar(255)
+  discNumber        Int?         @default(1)
+  hideOnHomepage    Boolean?     @default(false)
+  artist_id         Int
+  artist            Artist       @relation(fields: [artist_id], references: [id])
+  additionalArtists Artist[]     @relation("AppearsInRelease")
+  tracks            Track[]
+  collections       Collection[] @relation("CollectionToRelease")
+  mainReleaseId     Int?
+  mainRelease       Release?     @relation("ReleaseGroup", fields: [mainReleaseId], references: [id])
+  subReleases       Release[]    @relation("ReleaseGroup")
+  coverCollections  Collection[] @relation("CollectionCover")
+  coverArtist       Artist?      @relation("ArtistCover")
 
   @@index([hash], type: Hash)
 }

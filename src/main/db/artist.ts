@@ -6,7 +6,7 @@ import type {
   ArtistWithReleases,
   ArtistWithReleasesFull,
   PaginationParams,
-  ArtistUpdate
+  ArtistUpdate,
 } from '@/types/types';
 
 export async function getArtist(id: number): Promise<ArtistWithReleasesFull> {
@@ -39,11 +39,13 @@ export async function getArtist(id: number): Promise<ArtistWithReleasesFull> {
         },
         orderBy: { title: 'asc' }
       },
-      releases: {
+      appearsIn: {
         where: {
           mainRelease: null
         },
         include: {
+          artist: true,
+          additionalArtists: true,
           subReleases: {
             include: {
               tracks: {
@@ -54,7 +56,28 @@ export async function getArtist(id: number): Promise<ArtistWithReleasesFull> {
               discNumber: 'asc'
             }
           },
+          tracks: {
+            orderBy: { position: "asc" },
+          }
+        }
+      },
+      releases: {
+        where: {
+          mainRelease: null
+        },
+        include: {
           artist: true,
+          additionalArtists: true,
+          subReleases: {
+            include: {
+              tracks: {
+                orderBy: { position: "asc" },
+              }
+            },
+            orderBy: {
+              discNumber: 'asc'
+            }
+          },
           tracks: {
             orderBy: { position: "asc" },
           }
@@ -67,10 +90,14 @@ export async function getArtist(id: number): Promise<ArtistWithReleasesFull> {
     return null;
   }
 
-  const { releases, ...artist } = result as ArtistWithReleasesFull;
+  const { releases, appearsIn } = result as ArtistWithReleasesFull;
   return withEntityType({
     ...result,
-    releases: withEntityType(sortReleasesByTypeAndYear(releases, artist), 'release'),
+    releases: withEntityType(sortReleasesByTypeAndYear([...releases, ...appearsIn]), 'release').map(x => ({
+      ...x,
+      artist: withEntityType(x.artist, 'artist'),
+      additionalArtists: withEntityType(x.additionalArtists, 'artist'),
+    })),
     relatedArtists: withEntityType(result.relatedArtists.map(withCoverRelease), 'artist'),
     groups: withEntityType(result.groups, 'group')
   }, 'artist');
@@ -182,13 +209,35 @@ export async function setArtistCoverRelease(artist_id: number, release_id: numbe
   return result ? withEntityType(result, 'artist') : null;
 }
 
-type SearchArtistsParams = {
+export type SearchArtistsParams = {
   query: string;
-  excludeArtistsRelatedTo?: number;
+  exclude?: { key: 'relatedArtists' | 'appearsIn', artist_id: number; release_id?: number; },
   take?: number;
 };
 
-export async function searchArtists({ query, excludeArtistsRelatedTo, take = 50 }: SearchArtistsParams): Promise<Artist[]> {
+function getExcludeFilter(exclude: SearchArtistsParams["exclude"]) {
+  if (exclude.key === 'relatedArtists') {
+    return {
+      relatedArtists: {
+        none: {
+          id: exclude.artist_id
+        }
+      },
+      id: { not: exclude.artist_id }
+    }
+  }
+  return {
+    appearsIn: {
+      none: {
+        id: exclude.release_id
+      }
+    },
+    id: { not: exclude.artist_id }
+  }
+}
+
+export async function searchArtists({ query, exclude, take = 50 }: SearchArtistsParams): Promise<Artist[]> {
+
   const result = await prisma.artist.findMany({
     take,
     where: {
@@ -196,14 +245,7 @@ export async function searchArtists({ query, excludeArtistsRelatedTo, take = 50 
         contains: query,
         mode: "insensitive",
       },
-      relatedArtists: {
-        none: {
-          id: excludeArtistsRelatedTo
-        }
-      },
-      id: {
-        not: excludeArtistsRelatedTo
-      }
+      ...getExcludeFilter(exclude),
     },
     include: {
       coverRelease: true,

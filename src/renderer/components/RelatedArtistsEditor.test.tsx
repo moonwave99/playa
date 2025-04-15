@@ -22,7 +22,7 @@ describe("RelatedArtistsEditor component", () => {
         render(withQueryClientProvider(<RelatedArtistsEditor id={1} />));
         const title = await screen.findByText("Related Artists");
         expect(title).toBeInTheDocument();
-        const placeholder = await screen.findByText("No related artists yet.");
+        const placeholder = await screen.findByText("No artists yet.");
         expect(placeholder).toBeInTheDocument();
     });
 
@@ -62,9 +62,7 @@ describe("RelatedArtistsEditor component", () => {
         expect(artist).toBeInTheDocument();
 
         await userEvent.click(
-            screen.getByLabelText(
-                `Remove related artist: ${relatedArtists[0].name}`
-            )
+            screen.getByLabelText(`Remove artist: ${relatedArtists[0].name}`)
         );
         expect(artist).not.toBeInTheDocument();
     });
@@ -96,15 +94,13 @@ describe("RelatedArtistsEditor component", () => {
         render(withQueryClientProvider(<RelatedArtistsEditor id={1} />));
         const artist = await screen.findByText(relatedArtists[0].name);
         expect(artist).toBeInTheDocument();
-        user.click(screen.getByLabelText("Lookup Related Artists"));
+        user.click(screen.getByLabelText("Lookup Artists"));
         await user.keyboard("East");
 
         const suggestion = await screen.findByText("East");
         expect(suggestion).toBeInTheDocument();
 
-        await userEvent.click(
-            await screen.findByLabelText("Add related artist: East")
-        );
+        await userEvent.click(await screen.findByLabelText("Add artist: East"));
 
         expect(suggestion).not.toBeInTheDocument();
         const addedArtist = await screen.findByTitle("[3]");

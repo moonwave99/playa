@@ -4,9 +4,10 @@ import cx from "clsx";
 import Cover from "./Cover";
 import Link from "./Link";
 import { getReleaseTitle, getDiscInfo, withStopPropagation } from "@/lib/utils";
-import { getArtistLink, getReleaseLink } from "@/lib/links";
+import { getReleaseLink } from "@/lib/links";
 import type { ReleaseWithArtistAndSubreleases } from "@/types/types";
 import styles from "./ReleaseView.module.css";
+import EntityList from "./EntityList";
 
 type ReleaseViewProps = {
     release: ReleaseWithArtistAndSubreleases;
@@ -23,7 +24,7 @@ export default function ReleaseView({
     onClick,
     onContextMenu,
 }: ReleaseViewProps) {
-    const { artist, year, type, id } = release;
+    const { artist, year, type, id, additionalArtists } = release;
     const releaseTitle = getReleaseTitle(release);
     return (
         <article
@@ -47,13 +48,13 @@ export default function ReleaseView({
                 onDoubleClick={() => api.system.playback({ release_id: id })}
             />
             <div className={styles.footer}>
-                <Link
-                    className={styles.artist}
-                    to={getArtistLink(artist)}
-                    title={`See all ${artist.name} Releases`}
-                >
-                    {artist.name}
-                </Link>
+                <EntityList
+                    canDeleteFirstEntry={false}
+                    items={[artist, ...additionalArtists]}
+                    onDelete={(artist_id) =>
+                        window.api.release.removeAdditionalArtist(id, artist_id)
+                    }
+                />
                 <Link
                     className={styles.title}
                     to={getReleaseLink(release)}

@@ -7,8 +7,9 @@ import buttonStyles from "../buttons.module.css";
 
 type EntityListProps = {
     items: (Artist | Collection | Group)[];
-    label: string;
+    label?: string;
     useDarkText?: boolean;
+    canDeleteFirstEntry?: boolean;
     onDelete?: (id: number) => void;
 };
 
@@ -16,6 +17,7 @@ export default function EntityList({
     items,
     label,
     useDarkText,
+    canDeleteFirstEntry = true,
     onDelete,
 }: EntityListProps) {
     function getLink(item: Artist | Collection | Group) {
@@ -32,6 +34,17 @@ export default function EntityList({
             </Link>
         );
     }
+
+    function showDeleteButton(index: number) {
+        if (!onDelete) {
+            return false;
+        }
+        if (index >= 1) {
+            return true;
+        }
+        return canDeleteFirstEntry;
+    }
+
     return (
         <div
             className={cx(styles.EntityList, {
@@ -40,10 +53,10 @@ export default function EntityList({
         >
             {label}
             <ul>
-                {items.map((item) => (
+                {items.map((item, index) => (
                     <li key={item.id}>
                         {getLink(item)}
-                        {onDelete && (
+                        {showDeleteButton(index) && (
                             <button
                                 className={cx(
                                     buttonStyles.CornerActionButton,
