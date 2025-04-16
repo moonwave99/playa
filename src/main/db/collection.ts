@@ -1,6 +1,6 @@
 import prisma from "./prisma";
 import { withEntityType } from "@/types/types";
-import type { CollectionCreate, CollectionUpdate, CollectionWithReleases, HasId, PaginationParams, Release } from '@/types/types';
+import type { CollectionCreate, CollectionUpdate, CollectionWithReleases, HasId, PaginationParams, Release, ReleaseWithArtist } from '@/types/types';
 
 export async function getCollections({ take = 50 }: PaginationParams) {
   const results = await prisma.collection.findMany({
@@ -65,7 +65,14 @@ export async function getCollection(id: number) {
     },
   });
   return result
-    ? withEntityType({ ...result, releases: withEntityType(result.releases, 'release') }, 'collection') : null;
+    ? withEntityType({
+      ...result,
+      releases: withEntityType(result.releases.map((x: ReleaseWithArtist) => ({
+        ...x,
+        artist: withEntityType(x.artist, 'artist'),
+        additionalArtists: withEntityType(x.additionalArtists, 'artist'),
+      })), 'release')
+    }, 'collection') : null;
 }
 
 export async function createCollection({ title, releases = [] }: CollectionCreate) {

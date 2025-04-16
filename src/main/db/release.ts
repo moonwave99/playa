@@ -9,6 +9,7 @@ import type {
     Release,
     WithSubReleases,
     ReleaseWithArtistAndSubreleases,
+    ReleaseWithArtist,
 } from '@/types/types';
 
 export async function getRelease(id: number) {
@@ -182,7 +183,12 @@ export async function getLatestReleases(
             take,
             skip,
             orderBy: { createdAt: "desc" },
-            include: { artist: true, subReleases: true, mainRelease: true, additionalArtists: true },
+            include: {
+                artist: true,
+                subReleases: true,
+                mainRelease: true,
+                additionalArtists: true
+            },
             where: {
                 mainRelease: null,
                 hideOnHomepage: false
@@ -196,7 +202,11 @@ export async function getLatestReleases(
             skip,
             total
         },
-        results: withEntityType(results, 'release') as ReleaseWithArtistAndSubreleases[]
+        results: withEntityType(results.map((x: ReleaseWithArtist) => ({
+            ...x,
+            artist: withEntityType(x.artist, 'artist'),
+            additionalArtists: withEntityType(x.additionalArtists, 'artist'),
+        })), 'release') as ReleaseWithArtistAndSubreleases[]
     };
 }
 
