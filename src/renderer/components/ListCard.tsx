@@ -22,6 +22,7 @@ import type {
     GroupWithArtists,
 } from "@/types/types";
 
+import EntityList from "./EntityList";
 import Cover from "./Cover";
 import Link from "./Link";
 import RelatedArtistsList from "./RelatedArtistsList";
@@ -89,13 +90,11 @@ export default function ListCard({
         if (item._type === "release") {
             return (
                 <>
-                    <Link
+                    <EntityList
                         className={styles.artist}
-                        to={getArtistLink(item.artist)}
-                        title={`[${item.artist.id}]`}
-                    >
-                        {item.artist.name}
-                    </Link>
+                        useDarkText={useDarkText}
+                        items={[item.artist, ...item.additionalArtists]}
+                    />
                     <Link
                         className={styles.title}
                         to={getReleaseLink(item)}

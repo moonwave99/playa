@@ -13,6 +13,7 @@ import type {
   CollectionWithReleases,
   ArtistWithReleases,
   GroupWithArtists,
+  WithAdditionalArtists,
 
 } from "@/types/types";
 import { getCover } from './links';
@@ -27,6 +28,12 @@ export function getReleaseTitle({ title, subReleases = [] }:
   }
   const match = title.match(/(.*) CD(\d+)/);
   return match ? match[1] : title;
+}
+
+export function getReleaseArtist(
+  { artist, additionalArtists }: Pick<ReleaseWithArtist & WithAdditionalArtists, 'artist' | 'additionalArtists'>
+) {
+  return [artist, ...additionalArtists].map(x => x.name).join(', ');
 }
 
 export function getUniqueArtists(releases: ReleaseWithArtist[]): Artist[] {

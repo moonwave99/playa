@@ -22,7 +22,8 @@ import {
   addTracksToRelease,
   hideRelease,
   addAdditionalArtist as _addAdditionalArtist,
-  removeAdditionalArtist as _removeAdditionalArtist
+  removeAdditionalArtist as _removeAdditionalArtist,
+  type AdditionalArtistParams
 } from '../db/release';
 import { getArtist } from '../db/artist';
 import {
@@ -408,22 +409,24 @@ export function releaseController({
     send('clearSelection');
   }
 
-  async function addAdditionalArtist(release_id: number, artist_id: number) {
-    const result = await _addAdditionalArtist(release_id, artist_id);
+  async function addAdditionalArtist({ release_id, artist_id }: AdditionalArtistParams) {
+    const result = await _addAdditionalArtist({ release_id, artist_id });
     send('mutate', [
-      ['release', release_id],
+      ['releases', release_id],
       ['artists', result.artist.id],
       ['artists', artist_id],
     ]);
+    return result;
   }
 
-  async function removeAdditionalArtist(release_id: number, artist_id: number) {
-    const result = await _removeAdditionalArtist(release_id, artist_id);
+  async function removeAdditionalArtist({ release_id, artist_id }: AdditionalArtistParams) {
+    const result = await _removeAdditionalArtist({ release_id, artist_id });
     send('mutate', [
-      ['release', release_id],
+      ['releases', release_id],
       ['artists', result.artist.id],
       ['artists', artist_id],
     ]);
+    return result;
   }
 
   return {

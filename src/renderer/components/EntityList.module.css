@@ -33,16 +33,16 @@
       &:not(:last-child)::after {
         content: ',';
       }
-
-      a {
-        font-weight: 700;
-        letter-spacing: -.035rem;
-
-        &:hover {
-          text-decoration: underline;
-        }
-      }
     }
+  }
+}
+
+.link {
+  font-weight: 700;
+  letter-spacing: -.035rem;
+
+  &:hover {
+    text-decoration: underline;
   }
 }
 

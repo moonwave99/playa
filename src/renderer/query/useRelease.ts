@@ -76,12 +76,12 @@ export default function useRelease({
   });
 
   const addAdditionalArtist = useMutation({
-    mutationFn: (artist_id: number) => api.release.addAdditionalArtist(id, artist_id),
+    mutationFn: (artist_id: number) => api.release.addAdditionalArtist({ release_id: id, artist_id }),
     onSuccess
   });
 
   const removeAdditionalArtist = useMutation({
-    mutationFn: (artist_id: number) => api.release.removeAdditionalArtist(id, artist_id),
+    mutationFn: (artist_id: number) => api.release.removeAdditionalArtist({ release_id: id, artist_id }),
     onSuccess
   });
 

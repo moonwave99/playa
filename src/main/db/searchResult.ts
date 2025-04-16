@@ -1,6 +1,15 @@
-import { getCoverRelease, getReleaseTitle, sortByQueryPosition } from "@/lib/utils";
+import { getCoverRelease, getReleaseTitle, getReleaseArtist, sortByQueryPosition } from "@/lib/utils";
 import prisma from "./prisma";
-import type { SearchResult, HasTitle, ReleaseWithArtistAndSubreleases, CollectionWithReleases, ArtistWithReleases, TrackWithRelease, GroupWithArtists } from '@/types/types';
+import type {
+  SearchResult,
+  HasTitle,
+  ReleaseWithArtistAndSubreleases,
+  CollectionWithReleases,
+  ArtistWithReleases,
+  TrackWithRelease,
+  GroupWithArtists,
+  WithAdditionalArtists
+} from '@/types/types';
 import { withEntityType } from "@/types/types";
 
 export async function getSearchResults(query: string, take = 20): Promise<SearchResult[]> {
@@ -23,18 +32,24 @@ export async function getSearchResults(query: string, take = 20): Promise<Search
             },
           },
         },
+        {
+          additionalArtists: {
+            some: {
+              name: {
+                contains: query,
+                mode: "insensitive",
+              },
+            }
+          }
+        }
       ],
     },
     orderBy: {
       title: 'asc',
     },
-    select: {
-      id: true,
+    include: {
       artist: true,
-      title: true,
-      type: true,
-      year: true,
-      hash: true,
+      additionalArtists: true,
       subReleases: true,
     },
   });
@@ -155,12 +170,12 @@ const transformers = {
     coverRelease: coverRelease || releases[0]
   }),
   release: (
-    { id, title, artist, year, type, hash, subReleases }: ReleaseWithArtistAndSubreleases
+    { id, title, artist, year, type, hash, subReleases, additionalArtists }: ReleaseWithArtistAndSubreleases & WithAdditionalArtists
   ) => ({
     id,
     title: getReleaseTitle({ title, subReleases }),
     hash,
-    artist: artist.name,
+    artist: getReleaseArtist({ artist, additionalArtists }),
     description: year ? `${type}, ${year}` : type,
     type: 'release' as const,
     links: {

@@ -9,6 +9,7 @@ type EntityListProps = {
     items: (Artist | Collection | Group)[];
     label?: string;
     useDarkText?: boolean;
+    className?: string;
     canDeleteFirstEntry?: boolean;
     onDelete?: (id: number) => void;
 };
@@ -17,19 +18,28 @@ export default function EntityList({
     items,
     label,
     useDarkText,
+    className,
     canDeleteFirstEntry = true,
     onDelete,
 }: EntityListProps) {
     function getLink(item: Artist | Collection | Group) {
         if (item._type === "artist") {
             return (
-                <Link title={`[${item.id}]`} to={`/artists/${item.id}`}>
+                <Link
+                    className={cx(className || styles.link)}
+                    title={`[${item.id}]`}
+                    to={`/artists/${item.id}`}
+                >
                     {item.name}
                 </Link>
             );
         }
         return (
-            <Link title={`[${item.id}]`} to={`/${item._type}s/${item.id}`}>
+            <Link
+                className={cx(className || styles.link)}
+                title={`[${item.id}]`}
+                to={`/${item._type}s/${item.id}`}
+            >
                 {item.title}
             </Link>
         );

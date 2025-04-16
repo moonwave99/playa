@@ -604,3 +604,75 @@ describe('importFolderFromDialog function', () => {
     expect(send).toHaveBeenCalledWith('mutate', [['releases', 'latest']]);
   });
 });
+
+describe('addAdditionalArtist function', () => {
+  it('adds the given additional artist to the given release', async () => {
+    const release = getFakeRelease(1);
+    const artist = getFakeArtist(2);
+
+    prisma.release.update.mockResolvedValue(({
+      ...release,
+      additionalArtists: [...release.additionalArtists, artist]
+    }));
+
+    const send = vi.fn();
+
+    const { addAdditionalArtist } = releaseController({
+      ...defaultParams,
+      openFolderDialog: vi.fn(),
+      send,
+      state: {
+        getCurrentArtist: () => null
+      } as StateManager,
+    });
+
+    const updatedRelease = await addAdditionalArtist({
+      release_id: release.id,
+      artist_id: artist.id,
+    });
+
+    expect(updatedRelease.additionalArtists).toContainEqual(artist);
+
+    expect(send).toHaveBeenCalledWith('mutate', [
+      ['releases', release.id],
+      ['artists', release.artist.id],
+      ['artists', artist.id],
+    ]);
+  });
+});
+
+describe('removeAdditionalArtist function', () => {
+  it('removes the given additional artist from the given release', async () => {
+    const artist = getFakeArtist(2);
+    const release = { ...getFakeRelease(1), additionalArtists: [artist] };
+
+    prisma.release.update.mockResolvedValue(({
+      ...release,
+      additionalArtists: release.additionalArtists.filter(x => x.id !== artist.id)
+    }));
+
+    const send = vi.fn();
+
+    const { removeAdditionalArtist } = releaseController({
+      ...defaultParams,
+      openFolderDialog: vi.fn(),
+      send,
+      state: {
+        getCurrentArtist: () => null
+      } as StateManager,
+    });
+
+    const updatedRelease = await removeAdditionalArtist({
+      release_id: release.id,
+      artist_id: artist.id,
+    });
+
+    expect(updatedRelease.additionalArtists).not.toContainEqual(artist);
+
+    expect(send).toHaveBeenCalledWith('mutate', [
+      ['releases', release.id],
+      ['artists', release.artist.id],
+      ['artists', artist.id],
+    ]);
+  });
+});

@@ -43,7 +43,9 @@ export async function getRelease(id: number) {
     });
     return result ? withEntityType({
         ...result,
-        collections: withEntityType(result.collections, 'collection')
+        artist: withEntityType(result.artist, 'artist'),
+        additionalArtists: withEntityType(result.additionalArtists, 'artist'),
+        collections: withEntityType(result.collections, 'collection'),
     }, 'release') : null;
 }
 
@@ -220,7 +222,12 @@ export async function hideRelease(id: number) {
     });
 }
 
-export async function addAdditionalArtist(release_id: number, artist_id: number) {
+export type AdditionalArtistParams = {
+    release_id: number;
+    artist_id: number;
+}
+
+export async function addAdditionalArtist({ release_id, artist_id }: AdditionalArtistParams) {
     return prisma.release.update({
         where: { id: release_id },
         data: {
@@ -229,12 +236,13 @@ export async function addAdditionalArtist(release_id: number, artist_id: number)
             }
         },
         include: {
-            artist: true
+            artist: true,
+            additionalArtists: true
         }
     });
 }
 
-export async function removeAdditionalArtist(release_id: number, artist_id: number) {
+export async function removeAdditionalArtist({ release_id, artist_id }: AdditionalArtistParams) {
     return prisma.release.update({
         where: { id: release_id },
         data: {
@@ -243,7 +251,8 @@ export async function removeAdditionalArtist(release_id: number, artist_id: numb
             }
         },
         include: {
-            artist: true
+            artist: true,
+            additionalArtists: true
         }
     });
 }
