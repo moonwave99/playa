@@ -64,11 +64,6 @@ import {
 } from "@/types/types";
 
 function getModalOverrides(name: string) {
-    if (name === "editArtist") {
-        return {
-            width: "max(60vw, 800px)",
-        };
-    }
     if (name === "lightbox") {
         return {
             width: "min(70vw, 80vh)",
@@ -91,6 +86,7 @@ function getModalStyle(name: string) {
             background: "black",
             width: "max(40vw, 600px)",
             height: "min-content",
+            maxHeight: "95vh",
             margin: "auto",
             borderColor: "var(--tertiary-color)",
             borderRadius: ".5rem",

@@ -1,13 +1,14 @@
 .Placeholder {
   font-size: .8rem;
   color: var(--secondary-color);
-  height: calc(var(--related-artists-cover-size) + 3.5rem);
+  height: calc(var(--related-artists-cover-size) + 2.8rem);
 }
 
 .ArtistListWrapper {
   width: 100%;
-  overflow: auto;
-  padding-top: 1.5rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-top: 2rem;
   margin-top: -1.5rem;
 }
 
@@ -15,6 +16,11 @@
   list-style: none;
   display: flex;
   gap: 1rem;
+}
+
+.ArtistList li {
+  flex-basis: 1;
+  flex-grow: 0;
 }
 
 .ArtistCard {
@@ -28,13 +34,17 @@
   padding: .5rem;
   background-color: var(--tertiary-color);
   height: 100%;
-  width: min-content;
+  width: calc(var(--related-artists-cover-size) + 1rem);
 }
 
 .ArtistCardTitle {
-  font-size: .7rem;
-  line-height: 1rem;
-  height: 2rem;
+  font-size: .65rem;
+  line-height: .8rem;
+  width: 100%;
+  letter-spacing: -0.03rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .ArtistCardCover {

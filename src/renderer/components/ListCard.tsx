@@ -93,7 +93,14 @@ export default function ListCard({
                     <EntityList
                         className={styles.artist}
                         useDarkText={useDarkText}
+                        canDeleteFirstEntry={false}
                         items={[item.artist, ...item.additionalArtists]}
+                        onDelete={(artist_id) =>
+                            window.api.release.removeAdditionalArtist({
+                                release_id: item.id,
+                                artist_id,
+                            })
+                        }
                     />
                     <Link
                         className={styles.title}

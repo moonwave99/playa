@@ -72,7 +72,7 @@
 .artist {
   font-size: .9rem;
   line-height: .9rem;
-  letter-spacing: -.035rem;
+  letter-spacing: -.025rem;
   color: var(--primary-color);
 
   &:hover {

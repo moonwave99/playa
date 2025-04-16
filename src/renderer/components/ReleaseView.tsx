@@ -52,7 +52,10 @@ export default function ReleaseView({
                     canDeleteFirstEntry={false}
                     items={[artist, ...additionalArtists]}
                     onDelete={(artist_id) =>
-                        window.api.release.removeAdditionalArtist(id, artist_id)
+                        window.api.release.removeAdditionalArtist({
+                            release_id: id,
+                            artist_id,
+                        })
                     }
                 />
                 <Link
