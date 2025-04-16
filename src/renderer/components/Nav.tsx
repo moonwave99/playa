@@ -22,6 +22,10 @@ const navMap = [
         link: "/collections",
         label: "Latest Collections",
     },
+    {
+        link: "/groups",
+        label: "Latest Groups",
+    },
 ];
 
 export default function Nav() {
