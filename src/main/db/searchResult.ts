@@ -1,6 +1,7 @@
-import { getCoverRelease, getReleaseTitle, getReleaseArtist, sortByQueryPosition } from "@/lib/utils";
+
 import prisma from "./prisma";
 import type {
+  SearchableEntities,
   SearchResult,
   HasTitle,
   ReleaseWithArtistAndSubreleases,
@@ -8,12 +9,75 @@ import type {
   ArtistWithReleases,
   TrackWithRelease,
   GroupWithArtists,
-  WithAdditionalArtists
+  WithAdditionalArtists,
+  ReleaseWithArtist,
+  Unpacked
 } from '@/types/types';
 import { withEntityType } from "@/types/types";
+import {
+  getCoverRelease,
+  getReleaseTitle,
+  getReleaseArtist,
+  sortByQueryPosition
+} from "@/lib/utils";
 
-export async function getSearchResults(query: string, take = 20): Promise<SearchResult[]> {
-  const releases = await prisma.release.findMany({
+type GetSearchResultParams = {
+  query: string;
+  take?: number;
+  type?: SearchableEntities;
+};
+
+export async function getSearchResults({ query, take = 20, type }: GetSearchResultParams): Promise<SearchResult[]> {
+  const types = (type ? [type] : Object.keys(getters)) as SearchableEntities[];
+  const data = await Promise.all(
+    types.map(
+      async (type) => {
+        const results = await getters[type](query, take);
+        const transformer
+          = transformers[type] as (x: Unpacked<typeof results>) => SearchResult;
+        return results.map(transformer);
+      }
+    )
+  );
+
+  return withEntityType(data.flatMap(
+    x => x.toSorted((a: HasTitle, b: HasTitle) => sortByQueryPosition(query, 'title', a, b))
+  ), 'searchResult');
+}
+
+type Getter<T> = (query: string, take: number) => Promise<T[]>;
+
+type Getters = {
+  release: Getter<ReleaseWithArtist>;
+  artist: Getter<ArtistWithReleases>;
+  track: Getter<TrackWithRelease>;
+  collection: Getter<CollectionWithReleases>;
+  group: Getter<GroupWithArtists>;
+};
+
+const getters: Getters = {
+  artist: (query: string, take: number) => prisma.artist.findMany({
+    take,
+    where: {
+      name: {
+        contains: query,
+        mode: "insensitive",
+      },
+    },
+    include: {
+      coverRelease: {
+        include: {
+          artist: true
+        }
+      },
+      releases: {
+        where: {
+          mainRelease: null
+        }
+      }
+    },
+  }),
+  release: (query: string, take: number) => prisma.release.findMany({
     take,
     where: {
       mainRelease: null,
@@ -52,31 +116,24 @@ export async function getSearchResults(query: string, take = 20): Promise<Search
       additionalArtists: true,
       subReleases: true,
     },
-  });
-
-  const artists = await prisma.artist.findMany({
+  }),
+  track: (query: string, take: number) => prisma.track.findMany({
     take,
     where: {
-      name: {
+      title: {
         contains: query,
         mode: "insensitive",
       },
     },
     include: {
-      coverRelease: {
+      release: {
         include: {
           artist: true
         }
-      },
-      releases: {
-        where: {
-          mainRelease: null
-        }
       }
     },
-  });
-
-  const collections = await prisma.collection.findMany({
+  }),
+  collection: (query: string, take: number) => prisma.collection.findMany({
     take,
     where: {
       title: {
@@ -96,9 +153,8 @@ export async function getSearchResults(query: string, take = 20): Promise<Search
         }
       }
     },
-  });
-
-  const groups = await prisma.group.findMany({
+  }),
+  group: (query: string, take: number) => prisma.group.findMany({
     take,
     where: {
       title: {
@@ -126,40 +182,20 @@ export async function getSearchResults(query: string, take = 20): Promise<Search
         }
       },
     },
-  });
+  }),
+};
 
-  const tracks = await prisma.track.findMany({
-    take: 10,
-    where: {
-      title: {
-        contains: query,
-        mode: "insensitive",
-      },
-    },
-    include: {
-      release: {
-        include: {
-          artist: true
-        }
-      }
-    },
-  });
+type Transformers = {
+  [Entity in keyof Getters]: (
+    x: Unpacked<Awaited<ReturnType<Getters[Entity]>>>
+  ) => SearchResult;
+};
 
-  return withEntityType([
-    tracks.map(transformers.track),
-    collections.map(transformers.collection),
-    groups.map(transformers.group),
-    artists.map(transformers.artist),
-    releases.map(transformers.release),
-  ].flatMap(
-    x => x.toSorted((a: HasTitle, b: HasTitle) => sortByQueryPosition(query, 'title', a, b))
-  ), 'searchResult');
-}
-
-const transformers = {
+const transformers: Transformers = {
   artist: (
     { id, name, coverRelease, releases }: ArtistWithReleases
   ) => ({
+    _type: 'searchResult',
     id,
     title: name,
     description: 'Artist',
@@ -167,11 +203,12 @@ const transformers = {
     links: {
       artist: `/artists/${id}`
     },
-    coverRelease: coverRelease || releases[0]
+    coverRelease: coverRelease || releases[0],
   }),
   release: (
     { id, title, artist, year, type, hash, subReleases, additionalArtists }: ReleaseWithArtistAndSubreleases & WithAdditionalArtists
   ) => ({
+    _type: 'searchResult',
     id,
     title: getReleaseTitle({ title, subReleases }),
     hash,
@@ -186,6 +223,7 @@ const transformers = {
   collection: (
     { id, title, coverRelease, releases }: CollectionWithReleases
   ) => ({
+    _type: 'searchResult',
     id,
     title,
     description: "Collection",
@@ -198,6 +236,7 @@ const transformers = {
   group: (
     { id, title, coverArtist }: GroupWithArtists
   ) => ({
+    _type: 'searchResult',
     id,
     title,
     description: "Group",
@@ -210,6 +249,7 @@ const transformers = {
   track: (
     { id, title, release }: TrackWithRelease
   ) => ({
+    _type: 'searchResult',
     id,
     title,
     description: "Track",

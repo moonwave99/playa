@@ -21,6 +21,7 @@ type Track = Prisma.Track & { _type: 'track' };
 export type { Artist, Release, Collection, Track, ReleaseType, Group };
 
 export type Entities = 'collection' | 'release' | 'artist' | 'searchResult' | 'track' | 'group';
+export type SearchableEntities = 'collection' | 'release' | 'artist' | 'track' | 'group';
 export type HasId = { id: number; };
 export type HasTitle = { title: string; };
 
@@ -121,10 +122,10 @@ export type SearchResult = {
   id: number;
   type: Entities;
   title: string;
-  hash: string;
+  hash?: string;
   artist?: string;
   description: string;
-  links: Record<Entities, string>;
+  links: Partial<Record<Entities, string>>;
   coverRelease?: ReleaseWithArtist;
 }
 
@@ -166,3 +167,5 @@ export type MenuParams = {
 };
 
 export type Context = CollectionWithReleases | ArtistWithReleases | GroupWithArtists;
+
+export type Unpacked<T> = T extends (infer U)[] ? U : T;

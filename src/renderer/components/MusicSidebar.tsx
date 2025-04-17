@@ -34,7 +34,8 @@ export default function MusicSidebar() {
         take: 100,
         query: debouncedQuery,
         queryKey: ["search", debouncedQuery],
-        queryFn: api.searchResult.getSearchResults,
+        queryFn: (query, take) =>
+            api.searchResult.getSearchResults({ query, take }),
     });
     const { inputRef, currentContext, inputHandlers, listHandlers } =
         useSidebar({ isPending, setQuery });
@@ -153,7 +154,9 @@ function SearchResultView({
         if (type === "release" || coverRelease) {
             return (
                 <Cover
-                    {...(type === "release" ? item : coverRelease)}
+                    {...(type === "release"
+                        ? (item as SearchResult & { hash: string })
+                        : coverRelease)}
                     className={styles.coverWrapper}
                 />
             );

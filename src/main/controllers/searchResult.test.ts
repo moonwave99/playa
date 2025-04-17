@@ -38,7 +38,7 @@ describe('searchResult - search function', () => {
     prisma.group.findMany.mockResolvedValue([]);
 
     const { getSearchResults } = searchResultController();
-    const results = await getSearchResults('love');
+    const results = await getSearchResults({ query: 'love' });
     expect(results).toMatchObject([
       { id: 1, type: 'artist', links: { artist: '/artists/1' } },
       { id: 4, type: 'release', links: { artist: '/artists/1', release: '/releases/4' } },
