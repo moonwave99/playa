@@ -94,12 +94,12 @@ export default function EditArtistView({
                             }
                         />
                     </label>
-                    <div className={formStyles.info}>
-                        <MdInfoOutline />
-                        This will physically move the Artist folder in your
-                        Library.
-                    </div>
+
                     <div className={formStyles.actions}>
+                        <div className={formStyles.info}>
+                            <MdInfoOutline />
+                            This will move the Artist folder in your Library.
+                        </div>
                         <button
                             type="submit"
                             className={formStyles.button}

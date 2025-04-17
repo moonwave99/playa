@@ -140,13 +140,11 @@ export default function EditReleasesView({
                         </li>
                     ))}
                 </ul>
-                <div className={formStyles.info}>
-                    <MdInfoOutline />
-                    This will physically move the Release folder in your
-                    Library.
-                </div>
-                <AdditionalArtistsEditor releaseId={release.id} />
                 <div className={formStyles.actions}>
+                    <div className={formStyles.info}>
+                        <MdInfoOutline />
+                        This will move the Release folder in your Library.
+                    </div>
                     <button
                         type="submit"
                         className={formStyles.button}
@@ -162,6 +160,7 @@ export default function EditReleasesView({
                         Cancel
                     </button>
                 </div>
+                <AdditionalArtistsEditor releaseId={release.id} />
             </form>
         </div>
     );
@@ -196,34 +195,45 @@ function FolderView({
                 <>
                     <div className={formStyles.horizontalGroup}>
                         <Field
+                            hasFocus
+                            name="newTitle"
+                            release={release}
+                            onInput={onInput}
+                            isVertical
+                            className={styles.newTitle}
+                        />
+                        <Field
                             name="newYear"
                             release={release}
                             onInput={onInput}
                             type="number"
+                            isVertical
                         />
-                        <ReleaseTypeField release={release} onInput={onInput} />
+                        <ReleaseTypeField
+                            release={release}
+                            onInput={onInput}
+                            isVertical
+                        />
                     </div>
-                    <Field
-                        hasFocus
-                        name="newTitle"
-                        release={release}
-                        onInput={onInput}
-                    />
                 </>
             ) : null}
-            <Field
-                hasFocus={hasFocus && !isMainRelease}
-                name="newPath"
-                release={release}
-                onInput={onInput}
-            />
-            {hasMultipleDiscs ? (
+            <div className={formStyles.horizontalGroup}>
                 <Field
-                    name="newDiscTitle"
+                    hasFocus={hasFocus && !isMainRelease}
+                    name="newPath"
                     release={release}
                     onInput={onInput}
+                    isVertical
                 />
-            ) : null}
+                {hasMultipleDiscs ? (
+                    <Field
+                        name="newDiscTitle"
+                        release={release}
+                        onInput={onInput}
+                        isVertical
+                    />
+                ) : null}
+            </div>
         </article>
     );
 }
@@ -231,6 +241,8 @@ function FolderView({
 type FieldProps = Pick<FolderViewProps, "release" | "onInput" | "hasFocus"> & {
     name: keyof NewReleaseInfo;
     type?: string;
+    isVertical?: boolean;
+    className?: string;
 };
 
 function Field({
@@ -239,9 +251,15 @@ function Field({
     hasFocus,
     onInput,
     type = "text",
+    isVertical = false,
+    className,
 }: FieldProps) {
     return (
-        <label className={cx(formStyles.label, styles.label)}>
+        <label
+            className={cx(formStyles.label, styles.label, className, {
+                [formStyles.vertical]: isVertical,
+            })}
+        >
             {labelMap[name].label}
             <input
                 type={type}
@@ -259,15 +277,22 @@ function Field({
     );
 }
 
-type ReleaseTypeFieldProps = Omit<FieldProps, "name">;
+type ReleaseTypeFieldProps = Omit<FieldProps, "name"> & {
+    isVertical?: boolean;
+};
 
 function ReleaseTypeField({
     release,
     hasFocus,
     onInput,
+    isVertical = false,
 }: ReleaseTypeFieldProps) {
     return (
-        <label className={cx(formStyles.label, styles.label)}>
+        <label
+            className={cx(formStyles.label, styles.label, {
+                [formStyles.vertical]: isVertical,
+            })}
+        >
             {labelMap.newType.label}
             <select
                 className={cx(formStyles.select, styles.select)}

@@ -16,9 +16,9 @@
     gap: .5rem;
     align-items: start;
 
-    .input {
-      flex-basis: 2rem;
-      width: 20rem;
+    .input,
+    .select {
+      width: 100%;
     }
   }
 }
@@ -88,8 +88,8 @@
 }
 
 .info {
+  margin-right: auto;
   display: flex;
-  justify-content: end;
   align-items: center;
   gap: .25rem;
   font-size: .8rem;
@@ -118,7 +118,6 @@
 .horizontalGroup {
   display: flex;
   gap: 1rem;
-  align-items: center;
 }
 
 .container {
