@@ -23,25 +23,20 @@ describe('searchResult - search function', () => {
         x => {
           return lowerCaseCompare(
             x.title,
-            where.OR.at(0).title.contains
-          ) || lowerCaseCompare(x.artist.name, where.OR.at(1).artist.name.contains);
+            where.title.contains
+          );
         }
       );
     })
-    prisma.artist.findMany.mockImplementation(({ where }) => {
-      return artists.filter(
-        x => x.name.toLowerCase().includes(where.name.contains.toLowerCase())
-      );
-    })
+    prisma.artist.findMany.mockResolvedValue([]);
     prisma.collection.findMany.mockResolvedValue([]);
     prisma.track.findMany.mockResolvedValue([]);
     prisma.group.findMany.mockResolvedValue([]);
 
     const { getSearchResults } = searchResultController();
     const results = await getSearchResults({ query: 'love' });
+
     expect(results).toMatchObject([
-      { id: 1, type: 'artist', links: { artist: '/artists/1' } },
-      { id: 4, type: 'release', links: { artist: '/artists/1', release: '/releases/4' } },
       { id: 1, type: 'release', links: { artist: '/artists/1', release: '/releases/1' } },
       { id: 2, type: 'release', links: { artist: '/artists/1', release: '/releases/2' } },
     ]);

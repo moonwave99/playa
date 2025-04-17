@@ -120,7 +120,7 @@ export type SearchParams = Record<string, string>;
 export type SearchResult = {
   _type: 'searchResult',
   id: number;
-  type: Entities;
+  type: SearchableEntities;
   title: string;
   hash?: string;
   artist?: string;

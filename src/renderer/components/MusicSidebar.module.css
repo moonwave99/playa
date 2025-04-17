@@ -155,3 +155,23 @@
   margin-left: auto;
   flex-shrink: 0;
 }
+
+.showMore {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  color: var(--secondary-color);
+  background-color: var(--background-color);
+  font-size: .7rem;
+  height: 2rem;
+  margin: .5rem 1rem;
+  padding: 0 1rem;
+  border-radius: .25rem;
+  appearance: none;
+  border: none;
+  margin-left: auto;
+
+  &:hover {
+    opacity: .8;
+  }
+}

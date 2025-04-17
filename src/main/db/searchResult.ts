@@ -35,14 +35,13 @@ export async function getSearchResults({ query, take = 20, type }: GetSearchResu
         const results = await getters[type](query, take);
         const transformer
           = transformers[type] as (x: Unpacked<typeof results>) => SearchResult;
-        return results.map(transformer);
+        return results.map(transformer)
+          .toSorted((a: HasTitle, b: HasTitle) => sortByQueryPosition(query, 'title', a, b))
       }
     )
   );
 
-  return withEntityType(data.flatMap(
-    x => x.toSorted((a: HasTitle, b: HasTitle) => sortByQueryPosition(query, 'title', a, b))
-  ), 'searchResult');
+  return withEntityType(data.flat(), 'searchResult');
 }
 
 type Getter<T> = (query: string, take: number) => Promise<T[]>;
@@ -59,10 +58,24 @@ const getters: Getters = {
   artist: (query: string, take: number) => prisma.artist.findMany({
     take,
     where: {
-      name: {
-        contains: query,
-        mode: "insensitive",
-      },
+      OR: [
+        {
+          name: {
+            contains: query,
+            mode: "insensitive",
+          },
+        },
+        {
+          appearsIn: {
+            some: {
+              title: {
+                contains: query,
+                mode: "insensitive",
+              },
+            }
+          }
+        }
+      ]
     },
     include: {
       coverRelease: {
@@ -81,32 +94,10 @@ const getters: Getters = {
     take,
     where: {
       mainRelease: null,
-      OR: [
-        {
-          title: {
-            contains: query,
-            mode: "insensitive",
-          },
-        },
-        {
-          artist: {
-            name: {
-              contains: query,
-              mode: "insensitive",
-            },
-          },
-        },
-        {
-          additionalArtists: {
-            some: {
-              name: {
-                contains: query,
-                mode: "insensitive",
-              },
-            }
-          }
-        }
-      ],
+      title: {
+        contains: query,
+        mode: "insensitive",
+      },
     },
     orderBy: {
       title: 'asc',
@@ -196,10 +187,10 @@ const transformers: Transformers = {
     { id, name, coverRelease, releases }: ArtistWithReleases
   ) => ({
     _type: 'searchResult',
+    type: 'artist' as const,
     id,
     title: name,
     description: 'Artist',
-    type: 'artist' as const,
     links: {
       artist: `/artists/${id}`
     },
@@ -209,12 +200,12 @@ const transformers: Transformers = {
     { id, title, artist, year, type, hash, subReleases, additionalArtists }: ReleaseWithArtistAndSubreleases & WithAdditionalArtists
   ) => ({
     _type: 'searchResult',
+    type: 'release' as const,
     id,
     title: getReleaseTitle({ title, subReleases }),
     hash,
     artist: getReleaseArtist({ artist, additionalArtists }),
     description: year ? `${type}, ${year}` : type,
-    type: 'release' as const,
     links: {
       release: `/releases/${id}`,
       artist: `/artists/${artist.id}`
@@ -224,10 +215,10 @@ const transformers: Transformers = {
     { id, title, coverRelease, releases }: CollectionWithReleases
   ) => ({
     _type: 'searchResult',
+    type: 'collection' as const,
     id,
     title,
     description: "Collection",
-    type: 'collection' as const,
     links: {
       collection: `/collections/${id}`
     },
@@ -237,10 +228,10 @@ const transformers: Transformers = {
     { id, title, coverArtist }: GroupWithArtists
   ) => ({
     _type: 'searchResult',
+    type: 'group' as const,
     id,
     title,
     description: "Group",
-    type: 'group' as const,
     links: {
       group: `/groups/${id}`
     },
@@ -250,10 +241,10 @@ const transformers: Transformers = {
     { id, title, release }: TrackWithRelease
   ) => ({
     _type: 'searchResult',
+    type: 'track' as const,
     id,
     title,
     description: "Track",
-    type: 'track' as const,
     artist: release.artist.name,
     links: {
       track: `/releases/${release.id}?track_id=${id}`,
