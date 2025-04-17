@@ -9,6 +9,7 @@ import ReleaseList from "@/renderer/components/ReleaseList";
 import ListCard from "@/renderer/components/ListCard";
 import Loading from "@/renderer/components/Loading";
 import ErrorView from "@/renderer/components/ErrorView";
+import { withoutShift } from "../hooks/useKeyboardManager";
 
 import styles from "./Page.module.css";
 
@@ -51,8 +52,10 @@ export default function ArtistPage() {
     }
 
     const keyHandlers = {
-        c: (_event: KeyboardEvent, selection: ReleaseWithArtist[]) =>
-            setArtistCover(selection[0].id),
+        c: withoutShift(
+            (_event: KeyboardEvent, selection: ReleaseWithArtist[]) =>
+                selection.length && setArtistCover(selection[0].id)
+        ),
     };
 
     return (
