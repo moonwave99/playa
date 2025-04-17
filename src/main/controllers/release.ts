@@ -335,7 +335,7 @@ export function releaseController({
   }
 
   async function refreshCurrentArtistReleases() {
-    const releasesToRefresh = state.getCurrentArtist().releases
+    const releasesToRefresh = state.getCurrentArtist()?.releases
       .filter((x: ReleaseWithArtistAndTracks) => !x.tracks.length);
     if (!releasesToRefresh.length) {
       return;
