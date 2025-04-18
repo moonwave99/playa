@@ -109,8 +109,8 @@ describe('release - editRelease function', () => {
       newPath: 'Album One',
       newDiscTitle: 'Album Edited',
       newTitle: 'Album Edited',
-      newType: 'EP' as ReleaseType,
-      newYear: 2000
+      newYear: 1999,
+      newType: 'Album' as ReleaseType,
     };
 
     const result = await editRelease([{ ...release, ...newInfo }]);
@@ -119,8 +119,8 @@ describe('release - editRelease function', () => {
       path: 'Album One',
       discTitle: null,
       title: 'Album Edited',
-      type: 'EP' as ReleaseType,
-      year: 2000
+      year: 1999,
+      type: 'Album' as ReleaseType,
     });
 
     expect(spy).not.toHaveBeenCalled();
@@ -176,8 +176,8 @@ describe('release - editRelease function', () => {
       newPath: 'New Album Path',
       newDiscTitle: 'Album Edited',
       newTitle: 'Album Edited',
-      newType: 'EP' as ReleaseType,
-      newYear: 2000
+      newType: 'Album' as ReleaseType,
+      newYear: 1999
     };
 
     const result = await editRelease([{

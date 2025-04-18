@@ -58,7 +58,11 @@ export function releaseController({
     }
 
     const shouldJustRenameDiscs =
-      infos.every(x => x.path === x.newPath) && didReleaseInfoChange(infos);
+      infos.every(x =>
+        x.path === x.newPath
+        && x.year === x.newYear
+        && x.type === x.newType
+      ) && didReleaseInfoChange(infos);
 
     if (shouldJustRenameDiscs) {
       return await updateReleases(infos.map(x => ({
@@ -84,7 +88,13 @@ export function releaseController({
       }
       const targetPath = withPath(
         'LIBRARY_PATH',
-        getEntityPath({ ...info, _type: 'release', path: info.newPath, artist })
+        getEntityPath({
+          _type: 'release',
+          year: info.newYear,
+          type: info.newType,
+          path: info.newPath,
+          artist,
+        })
       );
 
       if (existsSync(targetPath)) {
@@ -110,7 +120,7 @@ export function releaseController({
         path: x.newPath,
         title: x.newTitle,
         type: x.newType,
-        year: x.newYear
+        year: x.newYear,
       }));
 
       await Promise.all(infos.map(async (x, index) => {

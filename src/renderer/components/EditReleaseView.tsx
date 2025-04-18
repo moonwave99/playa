@@ -83,7 +83,9 @@ export default function EditReleasesView({
                     (x) =>
                         x.path !== x.newPath ||
                         x.discTitle !== x.newDiscTitle ||
-                        x.title !== x.newTitle
+                        x.title !== x.newTitle ||
+                        x.year !== x.newYear ||
+                        x.type !== x.newType
                 )
                 .map((x) => ({
                     ...x,
