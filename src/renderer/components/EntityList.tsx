@@ -4,6 +4,7 @@ import { MdRemoveCircle } from "react-icons/md";
 import cx from "clsx";
 import styles from "./EntityList.module.css";
 import buttonStyles from "../buttons.module.css";
+import { normalizeArtistDisplayName } from "@/lib/utils";
 
 type EntityListProps = {
     items: (Artist | Collection | Group)[];
@@ -30,7 +31,7 @@ export default function EntityList({
                     title={`[${item.id}]`}
                     to={`/artists/${item.id}`}
                 >
-                    {item.name}
+                    {normalizeArtistDisplayName(item.name)}
                 </Link>
             );
         }

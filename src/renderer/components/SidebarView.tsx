@@ -78,8 +78,8 @@ export default function SidebarView() {
             {currentSidebar === "artists" ? (
                 <Sidebar
                     label="artists"
-                    filterFn={({ name }: Artist, query) =>
-                        lowerCaseCompare(name, query)
+                    filterFn={({ normalizedName }: Artist, query) =>
+                        lowerCaseCompare(normalizedName, query)
                     }
                     onEnter={(artist) => navigate(getArtistLink(artist))}
                     onContextMenu={api.menu.artist}

@@ -13,6 +13,7 @@ model Artist {
   createdAt               DateTime  @default(now())
   updatedAt               DateTime  @updatedAt
   name                    String    @db.VarChar(255)
+  normalizedName          String    @default("") @db.VarChar(255)
   hash                    String    @unique @db.VarChar(16)
   path                    String    @default("") @db.VarChar(255)
   releases                Release[]
@@ -32,6 +33,7 @@ model Release {
   createdAt         DateTime     @default(now())
   updatedAt         DateTime     @updatedAt
   title             String       @db.VarChar(255)
+  normalizedTitle   String       @default("") @db.VarChar(255)
   hash              String       @unique @db.VarChar(16)
   path              String       @db.VarChar(255)
   type              ReleaseType  @default(Album)
@@ -54,16 +56,17 @@ model Release {
 }
 
 model Track {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String   @db.VarChar(255)
-  hash      String   @unique @db.VarChar(16)
-  path      String   @db.VarChar(255)
-  duration  Int
-  releaseId Int
-  position  Int
-  release   Release  @relation(fields: [releaseId], references: [id], onDelete: Cascade)
+  id              Int      @id @default(autoincrement())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  title           String   @db.VarChar(255)
+  normalizedTitle String   @default("") @db.VarChar(255)
+  hash            String   @unique @db.VarChar(16)
+  path            String   @db.VarChar(255)
+  duration        Int
+  releaseId       Int
+  position        Int
+  release         Release  @relation(fields: [releaseId], references: [id], onDelete: Cascade)
 
   @@index([hash], type: Hash)
 }

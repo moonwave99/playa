@@ -1,5 +1,5 @@
 import prisma from "./prisma";
-import { countReleasesByType, sortReleasesByTypeAndYear, withCoverRelease } from '@/lib/utils';
+import { countReleasesByType, normalizeDiacritics, sortReleasesByTypeAndYear, withCoverRelease } from '@/lib/utils';
 import { withEntityType } from "@/types/types";
 import type {
   Artist,
@@ -184,7 +184,7 @@ export async function getLatestArtists(
 export async function getAllArtists(): Promise<Artist[]> {
   const result = await prisma.artist.findMany({
     orderBy: { name: "asc" },
-    select: { id: true, name: true, hash: true, path: true },
+    select: { id: true, name: true, normalizedName: true, hash: true, path: true },
   });
   return result ? withEntityType(result, 'artist') : null;
 }
@@ -196,7 +196,7 @@ function withReleaseCount(artist: ArtistWithReleases) {
 export async function updateArtist(id: number, { name, path }: ArtistUpdate) {
   const result = await prisma.artist.update({
     where: { id },
-    data: { name, path }
+    data: { name, normalizedName: normalizeDiacritics(name), path }
   });
   return result ? withEntityType(result, 'artist') : null;
 }

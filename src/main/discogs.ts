@@ -1,6 +1,6 @@
 import type { Release, Artist } from '@/types/types';
-import { deburr } from "lodash";
 import { log } from "./logger";
+import { normalizeDiacritics } from '@/lib/utils';
 import { version } from '../../package.json';
 import { getImageFromURL } from "./image";
 
@@ -17,8 +17,8 @@ type DiscogsSecrets = {
 
 export async function search({ artist, title }: SearchParams, secrets: DiscogsSecrets) {
     const params = new URLSearchParams({
-        artist: normalizeSearchParam(artist),
-        title: normalizeSearchParam(title),
+        artist: normalizeDiacritics(artist),
+        title: normalizeDiacritics(title),
         key: secrets.DISCOGS_KEY,
         secret: secrets.DISCOGS_SECRET,
     });
@@ -86,14 +86,4 @@ export async function searchCover(
         log('discogs:searchCover', error);
         return false;
     }
-}
-
-function normalizeSearchParam(input: string) {
-    return deburr(
-        input
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .replace(/\((\d+)\)$/, '')
-            .trim()
-    );
 }

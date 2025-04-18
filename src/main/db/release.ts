@@ -11,6 +11,7 @@ import type {
     ReleaseWithArtistAndSubreleases,
     ReleaseWithArtist,
 } from '@/types/types';
+import { normalizeDiacritics } from "@/lib/utils";
 
 export async function getRelease(id: number) {
     const result = await prisma.release.findFirst({
@@ -83,6 +84,7 @@ export async function addTracksToRelease(id: number, trackInfo: TrackInfo[]) {
     const tracks = await Promise.all(trackInfo.map(track => prisma.track.create({
         data: {
             ...track,
+            normalizedTitle: normalizeDiacritics(track.title),
             hash: sha1(`${id}-${track.path}`).slice(0, 16),
             releaseId: id
         }
@@ -218,7 +220,11 @@ export async function updateReleases(infos: RenameReleaseParam) {
     return prisma.$transaction(
         infos.map(({ id, title, path, hash, discTitle, discNumber, type, year }) => prisma.release.update({
             where: { id },
-            data: { title, path, hash, discTitle, discNumber, type, year }
+            data: {
+                title,
+                normalizedTitle: normalizeDiacritics(title),
+                path, hash, discTitle, discNumber, type, year
+            }
         }))
     );
 }

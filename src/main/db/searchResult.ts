@@ -60,7 +60,7 @@ const getters: Getters = {
     where: {
       OR: [
         {
-          name: {
+          normalizedName: {
             contains: query,
             mode: "insensitive",
           },
@@ -68,7 +68,7 @@ const getters: Getters = {
         {
           appearsIn: {
             some: {
-              title: {
+              normalizedTitle: {
                 contains: query,
                 mode: "insensitive",
               },
@@ -94,7 +94,7 @@ const getters: Getters = {
     take,
     where: {
       mainRelease: null,
-      title: {
+      normalizedTitle: {
         contains: query,
         mode: "insensitive",
       },
@@ -111,7 +111,7 @@ const getters: Getters = {
   track: (query: string, take: number) => prisma.track.findMany({
     take,
     where: {
-      title: {
+      normalizedTitle: {
         contains: query,
         mode: "insensitive",
       },

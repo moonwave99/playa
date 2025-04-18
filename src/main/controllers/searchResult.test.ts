@@ -22,8 +22,8 @@ describe('searchResult - search function', () => {
       return releases.filter(
         x => {
           return lowerCaseCompare(
-            x.title,
-            where.title.contains
+            x.normalizedTitle,
+            where.normalizedTitle.contains
           );
         }
       );

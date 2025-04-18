@@ -11,7 +11,7 @@ import {
   ReleaseWithArtistAndTracks,
   Context,
 } from "@/types/types";
-import { didReleaseInfoChange, mapSeries } from '@/lib/utils';
+import { didReleaseInfoChange, mapSeries, normalizeDiacritics } from '@/lib/utils';
 import {
   getRelease,
   getLatestReleases,
@@ -195,6 +195,7 @@ export function releaseController({
 
     const artistPath = releaseData.fullPath.split("/").slice(0, 2).join("/");
     const artistHash = hashArtistName(releaseData.artist.name);
+    const normalizedName = normalizeDiacritics(releaseData.artist.name);
 
     const artist = await prisma.artist.upsert({
       where: {
@@ -203,11 +204,13 @@ export function releaseController({
       update: {
         hash: artistHash,
         name: releaseData.artist.name,
+        normalizedName,
         path: artistPath,
       },
       create: {
         hash: artistHash,
         name: releaseData.artist.name,
+        normalizedName,
         path: artistPath,
       },
     });
@@ -216,18 +219,23 @@ export function releaseController({
 
     const releaseHash = hashRelease({ ...releaseData, artist_id: artist.id });
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { artist: artistData, fullPath, ...releaseWithoutArtist } = releaseData;
+    const { artist: artistData, fullPath, title, ...releaseWithoutArtist } = releaseData;
+    const normalizedTitle = normalizeDiacritics(title);
     const release = await prisma.release.upsert({
       where: {
         hash: releaseHash,
       },
       update: {
         hash: releaseHash,
+        title,
+        normalizedTitle,
         ...releaseWithoutArtist,
         artist_id: artist.id,
       },
       create: {
         hash: releaseHash,
+        title,
+        normalizedTitle,
         ...releaseWithoutArtist,
         artist_id: artist.id,
       },

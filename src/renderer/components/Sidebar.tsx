@@ -2,9 +2,9 @@ import { useState } from "react";
 import type { MouseEvent, ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { QueryKey } from "@tanstack/react-query";
-import { Artist, Release } from "@/types/types";
+import { Artist, Collection, Group, Release } from "@/types/types";
 import List from "@/renderer/components/List";
-import Draggable from "@/renderer/components/Draggable";
+import Draggable, { type DraggableItem } from "@/renderer/components/Draggable";
 import type { RenderParams } from "@/renderer/components/List";
 import { doContextsMatch } from "../hooks/useKeyboardManager";
 import useSidebar from "../hooks/useSidebar";
@@ -15,7 +15,7 @@ import Link from "./Link";
 import cx from "clsx";
 import styles from "./Sidebar.module.css";
 
-type Item = Artist | Release;
+type Item = Artist | Release | Collection | Group;
 
 type SidebarProps = {
     label: string;
@@ -158,7 +158,10 @@ function DefaultEntry({
                 {getEntryText(item)}
             </Link>
             {isDraggable && (
-                <Draggable className={styles.dragHandle} item={item} />
+                <Draggable
+                    className={styles.dragHandle}
+                    item={item as DraggableItem}
+                />
             )}
         </div>
     );

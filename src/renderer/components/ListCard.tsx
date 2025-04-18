@@ -7,6 +7,7 @@ import {
     getReleaseTitle,
     getCoverRelease,
     withStopPropagation,
+    normalizeArtistDisplayName,
 } from "@/lib/utils";
 import {
     getCover,
@@ -133,7 +134,7 @@ export default function ListCard({
                         to={getArtistLink(item)}
                         title={`[${item.id}]`}
                     >
-                        {item.name}
+                        {normalizeArtistDisplayName(item.name)}
                     </Link>
 
                     <div className={styles.info}>

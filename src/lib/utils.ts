@@ -1,4 +1,4 @@
-import { capitalize, uniqBy } from 'lodash';
+import { capitalize, deburr, uniqBy } from 'lodash';
 import type { MouseEvent } from 'react';
 import type {
   ReleaseType,
@@ -33,7 +33,7 @@ export function getReleaseTitle({ title, subReleases = [] }:
 export function getReleaseArtist(
   { artist, additionalArtists }: Pick<ReleaseWithArtist & WithAdditionalArtists, 'artist' | 'additionalArtists'>
 ) {
-  return [artist, ...additionalArtists].map(x => x.name).join(', ');
+  return [artist, ...additionalArtists].map(x => normalizeArtistName(x.name)).join(', ');
 }
 
 export function getUniqueArtists(releases: ReleaseWithArtist[]): Artist[] {
@@ -72,6 +72,10 @@ export function normalizeArtistName(name: string) {
     return "Various";
   }
   return name.replaceAll("!", "");
+}
+
+export function normalizeArtistDisplayName(name: string) {
+  return name === '_VV_AA_' ? 'Various Artists' : name;
 }
 
 export function getDiscInfo({ subReleases }: ReleaseWithArtistAndSubreleases) {
@@ -221,4 +225,14 @@ export function withCoverRelease(artist: ArtistWithReleases) {
 
 export function lowerCaseCompare(a: string, b: string) {
   return a.toLowerCase().includes(b.toLowerCase());
+}
+
+export function normalizeDiacritics(input: string) {
+  return deburr(
+    input
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\((\d+)\)$/, '')
+      .trim()
+  );
 }

@@ -5,8 +5,10 @@ import cx from "clsx";
 import styles from "../dnd.module.css";
 import { PiDotsThreeVerticalBold } from "react-icons/pi";
 
+export type DraggableItem = Artist | Release | SearchResult;
+
 type DraggableProps = {
-    item: Artist | Release | SearchResult;
+    item: DraggableItem;
     children?: ReactNode;
     className?: string;
 };

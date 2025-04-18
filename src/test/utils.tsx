@@ -13,6 +13,7 @@ import type {
     WithAppearances,
 } from "@/types/types";
 import path from "path";
+import { normalizeDiacritics } from "@/lib/utils";
 
 export function withRouter(children: ReactNode) {
     return <MemoryRouter>{children}</MemoryRouter>;
@@ -32,12 +33,13 @@ const timestamp = new Date("2025-04-04T14:52:56.879Z");
 
 const artistHashMap: Record<
     string,
-    Pick<Artist, "id" | "path" | "name" | "coverReleaseId">
+    Pick<Artist, "id" | "path" | "name" | "normalizedName" | "coverReleaseId">
 > = {
     "6c3f3d3203630ce7": {
         id: 1,
         path: "A/Artist",
         name: "Artist",
+        normalizedName: "Artist",
         coverReleaseId: 1,
     },
 };
@@ -94,6 +96,7 @@ export function getFakeArtist(
         _type: "artist",
         id,
         name: "Artist",
+        normalizedName: "Artist",
         createdAt: timestamp,
         updatedAt: timestamp,
         hash: hash || `artist-hash-${id}`,
@@ -110,12 +113,16 @@ export function getFakeArtist(
 
 const releaseHashMap: Record<
     string,
-    Pick<ReleaseWithArtist, "id" | "artist_id" | "title" | "year" | "path">
+    Pick<
+        ReleaseWithArtist,
+        "id" | "artist_id" | "title" | "normalizedTitle" | "year" | "path"
+    >
 > = {
     e6ff3253fb407e5f: {
         id: 1,
         artist_id: 1,
         title: "Album One",
+        normalizedTitle: "Album One",
         path: "Album One",
         year: 1999,
     },
@@ -123,6 +130,7 @@ const releaseHashMap: Record<
         id: 2,
         artist_id: 1,
         title: "Album Two",
+        normalizedTitle: "Album Two",
         path: "Album Two",
         year: 2000,
     },
@@ -150,6 +158,19 @@ export function getFakeRelease(
 
     artist_id = artist_id || data.artist_id || 1;
 
+    function getNormalizedTitle() {
+        if (overwrite?.normalizedTitle) {
+            return overwrite.normalizedTitle;
+        }
+        if (overwrite?.title) {
+            return normalizeDiacritics(overwrite.title);
+        }
+        if (data?.normalizedTitle) {
+            return data.normalizedTitle;
+        }
+        return "release title";
+    }
+
     return {
         _type: "release",
         id: release_id,
@@ -169,6 +190,7 @@ export function getFakeRelease(
         additionalArtists: [],
         ...data,
         ...overwrite,
+        normalizedTitle: getNormalizedTitle(),
     };
 }
 
@@ -187,6 +209,7 @@ export function getTrackFromData(
         createdAt: timestamp,
         updatedAt: timestamp,
         releaseId: data.releaseId || 1,
+        normalizedTitle: normalizeDiacritics(data.title),
         ...data,
     };
 }
@@ -201,6 +224,7 @@ export function getFakeTrack(index = 0, track_id = 1, releaseId = 1): Track {
         releaseId,
         path,
         title: `Track ${index + 1}`,
+        normalizedTitle: `Track ${index + 1}`,
         position: index + 1,
         duration: 123,
         hash: `track-hash-${track_id}`,
