@@ -10,6 +10,8 @@ import {
   ReleaseWithArtist,
   ReleaseWithArtistAndTracks,
   Context,
+  Release,
+  Track,
 } from "@/types/types";
 import { didReleaseInfoChange, mapSeries, normalizeDiacritics } from '@/lib/utils';
 import {
@@ -34,8 +36,7 @@ import {
   getFolderContents,
   parsePath
 } from '../utils';
-import { searchCover } from '../discogs';
-import { getImageFromURL } from '../image';
+import { searchCover, getImageFromURL } from '../covers';
 import { log } from '../logger';
 import { getSetting } from '../settings';
 import { type StateManager } from '../state';
@@ -257,14 +258,17 @@ export function releaseController({
     log('release:importSingleFolder', 'upserted release:', fullRelease);
 
     const COVERS_PATH = getSetting('COVERS_PATH') as string;
+    const DISCOGS_KEY = getSetting('DISCOGS_KEY') as string;
+    const DISCOGS_SECRET = getSetting('DISCOGS_SECRET') as string;
 
     await searchCover({
       release,
       artist,
+      track: fullRelease.tracks[0],
       outputPath: COVERS_PATH,
     }, {
-      DISCOGS_KEY: getSetting('DISCOGS_KEY') as string,
-      DISCOGS_SECRET: getSetting('DISCOGS_SECRET') as string,
+      DISCOGS_KEY,
+      DISCOGS_SECRET
     });
 
     return fullRelease;
@@ -281,7 +285,9 @@ export function releaseController({
     }
 
     const { hash } = release;
+
     const COVERS_PATH = getSetting('COVERS_PATH') as string;
+
     const success = await getImageFromURL({ outputPath: COVERS_PATH, hash, url });
     if (success) {
       send('coverUpdate', [release]);
@@ -291,18 +297,21 @@ export function releaseController({
 
   const THROTTLE_INTERVAL = 500;
 
-  async function importCovers(releases: ReleaseWithArtist[]) {
+  async function importCovers(releases: (ReleaseWithArtist & { tracks?: Track[] })[]) {
     const COVERS_PATH = getSetting('COVERS_PATH') as string;
     const DISCOGS_KEY = getSetting('DISCOGS_KEY') as string;
     const DISCOGS_SECRET = getSetting('DISCOGS_SECRET') as string;
 
     return await mapSeries(releases,
-      async (release: ReleaseWithArtist) => {
+      async (release: ReleaseWithArtist & { tracks?: Track[] }) => {
         const pic = await searchCover({
-          release, artist: release.artist, outputPath: COVERS_PATH
+          release,
+          artist: release.artist,
+          track: release.tracks?.length > 0 ? release.tracks[0] : null,
+          outputPath: COVERS_PATH
         }, {
           DISCOGS_KEY,
-          DISCOGS_SECRET
+          DISCOGS_SECRET,
         });
         if (!pic) {
           return null;
@@ -320,7 +329,7 @@ export function releaseController({
     await importCovers(releasesWithoutCover);
   }
 
-  async function deleteCover(release: ReleaseWithArtist) {
+  async function deleteCover(release: Release) {
     const cover = withPath('COVERS_PATH', `${release.hash}-cover.jpg`);
     await unlink(cover);
     send('coverUpdate', [release]);
