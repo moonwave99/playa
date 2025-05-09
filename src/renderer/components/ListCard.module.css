@@ -63,6 +63,7 @@
   color: var(--primary-color);
   font-weight: bold;
   letter-spacing: -.035rem;
+  text-wrap: balance;
 
   &:hover {
     text-decoration: underline;
@@ -74,6 +75,7 @@
   line-height: .9rem;
   letter-spacing: -.025rem;
   color: var(--primary-color);
+  text-wrap: balance;
 
   &:hover {
     text-decoration: underline;

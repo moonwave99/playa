@@ -1,6 +1,9 @@
 import { useParams, useSearchParams, Navigate } from "react-router";
 import api from "../api";
-import type { ReleaseWithArtistAndTracksAndSubreleases } from "@/types/types";
+import type {
+    ReleaseWithArtist,
+    ReleaseWithArtistAndTracksAndSubreleases,
+} from "@/types/types";
 import { getReleaseContextMenuParams } from "@/lib/utils";
 import useCollection from "@/renderer/query/useCollection";
 import { useClearSelectionOnLeave } from "@/renderer/hooks/ipc";
@@ -10,6 +13,7 @@ import Droppable from "../components/Droppable";
 import Loading from "@/renderer/components/Loading";
 import ErrorView from "../components/ErrorView";
 import styles from "./Page.module.css";
+import { withoutShift } from "../hooks/useKeyboardManager";
 
 export default function CollectionPage() {
     const { id } = useParams();
@@ -20,6 +24,7 @@ export default function CollectionPage() {
         error,
         updateTitle,
         removeReleasesFromCollection,
+        setCollectionCover,
     } = useCollection(+id);
 
     useClearSelectionOnLeave();
@@ -49,6 +54,13 @@ export default function CollectionPage() {
         );
     }
 
+    const keyHandlers = {
+        c: withoutShift(
+            (_event: KeyboardEvent, selection: ReleaseWithArtist[]) =>
+                selection.length && setCollectionCover(selection[0].id)
+        ),
+    };
+
     return (
         <div className={styles.page}>
             <EditableHeader
@@ -67,6 +79,7 @@ export default function CollectionPage() {
                         onDelete={removeReleasesFromCollection}
                         onContextMenu={onContextMenu}
                         className={styles.list}
+                        keyHandlers={keyHandlers}
                     />
                 )}
             </Droppable>

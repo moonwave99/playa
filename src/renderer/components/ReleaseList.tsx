@@ -7,7 +7,11 @@ import type {
 } from "@/types/types";
 import type { ScrollToOptions } from "@tanstack/react-virtual";
 import { releaseColumnsConfig } from "../hooks/useResponsiveColumns";
-import { useKeyManager, withPrevent } from "../hooks/useKeyboardManager";
+import {
+    useKeyManager,
+    withoutShift,
+    withPrevent,
+} from "../hooks/useKeyboardManager";
 import useStore from "../store";
 import api from "../api";
 import { getReleaseLink } from "@/lib/links";
@@ -153,6 +157,9 @@ export default function ReleaseList({
                             },
                         });
                     }
+                ),
+                d: withoutShift((_event: KeyboardEvent, selection: Release[]) =>
+                    api.release.deleteCover(selection[0])
                 ),
             }}
         />
