@@ -97,6 +97,7 @@ settings.json
 # Personal scripts
 scripts/
 src/playground.ts
+src/mobile-sync.ts
 
 # db dumps
 dump/
