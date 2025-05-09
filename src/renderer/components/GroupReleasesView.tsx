@@ -27,6 +27,7 @@ import { MdInfoOutline } from "react-icons/md";
 import cx from "clsx";
 import styles from "./GroupReleasesView.module.css";
 import formStyles from "../forms.module.css";
+import { lowerCaseCompare } from "@/lib/utils";
 
 type GroupReleasesViewProps = {
     releases: ReleaseWithArtist[];
@@ -89,13 +90,24 @@ export default function GroupReleasesView({
     }
 
     function fillInfo() {
-        setDiscInfo((prev) =>
-            prev.map((x, index) => ({
+        setDiscInfo((prev) => {
+            const bonusDisc = prev.findIndex((x) =>
+                lowerCaseCompare(x.discTitle, "bonus disc")
+            );
+
+            if (bonusDisc > -1) {
+                return prev.map((x, index) => ({
+                    ...x,
+                    discNumber: index + 1,
+                    discTitle: index === bonusDisc ? "Bonus Disc" : x.discTitle,
+                }));
+            }
+            return prev.map((x, index) => ({
                 ...x,
                 discNumber: index + 1,
                 discTitle: `Disc ${index + 1}`,
-            }))
-        );
+            }));
+        });
     }
 
     function getMainReleaseTitle() {
