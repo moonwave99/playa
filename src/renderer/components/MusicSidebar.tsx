@@ -13,7 +13,6 @@ import Cover from "@/renderer/components/Cover";
 import Loading from "./Loading";
 import ErrorView from "./ErrorView";
 import Draggable from "./Draggable";
-import { capitalize } from "lodash";
 
 import cx from "clsx";
 import styles from "./MusicSidebar.module.css";
@@ -23,7 +22,7 @@ const DEBOUNCE_MS = 300;
 const MAX_RESULTS_PER_TYPE = 3;
 
 type MaxSearchResult = SearchResult & {
-    lastOfType?: boolean;
+    firstOfType?: boolean;
 };
 
 function processResults(results: SearchResult[]): MaxSearchResult[] {
@@ -34,19 +33,19 @@ function processResults(results: SearchResult[]): MaxSearchResult[] {
         collection: 0,
         group: 0,
     };
-    const output = [] as MaxSearchResult[];
-    results.forEach((result) => {
-        if (countMap[result.type] >= MAX_RESULTS_PER_TYPE) {
-            return;
-        }
-        countMap[result.type]++;
-        output.push(
-            countMap[result.type] === MAX_RESULTS_PER_TYPE
-                ? { ...result, lastOfType: true }
-                : result
-        );
-    });
-    return output;
+    return results.reduce(
+        (memo, result) =>
+            countMap[result.type] >= MAX_RESULTS_PER_TYPE
+                ? memo
+                : [
+                      ...memo,
+                      {
+                          ...result,
+                          firstOfType: ++countMap[result.type] === 1,
+                      },
+                  ],
+        []
+    );
 }
 
 export default function MusicSidebar() {
@@ -108,8 +107,8 @@ export default function MusicSidebar() {
     function getItemDimensions(_columns: number, index: number) {
         return {
             width: 300,
-            height: (trimmedResults[index] as MaxSearchResult).lastOfType
-                ? 112
+            height: (trimmedResults[index] as MaxSearchResult).firstOfType
+                ? 96
                 : 64,
         };
     }
@@ -157,13 +156,22 @@ export default function MusicSidebar() {
                             />
                         )}
                     />
-                    <footer className={styles.footer}>
-                        Showing
-                        <strong className={styles.count}>
-                            {trimmedResults.length}
-                        </strong>
-                        results
-                    </footer>
+                    {searchType === null ? (
+                        <footer className={styles.footer}>
+                            Showing
+                            <strong className={styles.count}>
+                                {trimmedResults.length}/{results.length}
+                            </strong>
+                            results
+                        </footer>
+                    ) : (
+                        <button
+                            className={styles.footer}
+                            onClick={() => setSearchType(null)}
+                        >
+                            Show all results
+                        </button>
+                    )}
                 </>
             )}
         </div>
@@ -247,6 +255,17 @@ function SearchResultView({
 
     return (
         <>
+            {item.firstOfType && (
+                <h3 className={cx(styles.type, styles.resultType)}>
+                    {type}s
+                    <button
+                        className={styles.showAll}
+                        onClick={onSearchTypeClick}
+                    >
+                        Show all
+                    </button>
+                </h3>
+            )}
             <article
                 onClick={onClick}
                 className={cx(styles.listItem, {
@@ -263,11 +282,6 @@ function SearchResultView({
                     <Draggable className={styles.dragHandle} item={item} />
                 )}
             </article>
-            {item.lastOfType && (
-                <button className={styles.showMore} onClick={onSearchTypeClick}>
-                    Show more {capitalize(item.type)}s
-                </button>
-            )}
         </>
     );
 }
