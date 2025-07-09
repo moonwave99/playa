@@ -5,6 +5,7 @@ import type {
   Artist, ReleaseType, Release, Entities, ReleaseWithArtist, TrackInfo, TrackWithRelease
 } from "@/types/types";
 import { globby } from 'globby';
+import { VARIOUS_ARTISTS_NAME, VARIOUS_ARTISTS_FOLDER } from '@/lib/utils';
 
 type GetEntityPathParam = { _type: Entities } &
   (Pick<ReleaseWithArtist, 'artist' | 'path' | 'type' | 'year'>
@@ -65,6 +66,7 @@ type ParsePath = Pick<Release, | 'type' | 'path' | 'year' | 'title'> & {
   fullPath: string;
 } | null;
 
+
 export function parsePath(path: string): ParsePath {
   if (path.endsWith("/")) {
     path = path.slice(0, -1);
@@ -72,6 +74,15 @@ export function parsePath(path: string): ParsePath {
   if (path.startsWith("/")) {
     path = path.slice(1);
   }
+
+  if (path.startsWith(VARIOUS_ARTISTS_FOLDER)) {
+    path = path.replace(
+      VARIOUS_ARTISTS_FOLDER, `[V-A]/${VARIOUS_ARTISTS_NAME}`
+    );
+  }
+
+  console.log({ path })
+
   const tokens = path.split("/");
   if (tokens.length < 4) {
     return null;
@@ -93,7 +104,7 @@ export function parsePath(path: string): ParsePath {
     year,
     title,
     path: title,
-    fullPath: path
+    fullPath: path.replace(`[V-A]/${VARIOUS_ARTISTS_NAME}`, VARIOUS_ARTISTS_FOLDER)
   };
 }
 

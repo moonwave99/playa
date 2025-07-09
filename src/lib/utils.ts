@@ -21,6 +21,9 @@ import { getCover } from './links';
 const releaseTypes: ReleaseType[] =
   ['Album', 'Compilation', 'EP', 'Single', 'Bootleg', 'Various', 'Tribute', 'Soundtrack'];
 
+export const VARIOUS_ARTISTS_FOLDER = '[V:A]';
+export const VARIOUS_ARTISTS_NAME = '_VV_AA_';
+
 export function getReleaseTitle({ title, subReleases = [] }:
   Pick<ReleaseWithArtistAndSubreleases, 'title' | 'subReleases'>): string {
   if (!subReleases.length) {
@@ -68,14 +71,14 @@ export function normalizeTitle(title: string) {
 }
 
 export function normalizeArtistName(name: string) {
-  if (name === "_VV_AA_") {
+  if (name === VARIOUS_ARTISTS_NAME) {
     return "Various";
   }
   return name.replaceAll("!", "");
 }
 
 export function normalizeArtistDisplayName(name: string) {
-  return name === '_VV_AA_' ? 'Various Artists' : name;
+  return name === VARIOUS_ARTISTS_NAME ? 'Various Artists' : name;
 }
 
 export function getDiscInfo({ subReleases }: ReleaseWithArtistAndSubreleases) {
