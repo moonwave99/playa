@@ -70,6 +70,7 @@ export async function getGroup(id: number) {
     where: { id },
     include: {
       artists: {
+        orderBy: { name: 'asc' },
         include: {
           coverRelease: {
             include: {
