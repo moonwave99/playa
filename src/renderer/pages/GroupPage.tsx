@@ -9,6 +9,7 @@ import type { ArtistWithReleases } from "@/types/types";
 import useGroup from "../query/useGroup";
 import useStore from "../store";
 import { useKeyManager } from "@/renderer/hooks/useKeyboardManager";
+import { compactColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
 import { useClearSelectionOnLeave } from "@/renderer/hooks/ipc";
 import { getArtistLink } from "@/lib/links";
 import { estimateListCardSize } from "@/lib/utils";
@@ -20,11 +21,6 @@ import ErrorView from "../components/ErrorView";
 import Droppable from "../components/Droppable";
 
 import styles from "./Page.module.css";
-
-const columnsConfig = [
-    { count: 3, width: 900 },
-    { count: 2, width: 600 },
-];
 
 export default function GroupPage() {
     const navigate = useNavigate();
@@ -74,7 +70,7 @@ export default function GroupPage() {
                         shouldPreventSpace
                         items={group.artists}
                         className={styles.list}
-                        columnsConfig={columnsConfig}
+                        columnsConfig={compactColumnsConfig}
                         estimateSize={estimateListCardSize}
                         onEnter={(artist: ArtistWithReleases) =>
                             navigate(getArtistLink(artist))

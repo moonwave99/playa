@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router";
 import { useKeyManager } from "@/renderer/hooks/useKeyboardManager";
+import { compactColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
 import useLatestArtists from "@/renderer/query/useLatestArtists";
 import api from "../api";
 import useStore from "@/renderer/store";
@@ -11,11 +12,6 @@ import List from "@/renderer/components/List";
 import ListCard from "@/renderer/components/ListCard";
 
 import styles from "./Page.module.css";
-
-const columnsConfig = [
-    { count: 3, width: 900 },
-    { count: 2, width: 600 },
-];
 
 export default function LatestArtists() {
     const navigate = useNavigate();
@@ -53,7 +49,7 @@ export default function LatestArtists() {
                     className={styles.list}
                     estimateSize={estimateListCardSize}
                     isInfinite
-                    columnsConfig={columnsConfig}
+                    columnsConfig={compactColumnsConfig}
                     fetchNextPage={fetchNextPage}
                     hasNextPage={hasNextPage}
                     isFetchingNextPage={isFetchingNextPage}

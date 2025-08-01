@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router";
 import { useKeyManager } from "@/renderer/hooks/useKeyboardManager";
+import { compactColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
 import api from "../api";
 import useStore from "@/renderer/store";
 import { getCollectionLink } from "@/lib/links";
@@ -12,11 +13,6 @@ import List from "@/renderer/components/List";
 import ListCard from "@/renderer/components/ListCard";
 
 import styles from "./Page.module.css";
-
-const columnsConfig = [
-    { count: 3, width: 900 },
-    { count: 2, width: 600 },
-];
 
 export default function LatestCollections() {
     const navigate = useNavigate();
@@ -56,7 +52,7 @@ export default function LatestCollections() {
                     disableMultipleSelection
                     items={collections}
                     className={styles.list}
-                    columnsConfig={columnsConfig}
+                    columnsConfig={compactColumnsConfig}
                     estimateSize={estimateListCardSize}
                     onEnter={(collection: CollectionWithReleases) =>
                         navigate(getCollectionLink(collection))

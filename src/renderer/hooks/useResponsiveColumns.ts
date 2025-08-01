@@ -25,10 +25,19 @@ function getColumnCount(width: number, config: ColumnsConfigEntry[]) {
 }
 
 export const releaseColumnsConfig = [
+  { count: 9, width: 2800 },
+  { count: 7, width: 1600 },
   { count: 5, width: 1100 },
   { count: 4, width: 768 },
   { count: 3, width: 600 },
   { count: 2, width: 400 },
+];
+
+export const compactColumnsConfig = [
+  { count: 5, width: 2400 },
+  { count: 4, width: 1600 },
+  { count: 3, width: 900 },
+  { count: 2, width: 600 },
 ];
 
 export default function useResponsiveColumns({
