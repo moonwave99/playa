@@ -9,6 +9,7 @@ import { releaseController } from "./release";
 import { collectionController } from "./collection";
 import { groupController } from "./group";
 import { searchResultController } from "./searchResult";
+import { statsController } from "./stats";
 
 export type Controllers = {
   system: ReturnType<typeof systemController>;
@@ -17,6 +18,7 @@ export type Controllers = {
   collection: ReturnType<typeof collectionController>;
   group: ReturnType<typeof groupController>;
   searchResult: ReturnType<typeof searchResultController>;
+  stats: ReturnType<typeof statsController>;
 };
 
 export function send(channel: string, ...args: unknown[]) {
@@ -45,6 +47,7 @@ export function init(mainWindow: BrowserWindow) {
   const collection = collectionController();
   const group = groupController();
   const searchResult = searchResultController();
+  const stats = statsController();
 
   state.onStateChange((state) => refreshMenu(state));
 
@@ -54,7 +57,8 @@ export function init(mainWindow: BrowserWindow) {
     release,
     collection,
     group,
-    searchResult
+    searchResult,
+    stats
   };
 
   const { refreshMenu } = initMenu({
@@ -73,7 +77,8 @@ export function init(mainWindow: BrowserWindow) {
 
   const settings = { getSettings, setSettings };
 
-  [system, searchResult, artist, release, collection, group, menu, settings].forEach(registerHandlers);
+  [system, searchResult, artist, release, collection, group, menu, settings, stats]
+    .forEach(registerHandlers);
 
   mainWindow.on('swipe', (_, direction) => {
     if (state.isInputFocused()) {

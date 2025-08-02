@@ -9,22 +9,40 @@ import { IoMenu } from "react-icons/io5";
 import styles from "./Nav.module.css";
 import buttonStyles from "../buttons.module.css";
 
-const navMap = [
+const navMap: {
+    type: "link" | "modal";
+    label: string;
+    link: string;
+}[] = [
     {
+        type: "link",
         link: "/",
         label: "Latest Releases",
     },
     {
+        type: "link",
         link: "/artists",
         label: "Latest Artists",
     },
     {
+        type: "link",
         link: "/collections",
         label: "Latest Collections",
     },
     {
+        type: "link",
         link: "/groups",
         label: "Latest Groups",
+    },
+    {
+        type: "modal",
+        link: "settings",
+        label: "Settings",
+    },
+    {
+        type: "modal",
+        link: "stats",
+        label: "Stats",
     },
 ];
 
@@ -38,7 +56,9 @@ export default function Nav() {
         handlers: {
             Escape: () => setNavOpen(false),
             ArrowDown: () =>
-                setCurrentIndex((prev) => Math.min(prev + 1, navMap.length)),
+                setCurrentIndex((prev) =>
+                    Math.min(prev + 1, navMap.length - 1)
+                ),
             ArrowUp: () => setCurrentIndex((prev) => Math.max(0, prev - 1)),
         },
     });
@@ -70,36 +90,40 @@ export default function Nav() {
                 <IoMenu />
             </button>
             <div className={styles.entries} ref={ref}>
-                {navMap.map(({ link, label }, index) => (
-                    <NavLink
-                        data-nav-id={index}
-                        key={link}
-                        to={link}
-                        className={cx(styles.link, {
-                            [styles.hasFocus]: index === currentIndex,
-                        })}
-                        onClick={(event: MouseEvent) => {
-                            if (event.metaKey) {
-                                event.preventDefault();
-                            }
-                            setNavOpen(false);
-                        }}
-                    >
-                        {label}
-                    </NavLink>
-                ))}
-                <button
-                    data-nav-id={navMap.length}
-                    className={cx(styles.link, {
-                        [styles.hasFocus]: currentIndex === navMap.length,
-                    })}
-                    onClick={() => {
-                        setModalContents({ name: "settings" });
-                        setNavOpen(false);
-                    }}
-                >
-                    Settings
-                </button>
+                {navMap.map(({ link, label, type }, index) =>
+                    type === "link" ? (
+                        <NavLink
+                            data-nav-id={index}
+                            key={link}
+                            to={link}
+                            className={cx(styles.link, {
+                                [styles.hasFocus]: index === currentIndex,
+                            })}
+                            onClick={(event: MouseEvent) => {
+                                if (event.metaKey) {
+                                    event.preventDefault();
+                                }
+                                setNavOpen(false);
+                            }}
+                        >
+                            {label}
+                        </NavLink>
+                    ) : (
+                        <button
+                            data-nav-id={index}
+                            key={link}
+                            className={cx(styles.link, {
+                                [styles.hasFocus]: index === currentIndex,
+                            })}
+                            onClick={() => {
+                                setModalContents({ name: link });
+                                setNavOpen(false);
+                            }}
+                        >
+                            {label}
+                        </button>
+                    )
+                )}
             </div>
         </nav>
     );

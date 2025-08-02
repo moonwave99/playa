@@ -26,6 +26,7 @@ import {
     useOnOpenEditReleaseDialog,
     useOnOpenEditArtistDialog,
     useOnSwipe,
+    useOnOpenStats,
 } from "./hooks/ipc";
 import api from "./api";
 import useRefetch from "./hooks/useRefetch";
@@ -45,6 +46,7 @@ import LatestGroups from "./pages/LatestGroups";
 import Nav from "./components/Nav";
 import SidebarView from "./components/SidebarView";
 import SettingsView from "./components/SettingsView";
+import StatsView from "./components/StatsView";
 import GroupReleasesView from "./components/GroupReleasesView";
 import EditReleaseView from "./components/EditReleaseView";
 import EditArtistView from "./components/EditArtistView";
@@ -191,6 +193,9 @@ export default function Layout() {
                         clearModalContents();
                     }}
                 >
+                    {modalContents?.name === "stats" && (
+                        <StatsView onClose={closeModal} />
+                    )}
                     {modalContents?.name === "settings" && (
                         <SettingsView
                             onSave={closeModal}
@@ -295,6 +300,7 @@ function init(): Init {
     }, [isSmallScreen]);
 
     useOnOpenSettings(() => setModalContents({ name: "settings" }));
+    useOnOpenStats(() => setModalContents({ name: "stats" }));
     useOnOpenGroupDialog((releases: ReleaseWithArtist[]) =>
         setModalContents({ name: "groupReleases", params: { releases } })
     );

@@ -22,6 +22,7 @@ export type { Artist, Release, Collection, Track, ReleaseType, Group };
 
 export type Entities = 'collection' | 'release' | 'artist' | 'searchResult' | 'track' | 'group';
 export type SearchableEntities = 'collection' | 'release' | 'artist' | 'track' | 'group';
+export type Stats = Record<SearchableEntities, number>;
 export type HasId = { id: number; };
 export type HasTitle = { title: string; };
 
@@ -169,3 +170,8 @@ export type MenuParams = {
 export type Context = CollectionWithReleases | ArtistWithReleases | GroupWithArtists;
 
 export type Unpacked<T> = T extends (infer U)[] ? U : T;
+
+export type BaseQuery = {
+  isPending: boolean;
+  error: Error;
+}

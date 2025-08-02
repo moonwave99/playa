@@ -8,6 +8,7 @@ import { actions as artistActions } from "./main/controllers/artist";
 import { actions as releaseActions } from "./main/controllers/release";
 import { actions as collectionActions } from "./main/controllers/collection";
 import { actions as groupActions } from "./main/controllers/group";
+import { actions as statsActions } from "./main/controllers/stats";
 import { actions as searchResultActions } from "./main/controllers/searchResult";
 
 function getHandlersFromActions(controllerName: string, actionNames: string[]) {
@@ -24,6 +25,7 @@ contextBridge.exposeInMainWorld('api', {
   ...getHandlersFromActions('release', releaseActions),
   ...getHandlersFromActions('collection', collectionActions),
   ...getHandlersFromActions('group', groupActions),
+  ...getHandlersFromActions('stats', statsActions),
   ...getHandlersFromActions('searchResult', searchResultActions),
   ...getHandlersFromActions('system', systemActions),
   settings: getHandlers({ getSettings, setSettings }),
@@ -50,6 +52,7 @@ contextBridge.exposeInMainWorld('api', {
   onToggleViewMode: getHandler('toggleViewMode'),
   onToggleSidebar: getHandler('toggleSidebar'),
   onOpenSettings: getHandler('openSettings'),
+  onOpenStats: getHandler('openStats'),
   onCoverUpdate: getHandler('coverUpdate'),
   onOpenGroupDialog: getHandler('openGroupDialog'),
   onOpenEditReleaseDialog: getHandler('openEditReleaseDialog'),

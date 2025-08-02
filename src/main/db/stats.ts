@@ -1,28 +1,16 @@
 import prisma from "./prisma";
-import type { Entities } from "@/types/types";
+import type { SearchableEntities, Stats } from "@/types/types";
 
-export async function getStats(): Promise<Partial<Record<Entities, number>>> {
-  const artists = await prisma.artist.aggregate({
+export async function getStats(): Promise<Stats> {
+  const entities = ['artist', 'release', 'track', 'collection', 'group'] as SearchableEntities[];
+
+  const data = await Promise.all(entities.map(entity => prisma[entity].aggregate({
     _count: { id: true },
-  });
+    ...(entity === 'release' ? { where: { mainRelease: null } } : {})
+  })));
 
-  const releases = await prisma.release.aggregate({
-    _count: { id: true },
-    where: { mainRelease: null }
-  });
-
-  const tracks = await prisma.track.aggregate({
-    _count: { id: true },
-  });
-
-  const collections = await prisma.collection.aggregate({
-    _count: { id: true },
-  });
-
-  return {
-    artist: artists._count.id,
-    release: releases._count.id,
-    track: tracks._count.id,
-    collection: collections._count.id,
-  }
+  return entities.reduce((memo, entity, index) => ({
+    [entity]: data[index]._count.id,
+    ...memo
+  }), {} as Stats);
 }

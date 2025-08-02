@@ -320,6 +320,11 @@ export function initMenu({ controllers, state, send }: InitMenuParams) {
         click: () => send('navigate', link)
       })),
       {
+        label: 'Stats',
+        accelerator: 'alt+s',
+        click: () => send('openStats')
+      },
+      {
         label: 'Settings',
         accelerator: 'cmd+,',
         click: () => send('openSettings')

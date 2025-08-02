@@ -18,6 +18,7 @@ import { releaseController } from '@/main/controllers/release';
 import { collectionController } from '@/main/controllers/collection';
 import { groupController } from '@/main/controllers/group';
 import { systemController } from '@/main/controllers/system';
+import { statsController } from '@/main/controllers/stats';
 import { searchResultController } from '@/main/controllers/searchResult';
 
 declare module "*.module.css";
@@ -42,6 +43,7 @@ declare global {
   interface Window {
     api: {
       searchResult: ReturnType<typeof searchResultController>,
+      stats: ReturnType<typeof statsController>,
       release: ReturnType<typeof releaseController>,
       artist: ReturnType<typeof artistController>,
       collection: ReturnType<typeof collectionController>,
@@ -69,6 +71,7 @@ declare global {
       onToggleViewMode: (handler: () => void) => () => void;
       onToggleSidebar: (handler: (showSidebar: boolean) => void) => () => void;
       onOpenSettings: (handler: () => void) => () => void;
+      onOpenStats: (handler: () => void) => () => void;
       onCoverUpdate: (handler: (releases: Release[]) => void) => () => void;
       onOpenGroupDialog: (handler: (releases: Release[]) => void) => () => void;
       onOpenEditReleaseDialog: (handler: (release: ReleaseWithArtistAndSubreleases) => void) => () => void;

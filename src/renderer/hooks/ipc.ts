@@ -38,6 +38,15 @@ export function useOnOpenSettings(callback: () => void) {
   }, []);
 }
 
+export function useOnOpenStats(callback: () => void) {
+  useEffect(() => {
+    const unsubscribe = api.onOpenStats(callback);
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+}
+
 export function useOnOpenGroupDialog(callback: (selection: ReleaseWithArtist[]) => void) {
   useEffect(() => {
     const unsubscribe = api.onOpenGroupDialog(callback);
