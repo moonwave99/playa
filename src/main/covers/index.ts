@@ -4,6 +4,7 @@ import { log } from "../logger";
 import type { Release, Artist, Track } from '@/types/types';
 import { searchCover as deezerSearch } from './deezer';
 import { searchCover as discogsSearch, type DiscogsSecrets } from './discogs';
+import { VARIOUS_ARTISTS_NAME } from '@/lib/utils';
 
 export type GetImageFromURLParams = {
   outputPath: string;
@@ -27,7 +28,7 @@ export function normalizeTitle(title: string) {
 }
 
 export function normalizeArtist(artist: string) {
-  if (artist === "_VV_AA_") {
+  if (artist === VARIOUS_ARTISTS_NAME) {
     return "Various";
   }
   return artist.replaceAll("!", "");
