@@ -17,24 +17,24 @@ import formStyles from "../forms.module.css";
 
 const labelMap = {
     newTitle: {
-        label: "New Title",
-        placeholder: "Enter new title",
+        label: "Title",
+        placeholder: "Enter title",
     },
     newDiscTitle: {
-        label: "New Disc Title",
-        placeholder: "Enter new disc title",
+        label: "Disc Title",
+        placeholder: "Enter disc title",
     },
     newPath: {
-        label: "New Path",
-        placeholder: "Enter new path",
+        label: "Path",
+        placeholder: "Enter path",
     },
     newYear: {
-        label: "New Year",
-        placeholder: "Enter new year",
+        label: "Year",
+        placeholder: "Enter year",
     },
     newType: {
-        label: "New Release Type",
-        placeholder: "Enter new release type",
+        label: "Release Type",
+        placeholder: "Enter release type",
     },
 };
 
