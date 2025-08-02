@@ -30,6 +30,7 @@ type SidebarProps = {
     getEntryText: (entry: Item) => string;
     estimateSize?: () => { width: number; height: number };
     renderItem?: (params: RenderParams<Item>) => ReactNode;
+    showLetters?: boolean;
 };
 
 export default function Sidebar({
@@ -45,7 +46,9 @@ export default function Sidebar({
         height: 32,
     }),
     renderItem,
+    showLetters,
 }: SidebarProps) {
+    const [letter, setLetter] = useState(null);
     const [query, setQuery] = useState("");
     const { isPending, error, data } = useQuery<Item[]>(queryConfig(query));
     const { inputRef, currentContext, inputHandlers, listHandlers } =
@@ -83,6 +86,12 @@ export default function Sidebar({
     }
 
     const filteredItems = data.filter((item) => filterFn(item, query));
+    const initialIndex =
+        letter === "#"
+            ? 0
+            : filteredItems.findIndex((x) =>
+                  getEntryText(x).toLowerCase().startsWith(letter)
+              );
 
     return (
         <div className={styles.view}>
@@ -96,19 +105,31 @@ export default function Sidebar({
             {!filteredItems.length ? (
                 <div className={styles.noResults}>No results for {query}</div>
             ) : (
-                <List
-                    context="sidebar:list"
-                    className={styles.listWrapper}
-                    items={filteredItems}
-                    estimateSize={estimateSize}
-                    paddingRight={0}
-                    gap={0}
-                    disableMultipleSelection
-                    onEnter={onEnter}
-                    {...listHandlers}
-                    render={renderItem || defaultRenderItem}
-                    shouldPreventSpace
-                />
+                <div className={styles.wrapper}>
+                    {showLetters && (
+                        <LettersView
+                            onClick={(letter) => {
+                                setQuery("");
+                                setLetter(letter);
+                            }}
+                        />
+                    )}
+                    <List
+                        context="sidebar:list"
+                        className={styles.listWrapper}
+                        items={filteredItems}
+                        estimateSize={estimateSize}
+                        paddingRight={0}
+                        gap={0}
+                        disableMultipleSelection
+                        onEnter={onEnter}
+                        {...listHandlers}
+                        render={renderItem || defaultRenderItem}
+                        shouldPreventSpace
+                        initialIndex={initialIndex}
+                        onSelect={() => setLetter(null)}
+                    />
+                </div>
             )}
             <footer className={styles.footer}>
                 There are{" "}
@@ -163,6 +184,24 @@ function DefaultEntry({
                     item={item as DraggableItem}
                 />
             )}
+        </div>
+    );
+}
+
+const letters = "#abcdefghijklmnopqrstuvwxyz".split("");
+
+type LettersViewProps = {
+    onClick: (letter: string) => void;
+};
+
+function LettersView({ onClick }: LettersViewProps) {
+    return (
+        <div className={styles.letters}>
+            {letters.map((x) => (
+                <button key={x} onClick={() => onClick(x)}>
+                    {x}
+                </button>
+            ))}
         </div>
     );
 }

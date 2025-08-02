@@ -49,6 +49,7 @@ type ListProps<T> = {
     onSelectionChange?: (selection: number[]) => void;
     shouldPreventSpace?: boolean;
     initialSelection?: number[];
+    initialIndex?: number;
     scrollBehavior?: ScrollToOptions;
     keyHandlers?: Record<string, ListKeyHandler<T>>;
 };
@@ -91,12 +92,20 @@ export default function List<T>({
     onSelectionChange,
     shouldPreventSpace,
     initialSelection = [],
+    initialIndex,
     keyHandlers = {},
     scrollBehavior,
 }: ListProps<T>) {
-    const [currentIndex, setCurrentIndex] = useState(
-        initialSelection.length ? initialSelection[0] : -1
-    );
+    const [currentIndex, setCurrentIndex] = useState(() => {
+        if (initialSelection.length) {
+            return initialSelection[0];
+        }
+        if (initialIndex) {
+            return initialIndex;
+        }
+        return -1;
+    });
+
     const [selection, setSelection] = useState<number[]>(initialSelection);
 
     const ref = useRef<HTMLDivElement>(null);
@@ -132,8 +141,15 @@ export default function List<T>({
     }, [currentIndex]);
 
     useLayoutEffect(() => {
+        if (initialIndex > -1) {
+            virtualizer.scrollToIndex(initialIndex, {
+                ...scrollBehavior,
+                align: "start",
+            });
+            return;
+        }
         virtualizer.scrollToIndex(currentIndex, scrollBehavior);
-    }, [currentIndex, scrollBehavior]);
+    }, [currentIndex, initialIndex, scrollBehavior]);
 
     useEffect(() => {
         if (onSelectionChange) {

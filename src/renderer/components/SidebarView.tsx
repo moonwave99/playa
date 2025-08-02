@@ -77,6 +77,7 @@ export default function SidebarView() {
             {currentSidebar === "music" ? <MusicSidebar /> : null}
             {currentSidebar === "artists" ? (
                 <Sidebar
+                    showLetters
                     label="artists"
                     filterFn={({ normalizedName }: Artist, query) =>
                         lowerCaseCompare(normalizedName, query)

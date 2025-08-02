@@ -31,6 +31,7 @@
   --loading-icon-size: 3rem;
   --drop-area-background-color: #546ddc;
   --droppable-glow-color: #f5f5f55d;
+  --letters-menu-width: 2rem;
 }
 
 * {

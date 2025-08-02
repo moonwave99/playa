@@ -4,6 +4,40 @@
   flex: 1;
 }
 
+.wrapper {
+  height: calc(100vh - 10.5rem);
+  display: flex;
+  flex: 1;
+}
+
+.letters {
+  width: var(--letters-menu-width);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: calc(100vh - 10.5rem);
+  overflow: auto;
+}
+
+.letters button {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--primary-color);
+  text-transform: uppercase;
+  font-size: .8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(var(--letters-menu-width) * .75);
+  padding: .25rem;
+  width: 100%;
+
+  &:hover {
+    background-color: var(--background-color);
+  }
+}
+
 .input {
   border-radius: .25rem;
   border: 1px solid var(--tertiary-color);
@@ -32,6 +66,7 @@
 .listWrapper {
   height: calc(100vh - 10.5rem);
   overflow: auto;
+  flex: 1;
 }
 
 .listItem {
