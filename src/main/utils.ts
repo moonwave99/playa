@@ -81,8 +81,6 @@ export function parsePath(path: string): ParsePath {
     );
   }
 
-  console.log({ path })
-
   const tokens = path.split("/");
   if (tokens.length < 4) {
     return null;
