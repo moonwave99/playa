@@ -6,7 +6,10 @@ import type {
     ViewMode,
 } from "@/types/types";
 import type { ScrollToOptions } from "@tanstack/react-virtual";
-import { releaseColumnsConfig } from "../hooks/useResponsiveColumns";
+import {
+    releaseColumnsConfig,
+    compactColumnsConfig,
+} from "../hooks/useResponsiveColumns";
 import {
     useKeyManager,
     withoutShift,
@@ -108,10 +111,7 @@ export default function ReleaseList({
         }
         if (viewMode === "compact") {
             return {
-                columnsConfig: [
-                    { count: 3, width: 900 },
-                    { count: 2, width: 600 },
-                ],
+                columnsConfig: compactColumnsConfig,
                 estimateSize: estimateListCardSize,
                 render: ({
                     item,
