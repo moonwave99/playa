@@ -87,6 +87,32 @@ export function getDiscInfo({ subReleases }: ReleaseWithArtistAndSubreleases) {
     : null;
 }
 
+export function getReleaseDuration(release: ReleaseWithArtistAndTracksAndSubreleases) {
+  const allTracks = [
+    ...release.tracks,
+    ...(release.subReleases.length ? release.subReleases.flatMap(x => x.tracks) : [])
+  ];
+
+  return {
+    trackCount: allTracks.length,
+    duration: formatDuration(allTracks.reduce((memo, { duration }) => memo += duration, 0))
+  }
+}
+
+export function formatDuration(duration: number) {
+  const date = new Date(0);
+  date.setSeconds(duration);
+  const formatted = date.toISOString().substring(11, 19);
+  if (duration < 600) {
+    return formatted.slice(4);
+  }
+  if (duration < 3600) {
+    return formatted.slice(3);
+  }
+  return formatted;
+}
+
+
 export function isEmpty(obj: object) {
   return Object.keys(obj).length === 0;
 }

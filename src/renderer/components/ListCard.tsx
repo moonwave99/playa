@@ -8,6 +8,7 @@ import {
     getCoverRelease,
     withStopPropagation,
     normalizeArtistDisplayName,
+    getReleaseDuration,
 } from "@/lib/utils";
 import {
     getCover,
@@ -19,6 +20,7 @@ import {
 import type {
     ArtistWithReleases,
     ReleaseWithArtistAndSubreleases,
+    ReleaseWithArtistAndTracksAndSubreleases,
     CollectionWithReleases,
     GroupWithArtists,
 } from "@/types/types";
@@ -38,6 +40,7 @@ type Item =
     | CollectionWithReleases
     | ArtistWithReleases
     | ReleaseWithArtistAndSubreleases
+    | ReleaseWithArtistAndTracksAndSubreleases
     | GroupWithArtists;
 
 type ListCardProps = {
@@ -110,18 +113,13 @@ export default function ListCard({
                     >
                         {getReleaseTitle(item)}
                     </Link>
-                    <div className={styles.info}>
-                        {item.type}, {item.year} {getDiscInfo(item)}
-                        {isSingle && (
-                            <>
-                                <ContainingCollectionsList
-                                    prependSeparator
-                                    useDarkText={useDarkText}
-                                    id={item.id}
-                                />
-                            </>
-                        )}
-                    </div>
+                    <ReleaseInfo
+                        release={
+                            item as ReleaseWithArtistAndTracksAndSubreleases
+                        }
+                        isSingle={isSingle}
+                        useDarkText={useDarkText}
+                    />
                 </>
             );
         }
@@ -358,4 +356,35 @@ function MaybeDroppable({ item, render }: MaybeDroppableProps) {
         return <Droppable item={item} render={render} />;
     }
     return render({ isOver: false, canDrop: false });
+}
+
+type ReleaseInfoProps = {
+    release: ReleaseWithArtistAndTracksAndSubreleases;
+    isSingle: boolean;
+    useDarkText: boolean;
+};
+
+function ReleaseInfo({ release, isSingle, useDarkText }: ReleaseInfoProps) {
+    const { id, type, year } = release;
+    const { duration, trackCount } = getReleaseDuration(release);
+    return (
+        <div className={styles.info}>
+            {type}, {year} {getDiscInfo(release)}
+            {isSingle && (
+                <>
+                    <span className={styles.trackCount}>
+                        {trackCount} tracks
+                    </span>
+                    <span className={styles.releaseDuration}>{duration}</span>
+                </>
+            )}
+            {isSingle && (
+                <ContainingCollectionsList
+                    prependSeparator
+                    useDarkText={useDarkText}
+                    id={id}
+                />
+            )}
+        </div>
+    );
 }

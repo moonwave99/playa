@@ -137,6 +137,14 @@
   box-shadow: var(--accent-color) 0px 0px 0px .25rem;
 }
 
+.releaseDuration,
+.trackCount {
+  &::before {
+    content: '·';
+    margin-right: .25rem;
+  }
+}
+
 .multipleCovers {
   height: var(--release-group-height);
   position: relative;

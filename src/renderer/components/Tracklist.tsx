@@ -6,7 +6,7 @@ import type {
     Track,
     ReleaseWithArtistAndTracksAndSubreleases,
 } from "@/types/types";
-import { withStopPropagation } from "@/lib/utils";
+import { formatDuration, withStopPropagation } from "@/lib/utils";
 import List from "./List";
 import cx from "clsx";
 
@@ -156,6 +156,7 @@ function TrackEntry({
                 </h2>
             ) : null}
             <div
+                title={`[${id}]`}
                 onClick={onClick}
                 onDoubleClick={(event) => {
                     event.preventDefault();
@@ -201,17 +202,4 @@ function getTitlesInfo(
         }
     }
     return info;
-}
-
-function formatDuration(duration: number) {
-    const date = new Date(0);
-    date.setSeconds(duration);
-    const formatted = date.toISOString().substring(11, 19);
-    if (duration < 600) {
-        return formatted.slice(4);
-    }
-    if (duration < 3600) {
-        return formatted.slice(3);
-    }
-    return formatted;
 }
