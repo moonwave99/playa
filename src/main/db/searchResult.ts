@@ -119,7 +119,8 @@ const getters: Getters = {
     include: {
       release: {
         include: {
-          artist: true
+          artist: true,
+          mainRelease: true
         }
       }
     },
@@ -247,7 +248,7 @@ const transformers: Transformers = {
     description: "Track",
     artist: release.artist.name,
     links: {
-      track: `/releases/${release.id}?track_id=${id}`,
+      track: `/releases/${release.mainReleaseId || release.id}?track_id=${id}`,
       artist: `/artists/${release.artist.id}`,
     },
     coverRelease: release
