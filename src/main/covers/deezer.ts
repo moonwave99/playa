@@ -61,7 +61,10 @@ export async function searchCover({ release, artist, track }: SearchCoverParams)
         log(`covers:deezer:searchCover', 'No response for: ${artistName} - ${title}`);
         return null;
     }
-    const result = response.data.find(x => lowerCaseCompare(x.album.title, title));
+    const result = response.data.find(x => lowerCaseCompare(
+        normalizeDiacritics(x.album.title),
+        normalizeDiacritics(title))
+    );
 
     log('covers:deezer:searchCover', 'Searching:', artistName, title);
     if (!result) {
