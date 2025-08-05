@@ -12,6 +12,7 @@
         "plugin:import/electron",
         "plugin:import/typescript"
     ],
+    "ignorePatterns": ["scripts/", "src/playground.ts", "src/mobile-sync.ts"],
     "parser": "@typescript-eslint/parser",
     "plugins": ["import"],
     "settings": {
