@@ -55,7 +55,11 @@ export default function CoverLightbox({
                     <IoChevronBackOutline />
                 </button>
             )}
-            <Cover {...currentRelease} className={styles.cover} />
+            <Cover
+                {...currentRelease}
+                key={currentRelease.id}
+                className={styles.cover}
+            />
             <h3 className={styles.title}>
                 {currentRelease.artist.name} - {currentRelease.title}
             </h3>
