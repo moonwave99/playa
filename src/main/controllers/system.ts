@@ -40,14 +40,18 @@ export function systemController({ getSetting, withPath }: SystemControllerParam
 
     const release = await prisma.release.findFirst({
       where: { id: release_id },
-      include: { artist: true },
+      include: { artist: true, subReleases: { include: { artist: true } } },
     });
 
     if (!release) {
       return false;
     }
+
     await run('open', ['-a', PLAYER_PATH,
-      withPath('LIBRARY_PATH', getEntityPath({ ...release, _type: 'release' }))
+      ...[
+        release,
+        ...(release.subReleases || [])
+      ].map(x => withPath('LIBRARY_PATH', getEntityPath({ ...x, _type: 'release' })))
     ]);
     return true;
   }
@@ -59,11 +63,9 @@ export function systemController({ getSetting, withPath }: SystemControllerParam
         artist: true
       },
     });
-
     if (!release) {
       return;
     }
-
     const TAGGER_PATH = getSetting('TAGGER_PATH') as string;
     await run('open', ['-a', TAGGER_PATH,
       withPath('LIBRARY_PATH', getEntityPath({ ...release, _type: 'release' }))

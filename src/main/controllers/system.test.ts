@@ -3,7 +3,7 @@ import { shell, type IpcMainEvent } from 'electron';
 import prisma from '../db/__mocks__/prisma';
 import * as run from '../run';
 import { systemController } from "./system";
-import type { TrackWithRelease } from "@/types/types";
+import type { ReleaseWithArtistAndSubreleases, TrackWithRelease } from "@/types/types";
 
 vi.mock('../db/prisma');
 vi.mock('../run');
@@ -31,6 +31,27 @@ describe('system - playback function', () => {
     expect(result).toBeTruthy();
     expect(spy).toHaveBeenCalledWith(
       'open', ['-a', 'PLAYER_PATH', 'LIBRARY_PATH/A/Artist/[Album]/1999 - Album One']
+    );
+  });
+
+  it('calls run with the right paths if the release has subReleases', async () => {
+    const { playback } = systemController({ getSetting, withPath });
+    const spy = vi.spyOn(run, 'run');
+    prisma.release.findFirst.mockResolvedValue({
+      ...getFakeRelease(1),
+      subReleases: [
+        getFakeRelease(2)
+      ]
+    } as ReleaseWithArtistAndSubreleases);
+    const result = await playback({ release_id: 1 });
+    expect(result).toBeTruthy();
+    expect(spy).toHaveBeenCalledWith(
+      'open', [
+      '-a',
+      'PLAYER_PATH',
+      'LIBRARY_PATH/A/Artist/[Album]/1999 - Album One',
+      'LIBRARY_PATH/A/Artist/[Album]/2000 - Album Two'
+    ]
     );
   });
 
