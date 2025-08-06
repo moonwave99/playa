@@ -10,6 +10,11 @@
   font-size: 1rem;
   line-height: 2rem;
   font-weight: 300;
+  padding: .5rem 1rem;
+  box-shadow: rgba(61, 61, 61, 0.15) 1.95px 1.95px 2.6px;
+  border: .5px solid var(--tertiary-color);
+  background-color: var(--default-cover-background-color);
+  border-radius: .5rem;
 }
 
 .cover {
