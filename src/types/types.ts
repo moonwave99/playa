@@ -140,9 +140,11 @@ export type ViewMode = 'grid' | 'list' | 'compact';
 
 export type Settings = Record<string, string | number | boolean>;
 
-export function withEntityType<T>(item: T, _type: Entities): (T & { _type: Entities });
-export function withEntityType<T>(item: T[], _type: Entities): (T & { _type: Entities })[];
-export function withEntityType<T>(item: T | T[], _type: Entities): (T & { _type: Entities }) | (T & { _type: Entities })[] {
+type WithEntityType<T> = T & { _type: Entities };
+
+export function withEntityType<T>(item: T, _type: Entities): WithEntityType<T>;
+export function withEntityType<T>(item: T[], _type: Entities): WithEntityType<T>[];
+export function withEntityType<T>(item: T | T[], _type: Entities): WithEntityType<T> | WithEntityType<T>[] {
   if (Array.isArray(item)) {
     return item.map(x => withEntityType(x, _type));
   }
