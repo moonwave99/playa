@@ -57,11 +57,11 @@ export default function useSidebar({ isPending, setQuery }: UseSidebarParams): U
           return;
         }
         inputRef.current?.blur();
-        setTimeout(() => setContext("list"), 0);
+        queueMicrotask(() => setContext("list"));
       },
       Escape: () => {
         inputRef.current?.blur();
-        setTimeout(() => setContext("list"), 0);
+        queueMicrotask(() => setContext("list"));
       },
     }
   })
