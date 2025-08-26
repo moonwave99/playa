@@ -30,7 +30,7 @@ export default function useReleases(): UseReleases {
   } = useInfiniteQuery({
     queryKey: ["releases", "latest"],
     queryFn: (context) =>
-      api.release.getLatestReleases({
+      api.release.getReleases({
         take: pageSize,
         skip: context.pageParam,
       }),

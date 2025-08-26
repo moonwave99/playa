@@ -1,8 +1,8 @@
-import { existsSync, move, unlink } from 'fs-extra';
-import path from 'path';
+import { existsSync, move, unlink } from "fs-extra";
+import path from "path";
 import prisma from "../db/prisma";
-import { dialog } from 'electron';
-import { globby } from 'globby';
+import { dialog } from "electron";
+import { globby } from "globby";
 import {
   ArtistWithReleases,
   CollectionWithReleases,
@@ -13,10 +13,14 @@ import {
   Release,
   Track,
 } from "@/types/types";
-import { didReleaseInfoChange, mapSeries, normalizeDiacritics } from '@/lib/utils';
+import {
+  didReleaseInfoChange,
+  mapSeries,
+  normalizeDiacritics,
+} from "@/lib/utils";
 import {
   getRelease,
-  getLatestReleases,
+  getReleases,
   updateReleases,
   groupReleases,
   unGroupRelease,
@@ -25,21 +29,21 @@ import {
   hideRelease,
   addAdditionalArtist as _addAdditionalArtist,
   removeAdditionalArtist as _removeAdditionalArtist,
-  type AdditionalArtistParams
-} from '../db/release';
-import { getArtist } from '../db/artist';
+  type AdditionalArtistParams,
+} from "../db/release";
+import { getArtist } from "../db/artist";
 import {
   getEntityPath,
   hashRelease,
   hashArtistName,
   crawlFolder,
   getFolderContents,
-  parsePath
-} from '../utils';
-import { searchCover, getImageFromURL } from '../covers';
-import { log } from '../logger';
-import { getSetting } from '../settings';
-import { type StateManager } from '../state';
+  parsePath,
+} from "../utils";
+import { searchCover, getImageFromURL } from "../covers";
+import { log } from "../logger";
+import { getSetting } from "../settings";
+import { type StateManager } from "../state";
 
 type ReleaseControllerParams = {
   withPath: (key: string, folderPath: string) => string;
@@ -47,50 +51,54 @@ type ReleaseControllerParams = {
   send: (channel: string, ...args: unknown[]) => void;
   state: StateManager;
   openFolderDialog: (defaultPath: string) => string[];
-}
+};
 
 export function releaseController({
-  withPath, getSetting, send, state, openFolderDialog
+  withPath,
+  getSetting,
+  send,
+  state,
+  openFolderDialog,
 }: ReleaseControllerParams) {
-
   async function editRelease(infos: EditReleaseParam[]) {
     if (!infos.length) {
       return [];
     }
 
     const shouldJustRenameDiscs =
-      infos.every(x =>
-        x.path === x.newPath
-        && x.year === x.newYear
-        && x.type === x.newType
+      infos.every(
+        (x) =>
+          x.path === x.newPath && x.year === x.newYear && x.type === x.newType
       ) && didReleaseInfoChange(infos);
 
     if (shouldJustRenameDiscs) {
-      return await updateReleases(infos.map(x => ({
-        ...x,
-        discTitle: infos.length === 1 ? null : x.newDiscTitle,
-        title: x.newTitle,
-        type: x.newType,
-        year: x.newYear
-      })));
+      return await updateReleases(
+        infos.map((x) => ({
+          ...x,
+          discTitle: infos.length === 1 ? null : x.newDiscTitle,
+          title: x.newTitle,
+          type: x.newType,
+          year: x.newYear,
+        }))
+      );
     }
 
     const artist = await getArtist(infos[0].artist_id);
 
     for (const info of infos) {
-      if (info.newPath.includes('../')) {
+      if (info.newPath.includes("../")) {
         dialog.showMessageBoxSync(null, {
-          message: 'Error while renaming',
+          message: "Error while renaming",
           detail: "Path cannot contain any '../' sequence",
-          type: 'error',
-          buttons: ['OK'],
+          type: "error",
+          buttons: ["OK"],
         });
         return false;
       }
       const targetPath = withPath(
-        'LIBRARY_PATH',
+        "LIBRARY_PATH",
         getEntityPath({
-          _type: 'release',
+          _type: "release",
           year: info.newYear,
           type: info.newType,
           path: info.newPath,
@@ -100,23 +108,23 @@ export function releaseController({
 
       if (existsSync(targetPath)) {
         dialog.showMessageBoxSync(null, {
-          message: 'Error while renaming',
+          message: "Error while renaming",
           detail: `Path ${info.newPath} already exists`,
-          type: 'error',
-          buttons: ['OK'],
+          type: "error",
+          buttons: ["OK"],
         });
         return false;
       }
     }
 
     try {
-      const newInfos = infos.map(x => ({
+      const newInfos = infos.map((x) => ({
         ...x,
-        hash: hashRelease(({
+        hash: hashRelease({
           ...x,
           type: x.newType,
-          year: x.newYear
-        })),
+          year: x.newYear,
+        }),
         discTitle: infos.length === 1 ? null : x.newDiscTitle,
         path: x.newPath,
         title: x.newTitle,
@@ -124,55 +132,62 @@ export function releaseController({
         year: x.newYear,
       }));
 
-      await Promise.all(infos.map(async (x, index) => {
-        const oldPath = withPath(
-          'LIBRARY_PATH',
-          getEntityPath(({ ...x, artist, _type: 'release' }))
-        );
-        const newPath = withPath(
-          'LIBRARY_PATH',
-          getEntityPath(({
-            ...x,
-            artist,
-            _type: 'release',
-            type: x.newType,
-            year: x.newYear,
-            path: x.newPath,
-          }))
-        );
+      await Promise.all(
+        infos.map(async (x, index) => {
+          const oldPath = withPath(
+            "LIBRARY_PATH",
+            getEntityPath({ ...x, artist, _type: "release" })
+          );
+          const newPath = withPath(
+            "LIBRARY_PATH",
+            getEntityPath({
+              ...x,
+              artist,
+              _type: "release",
+              type: x.newType,
+              year: x.newYear,
+              path: x.newPath,
+            })
+          );
 
-        if (!existsSync(oldPath)) {
-          throw new Error(`Release ${x.id} not found at: ${oldPath}`);
-        }
+          if (!existsSync(oldPath)) {
+            throw new Error(`Release ${x.id} not found at: ${oldPath}`);
+          }
 
-        await move(oldPath, newPath);
+          await move(oldPath, newPath);
 
-        const oldCoverPath = withPath('COVERS_PATH', `${x.hash}-cover.jpg`);
-        const newCoverPath = withPath('COVERS_PATH', `${newInfos[index].hash}-cover.jpg`);
+          const oldCoverPath = withPath("COVERS_PATH", `${x.hash}-cover.jpg`);
+          const newCoverPath = withPath(
+            "COVERS_PATH",
+            `${newInfos[index].hash}-cover.jpg`
+          );
 
-        if (!existsSync(oldCoverPath)) {
+          if (!existsSync(oldCoverPath)) {
+            return true;
+          }
+
+          await move(oldCoverPath, newCoverPath);
           return true;
-        }
-
-        await move(oldCoverPath, newCoverPath);
-        return true;
-      }));
+        })
+      );
 
       return await updateReleases(newInfos);
     } catch (error) {
-      log('release:renameRelease', error);
-      log('release:renameRelease', infos);
+      log("release:renameRelease", error);
+      log("release:renameRelease", infos);
       dialog.showMessageBoxSync(null, {
-        message: 'Error while renaming',
+        message: "Error while renaming",
         detail: error.message,
-        type: 'warning',
-        buttons: ['OK'],
+        type: "warning",
+        buttons: ["OK"],
       });
       return false;
     }
   }
 
-  async function importFolder(folder: string): Promise<ReleaseWithArtistAndTracks[]> {
+  async function importFolder(
+    folder: string
+  ): Promise<ReleaseWithArtistAndTracks[]> {
     const folders = await globby("**", {
       onlyDirectories: true,
       cwd: folder,
@@ -192,12 +207,12 @@ export function releaseController({
   }
 
   async function importSingleFolder(folder: string) {
-    log('release:importSingleFolder', 'Crawling:', folder);
+    log("release:importSingleFolder", "Crawling:", folder);
     const contents = await crawlFolder(folder);
     if (!contents.length) {
       return null;
     }
-    const LIBRARY_PATH = getSetting('LIBRARY_PATH') as string;
+    const LIBRARY_PATH = getSetting("LIBRARY_PATH") as string;
     const releaseData = parsePath(folder.replace(LIBRARY_PATH, ""));
 
     if (!releaseData) {
@@ -226,11 +241,16 @@ export function releaseController({
       },
     });
 
-    log('release:importSingleFolder', 'upserted artist', artist);
+    log("release:importSingleFolder", "upserted artist", artist);
 
     const releaseHash = hashRelease({ ...releaseData, artist_id: artist.id });
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { artist: artistData, fullPath, title, ...releaseWithoutArtist } = releaseData;
+    const {
+      artist: artistData,
+      fullPath,
+      title,
+      ...releaseWithoutArtist
+    } = releaseData;
     const normalizedTitle = normalizeDiacritics(title);
     const release = await prisma.release.upsert({
       where: {
@@ -252,32 +272,38 @@ export function releaseController({
       },
     });
 
-    const trackInfo = await getFolderContents({ ...release, artist }, getSetting('LIBRARY_PATH') as string);
+    const trackInfo = await getFolderContents(
+      { ...release, artist },
+      getSetting("LIBRARY_PATH") as string
+    );
     const fullRelease = await addTracksToRelease(release.id, trackInfo);
 
-    log('release:importSingleFolder', 'upserted release:', fullRelease);
+    log("release:importSingleFolder", "upserted release:", fullRelease);
 
-    const COVERS_PATH = getSetting('COVERS_PATH') as string;
-    const DISCOGS_KEY = getSetting('DISCOGS_KEY') as string;
-    const DISCOGS_SECRET = getSetting('DISCOGS_SECRET') as string;
+    const COVERS_PATH = getSetting("COVERS_PATH") as string;
+    const DISCOGS_KEY = getSetting("DISCOGS_KEY") as string;
+    const DISCOGS_SECRET = getSetting("DISCOGS_SECRET") as string;
 
-    await searchCover({
-      release,
-      artist,
-      track: fullRelease.tracks[0],
-      outputPath: COVERS_PATH,
-    }, {
-      DISCOGS_KEY,
-      DISCOGS_SECRET
-    });
+    await searchCover(
+      {
+        release,
+        artist,
+        track: fullRelease.tracks[0],
+        outputPath: COVERS_PATH,
+      },
+      {
+        DISCOGS_KEY,
+        DISCOGS_SECRET,
+      }
+    );
 
     return fullRelease;
   }
 
-  async function downloadCover({ id, url }: { id: number, url: string }) {
+  async function downloadCover({ id, url }: { id: number; url: string }) {
     const release = await prisma.release.findFirst({
       where: { id },
-      include: { artist: true }
+      include: { artist: true },
     });
 
     if (!release) {
@@ -286,105 +312,123 @@ export function releaseController({
 
     const { hash } = release;
 
-    const COVERS_PATH = getSetting('COVERS_PATH') as string;
+    const COVERS_PATH = getSetting("COVERS_PATH") as string;
 
-    const success = await getImageFromURL({ outputPath: COVERS_PATH, hash, url });
+    const success = await getImageFromURL({
+      outputPath: COVERS_PATH,
+      hash,
+      url,
+    });
     if (success) {
-      send('coverUpdate', [release]);
+      send("coverUpdate", [release]);
     }
     return success;
   }
 
   const THROTTLE_INTERVAL = 500;
 
-  async function importCovers(releases: (ReleaseWithArtist & { tracks?: Track[] })[]) {
-    const COVERS_PATH = getSetting('COVERS_PATH') as string;
-    const DISCOGS_KEY = getSetting('DISCOGS_KEY') as string;
-    const DISCOGS_SECRET = getSetting('DISCOGS_SECRET') as string;
+  async function importCovers(
+    releases: (ReleaseWithArtist & { tracks?: Track[] })[]
+  ) {
+    const COVERS_PATH = getSetting("COVERS_PATH") as string;
+    const DISCOGS_KEY = getSetting("DISCOGS_KEY") as string;
+    const DISCOGS_SECRET = getSetting("DISCOGS_SECRET") as string;
 
-    return await mapSeries(releases,
+    return await mapSeries(
+      releases,
       async (release: ReleaseWithArtist & { tracks?: Track[] }) => {
-        const pic = await searchCover({
-          release,
-          artist: release.artist,
-          track: release.tracks?.length > 0 ? release.tracks[0] : null,
-          outputPath: COVERS_PATH
-        }, {
-          DISCOGS_KEY,
-          DISCOGS_SECRET,
-        });
+        const pic = await searchCover(
+          {
+            release,
+            artist: release.artist,
+            track: release.tracks?.length > 0 ? release.tracks[0] : null,
+            outputPath: COVERS_PATH,
+          },
+          {
+            DISCOGS_KEY,
+            DISCOGS_SECRET,
+          }
+        );
         if (!pic) {
           return null;
         }
-        send('coverUpdate', [release]);
+        send("coverUpdate", [release]);
         return pic;
-      }
-      , THROTTLE_INTERVAL);
+      },
+      THROTTLE_INTERVAL
+    );
   }
 
   async function importMissingCovers(releases: ReleaseWithArtist[]) {
     const releasesWithoutCover = releases.filter(
-      ({ hash }) => !existsSync(withPath('COVERS_PATH', `${hash}-cover.jpg`))
+      ({ hash }) => !existsSync(withPath("COVERS_PATH", `${hash}-cover.jpg`))
     );
     await importCovers(releasesWithoutCover);
   }
 
   async function deleteCover(release: Release) {
-    const cover = withPath('COVERS_PATH', `${release.hash}-cover.jpg`);
+    const cover = withPath("COVERS_PATH", `${release.hash}-cover.jpg`);
     await unlink(cover);
-    send('coverUpdate', [release]);
+    send("coverUpdate", [release]);
     return true;
   }
 
   async function refreshReleaseContents(id: number, context?: Context) {
     const release = await prisma.release.findFirst({
       where: { id },
-      include: { artist: true, subReleases: { include: { artist: true } } }
+      include: { artist: true, subReleases: { include: { artist: true } } },
     });
 
     if (!release) {
       return false;
     }
 
-    log('release:refreshReleaseContents', release);
-    const updatedRelease = await Promise.all([release, ...release.subReleases].map(async (release) => {
-      const tracks = await getFolderContents(release, getSetting('LIBRARY_PATH') as string);
-      log('release:refreshReleaseContents', 'tracks', tracks);
-      return addTracksToRelease(release.id, tracks);
-    }));
+    log("release:refreshReleaseContents", release);
+    const updatedRelease = await Promise.all(
+      [release, ...release.subReleases].map(async (release) => {
+        const tracks = await getFolderContents(
+          release,
+          getSetting("LIBRARY_PATH") as string
+        );
+        log("release:refreshReleaseContents", "tracks", tracks);
+        return addTracksToRelease(release.id, tracks);
+      })
+    );
 
-    send('mutate', [
-      ['releases', release.id],
-      [`${context?._type}s`, context?.id]
+    send("mutate", [
+      ["releases", release.id],
+      [`${context?._type}s`, context?.id],
     ]);
 
     return updatedRelease;
   }
 
   async function refreshCurrentArtistReleases() {
-    const releasesToRefresh = state.getCurrentArtist()?.releases
-      .filter((x: ReleaseWithArtistAndTracks) => !x.tracks.length);
+    const releasesToRefresh = state
+      .getCurrentArtist()
+      ?.releases.filter((x: ReleaseWithArtistAndTracks) => !x.tracks.length);
     if (!releasesToRefresh.length) {
       return;
     }
     state.setImporting(true);
     try {
       await Promise.all(
-        releasesToRefresh
-          .map((x: ReleaseWithArtistAndTracks) => refreshReleaseContents(x.id))
+        releasesToRefresh.map((x: ReleaseWithArtistAndTracks) =>
+          refreshReleaseContents(x.id)
+        )
       );
-      send('mutate', ['artists', state.getCurrentArtist().id]);
+      send("mutate", ["artists", state.getCurrentArtist().id]);
     } catch (error) {
-      log('release:refreshCurrentArtistRelease]', error);
+      log("release:refreshCurrentArtistRelease]", error);
     }
     state.setImporting(false);
   }
 
-  async function refreshEntityRelease(entity: ArtistWithReleases | CollectionWithReleases) {
-    await Promise.all(
-      entity.releases.map((x) => refreshReleaseContents(x.id))
-    );
-    send('mutate', [`${entity._type}s`, entity.id]);
+  async function refreshEntityRelease(
+    entity: ArtistWithReleases | CollectionWithReleases
+  ) {
+    await Promise.all(entity.releases.map((x) => refreshReleaseContents(x.id)));
+    send("mutate", [`${entity._type}s`, entity.id]);
   }
 
   async function ungroupSelectedRelease() {
@@ -393,34 +437,34 @@ export function releaseController({
       return;
     }
     await unGroupRelease(release);
-    send('mutate', [
-      ['releases', 'latest'],
-      ['artists', release.artist_id]
+    send("mutate", [
+      ["releases", "latest"],
+      ["artists", release.artist_id],
     ]);
-    send('clearSelection');
+    send("clearSelection");
   }
 
   async function importFolderFromDialog() {
     const folders = openFolderDialog(
-      withPath('LIBRARY_PATH', state.getCurrentArtist()?.path || '')
+      withPath("LIBRARY_PATH", state.getCurrentArtist()?.path || "")
     );
     if (!folders) {
       return;
     }
     const releases = await Promise.all(folders.map(importFolder));
 
-    send('mutate', [
-      ['releases', 'latest'],
-      ...releases.flat().map(x => (['artists', x.artist_id]))
+    send("mutate", [
+      ["releases", "latest"],
+      ...releases.flat().map((x) => ["artists", x.artist_id]),
     ]);
   }
 
   async function deleteReleases(release_ids: number[]) {
     const cancel = dialog.showMessageBoxSync(null, {
       message: `Are you sure to delete ${release_ids.length} Releases from library?`,
-      detail: 'This action is not reversible!',
-      type: 'warning',
-      buttons: ['OK', 'Cancel'],
+      detail: "This action is not reversible!",
+      type: "warning",
+      buttons: ["OK", "Cancel"],
       defaultId: 1,
     });
 
@@ -429,36 +473,42 @@ export function releaseController({
     }
 
     await Promise.all(release_ids.map(deleteRelease));
-    send('mutate', [
-      ['releases', 'latest'],
-      ...release_ids.map(id => ['releases', id])
+    send("mutate", [
+      ["releases", "latest"],
+      ...release_ids.map((id) => ["releases", id]),
     ]);
-    send('clearSelection');
+    send("clearSelection");
   }
 
-  async function addAdditionalArtist({ release_id, artist_id }: AdditionalArtistParams) {
+  async function addAdditionalArtist({
+    release_id,
+    artist_id,
+  }: AdditionalArtistParams) {
     const result = await _addAdditionalArtist({ release_id, artist_id });
-    send('mutate', [
-      ['releases', release_id],
-      ['artists', result.artist.id],
-      ['artists', artist_id],
+    send("mutate", [
+      ["releases", release_id],
+      ["artists", result.artist.id],
+      ["artists", artist_id],
     ]);
     return result;
   }
 
-  async function removeAdditionalArtist({ release_id, artist_id }: AdditionalArtistParams) {
+  async function removeAdditionalArtist({
+    release_id,
+    artist_id,
+  }: AdditionalArtistParams) {
     const result = await _removeAdditionalArtist({ release_id, artist_id });
-    send('mutate', [
-      ['releases', release_id],
-      ['artists', result.artist.id],
-      ['artists', artist_id],
+    send("mutate", [
+      ["releases", release_id],
+      ["artists", result.artist.id],
+      ["artists", artist_id],
     ]);
     return result;
   }
 
   return {
     getRelease,
-    getLatestReleases,
+    getReleases,
     groupReleases,
     unGroupRelease,
     editRelease,
@@ -477,30 +527,30 @@ export function releaseController({
     refreshEntityRelease,
     hideRelease,
     addAdditionalArtist,
-    removeAdditionalArtist
+    removeAdditionalArtist,
   };
 }
 
 export const actions = [
-  'getRelease',
-  'getLatestReleases',
-  'groupReleases',
-  'unGroupRelease',
-  'editRelease',
-  'deleteRelease',
-  'deleteReleases',
-  'addTracksToRelease',
-  'importFolder',
-  'downloadCover',
-  'importCovers',
-  'importMissingCovers',
-  'deleteCover',
-  'refreshReleaseContents',
-  'refreshCurrentArtistReleases',
-  'ungroupSelectedRelease',
-  'importFolderFromDialog',
-  'refreshEntityRelease',
-  'hideRelease',
-  'addAdditionalArtist',
-  'removeAdditionalArtist'
+  "getRelease",
+  "getReleases",
+  "groupReleases",
+  "unGroupRelease",
+  "editRelease",
+  "deleteRelease",
+  "deleteReleases",
+  "addTracksToRelease",
+  "importFolder",
+  "downloadCover",
+  "importCovers",
+  "importMissingCovers",
+  "deleteCover",
+  "refreshReleaseContents",
+  "refreshCurrentArtistReleases",
+  "ungroupSelectedRelease",
+  "importFolderFromDialog",
+  "refreshEntityRelease",
+  "hideRelease",
+  "addAdditionalArtist",
+  "removeAdditionalArtist",
 ];
