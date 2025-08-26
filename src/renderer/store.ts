@@ -1,10 +1,10 @@
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import type { ViewMode, Settings } from '@/types/types';
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import type { ViewMode, Settings } from "@/types/types";
 
 export type ModalContents = { name: string; params?: Record<string, unknown> };
 
-const viewModes = ['grid', 'list', 'compact'] as ViewMode[];
+const viewModes = ["grid", "list", "compact"] as ViewMode[];
 
 function getNextViewMode(current: ViewMode): ViewMode {
   const currentIndex = viewModes.indexOf(current);
@@ -17,7 +17,7 @@ type Store = {
   useDarkText: boolean;
   path: string;
   modalContents: ModalContents | null;
-  settings: Settings,
+  settings: Settings;
   setSettings: (settings: Settings) => void;
   toggleViewMode: () => void;
   toggleSidebar: (showSidebar?: boolean) => void;
@@ -29,23 +29,26 @@ type Store = {
 const useStore = create<Store>()(
   persist(
     (set) => ({
-      viewMode: 'grid',
-      path: '/',
+      viewMode: "grid",
+      path: "/",
       showSidebar: false,
       useDarkText: false,
       modalContents: null as ModalContents,
       settings: null as Settings,
-      setSettings: (settings) => set(({ settings })),
-      toggleSidebar: (showSidebar?: boolean) => set(
-        (prev) => ({ showSidebar: showSidebar === undefined ? !prev.showSidebar : showSidebar })
-      ),
-      toggleViewMode: () => set(({ viewMode }) => ({ viewMode: getNextViewMode(viewMode) })),
-      setUseDarkText: (useDarkText) => set(({ useDarkText })),
-      setPath: (path) => set(({ path })),
-      setModalContents: (modalContents) => set(({ modalContents }))
+      setSettings: (settings) => set({ settings }),
+      toggleSidebar: (showSidebar?: boolean) =>
+        set((prev) => ({
+          showSidebar:
+            showSidebar === undefined ? !prev.showSidebar : showSidebar,
+        })),
+      toggleViewMode: () =>
+        set(({ viewMode }) => ({ viewMode: getNextViewMode(viewMode) })),
+      setUseDarkText: (useDarkText) => set({ useDarkText }),
+      setPath: (path) => set({ path }),
+      setModalContents: (modalContents) => set({ modalContents }),
     }),
     {
-      name: 'playa-storage',
+      name: "playa-storage",
       storage: createJSONStorage(() => window.localStorage),
       partialize: ({ viewMode, path }) => ({ viewMode, path }),
     }

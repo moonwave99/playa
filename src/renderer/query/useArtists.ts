@@ -1,8 +1,8 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import type { ArtistWithReleases } from "@/types/types";
-import api from '../api';
+import api from "../api";
 
-type UseLatestArtists = {
+type UseArtists = {
   isPending: boolean;
   error: Error;
   artists: ArtistWithReleases[];
@@ -13,7 +13,7 @@ type UseLatestArtists = {
 
 const pageSize = 50;
 
-export default function useLatestArtists(): UseLatestArtists {
+export default function useArtists(): UseArtists {
   const {
     data,
     error,
@@ -38,6 +38,6 @@ export default function useLatestArtists(): UseLatestArtists {
     error,
     isFetchingNextPage,
     hasNextPage,
-    fetchNextPage
-  }
+    fetchNextPage,
+  };
 }

@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { CollectionWithReleases, Release } from "@/types/types";
-import api from '../api';
+import api from "../api";
 
 type UseCollection = {
   isPending: boolean;
@@ -13,36 +13,44 @@ type UseCollection = {
 
 export default function useCollection(id: number): UseCollection {
   const queryClient = useQueryClient();
-  const { isPending, error, data: collection } = useQuery<CollectionWithReleases>({
+  const {
+    isPending,
+    error,
+    data: collection,
+  } = useQuery<CollectionWithReleases>({
     queryKey: ["collections", id],
-    queryFn: () => api.collection.getCollection(id),
+    queryFn: () =>
+      api.collection.getCollection(id, { sortBy: "artistName", order: "asc" }),
   });
 
   function onSuccess() {
-    [
-      ["collections"],
-      ["collections", "latest"],
-      ["collections", id],
-    ].forEach(queryKey => queryClient.invalidateQueries({ queryKey }));
+    [["collections"], ["collections", "latest"], ["collections", id]].forEach(
+      (queryKey) => queryClient.invalidateQueries({ queryKey })
+    );
   }
 
   const updateTitle = useMutation({
-    mutationFn: (title: string) => api.collection.updateCollection(id, {
-      title,
-      releases: collection.releases.map(x => x.id),
-    }),
-    onSuccess
+    mutationFn: (title: string) =>
+      api.collection.updateCollection(id, {
+        title,
+        releases: collection.releases.map((x) => x.id),
+      }),
+    onSuccess,
   });
 
   const removeReleasesFromCollection = useMutation({
     mutationFn: async (releases: Release[]) =>
-      api.collection.removeReleasesFromCollection(id, releases.map(x => x.id)),
-    onSuccess
+      api.collection.removeReleasesFromCollection(
+        id,
+        releases.map((x) => x.id)
+      ),
+    onSuccess,
   });
 
   const setCollectionCover = useMutation({
-    mutationFn: (release_id: number) => api.collection.setCollectionCoverRelease(id, release_id),
-    onSuccess
+    mutationFn: (release_id: number) =>
+      api.collection.setCollectionCoverRelease(id, release_id),
+    onSuccess,
   });
 
   return {
@@ -52,5 +60,5 @@ export default function useCollection(id: number): UseCollection {
     updateTitle: updateTitle.mutate,
     removeReleasesFromCollection: removeReleasesFromCollection.mutate,
     setCollectionCover: setCollectionCover.mutate,
-  }
+  };
 }

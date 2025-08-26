@@ -5,6 +5,7 @@ import { getSetting } from '../settings';
 import { run } from '../run';
 import { getEntityPath } from "../utils";
 import { getRelease } from "../db/release";
+import { ReleaseWithArtistAndSubreleases, Track } from "@/types/types";
 
 type SystemControllerParams = {
   getSetting: (key: string) => ReturnType<typeof getSetting>;
@@ -16,25 +17,41 @@ type PlaybackParams = {
   track_id?: number;
 };
 
+type TrackWithCompleteRelease = Track & { release: ReleaseWithArtistAndSubreleases };
+
 export function systemController({ getSetting, withPath }: SystemControllerParams) {
+
+  function getPaths(
+    entity: ReleaseWithArtistAndSubreleases | TrackWithCompleteRelease
+  ): string[] {
+    if ((entity as Track).releaseId) {
+      return [
+        withPath('LIBRARY_PATH', getEntityPath({ ...entity, _type: 'track' }))
+      ]
+    }
+    return [
+      entity,
+      ...((entity as ReleaseWithArtistAndSubreleases).subReleases || [])
+    ].map(x => withPath('LIBRARY_PATH', getEntityPath({ ...x, _type: 'release' })))
+  }
 
   async function playback({ release_id, track_id }: PlaybackParams) {
     const PLAYER_PATH = getSetting('PLAYER_PATH') as string;
+
     if (track_id) {
       const track = await prisma.track.findFirst({
         where: { id: track_id },
         include: {
           release: {
-            include: { artist: true }
+            include: { artist: true, subReleases: { include: { artist: true } } },
           }
         }
       });
       if (!track) {
         return false;
       }
-      await run('open', ['-a', PLAYER_PATH,
-        withPath('LIBRARY_PATH', getEntityPath({ ...track, _type: 'track' }))
-      ]);
+
+      await run('open', ['-a', PLAYER_PATH, ...getPaths(track)]);
       return true;
     }
 
@@ -47,12 +64,7 @@ export function systemController({ getSetting, withPath }: SystemControllerParam
       return false;
     }
 
-    await run('open', ['-a', PLAYER_PATH,
-      ...[
-        release,
-        ...(release.subReleases || [])
-      ].map(x => withPath('LIBRARY_PATH', getEntityPath({ ...x, _type: 'release' })))
-    ]);
+    await run('open', ['-a', PLAYER_PATH, ...getPaths(release)]);
     return true;
   }
 

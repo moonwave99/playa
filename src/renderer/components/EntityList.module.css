@@ -5,6 +5,8 @@
   font-weight: 300;
   color: var(--primary-color);
   line-height: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
 
   &.useDarkText {
     color: black;

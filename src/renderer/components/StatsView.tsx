@@ -36,7 +36,7 @@ export default function StatsView({ onClose }: StatsViewProps) {
                 {sortedStatKeys.map((key) => (
                     <Fragment key={key}>
                         <dt>{`${key}s`}</dt>
-                        <dd>{stats[key]}</dd>
+                        <dd>{stats[key].toLocaleString()}</dd>
                     </Fragment>
                 ))}
             </dl>

@@ -23,7 +23,7 @@ describe('system - playback function', () => {
     expect(result).toBeFalsy();
   });
 
-  it('calls run with the right path if the release if found', async () => {
+  it('calls run with the right path if the release is found', async () => {
     const { playback } = systemController({ getSetting, withPath });
     const spy = vi.spyOn(run, 'run');
     prisma.release.findFirst.mockResolvedValue(getFakeRelease(1));
@@ -51,11 +51,10 @@ describe('system - playback function', () => {
       'PLAYER_PATH',
       'LIBRARY_PATH/A/Artist/[Album]/1999 - Album One',
       'LIBRARY_PATH/A/Artist/[Album]/2000 - Album Two'
-    ]
-    );
+    ]);
   });
 
-  it('calls run with the right path if the track if found', async () => {
+  it('calls run with the right path if the track is found', async () => {
     const { playback } = systemController({ getSetting, withPath });
     const spy = vi.spyOn(run, 'run');
     prisma.release.findFirst.mockResolvedValue(getFakeRelease(1));
@@ -71,6 +70,27 @@ describe('system - playback function', () => {
       'open', ['-a', 'PLAYER_PATH', 'LIBRARY_PATH/A/Artist/[Album]/1999 - Album One/01 - title.mp3']
     );
   });
+});
+
+it('calls run with the right path if the track is found inside multiple releases', async () => {
+  const { playback } = systemController({ getSetting, withPath });
+  const spy = vi.spyOn(run, 'run');
+  const release = getFakeRelease(1);
+  prisma.release.findFirst.mockResolvedValue(release);
+  prisma.track.findFirst.mockResolvedValue({
+    id: 11,
+    path: '01 - title.mp3',
+    releaseId: 1,
+    release
+  } as TrackWithRelease);
+  const result = await playback({ release_id: 1, track_id: 1 });
+  expect(result).toBeTruthy();
+  expect(spy).toHaveBeenCalledWith(
+    'open', [
+    '-a',
+    'PLAYER_PATH',
+    'LIBRARY_PATH/A/Artist/[Album]/1999 - Album One/01 - title.mp3'
+  ]);
 });
 
 describe('system - openTagger function', () => {

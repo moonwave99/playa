@@ -10,121 +10,114 @@ import styles from "./Nav.module.css";
 import buttonStyles from "../buttons.module.css";
 
 const navMap: {
-    type: "link" | "modal";
-    label: string;
-    link: string;
+  type: "link" | "modal";
+  label: string;
+  link: string;
 }[] = [
-    {
-        type: "link",
-        link: "/",
-        label: "Latest Releases",
-    },
-    {
-        type: "link",
-        link: "/artists",
-        label: "Latest Artists",
-    },
-    {
-        type: "link",
-        link: "/collections",
-        label: "Latest Collections",
-    },
-    {
-        type: "link",
-        link: "/groups",
-        label: "Latest Groups",
-    },
-    {
-        type: "modal",
-        link: "settings",
-        label: "Settings",
-    },
-    {
-        type: "modal",
-        link: "stats",
-        label: "Stats",
-    },
+  {
+    type: "link",
+    link: "/",
+    label: "Releases",
+  },
+  {
+    type: "link",
+    link: "/artists",
+    label: "Artists",
+  },
+  {
+    type: "link",
+    link: "/collections",
+    label: "Collections",
+  },
+  {
+    type: "link",
+    link: "/groups",
+    label: "Groups",
+  },
+  {
+    type: "modal",
+    link: "settings",
+    label: "Settings",
+  },
+  {
+    type: "modal",
+    link: "stats",
+    label: "Stats",
+  },
 ];
 
 export default function Nav() {
-    const [isNavOpen, setNavOpen] = useState(false);
-    const [currentIndex, setCurrentIndex] = useState(-1);
-    const ref = useClickOutside(() => setNavOpen(false));
-    const { setModalContents, useDarkText } = useStore();
-    const { setContext } = useKeyManager({
-        context: "nav",
-        handlers: {
-            Escape: () => setNavOpen(false),
-            ArrowDown: () =>
-                setCurrentIndex((prev) =>
-                    Math.min(prev + 1, navMap.length - 1)
-                ),
-            ArrowUp: () => setCurrentIndex((prev) => Math.max(0, prev - 1)),
-        },
-    });
+  const [isNavOpen, setNavOpen] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(-1);
+  const ref = useClickOutside(() => setNavOpen(false));
+  const { setModalContents, useDarkText } = useStore();
+  const { setContext } = useKeyManager({
+    context: "nav",
+    handlers: {
+      Escape: () => setNavOpen(false),
+      ArrowDown: () =>
+        setCurrentIndex((prev) => Math.min(prev + 1, navMap.length - 1)),
+      ArrowUp: () => setCurrentIndex((prev) => Math.max(0, prev - 1)),
+    },
+  });
 
-    useEffect(() => {
-        setContext(isNavOpen ? "nav" : "list");
-        setCurrentIndex(isNavOpen ? 0 : -1);
-    }, [isNavOpen]);
+  useEffect(() => {
+    setContext(isNavOpen ? "nav" : "list");
+    setCurrentIndex(isNavOpen ? 0 : -1);
+  }, [isNavOpen]);
 
-    useEffect(() => {
-        const target = ref.current.querySelector(
-            `[data-nav-id="${currentIndex}"]`
-        );
-        target?.focus();
-    }, [currentIndex]);
+  useEffect(() => {
+    const target = ref.current.querySelector(`[data-nav-id="${currentIndex}"]`);
+    target?.focus();
+  }, [currentIndex]);
 
-    return (
-        <nav
-            className={cx(styles.nav, { [styles.isOpen]: isNavOpen })}
-            ref={ref}
-        >
-            <button
-                className={cx(buttonStyles.button, styles.button, {
-                    [buttonStyles.useDarkText]: useDarkText,
-                })}
-                onClick={() => setNavOpen((prev) => !prev)}
-                aria-label="Toggle Navigation"
+  return (
+    <nav className={cx(styles.nav, { [styles.isOpen]: isNavOpen })} ref={ref}>
+      <button
+        className={cx(buttonStyles.button, styles.button, {
+          [buttonStyles.useDarkText]: useDarkText,
+        })}
+        onClick={() => setNavOpen((prev) => !prev)}
+        aria-label="Toggle Navigation"
+      >
+        <IoMenu />
+      </button>
+      <div className={styles.entries} ref={ref}>
+        {navMap.map(({ link, label, type }, index) =>
+          type === "link" ? (
+            <NavLink
+              data-nav-id={index}
+              key={link}
+              to={link}
+              className={cx(styles.link, {
+                [styles.hasFocus]: index === currentIndex,
+              })}
+              onClick={(event: MouseEvent) => {
+                if (event.metaKey) {
+                  event.preventDefault();
+                }
+                setNavOpen(false);
+              }}
             >
-                <IoMenu />
+              {label}
+            </NavLink>
+          ) : (
+            <button
+              data-nav-id={index}
+              key={link}
+              className={cx(styles.link, {
+                [styles.hasFocus]: index === currentIndex,
+              })}
+              onClick={() => {
+                setModalContents({ name: link });
+                setNavOpen(false);
+              }}
+            >
+              {label}
             </button>
-            <div className={styles.entries} ref={ref}>
-                {navMap.map(({ link, label, type }, index) =>
-                    type === "link" ? (
-                        <NavLink
-                            data-nav-id={index}
-                            key={link}
-                            to={link}
-                            className={cx(styles.link, {
-                                [styles.hasFocus]: index === currentIndex,
-                            })}
-                            onClick={(event: MouseEvent) => {
-                                if (event.metaKey) {
-                                    event.preventDefault();
-                                }
-                                setNavOpen(false);
-                            }}
-                        >
-                            {label}
-                        </NavLink>
-                    ) : (
-                        <button
-                            data-nav-id={index}
-                            key={link}
-                            className={cx(styles.link, {
-                                [styles.hasFocus]: index === currentIndex,
-                            })}
-                            onClick={() => {
-                                setModalContents({ name: link });
-                                setNavOpen(false);
-                            }}
-                        >
-                            {label}
-                        </button>
-                    )
-                )}
-            </div>
-        </nav>
-    );
+          )
+        )}
+      </div>
+    </nav>
+  );
 }
