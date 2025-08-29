@@ -4,18 +4,18 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = "postgresql://postgres:postgres@localhost:5432/music"
+  provider = "sqlite"
+  url      = "file:./data.db"
 }
 
 model Artist {
   id                      Int       @id @default(autoincrement())
   createdAt               DateTime  @default(now())
   updatedAt               DateTime  @updatedAt
-  name                    String    @db.VarChar(255)
-  normalizedName          String    @default("") @db.VarChar(255)
-  hash                    String    @unique @db.VarChar(16)
-  path                    String    @default("") @db.VarChar(255)
+  name                    String
+  normalizedName          String    @default("")
+  hash                    String    @unique
+  path                    String    @default("")
   releases                Release[]
   coverReleaseId          Int?      @unique
   coverRelease            Release?  @relation("ArtistCover", fields: [coverReleaseId], references: [id])
@@ -25,20 +25,20 @@ model Artist {
   coverGroups             Group[]   @relation("GroupCover")
   appearsIn               Release[] @relation("AppearsInRelease")
 
-  @@index([hash], type: Hash)
+  @@index([hash])
 }
 
 model Release {
   id                Int          @id @default(autoincrement())
   createdAt         DateTime     @default(now())
   updatedAt         DateTime     @updatedAt
-  title             String       @db.VarChar(255)
-  normalizedTitle   String       @default("") @db.VarChar(255)
-  hash              String       @unique @db.VarChar(16)
-  path              String       @db.VarChar(255)
+  title             String
+  normalizedTitle   String       @default("")
+  hash              String
+  path              String
   type              ReleaseType  @default(Album)
   year              Int?
-  discTitle         String?      @db.VarChar(255)
+  discTitle         String?
   discNumber        Int?         @default(1)
   hideOnHomepage    Boolean?     @default(false)
   artist_id         Int
@@ -52,30 +52,30 @@ model Release {
   coverCollections  Collection[] @relation("CollectionCover")
   coverArtist       Artist?      @relation("ArtistCover")
 
-  @@index([hash], type: Hash)
+  @@index([hash])
 }
 
 model Track {
   id              Int      @id @default(autoincrement())
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-  title           String   @db.VarChar(255)
-  normalizedTitle String   @default("") @db.VarChar(255)
-  hash            String   @unique @db.VarChar(16)
-  path            String   @db.VarChar(255)
+  title           String
+  normalizedTitle String   @default("")
+  hash            String   @unique
+  path            String
   duration        Int
   releaseId       Int
   position        Int
   release         Release  @relation(fields: [releaseId], references: [id], onDelete: Cascade)
 
-  @@index([hash], type: Hash)
+  @@index([hash])
 }
 
 model Collection {
   id             Int       @id @default(autoincrement())
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
-  title          String    @db.VarChar(255)
+  title          String
   releases       Release[] @relation("CollectionToRelease")
   coverReleaseId Int?
   coverRelease   Release?  @relation("CollectionCover", fields: [coverReleaseId], references: [id])
@@ -85,7 +85,7 @@ model Group {
   id            Int      @id @default(autoincrement())
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  title         String   @db.VarChar(255)
+  title         String
   description   String?
   artists       Artist[] @relation("GroupToArtist")
   coverArtistId Int?

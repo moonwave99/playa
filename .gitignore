@@ -111,3 +111,6 @@ discogs/
 
 # Logger config
 loggerConfig.json
+
+# SQLite
+data.db

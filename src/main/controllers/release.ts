@@ -254,9 +254,11 @@ export function releaseController({
     } = releaseData;
     /* eslint-enable @typescript-eslint/no-unused-vars */
     const normalizedTitle = normalizeDiacritics(title);
+    // TODO: fix upsert problem
     const release = await prisma.release.upsert({
       where: {
         hash: releaseHash,
+        // id: 0,
       },
       update: {
         hash: releaseHash,

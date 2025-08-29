@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "Artist" ADD COLUMN     "path" VARCHAR(255) NOT NULL DEFAULT '';

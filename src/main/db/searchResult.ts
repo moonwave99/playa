@@ -1,4 +1,3 @@
-
 import prisma from "./prisma";
 import type {
   SearchableEntities,
@@ -11,14 +10,14 @@ import type {
   GroupWithArtists,
   WithAdditionalArtists,
   ReleaseWithArtist,
-  Unpacked
-} from '@/types/types';
+  Unpacked,
+} from "@/types/types";
 import { withEntityType } from "@/types/types";
 import {
   getCoverRelease,
   getReleaseTitle,
   getReleaseArtist,
-  sortByQueryPosition
+  sortByQueryPosition,
 } from "@/lib/utils";
 
 type GetSearchResultParams = {
@@ -27,21 +26,27 @@ type GetSearchResultParams = {
   type?: SearchableEntities;
 };
 
-export async function getSearchResults({ query, take = 20, type }: GetSearchResultParams): Promise<SearchResult[]> {
+export async function getSearchResults({
+  query,
+  take = 20,
+  type,
+}: GetSearchResultParams): Promise<SearchResult[]> {
   const types = (type ? [type] : Object.keys(getters)) as SearchableEntities[];
   const data = await Promise.all(
-    types.map(
-      async (type) => {
-        const results = await getters[type](query, take);
-        const transformer
-          = transformers[type] as (x: Unpacked<typeof results>) => SearchResult;
-        return results.map(transformer)
-          .toSorted((a: HasTitle, b: HasTitle) => sortByQueryPosition(query, 'title', a, b))
-      }
-    )
+    types.map(async (type) => {
+      const results = await getters[type](query, take);
+      const transformer = transformers[type] as (
+        x: Unpacked<typeof results>
+      ) => SearchResult;
+      return results
+        .map(transformer)
+        .toSorted((a: HasTitle, b: HasTitle) =>
+          sortByQueryPosition(query, "title", a, b)
+        );
+    })
   );
 
-  return withEntityType(data.flat(), 'searchResult');
+  return withEntityType(data.flat(), "searchResult");
 }
 
 type Getter<T> = (query: string, take: number) => Promise<T[]>;
@@ -55,126 +60,125 @@ type Getters = {
 };
 
 const getters: Getters = {
-  artist: (query: string, take: number) => prisma.artist.findMany({
-    take,
-    where: {
-      OR: [
-        {
-          normalizedName: {
-            contains: query,
-            mode: "insensitive",
+  artist: (query: string, take: number) =>
+    prisma.artist.findMany({
+      take,
+      where: {
+        OR: [
+          {
+            normalizedName: {
+              contains: query,
+            },
+          },
+          {
+            appearsIn: {
+              some: {
+                normalizedTitle: {
+                  contains: query,
+                },
+              },
+            },
+          },
+        ],
+      },
+      include: {
+        coverRelease: {
+          include: {
+            artist: true,
           },
         },
-        {
-          appearsIn: {
-            some: {
-              normalizedTitle: {
-                contains: query,
-                mode: "insensitive",
-              },
-            }
-          }
-        }
-      ]
-    },
-    include: {
-      coverRelease: {
-        include: {
-          artist: true
-        }
-      },
-      releases: {
-        where: {
-          mainRelease: null
-        }
-      }
-    },
-  }),
-  release: (query: string, take: number) => prisma.release.findMany({
-    take,
-    where: {
-      mainRelease: null,
-      normalizedTitle: {
-        contains: query,
-        mode: "insensitive",
-      },
-    },
-    orderBy: {
-      title: 'asc',
-    },
-    include: {
-      artist: true,
-      additionalArtists: true,
-      subReleases: true,
-    },
-  }),
-  track: (query: string, take: number) => prisma.track.findMany({
-    take,
-    where: {
-      normalizedTitle: {
-        contains: query,
-        mode: "insensitive",
-      },
-    },
-    include: {
-      release: {
-        include: {
-          artist: true,
-          mainRelease: true
-        }
-      }
-    },
-  }),
-  collection: (query: string, take: number) => prisma.collection.findMany({
-    take,
-    where: {
-      title: {
-        contains: query,
-        mode: "insensitive",
-      },
-    },
-    include: {
-      coverRelease: {
-        include: {
-          artist: true
-        }
-      },
-      releases: {
-        where: {
-          mainRelease: null
-        }
-      }
-    },
-  }),
-  group: (query: string, take: number) => prisma.group.findMany({
-    take,
-    where: {
-      title: {
-        contains: query,
-        mode: "insensitive",
-      },
-    },
-    include: {
-      coverArtist: {
-        include: {
-          coverRelease: {
-            include: {
-              artist: true
-            }
+        releases: {
+          where: {
+            mainRelease: null,
           },
-          releases: {
-            take: 1,
-            where: {
-              mainRelease: null
-            },
-            include: {
-              artist: true
-            }
-          }
-        }
+        },
       },
-    },
-  }),
+    }),
+  release: (query: string, take: number) =>
+    prisma.release.findMany({
+      take,
+      where: {
+        mainRelease: null,
+        normalizedTitle: {
+          contains: query,
+        },
+      },
+      orderBy: {
+        title: "asc",
+      },
+      include: {
+        artist: true,
+        additionalArtists: true,
+        subReleases: true,
+      },
+    }),
+  track: (query: string, take: number) =>
+    prisma.track.findMany({
+      take,
+      where: {
+        normalizedTitle: {
+          contains: query,
+        },
+      },
+      include: {
+        release: {
+          include: {
+            artist: true,
+            mainRelease: true,
+          },
+        },
+      },
+    }),
+  collection: (query: string, take: number) =>
+    prisma.collection.findMany({
+      take,
+      where: {
+        title: {
+          contains: query,
+        },
+      },
+      include: {
+        coverRelease: {
+          include: {
+            artist: true,
+          },
+        },
+        releases: {
+          where: {
+            mainRelease: null,
+          },
+        },
+      },
+    }),
+  group: (query: string, take: number) =>
+    prisma.group.findMany({
+      take,
+      where: {
+        title: {
+          contains: query,
+        },
+      },
+      include: {
+        coverArtist: {
+          include: {
+            coverRelease: {
+              include: {
+                artist: true,
+              },
+            },
+            releases: {
+              take: 1,
+              where: {
+                mainRelease: null,
+              },
+              include: {
+                artist: true,
+              },
+            },
+          },
+        },
+      },
+    }),
 };
 
 type Transformers = {
@@ -184,24 +188,29 @@ type Transformers = {
 };
 
 const transformers: Transformers = {
-  artist: (
-    { id, name, coverRelease, releases }: ArtistWithReleases
-  ) => ({
-    _type: 'searchResult',
-    type: 'artist' as const,
+  artist: ({ id, name, coverRelease, releases }: ArtistWithReleases) => ({
+    _type: "searchResult",
+    type: "artist" as const,
     id,
     title: name,
-    description: 'Artist',
+    description: "Artist",
     links: {
-      artist: `/artists/${id}`
+      artist: `/artists/${id}`,
     },
     coverRelease: coverRelease || releases[0],
   }),
-  release: (
-    { id, title, artist, year, type, hash, subReleases, additionalArtists }: ReleaseWithArtistAndSubreleases & WithAdditionalArtists
-  ) => ({
-    _type: 'searchResult',
-    type: 'release' as const,
+  release: ({
+    id,
+    title,
+    artist,
+    year,
+    type,
+    hash,
+    subReleases,
+    additionalArtists,
+  }: ReleaseWithArtistAndSubreleases & WithAdditionalArtists) => ({
+    _type: "searchResult",
+    type: "release" as const,
     id,
     title: getReleaseTitle({ title, subReleases }),
     hash,
@@ -209,40 +218,39 @@ const transformers: Transformers = {
     description: year ? `${type}, ${year}` : type,
     links: {
       release: `/releases/${id}`,
-      artist: `/artists/${artist.id}`
-    }
+      artist: `/artists/${artist.id}`,
+    },
   }),
-  collection: (
-    { id, title, coverRelease, releases }: CollectionWithReleases
-  ) => ({
-    _type: 'searchResult',
-    type: 'collection' as const,
+  collection: ({
+    id,
+    title,
+    coverRelease,
+    releases,
+  }: CollectionWithReleases) => ({
+    _type: "searchResult",
+    type: "collection" as const,
     id,
     title,
     description: "Collection",
     links: {
-      collection: `/collections/${id}`
+      collection: `/collections/${id}`,
     },
-    coverRelease: coverRelease || releases[0]
+    coverRelease: coverRelease || releases[0],
   }),
-  group: (
-    { id, title, coverArtist }: GroupWithArtists
-  ) => ({
-    _type: 'searchResult',
-    type: 'group' as const,
+  group: ({ id, title, coverArtist }: GroupWithArtists) => ({
+    _type: "searchResult",
+    type: "group" as const,
     id,
     title,
     description: "Group",
     links: {
-      group: `/groups/${id}`
+      group: `/groups/${id}`,
     },
-    coverRelease: coverArtist ? getCoverRelease(coverArtist) : null
+    coverRelease: coverArtist ? getCoverRelease(coverArtist) : null,
   }),
-  track: (
-    { id, title, release }: TrackWithRelease
-  ) => ({
-    _type: 'searchResult',
-    type: 'track' as const,
+  track: ({ id, title, release }: TrackWithRelease) => ({
+    _type: "searchResult",
+    type: "track" as const,
     id,
     title,
     description: "Track",
@@ -251,6 +259,6 @@ const transformers: Transformers = {
       track: `/releases/${release.mainReleaseId || release.id}?track_id=${id}`,
       artist: `/artists/${release.artist.id}`,
     },
-    coverRelease: release
+    coverRelease: release,
   }),
 };
