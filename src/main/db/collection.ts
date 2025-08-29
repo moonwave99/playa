@@ -55,6 +55,8 @@ type SortParams = {
   order: "asc" | "desc";
 };
 
+const defaultSort = { sortBy: "artistName" as const, order: "asc" as const };
+
 function getSort({ sortBy, order }: SortParams) {
   if (sortBy === "default") {
     return {};
@@ -69,7 +71,7 @@ function getSort({ sortBy, order }: SortParams) {
   };
 }
 
-export async function getCollection(id: number, sort: SortParams) {
+export async function getCollection(id: number, sort = defaultSort) {
   const result = await prisma.collection.findFirst({
     where: { id },
     include: {
