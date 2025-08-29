@@ -114,3 +114,4 @@ loggerConfig.json
 
 # SQLite
 data.db
+data.db-journal
