@@ -7,25 +7,40 @@
   h2 {
     user-select: none;
   }
+  section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
 }
 
-.view>* {
+.view > * {
   margin: 0;
 }
 
 .stats {
   display: flex;
-  flex-direction: column;
-  font-size: .9rem;
+  font-size: 0.9rem;
+  list-style: none;
+  gap: 1rem;
 
-  dt {
-    text-transform: capitalize;
-    font-weight: bold;
-    line-height: 1.5rem;
-  }
-
-  dd {
-    margin-bottom: 1rem;
-    color: var(--secondary-color);
+  li {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background-color: var(--background-color-light);
+    border-radius: 0.25rem;
+    span {
+      &:first-child {
+        text-transform: capitalize;
+        font-weight: bold;
+      }
+      &:last-child {
+        color: var(--secondary-color);
+      }
+    }
   }
 }

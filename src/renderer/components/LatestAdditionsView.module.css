@@ -1,0 +1,38 @@
+.view {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background-color: black;
+
+  h2 {
+    user-select: none;
+  }
+}
+
+.view > * {
+  margin: 0;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  label {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.8rem;
+  }
+}
+
+.plot {
+  margin: 0;
+  height: 0;
+  padding-top: 40%;
+  position: relative;
+  svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+}

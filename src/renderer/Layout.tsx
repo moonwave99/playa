@@ -75,6 +75,11 @@ function getModalOverrides(name: string) {
       background: "transparent",
     };
   }
+  if (name === "stats") {
+    return {
+      width: "min(90vw, 1000px)",
+    };
+  }
   return {};
 }
 

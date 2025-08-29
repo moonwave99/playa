@@ -227,6 +227,28 @@ export async function getReleases({ take = 50, skip = 0 }: PaginationParams) {
   };
 }
 
+export async function getLatestAdditions(
+  from: string
+): Promise<Record<string, Pick<Release, "id" | "createdAt">[]>> {
+  const releases = await prisma.release.findMany({
+    where: {
+      mainRelease: null,
+      createdAt: {
+        gte: new Date(from || null),
+      },
+    },
+    select: {
+      id: true,
+      createdAt: true,
+    },
+  });
+
+  return Object.groupBy(
+    releases,
+    (x: Release) => x.createdAt.toISOString().split("T")[0]
+  );
+}
+
 type RenameReleaseParam = Pick<
   Release,
   | "id"

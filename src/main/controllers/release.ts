@@ -21,6 +21,7 @@ import {
 import {
   getRelease,
   getReleases,
+  getLatestAdditions,
   updateReleases,
   groupReleases,
   unGroupRelease,
@@ -244,13 +245,14 @@ export function releaseController({
     log("release:importSingleFolder", "upserted artist", artist);
 
     const releaseHash = hashRelease({ ...releaseData, artist_id: artist.id });
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    /* eslint-disable @typescript-eslint/no-unused-vars */
     const {
       artist: artistData,
       fullPath,
       title,
       ...releaseWithoutArtist
     } = releaseData;
+    /* eslint-enable @typescript-eslint/no-unused-vars */
     const normalizedTitle = normalizeDiacritics(title);
     const release = await prisma.release.upsert({
       where: {
@@ -509,6 +511,7 @@ export function releaseController({
   return {
     getRelease,
     getReleases,
+    getLatestAdditions,
     groupReleases,
     unGroupRelease,
     editRelease,
@@ -534,6 +537,7 @@ export function releaseController({
 export const actions = [
   "getRelease",
   "getReleases",
+  "getLatestAdditions",
   "groupReleases",
   "unGroupRelease",
   "editRelease",
