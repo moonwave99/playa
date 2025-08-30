@@ -27,9 +27,6 @@
     "coverage:renderer": "npx vitest run --coverage --config vite.renderer.config.ts",
     "coverage:main": "npx vitest run --coverage --config vite.main.config.ts"
   },
-  "prisma": {
-    "schema": "./src/main/db/schema.prisma"
-  },
   "license": "MIT",
   "devDependencies": {
     "@electron-forge/cli": "^7.7.0",

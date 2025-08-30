@@ -14,7 +14,7 @@ const config: ForgeConfig = {
     extraResource: [
       "./node_modules/.prisma",
       "./node_modules/@prisma/client",
-      "./data.db",
+      "./src/main/db/data.db",
     ],
   },
   rebuildConfig: {},

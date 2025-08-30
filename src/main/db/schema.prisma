@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:../../../data.db"
+  url      = "file:data.db"
 }
 
 model Artist {
@@ -34,7 +34,7 @@ model Release {
   updatedAt         DateTime     @updatedAt
   title             String
   normalizedTitle   String       @default("")
-  hash              String
+  hash              String       @unique
   path              String
   type              ReleaseType  @default(Album)
   year              Int?

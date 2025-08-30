@@ -4,7 +4,7 @@ import path from "node:path";
 
 const url =
   process.env.NODE_ENV === "development"
-    ? "file:../../../data.db"
+    ? "file:data.db"
     : `file:${path.join(process.resourcesPath, "data.db")}`;
 
 function getPrisma() {

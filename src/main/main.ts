@@ -59,7 +59,7 @@ async function createWindow() {
   const customProtocol = "playa-cover";
   protocol.handle(customProtocol, async ({ url }) => {
     const { hostname } = new URL(url);
-    if (process.env.NODE_ENV === "development") {
+    if (process.env.COVER_PLACEHOLDERS) {
       return getCoverPlaceholder(url);
     }
     try {
