@@ -1,25 +1,30 @@
 {
-    "env": {
-        "browser": true,
-        "es6": true,
-        "node": true
-    },
-    "extends": [
-        "eslint:recommended",
-        "plugin:@typescript-eslint/eslint-recommended",
-        "plugin:@typescript-eslint/recommended",
-        "plugin:import/recommended",
-        "plugin:import/electron",
-        "plugin:import/typescript"
-    ],
-    "ignorePatterns": ["scripts/", "src/playground.ts", "src/mobile-sync.ts"],
-    "parser": "@typescript-eslint/parser",
-    "plugins": ["import"],
-    "settings": {
-        "import/resolver": {
-            "typescript": {
-                "project": "."
-            }
-        }
+  "env": {
+    "browser": true,
+    "es6": true,
+    "node": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/recommended",
+    "plugin:import/electron",
+    "plugin:import/typescript"
+  ],
+  "ignorePatterns": [
+    "out",
+    "scripts/",
+    "src/playground.ts",
+    "src/mobile-sync.ts"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["import"],
+  "settings": {
+    "import/resolver": {
+      "typescript": {
+        "project": "."
+      }
     }
+  }
 }
