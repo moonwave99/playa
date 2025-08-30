@@ -17,6 +17,7 @@
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx .",
+    "db:seed": "cp /Applications/Playa.app/Contents/Resources/data.db ./dump/data-$(date +'%Y-%m-%d_%H-%M-%S').db && rm -f data.db && npm run db:migrate && npx tsx ./src/main/db/seed.ts",
     "db:generate": "npx prisma generate",
     "db:migrate": "npx prisma migrate dev --name init",
     "db:studio": "npx prisma studio",

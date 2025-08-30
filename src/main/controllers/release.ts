@@ -35,12 +35,11 @@ import {
 import { getArtist } from "../db/artist";
 import {
   getEntityPath,
-  hashRelease,
-  hashArtistName,
   crawlFolder,
   getFolderContents,
   parsePath,
 } from "../utils";
+import { hashRelease, hashArtistName } from "../hash";
 import { searchCover, getImageFromURL } from "../covers";
 import { log } from "../logger";
 import { getSetting } from "../settings";

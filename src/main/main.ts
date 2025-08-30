@@ -14,6 +14,7 @@ import started from "electron-squirrel-startup";
 import { getSetting } from "./settings";
 import { init } from "./controllers/init";
 import { log } from "./logger";
+import { getCoverPlaceholder } from "./cover-placeholder";
 
 if (started) {
   app.quit();
@@ -58,6 +59,9 @@ async function createWindow() {
   const customProtocol = "playa-cover";
   protocol.handle(customProtocol, async ({ url }) => {
     const { hostname } = new URL(url);
+    if (process.env.NODE_ENV === "development") {
+      return getCoverPlaceholder(url);
+    }
     try {
       return await net.fetch(`file://${path.join(COVERS_PATH, hostname)}`);
     } catch (error) {
