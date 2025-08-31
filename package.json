@@ -17,7 +17,9 @@
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx .",
-    "db:seed": "cp /Applications/Playa.app/Contents/Resources/data.db ./dump/data-$(date +'%Y-%m-%d_%H-%M-%S').db && rm -f data.db && npm run db:migrate && npx tsx ./src/main/db/seed.ts",
+    "clean": "rm -rf out",
+    "db:reset": "npx prisma db push --force-reset && npx prisma db push",
+    "db:seed": "cp /Applications/Playa.app/Contents/Resources/data.db ./dump/data-$(date +'%Y-%m-%d_%H-%M-%S').db && rm -f ./src/main/db/data.db && npm run db:migrate && npx tsx ./src/main/db/seed.ts",
     "db:generate": "npx prisma generate",
     "db:migrate": "npx prisma migrate dev --name init",
     "db:studio": "npx prisma studio",
@@ -47,6 +49,7 @@
     "@types/react-dom": "^19.0.4",
     "@types/react-modal": "^3.16.3",
     "@types/sha1": "^1.1.5",
+    "@types/unzipper": "^0.10.11",
     "@typescript-eslint/eslint-plugin": "^8.29.0",
     "@typescript-eslint/parser": "^8.29.0",
     "@vitejs/plugin-react": "^4.3.4",
@@ -92,8 +95,10 @@
     "react-router": "^7.3.0",
     "run-applescript": "^7.0.0",
     "sha1": "^1.1.1",
+    "unzipper": "^0.12.3",
     "use-debounce": "^10.0.4",
     "vite-plugin-svgr": "^4.3.0",
+    "zip-a-folder": "^3.1.9",
     "zustand": "^5.0.3"
   }
 }

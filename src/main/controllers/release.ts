@@ -1,7 +1,7 @@
 import { existsSync, move, unlink } from "fs-extra";
 import path from "path";
 import prisma from "../db/prisma";
-import { dialog } from "electron";
+import { dialog, type OpenDialogSyncOptions } from "electron";
 import { globby } from "globby";
 import {
   ArtistWithReleases,
@@ -50,7 +50,10 @@ type ReleaseControllerParams = {
   getSetting: (key: string) => ReturnType<typeof getSetting>;
   send: (channel: string, ...args: unknown[]) => void;
   state: StateManager;
-  openFolderDialog: (defaultPath: string) => string[];
+  openFolderDialog: (
+    defaultPath: string,
+    properties: OpenDialogSyncOptions["properties"]
+  ) => string[];
 };
 
 export function releaseController({
@@ -447,7 +450,8 @@ export function releaseController({
 
   async function importFolderFromDialog() {
     const folders = openFolderDialog(
-      withPath("LIBRARY_PATH", state.getCurrentArtist()?.path || "")
+      withPath("LIBRARY_PATH", state.getCurrentArtist()?.path || ""),
+      ["openDirectory", "multiSelections"]
     );
     if (!folders) {
       return;

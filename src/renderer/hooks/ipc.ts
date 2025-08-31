@@ -1,6 +1,11 @@
-import { useEffect } from 'react';
-import api from '../api';
-import type { Artist, ReleaseWithArtist, ReleaseWithArtistAndSubreleases, Sidebars } from "@/types/types";
+import { useEffect } from "react";
+import api from "../api";
+import type {
+  Artist,
+  ReleaseWithArtist,
+  ReleaseWithArtistAndSubreleases,
+  Sidebars,
+} from "@/types/types";
 
 export function useClearSelection(callback: () => void) {
   useEffect(() => {
@@ -38,6 +43,15 @@ export function useOnOpenSettings(callback: () => void) {
   }, []);
 }
 
+export function useOnOpenImportData(callback: () => void) {
+  useEffect(() => {
+    const unsubscribe = api.onOpenImportData(callback);
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+}
+
 export function useOnOpenStats(callback: () => void) {
   useEffect(() => {
     const unsubscribe = api.onOpenStats(callback);
@@ -47,7 +61,9 @@ export function useOnOpenStats(callback: () => void) {
   }, []);
 }
 
-export function useOnOpenGroupDialog(callback: (selection: ReleaseWithArtist[]) => void) {
+export function useOnOpenGroupDialog(
+  callback: (selection: ReleaseWithArtist[]) => void
+) {
   useEffect(() => {
     const unsubscribe = api.onOpenGroupDialog(callback);
     return () => {
@@ -56,7 +72,9 @@ export function useOnOpenGroupDialog(callback: (selection: ReleaseWithArtist[]) 
   }, []);
 }
 
-export function useOnOpenEditReleaseDialog(callback: (release: ReleaseWithArtistAndSubreleases) => void) {
+export function useOnOpenEditReleaseDialog(
+  callback: (release: ReleaseWithArtistAndSubreleases) => void
+) {
   useEffect(() => {
     const unsubscribe = api.onOpenEditReleaseDialog(callback);
     return () => {
@@ -77,7 +95,7 @@ export function useOnOpenEditArtistDialog(callback: (artist: Artist) => void) {
 export function useClearSelectionOnLeave() {
   useEffect(() => {
     return () => {
-      api.state.selectReleases([])
+      api.state.selectReleases([]);
     };
   }, []);
 }

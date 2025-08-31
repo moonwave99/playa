@@ -25,4 +25,4 @@ if (process.env.NODE_ENV === "development") {
   (global as any).prisma = prisma;
 }
 
-export default prisma;
+export default prisma as PrismaClient;

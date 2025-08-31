@@ -27,6 +27,7 @@ import {
   useOnOpenEditArtistDialog,
   useOnSwipe,
   useOnOpenStats,
+  useOnOpenImportData,
 } from "./hooks/ipc";
 import api from "./api";
 import useRefetch from "./hooks/useRefetch";
@@ -47,6 +48,7 @@ import GroupPage from "./pages/GroupPage";
 import Nav from "./components/Nav";
 import SidebarView from "./components/SidebarView";
 import SettingsView from "./components/SettingsView";
+import ImportDataView from "./components/ImportDataView";
 import StatsView from "./components/StatsView";
 import GroupReleasesView from "./components/GroupReleasesView";
 import EditReleaseView from "./components/EditReleaseView";
@@ -78,6 +80,11 @@ function getModalOverrides(name: string) {
   if (name === "stats") {
     return {
       width: "min(90vw, 1000px)",
+    };
+  }
+  if (name === "importData") {
+    return {
+      width: "min(80vw, 600px)",
     };
   }
   return {};
@@ -186,6 +193,9 @@ export default function Layout() {
           {modalContents?.name === "settings" && (
             <SettingsView onSave={closeModal} onCancel={closeModal} />
           )}
+          {modalContents?.name === "importData" && (
+            <ImportDataView onDone={closeModal} onCancel={closeModal} />
+          )}
           {modalContents?.name === "groupReleases" && (
             <GroupReleasesView
               releases={modalContents.params.releases as ReleaseWithArtist[]}
@@ -271,6 +281,7 @@ function init(): Init {
   }, [isSmallScreen]);
 
   useOnOpenSettings(() => setModalContents({ name: "settings" }));
+  useOnOpenImportData(() => setModalContents({ name: "importData" }));
   useOnOpenStats(() => setModalContents({ name: "stats" }));
   useOnOpenGroupDialog((releases: ReleaseWithArtist[]) =>
     setModalContents({ name: "groupReleases", params: { releases } })

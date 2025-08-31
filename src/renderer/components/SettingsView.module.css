@@ -9,7 +9,7 @@
   }
 }
 
-.view>* {
+.view > * {
   margin: 0;
 }
 
@@ -17,5 +17,5 @@
   background-color: var(--background-color);
   border: 1px solid var(--tertiary-color);
   font-size: 1rem;
-  border-radius: .25rem;
+  border-radius: 0.25rem;
 }

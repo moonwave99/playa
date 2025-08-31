@@ -400,6 +400,15 @@ export function initMenu({ controllers, state, send }: InitMenuParams) {
           accelerator: "Cmd+\\",
           click: () => send("toggleSidebar"),
         },
+        { type: "separator" },
+        {
+          label: "Export Data to Archive",
+          click: controllers.importExport.exportDataFromDialog,
+        },
+        {
+          label: "Import Data from Archive",
+          click: () => send("openImportData"),
+        },
       ],
     })
   );
