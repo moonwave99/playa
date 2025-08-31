@@ -7,7 +7,7 @@ import {
   matchPath,
 } from "react-router";
 import { useMediaQuery } from "react-responsive";
-import Modal from "react-modal";
+
 import {
   DndContext,
   DragOverlay,
@@ -32,7 +32,6 @@ import {
 import api from "./api";
 import useRefetch from "./hooks/useRefetch";
 import useStore from "./store";
-import type { ModalContents } from "./store";
 import { refreshCovers } from "@/lib/utils";
 import { handleDropEnd, fixCursorSnapOffset } from "./dnd";
 
@@ -47,13 +46,7 @@ import GroupPage from "./pages/GroupPage";
 
 import Nav from "./components/Nav";
 import SidebarView from "./components/SidebarView";
-import SettingsView from "./components/SettingsView";
-import ImportDataView from "./components/ImportDataView";
-import StatsView from "./components/StatsView";
-import GroupReleasesView from "./components/GroupReleasesView";
-import EditReleaseView from "./components/EditReleaseView";
-import EditArtistView from "./components/EditArtistView";
-import CoverLightbox from "./components/CoverLightbox";
+import Modal from "./Modal";
 
 import { MdOutlineSearch } from "react-icons/md";
 import cx from "clsx";
@@ -68,61 +61,11 @@ import {
   ReleaseWithArtistAndSubreleases,
 } from "@/types/types";
 
-function getModalOverrides(name: string) {
-  if (name === "lightbox") {
-    return {
-      width: "min(70vw, 80vh)",
-      overflow: "visible",
-      border: "none",
-      background: "transparent",
-    };
-  }
-  if (name === "stats") {
-    return {
-      width: "min(90vw, 1000px)",
-    };
-  }
-  if (name === "importData") {
-    return {
-      width: "min(80vw, 600px)",
-    };
-  }
-  return {};
-}
-
-function getModalStyle(name: string) {
-  const modalStyle = {
-    overlay: {
-      background: "rgba(100,100,100, 0.1)",
-      backdropFilter: "blur(3px)",
-      zIndex: 2,
-    },
-    content: {
-      background: "black",
-      width: "max(40vw, 600px)",
-      height: "min-content",
-      maxHeight: "95vh",
-      margin: "auto",
-      borderColor: "var(--tertiary-color)",
-      borderRadius: ".5rem",
-      padding: name === "lightbox" ? 0 : "1.5rem",
-      ...getModalOverrides(name),
-    },
-  };
-  return modalStyle;
-}
-
-Modal.setAppElement("#root");
-
 export default function Layout() {
   const {
     showSidebar,
     useDarkText,
     toggleSidebar,
-    modalContents,
-    clearModalContents,
-    closeModal,
-    isModalOpen,
     setContext,
     isDetailPage,
     onDragStart,
@@ -172,61 +115,7 @@ export default function Layout() {
             </Routes>
           </main>
         </div>
-        <Modal
-          closeTimeoutMS={300}
-          isOpen={isModalOpen}
-          onRequestClose={closeModal}
-          style={getModalStyle(modalContents?.name)}
-          onAfterOpen={() => {
-            api.state.setInputFocused(true);
-            setContext("modal");
-          }}
-          onAfterClose={() => {
-            api.state.setInputFocused(false);
-            setContext("list");
-            clearModalContents();
-          }}
-        >
-          {modalContents?.name === "stats" && (
-            <StatsView onClose={closeModal} />
-          )}
-          {modalContents?.name === "settings" && (
-            <SettingsView onSave={closeModal} onCancel={closeModal} />
-          )}
-          {modalContents?.name === "importData" && (
-            <ImportDataView onDone={closeModal} onCancel={closeModal} />
-          )}
-          {modalContents?.name === "groupReleases" && (
-            <GroupReleasesView
-              releases={modalContents.params.releases as ReleaseWithArtist[]}
-              onSave={closeModal}
-              onCancel={closeModal}
-            />
-          )}
-          {modalContents?.name === "editRelease" && (
-            <EditReleaseView
-              release={
-                modalContents.params.release as ReleaseWithArtistAndSubreleases
-              }
-              onSave={closeModal}
-              onCancel={closeModal}
-            />
-          )}
-          {modalContents?.name === "editArtist" && (
-            <EditArtistView
-              artist={modalContents.params.artist as ArtistWithReleases}
-              onSave={closeModal}
-              onCancel={closeModal}
-            />
-          )}
-          {modalContents?.name === "lightbox" && (
-            <CoverLightbox
-              onClose={closeModal}
-              release={modalContents.params.release as ReleaseWithArtist}
-              context={modalContents.params.context as ReleaseWithArtist[]}
-            />
-          )}
-        </Modal>
+        <Modal setContext={setContext} />
       </div>
       <DragOverlay modifiers={[snapCenterToCursor]}>
         {draggedItem && <div className={dragStyles.DragOverlay}>1</div>}
@@ -238,10 +127,6 @@ export default function Layout() {
 type Init = {
   showSidebar: boolean;
   useDarkText: boolean;
-  modalContents: ModalContents;
-  isModalOpen: boolean;
-  closeModal: () => void;
-  clearModalContents: () => void;
   setContext: (context: string) => void;
   toggleSidebar: () => void;
   isDetailPage: boolean;
@@ -260,11 +145,10 @@ function init(): Init {
     toggleViewMode,
     setPath,
     showSidebar,
-    modalContents,
-    setModalContents,
     toggleSidebar,
     useDarkText,
     setSettings,
+    setModalContents,
   } = useStore();
 
   const isSmallScreen = useMediaQuery({
@@ -272,7 +156,6 @@ function init(): Init {
   });
 
   const [draggedItem, setDraggedItem] = useState<Artist | Release>(null);
-  const [isModalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     if (isSmallScreen) {
@@ -363,18 +246,6 @@ function init(): Init {
     };
   }, []);
 
-  useEffect(() => {
-    setModalOpen(!!modalContents);
-  }, [modalContents]);
-
-  function closeModal() {
-    setModalOpen(false);
-  }
-
-  function clearModalContents() {
-    setModalContents(null);
-  }
-
   function onDragStart(event: DragStartEvent) {
     setDraggedItem(event.active.data.current as Artist | Release);
   }
@@ -389,10 +260,6 @@ function init(): Init {
     useDarkText,
     toggleSidebar,
     draggedItem,
-    modalContents,
-    isModalOpen,
-    closeModal,
-    clearModalContents,
     setContext,
     isDetailPage,
     onDragStart,

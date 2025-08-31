@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import useStore from "../store";
 import api from "../api";
 import cx from "clsx";
 import styles from "./ImportDataView.module.css";
@@ -16,16 +17,21 @@ export default function ImportDataView({
   onCancel,
 }: ImportDataViewProps) {
   const [progress, setProgress] = useState<Record<string, boolean>>({});
+  const { setModalFixed } = useStore();
 
   useEffect(() => {
     const unsubscribe = [
       api.importExport.onProgress((step, completed) => {
+        setModalFixed(true);
         if (step === "done") {
           setTimeout(onDone, ON_DONE_DELAY);
         }
         setProgress((prev) => ({ ...prev, [step]: completed }));
       }),
-      api.importExport.onError((message) => window.alert(message)),
+      api.importExport.onError((message) => {
+        window.alert(message);
+        setModalFixed(false);
+      }),
     ];
 
     return () => unsubscribe.forEach((u) => u());

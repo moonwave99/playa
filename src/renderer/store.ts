@@ -17,6 +17,7 @@ type Store = {
   useDarkText: boolean;
   path: string;
   modalContents: ModalContents | null;
+  isModalFixed: boolean;
   settings: Settings;
   setSettings: (settings: Settings) => void;
   toggleViewMode: () => void;
@@ -24,6 +25,7 @@ type Store = {
   setUseDarkText: (useDarkText: boolean) => void;
   setPath: (path: string) => void;
   setModalContents: (modalContents: ModalContents) => void;
+  setModalFixed: (isModalFixed: boolean) => void;
 };
 
 const useStore = create<Store>()(
@@ -34,6 +36,7 @@ const useStore = create<Store>()(
       showSidebar: false,
       useDarkText: false,
       modalContents: null as ModalContents,
+      isModalFixed: false,
       settings: null as Settings,
       setSettings: (settings) => set({ settings }),
       toggleSidebar: (showSidebar?: boolean) =>
@@ -46,6 +49,7 @@ const useStore = create<Store>()(
       setUseDarkText: (useDarkText) => set({ useDarkText }),
       setPath: (path) => set({ path }),
       setModalContents: (modalContents) => set({ modalContents }),
+      setModalFixed: (isModalFixed) => set({ isModalFixed }),
     }),
     {
       name: "playa-storage",
