@@ -117,6 +117,7 @@ export async function addTracksToRelease(id: number, trackInfo: TrackInfo[]) {
       },
     },
   });
+
   return withEntityType(result, "release");
 }
 

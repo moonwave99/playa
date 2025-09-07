@@ -6,7 +6,6 @@ import type {
   CollectionWithReleases,
   HasId,
   PaginationParams,
-  Release,
   ReleaseWithArtist,
 } from "@/types/types";
 
@@ -157,7 +156,7 @@ export async function updateCollection(
   return withEntityType(result, "collection");
 }
 
-export async function addReleasesToCollection(id: number, releases: Release[]) {
+export async function addReleasesToCollection(id: number, releases: HasId[]) {
   const result = await prisma.collection.update({
     where: {
       id,

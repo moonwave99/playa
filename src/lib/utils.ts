@@ -1,5 +1,5 @@
-import { capitalize, deburr, uniqBy } from 'lodash';
-import type { MouseEvent } from 'react';
+import { capitalize, deburr, uniqBy } from "lodash";
+import type { MouseEvent } from "react";
 import type {
   ReleaseType,
   Release,
@@ -14,18 +14,27 @@ import type {
   ArtistWithReleases,
   GroupWithArtists,
   WithAdditionalArtists,
-
 } from "@/types/types";
-import { getCover } from './links';
+import { getCover } from "./links";
 
-const releaseTypes: ReleaseType[] =
-  ['Album', 'Compilation', 'EP', 'Single', 'Bootleg', 'Various', 'Tribute', 'Soundtrack'];
+const releaseTypes: ReleaseType[] = [
+  "Album",
+  "Compilation",
+  "EP",
+  "Single",
+  "Bootleg",
+  "Various",
+  "Tribute",
+  "Soundtrack",
+];
 
-export const VARIOUS_ARTISTS_FOLDER = '[V:A]';
-export const VARIOUS_ARTISTS_NAME = '_VV_AA_';
+export const VARIOUS_ARTISTS_FOLDER = "[V:A]";
+export const VARIOUS_ARTISTS_NAME = "_VV_AA_";
 
-export function getReleaseTitle({ title, subReleases = [] }:
-  Pick<ReleaseWithArtistAndSubreleases, 'title' | 'subReleases'>): string {
+export function getReleaseTitle({
+  title,
+  subReleases = [],
+}: Pick<ReleaseWithArtistAndSubreleases, "title" | "subReleases">): string {
   if (!subReleases.length) {
     return title;
   }
@@ -33,14 +42,23 @@ export function getReleaseTitle({ title, subReleases = [] }:
   return match ? match[1] : title;
 }
 
-export function getReleaseArtist(
-  { artist, additionalArtists }: Pick<ReleaseWithArtist & WithAdditionalArtists, 'artist' | 'additionalArtists'>
-) {
-  return [artist, ...additionalArtists].map(x => normalizeArtistName(x.name)).join(', ');
+export function getReleaseArtist({
+  artist,
+  additionalArtists,
+}: Pick<
+  ReleaseWithArtist & WithAdditionalArtists,
+  "artist" | "additionalArtists"
+>) {
+  return [artist, ...additionalArtists]
+    .map((x) => normalizeArtistName(x.name))
+    .join(", ");
 }
 
 export function getUniqueArtists(releases: ReleaseWithArtist[]): Artist[] {
-  return uniqBy(releases.map(x => x.artist), (x => x.id));
+  return uniqBy(
+    releases.map((x) => x.artist),
+    (x) => x.id
+  );
 }
 
 export function getMainReleaseTitle(release: ReleaseWithArtist) {
@@ -52,12 +70,15 @@ export function getMainReleaseTitle(release: ReleaseWithArtist) {
 }
 
 export function countReleasesByType(releases: Release[]): ReleaseCountByType {
-  return releases.reduce((memo, { type }) => ({ ...memo, [type]: memo[type] ? memo[type] + 1 : 1 }), {} as ReleaseCountByType);
+  return releases.reduce(
+    (memo, { type }) => ({ ...memo, [type]: memo[type] ? memo[type] + 1 : 1 }),
+    {} as ReleaseCountByType
+  );
 }
 
 export function estimateListCardSize() {
   return {
-    width: '100%',
+    width: "100%",
     height: 6 * 16,
   };
 }
@@ -66,7 +87,7 @@ export function normalizeTitle(title: string) {
   return title
     .replace(/ CD(\d+)/, "")
     .replaceAll(/\(\w: (.*)\)/g, "")
-    .replaceAll(' : ', ' / ')
+    .replaceAll(" : ", " / ")
     .trim();
 }
 
@@ -78,25 +99,29 @@ export function normalizeArtistName(name: string) {
 }
 
 export function normalizeArtistDisplayName(name: string) {
-  return name === VARIOUS_ARTISTS_NAME ? 'Various Artists' : name;
+  return name === VARIOUS_ARTISTS_NAME ? "Various Artists" : name;
 }
 
 export function getDiscInfo({ subReleases }: ReleaseWithArtistAndSubreleases) {
-  return subReleases.length
-    ? `(${subReleases.length + 1} discs)`
-    : null;
+  return subReleases.length ? `(${subReleases.length + 1} discs)` : null;
 }
 
-export function getReleaseDuration(release: ReleaseWithArtistAndTracksAndSubreleases) {
+export function getReleaseDuration(
+  release: ReleaseWithArtistAndTracksAndSubreleases
+) {
   const allTracks = [
     ...release.tracks,
-    ...(release.subReleases.length ? release.subReleases.flatMap(x => x.tracks) : [])
+    ...(release.subReleases.length
+      ? release.subReleases.flatMap((x) => x.tracks)
+      : []),
   ];
 
   return {
     trackCount: allTracks.length,
-    duration: formatDuration(allTracks.reduce((memo, { duration }) => memo += duration, 0))
-  }
+    duration: formatDuration(
+      allTracks.reduce((memo, { duration }) => (memo += duration), 0)
+    ),
+  };
 }
 
 export function formatDuration(duration: number) {
@@ -112,15 +137,16 @@ export function formatDuration(duration: number) {
   return formatted;
 }
 
-
 export function isEmpty(obj: object) {
   return Object.keys(obj).length === 0;
 }
 
-export function sortReleasesByTypeAndYear(releases: ReleaseWithArtist[]) {
-  return releaseTypes
-    .flatMap(type => releases
-      .filter(x => x.type === type)
+export function sortReleasesByTypeAndYear(
+  releases: Pick<Release, "type" | "year" | "title">[]
+) {
+  return releaseTypes.flatMap((type) =>
+    releases
+      .filter((x) => x.type === type)
       .sort((a, b) => {
         if (!a.year || !b.year) {
           return 0;
@@ -128,21 +154,28 @@ export function sortReleasesByTypeAndYear(releases: ReleaseWithArtist[]) {
         if (a.year === b.year) {
           return a.title.toLowerCase() > b.title.toLowerCase() ? 1 : -1;
         }
-        return Math.sign(a.year - b.year)
+        return Math.sign(a.year - b.year);
       })
-    )
+  );
 }
 
-export function getReleaseWithTracklistHeight(release: ReleaseWithArtistAndTracksAndSubreleases): number {
-  const maxTracks = Math.max(...[
-    release,
-    ...release.subReleases
-  ].map(x => x.tracks?.length));
+export function getReleaseWithTracklistHeight(
+  release: ReleaseWithArtistAndTracksAndSubreleases
+): number {
+  const maxTracks = Math.max(
+    ...[release, ...release.subReleases].map((x) => x.tracks?.length)
+  );
   // cover height + margin + gap + tracks
-  return 128 + 16 + 4 + (release.subReleases.length ? 32 : 0) + (maxTracks * (40 + 4));
+  return (
+    128 + 16 + 4 + (release.subReleases.length ? 32 : 0) + maxTracks * (40 + 4)
+  );
 }
 
-export async function mapSeries<T, U>(array: T[], callback: (item: T, index: number) => Promise<U>, interval = 0): Promise<U[]> {
+export async function mapSeries<T, U>(
+  array: T[],
+  callback: (item: T, index: number) => Promise<U>,
+  interval = 0
+): Promise<U[]> {
   if (!array.length) {
     return [];
   }
@@ -162,16 +195,19 @@ export async function mapSeries<T, U>(array: T[], callback: (item: T, index: num
   });
 }
 
-export function sortByQueryPosition<K extends string, T extends {
-  [Property in K]: string;
-}>(query: string, key: keyof T, a: T, b: T) {
+export function sortByQueryPosition<
+  K extends string,
+  T extends {
+    [Property in K]: string;
+  },
+>(query: string, key: keyof T, a: T, b: T) {
   const posA = a[key].toLowerCase().indexOf(query.toLowerCase());
   const posB = b[key].toLowerCase().indexOf(query.toLowerCase());
   return Math.sign(posA - posB);
 }
 
 export function wait(ms = 100) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 export function getReleaseContextMenuParams({
@@ -202,7 +238,7 @@ export function refreshCovers(releases: Release[]) {
       const seed = `${Math.random() * 100000}`.slice(0, 5);
       element.src = `${getCover(hash)}?_=${seed}`;
     });
-  })
+  });
 }
 
 export function withStopPropagation(handler: (event: MouseEvent) => void) {
@@ -212,13 +248,19 @@ export function withStopPropagation(handler: (event: MouseEvent) => void) {
   };
 }
 
-type Item = CollectionWithReleases | ArtistWithReleases | ReleaseWithArtistAndSubreleases | GroupWithArtists;
+type Item =
+  | CollectionWithReleases
+  | ArtistWithReleases
+  | ReleaseWithArtistAndSubreleases
+  | GroupWithArtists;
 
-export function getCoverRelease(item: Item): ReleaseWithArtistAndSubreleases | null {
+export function getCoverRelease(
+  item: Item
+): ReleaseWithArtistAndSubreleases | null {
   if (item._type === "release") {
     return item;
   }
-  if (item._type === 'group') {
+  if (item._type === "group") {
     const coverArtist = item.coverArtist || item.artists[0];
     return coverArtist ? getCoverRelease(coverArtist) : null;
   }
@@ -231,24 +273,41 @@ type NewReleaseInfo = {
   newTitle: string;
   newType: ReleaseType;
   newYear: number;
-}
+};
 
-type EditReleaseParam = (
-  Pick<Release, 'id' | 'path' | 'hash' | 'title' | 'artist_id' | 'year' | 'type' | 'discTitle' | 'discNumber'>
-  & NewReleaseInfo
-);
+type EditReleaseParam = Pick<
+  Release,
+  | "id"
+  | "path"
+  | "hash"
+  | "title"
+  | "artist_id"
+  | "year"
+  | "type"
+  | "discTitle"
+  | "discNumber"
+> &
+  NewReleaseInfo;
 
-export function didReleaseInfoChange(infos: EditReleaseParam[], excludeDiscTitle?: boolean) {
-  return infos.some(
-    (x: EditReleaseParam) => ['path', 'title', 'type', 'year', 'discTitle'].slice(0, excludeDiscTitle ? -1 : undefined)
-      .some(key => x[key as keyof EditReleaseParam] !== x[`new${capitalize(key)}` as keyof NewReleaseInfo])
+export function didReleaseInfoChange(
+  infos: EditReleaseParam[],
+  excludeDiscTitle?: boolean
+) {
+  return infos.some((x: EditReleaseParam) =>
+    ["path", "title", "type", "year", "discTitle"]
+      .slice(0, excludeDiscTitle ? -1 : undefined)
+      .some(
+        (key) =>
+          x[key as keyof EditReleaseParam] !==
+          x[`new${capitalize(key)}` as keyof NewReleaseInfo]
+      )
   );
 }
 
 export function withCoverRelease(artist: ArtistWithReleases) {
   return {
     ...artist,
-    coverRelease: artist.coverRelease || artist.releases[0]
+    coverRelease: artist.coverRelease || artist.releases[0],
   };
 }
 
@@ -261,7 +320,7 @@ export function normalizeDiacritics(input: string) {
     input
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
-      .replace(/\((\d+)\)$/, '')
+      .replace(/\((\d+)\)$/, "")
       .trim()
   );
 }

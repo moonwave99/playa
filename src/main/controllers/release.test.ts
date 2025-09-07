@@ -1,16 +1,25 @@
-import { getFakeArtist, withPath, getSetting, getFakeRelease, getFakeArtistByHash, getTrackFromData, getFakeTrack, getFakeReleaseByHash, send, FULL_TRACKS } from "@/test/utils";
-import { dialog } from 'electron';
-import path from 'path';
-import prisma from '../db/__mocks__/prisma';
-import fsExtra, { existsSync } from 'fs-extra';
+import prisma from "../db/prisma";
+import { withPath, getSetting, send } from "@/test/utils";
+import { dialog } from "electron";
+import path from "path";
+import fsExtra, { existsSync } from "fs-extra";
 import { releaseController } from "./release";
 import { mockFs } from "@/test/mock-fs";
-import { ArtistWithReleases, ReleaseType, ReleaseWithArtist, ReleaseWithArtistAndTracks, Track } from "@/types/types";
+import {
+  ReleaseType,
+  ReleaseWithArtist,
+  ReleaseWithArtistAndSubreleases,
+  ReleaseWithArtistAndTracks,
+  Track,
+} from "@/types/types";
 import { StateManager } from "../state";
+import {
+  getFakeArtist,
+  getFakeArtists,
+  getFakeReleasesForArtist,
+} from "../../test/seed";
 
-vi.mock('../db/prisma');
-vi.mock('../run');
-vi.mock('../covers');
+vi.mock("../covers");
 
 const defaultParams = {
   withPath,
@@ -20,342 +29,452 @@ const defaultParams = {
   openFolderDialog: vi.fn(),
 };
 
-describe('release - importFolder function', () => {
-  it('returns null if the folder has no tracks', async () => {
+describe("release - importFolder function", () => {
+  it("returns null if the folder has no tracks", async () => {
     const { importFolder } = releaseController(defaultParams);
-    const releases = await importFolder('empty/folder');
+    const releases = await importFolder("empty/folder");
     expect(releases).toEqual([]);
   });
 
-  it('returns null if the folder is malformed', async () => {
+  it("returns null if the folder is malformed", async () => {
     const { importFolder } = releaseController(defaultParams);
-    const releases = await importFolder('malformed/folder');
+    const releases = await importFolder("malformed/folder");
     expect(releases).toEqual([]);
   });
 
-  it('parses the given path, updates the db and returns the created release', async () => {
-    prisma.artist.upsert.mockImplementation(({ where }) => getFakeArtistByHash(where.hash));
-    prisma.release.upsert.mockImplementation(({ where }) => getFakeRelease(where.hash));
-    prisma.track.create.mockImplementation(
-      ({ data }) => Promise.resolve(getTrackFromData(data))
+  it("parses the given path, updates the db and returns the created release", async (context) => {
+    const directory = await mockFs(
+      {
+        "/LIBRARY_PATH/A/Artist 1": {
+          "[Album]": {
+            "2000 - Release 1": {
+              "01 - Track 1.mp3": "",
+              "02 - Track 2.mp3": "",
+              "03 - Track 3.mp3": "",
+              "04 - Track 4.mp3": "",
+              "05 - Track 5.mp3": "",
+            },
+          },
+        },
+      },
+      context.task.id
     );
-    prisma.release.update.mockImplementation(({ data, where }) => Promise.resolve({
-      ...getFakeRelease(where.id),
-      tracks: data.tracks.connect.map(({ id }, index) => getFakeTrack(index, id, where.id))
-    }));
 
-    const { importFolder } = releaseController(defaultParams);
-    const releases = await importFolder('A/Artist/[Album]/1999 - Single Folder');
+    const LIBRARY_PATH = path.join(directory, "LIBRARY_PATH");
+
+    const { importFolder } = releaseController({
+      ...defaultParams,
+      getSetting: (key: string) =>
+        key === "LIBRARY_PATH" ? LIBRARY_PATH : key,
+    });
+    const releases = await importFolder(
+      path.join(LIBRARY_PATH, "A/Artist 1/[Album]")
+    );
     expect(releases.length).toBe(1);
     expect(releases[0].tracks.length).toBe(5);
   });
 
-  it('parses the given path, updates the db and returns the created releases', async () => {
-    prisma.artist.upsert.mockImplementation(({ where }) => getFakeArtistByHash(where.hash));
-    prisma.release.upsert.mockImplementation(({ where }) => getFakeReleaseByHash(where.hash));
-    prisma.track.create.mockImplementation(
-      ({ data }) => Promise.resolve(getTrackFromData(data))
+  it("parses the given path, updates the db and returns the created releases", async (context) => {
+    const directory = await mockFs(
+      {
+        "/LIBRARY_PATH/A/Artist 1": {
+          "[Album]": {
+            "2000 - Release 1": {
+              "01 - Track 1.mp3": "",
+              "02 - Track 2.mp3": "",
+              "03 - Track 3.mp3": "",
+              "04 - Track 4.mp3": "",
+              "05 - Track 5.mp3": "",
+            },
+            "2000 - Release 2": {
+              "01 - Track 1.mp3": "",
+              "02 - Track 2.mp3": "",
+              "03 - Track 3.mp3": "",
+              "04 - Track 4.mp3": "",
+              "05 - Track 5.mp3": "",
+            },
+          },
+        },
+      },
+      context.task.id
     );
-    prisma.release.update.mockImplementation(({ data, where }) => {
-      return Promise.resolve({
-        ...getFakeRelease(where.id),
-        tracks: data.tracks.connect.map(({ id }, index) => getFakeTrack(index, id, where.id))
-      })
-    })
 
-    const { importFolder } = releaseController(defaultParams);
-    const releases = await importFolder('A/Artist/[Album]');
+    const LIBRARY_PATH = path.join(directory, "LIBRARY_PATH");
 
-    expect(releases.length).toBe(2);
-    expect(releases[0]).toMatchObject({
-      _type: 'release',
-      id: 2,
-      path: 'Album Two',
-      title: 'Album Two',
-      hash: 'b66649708b05af8e',
-      year: 2000,
-      type: 'Album',
-      artist_id: 1,
+    const { importFolder } = releaseController({
+      ...defaultParams,
+      getSetting: (key: string) =>
+        key === "LIBRARY_PATH" ? LIBRARY_PATH : key,
     });
-    expect(releases[1]).toMatchObject({
-      _type: 'release',
-      id: 1,
-      path: 'Album One',
-      title: 'Album One',
-      hash: 'e6ff3253fb407e5f',
-      year: 1999,
-      type: 'Album',
-      artist_id: 1,
-    });
-    expect(releases[0].tracks.length).toBe(5);
-    expect(releases[1].tracks.length).toBe(5);
+    const importedReleases = await importFolder(
+      path.join(LIBRARY_PATH, "A/Artist 1/[Album]")
+    );
+
+    expect(importedReleases.length).toBe(2);
+    expect(
+      importedReleases.sort((a, b) => (a.title > b.title ? 1 : -1))
+    ).toMatchObject([
+      {
+        _type: "release",
+        path: "Release 1",
+        title: "Release 1",
+        hash: "ee1478c38c24f36e",
+        year: 2000,
+        type: "Album",
+        artist_id: 1,
+      },
+      {
+        _type: "release",
+        path: "Release 2",
+        title: "Release 2",
+        hash: "4af3d5d9da84e183",
+        year: 2000,
+        type: "Album",
+        artist_id: 1,
+      },
+    ]);
+    expect(importedReleases[0].tracks.length).toBe(5);
+    expect(importedReleases[1].tracks.length).toBe(5);
   });
 });
 
-describe('release - editRelease function', () => {
-  it('shows a warning if the new path already exists', async () => {
+describe("release - editRelease function", () => {
+  it("shows a warning if the new path already exists", async () => {
     const { editRelease } = releaseController(defaultParams);
     const result = await editRelease([]);
     expect(result).toEqual([]);
   });
 
-  it('updates the release info without moving the folder if the passed path is the old one', async () => {
-    const { editRelease } = releaseController(defaultParams);
-    const spy = vi.spyOn(fsExtra, 'move');
-    const release = getFakeRelease(1);
-    prisma.release.update.mockImplementation(({ data }) => ({ ...release, ...data }));
+  it("updates the release info without moving the folder if the passed path is the old one", async (context) => {
+    const directory = await mockFs(
+      {
+        "/LIBRARY_PATH/A/Artist 1": {
+          "[Album]": {
+            "2000 - Release 1": {
+              "01 - Track 1.mp3": "",
+              "02 - Track 2.mp3": "",
+              "03 - Track 3.mp3": "",
+              "04 - Track 4.mp3": "",
+              "05 - Track 5.mp3": "",
+            },
+            "2000 - Release 2": {
+              "01 - Track 1.mp3": "",
+              "02 - Track 2.mp3": "",
+              "03 - Track 3.mp3": "",
+              "04 - Track 4.mp3": "",
+              "05 - Track 5.mp3": "",
+            },
+          },
+        },
+      },
+      context.task.id
+    );
+
+    const { editRelease } = releaseController({
+      ...defaultParams,
+      withPath: (key, folderPath) => path.join(directory, key, folderPath),
+    });
+    const spy = vi.spyOn(fsExtra, "move");
+    const release = getFakeReleasesForArtist(1).at(0);
+    await prisma.artist.create({ data: getFakeArtist(1) });
+    await prisma.release.create({ data: release });
 
     const newInfo = {
-      newPath: 'Album One',
-      newDiscTitle: 'Album Edited',
-      newTitle: 'Album Edited',
+      newPath: "Album One",
+      newDiscTitle: "Album Edited",
+      newTitle: "Album Edited",
       newYear: 1999,
-      newType: 'Album' as ReleaseType,
+      newType: "Album" as ReleaseType,
     };
 
-    const result = await editRelease([{ ...release, ...newInfo }]);
+    const result = (await editRelease([
+      { ...release, ...newInfo },
+    ])) as ReleaseWithArtist[];
 
     expect(result[0]).toMatchObject({
-      path: 'Album One',
+      path: "Album One",
       discTitle: null,
-      title: 'Album Edited',
+      title: "Album Edited",
       year: 1999,
-      type: 'Album' as ReleaseType,
+      type: "Album" as ReleaseType,
     });
 
     expect(spy).not.toHaveBeenCalled();
   });
 
-  it('shows a warning if the new path contains any ../ sequence', async () => {
+  it("shows a warning if the new path contains any ../ sequence", async () => {
     const { editRelease } = releaseController(defaultParams);
-    const moveSpy = vi.spyOn(fsExtra, 'move');
-    const dialogSpy = vi.spyOn(dialog, 'showMessageBoxSync');
-    const release = getFakeRelease(1);
+    const moveSpy = vi.spyOn(fsExtra, "move");
+    const dialogSpy = vi.spyOn(dialog, "showMessageBoxSync");
     const newInfo = {
-      newPath: '../Album One',
-      newDiscTitle: 'Album Edited',
-      newTitle: 'Album Edited',
-      newType: 'EP' as ReleaseType,
-      newYear: 2000
+      newPath: "../Album One",
+      newDiscTitle: "Album Edited",
+      newTitle: "Album Edited",
+      newType: "EP" as ReleaseType,
+      newYear: 2000,
     };
 
-    const result = await editRelease([{
-      ...release,
-      ...newInfo
-    }]);
+    const release = getFakeReleasesForArtist(1).at(0);
+    await prisma.artist.create({ data: getFakeArtist(1) });
+    await prisma.release.create({ data: release });
 
-    expect(dialogSpy).toHaveBeenCalledWith(
-      null, {
-      message: 'Error while renaming',
+    const result = await editRelease([
+      {
+        ...release,
+        ...newInfo,
+      },
+    ]);
+
+    expect(dialogSpy).toHaveBeenCalledWith(null, {
+      message: "Error while renaming",
       detail: "Path cannot contain any '../' sequence",
-      type: 'error',
-      buttons: ['OK'],
+      type: "error",
+      buttons: ["OK"],
     });
 
     expect(result).toBe(false);
     expect(moveSpy).not.toHaveBeenCalled();
   });
 
-  it('shows a warning if the new path exists', async (context) => {
-    const directory = await mockFs({
-      '/LIBRARY_PATH/A/Artist/[Album]/1999 - New Album Path': {}
-    }, context.task.id);
+  it("shows a warning if the new path exists", async (context) => {
+    const directory = await mockFs(
+      {
+        "/LIBRARY_PATH/A/Artist 1/[Album]/": {
+          "2000 - Release 1": {},
+          "2000 - New Album Path": {},
+        },
+      },
+      context.task.id
+    );
+
+    const release = getFakeReleasesForArtist(1).at(0);
+    await prisma.artist.create({ data: getFakeArtist(1) });
+    await prisma.release.create({ data: release });
 
     const { editRelease } = releaseController({
       ...defaultParams,
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
     });
 
-    prisma.artist.findFirst.mockResolvedValue(
-      { ...getFakeArtist(1), releases: [] } as ArtistWithReleases
-    );
-    const moveSpy = vi.spyOn(fsExtra, 'move');
-    const dialogSpy = vi.spyOn(dialog, 'showMessageBoxSync');
-    const release = getFakeRelease(1);
+    const moveSpy = vi.spyOn(fsExtra, "move");
+    const dialogSpy = vi.spyOn(dialog, "showMessageBoxSync");
+
     const newInfo = {
-      newPath: 'New Album Path',
-      newDiscTitle: 'Album Edited',
-      newTitle: 'Album Edited',
-      newType: 'Album' as ReleaseType,
-      newYear: 1999
+      newPath: "New Album Path",
+      newDiscTitle: "Album Edited",
+      newTitle: "Album Edited",
+      newType: "Album" as ReleaseType,
+      newYear: 2000,
     };
 
-    const result = await editRelease([{
-      ...release,
-      ...newInfo
-    }]);
+    const result = await editRelease([
+      {
+        ...release,
+        ...newInfo,
+      },
+    ]);
 
-    expect(dialogSpy).toHaveBeenCalledWith(
-      null, {
-      message: 'Error while renaming',
+    expect(dialogSpy).toHaveBeenCalledWith(null, {
+      message: "Error while renaming",
       detail: `Path ${newInfo.newPath} already exists`,
-      type: 'error',
-      buttons: ['OK'],
+      type: "error",
+      buttons: ["OK"],
     });
 
     expect(result).toBe(false);
     expect(moveSpy).not.toHaveBeenCalled();
   });
 
-  it('shows a warning if the old path does not exist', async (context) => {
-    const directory = await mockFs({
-      '/LIBRARY_PATH': {}
-    }, context.task.id);
+  it("shows a warning if the old path does not exist", async (context) => {
+    const directory = await mockFs(
+      {
+        "/LIBRARY_PATH": {},
+      },
+      context.task.id
+    );
+
+    const release = getFakeReleasesForArtist(1).at(0);
+    await prisma.artist.create({ data: getFakeArtist(1) });
+    await prisma.release.create({ data: release });
 
     const { editRelease } = releaseController({
       ...defaultParams,
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
     });
 
-    prisma.artist.findFirst.mockResolvedValue({ ...getFakeArtist(1), releases: [] } as ArtistWithReleases);
-    const dialogSpy = vi.spyOn(dialog, 'showMessageBoxSync');
-    const release = {
-      ...getFakeRelease(1),
-      path: 'not-existing'
-    };
+    const dialogSpy = vi.spyOn(dialog, "showMessageBoxSync");
     const newInfo = {
-      newPath: 'New Album Path',
-      newDiscTitle: 'Album Edited',
-      newTitle: 'Album Edited',
-      newType: 'EP' as ReleaseType,
-      newYear: 2000
+      newPath: "New Album Path",
+      newDiscTitle: "Album Edited",
+      newTitle: "Album Edited",
+      newType: "EP" as ReleaseType,
+      newYear: 2000,
     };
 
-    const result = await editRelease([{
-      ...release,
-      ...newInfo
-    }]);
+    const result = await editRelease([
+      {
+        ...release,
+        ...newInfo,
+      },
+    ]);
 
-    expect(dialogSpy).toHaveBeenCalledWith(
-      null, {
-      message: 'Error while renaming',
-      type: 'warning',
-      detail: `Release 1 not found at: ${directory}/LIBRARY_PATH/A/Artist/[Album]/1999 - not-existing`,
-      buttons: ['OK'],
+    expect(dialogSpy).toHaveBeenCalledWith(null, {
+      message: "Error while renaming",
+      type: "warning",
+      detail: `Release 1 not found at: ${directory}/LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1`,
+      buttons: ["OK"],
     });
 
     expect(result).toBe(false);
   });
 
-  it('should move the release files and update it accordingly', async (context) => {
-    const directory = await mockFs({
-      '/LIBRARY_PATH/A/Artist/[Album]/1999 - Album One': {
-        '01 - track 1.mp3': ''
+  it("should move the release files and update it accordingly", async (context) => {
+    const directory = await mockFs(
+      {
+        "/LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1": {
+          "01 - Track 1.mp3": "",
+        },
+        "/LIBRARY_PATH/A/Artist 1/[EP]": {},
+        "/COVERS_PATH": {
+          "ee1478c38c24f36e-cover.jpg": "",
+        },
       },
-      '/LIBRARY_PATH/A/Artist/[EP]': {},
-      '/COVERS_PATH': {
-        'e6ff3253fb407e5f-cover.jpg': '',
-      },
-    }, context.task.id);
+      context.task.id
+    );
+
+    const release = getFakeReleasesForArtist(1).at(0);
+    await prisma.artist.create({ data: getFakeArtist(1) });
+    await prisma.release.create({ data: release });
 
     const { editRelease } = releaseController({
       ...defaultParams,
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
     });
 
-    prisma.artist.findFirst.mockResolvedValue({ ...getFakeArtist(1), releases: [] } as ArtistWithReleases);
-    prisma.release.update.mockImplementation(({ data }) => ({ ...release, ...data }));
-
-    const release = getFakeRelease(1);
     const newInfo = {
-      newPath: 'New Album Path',
-      newDiscTitle: 'Album Edited',
-      newTitle: 'Album Edited',
-      newType: 'EP' as ReleaseType,
-      newYear: 2000
+      newPath: "New Release Path",
+      newDiscTitle: "Release Edited",
+      newTitle: "Release Edited",
+      newType: "EP" as ReleaseType,
+      newYear: 2001,
     };
 
-    const result = await editRelease([{ ...release, ...newInfo }]);
+    const result = (await editRelease([
+      { ...release, ...newInfo },
+    ])) as ReleaseWithArtist[];
 
     expect(result[0]).toMatchObject({
-      path: 'New Album Path',
+      path: "New Release Path",
       discTitle: null,
-      title: 'Album Edited',
-      type: 'EP' as ReleaseType,
-      year: 2000
+      title: "Release Edited",
+      type: "EP" as ReleaseType,
+      year: 2001,
     });
 
-    expect(existsSync(
-      path.join(directory, 'LIBRARY_PATH/A/Artist/[Album]/1999 - Album One'))
+    expect(
+      existsSync(
+        path.join(directory, "LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1")
+      )
     ).toBe(false);
-    expect(existsSync(
-      path.join(directory, 'LIBRARY_PATH/A/Artist/[EP]/2000 - New Album Path'))
+    expect(
+      existsSync(
+        path.join(
+          directory,
+          "LIBRARY_PATH/A/Artist 1/[EP]/2001 - New Release Path"
+        )
+      )
     ).toBe(true);
-    expect(existsSync(
-      path.join(directory, 'COVERS_PATH/e6ff3253fb407e5f-cover.jpg'))
+    expect(
+      existsSync(path.join(directory, "COVERS_PATH/ee1478c38c24f36e-cover.jpg"))
     ).toBe(false);
-    expect(existsSync(
-      path.join(directory, 'COVERS_PATH/a916d4005e922133-cover.jpg'))
+    expect(
+      existsSync(path.join(directory, "COVERS_PATH/e1d0657d4ba3bd51-cover.jpg"))
     ).toBe(true);
   });
 
-  it('should skip moving the current cover if it does not exist', async (context) => {
-    const directory = await mockFs({
-      '/LIBRARY_PATH/A/Artist/[Album]/1999 - Album One': {
-        '01 - track 1.mp3': ''
+  it("should skip moving the current cover if it does not exist", async (context) => {
+    const directory = await mockFs(
+      {
+        "/LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1": {
+          "01 - Track 1.mp3": "",
+        },
+        "/LIBRARY_PATH/A/Artist 1/[EP]": {},
       },
-      '/LIBRARY_PATH/A/Artist/[EP]': {},
-    }, context.task.id);
+      context.task.id
+    );
+
+    const release = getFakeReleasesForArtist(1).at(0);
+    await prisma.artist.create({ data: getFakeArtist(1) });
+    await prisma.release.create({ data: release });
 
     const { editRelease } = releaseController({
       ...defaultParams,
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
     });
 
-    prisma.artist.findFirst.mockResolvedValue(
-      { ...getFakeArtist(1), releases: [] } as ArtistWithReleases
-    );
-    prisma.release.update.mockImplementation(({ data }) => ({ ...release, ...data }));
-
-    const release = getFakeRelease(1);
     const newInfo = {
-      newPath: 'New Album Path',
-      newDiscTitle: 'Album Edited',
-      newTitle: 'Album Edited',
-      newType: 'EP' as ReleaseType,
-      newYear: 2000
+      newPath: "New Release Path",
+      newDiscTitle: "Release Edited",
+      newTitle: "Release Edited",
+      newType: "EP" as ReleaseType,
+      newYear: 2001,
     };
 
-    const result = await editRelease([{ ...release, ...newInfo }]);
+    const result = (await editRelease([
+      { ...release, ...newInfo },
+    ])) as ReleaseWithArtist[];
 
     expect(result[0]).toMatchObject({
-      path: 'New Album Path',
+      path: "New Release Path",
       discTitle: null,
-      title: 'Album Edited',
-      type: 'EP' as ReleaseType,
-      year: 2000
+      title: "Release Edited",
+      type: "EP" as ReleaseType,
+      year: 2001,
     });
 
-    expect(existsSync(
-      path.join(directory, 'COVERS_PATH/a916d4005e922133-cover.jpg'))
+    expect(
+      existsSync(path.join(directory, "COVERS_PATH/e1d0657d4ba3bd51-cover.jpg"))
     ).toBe(false);
   });
 });
 
-describe('importCovers function', () => {
-  it('searches the covers of the given releases and returns those with positive results', async () => {
+describe("importCovers function", () => {
+  it("searches the covers of the given releases and returns those with positive results", async () => {
     {
+      const release = getFakeReleasesForArtist(1).at(0);
+      await prisma.artist.create({ data: getFakeArtist(1) });
+      await prisma.release.create({ data: release });
+
       const send = vi.fn();
       const { importCovers } = releaseController({ ...defaultParams, send });
-      const release = getFakeRelease(1);
-      await importCovers([release]);
-      expect(send).toHaveBeenCalledWith('coverUpdate', [release]);
+      await importCovers([release as ReleaseWithArtist]);
+      expect(send).toHaveBeenCalledWith("coverUpdate", [release]);
     }
     {
-      // const send = vi.fn();
-      // const { importCovers } = releaseController({ ...defaultParams, send });
-      // const release = getFakeRelease(3);
-      // await importCovers([release]);
-      // expect(send).not.toHaveBeenCalled();
+      const release = getFakeReleasesForArtist(1, 3).at(2);
+      await prisma.artist.create({ data: getFakeArtist(1) });
+      await prisma.release.create({ data: release });
+
+      const send = vi.fn();
+      const { importCovers } = releaseController({ ...defaultParams, send });
+      await importCovers([release as ReleaseWithArtist]);
+      expect(send).not.toHaveBeenCalled();
     }
   });
 });
 
-describe('importMissingCovers function', () => {
-  it('imports the covers of the releases without an existing cover file', async (context) => {
-    const directory = await mockFs({
-      'COVERS_PATH/e6ff3253fb407e5f-cover.jpg': '',
-    }, context.task.id);
+describe("importMissingCovers function", () => {
+  it("imports the covers of the releases without an existing cover file", async (context) => {
+    const directory = await mockFs(
+      {
+        "COVERS_PATH/ee1478c38c24f36e-cover.jpg": "",
+      },
+      context.task.id
+    );
+    const releases = getFakeReleasesForArtist(1, 2);
+    await prisma.artist.create({ data: getFakeArtist(1) });
+    await prisma.release.createMany({ data: releases });
+
     const send = vi.fn();
     const { importMissingCovers } = releaseController({
       ...defaultParams,
@@ -363,26 +482,29 @@ describe('importMissingCovers function', () => {
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
     });
     {
-      const releases = [getFakeRelease(1)];
-      await importMissingCovers(releases);
+      await importMissingCovers([releases[0]] as ReleaseWithArtist[]);
       expect(send).not.toHaveBeenCalled();
     }
     {
-      const releases = [
-        getFakeRelease(1),
-        getFakeRelease(2),
-      ];
-      await importMissingCovers(releases);
-      expect(send).toHaveBeenCalledWith('coverUpdate', [releases[1]]);
+      await importMissingCovers(releases as ReleaseWithArtist[]);
+      expect(send).toHaveBeenCalledWith("coverUpdate", [releases[1]]);
     }
   });
 });
 
-describe('deleteCover function', () => {
-  it('deletes the coves of the given release', async (context) => {
-    const directory = await mockFs({
-      'COVERS_PATH/e6ff3253fb407e5f-cover.jpg': '',
-    }, context.task.id);
+describe("deleteCover function", () => {
+  it("deletes the coves of the given release", async (context) => {
+    const directory = await mockFs(
+      {
+        "COVERS_PATH/ee1478c38c24f36e-cover.jpg": "",
+      },
+      context.task.id
+    );
+
+    const release = getFakeReleasesForArtist(1).at(0);
+    await prisma.artist.create({ data: getFakeArtist(1) });
+    await prisma.release.create({ data: release });
+
     const send = vi.fn();
     const { deleteCover } = releaseController({
       ...defaultParams,
@@ -390,33 +512,37 @@ describe('deleteCover function', () => {
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
     });
 
-    const release = getFakeRelease(1);
     await deleteCover(release);
-    expect(send).toHaveBeenCalledWith('coverUpdate', [release]);
-    expect(existsSync(withPath('COVERS_PATH', 'e6ff3253fb407e5f-cover.jpg'))).toBe(false);
+    expect(send).toHaveBeenCalledWith("coverUpdate", [release]);
+    expect(
+      existsSync(withPath("COVERS_PATH", "e6ff3253fb407e5f-cover.jpg"))
+    ).toBe(false);
   });
 });
 
-describe('downloadCover function', () => {
-  it('does nothing is no release if found', async () => {
+describe("downloadCover function", () => {
+  it("does nothing is no release if found", async () => {
     const { downloadCover } = releaseController(defaultParams);
-    prisma.release.findFirst.mockResolvedValue(null);
-    const result = await downloadCover({ id: 1, url: 'https://example.com/pic.jpg' });
+    const result = await downloadCover({
+      id: 1,
+      url: "https://example.com/pic.jpg",
+    });
     expect(result).toBeFalsy();
   });
 
-  it('downloads the passed url and stores as the cover for the given release id', async (context) => {
+  it("downloads the passed url and stores as the cover for the given release id", async (context) => {
     const directory = await mockFs({ COVERS_PATH: {} }, context.task.id);
-    const getSetting = ((key: string) => {
-      if (key === 'LIBRARY_PATH' || key === 'COVERS_PATH') {
+    const getSetting = (key: string) => {
+      if (key === "LIBRARY_PATH" || key === "COVERS_PATH") {
         return path.join(directory, key);
       }
       return key;
-    });
+    };
     {
       const send = vi.fn();
-      const release = getFakeRelease(1);
-      prisma.release.findFirst.mockResolvedValue(release);
+      const release = getFakeReleasesForArtist(1).at(0);
+      await prisma.artist.create({ data: getFakeArtist(1) });
+      await prisma.release.create({ data: release });
 
       const { downloadCover } = releaseController({
         ...defaultParams,
@@ -425,70 +551,96 @@ describe('downloadCover function', () => {
         withPath: (key, folderPath) => path.join(directory, key, folderPath),
       });
 
-      const result = await downloadCover({ id: 1, url: 'https://example.com/pic.jpg' });
+      const result = await downloadCover({
+        id: 1,
+        url: "https://example.com/pic.jpg",
+      });
 
       expect(result).toBeTruthy();
-      expect(existsSync(
-        path.join(directory, `/COVERS_PATH/${release.hash}-cover.jpg`))
+      expect(
+        existsSync(
+          path.join(directory, `/COVERS_PATH/${release.hash}-cover.jpg`)
+        )
       ).toBe(true);
-      expect(send).toHaveBeenCalledWith(
-        'coverUpdate', [release]
-      );
+      expect(send).toHaveBeenCalledWith("coverUpdate", expect.anything());
     }
     {
       const send = vi.fn();
-      const release = getFakeRelease(2);
-      prisma.release.findFirst.mockResolvedValue(release);
+      const release = getFakeReleasesForArtist(1, 2).at(1);
+      await prisma.artist.create({ data: getFakeArtist(1) });
+      await prisma.release.create({ data: release });
+
       const { downloadCover } = releaseController({
         ...defaultParams,
         withPath: (key, folderPath) => path.join(directory, key, folderPath),
       });
-      const result = await downloadCover({ id: 2, url: 'https://example.com/not-found.jpg' });
+      const result = await downloadCover({
+        id: 2,
+        url: "https://example.com/not-found.jpg",
+      });
       expect(result).toBe(false);
-      expect(existsSync(
-        path.join(directory, `/COVERS_PATH/${release.hash}-cover.jpg`))
+      expect(
+        existsSync(
+          path.join(directory, `/COVERS_PATH/${release.hash}-cover.jpg`)
+        )
       ).toBe(false);
       expect(send).not.toHaveBeenCalled();
     }
   });
 });
 
-describe('refreshReleaseContents function', () => {
-  it('does nothing is no release if found', async () => {
-    prisma.release.findFirst.mockResolvedValue(null);
+describe("refreshReleaseContents function", () => {
+  it("does nothing is no release if found", async () => {
     const { refreshReleaseContents } = releaseController(defaultParams);
     const result = await refreshReleaseContents(1);
     expect(result).toBeFalsy();
   });
 
-  it('updates the track information for the given release and returns it', async () => {
-    const release = { ...getFakeRelease(1), subReleases: [] as ReleaseWithArtist[] };
-    prisma.release.findFirst.mockResolvedValue(release);
-    prisma.track.create.mockImplementation(
-      ({ data }) => Promise.resolve(getTrackFromData(data))
+  it("updates the track information for the given release and returns it", async (context) => {
+    const directory = await mockFs(
+      {
+        "/LIBRARY_PATH/A/Artist 1": {
+          "[Album]": {
+            "2000 - Release 1": {
+              "01 - Track 1.mp3": "",
+              "02 - Track 2.mp3": "",
+              "03 - Track 3.mp3": "",
+              "04 - Track 4.mp3": "",
+              "05 - Track 5.mp3": "",
+            },
+          },
+        },
+      },
+      context.task.id
     );
-    prisma.release.update.mockResolvedValue({
-      ...release,
-      tracks: FULL_TRACKS
-    } as ReleaseWithArtistAndTracks);
-    const { refreshReleaseContents } = releaseController(defaultParams);
-    const result = await refreshReleaseContents(1) as ReleaseWithArtistAndTracks[];
+
+    const LIBRARY_PATH = path.join(directory, "LIBRARY_PATH");
+
+    const release = getFakeReleasesForArtist(1).at(0);
+    await prisma.artist.create({ data: getFakeArtist(1) });
+    await prisma.release.create({ data: release });
+
+    const { refreshReleaseContents } = releaseController({
+      ...defaultParams,
+      getSetting: (key: string) =>
+        key === "LIBRARY_PATH" ? LIBRARY_PATH : key,
+    });
+    const result = (await refreshReleaseContents(
+      1
+    )) as ReleaseWithArtistAndTracks[];
+
     expect(result[0]).toMatchObject(release);
     expect(result[0].tracks.length).toBe(5);
   });
 });
 
-describe('refreshCurrentArtistReleases function', () => {
-  it('updates the track information for releases of the current selected artist', async () => {
-    const release = { ...getFakeRelease(1), subReleases: [] as ReleaseWithArtist[], tracks: [] as Track[] };
-    prisma.release.findFirst.mockResolvedValue(release);
-    prisma.track.create.mockImplementation(
-      ({ data }) => Promise.resolve(getTrackFromData(data))
-    );
-    prisma.release.update.mockResolvedValue({
-      ...release,
-      tracks: FULL_TRACKS
-    } as ReleaseWithArtistAndTracks);
+describe("refreshCurrentArtistReleases function", () => {
+  it("updates the track information for releases of the current selected artist", async () => {
+    const artist = getFakeArtist(1);
+    const release = getFakeReleasesForArtist(artist.id).at(0);
+    await prisma.artist.create({ data: artist });
+    await prisma.release.create({ data: release });
+
     const send = vi.fn();
     const { refreshCurrentArtistReleases } = releaseController({
       ...defaultParams,
@@ -496,91 +648,94 @@ describe('refreshCurrentArtistReleases function', () => {
       state: {
         setImporting: vi.fn(),
         getCurrentArtist: () => ({
-          ...getFakeArtist(1),
-          releases: [release]
+          ...artist,
+          releases: [{ ...release, tracks: [] as Track[] }],
         }),
       } as unknown as StateManager,
     });
     await refreshCurrentArtistReleases();
-    expect(send).toHaveBeenCalledWith('mutate', ['artists', 1]);
+    expect(send).toHaveBeenCalledWith("mutate", ["artists", 1]);
   });
 });
 
-describe('refreshEntityRelease function', () => {
-  it('updates the track information for releases of the passed entity', async () => {
-    const release = { ...getFakeRelease(1), subReleases: [] as ReleaseWithArtistAndTracks[], tracks: [] as Track[] };
-    const artist = { ...getFakeArtist(1), releases: [release] };
-    prisma.release.findFirst.mockResolvedValue(release);
-    prisma.track.create.mockImplementation(
-      ({ data }) => Promise.resolve(getTrackFromData(data))
-    );
-    prisma.release.update.mockResolvedValue({
-      ...release,
-      tracks: FULL_TRACKS
-    } as ReleaseWithArtistAndTracks);
+describe("refreshEntityRelease function", () => {
+  it("updates the track information for releases of the passed entity", async () => {
+    const release = getFakeReleasesForArtist(1).at(0);
+    await prisma.artist.create({ data: getFakeArtist(1) });
+    await prisma.release.create({ data: release });
+
     const send = vi.fn();
-    const { refreshEntityRelease } = releaseController({ ...defaultParams, send });
-    await refreshEntityRelease(artist);
-    expect(send).toHaveBeenCalledWith('mutate', ['artists', 1]);
+    const { refreshEntityRelease } = releaseController({
+      ...defaultParams,
+      send,
+    });
+    const artist = await prisma.artist.findFirst({ where: { id: 1 } });
+    await refreshEntityRelease({
+      ...artist,
+      _type: "artist",
+      releases: [],
+    });
+    expect(send).toHaveBeenCalledWith("mutate", ["artists", 1]);
   });
 });
 
-describe('ungroupSelectedRelease function', () => {
-  it('does nothing if no release is selected', async () => {
+describe("ungroupSelectedRelease function", () => {
+  it("does nothing if no release is selected", async () => {
     const send = vi.fn();
     const { ungroupSelectedRelease } = releaseController({
       ...defaultParams,
       send,
       state: {
-        getSelectedReleases: () => []
+        getSelectedReleases: () => [],
       } as StateManager,
     });
     await ungroupSelectedRelease();
     expect(send).not.toHaveBeenCalled();
   });
-  it('ungroups the selected release', async () => {
-    prisma.release.update.mockImplementation(
-      ({ data }) => Promise.resolve(getTrackFromData(data))
-    );
-    const release = {
-      ...getFakeRelease(1),
-      subReleases: [
-        {
-          ...getFakeRelease(2),
-          mainReleaseId: 1
-        }
-      ]
-    }
+  it("ungroups the selected release", async () => {
+    const releases = getFakeReleasesForArtist(1, 2);
+    await prisma.artist.create({ data: getFakeArtist(1) });
+    await prisma.release.createMany({ data: releases });
+    await prisma.release.update({
+      where: { id: 2 },
+      data: { mainReleaseId: 1 },
+    });
+    const updatedRelease = await prisma.release.findFirst({
+      where: { id: 1 },
+      include: { subReleases: true },
+    });
+
     const send = vi.fn();
     const { ungroupSelectedRelease } = releaseController({
       ...defaultParams,
       send,
       state: {
-        getSelectedReleases: () => [release]
+        getSelectedReleases: () =>
+          [updatedRelease] as ReleaseWithArtistAndSubreleases[],
       } as StateManager,
     });
     await ungroupSelectedRelease();
-    send('mutate', [
-      ['releases', 'latest'],
-      ['artists', release.artist_id]
+    send("mutate", [
+      ["releases", "latest"],
+      ["artists", releases[0].artist_id],
     ]);
-    expect(send).toHaveBeenCalledWith('mutate', [
-      ['releases', 'latest'],
-      ['artists', 1]
+    expect(send).toHaveBeenCalledWith("mutate", [
+      ["releases", "latest"],
+      ["artists", 1],
     ]);
-    expect(send).toHaveBeenCalledWith('clearSelection');
+    expect(send).toHaveBeenCalledWith("clearSelection");
   });
 });
 
-describe('importFolderFromDialog function', () => {
-  it('does nothing if no folder is picked', async () => {
+describe("importFolderFromDialog function", () => {
+  it("does nothing if no folder is picked", async () => {
     const send = vi.fn();
     const { importFolderFromDialog } = releaseController({
       ...defaultParams,
       openFolderDialog: vi.fn(),
       send,
       state: {
-        getCurrentArtist: () => null
+        getCurrentArtist: () => null,
       } as StateManager,
     });
 
@@ -588,7 +743,7 @@ describe('importFolderFromDialog function', () => {
     expect(send).not.toHaveBeenCalled();
   });
 
-  it('imports the contents of the folder picked in the dialog', async () => {
+  it("imports the contents of the folder picked in the dialog", async () => {
     const artist = getFakeArtist(1);
     const send = vi.fn();
     const { importFolderFromDialog } = releaseController({
@@ -596,24 +751,21 @@ describe('importFolderFromDialog function', () => {
       openFolderDialog: (folder) => [folder],
       send,
       state: {
-        getCurrentArtist: () => artist
+        getCurrentArtist: () => artist,
       } as StateManager,
     });
 
     await importFolderFromDialog();
-    expect(send).toHaveBeenCalledWith('mutate', [['releases', 'latest']]);
+    expect(send).toHaveBeenCalledWith("mutate", [["releases", "latest"]]);
   });
 });
 
-describe('addAdditionalArtist function', () => {
-  it('adds the given additional artist to the given release', async () => {
-    const release = getFakeRelease(1);
-    const artist = getFakeArtist(2);
-
-    prisma.release.update.mockResolvedValue(({
-      ...release,
-      additionalArtists: [...release.additionalArtists, artist]
-    }));
+describe("addAdditionalArtist function", () => {
+  it("adds the given additional artist to the given release", async () => {
+    const release = getFakeReleasesForArtist(1).at(0);
+    const artists = getFakeArtists({ length: 2 });
+    await prisma.artist.createMany({ data: artists });
+    await prisma.release.create({ data: release });
 
     const send = vi.fn();
 
@@ -622,57 +774,59 @@ describe('addAdditionalArtist function', () => {
       openFolderDialog: vi.fn(),
       send,
       state: {
-        getCurrentArtist: () => null
+        getCurrentArtist: () => null,
       } as StateManager,
     });
 
     const updatedRelease = await addAdditionalArtist({
       release_id: release.id,
-      artist_id: artist.id,
+      artist_id: artists[1].id,
     });
 
-    expect(updatedRelease.additionalArtists).toContainEqual(artist);
+    expect(updatedRelease.additionalArtists[0]).toMatchObject(artists[1]);
 
-    expect(send).toHaveBeenCalledWith('mutate', [
-      ['releases', release.id],
-      ['artists', release.artist.id],
-      ['artists', artist.id],
+    expect(send).toHaveBeenCalledWith("mutate", [
+      ["releases", release.id],
+      ["artists", artists[0].id],
+      ["artists", artists[1].id],
     ]);
   });
 });
 
-describe('removeAdditionalArtist function', () => {
-  it('removes the given additional artist from the given release', async () => {
-    const artist = getFakeArtist(2);
-    const release = { ...getFakeRelease(1), additionalArtists: [artist] };
-
-    prisma.release.update.mockResolvedValue(({
-      ...release,
-      additionalArtists: release.additionalArtists.filter(x => x.id !== artist.id)
-    }));
+describe("removeAdditionalArtist function", () => {
+  it("removes the given additional artist from the given release", async () => {
+    const release = getFakeReleasesForArtist(1).at(0);
+    const artists = getFakeArtists({ length: 2 });
+    await prisma.artist.createMany({ data: artists });
+    await prisma.release.create({ data: release });
 
     const send = vi.fn();
 
-    const { removeAdditionalArtist } = releaseController({
+    const { addAdditionalArtist, removeAdditionalArtist } = releaseController({
       ...defaultParams,
       openFolderDialog: vi.fn(),
       send,
       state: {
-        getCurrentArtist: () => null
+        getCurrentArtist: () => null,
       } as StateManager,
+    });
+
+    await addAdditionalArtist({
+      release_id: release.id,
+      artist_id: artists[1].id,
     });
 
     const updatedRelease = await removeAdditionalArtist({
       release_id: release.id,
-      artist_id: artist.id,
+      artist_id: artists[1].id,
     });
 
-    expect(updatedRelease.additionalArtists).not.toContainEqual(artist);
+    expect(updatedRelease.additionalArtists).not.toContainEqual(artists[1]);
 
-    expect(send).toHaveBeenCalledWith('mutate', [
-      ['releases', release.id],
-      ['artists', release.artist.id],
-      ['artists', artist.id],
+    expect(send).toHaveBeenCalledWith("mutate", [
+      ["releases", release.id],
+      ["artists", artists[0].id],
+      ["artists", artists[1].id],
     ]);
   });
 });

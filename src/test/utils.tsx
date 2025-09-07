@@ -1,320 +1,35 @@
 import type { ReactNode } from "react";
 import { MemoryRouter } from "react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import type {
-    ReleaseWithArtist,
-    Artist,
-    Track,
-    ArtistWithReleases,
-    CollectionWithReleases,
-    WithRelatedArtists,
-    GroupWithArtists,
-    WithGroups,
-    WithAppearances,
-} from "@/types/types";
 import path from "path";
-import { normalizeDiacritics } from "@/lib/utils";
-
-export function withRouter(children: ReactNode) {
-    return <MemoryRouter>{children}</MemoryRouter>;
-}
 
 const queryClient = new QueryClient();
 
 export function withQueryClientProvider(children: ReactNode) {
-    return (
-        <QueryClientProvider client={queryClient}>
-            {children}
-        </QueryClientProvider>
-    );
+  return (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
 }
 
-const timestamp = new Date("2025-04-04T14:52:56.879Z");
-
-const artistHashMap: Record<
-    string,
-    Pick<Artist, "id" | "path" | "name" | "normalizedName" | "coverReleaseId">
-> = {
-    "6c3f3d3203630ce7": {
-        id: 1,
-        path: "A/Artist",
-        name: "Artist",
-        normalizedName: "Artist",
-        coverReleaseId: 1,
-    },
-};
-
-export function getFakeCollection(
-    id: number,
-    overwrite?: Partial<CollectionWithReleases>
-) {
-    return {
-        _type: "collection",
-        id,
-        title: "My Collection",
-        createdAt: timestamp,
-        updatedAt: timestamp,
-        ...overwrite,
-    };
+export function withRouter(children: ReactNode) {
+  return <MemoryRouter>{children}</MemoryRouter>;
 }
-
-export function getFakeGroup(
-    id: number,
-    overwrite?: Partial<GroupWithArtists>
-) {
-    return {
-        _type: "group",
-        id,
-        title: "My Group",
-        createdAt: timestamp,
-        updatedAt: timestamp,
-        ...overwrite,
-    };
-}
-
-export function getFakeArtistByHash(hash: string): ArtistWithReleases {
-    const id = artistHashMap[hash].id;
-    if (!id) {
-        return getFakeArtist(1);
-    }
-    return getFakeArtist(id, hash);
-}
-
-export function getFakeArtist(
-    id: number,
-    hash?: string,
-    overwrite?: Partial<ArtistWithReleases>
-): ArtistWithReleases & WithRelatedArtists & WithGroups & WithAppearances {
-    const foundHash = Object.keys(artistHashMap).find(
-        (hash) => artistHashMap[hash]?.id === id
-    );
-
-    const data = artistHashMap[foundHash] || ({} as ArtistWithReleases);
-
-    id = id || data.id || 1;
-    return {
-        _type: "artist",
-        id,
-        name: "Artist",
-        normalizedName: "Artist",
-        createdAt: timestamp,
-        updatedAt: timestamp,
-        hash: hash || `artist-hash-${id}`,
-        path: "artist-path",
-        coverReleaseId: 1,
-        releases: [],
-        relatedArtists: [],
-        groups: [],
-        appearsIn: [],
-        ...data,
-        ...overwrite,
-    };
-}
-
-const releaseHashMap: Record<
-    string,
-    Pick<
-        ReleaseWithArtist,
-        "id" | "artist_id" | "title" | "normalizedTitle" | "year" | "path"
-    >
-> = {
-    e6ff3253fb407e5f: {
-        id: 1,
-        artist_id: 1,
-        title: "Album One",
-        normalizedTitle: "Album One",
-        path: "Album One",
-        year: 1999,
-    },
-    b66649708b05af8e: {
-        id: 2,
-        artist_id: 1,
-        title: "Album Two",
-        normalizedTitle: "Album Two",
-        path: "Album Two",
-        year: 2000,
-    },
-};
-
-export function getFakeReleaseByHash(hash: string): ReleaseWithArtist {
-    const match = releaseHashMap[hash];
-    if (!match) {
-        return getFakeRelease(1);
-    }
-    return getFakeRelease(match.id, match.artist_id, hash);
-}
-
-export function getFakeRelease(
-    release_id: number,
-    artist_id?: number,
-    hash?: string,
-    overwrite?: Partial<ReleaseWithArtist>
-): ReleaseWithArtist {
-    const foundHash = Object.keys(releaseHashMap).find(
-        (hash) => releaseHashMap[hash]?.id === release_id
-    );
-
-    const data = releaseHashMap[foundHash] || ({} as ReleaseWithArtist);
-
-    artist_id = artist_id || data.artist_id || 1;
-
-    function getNormalizedTitle() {
-        if (overwrite?.normalizedTitle) {
-            return overwrite.normalizedTitle;
-        }
-        if (overwrite?.title) {
-            return normalizeDiacritics(overwrite.title);
-        }
-        if (data?.normalizedTitle) {
-            return data.normalizedTitle;
-        }
-        return "release title";
-    }
-
-    return {
-        _type: "release",
-        id: release_id,
-        path: "release-path",
-        title: "release title",
-        createdAt: timestamp,
-        updatedAt: timestamp,
-        hash: hash || foundHash || `release-hash-${release_id}`,
-        year: 1999,
-        type: "Album",
-        hideOnHomepage: false,
-        discTitle: null,
-        discNumber: 1,
-        mainReleaseId: null,
-        artist_id,
-        artist: getFakeArtist(artist_id),
-        additionalArtists: [],
-        ...data,
-        ...overwrite,
-        normalizedTitle: getNormalizedTitle(),
-    };
-}
-
-export function getTrackPaths(length = 5) {
-    return Array.from({ length }, (_, i) => getTrackPathFromIndex(i));
-}
-
-export function getTrackFromData(
-    data: Pick<Track, "path" | "title" | "duration" | "position" | "hash"> & {
-        releaseId?: number;
-    }
-): Track {
-    return {
-        _type: "track",
-        id: parseInt(`${data?.releaseId || 1}${data.position}`),
-        createdAt: timestamp,
-        updatedAt: timestamp,
-        releaseId: data.releaseId || 1,
-        normalizedTitle: normalizeDiacritics(data.title),
-        ...data,
-    };
-}
-
-export function getFakeTrack(index = 0, track_id = 1, releaseId = 1): Track {
-    const path = getTrackPathFromIndex(index);
-    return {
-        _type: "track",
-        id: track_id,
-        createdAt: timestamp,
-        updatedAt: timestamp,
-        releaseId,
-        path,
-        title: `Track ${index + 1}`,
-        normalizedTitle: `Track ${index + 1}`,
-        position: index + 1,
-        duration: 123,
-        hash: `track-hash-${track_id}`,
-    };
-}
-
-function getTrackPathFromIndex(index = 1, extension = ".mp3") {
-    return `${index < 9 ? "0" : ""}${index + 1} - track_${
-        index + 1
-    }${extension}`;
-}
-
-export const FULL_TRACKS = [
-    {
-        _type: "track",
-        id: 11,
-        createdAt: timestamp,
-        updatedAt: timestamp,
-        releaseId: 1,
-        path: "01 - track_1.mp3",
-        title: "Track 1",
-        duration: 123,
-        position: 1,
-        hash: "2fbad3d560262706",
-    },
-    {
-        _type: "track",
-        id: 12,
-        createdAt: timestamp,
-        updatedAt: timestamp,
-        releaseId: 1,
-        path: "02 - track_2.mp3",
-        title: "Track 2",
-        duration: 123,
-        position: 2,
-        hash: "898229a56a967dab",
-    },
-    {
-        _type: "track",
-        id: 13,
-        createdAt: timestamp,
-        updatedAt: timestamp,
-        releaseId: 1,
-        path: "03 - track_3.mp3",
-        title: "Track 3",
-        duration: 123,
-        position: 3,
-        hash: "49d2b4621a291e4f",
-    },
-    {
-        _type: "track",
-        id: 14,
-        createdAt: timestamp,
-        updatedAt: timestamp,
-        releaseId: 1,
-        path: "04 - track_4.mp3",
-        title: "Track 4",
-        duration: 123,
-        position: 4,
-        hash: "556ac59172a802c3",
-    },
-    {
-        _type: "track",
-        id: 15,
-        createdAt: timestamp,
-        updatedAt: timestamp,
-        releaseId: 1,
-        path: "05 - track_5.mp3",
-        title: "Track 5",
-        duration: 123,
-        position: 5,
-        hash: "cb763ce03c4bcb15",
-    },
-];
 
 const settings = {
-    PLAYER_PATH: "PLAYER_PATH",
-    TAGGER_PATH: "TAGGER_PATH",
-    DISCOGS_KEY: "DISCOGS_KEY",
-    DISCOGS_SECRET: "DISCOGS_SECRET",
-    LIBRARY_PATH: "LIBRARY_PATH",
-    COVERS_PATH: "COVERS_PATH",
+  PLAYER_PATH: "PLAYER_PATH",
+  TAGGER_PATH: "TAGGER_PATH",
+  DISCOGS_KEY: "DISCOGS_KEY",
+  DISCOGS_SECRET: "DISCOGS_SECRET",
+  LIBRARY_PATH: "LIBRARY_PATH",
+  COVERS_PATH: "COVERS_PATH",
 } as const;
 
 export function getSetting(key: keyof typeof settings) {
-    return settings[key];
+  return settings[key];
 }
 
 export function withPath(key: keyof typeof settings, folderPath: string) {
-    return path.join(getSetting(key), folderPath);
+  return path.join(getSetting(key), folderPath);
 }
 
 export const send = vi.fn();

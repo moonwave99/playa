@@ -12,6 +12,7 @@ import type {
   ArtistWithReleasesFull,
   PaginationParams,
   ArtistUpdate,
+  ReleaseWithArtist,
 } from "@/types/types";
 
 export async function getArtist(id: number): Promise<ArtistWithReleasesFull> {
@@ -95,20 +96,22 @@ export async function getArtist(id: number): Promise<ArtistWithReleasesFull> {
     return null;
   }
 
-  const { releases, appearsIn } = result as ArtistWithReleasesFull;
+  const { releases, appearsIn } = result;
   return withEntityType(
     {
       ...result,
       releases: withEntityType(
         sortReleasesByTypeAndYear([...releases, ...appearsIn]),
         "release"
-      ).map((x) => ({
+      ).map((x: ReleaseWithArtist) => ({
         ...x,
         artist: withEntityType(x.artist, "artist"),
         additionalArtists: withEntityType(x.additionalArtists, "artist"),
       })),
       relatedArtists: withEntityType(
-        result.relatedArtists.map(withCoverRelease),
+        result.relatedArtists.map((x) =>
+          withCoverRelease(x as ArtistWithReleases)
+        ),
         "artist"
       ),
       groups: withEntityType(result.groups, "group"),
@@ -225,6 +228,9 @@ export async function updateArtist(id: number, { name, path }: ArtistUpdate) {
   const result = await prisma.artist.update({
     where: { id },
     data: { name, normalizedName: normalizeDiacritics(name), path },
+    include: {
+      relatedArtists: true,
+    },
   });
   return result ? withEntityType(result, "artist") : null;
 }

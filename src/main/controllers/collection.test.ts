@@ -1,68 +1,147 @@
+import prisma from "../db/prisma";
 import { collectionController } from "./collection";
-import { getFakeCollection, getFakeRelease } from "@/test/utils";
-import prisma from '../db/__mocks__/prisma';
-import { HasId, ReleaseWithArtistAndTracksAndSubreleases } from "@/types/types";
+import {
+  getFakeCollections,
+  getFakeArtists,
+  getFakeReleasesForArtist,
+} from "../../test/seed";
 
-vi.mock('../db/prisma');
+import { clearPrisma } from "../../test/prisma-utils";
 
-const collections = Array.from({ length: 55 }, (_, i) => getFakeCollection(i + 1));
+afterEach(clearPrisma);
 
-describe('getCollections function', () => {
-  it('returns as many collections as per the take parameter', async () => {
-    prisma.collection.findMany.mockImplementation(({ take }) => collections.slice(0, take));
+describe("getCollections function", () => {
+  const collections = getFakeCollections({ length: 100 });
+
+  it("returns as many collections as per the take parameter", async () => {
+    await prisma.collection.createMany({ data: collections });
     const { getCollections } = collectionController();
     const result = await getCollections({ take: 5 });
     expect(result.length).toBe(5);
   });
 
-  it('returns max 50 collections if no take parameter is specified', async () => {
-    prisma.collection.findMany.mockImplementation(({ take }) => collections.slice(0, take));
+  it("returns max 50 collections if no take parameter is specified", async () => {
+    await prisma.collection.createMany({ data: collections });
     const { getCollections } = collectionController();
     const result = await getCollections({});
     expect(result.length).toBe(50);
   });
-})
+});
 
-describe('removeReleasesFromCollection function', () => {
-  const collection = getFakeCollection(1, {
-    coverReleaseId: 1,
-    releases: [
-      getFakeRelease(1),
-      getFakeRelease(2),
-      getFakeRelease(3),
-    ] as ReleaseWithArtistAndTracksAndSubreleases[]
-  });
-  it('removes the releases by given ids from the collection', async () => {
-    prisma.collection.update.mockImplementation(({ data }) => {
-      return {
+describe("setCollectionCoverRelease function", () => {
+  it("set the passed release as cover for the collection", async () => {
+    const artist = getFakeArtists({ length: 1 }).at(0);
+    const releases = getFakeReleasesForArtist(artist.id);
+    const collection = getFakeCollections({ length: 1 }).at(0);
+
+    await prisma.artist.create({ data: artist });
+    await prisma.release.createMany({ data: releases });
+    await prisma.collection.create({
+      data: {
         ...collection,
-        releases: collection.releases.filter(
-          x => !(data.releases.disconnect as HasId[]).map(x => x.id).includes(x.id)
-        )
-      }
+        releases: {
+          connect: releases.map((x) => ({ id: x.id })),
+        },
+      },
+    });
+    const { setCollectionCoverRelease } = collectionController();
+    await setCollectionCoverRelease(1, 2);
+    const updatedCollection = await prisma.collection.findFirst({
+      where: { id: 1 },
+    });
+    expect(updatedCollection.coverReleaseId).toBe(2);
+  });
+});
+
+describe("addReleasesToCollection function", () => {
+  it("adds the releases by given ids to the collection", async () => {
+    const artist = getFakeArtists({ length: 1 }).at(0);
+    const releases = getFakeReleasesForArtist(artist.id);
+    const collection = getFakeCollections({ length: 1 }).at(0);
+
+    await prisma.artist.create({ data: artist });
+    await prisma.release.createMany({ data: releases });
+    await prisma.collection.create({
+      data: collection,
+    });
+    const { addReleasesToCollection } = collectionController();
+    await addReleasesToCollection(1, releases);
+    const updatedCollection = await prisma.collection.findFirst({
+      where: { id: 1 },
+      include: { releases: true },
+    });
+
+    expect(updatedCollection.releases).toMatchObject([
+      { id: 1 },
+      { id: 2 },
+      { id: 3 },
+      { id: 4 },
+      { id: 5 },
+    ]);
+  });
+});
+
+describe("removeReleasesFromCollection function", () => {
+  const artist = getFakeArtists({ length: 1 }).at(0);
+  const releases = getFakeReleasesForArtist(artist.id);
+  const collection = getFakeCollections({ length: 1 }).at(0);
+
+  it("adds the releases by given ids to the collection", async () => {
+    await prisma.artist.create({ data: artist });
+    await prisma.release.createMany({ data: releases });
+    await prisma.collection.create({
+      data: collection,
+    });
+    const { addReleasesToCollection } = collectionController();
+    await addReleasesToCollection(1, releases);
+    const updatedCollection = await prisma.collection.findFirst({
+      where: { id: 1 },
+      include: { releases: true },
+    });
+
+    expect(updatedCollection.releases).toMatchObject([
+      { id: 1 },
+      { id: 2 },
+      { id: 3 },
+      { id: 4 },
+      { id: 5 },
+    ]);
+  });
+
+  it("removes the releases by given ids from the collection", async () => {
+    await prisma.artist.create({ data: artist });
+    await prisma.release.createMany({ data: releases });
+    await prisma.collection.create({
+      data: {
+        ...collection,
+        releases: {
+          connect: releases.map((x) => ({ id: x.id })),
+        },
+      },
     });
     const { removeReleasesFromCollection } = collectionController();
-    const updatedCollection = await removeReleasesFromCollection(1, [2, 3]);
-    expect(updatedCollection.releases).toMatchObject([{ id: 1 }]);
+    const updatedCollection = await removeReleasesFromCollection(1, [2, 4]);
+    expect(updatedCollection.releases).toMatchObject([
+      { id: 1 },
+      { id: 3 },
+      { id: 5 },
+    ]);
   });
 
-  it('sets the cover release to empty if the current cover release is removed', async () => {
-    prisma.collection.update.mockImplementation(({ data }) => {
-      if (data.coverReleaseId !== undefined) {
-        return {
-          ...collection,
-          coverReleaseId: data.coverReleaseId
-        }
-      }
-      return {
+  it("sets the cover release to empty if the current cover release is removed", async () => {
+    await prisma.artist.create({ data: artist });
+    await prisma.release.createMany({ data: releases });
+    await prisma.collection.create({
+      data: {
         ...collection,
-        releases: collection.releases.filter(
-          x => !(data.releases.disconnect as HasId[]).map(x => x.id).includes(x.id)
-        )
-      }
+        releases: {
+          connect: releases.map((x) => ({ id: x.id })),
+        },
+        coverReleaseId: 2,
+      },
     });
     const { removeReleasesFromCollection } = collectionController();
-    const updatedCollection = await removeReleasesFromCollection(1, [1]);
+    const updatedCollection = await removeReleasesFromCollection(1, [2]);
     expect(updatedCollection.coverReleaseId).toBe(null);
   });
 });

@@ -15,7 +15,7 @@ function getReleasesForArtist(artist_id: number, length = 5) {
     id: (artist_id - 1) * length + i + 1,
     title: `Release ${i + 1}`,
     normalizedTitle: `Release ${i + 1}`,
-    type: "Album",
+    type: "Album" as const,
     year: 2000,
     path: `[Album]/2000 - Release ${i + 1}`,
     hash: hashRelease({
@@ -61,19 +61,14 @@ const groups = Array.from({ length: 3 }, (_, i) => ({
 }));
 
 async function main() {
-  await Promise.all(artists.map((x) => prisma.artist.create({ data: x })));
   const releases = artists.flatMap((x) => getReleasesForArtist(x.id));
-  await Promise.all(groups.map((x) => prisma.group.create({ data: x })));
-  await Promise.all(releases.map((x) => prisma.release.create({ data: x })));
-  await Promise.all(
-    releases.flatMap((r) =>
-      getTracksForRelease(r.id).map((x) => prisma.track.create({ data: x }))
-    )
-  );
-
-  await Promise.all(
-    collections.map((x) => prisma.collection.create({ data: x }))
-  );
+  await prisma.artist.createMany({ data: artists });
+  await prisma.group.createMany({ data: groups });
+  await prisma.collection.createMany({ data: collections });
+  await prisma.release.createMany({ data: releases });
+  await prisma.track.createMany({
+    data: releases.flatMap((r) => getTracksForRelease(r.id)),
+  });
 
   await prisma.artist.update({
     where: { id: 1 },
