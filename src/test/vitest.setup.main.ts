@@ -16,15 +16,31 @@ vi.mock("@prisma/client-generated", async () => {
   };
 });
 
-vi.mock("electron", () => ({
-  shell: {
-    openPath: vi.fn(),
-  },
-  dialog: {
-    showMessageBoxSync: vi.fn(),
-    showOpenDialogSync: vi.fn((...args) => [args[1].defaultPath]),
-  },
-}));
+vi.mock("electron", () => {
+  return {
+    shell: {
+      openPath: vi.fn(),
+    },
+    dialog: {
+      showMessageBoxSync: vi.fn(),
+      showOpenDialogSync: vi.fn((...args) => [args[1].defaultPath]),
+    },
+    app: {
+      getPath: vi.fn(),
+    },
+    Menu: {
+      setApplicationMenu: vi.fn(),
+      getApplicationMenu: vi.fn(() => ({
+        append: vi.fn(),
+      })),
+    },
+    MenuItem: vi.fn(),
+    ipcMain: {
+      handle: vi.fn(),
+      on: vi.fn(),
+    },
+  };
+});
 
 vi.mock("music-metadata", () => ({
   parseFile: async (filePath: string) => {
