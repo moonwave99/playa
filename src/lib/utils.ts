@@ -141,9 +141,10 @@ export function isEmpty(obj: object) {
   return Object.keys(obj).length === 0;
 }
 
+type Sortable = number | string | boolean | Date;
+
 export function sortBy(key: string, order: "asc" | "desc" = "asc") {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return (a: any, b: any) =>
+  return (a: Record<string, Sortable>, b: Record<string, Sortable>) =>
     (a[key] > b[key] ? 1 : -1) * (order === "asc" ? 1 : -1);
 }
 
