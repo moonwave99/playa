@@ -197,14 +197,13 @@ export async function removeArtistsFromGroup(id: number, artist_ids: number[]) {
 }
 
 export async function deleteGroups(ids: number[]) {
-  return Promise.all(ids.map(deleteGroup));
+  return prisma.group.deleteMany({ where: { id: { in: ids } } });
 }
 
 export async function deleteGroup(id: number) {
-  const result = await prisma.group.delete({
+  return prisma.group.delete({
     where: { id },
   });
-  return result;
 }
 
 export async function setGroupCoverArtist(group_id: number, artist_id: number) {

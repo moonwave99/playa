@@ -18,6 +18,7 @@ import {
   getFakeArtists,
   getFakeReleasesForArtist,
 } from "../../test/seed";
+import { sortBy } from "@/lib/utils";
 
 vi.mock("../covers");
 
@@ -46,9 +47,7 @@ describe("getReleases function", () => {
     });
 
     expect(result.results).toMatchObject(
-      releases
-        .toSorted((a, b) => (a.createdAt > b.createdAt ? -1 : 1))
-        .slice(0, 10)
+      releases.toSorted(sortBy("createdAt", "desc")).slice(0, 10)
     );
   });
 
@@ -76,7 +75,7 @@ describe("getReleases function", () => {
     expect(result.results).toMatchObject(
       releases
         .filter((x) => x.id !== 2)
-        .toSorted((a, b) => (a.createdAt > b.createdAt ? -1 : 1))
+        .toSorted(sortBy("createdAt", "desc"))
         .map((x) =>
           x.id === 1
             ? {

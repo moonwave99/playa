@@ -17,7 +17,7 @@ export function getFakeArtists({ length = 10 }) {
     normalizedName: `Artist ${i + 1}`,
     path: `A/Artist ${i + 1}`,
     hash: hashArtistName(`Artist ${i + 1}`),
-    createdAt: new Date(`2025-0${i + 1}-0${i + 1}T21:41:31.693Z`),
+    createdAt: getDate(i),
   }));
 }
 

@@ -8,6 +8,8 @@ import {
   getFakeArtist,
 } from "../../test/seed";
 
+import { sortBy } from "@/lib/utils";
+
 import { clearPrisma } from "../../test/prisma-utils";
 
 afterEach(clearPrisma);
@@ -53,7 +55,7 @@ describe("getCollection function", () => {
         order: "desc",
       });
       expect(result.releases).toMatchObject(
-        releases.toSorted((a, b) => (a.title > b.title ? -1 : 1))
+        releases.toSorted(sortBy("title", "desc"))
       );
     }
   });
@@ -155,7 +157,7 @@ describe("createCollection function", () => {
 });
 
 describe("deleteCollection function", () => {
-  it("deletes a collection by given id", async () => {
+  it("deletes a collection by the given id", async () => {
     const collection = getFakeCollections({ length: 1 }).at(0);
     await prisma.collection.create({ data: collection });
 
@@ -168,7 +170,7 @@ describe("deleteCollection function", () => {
 });
 
 describe("deleteCollections function", () => {
-  it("deletes all collections by given ids", async () => {
+  it("deletes all collections by the given ids", async () => {
     const collections = getFakeCollections({ length: 3 });
     await prisma.collection.createMany({ data: collections });
 
