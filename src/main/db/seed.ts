@@ -63,12 +63,14 @@ const groups = Array.from({ length: 3 }, (_, i) => ({
 async function main() {
   const releases = artists.flatMap((x) => getReleasesForArtist(x.id));
   await prisma.artist.createMany({ data: artists });
-  await prisma.group.createMany({ data: groups });
-  await prisma.collection.createMany({ data: collections });
   await prisma.release.createMany({ data: releases });
   await prisma.track.createMany({
     data: releases.flatMap((r) => getTracksForRelease(r.id)),
   });
+  await Promise.all(groups.map((data) => prisma.group.create({ data })));
+  await Promise.all(
+    collections.map((data) => prisma.collection.create({ data }))
+  );
 
   await prisma.artist.update({
     where: { id: 1 },

@@ -26,6 +26,7 @@ type EditArtistParams = Pick<Artist, "path" | "id"> & {
 export function artistController({ withPath, state }: ArtistControllerParams) {
   async function editArtist(infos: EditArtistParams) {
     const shouldMoveArtist = infos.newPath !== infos.path;
+
     if (
       shouldMoveArtist &&
       existsSync(withPath("LIBRARY_PATH", infos.newPath))

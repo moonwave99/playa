@@ -1,14 +1,63 @@
 import prisma from "../db/prisma";
 import { collectionController } from "./collection";
 import {
+  getFakeCollection,
   getFakeCollections,
   getFakeArtists,
   getFakeReleasesForArtist,
+  getFakeArtist,
 } from "../../test/seed";
 
 import { clearPrisma } from "../../test/prisma-utils";
 
 afterEach(clearPrisma);
+
+describe("getAllCollections function", () => {
+  it("returns all the collections", async () => {
+    const collections = getFakeCollections({ length: 2 });
+    await prisma.collection.createMany({ data: collections });
+    const { getAllCollections } = collectionController();
+    const result = await getAllCollections();
+    expect(result).toMatchObject(collections);
+  });
+});
+
+describe("getCollection function", () => {
+  it("returns the collection by given id", async () => {
+    const collection = getFakeCollection();
+    const releases = getFakeReleasesForArtist(1);
+    await prisma.artist.create({ data: getFakeArtist(1) });
+    await prisma.release.createMany({ data: releases });
+    await prisma.collection.create({
+      data: {
+        ...collection,
+        releases: { connect: releases.map((x) => ({ id: x.id })) },
+      },
+    });
+
+    const { getCollection } = collectionController();
+    {
+      const result = await getCollection(1);
+      expect(result.releases).toMatchObject(releases);
+    }
+    {
+      const result = await getCollection(1, {
+        sortBy: "title",
+        order: "asc",
+      });
+      expect(result.releases).toMatchObject(releases);
+    }
+    {
+      const result = await getCollection(1, {
+        sortBy: "title",
+        order: "desc",
+      });
+      expect(result.releases).toMatchObject(
+        releases.toSorted((a, b) => (a.title > b.title ? -1 : 1))
+      );
+    }
+  });
+});
 
 describe("getCollections function", () => {
   const collections = getFakeCollections({ length: 100 });
@@ -61,9 +110,8 @@ describe("addReleasesToCollection function", () => {
 
     await prisma.artist.create({ data: artist });
     await prisma.release.createMany({ data: releases });
-    await prisma.collection.create({
-      data: collection,
-    });
+    await prisma.collection.create({ data: collection });
+
     const { addReleasesToCollection } = collectionController();
     await addReleasesToCollection(1, releases);
     const updatedCollection = await prisma.collection.findFirst({
@@ -78,6 +126,81 @@ describe("addReleasesToCollection function", () => {
       { id: 4 },
       { id: 5 },
     ]);
+  });
+});
+
+describe("createCollection function", () => {
+  it("creates a new collection", async () => {
+    const artist = getFakeArtists({ length: 1 }).at(0);
+    const releases = getFakeReleasesForArtist(artist.id);
+
+    await prisma.artist.create({ data: artist });
+    await prisma.release.createMany({ data: releases });
+
+    const { createCollection } = collectionController();
+    const newCollection = await createCollection({
+      title: "new collection",
+      releases: releases.map(({ id }) => id),
+    });
+
+    expect(newCollection.title).toBe("new collection");
+
+    const result = await prisma.collection.findFirst({
+      where: { id: 1 },
+      include: { releases: true },
+    });
+
+    expect(result.releases).toMatchObject(releases);
+  });
+});
+
+describe("deleteCollection function", () => {
+  it("deletes a collection by given id", async () => {
+    const collection = getFakeCollections({ length: 1 }).at(0);
+    await prisma.collection.create({ data: collection });
+
+    const { deleteCollection } = collectionController();
+    await deleteCollection(1);
+    const result = await prisma.collection.findFirst({ where: { id: 1 } });
+
+    expect(result).toBe(null);
+  });
+});
+
+describe("deleteCollections function", () => {
+  it("deletes all collections by given ids", async () => {
+    const collections = getFakeCollections({ length: 3 });
+    await prisma.collection.createMany({ data: collections });
+
+    const { deleteCollections } = collectionController();
+    await deleteCollections([2, 3]);
+    const result = await prisma.collection.findMany();
+
+    expect(result).toMatchObject(collections.slice(0, 1));
+  });
+});
+
+describe("updateCollection function", () => {
+  it("updates the collection", async () => {
+    const artist = getFakeArtists({ length: 1 }).at(0);
+    const releases = getFakeReleasesForArtist(artist.id);
+    const collection = getFakeCollections({ length: 1 }).at(0);
+
+    await prisma.artist.create({ data: artist });
+    await prisma.release.createMany({ data: releases });
+    await prisma.collection.create({ data: collection });
+
+    const { updateCollection } = collectionController();
+
+    const result = await updateCollection(1, {
+      title: "new title",
+      releases: releases.map(({ id }) => id),
+    });
+
+    expect(result).toMatchObject({
+      title: "new title",
+      releases: releases.map(({ id }) => ({ id })),
+    });
   });
 });
 

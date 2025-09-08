@@ -7,7 +7,6 @@ import {
 } from "@/lib/utils";
 import { withEntityType } from "@/types/types";
 import type {
-  Artist,
   ArtistWithReleases,
   ArtistWithReleasesFull,
   PaginationParams,
@@ -120,48 +119,6 @@ export async function getArtist(id: number): Promise<ArtistWithReleasesFull> {
   );
 }
 
-export type GetArtistsParams = PaginationParams & {
-  startsWith?: string;
-};
-
-export async function getArtists({
-  take = 50,
-  skip = 0,
-  startsWith,
-}: GetArtistsParams) {
-  const where =
-    startsWith === "symbol"
-      ? {
-          path: {
-            startsWith: "0-9_",
-          },
-        }
-      : {
-          name: {
-            startsWith,
-          },
-        };
-
-  const [results, total] = await prisma.$transaction([
-    prisma.artist.findMany({
-      take,
-      skip,
-      where,
-      orderBy: { name: "asc" },
-      include: { releases: true },
-    }),
-    prisma.artist.count({ where }),
-  ]);
-  return {
-    pagination: {
-      take,
-      skip,
-      total,
-    },
-    results: results.map(withReleaseCount),
-  };
-}
-
 export async function getLatestArtists({
   take = 50,
   skip = 0,
@@ -206,7 +163,7 @@ export async function getLatestArtists({
   };
 }
 
-export async function getAllArtists(): Promise<Artist[]> {
+export async function getAllArtists() {
   const result = await prisma.artist.findMany({
     orderBy: { name: "asc" },
     select: {
@@ -281,7 +238,7 @@ export async function searchArtists({
   query,
   exclude,
   take = 50,
-}: SearchArtistsParams): Promise<Artist[]> {
+}: SearchArtistsParams) {
   const result = await prisma.artist.findMany({
     take,
     where: {

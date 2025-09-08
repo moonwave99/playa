@@ -1,125 +1,156 @@
-import { Controllers, send } from '@/main/controllers/init';
+import { Controllers, send } from "@/main/controllers/init";
 // eslint-disable-next-line import/no-named-as-default
-import Prisma, { ReleaseType } from '@prisma/client-generated';
+import Prisma, { ReleaseType } from "@prisma/client-generated";
 
 type Artist = Prisma.Artist & {
-  _type: 'artist',
-  coverRelease?: ReleaseWithArtistAndSubreleases
+  _type: "artist";
+  coverRelease?: ReleaseWithArtistAndSubreleases;
 };
-type Release = Prisma.Release & { _type: 'release' };
+type Release = Prisma.Release & { _type: "release" };
 
 type Collection = Prisma.Collection & {
-  _type: 'collection',
-  coverRelease?: ReleaseWithArtistAndSubreleases
+  _type: "collection";
+  coverRelease?: ReleaseWithArtistAndSubreleases;
 };
 type Group = Prisma.Group & {
-  _type: 'group',
+  _type: "group";
   coverArtist?: ArtistWithReleases;
 };
-type Track = Prisma.Track & { _type: 'track' };
+type Track = Prisma.Track & { _type: "track" };
 
 export type { Artist, Release, Collection, Track, ReleaseType, Group };
 
-export type Entities = 'collection' | 'release' | 'artist' | 'searchResult' | 'track' | 'group';
-export type SearchableEntities = 'collection' | 'release' | 'artist' | 'track' | 'group';
+export type Entities =
+  | "collection"
+  | "release"
+  | "artist"
+  | "searchResult"
+  | "track"
+  | "group";
+export type SearchableEntities =
+  | "collection"
+  | "release"
+  | "artist"
+  | "track"
+  | "group";
 export type Stats = Record<SearchableEntities, number>;
-export type HasId = { id: number; };
-export type HasTitle = { title: string; };
+export type HasId = { id: number };
+export type HasTitle = { title: string };
 
-export type CollectionCreate = { title: string, releases?: number[] };
-export type CollectionUpdate = { title: string, releases: number[] };
-export type GroupCreate = { title: string, artists?: number[] };
-export type GroupUpdate = { title: string, artists: number[] };
-export type ArtistUpdate = Pick<Artist, 'name' | 'path'>;
-export type TrackInfo = Pick<Track, 'path' | 'duration' | 'position' | 'title'>;
+export type CollectionCreate = { title: string; releases?: number[] };
+export type CollectionUpdate = { title: string; releases: number[] };
+export type GroupCreate = { title: string; artists?: number[] };
+export type GroupUpdate = { title: string; artists: number[] };
+export type ArtistUpdate = Pick<Artist, "name" | "path">;
+export type TrackInfo = Pick<Track, "path" | "duration" | "position" | "title">;
 export type ReleaseCountByType = Record<ReleaseType, number>;
 export type TrackWithRelease = Track & { release: ReleaseWithArtist };
 
 export type WithReleases = {
   releases: ReleaseWithArtist[];
-}
+};
 
 type WithReleasesAndSubreleases = {
   releases: ReleaseWithArtistAndSubreleases[];
-}
+};
 
 type WithReleasesAndSubreleasesAndTracks = {
   releases: ReleaseWithArtistAndTracksAndSubreleases[];
-}
+};
 
 type WithArtist = {
   artist: Artist;
-}
+};
 
 type WithArtistsAndReleases = {
   artists: ArtistWithReleases[];
-}
+};
 
 type WithTracks = {
   tracks: Track[];
-}
+};
 
 type WithCollections = {
   collections: Collection[];
-}
+};
 
 export type WithGroups = {
   groups: Group[];
-}
+};
 
 export type WithRelatedArtists = {
   relatedArtists: Artist[];
-}
+};
 
 export type WithAdditionalArtists = {
   additionalArtists: Artist[];
-}
+};
 
 export type WithAppearances = {
   appearsIn: ReleaseWithArtist[];
-}
+};
 
 export type ArtistWithRelatedArtists = Artist & WithRelatedArtists;
 export type ArtistWithReleases = Artist & WithReleasesAndSubreleases;
-export type ArtistWithReleasesFull = Artist & WithRelatedArtists & WithReleasesAndSubreleasesAndTracks & WithGroups & WithAppearances;
-export type CollectionWithReleases = Collection & WithReleasesAndSubreleasesAndTracks;
+export type ArtistWithReleasesFull = Artist &
+  WithRelatedArtists &
+  WithReleasesAndSubreleasesAndTracks &
+  WithGroups &
+  WithAppearances;
+export type CollectionWithReleases = Collection &
+  WithReleasesAndSubreleasesAndTracks;
 export type ReleaseWithArtist = Release & WithArtist & WithAdditionalArtists;
-export type ReleaseWithArtistAndSubreleases = Release & WithArtist & WithAdditionalArtists & WithSubReleases;
-export type ReleaseWithArtistAndTracks = Release & WithArtist & WithAdditionalArtists & WithTracks;
-export type ReleaseWithArtistAndTracksAndSubreleases = Release & WithArtist & WithAdditionalArtists & WithTracks & WithSubReleases;
-export type ReleaseWithArtistAndTracksAndSubreleasesAndCollections = Release & WithArtist & WithAdditionalArtists & WithTracks & WithSubReleases & WithCollections;
+export type ReleaseWithArtistAndSubreleases = Release &
+  WithArtist &
+  WithAdditionalArtists &
+  WithSubReleases;
+export type ReleaseWithArtistAndTracks = Release &
+  WithArtist &
+  WithAdditionalArtists &
+  WithTracks;
+export type ReleaseWithArtistAndTracksAndSubreleases = Release &
+  WithArtist &
+  WithAdditionalArtists &
+  WithTracks &
+  WithSubReleases;
+export type ReleaseWithArtistAndTracksAndSubreleasesAndCollections = Release &
+  WithArtist &
+  WithAdditionalArtists &
+  WithTracks &
+  WithSubReleases &
+  WithCollections;
 export type ArtistWithReleaseCount = ArtistWithReleases & {
-  releaseCount: ReleaseCountByType
+  releaseCount: ReleaseCountByType;
 };
 export type GroupWithArtists = Group & WithArtistsAndReleases;
 
 export type WithSubReleases = {
   subReleases: ReleaseWithArtistAndTracks[];
-}
+};
 
 export type Pagination = {
   take: number;
   skip: number;
   total: number;
-}
+};
 
 export type WithPagination = {
   pagination: Pagination;
-}
+};
 
 export type PaginatedResults<T> = WithPagination & {
   results: T[];
-}
+};
 
 export type PaginationParams = {
-  take?: number,
-  skip?: number
-}
+  take?: number;
+  skip?: number;
+};
 
 export type SearchParams = Record<string, string>;
 
 export type SearchResult = {
-  _type: 'searchResult',
+  _type: "searchResult";
   id: number;
   type: SearchableEntities;
   title: string;
@@ -128,7 +159,7 @@ export type SearchResult = {
   description: string;
   links: Partial<Record<Entities, string>>;
   coverRelease?: ReleaseWithArtist;
-}
+};
 
 export type Sidebars = "music" | "artists" | "collections" | "groups";
 
@@ -136,19 +167,25 @@ export type Entries<T> = {
   [K in keyof T]: [K, T[K]];
 }[keyof T][];
 
-export type ViewMode = 'grid' | 'list' | 'compact';
+export type ViewMode = "grid" | "list" | "compact";
 
 export type Settings = Record<string, string | number | boolean>;
 
 type WithEntityType<T> = T & { _type: Entities };
 
 export function withEntityType<T>(item: T, _type: Entities): WithEntityType<T>;
-export function withEntityType<T>(item: T[], _type: Entities): WithEntityType<T>[];
-export function withEntityType<T>(item: T | T[], _type: Entities): WithEntityType<T> | WithEntityType<T>[] {
+export function withEntityType<T>(
+  item: T[],
+  _type: Entities
+): WithEntityType<T>[];
+export function withEntityType<T>(
+  item: T | T[],
+  _type: Entities
+): WithEntityType<T> | WithEntityType<T>[] {
   if (Array.isArray(item)) {
-    return item.map(x => withEntityType(x, _type));
+    return item.map((x) => withEntityType(x, _type));
   }
-  return { ...item, _type }
+  return { ...item, _type };
 }
 
 export type NewReleaseInfo = {
@@ -157,23 +194,35 @@ export type NewReleaseInfo = {
   newTitle: string;
   newType: ReleaseType;
   newYear: number;
-}
+};
 
-export type EditReleaseParam = (
-  Pick<Release, 'id' | 'path' | 'hash' | 'title' | 'artist_id' | 'year' | 'type' | 'discTitle' | 'discNumber'>
-  & NewReleaseInfo
-);
+export type EditReleaseParam = Pick<
+  Release,
+  | "id"
+  | "path"
+  | "hash"
+  | "title"
+  | "artist_id"
+  | "year"
+  | "type"
+  | "discTitle"
+  | "discNumber"
+> &
+  NewReleaseInfo;
 
 export type MenuParams = {
   controllers: Controllers;
   send: typeof send;
 };
 
-export type Context = CollectionWithReleases | ArtistWithReleases | GroupWithArtists;
+export type Context =
+  | CollectionWithReleases
+  | ArtistWithReleases
+  | GroupWithArtists;
 
 export type Unpacked<T> = T extends (infer U)[] ? U : T;
 
 export type BaseQuery = {
   isPending: boolean;
   error: Error;
-}
+};

@@ -5,7 +5,6 @@ import type {
   GroupUpdate,
   HasId,
   PaginationParams,
-  GroupWithArtists,
 } from "@/types/types";
 
 export async function getGroups({ take = 50 }: PaginationParams) {
@@ -52,7 +51,7 @@ export async function getGroups({ take = 50 }: PaginationParams) {
     },
   });
   return withEntityType(
-    results.map((x: GroupWithArtists) => ({
+    results.map((x) => ({
       ...x,
       artists: withEntityType(x.artists, "artist"),
     })),
@@ -183,6 +182,13 @@ export async function removeArtistsFromGroup(id: number, artist_ids: number[]) {
       where: { id },
       data: {
         coverArtistId: null,
+      },
+      include: {
+        artists: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
   }

@@ -9,6 +9,7 @@ describe("searchResult - search function", () => {
 
     const { getSearchResults } = searchResultController();
     const results = await getSearchResults({ query: "Release" });
+
     expect(results).toMatchObject([
       {
         id: 1,

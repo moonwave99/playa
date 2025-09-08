@@ -6,7 +6,11 @@ import { artistController } from "./artist";
 import { mockFs } from "@/test/mock-fs";
 import { StateManager } from "../state";
 import { clearPrisma } from "@/test/prisma-utils";
-import { getFakeArtist, getFakeArtists } from "@/test/seed";
+import {
+  getFakeArtist,
+  getFakeArtists,
+  getFakeReleasesForArtist,
+} from "@/test/seed";
 import { withPath } from "@/test/utils";
 
 afterEach(clearPrisma);
@@ -38,7 +42,28 @@ describe("artist - getAllArtists function", () => {
     await prisma.artist.createMany({ data: artists });
     const { getAllArtists } = artistController(defaultParams);
     const result = await getAllArtists();
-    expect(result).toMatchObject(artists);
+    // eslint-disable-next-line  @typescript-eslint/no-unused-vars
+    expect(result).toMatchObject(artists.map(({ createdAt, ...x }) => x));
+  });
+});
+
+describe("artist - getLatestArtists function", () => {
+  it("returns the latest added artists in chronological reversed order", async () => {
+    const artists = getFakeArtists({ length: 5 });
+    await prisma.artist.createMany({ data: artists });
+    const { getLatestArtists } = artistController(defaultParams);
+    const result = await getLatestArtists({
+      take: 50,
+      skip: 0,
+    });
+    expect(result).toMatchObject({
+      pagination: {
+        take: 50,
+        skip: 0,
+        total: artists.length,
+      },
+      results: artists.toReversed(),
+    });
   });
 });
 
@@ -107,5 +132,118 @@ describe("artist - editArtist function", () => {
     );
 
     expect(state.setCurrentArtist).toHaveBeenCalled();
+  });
+});
+
+describe("artist - setArtistCoverRelease function", () => {
+  it("sets the artist cover release", async () => {
+    const artist = getFakeArtist();
+    const release = getFakeReleasesForArtist(artist.id).at(0);
+    await prisma.artist.create({ data: artist });
+    await prisma.release.create({ data: release });
+
+    const { setArtistCoverRelease } = artistController(defaultParams);
+
+    await setArtistCoverRelease(artist.id, release.id);
+    const updatedArtist = await prisma.artist.findFirst({
+      where: { id: artist.id },
+    });
+
+    expect(updatedArtist.coverReleaseId).toBe(release.id);
+  });
+});
+
+describe("artist - addRelatedArtist function", () => {
+  it("adds a related artist", async () => {
+    const artists = getFakeArtists({ length: 2 });
+    await prisma.artist.createMany({ data: artists });
+
+    const { addRelatedArtist } = artistController(defaultParams);
+
+    await addRelatedArtist(artists[1].id, artists[0].id);
+
+    const updatedArtist = await prisma.artist.findFirst({
+      where: { id: artists[0].id },
+      include: { relatedArtists: true, symmetricRelatedArtists: true },
+    });
+
+    const addedArtist = await prisma.artist.findFirst({
+      where: { id: artists[1].id },
+      include: { relatedArtists: true, symmetricRelatedArtists: true },
+    });
+
+    expect(updatedArtist.relatedArtists).toMatchObject([artists[1]]);
+    expect(addedArtist.relatedArtists).toMatchObject([artists[0]]);
+  });
+});
+
+describe("artist - removeRelatedArtist function", () => {
+  it("removes a related artist", async () => {
+    const artists = getFakeArtists({ length: 3 });
+    await prisma.artist.createMany({ data: artists });
+
+    const { addRelatedArtist, removeRelatedArtist } =
+      artistController(defaultParams);
+
+    await addRelatedArtist(artists[1].id, artists[0].id);
+    await addRelatedArtist(artists[2].id, artists[0].id);
+    await removeRelatedArtist(artists[1].id, artists[0].id);
+
+    const updatedArtist = await prisma.artist.findFirst({
+      where: { id: artists[0].id },
+      include: { relatedArtists: true, symmetricRelatedArtists: true },
+    });
+
+    const removedArtist = await prisma.artist.findFirst({
+      where: { id: artists[1].id },
+      include: { relatedArtists: true, symmetricRelatedArtists: true },
+    });
+
+    expect(updatedArtist.relatedArtists.map((x) => x.id)).toMatchObject([3]);
+    expect(removedArtist.relatedArtists).toMatchObject([]);
+  });
+});
+
+describe("artist - searchArtists function", () => {
+  it("returns the artists that match the passed appearsIn exclude query", async () => {
+    const artists = getFakeArtists({ length: 9 });
+    await prisma.artist.createMany({ data: artists });
+    await prisma.release.createMany({ data: getFakeReleasesForArtist(1) });
+
+    await prisma.release.update({
+      where: { id: 1 },
+      data: {
+        additionalArtists: {
+          connect: { id: 1 },
+        },
+      },
+    });
+
+    const { searchArtists } = artistController(defaultParams);
+
+    const results = await searchArtists({
+      query: "Art",
+      take: 50,
+      exclude: { key: "appearsIn", artist_id: 2, release_id: 1 },
+    });
+
+    expect(results).toMatchObject(artists.slice(2));
+  });
+
+  it("returns the artists that match the passed relatedArtists exclude query", async () => {
+    const artists = getFakeArtists({ length: 9 });
+    await prisma.artist.createMany({ data: artists });
+
+    const { searchArtists, addRelatedArtist } = artistController(defaultParams);
+
+    await addRelatedArtist(1, 2);
+
+    const results = await searchArtists({
+      query: "Art",
+      take: 50,
+      exclude: { key: "relatedArtists", artist_id: 1 },
+    });
+
+    expect(results).toMatchObject(artists.slice(1));
   });
 });

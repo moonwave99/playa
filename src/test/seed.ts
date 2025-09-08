@@ -1,6 +1,6 @@
 import sha1 from "sha1";
 import { hashArtistName, hashRelease } from "../main/hash";
-import type { HasId } from "@/types/types";
+import type { Release, HasId } from "@/types/types";
 
 export function getFakeArtist(id = 1) {
   const artist = getFakeArtists({ length: 1 }).at(0);
@@ -17,7 +17,33 @@ export function getFakeArtists({ length = 10 }) {
     normalizedName: `Artist ${i + 1}`,
     path: `A/Artist ${i + 1}`,
     hash: hashArtistName(`Artist ${i + 1}`),
+    createdAt: new Date(`2025-0${i + 1}-0${i + 1}T21:41:31.693Z`),
   }));
+}
+
+export function getFakeRelease(id = 1, override: Partial<Release> = {}) {
+  return {
+    id,
+    title: `Release ${id}`,
+    normalizedTitle: `Release ${id}`,
+    type: "Album" as const,
+    year: 2000,
+    path: `Release ${id}`,
+    hash: hashRelease({
+      title: `Release ${id}`,
+      type: "Album",
+      year: 2000,
+      artist_id: override.artist_id,
+    }),
+    artist_id: override.artist_id,
+    discTitle: "",
+    discNumber: 1,
+    createdAt: getDate(id),
+    updatedAt: getDate(id),
+    mainReleaseId: null as number,
+    hideOnHomepage: false,
+    ...override,
+  };
 }
 
 export function getFakeReleasesForArtist(artist_id: number, length = 5) {
@@ -37,8 +63,8 @@ export function getFakeReleasesForArtist(artist_id: number, length = 5) {
     artist_id,
     discTitle: "",
     discNumber: 1,
-    createdAt: new Date(`2025-0${i + 1}-0${i + 1}T21:41:31.693Z`),
-    updatedAt: new Date(`2025-0${i + 1}-0${i + 1}T21:41:31.693Z`),
+    createdAt: getDate(i),
+    updatedAt: getDate(i),
     mainReleaseId: null as number,
     hideOnHomepage: false,
   }));
@@ -59,6 +85,14 @@ export function getFakeTracksForRelease(releaseId: number, length = 5) {
   }));
 }
 
+export function getFakeCollection(id = 1) {
+  const collection = getFakeCollections({ length: 1 }).at(0);
+  return {
+    ...collection,
+    id,
+  };
+}
+
 export function getFakeCollections({
   length = 3,
   releases = [],
@@ -66,12 +100,11 @@ export function getFakeCollections({
   length: number;
   releases?: HasId[];
 }) {
+  const connect = releases?.length ? { releases: { connect: releases } } : {};
   return Array.from({ length }, (_, i) => ({
     id: i + 1,
     title: `Collection ${i + 1}`,
-    releases: {
-      connect: releases,
-    },
+    ...connect,
   }));
 }
 
@@ -82,12 +115,19 @@ export function getFakeGroups({
   length: number;
   artists?: HasId[];
 }) {
+  const connect = artists?.length ? { artists: { connect: artists } } : {};
   return Array.from({ length }, (_, i) => ({
     id: i + 1,
     title: `Group ${i + 1}`,
     coverArtistId: artists?.at(0)?.id || null,
-    artists: {
-      connect: artists,
-    },
+    ...connect,
   }));
 }
+
+function getDate(id: number) {
+  const month = (id % 12) + 1;
+  const day = (id % 28) + 1;
+  return new Date(`2025-${pad(month)}-${pad(day)}T21:41:31.693Z`);
+}
+
+const pad = (n = 1) => (n < 10 ? `0${n}` : n);

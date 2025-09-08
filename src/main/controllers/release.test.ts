@@ -29,7 +29,90 @@ const defaultParams = {
   openFolderDialog: vi.fn(),
 };
 
-describe("release - importFolder function", () => {
+describe("getReleases function", () => {
+  it("returns the releases with the given pagination params", async () => {
+    const releases = getFakeReleasesForArtist(1, 20);
+    const artist = getFakeArtist(1);
+    await prisma.artist.create({ data: artist });
+    await prisma.release.createMany({ data: releases });
+
+    const { getReleases } = releaseController(defaultParams);
+    const result = await getReleases({ take: 10, skip: 0 });
+
+    expect(result.pagination).toMatchObject({
+      take: 10,
+      skip: 0,
+      total: releases.length,
+    });
+
+    expect(result.results).toMatchObject(
+      releases
+        .toSorted((a, b) => (a.createdAt > b.createdAt ? -1 : 1))
+        .slice(0, 10)
+    );
+  });
+
+  it("must exclude subreleases", async () => {
+    const releases = getFakeReleasesForArtist(1);
+    const artist = getFakeArtist(1);
+    await prisma.artist.create({ data: artist });
+    await prisma.release.createMany({ data: releases });
+
+    const { getReleases, groupReleases } = releaseController(defaultParams);
+
+    await groupReleases({
+      mainRelease: {
+        id: 1,
+        title: "main release title",
+      },
+      discInfo: [
+        { id: 1, title: "disc 1", number: 1 },
+        { id: 2, title: "disc 2", number: 2 },
+      ],
+    });
+
+    const result = await getReleases({ take: 10, skip: 0 });
+
+    expect(result.results).toMatchObject(
+      releases
+        .filter((x) => x.id !== 2)
+        .toSorted((a, b) => (a.createdAt > b.createdAt ? -1 : 1))
+        .map((x) =>
+          x.id === 1
+            ? {
+                ...x,
+                title: "main release title",
+                normalizedTitle: "main release title",
+                discTitle: "disc 1",
+              }
+            : x
+        )
+    );
+  });
+});
+
+describe("getLatestAdditions function", () => {
+  it("returns the latest added releases grouped by date", async () => {
+    const releases = getFakeReleasesForArtist(1, 20);
+    const artist = getFakeArtist(1);
+    await prisma.artist.create({ data: artist });
+    await prisma.release.createMany({ data: releases });
+
+    const { getLatestAdditions } = releaseController(defaultParams);
+    const result = await getLatestAdditions("2025-11-01");
+
+    expect(result).toMatchObject({
+      "2025-11-11": [
+        { id: 11, createdAt: new Date("2025-11-11T21:41:31.693Z") },
+      ],
+      "2025-12-12": [
+        { id: 12, createdAt: new Date("2025-12-12T21:41:31.693Z") },
+      ],
+    });
+  });
+});
+
+describe("importFolder function", () => {
   it("returns null if the folder has no tracks", async () => {
     const { importFolder } = releaseController(defaultParams);
     const releases = await importFolder("empty/folder");
@@ -138,7 +221,7 @@ describe("release - importFolder function", () => {
   });
 });
 
-describe("release - editRelease function", () => {
+describe("editRelease function", () => {
   it("shows a warning if the new path already exists", async () => {
     const { editRelease } = releaseController(defaultParams);
     const result = await editRelease([]);
@@ -828,5 +911,123 @@ describe("removeAdditionalArtist function", () => {
       ["artists", artists[0].id],
       ["artists", artists[1].id],
     ]);
+  });
+});
+
+describe("deleteRelease function", () => {
+  it("deletes the passed release from library", async () => {
+    const releases = getFakeReleasesForArtist(1);
+    const artist = getFakeArtist(1);
+    await prisma.artist.create({ data: artist });
+    await prisma.release.createMany({ data: releases });
+
+    const { deleteRelease, groupReleases } = releaseController(defaultParams);
+
+    await groupReleases({
+      mainRelease: {
+        id: 1,
+        title: "main release title",
+      },
+      discInfo: [
+        { id: 1, title: "disc 1", number: 1 },
+        { id: 2, title: "disc 2", number: 2 },
+      ],
+    });
+
+    await deleteRelease(1);
+
+    const updatedReleases = await prisma.release.findMany();
+    expect(updatedReleases).toMatchObject(releases.slice(2));
+  });
+});
+
+describe("deleteReleases function", () => {
+  it("deletes the passed releases from library", async () => {
+    const releases = getFakeReleasesForArtist(1);
+    const artist = getFakeArtist(1);
+    await prisma.artist.create({ data: artist });
+    await prisma.release.createMany({ data: releases });
+    const send = vi.fn();
+
+    const { deleteReleases } = releaseController({
+      ...defaultParams,
+      openFolderDialog: vi.fn(),
+      send,
+    });
+
+    await deleteReleases([4, 5]);
+
+    const updatedReleases = await prisma.release.findMany();
+    const updatedArtist = await prisma.artist.findFirst({
+      where: { id: 1 },
+      include: { releases: true },
+    });
+
+    expect(updatedReleases).toMatchObject(releases.slice(0, 3));
+    expect(updatedArtist.releases).toMatchObject(releases.slice(0, 3));
+
+    expect(send).toHaveBeenCalledWith("mutate", [
+      ["releases", "latest"],
+      ["releases", 4],
+      ["releases", 5],
+    ]);
+    expect(send).toHaveBeenCalledWith("clearSelection");
+  });
+});
+
+describe("groupReleases function", () => {
+  it("groups the passed releases together", async () => {
+    const releases = getFakeReleasesForArtist(1);
+    const artist = getFakeArtist(1);
+    await prisma.artist.create({ data: artist });
+    await prisma.release.createMany({ data: releases });
+
+    const { groupReleases } = releaseController(defaultParams);
+
+    await groupReleases({
+      mainRelease: {
+        id: 1,
+        title: "main release title",
+      },
+      discInfo: [
+        { id: 1, title: "disc 1", number: 1 },
+        { id: 2, title: "disc 2", number: 2 },
+      ],
+    });
+
+    const updatedRelease = await prisma.release.findFirst({
+      where: { id: 1 },
+      include: {
+        subReleases: {
+          include: {
+            mainRelease: true,
+          },
+        },
+      },
+    });
+
+    expect(updatedRelease).toMatchObject({
+      ...releases[0],
+      title: "main release title",
+      normalizedTitle: "main release title",
+      discTitle: "disc 1",
+      subReleases: [
+        {
+          ...releases[1],
+          title: "main release title",
+          normalizedTitle: "main release title",
+          mainReleaseId: 1,
+          discNumber: 2,
+          discTitle: "disc 2",
+        },
+      ],
+    });
+
+    expect(updatedRelease.subReleases[0].mainRelease).toMatchObject({
+      ...releases[0],
+      title: "main release title",
+      normalizedTitle: "main release title",
+      discTitle: "disc 1",
+    });
   });
 });
