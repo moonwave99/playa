@@ -7,6 +7,7 @@ import { releaseController } from "./release";
 import { mockFs } from "@/test/mock-fs";
 import {
   ReleaseType,
+  Release,
   ReleaseWithArtist,
   ReleaseWithArtistAndSubreleases,
   ReleaseWithArtistAndTracks,
@@ -118,9 +119,31 @@ describe("importFolder function", () => {
     expect(releases).toEqual([]);
   });
 
-  it("returns null if the folder is malformed", async () => {
-    const { importFolder } = releaseController(defaultParams);
-    const releases = await importFolder("malformed/folder");
+  it("returns null if the folder is malformed", async (context) => {
+    const directory = await mockFs(
+      {
+        "/LIBRARY_PATH/malformed/folder": {
+          "01 - Track 1.mp3": "",
+          "02 - Track 2.mp3": "",
+          "03 - Track 3.mp3": "",
+          "04 - Track 4.mp3": "",
+          "05 - Track 5.mp3": "",
+        },
+      },
+      context.task.id
+    );
+
+    const LIBRARY_PATH = path.join(directory, "LIBRARY_PATH");
+
+    const { importFolder } = releaseController({
+      ...defaultParams,
+      getSetting: (key: string) =>
+        key === "LIBRARY_PATH" ? LIBRARY_PATH : key,
+    });
+
+    const releases = await importFolder(
+      path.join(LIBRARY_PATH, "malformed/folder")
+    );
     expect(releases).toEqual([]);
   });
 
@@ -225,6 +248,40 @@ describe("editRelease function", () => {
     const { editRelease } = releaseController(defaultParams);
     const result = await editRelease([]);
     expect(result).toEqual([]);
+  });
+
+  it("just renames the discs if no other info is changed", async () => {
+    const { editRelease } = releaseController(defaultParams);
+    const spy = vi.spyOn(fsExtra, "move");
+    const releases = getFakeReleasesForArtist(1, 2);
+    await prisma.artist.create({ data: getFakeArtist(1) });
+    await prisma.release.createMany({ data: releases });
+
+    const result = (await editRelease([
+      {
+        ...releases[0],
+        newPath: "Release 1",
+        newDiscTitle: "New Disc 1",
+        newTitle: "Release 1",
+        newYear: 2000,
+        newType: "Album" as ReleaseType,
+      },
+      {
+        ...releases[1],
+        newPath: "Release 2",
+        newDiscTitle: "New Disc 2",
+        newTitle: "Release 2",
+        newYear: 2000,
+        newType: "Album" as ReleaseType,
+      },
+    ])) as ReleaseWithArtist[];
+
+    expect(result).toMatchObject([
+      { discTitle: "New Disc 1" },
+      { discTitle: "New Disc 2" },
+    ]);
+
+    expect(spy).not.toHaveBeenCalled();
   });
 
   it("updates the release info without moving the folder if the passed path is the old one", async (context) => {
@@ -717,6 +774,26 @@ describe("refreshReleaseContents function", () => {
 });
 
 describe("refreshCurrentArtistReleases function", () => {
+  it("does nothing is no release should be refreshed", async () => {
+    const send = vi.fn();
+    const setImporting = vi.fn();
+    const { refreshCurrentArtistReleases } = releaseController({
+      ...defaultParams,
+      send,
+      state: {
+        setImporting,
+        getCurrentArtist: () => ({
+          releases: [] as Release[],
+        }),
+      } as unknown as StateManager,
+    });
+
+    await refreshCurrentArtistReleases();
+
+    expect(send).not.toHaveBeenCalled();
+    expect(setImporting).not.toHaveBeenCalled();
+  });
+
   it("updates the track information for releases of the current selected artist", async () => {
     const artist = getFakeArtist(1);
     const release = getFakeReleasesForArtist(artist.id).at(0);
@@ -941,6 +1018,23 @@ describe("deleteRelease function", () => {
 });
 
 describe("deleteReleases function", () => {
+  it("does nothing is the cancel button is pressed", async () => {
+    const showMessageBoxSync = vi
+      .spyOn(dialog, "showMessageBoxSync")
+      .mockImplementation(() => 1);
+
+    const send = vi.fn();
+    const { deleteReleases } = releaseController({
+      ...defaultParams,
+      openFolderDialog: vi.fn(),
+      send,
+    });
+
+    await deleteReleases([4, 5]);
+    expect(send).not.toHaveBeenCalled();
+    showMessageBoxSync.mockRestore();
+  });
+
   it("deletes the passed releases from library", async () => {
     const releases = getFakeReleasesForArtist(1);
     const artist = getFakeArtist(1);

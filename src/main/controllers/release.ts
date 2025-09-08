@@ -217,6 +217,7 @@ export function releaseController({
     }
     const LIBRARY_PATH = getSetting("LIBRARY_PATH") as string;
     const releaseData = parsePath(folder.split(LIBRARY_PATH).at(1));
+
     if (!releaseData) {
       return null;
     }
@@ -411,6 +412,7 @@ export function releaseController({
     const releasesToRefresh = state
       .getCurrentArtist()
       ?.releases.filter((x: ReleaseWithArtistAndTracks) => !x.tracks.length);
+
     if (!releasesToRefresh.length) {
       return;
     }
