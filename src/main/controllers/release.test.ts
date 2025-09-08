@@ -1,4 +1,5 @@
 import prisma from "../db/prisma";
+import { clearPrisma } from "@/test/prisma-utils";
 import { withPath, getSetting, send } from "@/test/utils";
 import { dialog } from "electron";
 import path from "path";
@@ -20,6 +21,8 @@ import {
   getFakeReleasesForArtist,
 } from "../../test/seed";
 import { sortBy } from "@/lib/utils";
+
+afterEach(clearPrisma);
 
 vi.mock("../covers");
 

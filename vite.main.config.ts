@@ -27,6 +27,7 @@ export default defineConfig({
         "**/seed.ts",
         "**/logger.ts",
         "**/run.ts",
+        "**/menu/*",
       ],
     },
   },

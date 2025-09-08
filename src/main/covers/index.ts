@@ -39,9 +39,9 @@ export function normalizeArtist(artist: string) {
 }
 
 type SearchCoverParams = {
-  release: Release;
-  artist: Artist;
-  track?: Track;
+  release: Pick<Release, "title" | "hash">;
+  artist: Pick<Artist, "name">;
+  track?: Pick<Track, "title">;
   outputPath: string;
 };
 

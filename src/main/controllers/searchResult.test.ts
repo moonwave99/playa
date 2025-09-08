@@ -1,4 +1,5 @@
 import prisma from "../db/prisma";
+import { clearPrisma } from "@/test/prisma-utils";
 import {
   getFakeArtist,
   getFakeCollections,
@@ -7,6 +8,8 @@ import {
   getFakeTracksForRelease,
 } from "../../test/seed";
 import { searchResultController } from "./searchResult";
+
+afterEach(clearPrisma);
 
 describe("searchResult - search function", () => {
   it("returns the results for the given query string", async () => {

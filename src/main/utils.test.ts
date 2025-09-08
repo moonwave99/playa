@@ -1,8 +1,11 @@
 import prisma from "./db/prisma";
+import { clearPrisma } from "@/test/prisma-utils";
 import { getFolderContents, parsePath } from "./utils";
 import { getFakeArtist, getFakeReleasesForArtist } from "../test/seed";
 import path from "path";
 import { mockFs } from "@/test/mock-fs";
+
+afterEach(clearPrisma);
 
 describe("parsePath function", () => {
   it("parses input correctly", () => {

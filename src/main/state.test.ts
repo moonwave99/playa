@@ -1,10 +1,13 @@
 import prisma from "./db/prisma";
+import { clearPrisma } from "@/test/prisma-utils";
 import {
   ArtistWithReleasesFull,
   ReleaseWithArtistAndSubreleases,
 } from "@/types/types";
 import { StateManager } from "./state";
 import { getFakeArtist } from "../test/seed";
+
+afterEach(clearPrisma);
 
 describe("StateManager - constructor", () => {
   it("should initialize a new StateManager", () => {

@@ -1,4 +1,5 @@
 import prisma from "../db/prisma";
+import { clearPrisma } from "@/test/prisma-utils";
 import { getSetting, withPath } from "@/test/utils";
 import {
   getFakeArtist,
@@ -8,6 +9,8 @@ import {
 import { shell, type IpcMainEvent } from "electron";
 import * as run from "../run";
 import { systemController } from "./system";
+
+afterEach(clearPrisma);
 
 vi.mock("../run");
 
