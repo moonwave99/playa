@@ -20,6 +20,13 @@ type ImportExportControllerParams = {
 
 const ON_DONE_DELAY = 5000;
 
+function getDelay() {
+  if (process.env.NODE_ENV === "test") {
+    return 0;
+  }
+  return ON_DONE_DELAY;
+}
+
 export function importExportController({
   openFolderDialog,
   openFileDialog,
@@ -47,7 +54,7 @@ export function importExportController({
         onProgress: (step, completed = false) =>
           send("importData:progress", step, completed),
       });
-      await wait(ON_DONE_DELAY);
+      await wait(getDelay());
       app.relaunch();
       app.exit();
     } catch (error) {

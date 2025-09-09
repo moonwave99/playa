@@ -27,6 +27,8 @@ vi.mock("electron", () => {
     },
     app: {
       getPath: vi.fn(),
+      relaunch: vi.fn(),
+      exit: vi.fn(),
     },
     Menu: {
       setApplicationMenu: vi.fn(),

@@ -168,6 +168,15 @@ export async function seed() {
     },
   });
 
+  await prisma.artist.update({
+    where: { id: 3 },
+    data: {
+      relatedArtists: {
+        connect: [{ id: 4 }],
+      },
+    },
+  });
+
   await prisma.release.update({
     where: { id: 1 },
     data: {
@@ -176,7 +185,33 @@ export async function seed() {
       },
     },
   });
+  await prisma.release.update({
+    where: { id: 2 },
+    data: {
+      additionalArtists: {
+        connect: [{ id: 2 }],
+      },
+    },
+  });
+  await prisma.release.update({
+    where: { id: 1 },
+    data: {
+      additionalArtists: {
+        connect: [{ id: 3 }],
+      },
+    },
+  });
+  await prisma.release.update({
+    where: { id: 3 },
+    data: {
+      additionalArtists: {
+        connect: [{ id: 4 }],
+      },
+    },
+  });
+}
 
+export async function getData() {
   return {
     artists: await prisma.artist.findMany({
       include: {

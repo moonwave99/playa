@@ -265,7 +265,6 @@ export async function importData({
       )
     );
     onProgress("Importing additional relationships", true);
-
     log("importExport:importData", "Done!");
     onProgress("done");
   } catch (error) {
