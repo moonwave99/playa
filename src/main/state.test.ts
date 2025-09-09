@@ -123,3 +123,27 @@ describe("StateManager - setPath", () => {
     }
   });
 });
+
+describe("StateManager - refreshCurrentArtist", () => {
+  it("should do nothing if no current artist is stored in state", async () => {
+    const state = new StateManager();
+    expect(state.getCurrentArtist()).toBe(null);
+    await state.refreshCurrentArtist();
+    expect(state.getCurrentArtist()).toBe(null);
+  });
+  it("should refresh current artist", async () => {
+    const artist = getFakeArtist(1);
+    await prisma.artist.create({ data: artist });
+    const state = new StateManager();
+    state.setCurrentArtist(artist as ArtistWithReleasesFull);
+    expect(state.getCurrentArtist()).toMatchObject({ id: 1 });
+
+    await prisma.artist.update({
+      where: { id: 1 },
+      data: { name: "new name" },
+    });
+
+    await state.refreshCurrentArtist();
+    expect(state.getCurrentArtist()).toMatchObject({ name: "new name" });
+  });
+});
