@@ -63,7 +63,8 @@ export function importExportController({
     if (!outputPath) {
       return;
     }
-    exportData({
+
+    return await exportData({
       userDataPath,
       outputPath,
       appVersion,

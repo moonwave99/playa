@@ -1,3 +1,4 @@
+import prisma from "../main/db/prisma";
 import sha1 from "sha1";
 import { hashArtistName, hashRelease } from "../main/hash";
 import type { Release, HasId } from "@/types/types";
@@ -122,6 +123,79 @@ export function getFakeGroups({
     coverArtistId: artists?.at(0)?.id || null,
     ...connect,
   }));
+}
+
+export async function seed() {
+  const artists = getFakeArtists({ length: 10 });
+  const releases = artists.flatMap((x) => getFakeReleasesForArtist(x.id));
+  await prisma.artist.createMany({ data: artists });
+  await prisma.release.createMany({ data: releases });
+  await prisma.track.createMany({
+    data: releases.flatMap((r) => getFakeTracksForRelease(r.id)),
+  });
+  await Promise.all(
+    getFakeGroups({ length: 3 }).map((x) =>
+      prisma.group.create({
+        data: {
+          ...x,
+          artists: { connect: artists.slice(0, 3).map(({ id }) => ({ id })) },
+        },
+      })
+    )
+  );
+
+  await Promise.all(
+    getFakeCollections({ length: 3 }).map((x, i) =>
+      prisma.collection.create({
+        data: {
+          ...x,
+          releases: {
+            connect: Array.from({ length: 3 }, (_, j) => ({
+              id: j + 1 + 3 * i,
+            })),
+          },
+        },
+      })
+    )
+  );
+
+  await prisma.artist.update({
+    where: { id: 1 },
+    data: {
+      relatedArtists: {
+        connect: [{ id: 2 }],
+      },
+    },
+  });
+
+  await prisma.release.update({
+    where: { id: 1 },
+    data: {
+      additionalArtists: {
+        connect: [{ id: 2 }],
+      },
+    },
+  });
+
+  return {
+    artists: await prisma.artist.findMany({
+      include: {
+        groups: { select: { id: true } },
+        appearsIn: { select: { id: true } },
+        relatedArtists: { select: { id: true } },
+        coverGroups: { select: { id: true } },
+      },
+    }),
+    releases: await prisma.release.findMany({
+      include: {
+        subReleases: { select: { id: true } },
+        coverCollections: { select: { id: true } },
+      },
+    }),
+    tracks: await prisma.track.findMany(),
+    groups: await prisma.group.findMany(),
+    collections: await prisma.collection.findMany(),
+  };
 }
 
 function getDate(id: number) {

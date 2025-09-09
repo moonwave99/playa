@@ -33,3 +33,11 @@ export function withPath(key: keyof typeof settings, folderPath: string) {
 }
 
 export const send = vi.fn();
+
+export function withoutDates<T>(
+  x: T & { createdAt: string | Date; updatedAt: string | Date }
+): Omit<T, "createdAt" | "updatedAt"> {
+  // eslint-disable-next-line  @typescript-eslint/no-unused-vars
+  const { createdAt, updatedAt, ...rest } = x;
+  return rest;
+}
