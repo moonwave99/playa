@@ -1,7 +1,8 @@
 import prisma from "../db/prisma";
+import { clearPrisma } from "../../test/prisma-utils";
+import { dialog } from "electron";
 import { getFakeGroups, getFakeArtists } from "../../test/seed";
 import { groupController } from "./group";
-import { clearPrisma } from "../../test/prisma-utils";
 import { sortBy } from "@/lib/utils";
 
 afterEach(clearPrisma);
@@ -165,6 +166,29 @@ describe("addArtistsToGroup function", async () => {
 });
 
 describe("removeArtistsFromGroup function", async () => {
+  it("does nothing if the cancel button is pressed", async () => {
+    const artists = getFakeArtists({ length: 3 });
+    await prisma.artist.createMany({ data: artists });
+    await prisma.group.create({
+      data: getFakeGroups({ length: 1, artists }).at(0),
+    });
+
+    const dialogSpy = vi.spyOn(dialog, "showMessageBoxSync");
+    dialogSpy.mockReturnValueOnce(1);
+
+    const { removeArtistsFromGroup } = groupController();
+    await removeArtistsFromGroup(1, [2]);
+
+    const result = await prisma.group.findFirst({
+      where: { id: 1 },
+      include: { artists: true },
+    });
+
+    expect(result.artists.length).toBe(artists.length);
+
+    dialogSpy.mockReset();
+  });
+
   it("removes the artists by given ids from the group", async () => {
     const artists = getFakeArtists({ length: 3 });
     await prisma.artist.createMany({ data: artists });

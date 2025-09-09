@@ -1,5 +1,8 @@
 import prisma from "../db/prisma";
+import { clearPrisma } from "../../test/prisma-utils";
+import { dialog } from "electron";
 import { collectionController } from "./collection";
+import { sortBy } from "@/lib/utils";
 import {
   getFakeCollection,
   getFakeCollections,
@@ -7,10 +10,6 @@ import {
   getFakeReleasesForArtist,
   getFakeArtist,
 } from "../../test/seed";
-
-import { sortBy } from "@/lib/utils";
-
-import { clearPrisma } from "../../test/prisma-utils";
 
 afterEach(clearPrisma);
 
@@ -211,26 +210,32 @@ describe("removeReleasesFromCollection function", () => {
   const releases = getFakeReleasesForArtist(artist.id);
   const collection = getFakeCollections({ length: 1 }).at(0);
 
-  it("adds the releases by given ids to the collection", async () => {
+  it("does nothing if the cancel button is pressed", async () => {
     await prisma.artist.create({ data: artist });
     await prisma.release.createMany({ data: releases });
     await prisma.collection.create({
-      data: collection,
+      data: {
+        ...collection,
+        releases: {
+          connect: releases.map((x) => ({ id: x.id })),
+        },
+      },
     });
-    const { addReleasesToCollection } = collectionController();
-    await addReleasesToCollection(1, releases);
-    const updatedCollection = await prisma.collection.findFirst({
+
+    const dialogSpy = vi.spyOn(dialog, "showMessageBoxSync");
+    dialogSpy.mockReturnValueOnce(1);
+
+    const { removeReleasesFromCollection } = collectionController();
+    await removeReleasesFromCollection(1, [2]);
+
+    const result = await prisma.collection.findFirst({
       where: { id: 1 },
       include: { releases: true },
     });
 
-    expect(updatedCollection.releases).toMatchObject([
-      { id: 1 },
-      { id: 2 },
-      { id: 3 },
-      { id: 4 },
-      { id: 5 },
-    ]);
+    expect(result.releases.length).toBe(5);
+
+    dialogSpy.mockReset();
   });
 
   it("removes the releases by given ids from the collection", async () => {
