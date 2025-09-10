@@ -5,7 +5,7 @@ import { dialog } from "electron";
 import path from "path";
 import fsExtra, { existsSync } from "fs-extra";
 import { releaseController } from "./release";
-import { mockFs } from "@/test/mock-fs";
+import { testFs } from "@moonwave99/test-fs";
 import {
   ReleaseType,
   Release,
@@ -123,7 +123,7 @@ describe("importFolder function", () => {
   });
 
   it("returns null if the folder is malformed", async (context) => {
-    const directory = await mockFs(
+    const directory = await testFs(
       {
         "/LIBRARY_PATH/malformed/folder": {
           "01 - Track 1.mp3": "",
@@ -151,7 +151,7 @@ describe("importFolder function", () => {
   });
 
   it("parses the given path, updates the db and returns the created release", async (context) => {
-    const directory = await mockFs(
+    const directory = await testFs(
       {
         "/LIBRARY_PATH/A/Artist 1": {
           "[Album]": {
@@ -183,7 +183,7 @@ describe("importFolder function", () => {
   });
 
   it("parses the given path, updates the db and returns the created releases", async (context) => {
-    const directory = await mockFs(
+    const directory = await testFs(
       {
         "/LIBRARY_PATH/A/Artist 1": {
           "[Album]": {
@@ -288,7 +288,7 @@ describe("editRelease function", () => {
   });
 
   it("updates the release info without moving the folder if the passed path is the old one", async (context) => {
-    const directory = await mockFs(
+    const directory = await testFs(
       {
         "/LIBRARY_PATH/A/Artist 1": {
           "[Album]": {
@@ -379,7 +379,7 @@ describe("editRelease function", () => {
   });
 
   it("shows a warning if the new path exists", async (context) => {
-    const directory = await mockFs(
+    const directory = await testFs(
       {
         "/LIBRARY_PATH/A/Artist 1/[Album]/": {
           "2000 - Release 1": {},
@@ -428,7 +428,7 @@ describe("editRelease function", () => {
   });
 
   it("shows a warning if the old path does not exist", async (context) => {
-    const directory = await mockFs(
+    const directory = await testFs(
       {
         "/LIBRARY_PATH": {},
       },
@@ -471,7 +471,7 @@ describe("editRelease function", () => {
   });
 
   it("should move the release files and update it accordingly", async (context) => {
-    const directory = await mockFs(
+    const directory = await testFs(
       {
         "/LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1": {
           "01 - Track 1.mp3": "",
@@ -535,7 +535,7 @@ describe("editRelease function", () => {
   });
 
   it("should skip moving the current cover if it does not exist", async (context) => {
-    const directory = await mockFs(
+    const directory = await testFs(
       {
         "/LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1": {
           "01 - Track 1.mp3": "",
@@ -607,7 +607,7 @@ describe("importCovers function", () => {
 
 describe("importMissingCovers function", () => {
   it("imports the covers of the releases without an existing cover file", async (context) => {
-    const directory = await mockFs(
+    const directory = await testFs(
       {
         "COVERS_PATH/ee1478c38c24f36e-cover.jpg": "",
       },
@@ -636,7 +636,7 @@ describe("importMissingCovers function", () => {
 
 describe("deleteCover function", () => {
   it("deletes the coves of the given release", async (context) => {
-    const directory = await mockFs(
+    const directory = await testFs(
       {
         "COVERS_PATH/ee1478c38c24f36e-cover.jpg": "",
       },
@@ -673,7 +673,7 @@ describe("downloadCover function", () => {
   });
 
   it("downloads the passed url and stores as the cover for the given release id", async (context) => {
-    const directory = await mockFs({ COVERS_PATH: {} }, context.task.id);
+    const directory = await testFs({ COVERS_PATH: {} }, context.task.id);
     const getSetting = (key: string) => {
       if (key === "LIBRARY_PATH" || key === "COVERS_PATH") {
         return path.join(directory, key);
@@ -739,7 +739,7 @@ describe("refreshReleaseContents function", () => {
   });
 
   it("updates the track information for the given release and returns it", async (context) => {
-    const directory = await mockFs(
+    const directory = await testFs(
       {
         "/LIBRARY_PATH/A/Artist 1": {
           "[Album]": {
@@ -906,7 +906,7 @@ describe("importFolderFromDialog function", () => {
   });
 
   it("imports the contents of the folder picked in the dialog", async (context) => {
-    const directory = await mockFs(
+    const directory = await testFs(
       {
         "/LIBRARY_PATH/A/Artist 1": {
           "[Album]": {

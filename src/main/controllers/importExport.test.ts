@@ -1,6 +1,6 @@
 import { clearPrisma } from "@/test/prisma-utils";
 import { seed, getData } from "@/test/seed";
-import { mockFs } from "@/test/mock-fs";
+import { testFs } from "@moonwave99/test-fs";
 import { withoutDates } from "@/test/utils";
 import { importExportController } from "./importExport";
 import { Open } from "unzipper";
@@ -13,7 +13,7 @@ describe("exportDataFromDialog function", () => {
   it("exports current data to a zip archive", async (context) => {
     await seed();
     const seeded = await getData();
-    const directory = await mockFs(
+    const directory = await testFs(
       {
         Desktop: {
           dumpFolder: {},
@@ -66,7 +66,7 @@ describe("exportDataFromDialog function", () => {
 describe("importDataFromDialog function", () => {
   it("imports data from an archive", async (context) => {
     await seed();
-    const directory = await mockFs(
+    const directory = await testFs(
       {
         Desktop: {
           dumpFolder: {},

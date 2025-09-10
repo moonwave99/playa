@@ -3,7 +3,7 @@ import { dialog } from "electron";
 import path from "path";
 import fsExtra, { existsSync } from "fs-extra";
 import { artistController } from "./artist";
-import { mockFs } from "@/test/mock-fs";
+import { testFs } from "@moonwave99/test-fs";
 import { StateManager } from "../state";
 import { clearPrisma } from "@/test/prisma-utils";
 import {
@@ -69,7 +69,7 @@ describe("artist - getLatestArtists function", () => {
 
 describe("artist - editArtist function", () => {
   it("shows a warning if the new path already exists", async (context) => {
-    const directory = await mockFs(
+    const directory = await testFs(
       { "/LIBRARY_PATH/A/Artist New": {} },
       context.task.id
     );
@@ -104,7 +104,7 @@ describe("artist - editArtist function", () => {
 
   it("updates the artist with the given information", async (context) => {
     const artist = getFakeArtist();
-    const directory = await mockFs(
+    const directory = await testFs(
       { "/LIBRARY_PATH/A/Artist 1": {} },
       context.task.id
     );

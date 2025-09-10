@@ -1,6 +1,6 @@
 import { afterEach } from "vitest";
 import path from "path";
-import { mockFsCleanup } from "./mock-fs";
+import { testFsCleanup } from "@moonwave99/test-fs";
 import type { PrismaClient } from "@prisma/client";
 import { createPrismock } from "prismock";
 import { clearPrisma } from "./prisma-utils";
@@ -62,10 +62,10 @@ vi.mock("music-metadata", () => ({
 }));
 
 beforeEach(async (context) => {
-  await mockFsCleanup(context.task.id);
+  await testFsCleanup(context.task.id);
   clearPrisma();
 });
 
 afterEach(async (context) => {
-  await mockFsCleanup(context.task.id);
+  await testFsCleanup(context.task.id);
 });

@@ -3,7 +3,7 @@ import { clearPrisma } from "@/test/prisma-utils";
 import { getFolderContents, parsePath } from "./utils";
 import { getFakeArtist, getFakeReleasesForArtist } from "../test/seed";
 import path from "path";
-import { mockFs } from "@/test/mock-fs";
+import { testFs } from "@moonwave99/test-fs";
 
 afterEach(clearPrisma);
 
@@ -65,7 +65,7 @@ describe("parsePath function", () => {
 
 describe("getFolderContents function", () => {
   it("returns the track information for the given release", async (context) => {
-    const directory = await mockFs(
+    const directory = await testFs(
       {
         "/LIBRARY_PATH/A/Artist 1": {
           "[Album]": {
