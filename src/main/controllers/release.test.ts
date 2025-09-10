@@ -905,12 +905,29 @@ describe("importFolderFromDialog function", () => {
     expect(send).not.toHaveBeenCalled();
   });
 
-  it("imports the contents of the folder picked in the dialog", async () => {
+  it("imports the contents of the folder picked in the dialog", async (context) => {
+    const directory = await mockFs(
+      {
+        "/LIBRARY_PATH/A/Artist 1": {
+          "[Album]": {
+            "2000 - Release 1": {
+              "01 - Track 1.mp3": "",
+              "02 - Track 2.mp3": "",
+              "03 - Track 3.mp3": "",
+              "04 - Track 4.mp3": "",
+              "05 - Track 5.mp3": "",
+            },
+          },
+        },
+      },
+      context.task.id
+    );
+
     const artist = getFakeArtist(1);
     const send = vi.fn();
     const { importFolderFromDialog } = releaseController({
       ...defaultParams,
-      openFolderDialog: (folder) => [folder],
+      openFolderDialog: (folder) => [path.join(directory, folder)],
       send,
       state: {
         getCurrentArtist: () => artist,
@@ -918,7 +935,14 @@ describe("importFolderFromDialog function", () => {
     });
 
     await importFolderFromDialog();
-    expect(send).toHaveBeenCalledWith("mutate", [["releases", "latest"]]);
+    expect(send).toHaveBeenCalledWith("mutate", [
+      ["releases", "latest"],
+      ["artists", 1],
+    ]);
+    expect(send).toHaveBeenCalledWith("notify", {
+      type: "success",
+      message: `1 releases imported`,
+    });
   });
 });
 
@@ -1074,11 +1098,20 @@ describe("deleteReleases function", () => {
 describe("groupReleases function", () => {
   it("groups the passed releases together", async () => {
     const releases = getFakeReleasesForArtist(1);
-    const artist = getFakeArtist(1);
-    await prisma.artist.create({ data: artist });
+    const artists = getFakeArtists({ length: 2 });
+    await prisma.artist.createMany({ data: artists });
     await prisma.release.createMany({ data: releases });
+    await prisma.release.update({
+      where: { id: 1 },
+      data: { additionalArtists: { connect: [{ id: 2 }] } },
+    });
 
-    const { groupReleases } = releaseController(defaultParams);
+    const send = vi.fn();
+
+    const { groupReleases } = releaseController({
+      ...defaultParams,
+      send,
+    });
 
     await groupReleases({
       mainRelease: {
@@ -1089,6 +1122,17 @@ describe("groupReleases function", () => {
         { id: 1, title: "disc 1", number: 1 },
         { id: 2, title: "disc 2", number: 2 },
       ],
+    });
+
+    expect(send).toHaveBeenCalledWith("mutate", [
+      ["releases", "latest"],
+      ["artists", 1],
+      ["artists", 2],
+    ]);
+    expect(send).toHaveBeenCalledWith("clearSelection");
+    expect(send).toHaveBeenCalledWith("notify", {
+      message: "2 releases grouped",
+      type: "success",
     });
 
     const updatedRelease = await prisma.release.findFirst({

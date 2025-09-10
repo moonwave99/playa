@@ -23,14 +23,15 @@ import {
   getReleases,
   getLatestAdditions,
   updateReleases,
-  groupReleases,
   unGroupRelease,
   deleteRelease,
   addTracksToRelease,
   hideRelease,
   addAdditionalArtist as _addAdditionalArtist,
   removeAdditionalArtist as _removeAdditionalArtist,
+  groupReleases as _groupReleases,
   type AdditionalArtistParams,
+  type GroupReleaseParams,
 } from "../db/release";
 import { getArtist } from "../db/artist";
 import {
@@ -206,12 +207,14 @@ export function releaseController({
         .filter((x) => !x.endsWith("]"))
         .map((f) => importSingleFolder(path.join(folder, f)))
     );
+
     return releases.filter((x: unknown) => !!x);
   }
 
   async function importSingleFolder(folder: string) {
     log("release:importSingleFolder", "Crawling:", folder);
     const contents = await crawlFolder(folder);
+
     if (!contents.length) {
       return null;
     }
@@ -221,7 +224,6 @@ export function releaseController({
     if (!releaseData) {
       return null;
     }
-
     const artistPath = releaseData.fullPath.split("/").slice(0, 2).join("/");
     const artistHash = hashArtistName(releaseData.artist.name);
     const normalizedName = normalizeDiacritics(releaseData.artist.name);
@@ -301,7 +303,6 @@ export function releaseController({
         DISCOGS_SECRET,
       }
     );
-
     return fullRelease;
   }
 
@@ -448,6 +449,7 @@ export function releaseController({
       ["artists", release.artist_id],
     ]);
     send("clearSelection");
+    send("notify", { type: "success", message: "releases ungrouped" });
   }
 
   async function importFolderFromDialog() {
@@ -464,6 +466,11 @@ export function releaseController({
       ["releases", "latest"],
       ...releases.flat().map((x) => ["artists", x.artist_id]),
     ]);
+
+    send("notify", {
+      type: "success",
+      message: `${releases.length} releases imported`,
+    });
   }
 
   async function deleteReleases(release_ids: number[]) {
@@ -511,6 +518,19 @@ export function releaseController({
       ["artists", artist_id],
     ]);
     return result;
+  }
+
+  async function groupReleases(params: GroupReleaseParams) {
+    const { updatedArtists } = await _groupReleases(params);
+    send("mutate", [
+      ["releases", "latest"],
+      ...updatedArtists.map((id: number) => ["artists", id]),
+    ]);
+    send("clearSelection");
+    send("notify", {
+      type: "success",
+      message: `${params.discInfo.length} releases grouped`,
+    });
   }
 
   return {

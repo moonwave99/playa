@@ -119,7 +119,7 @@ export async function addTracksToRelease(id: number, trackInfo: TrackInfo[]) {
   return withEntityType(result, "release");
 }
 
-type GroupReleaseParams = {
+export type GroupReleaseParams = {
   mainRelease: {
     id: number;
     title: string;
@@ -131,7 +131,7 @@ export async function groupReleases({
   mainRelease,
   discInfo,
 }: GroupReleaseParams) {
-  await prisma.$transaction([
+  const result = await prisma.$transaction([
     ...discInfo.slice(1).map(({ id, title, number }) =>
       prisma.release.update({
         where: { id },
@@ -141,6 +141,11 @@ export async function groupReleases({
           mainReleaseId: mainRelease.id,
           discTitle: title,
           discNumber: number,
+        },
+        select: {
+          id: true,
+          artist_id: true,
+          additionalArtists: { select: { id: true } },
         },
       })
     ),
@@ -157,8 +162,24 @@ export async function groupReleases({
           connect: discInfo.slice(1).map(({ id }) => ({ id })),
         },
       },
+      select: {
+        id: true,
+        artist_id: true,
+        additionalArtists: { select: { id: true } },
+      },
     }),
   ]);
+
+  return {
+    updatedArtists: [
+      ...new Set(
+        result.flatMap((x) => [
+          x.artist_id,
+          ...x.additionalArtists.map(({ id }) => id),
+        ])
+      ),
+    ],
+  };
 }
 
 export async function unGroupRelease(release: Release & WithSubReleases) {

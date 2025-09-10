@@ -226,3 +226,8 @@ export type BaseQuery = {
   isPending: boolean;
   error: Error;
 };
+
+export type Notification = {
+  type: "success" | "warning" | "error";
+  message: string;
+};

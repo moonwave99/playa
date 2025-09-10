@@ -7,7 +7,7 @@ import {
   matchPath,
 } from "react-router";
 import { useMediaQuery } from "react-responsive";
-
+import { ToastContainer, toast } from "react-toastify";
 import {
   DndContext,
   DragOverlay,
@@ -47,6 +47,7 @@ import GroupPage from "./pages/GroupPage";
 import Nav from "./components/Nav";
 import SidebarView from "./components/SidebarView";
 import Modal from "./Modal";
+import ToastView from "./components/ToastView";
 
 import { MdOutlineSearch } from "react-icons/md";
 import cx from "clsx";
@@ -59,6 +60,7 @@ import {
   Release,
   ReleaseWithArtist,
   ReleaseWithArtistAndSubreleases,
+  Notification,
 } from "@/types/types";
 
 export default function Layout() {
@@ -116,6 +118,7 @@ export default function Layout() {
           </main>
         </div>
         <Modal setContext={setContext} />
+        <ToastContainer />
       </div>
       <DragOverlay modifiers={[snapCenterToCursor]}>
         {draggedItem && <div className={dragStyles.DragOverlay}>1</div>}
@@ -223,6 +226,15 @@ function init(): Init {
     setPath(fullLocation);
   }, [location]);
 
+  function onNotification(data: Notification) {
+    toast(ToastView, {
+      data,
+      position: "bottom-right",
+      closeButton: false,
+      autoClose: 1500,
+    });
+  }
+
   useEffect(() => {
     api.state.setInputFocused(false);
     api.state.refreshMenu();
@@ -231,6 +243,7 @@ function init(): Init {
     const removeHandlers = [
       api.onToggleViewMode(toggleViewMode),
       api.onMutate(refetch),
+      api.onNotify(onNotification),
       api.onNavigate((path: string) => {
         navigate(path);
         setContext("list");

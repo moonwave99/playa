@@ -11,6 +11,7 @@ import type {
   Sidebars,
   ReleaseWithArtistAndSubreleases,
   GroupWithArtists,
+  Notification,
 } from "./types";
 
 import { artistController } from "@/main/controllers/artist";
@@ -76,6 +77,7 @@ declare global {
       onSwipe: (handler: (direction: 1 | -1) => void) => () => void;
       onNavigateSidebar: (handler: (sidebar: Sidebars) => void) => () => void;
       onMutate: (handler: (keys: QueryKey) => void) => () => void;
+      onNotify: (handler: (notification: Notification) => void) => () => void;
       onClearSelection: (handler: () => void) => () => void;
       onToggleViewMode: (handler: () => void) => () => void;
       onToggleSidebar: (handler: (showSidebar: boolean) => void) => () => void;
