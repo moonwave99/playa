@@ -3,11 +3,8 @@ import { withEntityType } from "@/types/types";
 import type {
   CollectionCreate,
   CollectionUpdate,
-  CollectionWithReleases,
   HasId,
   PaginationParams,
-  Release,
-  ReleaseWithArtist,
 } from "@/types/types";
 
 export async function getCollections({ take = 50 }: PaginationParams) {
@@ -71,7 +68,10 @@ function getSort({ sortBy, order }: SortParams) {
   };
 }
 
-export async function getCollection(id: number, sort = defaultSort) {
+export async function getCollection(
+  id: number,
+  sort: SortParams = defaultSort
+) {
   const result = await prisma.collection.findFirst({
     where: { id },
     include: {
@@ -99,7 +99,7 @@ export async function getCollection(id: number, sort = defaultSort) {
         {
           ...result,
           releases: withEntityType(
-            result.releases.map((x: ReleaseWithArtist) => ({
+            result.releases.map((x) => ({
               ...x,
               artist: withEntityType(x.artist, "artist"),
               additionalArtists: withEntityType(x.additionalArtists, "artist"),
@@ -153,11 +153,16 @@ export async function updateCollection(
         disconnect,
       },
     },
+    include: {
+      releases: {
+        select: { id: true },
+      },
+    },
   });
   return withEntityType(result, "collection");
 }
 
-export async function addReleasesToCollection(id: number, releases: Release[]) {
+export async function addReleasesToCollection(id: number, releases: HasId[]) {
   const result = await prisma.collection.update({
     where: {
       id,
@@ -174,7 +179,7 @@ export async function addReleasesToCollection(id: number, releases: Release[]) {
 export async function removeReleasesFromCollection(
   id: number,
   release_ids: number[]
-): Promise<CollectionWithReleases> {
+) {
   let result = await prisma.collection.update({
     where: {
       id,
@@ -198,20 +203,24 @@ export async function removeReleasesFromCollection(
       data: {
         coverReleaseId: null,
       },
+      include: {
+        releases: {
+          select: {
+            id: true,
+          },
+        },
+      },
     });
   }
   return withEntityType(result, "collection");
 }
 
 export async function deleteCollections(ids: number[]) {
-  return Promise.all(ids.map(deleteCollection));
+  return prisma.collection.deleteMany({ where: { id: { in: ids } } });
 }
 
 export async function deleteCollection(id: number) {
-  const result = await prisma.collection.delete({
-    where: { id },
-  });
-  return result;
+  return prisma.collection.delete({ where: { id } });
 }
 
 export async function setCollectionCoverRelease(

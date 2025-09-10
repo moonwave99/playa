@@ -1,49 +1,39 @@
-import { getFakeArtist, getFakeRelease, getFakeTrack } from "@/test/utils";
+import prisma from "../db/prisma";
 import { statsController } from "./stats";
-import { Collection, Group, SearchableEntities } from "@/types/types";
-import prisma from '../db/__mocks__/prisma';
+import { clearPrisma } from "../../test/prisma-utils";
+import {
+  getFakeArtists,
+  getFakeReleasesForArtist,
+  getFakeTracksForRelease,
+  getFakeCollections,
+  getFakeGroups,
+} from "../../test/seed";
 
-vi.mock('../db/prisma');
+afterEach(clearPrisma);
 
-describe('statsController - getStats function', () => {
-  const artists = [
-    getFakeArtist(1, undefined, { name: 'The Lovers', releases: [] }),
-    getFakeArtist(2, undefined, { name: 'The Haters', releases: [] })
-  ];
+describe("statsController - getStats function", () => {
+  it("returns the library stats", async () => {
+    const artists = getFakeArtists({ length: 2 });
+    const releases = artists.flatMap((x) => getFakeReleasesForArtist(x.id, 3));
+    const tracks = releases.flatMap((x) => getFakeTracksForRelease(x.id, 5));
+    const groups = getFakeGroups({ length: 3 });
+    const collections = getFakeCollections({ length: 3 });
 
-  const data = {
-    artist: artists,
-    release: [
-      getFakeRelease(1, 1, undefined, { title: 'I Love You', artist: artists[0] }),
-      getFakeRelease(2, 1, undefined, { title: 'I love you', artist: artists[0] }),
-      getFakeRelease(3, 2, undefined, { title: 'I Hate You', artist: artists[1] }),
-      getFakeRelease(4, 1, undefined, { title: 'I Hate You', artist: artists[0] }),
-    ],
-    track: Array.from({ length: 5 }, (_, i) => getFakeTrack(i, i + 1, i + 1)),
-    group: [] as Group[],
-    collection: [] as Collection[],
-  };
-
-  it('returns the library stats', async () => {
-    Object.entries(data).forEach(([key, value]) => {
-      prisma[key as SearchableEntities].aggregate.mockResolvedValue({
-        _count: { id: value.length },
-        _avg: null,
-        _sum: null,
-        _min: null,
-        _max: null,
-      })
-    });
+    await prisma.artist.createMany({ data: artists });
+    await prisma.release.createMany({ data: releases });
+    await prisma.track.createMany({ data: tracks });
+    await prisma.group.createMany({ data: groups });
+    await prisma.collection.createMany({ data: collections });
 
     const { getStats } = statsController();
     const results = await getStats();
 
     expect(results).toMatchObject({
       artist: 2,
-      release: 4,
-      track: 5,
-      group: 0,
-      collection: 0
+      release: 6,
+      track: 30,
+      group: 3,
+      collection: 3,
     });
   });
 });

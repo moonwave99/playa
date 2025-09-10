@@ -21,7 +21,14 @@ export default defineConfig({
     coverage: {
       provider: "istanbul",
       include: ["src/main"],
-      exclude: ["**/__mocks__/*"],
+      exclude: [
+        "**/__mocks__/*",
+        "**/cover-placeholder.ts",
+        "**/seed.ts",
+        "**/logger.ts",
+        "**/run.ts",
+        "**/menu/*",
+      ],
     },
   },
 });

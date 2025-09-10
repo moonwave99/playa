@@ -30,15 +30,21 @@ export async function exportData({
       dumpTable(table, tempPath)
     )
   );
+
   await outputJSON(path.join(tempPath, `_info.json`), info, {
     spaces: 2,
   });
+
+  const zipPath = path.join(outputPath, `${exportName}.zip`);
+
   try {
-    await zip(tempPath, path.join(outputPath, `${exportName}.zip`));
+    await zip(tempPath, zipPath);
   } catch (error) {
     log("importExport:exportData", "Error zipping", error);
   }
   await remove(tempPath);
+
+  return zipPath;
 }
 
 const includeMap: Record<string, object> = {
@@ -259,7 +265,6 @@ export async function importData({
       )
     );
     onProgress("Importing additional relationships", true);
-
     log("importExport:importData", "Done!");
     onProgress("done");
   } catch (error) {

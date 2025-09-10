@@ -1,59 +1,69 @@
-import { afterEach } from 'vitest';
-import path from 'path';
-import { getTrackPaths } from './utils';
-import { mockFsCleanup } from './mock-fs';
-import prisma from '@/main/db/__mocks__/prisma';
+import { afterEach } from "vitest";
+import path from "path";
+import { mockFsCleanup } from "./mock-fs";
+import type { PrismaClient } from "@prisma/client";
+import { createPrismock } from "prismock";
+import { clearPrisma } from "./prisma-utils";
 
-type GlobbyOptions = { cwd: string, onlyDirectories: boolean };
+vi.mock("@prisma/client-generated", async () => {
+  const actual = await vi.importActual<PrismaClient>(
+    "@prisma/client-generated"
+  );
+  const PrismaClient = createPrismock(actual.Prisma);
+  return {
+    ...actual,
+    PrismaClient,
+  };
+});
 
-vi.mock("electron", () => ({
-  shell: {
-    openPath: vi.fn(),
-  },
-  dialog: {
-    showMessageBoxSync: vi.fn(),
-    showOpenDialogSync: vi.fn((...args) => [args[1].defaultPath]),
-  },
-}));
+vi.mock("electron", () => {
+  return {
+    shell: {
+      openPath: vi.fn(),
+    },
+    dialog: {
+      showMessageBoxSync: vi.fn(),
+      showOpenDialogSync: vi.fn((...args) => [args[1].defaultPath]),
+    },
+    app: {
+      getPath: vi.fn(),
+      relaunch: vi.fn(),
+      exit: vi.fn(),
+    },
+    Menu: {
+      setApplicationMenu: vi.fn(),
+      getApplicationMenu: vi.fn(() => ({
+        append: vi.fn(),
+      })),
+    },
+    MenuItem: vi.fn(),
+    ipcMain: {
+      handle: vi.fn(),
+      on: vi.fn(),
+    },
+  };
+});
 
-vi.mock('globby', () => ({
-  globby: (_: string, { cwd, onlyDirectories }: GlobbyOptions): string[] => {
-    if (cwd.includes('empty/folder')) {
-      return [];
-    }
-    if (onlyDirectories) {
-      if (cwd.includes('Single Folder')) {
-        return [];
-      }
-      return [
-        '1999 - Album One',
-        '2000 - Album Two'
-      ];
-    }
-    return getTrackPaths();
-  }
-}));
-
-vi.mock('music-metadata', () => ({
+vi.mock("music-metadata", () => ({
   parseFile: async (filePath: string) => {
-    const index = parseInt(path.basename(filePath).split('-').at(0));
+    const index = parseInt(path.basename(filePath).split("-").at(0));
     return Promise.resolve({
       common: {
         title: `Track ${index}`,
         track: {
-          no: index
-        }
+          no: index,
+        },
       },
       format: {
-        duration: 123
-      }
+        duration: 123,
+      },
     });
-  }
+  },
 }));
 
 beforeEach(async (context) => {
   await mockFsCleanup(context.task.id);
-  prisma.$transaction.mockImplementation((x: unknown) => Promise.resolve(x));
+  clearPrisma();
 });
 
 afterEach(async (context) => {

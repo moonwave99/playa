@@ -8,8 +8,6 @@ import type {
   PaginationParams,
   Release,
   WithSubReleases,
-  ReleaseWithArtistAndSubreleases,
-  ReleaseWithArtist,
 } from "@/types/types";
 import { normalizeDiacritics } from "@/lib/utils";
 
@@ -117,6 +115,7 @@ export async function addTracksToRelease(id: number, trackInfo: TrackInfo[]) {
       },
     },
   });
+
   return withEntityType(result, "release");
 }
 
@@ -138,6 +137,7 @@ export async function groupReleases({
         where: { id },
         data: {
           title: mainRelease.title,
+          normalizedTitle: normalizeDiacritics(mainRelease.title),
           mainReleaseId: mainRelease.id,
           discTitle: title,
           discNumber: number,
@@ -150,6 +150,7 @@ export async function groupReleases({
       },
       data: {
         title: mainRelease.title,
+        normalizedTitle: normalizeDiacritics(mainRelease.title),
         discTitle: discInfo[0].title,
         discNumber: 1,
         subReleases: {
@@ -217,13 +218,13 @@ export async function getReleases({ take = 50, skip = 0 }: PaginationParams) {
       total,
     },
     results: withEntityType(
-      results.map((x: ReleaseWithArtist) => ({
+      results.map((x) => ({
         ...x,
         artist: withEntityType(x.artist, "artist"),
         additionalArtists: withEntityType(x.additionalArtists, "artist"),
       })),
       "release"
-    ) as ReleaseWithArtistAndSubreleases[],
+    ),
   };
 }
 

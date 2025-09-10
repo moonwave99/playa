@@ -216,7 +216,7 @@ export function releaseController({
       return null;
     }
     const LIBRARY_PATH = getSetting("LIBRARY_PATH") as string;
-    const releaseData = parsePath(folder.replace(LIBRARY_PATH, ""));
+    const releaseData = parsePath(folder.split(LIBRARY_PATH).at(1));
 
     if (!releaseData) {
       return null;
@@ -280,6 +280,7 @@ export function releaseController({
       { ...release, artist },
       getSetting("LIBRARY_PATH") as string
     );
+
     const fullRelease = await addTracksToRelease(release.id, trackInfo);
 
     log("release:importSingleFolder", "upserted release:", fullRelease);
@@ -370,7 +371,7 @@ export function releaseController({
     await importCovers(releasesWithoutCover);
   }
 
-  async function deleteCover(release: Release) {
+  async function deleteCover(release: Pick<Release, "id" | "hash">) {
     const cover = withPath("COVERS_PATH", `${release.hash}-cover.jpg`);
     await unlink(cover);
     send("coverUpdate", [release]);
@@ -411,6 +412,7 @@ export function releaseController({
     const releasesToRefresh = state
       .getCurrentArtist()
       ?.releases.filter((x: ReleaseWithArtistAndTracks) => !x.tracks.length);
+
     if (!releasesToRefresh.length) {
       return;
     }

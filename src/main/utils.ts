@@ -47,7 +47,7 @@ export async function crawlFolder(folder: string) {
 }
 
 export async function getFolderContents(
-  release: ReleaseWithArtist,
+  release: Pick<ReleaseWithArtist, "id" | "path" | "type" | "year" | "artist">,
   library_path: string
 ): Promise<TrackInfo[]> {
   const folder = path.join(
