@@ -90,6 +90,7 @@
     "fs-extra": "^11.3.1",
     "globby": "^14.1.0",
     "image-downloader": "^4.3.0",
+    "jdenticon": "^3.3.0",
     "lodash": "^4.17.21",
     "music-metadata": "^11.0.2",
     "picocolors": "^1.1.1",
