@@ -2,7 +2,10 @@
   "name": "playa",
   "productName": "Playa",
   "version": "0.5.0",
-  "repository": "https://github.com/moonwave99/playa",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/moonwave99/playa.git"
+  },
   "homepage": "https://moonwave99.github.io/playa",
   "author": {
     "name": "Diego Caponera",
@@ -40,7 +43,7 @@
     "@electron-forge/plugin-fuses": "^7.7.0",
     "@electron-forge/plugin-vite": "^7.7.0",
     "@electron/fuses": "^1.8.0",
-    "@moonwave99/test-fs": "^0.0.4",
+    "@moonwave99/test-fs": "^0.0.5",
     "@react-router/dev": "^7.3.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
