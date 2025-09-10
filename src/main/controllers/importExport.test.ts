@@ -10,6 +10,23 @@ import { readJSON } from "fs-extra";
 afterEach(clearPrisma);
 
 describe("exportDataFromDialog function", () => {
+  it("does nothing if no file is chosen", async () => {
+    const openFolderDialog = vi.fn();
+
+    const { exportDataFromDialog } = importExportController({
+      openFolderDialog,
+      openFileDialog: vi.fn(),
+      send: vi.fn(),
+      desktopPath: "",
+      userDataPath: "",
+      appVersion: "0.5",
+    });
+
+    openFolderDialog.mockReturnValueOnce(false);
+    const result = await exportDataFromDialog();
+    expect(result).toBeUndefined();
+  });
+
   it("exports current data to a zip archive", async (context) => {
     await seed();
     const seeded = await getData();
@@ -64,6 +81,45 @@ describe("exportDataFromDialog function", () => {
 });
 
 describe("importDataFromDialog function", () => {
+  it("does nothing if no file is chosen", async () => {
+    const send = vi.fn();
+    const openFileDialog = vi.fn();
+
+    const { importDataFromDialog } = importExportController({
+      openFolderDialog: vi.fn(),
+      openFileDialog,
+      desktopPath: "",
+      userDataPath: "",
+      appVersion: "0.5",
+      send,
+    });
+
+    openFileDialog.mockReturnValueOnce(false);
+    await importDataFromDialog();
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("sends an error if the chosen file is not in the .zip format", async () => {
+    const send = vi.fn();
+    const openFileDialog = vi.fn();
+
+    const { importDataFromDialog } = importExportController({
+      openFolderDialog: vi.fn(),
+      openFileDialog,
+      desktopPath: "",
+      userDataPath: "",
+      appVersion: "0.5",
+      send,
+    });
+
+    openFileDialog.mockReturnValueOnce("some/file.ext");
+    await importDataFromDialog();
+    expect(send).toHaveBeenCalledWith(
+      "importData:error",
+      "Import file must be in .zip format"
+    );
+  });
+
   it("imports data from an archive", async (context) => {
     await seed();
     const directory = await testFs(

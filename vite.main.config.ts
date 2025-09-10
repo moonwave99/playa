@@ -23,7 +23,6 @@ export default defineConfig({
       include: ["src/main"],
       exclude: [
         "**/__mocks__/*",
-        "**/cover-placeholder.ts",
         "**/seed.ts",
         "**/logger.ts",
         "**/run.ts",

@@ -59,14 +59,12 @@ async function createWindow() {
   const customProtocol = "playa-cover";
   protocol.handle(customProtocol, async ({ url }) => {
     const { hostname } = new URL(url);
-    if (process.env.COVER_PLACEHOLDERS) {
-      return getCoverPlaceholder(url);
-    }
     try {
       return await net.fetch(`file://${path.join(COVERS_PATH, hostname)}`);
     } catch (error) {
       log("covers", "cover not found:", url);
       log("covers", error);
+      return getCoverPlaceholder(url);
     }
   });
 
