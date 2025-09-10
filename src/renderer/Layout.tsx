@@ -50,6 +50,7 @@ import Modal from "./Modal";
 import ToastView from "./components/ToastView";
 
 import { MdOutlineSearch } from "react-icons/md";
+import { IoClose } from "react-icons/io5";
 import cx from "clsx";
 import styles from "./Layout.module.css";
 import buttonStyles from "./buttons.module.css";
@@ -95,7 +96,7 @@ export default function Layout() {
             [buttonStyles.useDarkText]: useDarkText,
           })}
         >
-          <MdOutlineSearch />
+          {showSidebar ? <IoClose /> : <MdOutlineSearch />}
         </button>
         <Nav />
         <div className={styles.page}>
