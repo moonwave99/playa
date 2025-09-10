@@ -152,25 +152,25 @@ function refreshMenu(
   });
 
   const groupReleasesEntry = menu.getMenuItemById("groupReleases");
-  const ungroupReleasesEntry = menu.getMenuItemById("ungroupRelease");
+  const unGroupReleasesEntry = menu.getMenuItemById("unGroupRelease");
   const isSomeReleaseMain = selectedReleases.some((x) => x?.subReleases.length);
 
   if (isSomeReleaseMain) {
     if (selectedReleases.length > 1) {
       groupReleasesEntry.visible = true;
       groupReleasesEntry.enabled = false;
-      ungroupReleasesEntry.visible = false;
-      ungroupReleasesEntry.enabled = false;
+      unGroupReleasesEntry.visible = false;
+      unGroupReleasesEntry.enabled = false;
     } else if (selectedReleases.length === 1) {
       groupReleasesEntry.visible = false;
       groupReleasesEntry.enabled = false;
-      ungroupReleasesEntry.visible = true;
-      ungroupReleasesEntry.enabled = true;
+      unGroupReleasesEntry.visible = true;
+      unGroupReleasesEntry.enabled = true;
     }
     return;
   }
-  ungroupReleasesEntry.visible = false;
-  ungroupReleasesEntry.enabled = false;
+  unGroupReleasesEntry.visible = false;
+  unGroupReleasesEntry.enabled = false;
   groupReleasesEntry.visible = true;
   groupReleasesEntry.enabled = selectedReleases.length > 1;
 }
@@ -338,11 +338,11 @@ export function initMenu({ controllers, state, send }: InitMenuParams) {
           click: () => send("openGroupDialog", state.getSelectedReleases()),
         },
         {
-          id: "ungroupRelease",
+          id: "unGroupRelease",
           label: `Ungroup Selected Release`,
           accelerator: "Cmd+Shift+G",
           visible: false,
-          click: controllers.release.ungroupSelectedRelease,
+          click: controllers.release.unGroupSelectedRelease,
         },
       ],
     })

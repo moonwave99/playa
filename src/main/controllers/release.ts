@@ -438,7 +438,7 @@ export function releaseController({
     send("mutate", [`${entity._type}s`, entity.id]);
   }
 
-  async function ungroupSelectedRelease() {
+  async function unGroupSelectedRelease() {
     const release = state.getSelectedReleases()[0];
     if (!release) {
       return;
@@ -449,7 +449,7 @@ export function releaseController({
       ["artists", release.artist_id],
     ]);
     send("clearSelection");
-    send("notify", { type: "success", message: "releases ungrouped" });
+    send("notify", { type: "success", message: "releases unGrouped" });
   }
 
   async function importFolderFromDialog() {
@@ -492,6 +492,10 @@ export function releaseController({
       ...release_ids.map((id) => ["releases", id]),
     ]);
     send("clearSelection");
+    send("notify", {
+      type: "success",
+      message: `${release_ids.length} releases deleted`,
+    });
   }
 
   async function addAdditionalArtist({
@@ -550,7 +554,7 @@ export function releaseController({
     deleteCover,
     refreshReleaseContents,
     refreshCurrentArtistReleases,
-    ungroupSelectedRelease,
+    unGroupSelectedRelease,
     importFolderFromDialog,
     refreshEntityRelease,
     hideRelease,
@@ -576,7 +580,7 @@ export const actions = [
   "deleteCover",
   "refreshReleaseContents",
   "refreshCurrentArtistReleases",
-  "ungroupSelectedRelease",
+  "unGroupSelectedRelease",
   "importFolderFromDialog",
   "refreshEntityRelease",
   "hideRelease",

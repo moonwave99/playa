@@ -15,6 +15,7 @@ import { StateManager } from "../state";
 
 type ArtistControllerParams = {
   withPath: (key: string, folderPath: string) => string;
+  send: (channel: string, ...args: unknown[]) => void;
   state: StateManager;
 };
 
@@ -23,7 +24,11 @@ type EditArtistParams = Pick<Artist, "path" | "id"> & {
   newName: string;
 };
 
-export function artistController({ withPath, state }: ArtistControllerParams) {
+export function artistController({
+  withPath,
+  send,
+  state,
+}: ArtistControllerParams) {
   async function editArtist(infos: EditArtistParams) {
     const shouldMoveArtist = infos.newPath !== infos.path;
 
@@ -41,10 +46,12 @@ export function artistController({ withPath, state }: ArtistControllerParams) {
     }
 
     if (shouldMoveArtist) {
-      await move(
-        withPath("LIBRARY_PATH", infos.path),
-        withPath("LIBRARY_PATH", infos.newPath)
-      );
+      const targetPath = withPath("LIBRARY_PATH", infos.newPath);
+      await move(withPath("LIBRARY_PATH", infos.path), targetPath);
+      send("notify", {
+        type: "info",
+        message: `Artist folder moved to ${targetPath}`,
+      });
     }
 
     const updatedArtist = await updateArtist(infos.id, {

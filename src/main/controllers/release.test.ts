@@ -3,7 +3,7 @@ import { clearPrisma } from "@/test/prisma-utils";
 import { withPath, getSetting, send } from "@/test/utils";
 import { dialog } from "electron";
 import path from "path";
-import fsExtra, { existsSync } from "fs-extra";
+import fsExtra, { pathExists } from "fs-extra";
 import { releaseController } from "./release";
 import { testFs } from "@moonwave99/test-fs";
 import {
@@ -514,12 +514,12 @@ describe("editRelease function", () => {
     });
 
     expect(
-      existsSync(
+      await pathExists(
         path.join(directory, "LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1")
       )
     ).toBe(false);
     expect(
-      existsSync(
+      await pathExists(
         path.join(
           directory,
           "LIBRARY_PATH/A/Artist 1/[EP]/2001 - New Release Path"
@@ -527,10 +527,14 @@ describe("editRelease function", () => {
       )
     ).toBe(true);
     expect(
-      existsSync(path.join(directory, "COVERS_PATH/ee1478c38c24f36e-cover.jpg"))
+      await pathExists(
+        path.join(directory, "COVERS_PATH/ee1478c38c24f36e-cover.jpg")
+      )
     ).toBe(false);
     expect(
-      existsSync(path.join(directory, "COVERS_PATH/e1d0657d4ba3bd51-cover.jpg"))
+      await pathExists(
+        path.join(directory, "COVERS_PATH/e1d0657d4ba3bd51-cover.jpg")
+      )
     ).toBe(true);
   });
 
@@ -575,7 +579,9 @@ describe("editRelease function", () => {
     });
 
     expect(
-      existsSync(path.join(directory, "COVERS_PATH/e1d0657d4ba3bd51-cover.jpg"))
+      await pathExists(
+        path.join(directory, "COVERS_PATH/e1d0657d4ba3bd51-cover.jpg")
+      )
     ).toBe(false);
   });
 });
@@ -657,7 +663,7 @@ describe("deleteCover function", () => {
     await deleteCover(release);
     expect(send).toHaveBeenCalledWith("coverUpdate", [release]);
     expect(
-      existsSync(withPath("COVERS_PATH", "e6ff3253fb407e5f-cover.jpg"))
+      await pathExists(withPath("COVERS_PATH", "e6ff3253fb407e5f-cover.jpg"))
     ).toBe(false);
   });
 });
@@ -700,7 +706,7 @@ describe("downloadCover function", () => {
 
       expect(result).toBeTruthy();
       expect(
-        existsSync(
+        await pathExists(
           path.join(directory, `/COVERS_PATH/${release.hash}-cover.jpg`)
         )
       ).toBe(true);
@@ -722,7 +728,7 @@ describe("downloadCover function", () => {
       });
       expect(result).toBe(false);
       expect(
-        existsSync(
+        await pathExists(
           path.join(directory, `/COVERS_PATH/${release.hash}-cover.jpg`)
         )
       ).toBe(false);
@@ -841,20 +847,20 @@ describe("refreshEntityRelease function", () => {
   });
 });
 
-describe("ungroupSelectedRelease function", () => {
+describe("unGroupSelectedRelease function", () => {
   it("does nothing if no release is selected", async () => {
     const send = vi.fn();
-    const { ungroupSelectedRelease } = releaseController({
+    const { unGroupSelectedRelease } = releaseController({
       ...defaultParams,
       send,
       state: {
         getSelectedReleases: () => [],
       } as StateManager,
     });
-    await ungroupSelectedRelease();
+    await unGroupSelectedRelease();
     expect(send).not.toHaveBeenCalled();
   });
-  it("ungroups the selected release", async () => {
+  it("unGroups the selected release", async () => {
     const releases = getFakeReleasesForArtist(1, 2);
     await prisma.artist.create({ data: getFakeArtist(1) });
     await prisma.release.createMany({ data: releases });
@@ -868,7 +874,7 @@ describe("ungroupSelectedRelease function", () => {
     });
 
     const send = vi.fn();
-    const { ungroupSelectedRelease } = releaseController({
+    const { unGroupSelectedRelease } = releaseController({
       ...defaultParams,
       send,
       state: {
@@ -876,7 +882,7 @@ describe("ungroupSelectedRelease function", () => {
           [updatedRelease] as ReleaseWithArtistAndSubreleases[],
       } as StateManager,
     });
-    await ungroupSelectedRelease();
+    await unGroupSelectedRelease();
     send("mutate", [
       ["releases", "latest"],
       ["artists", releases[0].artist_id],

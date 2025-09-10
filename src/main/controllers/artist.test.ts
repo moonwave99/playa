@@ -1,7 +1,7 @@
 import prisma from "../db/prisma";
 import { dialog } from "electron";
 import path from "path";
-import fsExtra, { existsSync } from "fs-extra";
+import fsExtra, { pathExists } from "fs-extra";
 import { artistController } from "./artist";
 import { testFs } from "@moonwave99/test-fs";
 import { StateManager } from "../state";
@@ -17,7 +17,8 @@ afterEach(clearPrisma);
 
 const defaultParams = {
   withPath,
-  state: {} as StateManager,
+  state: {} as unknown as StateManager,
+  send: vi.fn(),
 };
 
 describe("artist - getArtist function", () => {
@@ -75,6 +76,7 @@ describe("artist - editArtist function", () => {
     );
     const state = { setCurrentArtist: vi.fn() } as unknown as StateManager;
     const { editArtist } = artistController({
+      ...defaultParams,
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
       state,
     });
@@ -109,9 +111,11 @@ describe("artist - editArtist function", () => {
       context.task.id
     );
     const state = { setCurrentArtist: vi.fn() } as unknown as StateManager;
+    const send = vi.fn();
     const { editArtist } = artistController({
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
       state,
+      send,
     });
 
     await prisma.artist.create({ data: artist });
@@ -122,16 +126,20 @@ describe("artist - editArtist function", () => {
       newPath: "A/Artist New",
     });
 
+    const previousPath = path.join(directory, "LIBRARY_PATH/A/Artist");
+    const newPath = path.join(directory, "LIBRARY_PATH/A/Artist New");
+
     expect(result).toBeTruthy();
 
-    expect(existsSync(path.join(directory, "LIBRARY_PATH/A/Artist"))).toBe(
-      false
-    );
-    expect(existsSync(path.join(directory, "LIBRARY_PATH/A/Artist New"))).toBe(
-      true
-    );
+    expect(await pathExists(previousPath)).toBe(false);
+    expect(await pathExists(newPath)).toBe(true);
 
     expect(state.setCurrentArtist).toHaveBeenCalled();
+
+    expect(send).toHaveBeenCalledWith("notify", {
+      message: `Artist folder moved to ${newPath}`,
+      type: "info",
+    });
   });
 });
 

@@ -228,6 +228,6 @@ export type BaseQuery = {
 };
 
 export type Notification = {
-  type: "success" | "warning" | "error";
+  type: "success" | "info" | "warning" | "error";
   message: string;
 };
