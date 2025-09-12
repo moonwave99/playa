@@ -3,7 +3,7 @@ import api from "../api";
 import type {
   Artist,
   ReleaseWithArtist,
-  ReleaseWithArtistAndSubreleases,
+  ReleaseWithArtistAndSubReleases,
   Sidebars,
 } from "@/types/types";
 
@@ -73,7 +73,7 @@ export function useOnOpenGroupDialog(
 }
 
 export function useOnOpenEditReleaseDialog(
-  callback: (release: ReleaseWithArtistAndSubreleases) => void
+  callback: (release: ReleaseWithArtistAndSubReleases) => void
 ) {
   useEffect(() => {
     const unsubscribe = api.onOpenEditReleaseDialog(callback);

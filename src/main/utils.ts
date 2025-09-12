@@ -4,7 +4,7 @@ import type {
   Artist,
   ReleaseType,
   Release,
-  Entities,
+  EntityType,
   ReleaseWithArtist,
   TrackInfo,
   TrackWithRelease,
@@ -12,16 +12,17 @@ import type {
 import { globby } from "globby";
 import { VARIOUS_ARTISTS_NAME, VARIOUS_ARTISTS_FOLDER } from "@/lib/utils";
 
-type GetEntityPathParam = { _type: Entities } & (
+type GetEntityPathParam = { entityType: EntityType } & (
+  | Pick<Artist, "path">
   | Pick<ReleaseWithArtist, "artist" | "path" | "type" | "year">
   | Pick<TrackWithRelease, "release" | "path">
 );
 
 export function getEntityPath(entity: GetEntityPathParam) {
-  if (entity._type === "artist") {
+  if (entity.entityType === "Artist") {
     return entity.path;
   }
-  if (entity._type === "release") {
+  if (entity.entityType === "Release") {
     const release = entity as ReleaseWithArtist;
     return path.join(
       release.artist.path,
@@ -52,7 +53,7 @@ export async function getFolderContents(
 ): Promise<TrackInfo[]> {
   const folder = path.join(
     library_path,
-    getEntityPath({ ...release, _type: "release" })
+    getEntityPath({ ...release, entityType: "Release" })
   );
   const contents = await crawlFolder(folder);
   return Promise.all(contents.map(getMetadata));

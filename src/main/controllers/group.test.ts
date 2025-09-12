@@ -29,7 +29,9 @@ describe("getAllGroups function", () => {
     await prisma.group.createMany({ data: groups });
     const { getAllGroups } = groupController();
     const result = await getAllGroups();
-    expect(result).toMatchObject(groups.toSorted(sortBy("title")));
+    expect(result).toMatchObject(
+      (groups as { title: string }[]).toSorted(sortBy("title"))
+    );
   });
 });
 

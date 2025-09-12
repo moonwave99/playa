@@ -2,21 +2,27 @@ import { Controllers, send } from "@/main/controllers/init";
 // eslint-disable-next-line import/no-named-as-default
 import Prisma, { ReleaseType } from "@prisma/client-generated";
 
+export { EntityType } from "@prisma/client-generated";
+
 type Artist = Prisma.Artist & {
-  _type: "artist";
-  coverRelease?: ReleaseWithArtistAndSubreleases;
+  entityType: "Artist";
+  coverRelease?: ReleaseWithArtistAndSubReleases;
 };
-type Release = Prisma.Release & { _type: "release" };
+type Release = Prisma.Release & {
+  entityType: "Release";
+};
 
 type Collection = Prisma.Collection & {
-  _type: "collection";
-  coverRelease?: ReleaseWithArtistAndSubreleases;
+  entityType: "Collection";
+  coverRelease?: ReleaseWithArtistAndSubReleases;
 };
 type Group = Prisma.Group & {
-  _type: "group";
+  entityType: "Group";
   coverArtist?: ArtistWithReleases;
 };
-type Track = Prisma.Track & { _type: "track" };
+type Track = Prisma.Track & {
+  entityType: "Track";
+};
 
 export type { Artist, Release, Collection, Track, ReleaseType, Group };
 
@@ -51,7 +57,7 @@ export type WithReleases = {
 };
 
 type WithReleasesAndSubreleases = {
-  releases: ReleaseWithArtistAndSubreleases[];
+  releases: ReleaseWithArtistAndSubReleases[];
 };
 
 type WithReleasesAndSubreleasesAndTracks = {
@@ -72,6 +78,10 @@ type WithTracks = {
 
 type WithCollections = {
   collections: Collection[];
+};
+
+export type WithCoverRelease = {
+  coverRelease: Release;
 };
 
 export type WithGroups = {
@@ -95,12 +105,11 @@ export type ArtistWithReleases = Artist & WithReleasesAndSubreleases;
 export type ArtistWithReleasesFull = Artist &
   WithRelatedArtists &
   WithReleasesAndSubreleasesAndTracks &
-  WithGroups &
-  WithAppearances;
+  WithAppearances & { groups: Pick<Group, "id" | "title">[] };
 export type CollectionWithReleases = Collection &
   WithReleasesAndSubreleasesAndTracks;
 export type ReleaseWithArtist = Release & WithArtist & WithAdditionalArtists;
-export type ReleaseWithArtistAndSubreleases = Release &
+export type ReleaseWithArtistAndSubReleases = Release &
   WithArtist &
   WithAdditionalArtists &
   WithSubReleases;
@@ -150,7 +159,7 @@ export type PaginationParams = {
 export type SearchParams = Record<string, string>;
 
 export type SearchResult = {
-  _type: "searchResult";
+  entityType: "SearchResult";
   id: number;
   type: SearchableEntities;
   title: string;
@@ -170,23 +179,6 @@ export type Entries<T> = {
 export type ViewMode = "grid" | "list" | "compact";
 
 export type Settings = Record<string, string | number | boolean>;
-
-type WithEntityType<T> = T & { _type: Entities };
-
-export function withEntityType<T>(item: T, _type: Entities): WithEntityType<T>;
-export function withEntityType<T>(
-  item: T[],
-  _type: Entities
-): WithEntityType<T>[];
-export function withEntityType<T>(
-  item: T | T[],
-  _type: Entities
-): WithEntityType<T> | WithEntityType<T>[] {
-  if (Array.isArray(item)) {
-    return item.map((x) => withEntityType(x, _type));
-  }
-  return { ...item, _type };
-}
 
 export type NewReleaseInfo = {
   newPath: string;

@@ -82,39 +82,29 @@ export function init(mainWindow: BrowserWindow) {
   }
 
   const state = new StateManager();
-  const system = systemController({ withPath, getSetting });
-  const artist = artistController({ withPath, state });
-  const release = releaseController({
-    withPath,
-    getSetting,
-    send,
-    state,
-    openFolderDialog,
-  });
-  const collection = collectionController();
-  const group = groupController();
-  const searchResult = searchResultController();
-  const stats = statsController();
-  const importExport = importExportController({
-    openFileDialog,
-    openFolderDialog,
-    desktopPath,
-    userDataPath,
-    appVersion,
-    send,
-  });
-
-  state.onStateChange((state) => refreshMenu(state));
 
   const controllers = {
-    system,
-    artist,
-    release,
-    collection,
-    group,
-    searchResult,
-    stats,
-    importExport,
+    system: systemController({ withPath, getSetting }),
+    artist: artistController({ withPath, state, send }),
+    release: releaseController({
+      withPath,
+      getSetting,
+      send,
+      state,
+      openFolderDialog,
+    }),
+    collection: collectionController(),
+    group: groupController(),
+    searchResult: searchResultController(),
+    stats: statsController(),
+    importExport: importExportController({
+      openFileDialog,
+      openFolderDialog,
+      desktopPath,
+      userDataPath,
+      appVersion,
+      send,
+    }),
   };
 
   const { refreshMenu } = initMenu({
@@ -123,27 +113,18 @@ export function init(mainWindow: BrowserWindow) {
     send,
   });
 
-  const menu = {
-    "menu:release": releaseMenu({ controllers, send }),
-    "menu:artist": artistMenu({ controllers, send }),
-    "menu:collection": collectionMenu({ controllers, send }),
-    "menu:group": groupMenu({ controllers, send }),
-    "menu:searchResult": searchResultMenu({ controllers, send }),
-  };
-
-  const settings = { getSettings, setSettings };
+  state.onStateChange(refreshMenu);
 
   [
-    system,
-    searchResult,
-    artist,
-    release,
-    collection,
-    group,
-    menu,
-    settings,
-    stats,
-    importExport,
+    ...Object.values(controllers),
+    { getSettings, setSettings },
+    {
+      "menu:release": releaseMenu({ controllers, send }),
+      "menu:artist": artistMenu({ controllers, send }),
+      "menu:collection": collectionMenu({ controllers, send }),
+      "menu:group": groupMenu({ controllers, send }),
+      "menu:searchResult": searchResultMenu({ controllers, send }),
+    },
   ].forEach(registerHandlers);
 
   mainWindow.on("swipe", (_, direction) => {

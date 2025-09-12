@@ -9,7 +9,7 @@ import type {
   Collection,
   SearchResult,
   Sidebars,
-  ReleaseWithArtistAndSubreleases,
+  ReleaseWithArtistAndSubReleases,
   GroupWithArtists,
   Notification,
 } from "./types";
@@ -87,14 +87,14 @@ declare global {
       onCoverUpdate: (handler: (releases: Release[]) => void) => () => void;
       onOpenGroupDialog: (handler: (releases: Release[]) => void) => () => void;
       onOpenEditReleaseDialog: (
-        handler: (release: ReleaseWithArtistAndSubreleases) => void
+        handler: (release: ReleaseWithArtistAndSubReleases) => void
       ) => () => void;
       onOpenEditArtistDialog: (
         handler: (artist: ArtistWithReleases) => void
       ) => () => void;
       state: {
         selectReleases: (
-          selectedReleases: ReleaseWithArtistAndSubreleases[]
+          selectedReleases: ReleaseWithArtistAndSubReleases[]
         ) => void;
         setInputFocused: (inputFocused: boolean) => void;
         navigate: (path: string) => void;

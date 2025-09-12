@@ -2,7 +2,7 @@ import { useNavigate } from "react-router";
 import type {
   HasId,
   Release,
-  ReleaseWithArtistAndSubreleases,
+  ReleaseWithArtistAndSubReleases,
   ReleaseWithArtistAndTracksAndSubreleases,
 } from "@/types/types";
 import api from "../api";
@@ -48,7 +48,7 @@ export default function LatestReleases() {
   }
 
   function onEnter(
-    release: ReleaseWithArtistAndSubreleases,
+    release: ReleaseWithArtistAndSubReleases,
     event: KeyboardEvent
   ) {
     if (event.metaKey) {

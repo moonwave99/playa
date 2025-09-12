@@ -1,5 +1,4 @@
 import prisma from "./prisma";
-import { withEntityType } from "@/types/types";
 import type {
   GroupCreate,
   GroupUpdate,
@@ -8,7 +7,7 @@ import type {
 } from "@/types/types";
 
 export async function getGroups({ take = 50 }: PaginationParams) {
-  const results = await prisma.group.findMany({
+  return prisma.group.findMany({
     take,
     orderBy: { updatedAt: "desc" },
     include: {
@@ -50,17 +49,10 @@ export async function getGroups({ take = 50 }: PaginationParams) {
       },
     },
   });
-  return withEntityType(
-    results.map((x) => ({
-      ...x,
-      artists: withEntityType(x.artists, "artist"),
-    })),
-    "group"
-  );
 }
 
 export async function getAllGroups() {
-  const result = await prisma.group.findMany({
+  return prisma.group.findMany({
     orderBy: { title: "asc" },
     include: {
       artists: {
@@ -70,11 +62,10 @@ export async function getAllGroups() {
       },
     },
   });
-  return withEntityType(result, "group");
 }
 
 export async function getGroup(id: number) {
-  const result = await prisma.group.findFirst({
+  return prisma.group.findFirst({
     where: { id },
     include: {
       artists: {
@@ -97,23 +88,15 @@ export async function getGroup(id: number) {
       },
     },
   });
-
-  return result
-    ? withEntityType(
-        { ...result, artists: withEntityType(result.artists, "artist") },
-        "group"
-      )
-    : null;
 }
 
 export async function createGroup({ title, artists = [] }: GroupCreate) {
-  const result = await prisma.group.create({
+  return prisma.group.create({
     data: {
       title,
       artists: { connect: artists.map((id) => ({ id })) },
     },
   });
-  return withEntityType(result, "group");
 }
 
 export async function updateGroup(id: number, { title, artists }: GroupUpdate) {
@@ -131,7 +114,7 @@ export async function updateGroup(id: number, { title, artists }: GroupUpdate) {
     .filter(({ id }: HasId) => artists.every((x) => x != id))
     .map(({ id }: HasId) => ({ id }));
 
-  const result = await prisma.group.update({
+  return prisma.group.update({
     where: {
       id,
     },
@@ -143,11 +126,10 @@ export async function updateGroup(id: number, { title, artists }: GroupUpdate) {
       },
     },
   });
-  return withEntityType(result, "group");
 }
 
 export async function addArtistsToGroup(id: number, artists: HasId[]) {
-  const result = await prisma.group.update({
+  return prisma.group.update({
     where: {
       id,
     },
@@ -157,7 +139,6 @@ export async function addArtistsToGroup(id: number, artists: HasId[]) {
       },
     },
   });
-  return withEntityType(result, "group");
 }
 
 export async function removeArtistsFromGroup(id: number, artist_ids: number[]) {
@@ -193,7 +174,7 @@ export async function removeArtistsFromGroup(id: number, artist_ids: number[]) {
     });
   }
 
-  return withEntityType(result, "group");
+  return result;
 }
 
 export async function deleteGroups(ids: number[]) {
@@ -207,9 +188,8 @@ export async function deleteGroup(id: number) {
 }
 
 export async function setGroupCoverArtist(group_id: number, artist_id: number) {
-  const result = await prisma.group.update({
+  return prisma.group.update({
     where: { id: group_id },
     data: { coverArtistId: artist_id },
   });
-  return withEntityType(result, "group");
 }

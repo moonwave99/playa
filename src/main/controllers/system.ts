@@ -1,11 +1,11 @@
 import prisma from "../db/prisma";
-import path from 'path';
-import { shell, type IpcMainEvent } from 'electron';
-import { getSetting } from '../settings';
-import { run } from '../run';
+import path from "path";
+import { shell, type IpcMainEvent } from "electron";
+import { getSetting } from "../settings";
+import { run } from "../run";
 import { getEntityPath } from "../utils";
 import { getRelease } from "../db/release";
-import { ReleaseWithArtistAndSubreleases, Track } from "@/types/types";
+import { ReleaseWithArtistAndSubReleases, Track } from "@/types/types";
 
 type SystemControllerParams = {
   getSetting: (key: string) => ReturnType<typeof getSetting>;
@@ -17,41 +17,55 @@ type PlaybackParams = {
   track_id?: number;
 };
 
-type TrackWithCompleteRelease = Track & { release: ReleaseWithArtistAndSubreleases };
+type TrackWithCompleteRelease = Track & {
+  release: ReleaseWithArtistAndSubReleases;
+};
 
-export function systemController({ getSetting, withPath }: SystemControllerParams) {
-
+export function systemController({
+  getSetting,
+  withPath,
+}: SystemControllerParams) {
   function getPaths(
-    entity: ReleaseWithArtistAndSubreleases | TrackWithCompleteRelease
+    entity: ReleaseWithArtistAndSubReleases | TrackWithCompleteRelease
   ): string[] {
     if ((entity as Track).releaseId) {
       return [
-        withPath('LIBRARY_PATH', getEntityPath({ ...entity, _type: 'track' }))
-      ]
+        withPath(
+          "LIBRARY_PATH",
+          getEntityPath({ ...entity, entityType: "Track" })
+        ),
+      ];
     }
     return [
       entity,
-      ...((entity as ReleaseWithArtistAndSubreleases).subReleases || [])
-    ].map(x => withPath('LIBRARY_PATH', getEntityPath({ ...x, _type: 'release' })))
+      ...((entity as ReleaseWithArtistAndSubReleases).subReleases || []),
+    ].map((x) =>
+      withPath("LIBRARY_PATH", getEntityPath({ ...x, entityType: "Release" }))
+    );
   }
 
   async function playback({ release_id, track_id }: PlaybackParams) {
-    const PLAYER_PATH = getSetting('PLAYER_PATH') as string;
+    const PLAYER_PATH = getSetting("PLAYER_PATH") as string;
 
     if (track_id) {
       const track = await prisma.track.findFirst({
         where: { id: track_id },
         include: {
           release: {
-            include: { artist: true, subReleases: { include: { artist: true } } },
-          }
-        }
+            include: {
+              artist: true,
+              subReleases: {
+                include: { artist: true },
+              },
+            },
+          },
+        },
       });
       if (!track) {
         return false;
       }
 
-      await run('open', ['-a', PLAYER_PATH, ...getPaths(track)]);
+      await run("open", ["-a", PLAYER_PATH, ...getPaths(track)]);
       return true;
     }
 
@@ -64,7 +78,7 @@ export function systemController({ getSetting, withPath }: SystemControllerParam
       return false;
     }
 
-    await run('open', ['-a', PLAYER_PATH, ...getPaths(release)]);
+    await run("open", ["-a", PLAYER_PATH, ...getPaths(release)]);
     return true;
   }
 
@@ -72,32 +86,46 @@ export function systemController({ getSetting, withPath }: SystemControllerParam
     const release = await prisma.release.findFirst({
       where: { id: release_id },
       include: {
-        artist: true
+        artist: true,
       },
     });
     if (!release) {
       return;
     }
-    const TAGGER_PATH = getSetting('TAGGER_PATH') as string;
-    await run('open', ['-a', TAGGER_PATH,
-      withPath('LIBRARY_PATH', getEntityPath({ ...release, _type: 'release' }))
+    const TAGGER_PATH = getSetting("TAGGER_PATH") as string;
+    await run("open", [
+      "-a",
+      TAGGER_PATH,
+      withPath(
+        "LIBRARY_PATH",
+        getEntityPath({ ...release, entityType: "Release" })
+      ),
     ]);
     return true;
   }
 
-  async function revealEntityInFinder(entity: 'release' | 'artist', id: number) {
+  async function revealEntityInFinder(
+    entity: "Release" | "Artist" | "Track",
+    id: number
+  ) {
     let result;
-    if (entity === 'release') {
-      result = await prisma.release.findFirst({ where: { id }, include: { artist: true } });
-    } else {
+    if (entity === "Release") {
+      result = await prisma.release.findFirst({
+        where: { id },
+        include: { artist: true },
+      });
+    } else if (entity === "Artist") {
       result = await prisma.artist.findFirst({ where: { id } });
+    } else {
+      result = await prisma.track.findFirst({
+        where: { id },
+        include: { release: true },
+      });
     }
     if (!result) {
       return;
     }
-    await shell.openPath(
-      withPath('LIBRARY_PATH', getEntityPath({ ...result, _type: entity }))
-    );
+    await shell.openPath(withPath("LIBRARY_PATH", getEntityPath(result)));
     return true;
   }
 
@@ -108,8 +136,8 @@ export function systemController({ getSetting, withPath }: SystemControllerParam
     }
 
     event.sender.startDrag({
-      file: withPath('LIBRARY_PATH', getEntityPath(release)),
-      icon: path.resolve('folder.png')
+      file: withPath("LIBRARY_PATH", getEntityPath(release)),
+      icon: path.resolve("folder.png"),
     });
   }
 
@@ -117,13 +145,13 @@ export function systemController({ getSetting, withPath }: SystemControllerParam
     playback,
     openTagger,
     revealEntityInFinder,
-    startDrag
+    startDrag,
   };
 }
 
 export const actions = [
-  'playback',
-  'openTagger',
-  'revealEntityInFinder',
-  'startDrag'
+  "playback",
+  "openTagger",
+  "revealEntityInFinder",
+  "startDrag",
 ];

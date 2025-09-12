@@ -6,7 +6,7 @@ import type {
   CollectionWithReleases,
   ArtistWithReleases,
   SearchResult,
-  ReleaseWithArtistAndSubreleases,
+  ReleaseWithArtistAndSubReleases,
   GroupWithArtists,
 } from "./types/types";
 
@@ -79,7 +79,7 @@ contextBridge.exposeInMainWorld("api", {
   state: {
     setInputFocused: (inputFocused: boolean) =>
       ipc.send("state:setInputFocused", inputFocused),
-    selectReleases: (selection: ReleaseWithArtistAndSubreleases[]) =>
+    selectReleases: (selection: ReleaseWithArtistAndSubReleases[]) =>
       ipc.send("state:selectReleases", selection),
     navigate: (path: string) => ipc.send("state:navigate", path),
     clearSelection: () => ipc.send("state:clearSelection"),

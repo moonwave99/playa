@@ -4,7 +4,7 @@ import type {
   ReleaseType,
   Release,
   ReleaseWithArtist,
-  ReleaseWithArtistAndSubreleases,
+  ReleaseWithArtistAndSubReleases,
   Artist,
   ReleaseCountByType,
   ReleaseWithArtistAndTracksAndSubreleases,
@@ -34,7 +34,7 @@ export const VARIOUS_ARTISTS_NAME = "_VV_AA_";
 export function getReleaseTitle({
   title,
   subReleases = [],
-}: Pick<ReleaseWithArtistAndSubreleases, "title" | "subReleases">): string {
+}: Pick<ReleaseWithArtistAndSubReleases, "title" | "subReleases">): string {
   if (!subReleases.length) {
     return title;
   }
@@ -102,7 +102,7 @@ export function normalizeArtistDisplayName(name: string) {
   return name === VARIOUS_ARTISTS_NAME ? "Various Artists" : name;
 }
 
-export function getDiscInfo({ subReleases }: ReleaseWithArtistAndSubreleases) {
+export function getDiscInfo({ subReleases }: ReleaseWithArtistAndSubReleases) {
   return subReleases.length ? `(${subReleases.length + 1} discs)` : null;
 }
 
@@ -148,9 +148,7 @@ export function sortBy(key: string, order: "asc" | "desc" = "asc") {
     (a[key] > b[key] ? 1 : -1) * (order === "asc" ? 1 : -1);
 }
 
-export function sortReleasesByTypeAndYear(
-  releases: Pick<Release, "type" | "year" | "title">[]
-) {
+export function sortReleasesByTypeAndYear<T extends Release>(releases: T[]) {
   return releaseTypes.flatMap((type) =>
     releases
       .filter((x) => x.type === type)
@@ -258,20 +256,26 @@ export function withStopPropagation(handler: (event: MouseEvent) => void) {
 type Item =
   | CollectionWithReleases
   | ArtistWithReleases
-  | ReleaseWithArtistAndSubreleases
+  | ReleaseWithArtistAndSubReleases
   | GroupWithArtists;
 
 export function getCoverRelease(
   item: Item
-): ReleaseWithArtistAndSubreleases | null {
-  if (item._type === "release") {
-    return item;
+): ReleaseWithArtistAndSubReleases | null {
+  if (item.entityType === "Release") {
+    return item as ReleaseWithArtistAndSubReleases;
   }
-  if (item._type === "group") {
-    const coverArtist = item.coverArtist || item.artists[0];
+  if (item.entityType === "Group") {
+    const coverArtist =
+      (item as GroupWithArtists).coverArtist ||
+      (item as GroupWithArtists).artists[0];
     return coverArtist ? getCoverRelease(coverArtist) : null;
   }
-  return item.coverRelease || item.releases[0] || null;
+  return (
+    (item as CollectionWithReleases).coverRelease ||
+    (item as ArtistWithReleases).releases[0] ||
+    null
+  );
 }
 
 type NewReleaseInfo = {
@@ -311,7 +315,9 @@ export function didReleaseInfoChange(
   );
 }
 
-export function withCoverRelease(artist: ArtistWithReleases) {
+export function withCoverRelease(
+  artist: ArtistWithReleases
+): ArtistWithReleases {
   return {
     ...artist,
     coverRelease: artist.coverRelease || artist.releases[0],

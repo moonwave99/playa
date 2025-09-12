@@ -1,6 +1,11 @@
 import { Menu, MenuItem, dialog } from "electron";
 import type { MenuItemConstructorOptions } from "electron";
-import type { Context, Entities } from "@/types/types";
+import type {
+  Context,
+  Entities,
+  GroupWithArtists,
+  WithReleases,
+} from "@/types/types";
 import type { QueryKey } from "@tanstack/react-query";
 import { getArtistLink, getRandomLink } from "@/lib/links";
 import { getStats } from "../db/stats";
@@ -18,7 +23,6 @@ import { artistMenu } from "./artist";
 import { collectionMenu } from "./collection";
 import { groupMenu } from "./group";
 import { searchResultMenu } from "./searchResult";
-import { capitalize } from "lodash";
 import type { StateManager, State } from "../state";
 import { send } from "../controllers/init";
 
@@ -40,10 +44,10 @@ function shouldDisplayCoverEntityEntry(context: Context) {
   if (!context) {
     return false;
   }
-  if (context?._type === "group") {
-    return context?.artists.length > 1;
+  if (context?.entityType === "Group") {
+    return (context as GroupWithArtists)?.artists.length > 1;
   }
-  return context?.releases.length > 1;
+  return (context as WithReleases)?.releases.length > 1;
 }
 
 export function getCoverEntityEntry({
@@ -55,9 +59,9 @@ export function getCoverEntityEntry({
     return { type: "separator" };
   }
   return {
-    label: `Set as ${capitalize(context._type)} Cover`,
+    label: `Set as ${context.entityType} Cover`,
     click: async () => {
-      if (context._type === "artist") {
+      if (context.entityType === "Artist") {
         await controllers.artist.setArtistCoverRelease(
           context.id,
           selection_id
@@ -69,7 +73,7 @@ export function getCoverEntityEntry({
         return;
       }
 
-      if (context._type === "group") {
+      if (context.entityType === "Group") {
         await controllers.group.setGroupCoverArtist(context.id, selection_id);
         send("mutate", [
           ["group", "latest"],
@@ -240,7 +244,7 @@ export function initMenu({ controllers, state, send }: InitMenuParams) {
           accelerator: "Cmd+Shift+F",
           click: () =>
             controllers.system.revealEntityInFinder(
-              "artist",
+              "Artist",
               state.getCurrentArtist().id
             ),
         },
@@ -303,7 +307,7 @@ export function initMenu({ controllers, state, send }: InitMenuParams) {
           accelerator: "Shift+F",
           click: () =>
             controllers.system.revealEntityInFinder(
-              "release",
+              "Release",
               state.getSelectedReleases()[0].id
             ),
         },

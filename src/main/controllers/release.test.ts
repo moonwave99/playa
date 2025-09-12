@@ -10,7 +10,7 @@ import {
   ReleaseType,
   Release,
   ReleaseWithArtist,
-  ReleaseWithArtistAndSubreleases,
+  ReleaseWithArtistAndSubReleases,
   ReleaseWithArtistAndTracks,
   Track,
 } from "@/types/types";
@@ -223,7 +223,7 @@ describe("importFolder function", () => {
       importedReleases.sort((a, b) => (a.title > b.title ? 1 : -1))
     ).toMatchObject([
       {
-        _type: "release",
+        entityType: "Release",
         path: "Release 1",
         title: "Release 1",
         hash: "ee1478c38c24f36e",
@@ -232,7 +232,7 @@ describe("importFolder function", () => {
         artist_id: 1,
       },
       {
-        _type: "release",
+        entityType: "Release",
         path: "Release 2",
         title: "Release 2",
         hash: "4af3d5d9da84e183",
@@ -840,7 +840,7 @@ describe("refreshEntityRelease function", () => {
     const artist = await prisma.artist.findFirst({ where: { id: 1 } });
     await refreshEntityRelease({
       ...artist,
-      _type: "artist",
+      entityType: "Artist",
       releases: [],
     });
     expect(send).toHaveBeenCalledWith("mutate", ["artists", 1]);
@@ -879,7 +879,7 @@ describe("unGroupSelectedRelease function", () => {
       send,
       state: {
         getSelectedReleases: () =>
-          [updatedRelease] as ReleaseWithArtistAndSubreleases[],
+          [updatedRelease] as ReleaseWithArtistAndSubReleases[],
       } as StateManager,
     });
     await unGroupSelectedRelease();

@@ -1,15 +1,23 @@
-import { GroupWithArtists, Artist, CollectionWithReleases, Release } from "@/types/types";
-import { CollisionDetection, DragEndEvent, rectIntersection } from "@dnd-kit/core";
+import {
+  GroupWithArtists,
+  Artist,
+  CollectionWithReleases,
+  Release,
+} from "@/types/types";
+import {
+  CollisionDetection,
+  DragEndEvent,
+  rectIntersection,
+} from "@dnd-kit/core";
 import api from "./api";
 import { UseRefetch } from "./hooks/useRefetch";
 
 export async function handleDropEnd(event: DragEndEvent, refetch: UseRefetch) {
   const { active, over } = event;
   if (
-    !over || (
-      !over.data.current.accepts.includes(active.data.current._type) &&
-      !over.data.current.accepts.includes(active.data.current.type)
-    )
+    !over ||
+    (!over.data.current.accepts.includes(active.data.current.entityType) &&
+      !over.data.current.accepts.includes(active.data.current.type))
   ) {
     return;
   }
@@ -38,7 +46,7 @@ async function onGroupDrop({ active, over }: DragEndEvent) {
 
   return [
     ["groups", "latest"],
-    ["groups", group.id]
+    ["groups", group.id],
   ];
 }
 
@@ -54,7 +62,7 @@ async function onCollectionDrop({ active, over }: DragEndEvent) {
 
   return [
     ["collections", "latest"],
-    ["collections", collection.id]
+    ["collections", collection.id],
   ];
 }
 
@@ -80,4 +88,4 @@ export const fixCursorSnapOffset: CollisionDetection = (args) => {
     },
   };
   return rectIntersection(updated);
-}
+};

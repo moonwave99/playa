@@ -93,7 +93,7 @@ describe("getFolderContents function", () => {
         ...release,
         artist: {
           ...release.artist,
-          _type: "artist",
+          entityType: "Artist",
         },
       },
       path.join(directory, "LIBRARY_PATH")

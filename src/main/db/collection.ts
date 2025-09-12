@@ -1,5 +1,4 @@
 import prisma from "./prisma";
-import { withEntityType } from "@/types/types";
 import type {
   CollectionCreate,
   CollectionUpdate,
@@ -8,7 +7,7 @@ import type {
 } from "@/types/types";
 
 export async function getCollections({ take = 50 }: PaginationParams) {
-  const results = await prisma.collection.findMany({
+  return prisma.collection.findMany({
     take,
     orderBy: { updatedAt: "desc" },
     include: {
@@ -30,11 +29,10 @@ export async function getCollections({ take = 50 }: PaginationParams) {
       },
     },
   });
-  return withEntityType(results, "collection");
 }
 
 export async function getAllCollections() {
-  const result = await prisma.collection.findMany({
+  return prisma.collection.findMany({
     orderBy: { title: "asc" },
     include: {
       releases: {
@@ -44,7 +42,6 @@ export async function getAllCollections() {
       },
     },
   });
-  return withEntityType(result, "collection");
 }
 
 type SortParams = {
@@ -72,7 +69,7 @@ export async function getCollection(
   id: number,
   sort: SortParams = defaultSort
 ) {
-  const result = await prisma.collection.findFirst({
+  return prisma.collection.findFirst({
     where: { id },
     include: {
       releases: {
@@ -94,35 +91,18 @@ export async function getCollection(
       },
     },
   });
-  return result
-    ? withEntityType(
-        {
-          ...result,
-          releases: withEntityType(
-            result.releases.map((x) => ({
-              ...x,
-              artist: withEntityType(x.artist, "artist"),
-              additionalArtists: withEntityType(x.additionalArtists, "artist"),
-            })),
-            "release"
-          ),
-        },
-        "collection"
-      )
-    : null;
 }
 
 export async function createCollection({
   title,
   releases = [],
 }: CollectionCreate) {
-  const result = await prisma.collection.create({
+  return prisma.collection.create({
     data: {
       title,
       releases: { connect: releases.map((id) => ({ id })) },
     },
   });
-  return withEntityType(result, "collection");
 }
 
 export async function updateCollection(
@@ -142,7 +122,7 @@ export async function updateCollection(
   const disconnect = collection.releases.filter(({ id }: HasId) =>
     releases.every((x) => x != id)
   );
-  const result = await prisma.collection.update({
+  return prisma.collection.update({
     where: {
       id,
     },
@@ -159,11 +139,10 @@ export async function updateCollection(
       },
     },
   });
-  return withEntityType(result, "collection");
 }
 
 export async function addReleasesToCollection(id: number, releases: HasId[]) {
-  const result = await prisma.collection.update({
+  return prisma.collection.update({
     where: {
       id,
     },
@@ -173,7 +152,6 @@ export async function addReleasesToCollection(id: number, releases: HasId[]) {
       },
     },
   });
-  return withEntityType(result, "collection");
 }
 
 export async function removeReleasesFromCollection(
@@ -212,7 +190,7 @@ export async function removeReleasesFromCollection(
       },
     });
   }
-  return withEntityType(result, "collection");
+  return result;
 }
 
 export async function deleteCollections(ids: number[]) {
@@ -227,9 +205,8 @@ export async function setCollectionCoverRelease(
   collection_id: number,
   release_id: number
 ) {
-  const result = await prisma.collection.update({
+  return prisma.collection.update({
     where: { id: collection_id },
     data: { coverReleaseId: release_id },
   });
-  return withEntityType(result, "collection");
 }

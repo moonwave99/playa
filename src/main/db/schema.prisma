@@ -9,27 +9,29 @@ datasource db {
 }
 
 model Artist {
-  id                      Int       @id @default(autoincrement())
-  createdAt               DateTime  @default(now())
-  updatedAt               DateTime  @updatedAt
+  id                      Int        @id @default(autoincrement())
+  entityType              EntityType @default(Artist)
+  createdAt               DateTime   @default(now())
+  updatedAt               DateTime   @updatedAt
   name                    String
-  normalizedName          String    @default("")
-  hash                    String    @unique
-  path                    String    @default("")
+  normalizedName          String     @default("")
+  hash                    String     @unique
+  path                    String     @default("")
   releases                Release[]
-  coverReleaseId          Int?      @unique
-  coverRelease            Release?  @relation("ArtistCover", fields: [coverReleaseId], references: [id])
-  relatedArtists          Artist[]  @relation("RelatedArtists")
-  symmetricRelatedArtists Artist[]  @relation("RelatedArtists")
-  groups                  Group[]   @relation("GroupToArtist")
-  coverGroups             Group[]   @relation("GroupCover")
-  appearsIn               Release[] @relation("AppearsInRelease")
+  coverReleaseId          Int?       @unique
+  coverRelease            Release?   @relation("ArtistCover", fields: [coverReleaseId], references: [id])
+  relatedArtists          Artist[]   @relation("RelatedArtists")
+  symmetricRelatedArtists Artist[]   @relation("RelatedArtists")
+  groups                  Group[]    @relation("GroupToArtist")
+  coverGroups             Group[]    @relation("GroupCover")
+  appearsIn               Release[]  @relation("AppearsInRelease")
 
   @@index([hash])
 }
 
 model Release {
   id                Int          @id @default(autoincrement())
+  entityType        EntityType   @default(Release)
   createdAt         DateTime     @default(now())
   updatedAt         DateTime     @updatedAt
   title             String
@@ -56,40 +58,43 @@ model Release {
 }
 
 model Track {
-  id              Int      @id @default(autoincrement())
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id              Int        @id @default(autoincrement())
+  entityType      EntityType @default(Track)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
   title           String
-  normalizedTitle String   @default("")
-  hash            String   @unique
+  normalizedTitle String     @default("")
+  hash            String     @unique
   path            String
   duration        Int
   releaseId       Int
   position        Int
-  release         Release  @relation(fields: [releaseId], references: [id], onDelete: Cascade)
+  release         Release    @relation(fields: [releaseId], references: [id], onDelete: Cascade)
 
   @@index([hash])
 }
 
 model Collection {
-  id             Int       @id @default(autoincrement())
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  id             Int        @id @default(autoincrement())
+  entityType     EntityType @default(Collection)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
   title          String
-  releases       Release[] @relation("CollectionToRelease")
+  releases       Release[]  @relation("CollectionToRelease")
   coverReleaseId Int?
-  coverRelease   Release?  @relation("CollectionCover", fields: [coverReleaseId], references: [id])
+  coverRelease   Release?   @relation("CollectionCover", fields: [coverReleaseId], references: [id])
 }
 
 model Group {
-  id            Int      @id @default(autoincrement())
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id            Int        @id @default(autoincrement())
+  entityType    EntityType @default(Group)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
   title         String
   description   String?
-  artists       Artist[] @relation("GroupToArtist")
+  artists       Artist[]   @relation("GroupToArtist")
   coverArtistId Int?
-  coverArtist   Artist?  @relation("GroupCover", fields: [coverArtistId], references: [id])
+  coverArtist   Artist?    @relation("GroupCover", fields: [coverArtistId], references: [id])
 }
 
 enum ReleaseType {
@@ -101,4 +106,12 @@ enum ReleaseType {
   Various
   Tribute
   Soundtrack
+}
+
+enum EntityType {
+  Artist
+  Release
+  Track
+  Group
+  Collection
 }

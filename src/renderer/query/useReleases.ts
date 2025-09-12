@@ -3,13 +3,13 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import type { ReleaseWithArtistAndSubreleases } from "@/types/types";
+import type { ReleaseWithArtistAndSubReleases } from "@/types/types";
 import api from "../api";
 
 type UseReleases = {
   isPending: boolean;
   error: Error;
-  releases: ReleaseWithArtistAndSubreleases[];
+  releases: ReleaseWithArtistAndSubReleases[];
   isFetchingNextPage: boolean;
   hasNextPage: boolean;
   fetchNextPage: () => void;

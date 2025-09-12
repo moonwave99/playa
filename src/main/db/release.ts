@@ -1,7 +1,6 @@
 import prisma from "./prisma";
 import sha1 from "sha1";
 
-import { withEntityType } from "@/types/types";
 import type {
   HasId,
   TrackInfo,
@@ -12,7 +11,7 @@ import type {
 import { normalizeDiacritics } from "@/lib/utils";
 
 export async function getRelease(id: number) {
-  const result = await prisma.release.findFirst({
+  return prisma.release.findFirst({
     where: { id },
     include: {
       artist: true,
@@ -41,17 +40,6 @@ export async function getRelease(id: number) {
       },
     },
   });
-  return result
-    ? withEntityType(
-        {
-          ...result,
-          artist: withEntityType(result.artist, "artist"),
-          additionalArtists: withEntityType(result.additionalArtists, "artist"),
-          collections: withEntityType(result.collections, "collection"),
-        },
-        "release"
-      )
-    : null;
 }
 
 export async function deleteRelease(id: number) {
@@ -97,7 +85,7 @@ export async function addTracksToRelease(id: number, trackInfo: TrackInfo[]) {
     )
   );
 
-  const result = await prisma.release.update({
+  return prisma.release.update({
     where: {
       id,
     },
@@ -115,8 +103,6 @@ export async function addTracksToRelease(id: number, trackInfo: TrackInfo[]) {
       },
     },
   });
-
-  return withEntityType(result, "release");
 }
 
 export type GroupReleaseParams = {
@@ -238,14 +224,7 @@ export async function getReleases({ take = 50, skip = 0 }: PaginationParams) {
       skip,
       total,
     },
-    results: withEntityType(
-      results.map((x) => ({
-        ...x,
-        artist: withEntityType(x.artist, "artist"),
-        additionalArtists: withEntityType(x.additionalArtists, "artist"),
-      })),
-      "release"
-    ),
+    results,
   };
 }
 

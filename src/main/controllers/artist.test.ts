@@ -110,7 +110,10 @@ describe("artist - editArtist function", () => {
       { "/LIBRARY_PATH/A/Artist 1": {} },
       context.task.id
     );
-    const state = { setCurrentArtist: vi.fn() } as unknown as StateManager;
+    const state = {
+      setCurrentArtist: vi.fn(),
+      getCurrentArtist: () => artist,
+    } as unknown as StateManager;
     const send = vi.fn();
     const { editArtist } = artistController({
       withPath: (key, folderPath) => path.join(directory, key, folderPath),

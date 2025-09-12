@@ -3,7 +3,7 @@ import useStore from "./store";
 import { useEffect, useState } from "react";
 import {
   ReleaseWithArtist,
-  ReleaseWithArtistAndSubreleases,
+  ReleaseWithArtistAndSubReleases,
   ArtistWithReleases,
 } from "@/types/types";
 import api from "./api";
@@ -108,7 +108,7 @@ export default function Modal({ setContext }: ModalProps) {
     if (name === "editRelease") {
       return (
         <EditReleaseView
-          release={params.release as ReleaseWithArtistAndSubreleases}
+          release={params.release as ReleaseWithArtistAndSubReleases}
           onSave={closeModal}
           onCancel={closeModal}
         />

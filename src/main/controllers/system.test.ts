@@ -117,7 +117,7 @@ describe("system - openTagger function", () => {
 describe("system revealEntityInFinder function", () => {
   it("does nothing if no release is found", async () => {
     const { revealEntityInFinder } = systemController({ getSetting, withPath });
-    const result = await revealEntityInFinder("release", 1);
+    const result = await revealEntityInFinder("Release", 1);
     expect(result).toBeFalsy();
   });
 
@@ -129,7 +129,7 @@ describe("system revealEntityInFinder function", () => {
     const { revealEntityInFinder } = systemController({ getSetting, withPath });
     const spy = vi.spyOn(shell, "openPath");
 
-    const result = await revealEntityInFinder("release", 1);
+    const result = await revealEntityInFinder("Release", 1);
     expect(result).toBeTruthy();
     expect(spy).toHaveBeenCalledWith(
       "LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1"
@@ -144,7 +144,7 @@ describe("system revealEntityInFinder function", () => {
     const { revealEntityInFinder } = systemController({ getSetting, withPath });
     const spy = vi.spyOn(shell, "openPath");
 
-    const result = await revealEntityInFinder("artist", 1);
+    const result = await revealEntityInFinder("Artist", 1);
     expect(result).toBeTruthy();
     expect(spy).toHaveBeenCalledWith("LIBRARY_PATH/A/Artist 1");
   });

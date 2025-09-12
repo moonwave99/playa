@@ -19,269 +19,257 @@ import styles from "./MusicSidebar.module.css";
 
 const DEBOUNCE_MS = 300;
 
-const MAX_RESULTS_PER_TYPE = 3;
+const MAX_RESULTS_PERentityType = 3;
 
 type MaxSearchResult = SearchResult & {
-    firstOfType?: boolean;
+  firstOfType?: boolean;
 };
 
 function processResults(results: SearchResult[]): MaxSearchResult[] {
-    const countMap = {
-        artist: 0,
-        release: 0,
-        track: 0,
-        collection: 0,
-        group: 0,
-    };
-    return results.reduce(
-        (memo, result) =>
-            countMap[result.type] >= MAX_RESULTS_PER_TYPE
-                ? memo
-                : [
-                      ...memo,
-                      {
-                          ...result,
-                          firstOfType: ++countMap[result.type] === 1,
-                      },
-                  ],
-        []
-    );
+  const countMap = {
+    artist: 0,
+    release: 0,
+    track: 0,
+    collection: 0,
+    group: 0,
+  };
+  return results.reduce(
+    (memo, result) =>
+      countMap[result.type] >= MAX_RESULTS_PERentityType
+        ? memo
+        : [
+            ...memo,
+            {
+              ...result,
+              firstOfType: ++countMap[result.type] === 1,
+            },
+          ],
+    []
+  );
 }
 
 export default function MusicSidebar() {
-    const navigate = useNavigate();
-    const [query, setQuery] = useState("");
-    const [searchType, setSearchType] = useState(null);
-    const [debouncedQuery] = useDebounce(query, DEBOUNCE_MS, {
-        leading: false,
-    });
-    const { isPending, error, results } = useSearch({
-        take: 100,
-        query: debouncedQuery,
-        queryKey: searchType
-            ? ["search", debouncedQuery, searchType]
-            : ["search", debouncedQuery],
-        queryFn: (query, take) =>
-            api.searchResult.getSearchResults({
-                query,
-                take,
-                type: searchType,
-            }),
-    });
-    const { inputRef, currentContext, inputHandlers, listHandlers } =
-        useSidebar({ isPending, setQuery });
+  const navigate = useNavigate();
+  const [query, setQuery] = useState("");
+  const [searchType, setSearchType] = useState(null);
+  const [debouncedQuery] = useDebounce(query, DEBOUNCE_MS, {
+    leading: false,
+  });
+  const { isPending, error, results } = useSearch({
+    take: 100,
+    query: debouncedQuery,
+    queryKey: searchType
+      ? ["search", debouncedQuery, searchType]
+      : ["search", debouncedQuery],
+    queryFn: (query, take) =>
+      api.searchResult.getSearchResults({
+        query,
+        take,
+        type: searchType,
+      }),
+  });
+  const { inputRef, currentContext, inputHandlers, listHandlers } = useSidebar({
+    isPending,
+    setQuery,
+  });
 
-    useEffect(() => {
-        setSearchType(null);
-    }, [query]);
+  useEffect(() => {
+    setSearchType(null);
+  }, [query]);
 
-    if (isPending) {
-        return <Loading />;
+  if (isPending) {
+    return <Loading />;
+  }
+
+  if (error) {
+    return <ErrorView error={error} />;
+  }
+
+  function onEnter(item: SearchResult, event: KeyboardEvent) {
+    if (item.type === "release" && event.metaKey) {
+      api.system.playback({ release_id: item.id });
+      return;
     }
-
-    if (error) {
-        return <ErrorView error={error} />;
+    if (item.type === "track" && event.metaKey) {
+      api.system.playback({
+        release_id: item.coverRelease.id,
+        track_id: item.id,
+      });
+      return;
     }
+    navigate(item.links[item.type]);
+  }
 
-    function onEnter(item: SearchResult, event: KeyboardEvent) {
-        if (item.type === "release" && event.metaKey) {
-            api.system.playback({ release_id: item.id });
-            return;
-        }
-        if (item.type === "track" && event.metaKey) {
-            api.system.playback({
-                release_id: item.coverRelease.id,
-                track_id: item.id,
-            });
-            return;
-        }
-        navigate(item.links[item.type]);
-    }
+  function isDraggable(item: SearchResult) {
+    return ["release", "artist", "searchResult"].includes(item.type);
+  }
 
-    function isDraggable(item: SearchResult) {
-        return ["release", "artist", "searchResult"].includes(item.type);
-    }
+  const trimmedResults = searchType ? results : processResults(results);
 
-    const trimmedResults = searchType ? results : processResults(results);
+  function getItemDimensions(_columns: number, index: number) {
+    return {
+      width: 300,
+      height: (trimmedResults[index] as MaxSearchResult).firstOfType ? 96 : 64,
+    };
+  }
 
-    function getItemDimensions(_columns: number, index: number) {
-        return {
-            width: 300,
-            height: (trimmedResults[index] as MaxSearchResult).firstOfType
-                ? 96
-                : 64,
-        };
-    }
-
-    return (
-        <div className={styles.view}>
-            <input
-                ref={inputRef}
-                className={styles.input}
-                type="search"
-                placeholder="Search music"
-                {...inputHandlers}
-            />
-            {!results.length ? (
-                debouncedQuery && !isPending ? (
-                    <div className={styles.noResults}>
-                        No results for {debouncedQuery}
-                    </div>
-                ) : null
-            ) : (
-                <>
-                    <List
-                        disableMultipleSelection
-                        context="sidebar:list"
-                        className={styles.listWrapper}
-                        items={trimmedResults}
-                        estimateSize={getItemDimensions}
-                        paddingRight={0}
-                        gap={12}
-                        onEnter={onEnter}
-                        {...listHandlers}
-                        render={({ item, selected, onClick }) => (
-                            <SearchResultView
-                                isDraggable={isDraggable(item)}
-                                item={item}
-                                selected={selected}
-                                onClick={onClick}
-                                currentContext={currentContext}
-                                onContextMenu={() =>
-                                    api.menu.searchResult(item)
-                                }
-                                onSearchTypeClick={() =>
-                                    setSearchType(item.type)
-                                }
-                            />
-                        )}
-                    />
-                    {searchType === null ? (
-                        <footer className={styles.footer}>
-                            Showing
-                            <strong className={styles.count}>
-                                {trimmedResults.length}/{results.length}
-                            </strong>
-                            results
-                        </footer>
-                    ) : (
-                        <button
-                            className={styles.footer}
-                            onClick={() => setSearchType(null)}
-                        >
-                            Show all results
-                        </button>
-                    )}
-                </>
+  return (
+    <div className={styles.view}>
+      <input
+        ref={inputRef}
+        className={styles.input}
+        type="search"
+        placeholder="Search music"
+        {...inputHandlers}
+      />
+      {!results.length ? (
+        debouncedQuery && !isPending ? (
+          <div className={styles.noResults}>
+            No results for {debouncedQuery}
+          </div>
+        ) : null
+      ) : (
+        <>
+          <List
+            disableMultipleSelection
+            context="sidebar:list"
+            className={styles.listWrapper}
+            items={trimmedResults}
+            estimateSize={getItemDimensions}
+            paddingRight={0}
+            gap={12}
+            onEnter={onEnter}
+            {...listHandlers}
+            render={({ item, selected, onClick }) => (
+              <SearchResultView
+                isDraggable={isDraggable(item)}
+                item={item}
+                selected={selected}
+                onClick={onClick}
+                currentContext={currentContext}
+                onContextMenu={() => api.menu.searchResult(item)}
+                onSearchTypeClick={() => setSearchType(item.type)}
+              />
             )}
-        </div>
-    );
+          />
+          {searchType === null ? (
+            <footer className={styles.footer}>
+              Showing
+              <strong className={styles.count}>
+                {trimmedResults.length}/{results.length}
+              </strong>
+              results
+            </footer>
+          ) : (
+            <button
+              className={styles.footer}
+              onClick={() => setSearchType(null)}
+            >
+              Show all results
+            </button>
+          )}
+        </>
+      )}
+    </div>
+  );
 }
 
 type SearchResultViewProps = {
-    selected: boolean;
-    item: MaxSearchResult;
-    onClick: (event: MouseEvent) => void;
-    currentContext: string;
-    onContextMenu?: () => void;
-    isDraggable?: boolean;
-    onSearchTypeClick?: () => void;
+  selected: boolean;
+  item: MaxSearchResult;
+  onClick: (event: MouseEvent) => void;
+  currentContext: string;
+  onContextMenu?: () => void;
+  isDraggable?: boolean;
+  onSearchTypeClick?: () => void;
 };
 
 function SearchResultView({
-    item,
-    selected,
-    onContextMenu,
-    onClick,
-    onSearchTypeClick,
-    currentContext,
-    isDraggable = false,
+  item,
+  selected,
+  onContextMenu,
+  onClick,
+  onSearchTypeClick,
+  currentContext,
+  isDraggable = false,
 }: SearchResultViewProps) {
-    const { title, type, artist, links, description, coverRelease } = item;
+  const { title, type, artist, links, description, coverRelease } = item;
 
-    function getTitle(): string {
-        if (type === "release") {
-            return `${artist} - ${title}`;
-        }
-        return title;
+  function getTitle(): string {
+    if (type === "release") {
+      return `${artist} - ${title}`;
     }
+    return title;
+  }
 
-    function getLink() {
-        return links[type];
+  function getLink() {
+    return links[type];
+  }
+
+  function renderCover() {
+    if (type === "release" || coverRelease) {
+      return (
+        <Cover
+          {...(type === "release"
+            ? (item as SearchResult & { hash: string })
+            : coverRelease)}
+          className={styles.coverWrapper}
+        />
+      );
     }
+    return <div className={styles.ghost}></div>;
+  }
 
-    function renderCover() {
-        if (type === "release" || coverRelease) {
-            return (
-                <Cover
-                    {...(type === "release"
-                        ? (item as SearchResult & { hash: string })
-                        : coverRelease)}
-                    className={styles.coverWrapper}
-                />
-            );
-        }
-        return <div className={styles.ghost}></div>;
-    }
-
-    function renderContent() {
-        if (type === "track") {
-            return (
-                <>
-                    <Link to={getLink()} className={styles.title}>
-                        {getTitle()}
-                    </Link>
-                    <span className={styles.type}>
-                        Track by{" "}
-                        <Link
-                            to={item.links.artist}
-                            className={styles.trackArtist}
-                        >
-                            {artist}
-                        </Link>
-                    </span>
-                </>
-            );
-        }
-        return (
-            <>
-                <Link to={getLink()} className={styles.title}>
-                    {getTitle()}
-                </Link>
-                <span className={styles.type}>{description}</span>
-            </>
-        );
-    }
-
-    return (
+  function renderContent() {
+    if (type === "track") {
+      return (
         <>
-            {item.firstOfType && (
-                <h3 className={cx(styles.type, styles.resultType)}>
-                    {type}s
-                    <button
-                        className={styles.showAll}
-                        onClick={onSearchTypeClick}
-                    >
-                        Show all
-                    </button>
-                </h3>
-            )}
-            <article
-                onClick={onClick}
-                className={cx(styles.listItem, {
-                    [styles.isDraggable]: isDraggable,
-                    [styles.selected]: selected,
-                    [styles.hasFocus]:
-                        selected && doContextsMatch(currentContext, "sidebar"),
-                })}
-                onContextMenu={onContextMenu}
-            >
-                {renderCover()}
-                <div className={styles.description}>{renderContent()}</div>
-                {isDraggable && (
-                    <Draggable className={styles.dragHandle} item={item} />
-                )}
-            </article>
+          <Link to={getLink()} className={styles.title}>
+            {getTitle()}
+          </Link>
+          <span className={styles.type}>
+            Track by{" "}
+            <Link to={item.links.artist} className={styles.trackArtist}>
+              {artist}
+            </Link>
+          </span>
         </>
+      );
+    }
+    return (
+      <>
+        <Link to={getLink()} className={styles.title}>
+          {getTitle()}
+        </Link>
+        <span className={styles.type}>{description}</span>
+      </>
     );
+  }
+
+  return (
+    <>
+      {item.firstOfType && (
+        <h3 className={cx(styles.type, styles.resultType)}>
+          {type}s
+          <button className={styles.showAll} onClick={onSearchTypeClick}>
+            Show all
+          </button>
+        </h3>
+      )}
+      <article
+        onClick={onClick}
+        className={cx(styles.listItem, {
+          [styles.isDraggable]: isDraggable,
+          [styles.selected]: selected,
+          [styles.hasFocus]:
+            selected && doContextsMatch(currentContext, "sidebar"),
+        })}
+        onContextMenu={onContextMenu}
+      >
+        {renderCover()}
+        <div className={styles.description}>{renderContent()}</div>
+        {isDraggable && <Draggable className={styles.dragHandle} item={item} />}
+      </article>
+    </>
+  );
 }

@@ -5,16 +5,16 @@ import {
   sortReleasesByTypeAndYear,
   withCoverRelease,
 } from "@/lib/utils";
-import { withEntityType } from "@/types/types";
 import type {
   ArtistWithReleases,
-  ArtistWithReleasesFull,
   PaginationParams,
   ArtistUpdate,
-  ReleaseWithArtist,
+  Release,
+  ReleaseWithArtistAndSubReleases,
+  Track,
 } from "@/types/types";
 
-export async function getArtist(id: number): Promise<ArtistWithReleasesFull> {
+export async function getArtist(id: number) {
   const result = await prisma.artist.findFirst({
     where: { id },
     include: {
@@ -25,7 +25,11 @@ export async function getArtist(id: number): Promise<ArtistWithReleasesFull> {
       },
       relatedArtists: {
         include: {
-          coverRelease: true,
+          coverRelease: {
+            include: {
+              additionalArtists: true,
+            },
+          },
           releases: {
             take: 1,
             where: {
@@ -96,27 +100,18 @@ export async function getArtist(id: number): Promise<ArtistWithReleasesFull> {
   }
 
   const { releases, appearsIn } = result;
-  return withEntityType(
-    {
-      ...result,
-      releases: withEntityType(
-        sortReleasesByTypeAndYear([...releases, ...appearsIn]),
-        "release"
-      ).map((x: ReleaseWithArtist) => ({
-        ...x,
-        artist: withEntityType(x.artist, "artist"),
-        additionalArtists: withEntityType(x.additionalArtists, "artist"),
-      })),
-      relatedArtists: withEntityType(
-        result.relatedArtists.map((x) =>
-          withCoverRelease(x as ArtistWithReleases)
-        ),
-        "artist"
-      ),
-      groups: withEntityType(result.groups, "group"),
-    },
-    "artist"
-  );
+  return {
+    ...result,
+    entityType: "Artist" as const,
+    coverRelease: result.coverRelease as ReleaseWithArtistAndSubReleases,
+    releases: sortReleasesByTypeAndYear([
+      ...(releases as Release[]),
+      ...(appearsIn as Release[]),
+    ]) as (ReleaseWithArtistAndSubReleases & { tracks: Track[] })[],
+    relatedArtists: result.relatedArtists.map((x) =>
+      withCoverRelease(x as ArtistWithReleases)
+    ),
+  };
 }
 
 export async function getLatestArtists({
@@ -138,6 +133,9 @@ export async function getLatestArtists({
           where: {
             mainRelease: null,
           },
+          include: {
+            artist: true,
+          },
         },
       },
     }),
@@ -150,21 +148,12 @@ export async function getLatestArtists({
       skip,
       total,
     },
-    results: results
-      .map(withReleaseCount)
-      .map((x: ArtistWithReleases) => withEntityType(x, "artist"))
-      .map((x: ArtistWithReleases) => ({
-        ...x,
-        releases: withEntityType(
-          x.releases.map((y) => ({ ...y, artist: { name: x.name } })),
-          "release"
-        ),
-      })),
+    results: results.map((x) => withReleaseCount(x as ArtistWithReleases)),
   };
 }
 
 export async function getAllArtists() {
-  const result = await prisma.artist.findMany({
+  return prisma.artist.findMany({
     orderBy: { name: "asc" },
     select: {
       id: true,
@@ -174,7 +163,6 @@ export async function getAllArtists() {
       path: true,
     },
   });
-  return result ? withEntityType(result, "artist") : null;
 }
 
 function withReleaseCount(artist: ArtistWithReleases) {
@@ -182,25 +170,20 @@ function withReleaseCount(artist: ArtistWithReleases) {
 }
 
 export async function updateArtist(id: number, { name, path }: ArtistUpdate) {
-  const result = await prisma.artist.update({
+  return prisma.artist.update({
     where: { id },
     data: { name, normalizedName: normalizeDiacritics(name), path },
-    include: {
-      relatedArtists: true,
-    },
   });
-  return result ? withEntityType(result, "artist") : null;
 }
 
 export async function setArtistCoverRelease(
   artist_id: number,
   release_id: number
 ) {
-  const result = await prisma.artist.update({
+  return await prisma.artist.update({
     where: { id: artist_id },
     data: { coverReleaseId: release_id },
   });
-  return result ? withEntityType(result, "artist") : null;
 }
 
 export type SearchArtistsParams = {
@@ -248,17 +231,28 @@ export async function searchArtists({
       ...getExcludeFilter(exclude),
     },
     include: {
-      coverRelease: true,
+      coverRelease: {
+        include: {
+          subReleases: true,
+          additionalArtists: true,
+          artist: true,
+        },
+      },
       releases: {
         take: 1,
         where: {
           mainRelease: null,
         },
+        include: {
+          subReleases: true,
+          additionalArtists: true,
+          artist: true,
+        },
       },
     },
     orderBy: { name: "asc" },
   });
-  return result.map(withCoverRelease);
+  return result.map((x) => withCoverRelease(x as ArtistWithReleases));
 }
 
 export async function addRelatedArtist(first_id: number, second_id: number) {

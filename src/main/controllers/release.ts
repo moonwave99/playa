@@ -12,6 +12,7 @@ import {
   Context,
   Release,
   Track,
+  Artist,
 } from "@/types/types";
 import {
   didReleaseInfoChange,
@@ -102,11 +103,11 @@ export function releaseController({
       const targetPath = withPath(
         "LIBRARY_PATH",
         getEntityPath({
-          _type: "release",
+          entityType: "Release",
           year: info.newYear,
           type: info.newType,
           path: info.newPath,
-          artist,
+          artist: artist as unknown as Artist,
         })
       );
 
@@ -140,14 +141,18 @@ export function releaseController({
         infos.map(async (x, index) => {
           const oldPath = withPath(
             "LIBRARY_PATH",
-            getEntityPath({ ...x, artist, _type: "release" })
+            getEntityPath({
+              ...x,
+              artist: artist as unknown as Artist,
+              entityType: "Release",
+            })
           );
           const newPath = withPath(
             "LIBRARY_PATH",
             getEntityPath({
               ...x,
-              artist,
-              _type: "release",
+              artist: artist as unknown as Artist,
+              entityType: "Release",
               type: x.newType,
               year: x.newYear,
               path: x.newPath,
@@ -189,9 +194,7 @@ export function releaseController({
     }
   }
 
-  async function importFolder(
-    folder: string
-  ): Promise<ReleaseWithArtistAndTracks[]> {
+  async function importFolder(folder: string) {
     const folders = await globby("**", {
       onlyDirectories: true,
       cwd: folder,
@@ -279,7 +282,7 @@ export function releaseController({
     });
 
     const trackInfo = await getFolderContents(
-      { ...release, artist },
+      { ...release, artist: artist as Artist },
       getSetting("LIBRARY_PATH") as string
     );
 
@@ -393,7 +396,7 @@ export function releaseController({
     const updatedRelease = await Promise.all(
       [release, ...release.subReleases].map(async (release) => {
         const tracks = await getFolderContents(
-          release,
+          release as ReleaseWithArtist,
           getSetting("LIBRARY_PATH") as string
         );
         log("release:refreshReleaseContents", "tracks", tracks);
@@ -403,7 +406,7 @@ export function releaseController({
 
     send("mutate", [
       ["releases", release.id],
-      [`${context?._type}s`, context?.id],
+      [`${context?.entityType.toLowerCase()}s`, context?.id],
     ]);
 
     return updatedRelease;
@@ -435,7 +438,7 @@ export function releaseController({
     entity: ArtistWithReleases | CollectionWithReleases
   ) {
     await Promise.all(entity.releases.map((x) => refreshReleaseContents(x.id)));
-    send("mutate", [`${entity._type}s`, entity.id]);
+    send("mutate", [`${entity.entityType.toLowerCase()}s`, entity.id]);
   }
 
   async function unGroupSelectedRelease() {

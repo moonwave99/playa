@@ -60,7 +60,7 @@ import {
   ArtistWithReleases,
   Release,
   ReleaseWithArtist,
-  ReleaseWithArtistAndSubreleases,
+  ReleaseWithArtistAndSubReleases,
   Notification,
 } from "@/types/types";
 
@@ -173,7 +173,7 @@ function init(): Init {
   useOnOpenGroupDialog((releases: ReleaseWithArtist[]) =>
     setModalContents({ name: "groupReleases", params: { releases } })
   );
-  useOnOpenEditReleaseDialog((release: ReleaseWithArtistAndSubreleases) =>
+  useOnOpenEditReleaseDialog((release: ReleaseWithArtistAndSubReleases) =>
     setModalContents({ name: "editRelease", params: { release } })
   );
   useOnOpenEditArtistDialog((artist: ArtistWithReleases) =>

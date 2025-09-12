@@ -1,14 +1,17 @@
-import { matchPath } from 'react-router';
-import type { ReleaseWithArtistAndSubreleases, ArtistWithReleasesFull } from '@/types/types';
-import { getArtist } from './db/artist';
+import { matchPath } from "react-router";
+import type {
+  ReleaseWithArtistAndSubReleases,
+  ArtistWithReleasesFull,
+} from "@/types/types";
+import { getArtist } from "./db/artist";
 
 export type State = {
-  selectedReleases: ReleaseWithArtistAndSubreleases[];
+  selectedReleases: ReleaseWithArtistAndSubReleases[];
   currentArtist: ArtistWithReleasesFull;
   isInputFocused: boolean;
   isImporting: boolean;
   path: string;
-}
+};
 
 export class StateManager {
   private state: State;
@@ -19,7 +22,7 @@ export class StateManager {
       currentArtist: null,
       isInputFocused: false,
       isImporting: false,
-      path: '',
+      path: "",
     };
   }
   getState(): State {
@@ -28,7 +31,7 @@ export class StateManager {
   getCurrentArtist(): ArtistWithReleasesFull {
     return this.state.currentArtist;
   }
-  getSelectedReleases(): ReleaseWithArtistAndSubreleases[] {
+  getSelectedReleases(): ReleaseWithArtistAndSubReleases[] {
     return this.state.selectedReleases;
   }
   isInputFocused(): boolean {
@@ -40,7 +43,7 @@ export class StateManager {
   onStateChange(handler: (state: State) => void) {
     this.handler = handler;
   }
-  setSelectedReleases(selectedReleases: ReleaseWithArtistAndSubreleases[]) {
+  setSelectedReleases(selectedReleases: ReleaseWithArtistAndSubReleases[]) {
     this.state.selectedReleases = selectedReleases;
     this.onUpdate();
   }
@@ -57,15 +60,17 @@ export class StateManager {
     this.onUpdate();
   }
   isSingleArtistPage() {
-    const artistMatch = matchPath('/artists/:id', this.state.path);
+    const artistMatch = matchPath("/artists/:id", this.state.path);
     return +artistMatch?.params.id;
   }
   async setPath(path: string) {
-    const artistMatch = matchPath('/artists/:id', path);
+    const artistMatch = matchPath("/artists/:id", path);
     this.state.path = path;
     const id = this.isSingleArtistPage();
     if (id) {
-      this.state.currentArtist = await getArtist(+artistMatch.params.id);
+      this.state.currentArtist = (await getArtist(
+        +artistMatch.params.id
+      )) as unknown as ArtistWithReleasesFull;
     } else {
       this.state.currentArtist = null;
     }
@@ -81,6 +86,10 @@ export class StateManager {
     if (!this.state.currentArtist?.id) {
       return;
     }
-    this.setCurrentArtist(await getArtist(this.state.currentArtist.id));
+    this.setCurrentArtist(
+      (await getArtist(
+        this.state.currentArtist.id
+      )) as unknown as ArtistWithReleasesFull
+    );
   }
 }

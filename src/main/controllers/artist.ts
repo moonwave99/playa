@@ -59,7 +59,10 @@ export function artistController({
       path: infos.newPath,
     });
 
-    state.setCurrentArtist(updatedArtist);
+    state.setCurrentArtist({
+      ...state.getCurrentArtist(),
+      ...(updatedArtist as Artist),
+    });
 
     return updatedArtist;
   }

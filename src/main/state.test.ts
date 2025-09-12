@@ -2,7 +2,7 @@ import prisma from "./db/prisma";
 import { clearPrisma } from "@/test/prisma-utils";
 import {
   ArtistWithReleasesFull,
-  ReleaseWithArtistAndSubreleases,
+  ReleaseWithArtistAndSubReleases,
 } from "@/types/types";
 import { StateManager } from "./state";
 import { getFakeArtist } from "../test/seed";
@@ -51,7 +51,7 @@ describe("StateManager - setSelectedReleases / getSelectedReleases", () => {
     state.setSelectedReleases([
       { id: 1 },
       { id: 2 },
-    ] as ReleaseWithArtistAndSubreleases[]);
+    ] as ReleaseWithArtistAndSubReleases[]);
     expect(state.getSelectedReleases()).toMatchObject([{ id: 1 }, { id: 2 }]);
     expect(onChange).toHaveBeenCalledWith(
       expect.objectContaining({

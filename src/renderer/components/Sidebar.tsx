@@ -18,190 +18,188 @@ import styles from "./Sidebar.module.css";
 type Item = Artist | Release | Collection | Group;
 
 type SidebarProps = {
-    label: string;
-    queryConfig: (query: string) => {
-        queryKey: QueryKey;
-        queryFn: () => Promise<Item[]>;
-    };
-    onEnter: (entry: Item) => void;
-    onContextMenu?: (entry: Item) => void;
-    filterFn: (entry: Item, query: string) => boolean;
-    getLink: (entry: Item) => string;
-    getEntryText: (entry: Item) => string;
-    estimateSize?: () => { width: number; height: number };
-    renderItem?: (params: RenderParams<Item>) => ReactNode;
-    showLetters?: boolean;
+  label: string;
+  queryConfig: (query: string) => {
+    queryKey: QueryKey;
+    queryFn: () => Promise<Item[]>;
+  };
+  onEnter: (entry: Item) => void;
+  onContextMenu?: (entry: Item) => void;
+  filterFn: (entry: Item, query: string) => boolean;
+  getLink: (entry: Item) => string;
+  getEntryText: (entry: Item) => string;
+  estimateSize?: () => { width: number; height: number };
+  renderItem?: (params: RenderParams<Item>) => ReactNode;
+  showLetters?: boolean;
 };
 
 export default function Sidebar({
-    label,
-    queryConfig,
-    onEnter,
-    onContextMenu,
-    filterFn,
-    getEntryText,
-    getLink,
-    estimateSize = () => ({
-        width: 300,
-        height: 32,
-    }),
-    renderItem,
-    showLetters,
+  label,
+  queryConfig,
+  onEnter,
+  onContextMenu,
+  filterFn,
+  getEntryText,
+  getLink,
+  estimateSize = () => ({
+    width: 300,
+    height: 32,
+  }),
+  renderItem,
+  showLetters,
 }: SidebarProps) {
-    const [letter, setLetter] = useState(null);
-    const [query, setQuery] = useState("");
-    const { isPending, error, data } = useQuery<Item[]>(queryConfig(query));
-    const { inputRef, currentContext, inputHandlers, listHandlers } =
-        useSidebar({ isPending, setQuery });
+  const [letter, setLetter] = useState(null);
+  const [query, setQuery] = useState("");
+  const { isPending, error, data } = useQuery<Item[]>(queryConfig(query));
+  const { inputRef, currentContext, inputHandlers, listHandlers } = useSidebar({
+    isPending,
+    setQuery,
+  });
 
-    if (isPending) {
-        return <Loading />;
-    }
+  if (isPending) {
+    return <Loading />;
+  }
 
-    if (error) {
-        return <ErrorView error={error} />;
-    }
+  if (error) {
+    return <ErrorView error={error} />;
+  }
 
-    function defaultRenderItem({
-        item,
-        selected,
-        onClick,
-    }: {
-        item: Item;
-        selected: boolean;
-        onClick: (event: MouseEvent) => void;
-    }) {
-        return (
-            <DefaultEntry
-                item={item}
-                selected={selected}
-                currentContext={currentContext}
-                getLink={getLink}
-                getEntryText={getEntryText}
-                onClick={onClick}
-                onContextMenu={onContextMenu}
-                isDraggable={item._type === "artist"}
-            />
-        );
-    }
-
-    const filteredItems = data.filter((item) => filterFn(item, query));
-    const initialIndex =
-        letter === "#"
-            ? 0
-            : filteredItems.findIndex((x) =>
-                  getEntryText(x).toLowerCase().startsWith(letter)
-              );
-
+  function defaultRenderItem({
+    item,
+    selected,
+    onClick,
+  }: {
+    item: Item;
+    selected: boolean;
+    onClick: (event: MouseEvent) => void;
+  }) {
     return (
-        <div className={styles.view}>
-            <input
-                ref={inputRef}
-                className={styles.input}
-                type="search"
-                placeholder={`Search ${label}`}
-                {...inputHandlers}
-            />
-            {!filteredItems.length ? (
-                <div className={styles.noResults}>No results for {query}</div>
-            ) : (
-                <div className={styles.wrapper}>
-                    {showLetters && (
-                        <LettersView
-                            onClick={(letter) => {
-                                setQuery("");
-                                setLetter(letter);
-                            }}
-                        />
-                    )}
-                    <List
-                        context="sidebar:list"
-                        className={styles.listWrapper}
-                        items={filteredItems}
-                        estimateSize={estimateSize}
-                        paddingRight={0}
-                        gap={0}
-                        disableMultipleSelection
-                        onEnter={onEnter}
-                        {...listHandlers}
-                        render={renderItem || defaultRenderItem}
-                        shouldPreventSpace
-                        initialIndex={initialIndex}
-                        onSelect={() => setLetter(null)}
-                    />
-                </div>
-            )}
-            <footer className={styles.footer}>
-                There are{" "}
-                <strong className={styles.count}>{data.length}</strong> {label}{" "}
-                in total
-            </footer>
-        </div>
+      <DefaultEntry
+        item={item}
+        selected={selected}
+        currentContext={currentContext}
+        getLink={getLink}
+        getEntryText={getEntryText}
+        onClick={onClick}
+        onContextMenu={onContextMenu}
+        isDraggable={item.entityType === "Artist"}
+      />
     );
+  }
+
+  const filteredItems = data.filter((item) => filterFn(item, query));
+  const initialIndex =
+    letter === "#"
+      ? 0
+      : filteredItems.findIndex((x) =>
+          getEntryText(x).toLowerCase().startsWith(letter)
+        );
+
+  return (
+    <div className={styles.view}>
+      <input
+        ref={inputRef}
+        className={styles.input}
+        type="search"
+        placeholder={`Search ${label}`}
+        {...inputHandlers}
+      />
+      {!filteredItems.length ? (
+        <div className={styles.noResults}>No results for {query}</div>
+      ) : (
+        <div className={styles.wrapper}>
+          {showLetters && (
+            <LettersView
+              onClick={(letter) => {
+                setQuery("");
+                setLetter(letter);
+              }}
+            />
+          )}
+          <List
+            context="sidebar:list"
+            className={styles.listWrapper}
+            items={filteredItems}
+            estimateSize={estimateSize}
+            paddingRight={0}
+            gap={0}
+            disableMultipleSelection
+            onEnter={onEnter}
+            {...listHandlers}
+            render={renderItem || defaultRenderItem}
+            shouldPreventSpace
+            initialIndex={initialIndex}
+            onSelect={() => setLetter(null)}
+          />
+        </div>
+      )}
+      <footer className={styles.footer}>
+        There are <strong className={styles.count}>{data.length}</strong>{" "}
+        {label} in total
+      </footer>
+    </div>
+  );
 }
 
 type DefaultEntryProps = Pick<
-    SidebarProps,
-    "getLink" | "getEntryText" | "onContextMenu"
+  SidebarProps,
+  "getLink" | "getEntryText" | "onContextMenu"
 > & {
-    selected: boolean;
-    item: Item;
-    onClick: (event: MouseEvent) => void;
-    currentContext: string;
-    isDraggable?: boolean;
+  selected: boolean;
+  item: Item;
+  onClick: (event: MouseEvent) => void;
+  currentContext: string;
+  isDraggable?: boolean;
 };
 
 function DefaultEntry({
-    item,
-    selected,
-    getLink,
-    getEntryText,
-    onContextMenu,
-    onClick,
-    currentContext,
-    isDraggable = false,
+  item,
+  selected,
+  getLink,
+  getEntryText,
+  onContextMenu,
+  onClick,
+  currentContext,
+  isDraggable = false,
 }: DefaultEntryProps) {
-    return (
-        <div
-            className={cx(styles.listItem, {
-                [styles.isDraggable]: isDraggable,
-                [styles.selected]: selected,
-                [styles.hasFocus]:
-                    selected && doContextsMatch(currentContext, "sidebar"),
-            })}
-        >
-            <Link
-                title={`[${item.id}]`}
-                to={getLink(item)}
-                onClick={onClick}
-                onContextMenu={() => onContextMenu && onContextMenu(item)}
-            >
-                {getEntryText(item)}
-            </Link>
-            {isDraggable && (
-                <Draggable
-                    className={styles.dragHandle}
-                    item={item as DraggableItem}
-                />
-            )}
-        </div>
-    );
+  return (
+    <div
+      className={cx(styles.listItem, {
+        [styles.isDraggable]: isDraggable,
+        [styles.selected]: selected,
+        [styles.hasFocus]:
+          selected && doContextsMatch(currentContext, "sidebar"),
+      })}
+    >
+      <Link
+        title={`[${item.id}]`}
+        to={getLink(item)}
+        onClick={onClick}
+        onContextMenu={() => onContextMenu && onContextMenu(item)}
+      >
+        {getEntryText(item)}
+      </Link>
+      {isDraggable && (
+        <Draggable className={styles.dragHandle} item={item as DraggableItem} />
+      )}
+    </div>
+  );
 }
 
 const letters = "#abcdefghijklmnopqrstuvwxyz".split("");
 
 type LettersViewProps = {
-    onClick: (letter: string) => void;
+  onClick: (letter: string) => void;
 };
 
 function LettersView({ onClick }: LettersViewProps) {
-    return (
-        <div className={styles.letters}>
-            {letters.map((x) => (
-                <button key={x} onClick={() => onClick(x)}>
-                    {x}
-                </button>
-            ))}
-        </div>
-    );
+  return (
+    <div className={styles.letters}>
+      {letters.map((x) => (
+        <button key={x} onClick={() => onClick(x)}>
+          {x}
+        </button>
+      ))}
+    </div>
+  );
 }

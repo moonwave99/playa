@@ -19,7 +19,7 @@ import {
 } from "@/lib/links";
 import type {
   ArtistWithReleases,
-  ReleaseWithArtistAndSubreleases,
+  ReleaseWithArtistAndSubReleases,
   ReleaseWithArtistAndTracksAndSubreleases,
   CollectionWithReleases,
   GroupWithArtists,
@@ -39,7 +39,7 @@ import styles from "./ListCard.module.css";
 type Item =
   | CollectionWithReleases
   | ArtistWithReleases
-  | ReleaseWithArtistAndSubreleases
+  | ReleaseWithArtistAndSubReleases
   | ReleaseWithArtistAndTracksAndSubreleases
   | GroupWithArtists;
 
@@ -91,7 +91,7 @@ export default function ListCard({
   const { onMouseEnter, onMouseLeave, isHover } = useHover();
 
   function getContent() {
-    if (item._type === "release") {
+    if (item.entityType === "Release") {
       return (
         <>
           <EntityList
@@ -122,7 +122,7 @@ export default function ListCard({
       );
     }
 
-    if (item._type === "artist") {
+    if (item.entityType === "Artist") {
       return (
         <>
           <Link
@@ -143,7 +143,7 @@ export default function ListCard({
         </>
       );
     }
-    if (item._type === "group") {
+    if (item.entityType === "Group") {
       return (
         <>
           <Link
@@ -181,10 +181,10 @@ export default function ListCard({
   }
 
   function shouldDisplayMultipleCovers() {
-    if (!showMultipleCovers || item._type === "release") {
+    if (!showMultipleCovers || item.entityType === "Release") {
       return false;
     }
-    return item._type === "group"
+    return item.entityType === "Group"
       ? item.artists.length > 1
       : item.releases.length > 1;
   }
@@ -211,7 +211,7 @@ export default function ListCard({
           {...coverRelease}
           onClick={onCoverClick}
           className={styles.cover}
-          title={`${coverRelease.artist.name} - ${getReleaseTitle(
+          title={`${coverRelease?.artist?.name} - ${getReleaseTitle(
             coverRelease
           )}`}
           onLoad={onLoad}
@@ -310,14 +310,14 @@ function MultipleCovers({
 }
 
 type GetCovers = {
-  coverRelease: ReleaseWithArtistAndSubreleases;
-  otherReleases: ReleaseWithArtistAndSubreleases[];
+  coverRelease: ReleaseWithArtistAndSubReleases;
+  otherReleases: ReleaseWithArtistAndSubReleases[];
 };
 
 function getCovers(item: MultipleCoversProps["item"], count = 5): GetCovers {
   const coverRelease = getCoverRelease(item);
   let otherReleases;
-  if (item._type === "group") {
+  if (item.entityType === "Group") {
     otherReleases = item.artists
       .map(getCoverRelease)
       .filter((x) => x.id !== coverRelease.id)
@@ -339,7 +339,7 @@ type MaybeDroppableProps = {
 };
 
 function MaybeDroppable({ item, render }: MaybeDroppableProps) {
-  if (item._type === "group" || item._type === "collection") {
+  if (item.entityType === "Group" || item.entityType === "Collection") {
     return <Droppable item={item} render={render} />;
   }
   return render({ isOver: false, canDrop: false });
