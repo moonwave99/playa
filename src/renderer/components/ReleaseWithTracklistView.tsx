@@ -5,29 +5,38 @@ import Tracklist from "./Tracklist";
 import ListCard from "./ListCard";
 import { withStopPropagation } from "@/lib/utils";
 import useStore from "../store";
+import cx from "clsx";
 import styles from "./ReleaseWithTracklistView.module.css";
 
 type ReleaseWithTracklistViewProps = {
   selected?: boolean;
   hasFocus?: boolean;
   isSingle?: boolean;
+  hideCover?: boolean;
+  className?: string;
   release: ReleaseWithArtistAndTracksAndSubreleases;
   selectedTrackId?: number;
+  context?: string;
   onContextMenu?: (
     selection: ReleaseWithArtistAndTracksAndSubreleases[],
     target_id: number
   ) => void;
   onClick?: (event: MouseEvent) => void;
+  onLinkClick?: () => void;
 };
 
 export default function ReleaseWithTracklistView({
   selected,
   hasFocus,
   isSingle = false,
+  hideCover = false,
+  className = "",
   release,
   selectedTrackId,
+  context = "list",
   onContextMenu,
   onClick,
+  onLinkClick,
 }: ReleaseWithTracklistViewProps) {
   const { id } = release;
   const { setUseDarkText, setModalContents } = useStore();
@@ -41,7 +50,7 @@ export default function ReleaseWithTracklistView({
 
   return (
     <article
-      className={styles.releaseView}
+      className={cx(styles.releaseView, className)}
       onClick={onClick}
       onContextMenu={
         onContextMenu &&
@@ -49,19 +58,23 @@ export default function ReleaseWithTracklistView({
       }
     >
       <ListCard
+        hideCover={hideCover}
         item={release}
         selected={selected}
         hasFocus={hasFocus}
         isSingle={isSingle}
+        onLinkClick={onLinkClick}
         onCoverClick={() =>
           setModalContents({ name: "lightbox", params: { release } })
         }
         onColorChange={isSingle ? setUseDarkText : null}
       />
       <Tracklist
+        isFlipped={hideCover && isSingle}
         release={release}
         selectedTrackId={selectedTrackId}
         isNavigable={isSingle}
+        context={context}
         onContextMenu={onDiscContextMenu}
         onDoubleClick={(track_id) =>
           api.system.playback({

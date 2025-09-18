@@ -35,6 +35,7 @@ export async function getRelease(id: number) {
         select: {
           id: true,
           title: true,
+          entityType: true,
         },
         orderBy: { title: "asc" },
       },

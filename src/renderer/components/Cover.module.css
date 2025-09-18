@@ -5,7 +5,7 @@
   flex-shrink: 0;
   align-self: center;
   overflow: hidden;
-  border-radius: .25rem;
+  border-radius: 0.25rem;
   background-color: rgba(0, 0, 0, 0.2);
 }
 
@@ -14,7 +14,7 @@
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  transition: opacity .2s ease-in-out;
+  transition: opacity 0.2s ease-in-out;
   user-select: none;
   scale: 1.02;
 }

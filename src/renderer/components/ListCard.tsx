@@ -57,11 +57,12 @@ type ListCardProps = {
   onColorChange?: (useDarkText: boolean) => void;
   showMultipleCovers?: boolean;
   onCoverDoubleClick?: (release_id: number) => void;
+  onLinkClick?: () => void;
 };
 
 export default function ListCard({
   item,
-  className,
+  className = "",
   selected,
   hasFocus,
   isSingle,
@@ -72,12 +73,14 @@ export default function ListCard({
   onColorChange,
   showMultipleCovers,
   onCoverDoubleClick,
+  onLinkClick,
 }: ListCardProps) {
   const [loadCount, setLoadCount] = useState(0);
   const coverRelease = getCoverRelease(item);
   const { color, useDarkText, loaded } = useDominantColor(
     coverRelease ? getCover(coverRelease.hash) : null,
-    loadCount
+    loadCount,
+    hideCover
   );
 
   useEffect(() => {
@@ -99,6 +102,7 @@ export default function ListCard({
             useDarkText={useDarkText}
             canDeleteFirstEntry={false}
             items={[item.artist, ...item.additionalArtists]}
+            onLinkClick={onLinkClick}
             onDelete={(artist_id) =>
               window.api.release.removeAdditionalArtist({
                 release_id: item.id,
@@ -110,13 +114,16 @@ export default function ListCard({
             className={styles.title}
             to={getReleaseLink(item)}
             title={`[${item.id}]`}
+            onClick={onLinkClick}
           >
             {getReleaseTitle(item)}
           </Link>
           <ReleaseInfo
             release={item as ReleaseWithArtistAndTracksAndSubreleases}
             isSingle={isSingle}
+            isInline={!hideCover}
             useDarkText={useDarkText}
+            onLinkClick={onLinkClick}
           />
         </>
       );
@@ -316,20 +323,14 @@ type GetCovers = {
 
 function getCovers(item: MultipleCoversProps["item"], count = 5): GetCovers {
   const coverRelease = getCoverRelease(item);
-  let otherReleases;
-  if (item.entityType === "Group") {
-    otherReleases = item.artists
-      .map(getCoverRelease)
-      .filter((x) => x.id !== coverRelease.id)
-      .slice(0, count - 1);
-  } else {
-    otherReleases = item.releases
-      .filter((x) => x.id !== coverRelease.id)
-      .slice(0, count - 1);
-  }
   return {
     coverRelease,
-    otherReleases,
+    otherReleases: (item.entityType === "Group"
+      ? item.artists.map(getCoverRelease)
+      : item.releases
+    )
+      .filter((x) => x.id !== coverRelease.id)
+      .slice(0, count - 1),
   };
 }
 
@@ -348,25 +349,40 @@ function MaybeDroppable({ item, render }: MaybeDroppableProps) {
 type ReleaseInfoProps = {
   release: ReleaseWithArtistAndTracksAndSubreleases;
   isSingle: boolean;
+  isInline: boolean;
   useDarkText: boolean;
+  onLinkClick?: () => void;
 };
 
-function ReleaseInfo({ release, isSingle, useDarkText }: ReleaseInfoProps) {
+function ReleaseInfo({
+  release,
+  isSingle,
+  isInline = true,
+  useDarkText,
+  onLinkClick,
+}: ReleaseInfoProps) {
   const { id, type, year } = release;
   const { duration, trackCount } = getReleaseDuration(release);
   return (
-    <div className={styles.info}>
+    <div className={cx(styles.info, { [styles.isInline]: isInline })}>
       {type}, {year} {getDiscInfo(release)}
       {isSingle && (
         <>
           <span className={styles.trackCount}>{trackCount} tracks</span>
-          <span className={styles.releaseDuration}>{duration}</span>
+          <span
+            className={cx(styles.releaseDuration, {
+              [styles.releaseDurationBlock]: !isInline && isSingle,
+            })}
+          >
+            {duration}
+          </span>
         </>
       )}
       {isSingle && (
         <ContainingCollectionsList
-          prependSeparator
+          prependSeparator={isInline}
           useDarkText={useDarkText}
+          onLinkClick={onLinkClick}
           id={id}
         />
       )}

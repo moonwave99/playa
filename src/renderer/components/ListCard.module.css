@@ -2,10 +2,15 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  transition: background-color .3s ease-in-out;
+  transition: background-color 0.3s ease-in-out;
   overflow: hidden;
-  border-radius: .25rem;
+  border-radius: 0.25rem;
   opacity: 0;
+
+  &.hideCover {
+    padding: 1rem 2rem;
+    border-bottom: none;
+  }
 
   &.loaded {
     opacity: 1;
@@ -25,14 +30,19 @@
     position: relative;
 
     &::after {
-      content: ' ';
+      content: " ";
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
       height: 100%;
       background-repeat: no-repeat;
-      background-image: linear-gradient(90deg, transparent 0%, var(--droppable-glow-color) 50%, transparent 100%);
+      background-image: linear-gradient(
+        90deg,
+        transparent 0%,
+        var(--droppable-glow-color) 50%,
+        transparent 100%
+      );
       transform: translateX(-100%);
       animation-name: canDrop;
       animation-direction: normal;
@@ -53,16 +63,16 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: .25rem;
-  transition: transform .3s ease-in-out;
-  transition-delay: .2s;
+  gap: 0.25rem;
+  transition: transform 0.3s ease-in-out;
+  transition-delay: 0.2s;
 }
 
 .title {
-  font-size: .9rem;
+  font-size: 0.9rem;
   color: var(--primary-color);
   font-weight: bold;
-  letter-spacing: -.035rem;
+  letter-spacing: -0.035rem;
   text-wrap: balance;
 
   &:hover {
@@ -71,9 +81,9 @@
 }
 
 .artist {
-  font-size: .9rem;
-  line-height: .9rem;
-  letter-spacing: -.025rem;
+  font-size: 0.9rem;
+  line-height: 0.9rem;
+  letter-spacing: -0.025rem;
   color: var(--primary-color);
   text-wrap: balance;
 
@@ -84,7 +94,7 @@
 
 .isSingle {
   border-radius: 0;
-  border-bottom: .5px solid var(--neutral-border-color);
+  border-bottom: 0.5px solid var(--neutral-border-color);
 
   .content {
     margin-top: 1rem;
@@ -107,16 +117,19 @@
 
 .info {
   line-height: 1rem;
-  font-size: .8rem;
+  font-size: 0.8rem;
   font-weight: 300;
   user-select: none;
   display: flex;
   align-items: center;
-  gap: .25rem;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+  &.isInline {
+    flex-wrap: nowrap;
+  }
 }
 
 .useDarkText {
-
   .title,
   .artist,
   .info {
@@ -134,15 +147,19 @@
 }
 
 .hasFocus {
-  box-shadow: var(--accent-color) 0px 0px 0px .25rem;
+  box-shadow: var(--accent-color) 0px 0px 0px 0.25rem;
 }
 
 .releaseDuration,
 .trackCount {
   &::before {
-    content: '·';
-    margin-right: .25rem;
+    content: "·";
+    margin-right: 0.25rem;
   }
+}
+
+.releaseDurationBlock {
+  width: 8rem;
 }
 
 .multipleCovers {
@@ -157,80 +174,108 @@
 
   .cover:nth-child(1) {
     scale: 1;
-    transition: scale .2s ease-in-out;
+    transition: scale 0.2s ease-in-out;
   }
 
   .cover:nth-child(2) {
-    transition: transform 0.2s ease-in-out, scale .2s ease-in-out;
+    transition:
+      transform 0.2s ease-in-out,
+      scale 0.2s ease-in-out;
   }
 
   .cover:nth-child(3) {
-    transition: transform 0.3s ease-in-out, scale .2s ease-in-out;
+    transition:
+      transform 0.3s ease-in-out,
+      scale 0.2s ease-in-out;
   }
 
   .cover:nth-child(4) {
-    transition: transform 0.4s ease-in-out, scale .2s ease-in-out;
+    transition:
+      transform 0.4s ease-in-out,
+      scale 0.2s ease-in-out;
   }
 
   .cover:nth-child(5) {
-    transition: transform 0.5s ease-in-out, scale .2s ease-in-out;
+    transition:
+      transform 0.5s ease-in-out,
+      scale 0.2s ease-in-out;
   }
 
   .cover:nth-child(6) {
-    transition: transform 0.6s ease-in-out, scale .2s ease-in-out;
+    transition:
+      transform 0.6s ease-in-out,
+      scale 0.2s ease-in-out;
   }
 
   .cover:nth-child(7) {
-    transition: transform 0.7s ease-in-out, scale .2s ease-in-out;
+    transition:
+      transform 0.7s ease-in-out,
+      scale 0.2s ease-in-out;
   }
 
   .cover:nth-child(8) {
-    transition: transform 0.8s ease-in-out, scale .2s ease-in-out;
+    transition:
+      transform 0.8s ease-in-out,
+      scale 0.2s ease-in-out;
   }
 
   &.isHover {
     .cover {
-      scale: .9;
-      border-radius: .15rem;
+      scale: 0.9;
+      border-radius: 0.15rem;
 
       &:hover {
-        opacity: .9;
+        opacity: 0.9;
       }
     }
 
     .cover:nth-child(2) {
-      transform: translateX(calc(var(--release-group-height) + var(--multiple-covers-gap)));
-      scale: .9;
+      transform: translateX(
+        calc(var(--release-group-height) + var(--multiple-covers-gap))
+      );
+      scale: 0.9;
     }
 
     .cover:nth-child(3) {
-      transform: translateX(calc(2 * (var(--release-group-height) + var(--multiple-covers-gap))));
-      scale: .9;
+      transform: translateX(
+        calc(2 * (var(--release-group-height) + var(--multiple-covers-gap)))
+      );
+      scale: 0.9;
     }
 
     .cover:nth-child(4) {
-      transform: translateX(calc(3 * (var(--release-group-height) + var(--multiple-covers-gap))));
-      scale: .9;
+      transform: translateX(
+        calc(3 * (var(--release-group-height) + var(--multiple-covers-gap)))
+      );
+      scale: 0.9;
     }
 
     .cover:nth-child(5) {
-      transform: translateX(calc(4 * (var(--release-group-height) + var(--multiple-covers-gap))));
-      scale: .9;
+      transform: translateX(
+        calc(4 * (var(--release-group-height) + var(--multiple-covers-gap)))
+      );
+      scale: 0.9;
     }
 
     .cover:nth-child(6) {
-      transform: translateX(calc(5 * (var(--release-group-height) + var(--multiple-covers-gap))));
-      scale: .9;
+      transform: translateX(
+        calc(5 * (var(--release-group-height) + var(--multiple-covers-gap)))
+      );
+      scale: 0.9;
     }
 
     .cover:nth-child(7) {
-      transform: translateX(calc(6 * (var(--release-group-height) + var(--multiple-covers-gap))));
-      scale: .9;
+      transform: translateX(
+        calc(6 * (var(--release-group-height) + var(--multiple-covers-gap)))
+      );
+      scale: 0.9;
     }
 
     .cover:nth-child(8) {
-      transform: translateX(calc(7 * (var(--release-group-height) + var(--multiple-covers-gap))));
-      scale: .9;
+      transform: translateX(
+        calc(7 * (var(--release-group-height) + var(--multiple-covers-gap)))
+      );
+      scale: 0.9;
     }
   }
 }

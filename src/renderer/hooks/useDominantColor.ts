@@ -1,20 +1,32 @@
 import { useState, useEffect } from "react";
 
-type ColorInfo = { color: string; useDarkText: boolean; loaded: boolean; }
+type ColorInfo = { color: string; useDarkText: boolean; loaded: boolean };
 
-export default function useDominantColor(url: string, count = 0): ColorInfo {
+export default function useDominantColor(
+  url: string,
+  count = 0,
+  hideCover: boolean = false
+): ColorInfo {
   const [color, setColor] = useState({
-    color: "black",
+    color: "transparent",
     useDarkText: false,
     loaded: !url,
   });
 
   useEffect(() => {
+    if (hideCover) {
+      setColor({
+        color: "transparent",
+        useDarkText: false,
+        loaded: true,
+      });
+      return;
+    }
     if (count === 0) {
       return;
     }
     getDominantColor(url, count).then(setColor);
-  }, [url, count]);
+  }, [url, count, hideCover]);
 
   return color;
 }
@@ -42,8 +54,8 @@ function getDominantColor(url: string, count = 0): Promise<ColorInfo> {
       cache[`${url}-${count}`] = {
         color: `#${HEX}`,
         useDarkText: isTextDark(`#${HEX}`),
-        loaded: true
-      }
+        loaded: true,
+      };
       resolve(cache[`${url}-${count}`]);
     };
 
@@ -54,7 +66,7 @@ function getDominantColor(url: string, count = 0): Promise<ColorInfo> {
         loaded: true,
       };
       resolve(cache[`${url}-${count}`]);
-    }
+    };
   });
 }
 
@@ -77,6 +89,6 @@ function isTextDark(hex: string) {
     return Math.pow((color + 0.055) / 1.055, 2.4);
   });
 
-  const luminance = (0.2126 * c[0]) + (0.7152 * c[1]) + (0.0722 * c[2]);
+  const luminance = 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
   return luminance > 0.179;
 }

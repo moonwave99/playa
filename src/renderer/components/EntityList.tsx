@@ -13,6 +13,7 @@ type EntityListProps = {
   className?: string;
   canDeleteFirstEntry?: boolean;
   onDelete?: (id: number) => void;
+  onLinkClick?: () => void;
 };
 
 export default function EntityList({
@@ -22,6 +23,7 @@ export default function EntityList({
   className,
   canDeleteFirstEntry = true,
   onDelete,
+  onLinkClick,
 }: EntityListProps) {
   function getLink(item: Artist | Collection | Group) {
     if (item.entityType === "Artist") {
@@ -30,6 +32,7 @@ export default function EntityList({
           className={cx(className || styles.link)}
           title={`[${item.id}]`}
           to={`/artists/${item.id}`}
+          onClick={onLinkClick}
         >
           {normalizeArtistDisplayName(item.name)}
         </Link>
@@ -39,7 +42,8 @@ export default function EntityList({
       <Link
         className={cx(className || styles.link)}
         title={`[${item.id}]`}
-        to={`/${item.entityType}s/${item.id}`}
+        to={`/${item.entityType.toLowerCase()}s/${item.id}`}
+        onClick={onLinkClick}
       >
         {item.title}
       </Link>

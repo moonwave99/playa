@@ -5,6 +5,7 @@ import {
   ReleaseWithArtist,
   ReleaseWithArtistAndSubReleases,
   ArtistWithReleases,
+  Release,
 } from "@/types/types";
 import api from "./api";
 import CoverLightbox from "./components/CoverLightbox";
@@ -18,7 +19,8 @@ import StatsView from "./components/StatsView";
 function getModalOverrides(name: string) {
   if (name === "lightbox") {
     return {
-      width: "min(70vw, 80vh)",
+      width: "calc(400px + var(--cover-lightbox-size))",
+      height: "var(--cover-lightbox-size)",
       overflow: "visible",
       border: "none",
       background: "transparent",
@@ -127,7 +129,7 @@ export default function Modal({ setContext }: ModalProps) {
       return (
         <CoverLightbox
           onClose={closeModal}
-          release={params.release as ReleaseWithArtist}
+          id={(params.release as Release).id}
           context={params.context as ReleaseWithArtist[]}
         />
       );

@@ -23,7 +23,7 @@
   --release-tracklist-list-cover-size: 8rem;
   --multiple-covers-gap: 0.25rem;
   --search-results-size: 4rem;
-  --tracklist-entry-alternate-background-color: #1e1d1d;
+  --tracklist-entry-alternate-background-color: #1a1a1a;
   --search-results-background-color: #34363b;
   --search-results-background-color-light: #61646d;
   --neutral-border-color: rgba(120, 120, 120, 0.3);
@@ -37,6 +37,7 @@
   --toastify-toast-min-height: 3rem;
   --toastify-text-color-light: var(--primary-color);
   --toastify-color-light: var(--accent-color);
+  --cover-lightbox-size: 90vh;
 }
 
 * {
