@@ -16,7 +16,7 @@ function getPlotConfig(
   }));
 
   return {
-    width: 1000,
+    width: window.innerWidth - 64,
     x: {
       interval: "day" as const,
       label: "",

@@ -71,11 +71,12 @@ contextBridge.exposeInMainWorld("api", {
   onToggleSidebar: getHandler("toggleSidebar"),
   onOpenSettings: getHandler("openSettings"),
   onOpenImportData: getHandler("openImportData"),
-  onOpenStats: getHandler("openStats"),
   onCoverUpdate: getHandler("coverUpdate"),
   onOpenGroupDialog: getHandler("openGroupDialog"),
   onOpenEditReleaseDialog: getHandler("openEditReleaseDialog"),
   onOpenEditArtistDialog: getHandler("openEditArtistDialog"),
+  onOpenEditCollectionDialog: getHandler("openEditCollectionDialog"),
+  onOpenEditGroupDialog: getHandler("openEditGroupDialog"),
   state: {
     setInputFocused: (inputFocused: boolean) =>
       ipc.send("state:setInputFocused", inputFocused),

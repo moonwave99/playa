@@ -2,23 +2,37 @@ import useStats from "../query/useStats";
 import Loading from "./Loading";
 import ErrorView from "./ErrorView";
 import LatestAdditionsView from "./LatestAdditionsView";
+import Link from "./Link";
 import styles from "./StatsView.module.css";
-import formStyles from "../forms.module.css";
 import type { Stats } from "@/types/types";
 
-type StatsViewProps = {
-  onClose: () => void;
-};
+const sortedStatKeys: {
+  key: keyof Stats;
+  link: string;
+}[] = [
+  {
+    key: "release",
+    link: "/releases",
+  },
+  {
+    key: "artist",
+    link: "/artists",
+  },
+  {
+    key: "track",
+    link: null,
+  },
+  {
+    key: "collection",
+    link: "/collections",
+  },
+  {
+    key: "group",
+    link: "/groups",
+  },
+];
 
-const sortedStatKeys = [
-  "release",
-  "artist",
-  "track",
-  "collection",
-  "group",
-] as (keyof Stats)[];
-
-export default function StatsView({ onClose }: StatsViewProps) {
+export default function StatsView() {
   const { isPending, error, stats } = useStats();
 
   if (isPending) {
@@ -32,22 +46,26 @@ export default function StatsView({ onClose }: StatsViewProps) {
   return (
     <div className={styles.view}>
       <section>
-        <h2 className={styles.title}>Stats</h2>
+        <h2 className={styles.title}>Your Library</h2>
         <ul className={styles.stats}>
-          {sortedStatKeys.map((key) => (
+          {sortedStatKeys.map(({ key, link }) => (
             <li key={key}>
-              <span>{`${key}s`}</span>
-              <span>{stats[key].toLocaleString()}</span>
+              {link ? (
+                <Link to={link} className={styles.entry}>
+                  <span>{`${key}s`}</span>
+                  <span>{stats[key].toLocaleString()}</span>
+                </Link>
+              ) : (
+                <span className={styles.entry}>
+                  <span>{`${key}s`}</span>
+                  <span>{stats[key].toLocaleString()}</span>
+                </span>
+              )}
             </li>
           ))}
         </ul>
       </section>
       <LatestAdditionsView />
-      <div className={formStyles.actions}>
-        <button type="button" className={formStyles.button} onClick={onClose}>
-          Close
-        </button>
-      </div>
     </div>
   );
 }

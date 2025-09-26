@@ -7,6 +7,7 @@ import type {
   ReleaseWithArtist,
   ArtistWithReleases,
   Collection,
+  Group,
   SearchResult,
   Sidebars,
   ReleaseWithArtistAndSubReleases,
@@ -83,7 +84,6 @@ declare global {
       onToggleSidebar: (handler: (showSidebar: boolean) => void) => () => void;
       onOpenSettings: (handler: () => void) => () => void;
       onOpenImportData: (handler: () => void) => () => void;
-      onOpenStats: (handler: () => void) => () => void;
       onCoverUpdate: (handler: (releases: Release[]) => void) => () => void;
       onOpenGroupDialog: (handler: (releases: Release[]) => void) => () => void;
       onOpenEditReleaseDialog: (
@@ -92,6 +92,10 @@ declare global {
       onOpenEditArtistDialog: (
         handler: (artist: ArtistWithReleases) => void
       ) => () => void;
+      onOpenEditCollectionDialog: (
+        handler: (collection: Collection) => void
+      ) => () => void;
+      onOpenEditGroupDialog: (handler: (group: Group) => void) => () => void;
       state: {
         selectReleases: (
           selectedReleases: ReleaseWithArtistAndSubReleases[]

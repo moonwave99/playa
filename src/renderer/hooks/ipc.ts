@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import api from "../api";
 import type {
   Artist,
+  Collection,
+  Group,
   ReleaseWithArtist,
   ReleaseWithArtistAndSubReleases,
   Sidebars,
@@ -52,15 +54,6 @@ export function useOnOpenImportData(callback: () => void) {
   }, []);
 }
 
-export function useOnOpenStats(callback: () => void) {
-  useEffect(() => {
-    const unsubscribe = api.onOpenStats(callback);
-    return () => {
-      unsubscribe();
-    };
-  }, []);
-}
-
 export function useOnOpenGroupDialog(
   callback: (selection: ReleaseWithArtist[]) => void
 ) {
@@ -86,6 +79,26 @@ export function useOnOpenEditReleaseDialog(
 export function useOnOpenEditArtistDialog(callback: (artist: Artist) => void) {
   useEffect(() => {
     const unsubscribe = api.onOpenEditArtistDialog(callback);
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+}
+
+export function useOnOpenEditCollectionDialog(
+  callback: (collection: Collection) => void
+) {
+  useEffect(() => {
+    const unsubscribe = api.onOpenEditCollectionDialog(callback);
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+}
+
+export function useOnOpenEditGroupDialog(callback: (group: Group) => void) {
+  useEffect(() => {
+    const unsubscribe = api.onOpenEditGroupDialog(callback);
     return () => {
       unsubscribe();
     };

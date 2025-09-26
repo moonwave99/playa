@@ -25,9 +25,10 @@ import {
   useOnOpenGroupDialog,
   useOnOpenEditReleaseDialog,
   useOnOpenEditArtistDialog,
+  useOnOpenEditCollectionDialog,
   useOnSwipe,
-  useOnOpenStats,
   useOnOpenImportData,
+  useOnOpenEditGroupDialog,
 } from "./hooks/ipc";
 import api from "./api";
 import useRefetch from "./hooks/useRefetch";
@@ -35,25 +36,15 @@ import useStore from "./store";
 import { refreshCovers } from "@/lib/utils";
 import { handleDropEnd, fixCursorSnapOffset } from "./dnd";
 
-import ReleasesPage from "./pages/ReleasesPage";
-import ArtistsPage from "./pages/ArtistsPage";
-import CollectionsPage from "./pages/CollectionsPage";
-import GroupsPage from "./pages/GroupsPage";
-import ReleasePage from "./pages/ReleasePage";
-import ArtistPage from "./pages/ArtistPage";
-import CollectionPage from "./pages/CollectionPage";
-import GroupPage from "./pages/GroupPage";
+import { routes } from "./routes";
 
 import Nav from "./components/Nav";
 import SidebarView from "./components/SidebarView";
 import Modal from "./Modal";
 import ToastView from "./components/ToastView";
 
-import { MdOutlineSearch } from "react-icons/md";
-import { IoClose } from "react-icons/io5";
 import cx from "clsx";
 import styles from "./Layout.module.css";
-import buttonStyles from "./buttons.module.css";
 import dragStyles from "./dnd.module.css";
 import {
   Artist,
@@ -62,13 +53,13 @@ import {
   ReleaseWithArtist,
   ReleaseWithArtistAndSubReleases,
   Notification,
+  Collection,
+  Group,
 } from "@/types/types";
 
 export default function Layout() {
   const {
     showSidebar,
-    useDarkText,
-    toggleSidebar,
     setContext,
     isDetailPage,
     onDragStart,
@@ -88,35 +79,20 @@ export default function Layout() {
           [styles.isDetailPage]: isDetailPage,
         })}
       >
-        <button
-          aria-label="Toggle Sidebar"
-          onClick={() => toggleSidebar()}
-          className={cx(buttonStyles.button, styles.toggleSidebarButton, {
-            [styles.showSidebar]: showSidebar,
-            [buttonStyles.useDarkText]: useDarkText,
-          })}
-        >
-          {showSidebar ? <IoClose /> : <MdOutlineSearch />}
-        </button>
-        <Nav />
+        <Nav isDetailPage={isDetailPage} />
         <div className={styles.page}>
+          <main className={styles.main}>
+            <Routes>
+              {routes.map(({ path, element }) => (
+                <Route path={path} element={element} />
+              ))}
+            </Routes>
+          </main>
           {showSidebar && (
             <div className={styles.sidebar}>
               <SidebarView />
             </div>
           )}
-          <main className={styles.main}>
-            <Routes>
-              <Route path="/" element={<ReleasesPage />} />
-              <Route path="/releases/:id" element={<ReleasePage />} />
-              <Route path="/collections" element={<CollectionsPage />} />
-              <Route path="/collections/:id" element={<CollectionPage />} />
-              <Route path="/groups" element={<GroupsPage />} />
-              <Route path="/groups/:id" element={<GroupPage />} />
-              <Route path="/artists" element={<ArtistsPage />} />
-              <Route path="/artists/:id" element={<ArtistPage />} />
-            </Routes>
-          </main>
         </div>
         <Modal setContext={setContext} />
         <ToastContainer />
@@ -169,7 +145,6 @@ function init(): Init {
 
   useOnOpenSettings(() => setModalContents({ name: "settings" }));
   useOnOpenImportData(() => setModalContents({ name: "importData" }));
-  useOnOpenStats(() => setModalContents({ name: "stats" }));
   useOnOpenGroupDialog((releases: ReleaseWithArtist[]) =>
     setModalContents({ name: "groupReleases", params: { releases } })
   );
@@ -179,6 +154,13 @@ function init(): Init {
   useOnOpenEditArtistDialog((artist: ArtistWithReleases) =>
     setModalContents({ name: "editArtist", params: { artist } })
   );
+  useOnOpenEditCollectionDialog((collection: Collection) =>
+    setModalContents({ name: "editCollection", params: { collection } })
+  );
+  useOnOpenEditGroupDialog((group: Group) =>
+    setModalContents({ name: "editGroup", params: { group } })
+  );
+
   useOnSwipe(navigate);
 
   const isDetailPage = !!(

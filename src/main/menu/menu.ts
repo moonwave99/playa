@@ -186,9 +186,14 @@ type MenuEntry = {
 
 const navigateMenu: (MenuEntry & { link: string })[] = [
   {
+    label: "Home",
+    accelerator: "Cmd+Shift+H",
+    link: "/",
+  },
+  {
     label: "Releases",
     accelerator: "Cmd+1",
-    link: "/",
+    link: "/releases",
   },
   {
     label: "Artists",
@@ -362,11 +367,6 @@ export function initMenu({ controllers, state, send }: InitMenuParams) {
           accelerator,
           click: () => send("navigate", link),
         })),
-        {
-          label: "Stats",
-          accelerator: "alt+s",
-          click: () => send("openStats"),
-        },
         {
           label: "Settings",
           accelerator: "cmd+,",

@@ -37,7 +37,6 @@ export default function LatestGroups() {
 
   return (
     <div className={styles.page}>
-      <h1 className={styles.header}>Groups</h1>
       {!groups?.length ? (
         <div className={styles.placeholder}>There are no groups yet.</div>
       ) : (

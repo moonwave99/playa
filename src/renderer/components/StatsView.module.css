@@ -3,7 +3,7 @@
   flex-direction: column;
   gap: 2rem;
   background-color: black;
-
+  padding: 1rem;
   h2 {
     user-select: none;
   }
@@ -26,20 +26,25 @@
 
   li {
     flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 1rem;
-    background-color: var(--background-color-light);
-    border-radius: 0.25rem;
-    span {
-      &:first-child {
-        text-transform: capitalize;
-        font-weight: bold;
+    .entry {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem;
+      background-color: var(--background-color-light);
+      border-radius: 0.25rem;
+      span {
+        &:first-child {
+          text-transform: capitalize;
+          font-weight: bold;
+        }
+        &:last-child {
+          color: var(--secondary-color);
+        }
       }
-      &:last-child {
-        color: var(--secondary-color);
+      &:is(a):hover {
+        background-color: var(--accent-color);
       }
     }
   }

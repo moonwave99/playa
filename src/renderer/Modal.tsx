@@ -6,15 +6,18 @@ import {
   ReleaseWithArtistAndSubReleases,
   ArtistWithReleases,
   Release,
+  Collection,
+  Group,
 } from "@/types/types";
 import api from "./api";
 import CoverLightbox from "./components/CoverLightbox";
 import EditArtistView from "./components/EditArtistView";
 import EditReleaseView from "./components/EditReleaseView";
+import EditCollectionView from "./components/EditCollectionView";
 import GroupReleasesView from "./components/GroupReleasesView";
 import ImportDataView from "./components/ImportDataView";
 import SettingsView from "./components/SettingsView";
-import StatsView from "./components/StatsView";
+import EditGroupView from "./components/EditGroupView";
 
 function getModalOverrides(name: string) {
   if (name === "lightbox") {
@@ -89,9 +92,6 @@ export default function Modal({ setContext }: ModalProps) {
     }
     const { name, params } = modalContents;
 
-    if (name === "stats") {
-      return <StatsView onClose={closeModal} />;
-    }
     if (name === "settings") {
       return <SettingsView onSave={closeModal} onCancel={closeModal} />;
     }
@@ -120,6 +120,24 @@ export default function Modal({ setContext }: ModalProps) {
       return (
         <EditArtistView
           artist={params.artist as ArtistWithReleases}
+          onSave={closeModal}
+          onCancel={closeModal}
+        />
+      );
+    }
+    if (name === "editCollection") {
+      return (
+        <EditCollectionView
+          collection={params.collection as Collection}
+          onSave={closeModal}
+          onCancel={closeModal}
+        />
+      );
+    }
+    if (name === "editGroup") {
+      return (
+        <EditGroupView
+          group={params.group as Group}
           onSave={closeModal}
           onCancel={closeModal}
         />

@@ -36,7 +36,6 @@ export default function ArtistsPage() {
 
   return (
     <div className={styles.page}>
-      <h1 className={styles.header}>Artists</h1>
       {!artists?.length ? (
         <div className={styles.placeholder}>There are no artists yet.</div>
       ) : (

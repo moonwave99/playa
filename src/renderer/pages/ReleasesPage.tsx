@@ -9,6 +9,7 @@ import api from "../api";
 import { releaseColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
 import {
   useKeyManager,
+  withMeta,
   withPrevent,
 } from "@/renderer/hooks/useKeyboardManager";
 import useReleases from "@/renderer/query/useReleases";
@@ -74,7 +75,6 @@ export default function LatestReleases() {
 
   return (
     <div className={styles.page}>
-      <h1 className={styles.header}>Releases</h1>
       {!releases?.length ? (
         <div className={styles.placeholder}>There are no releases yet.</div>
       ) : (
@@ -88,8 +88,11 @@ export default function LatestReleases() {
           hasNextPage={hasNextPage}
           isFetchingNextPage={isFetchingNextPage}
           onEnter={onEnter}
-          onLeft={() => setContext("sidebar")}
-          shouldCallOnLeft={() => showSidebar}
+          onRight={withMeta(() => {
+            setContext("sidebar");
+            return true;
+          })}
+          shouldCallOnRight={() => showSidebar}
           onSelectionChange={(selection) =>
             api.state.selectReleases(selection.map((index) => releases[index]))
           }

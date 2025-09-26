@@ -5,9 +5,11 @@ import { useKeyManager } from "../hooks/useKeyboardManager";
 import useClickOutside from "../hooks/useClickOutside";
 import useStore from "../store";
 import cx from "clsx";
-import { IoMenu } from "react-icons/io5";
+import { IoClose, IoMenu } from "react-icons/io5";
 import styles from "./Nav.module.css";
 import buttonStyles from "../buttons.module.css";
+import { MdOutlineSearch } from "react-icons/md";
+import Breadcrumbs from "./Breadcrumbs";
 
 const navMap: {
   type: "link" | "modal";
@@ -16,7 +18,7 @@ const navMap: {
 }[] = [
   {
     type: "link",
-    link: "/",
+    link: "/releases",
     label: "Releases",
   },
   {
@@ -39,18 +41,18 @@ const navMap: {
     link: "settings",
     label: "Settings",
   },
-  {
-    type: "modal",
-    link: "stats",
-    label: "Stats",
-  },
 ];
 
-export default function Nav() {
+type NavProps = {
+  isDetailPage: boolean;
+};
+
+export default function Nav({ isDetailPage }: NavProps) {
   const [isNavOpen, setNavOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(-1);
   const ref = useClickOutside(() => setNavOpen(false));
-  const { setModalContents, useDarkText } = useStore();
+  const { setModalContents, useDarkText, toggleSidebar, showSidebar } =
+    useStore();
   const { setContext } = useKeyManager({
     context: "nav",
     handlers: {
@@ -72,16 +74,38 @@ export default function Nav() {
   }, [currentIndex]);
 
   return (
-    <nav className={cx(styles.nav, { [styles.isOpen]: isNavOpen })} ref={ref}>
-      <button
-        className={cx(buttonStyles.button, styles.button, {
-          [buttonStyles.useDarkText]: useDarkText,
-        })}
-        onClick={() => setNavOpen((prev) => !prev)}
-        aria-label="Toggle Navigation"
-      >
-        <IoMenu />
-      </button>
+    <nav
+      className={cx(styles.nav, {
+        [styles.isOpen]: isNavOpen,
+        [styles.isSidebarOpen]: showSidebar,
+        [styles.isDetailPage]: isDetailPage,
+      })}
+      ref={ref}
+    >
+      <Breadcrumbs isDetailPage={isDetailPage} />
+      <div className={styles.buttons}>
+        <button
+          type="button"
+          aria-label="Toggle Navigation"
+          onClick={() => setNavOpen((prev) => !prev)}
+          className={cx(buttonStyles.button, {
+            [buttonStyles.useDarkText]: useDarkText,
+          })}
+        >
+          <IoMenu />
+        </button>
+        <button
+          type="button"
+          aria-label="Toggle Sidebar"
+          onClick={() => toggleSidebar()}
+          className={cx(buttonStyles.button, styles.toggleSidebarButton, {
+            [styles.showSidebar]: showSidebar,
+            [buttonStyles.useDarkText]: useDarkText,
+          })}
+        >
+          {showSidebar ? <IoClose /> : <MdOutlineSearch />}
+        </button>
+      </div>
       <div className={styles.entries} ref={ref}>
         {navMap.map(({ link, label, type }, index) =>
           type === "link" ? (

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import type { FormEvent, Ref } from "react";
-import api from '../api';
+import api from "../api";
 import {
   useKeyManager,
   KeyManager,
@@ -13,19 +13,22 @@ type UseSidebarParams = {
 };
 
 type UseSidebar = {
-  inputRef: Ref<HTMLInputElement>,
+  inputRef: Ref<HTMLInputElement>;
   currentContext: string;
   inputHandlers: {
     onInput: (event: FormEvent) => void;
     onBlur: () => void;
     onFocus: () => void;
-  },
+  };
   listHandlers: {
     onUp: () => void;
-  },
-}
+  };
+};
 
-export default function useSidebar({ isPending, setQuery }: UseSidebarParams): UseSidebar {
+export default function useSidebar({
+  isPending,
+  setQuery,
+}: UseSidebarParams): UseSidebar {
   const firstRender = useRef(true);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -37,20 +40,20 @@ export default function useSidebar({ isPending, setQuery }: UseSidebarParams): U
   });
 
   useKeyManager({
-    context: 'sidebar:input',
+    context: "sidebar:input",
     handlers: {
-      '\\': withMeta(() => {
+      "\\": withMeta(() => {
         api.state.toggleSidebar(false);
-        setContext('list');
+        setContext("list");
       }),
-      ArrowLeft: withMeta(() => {
+      ArrowRight: withMeta(() => {
         inputRef.current.selectionStart = 0;
         inputRef.current.selectionEnd = 0;
       }),
-      ArrowRight: (event: KeyboardEvent) => {
+      ArrowLeft: (event: KeyboardEvent) => {
         if (event.metaKey) {
-          inputRef.current.selectionStart = inputRef.current?.value.length
-          inputRef.current.selectionEnd = inputRef.current?.value.length
+          inputRef.current.selectionStart = inputRef.current?.value.length;
+          inputRef.current.selectionEnd = inputRef.current?.value.length;
           return;
         }
         if (inputRef.current?.selectionEnd !== inputRef.current?.value.length) {
@@ -63,8 +66,8 @@ export default function useSidebar({ isPending, setQuery }: UseSidebarParams): U
         inputRef.current?.blur();
         queueMicrotask(() => setContext("list"));
       },
-    }
-  })
+    },
+  });
 
   useEffect(() => {
     if (
@@ -104,6 +107,6 @@ export default function useSidebar({ isPending, setQuery }: UseSidebarParams): U
     },
     listHandlers: {
       onUp,
-    }
+    },
   };
 }

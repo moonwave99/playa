@@ -37,7 +37,6 @@ export default function LatestCollections() {
 
   return (
     <div className={styles.page}>
-      <h1 className={styles.header}>Collections</h1>
       {!collections?.length ? (
         <div className={styles.placeholder}>There are no collections yet.</div>
       ) : (
