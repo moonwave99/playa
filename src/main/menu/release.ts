@@ -116,6 +116,15 @@ export const releaseMenu =
           label: "Refresh Folder Contents",
           click: () => controllers.release.refreshReleaseContents(release.id),
         },
+        release.hideOnHomepage
+          ? {
+              label: "Show Release on Homepage",
+              click: () => controllers.release.showRelease(release.id),
+            }
+          : {
+              label: "Hide Release from Homepage",
+              click: () => controllers.release.hideRelease(release.id),
+            },
         {
           id: "editRelease",
           label: `Edit Release`,

@@ -283,11 +283,14 @@ export async function updateReleases(infos: RenameReleaseParam) {
   );
 }
 
-export async function hideRelease(id: number) {
+export async function toggleHomepageVisibility(
+  id: number,
+  hideOnHomepage = true
+) {
   return prisma.release.update({
     where: { id },
     data: {
-      hideOnHomepage: true,
+      hideOnHomepage,
     },
   });
 }

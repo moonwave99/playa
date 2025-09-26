@@ -365,22 +365,23 @@ function ReleaseInfo({
   const { duration, trackCount } = getReleaseDuration(release);
   return (
     <div className={cx(styles.info, { [styles.isInline]: isInline })}>
-      {type}, {year} {getDiscInfo(release)}
-      {isSingle && (
-        <>
-          <span className={styles.trackCount}>{trackCount} tracks</span>
-          <span
-            className={cx(styles.releaseDuration, {
-              [styles.releaseDurationBlock]: !isInline && isSingle,
-            })}
-          >
-            {duration}
-          </span>
-        </>
-      )}
+      <span>
+        {type}, {year} {getDiscInfo(release)}
+        {isSingle && (
+          <>
+            <span className={styles.trackCount}>{trackCount} tracks</span>
+            <span
+              className={cx(styles.releaseDuration, {
+                [styles.releaseDurationBlock]: !isInline && isSingle,
+              })}
+            >
+              {duration}
+            </span>
+          </>
+        )}
+      </span>
       {isSingle && (
         <ContainingCollectionsList
-          prependSeparator={isInline}
           useDarkText={useDarkText}
           onLinkClick={onLinkClick}
           id={id}

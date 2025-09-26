@@ -1,7 +1,7 @@
 import useStats from "../query/useStats";
 import Loading from "./Loading";
 import ErrorView from "./ErrorView";
-import LatestAdditionsView from "./LatestAdditionsView";
+import LatestAdditionsView from "./LatestActivityView";
 import Link from "./Link";
 import styles from "./StatsView.module.css";
 import type { Stats } from "@/types/types";

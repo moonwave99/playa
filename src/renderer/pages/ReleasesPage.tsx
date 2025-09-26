@@ -35,7 +35,6 @@ export default function LatestReleases() {
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
-    hideRelease,
   } = useReleases();
 
   useClearSelectionOnLeave();
@@ -60,8 +59,6 @@ export default function LatestReleases() {
   }
 
   const keyHandlers = {
-    h: (_event: KeyboardEvent, selection: Release[]) =>
-      hideRelease(selection[0].id),
     " ": withPrevent((_event: KeyboardEvent, selection: Release[]) => {
       setModalContents({
         name: "lightbox",

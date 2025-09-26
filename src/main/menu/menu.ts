@@ -47,7 +47,9 @@ function shouldDisplayCoverEntityEntry(context: Context) {
   if (context?.entityType === "Group") {
     return (context as GroupWithArtists)?.artists.length > 1;
   }
-  return (context as WithReleases)?.releases.length > 1;
+  if (context?.entityType === "Artist") {
+    return (context as WithReleases)?.releases.length > 1;
+  }
 }
 
 export function getCoverEntityEntry({

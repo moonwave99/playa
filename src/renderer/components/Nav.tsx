@@ -15,31 +15,43 @@ const navMap: {
   type: "link" | "modal";
   label: string;
   link: string;
+  shortcut: string;
 }[] = [
+  {
+    type: "link",
+    link: "/",
+    label: "Library",
+    shortcut: "Cmd+Shift+H",
+  },
   {
     type: "link",
     link: "/releases",
     label: "Releases",
+    shortcut: "Cmd+1",
   },
   {
     type: "link",
     link: "/artists",
     label: "Artists",
+    shortcut: "Cmd+2",
   },
   {
     type: "link",
     link: "/collections",
     label: "Collections",
+    shortcut: "Cmd+3",
   },
   {
     type: "link",
     link: "/groups",
     label: "Groups",
+    shortcut: "Cmd+4",
   },
   {
     type: "modal",
     link: "settings",
     label: "Settings",
+    shortcut: "Cmd+,",
   },
 ];
 
@@ -82,7 +94,7 @@ export default function Nav({ isDetailPage }: NavProps) {
       })}
       ref={ref}
     >
-      <Breadcrumbs isDetailPage={isDetailPage} />
+      <Breadcrumbs isDetailPage={isDetailPage} useDarkText={useDarkText} />
       <div className={styles.buttons}>
         <button
           type="button"
@@ -107,7 +119,7 @@ export default function Nav({ isDetailPage }: NavProps) {
         </button>
       </div>
       <div className={styles.entries} ref={ref}>
-        {navMap.map(({ link, label, type }, index) =>
+        {navMap.map(({ link, label, type, shortcut }, index) =>
           type === "link" ? (
             <NavLink
               data-nav-id={index}
@@ -124,6 +136,7 @@ export default function Nav({ isDetailPage }: NavProps) {
               }}
             >
               {label}
+              <span className={styles.shortcut}>{shortcut}</span>
             </NavLink>
           ) : (
             <button
@@ -138,6 +151,7 @@ export default function Nav({ isDetailPage }: NavProps) {
               }}
             >
               {label}
+              <span className={styles.shortcut}>{shortcut}</span>
             </button>
           )
         )}

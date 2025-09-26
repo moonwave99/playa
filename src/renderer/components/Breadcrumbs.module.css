@@ -3,6 +3,11 @@
   display: flex;
   font-size: 0.8rem;
   line-height: 1rem;
+  &.isDetailPage {
+    li:not(:last-of-type):after {
+      font-size: 0.8rem;
+    }
+  }
   li {
     display: flex;
     align-items: center;
@@ -32,6 +37,16 @@
   border: none;
   padding: 0 0.5rem;
 
+  &.isDetailPage {
+    padding: 0;
+    background-color: transparent;
+  }
+
+  &.useDarkText {
+    background-color: transparent;
+    color: black;
+  }
+
   a {
     display: flex;
     align-items: center;
@@ -51,7 +66,8 @@
 
   .content {
     display: flex;
-    gap: 0.5rem;
+    align-items: center;
+    gap: 0.25rem;
     @media (max-width: 768px) {
       display: inline-block;
       max-width: 15rem;

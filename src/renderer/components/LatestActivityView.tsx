@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import useLatesAdditions from "../query/useLatestAdditions";
 import ErrorView from "./ErrorView";
 import * as Plot from "@observablehq/plot";
-import styles from "./LatestAdditionsView.module.css";
+import styles from "./LatestActivityView.module.css";
 import type { Release } from "@/types/types";
 
 const defaultFrom = "2025-01-01";
@@ -33,7 +33,7 @@ function getPlotConfig(
   };
 }
 
-export default function LatestAdditionsView() {
+export default function LatestActivityView() {
   const [from, setFrom] = useState(defaultFrom);
   const ref = useRef(null);
   const { error, latestAdditions } = useLatesAdditions(from);
@@ -59,7 +59,7 @@ export default function LatestAdditionsView() {
   return (
     <section className={styles.view}>
       <header className={styles.header}>
-        <h2 className={styles.title}>Latest Additions</h2>
+        <h2 className={styles.title}>Latest Activity</h2>
         <label>
           From
           <input

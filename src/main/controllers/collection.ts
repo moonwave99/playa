@@ -3,22 +3,29 @@ import {
   getAllCollections,
   getCollection,
   createCollection,
-  updateCollection,
+  updateCollection as _updateCollection,
   addReleasesToCollection,
   removeReleasesFromCollection as _removeReleasesFromCollection,
   deleteCollections,
   deleteCollection,
-  setCollectionCoverRelease
-} from '../db/collection';
+  setCollectionCoverRelease,
+} from "../db/collection";
 
-import { dialog } from 'electron';
+import { dialog } from "electron";
 
-export function collectionController() {
-  async function removeReleasesFromCollection(id: number, release_ids: number[]) {
+type CollectionControllerParams = {
+  send: (channel: string, ...args: unknown[]) => void;
+};
+
+export function collectionController({ send }: CollectionControllerParams) {
+  async function removeReleasesFromCollection(
+    id: number,
+    release_ids: number[]
+  ) {
     const cancel = dialog.showMessageBoxSync(null, {
       message: `Are you sure to remove ${release_ids.length} entries from this Collection?`,
-      type: 'warning',
-      buttons: ['OK', 'Cancel'],
+      type: "warning",
+      buttons: ["OK", "Cancel"],
       defaultId: 1,
     });
 
@@ -27,6 +34,19 @@ export function collectionController() {
     }
 
     return await _removeReleasesFromCollection(id, release_ids);
+  }
+
+  async function updateCollection(
+    ...params: Parameters<typeof _updateCollection>
+  ) {
+    const updatedCollection = await _updateCollection(...params);
+    if (updatedCollection) {
+      send("notify", {
+        type: "success",
+        message: "Collection renamed",
+      });
+    }
+    return updatedCollection;
   }
 
   return {
@@ -39,19 +59,19 @@ export function collectionController() {
     removeReleasesFromCollection,
     deleteCollections,
     deleteCollection,
-    setCollectionCoverRelease
+    setCollectionCoverRelease,
   };
 }
 
 export const actions = [
-  'getCollections',
-  'getAllCollections',
-  'getCollection',
-  'createCollection',
-  'updateCollection',
-  'addReleasesToCollection',
-  'removeReleasesFromCollection',
-  'deleteCollections',
-  'deleteCollection',
-  'setCollectionCoverRelease'
+  "getCollections",
+  "getAllCollections",
+  "getCollection",
+  "createCollection",
+  "updateCollection",
+  "addReleasesToCollection",
+  "removeReleasesFromCollection",
+  "deleteCollections",
+  "deleteCollection",
+  "setCollectionCoverRelease",
 ];

@@ -1,6 +1,7 @@
 import { useLocation, matchRoutes, type Params } from "react-router";
 import Link from "./Link";
 import { routes, type Route } from "../routes";
+import cx from "clsx";
 import styles from "./Breadcrumbs.module.css";
 
 type RouteWithParams = Route & { params: Params };
@@ -30,9 +31,13 @@ function getBreadCrumbs(location: ReturnType<typeof useLocation>) {
 
 type BreadCrumbsProps = {
   isDetailPage: boolean;
+  useDarkText: boolean;
 };
 
-export default function BreadCrumbs({ isDetailPage }: BreadCrumbsProps) {
+export default function BreadCrumbs({
+  isDetailPage,
+  useDarkText,
+}: BreadCrumbsProps) {
   const location = useLocation();
   const breadcrumbs = getBreadCrumbs(location)
     .map(renderEntry)
@@ -60,10 +65,21 @@ export default function BreadCrumbs({ isDetailPage }: BreadCrumbsProps) {
   }
 
   return (
-    <ul className={styles.view}>
+    <ul
+      className={cx(styles.view, {
+        [styles.isDetailPage]: isDetailPage,
+      })}
+    >
       {breadcrumbs.map((entry, index) => (
         <li key={index}>
-          <span className={styles.breadCrumb}>{entry}</span>
+          <span
+            className={cx(styles.breadCrumb, {
+              [styles.useDarkText]: useDarkText,
+              [styles.isDetailPage]: isDetailPage,
+            })}
+          >
+            {entry}
+          </span>
         </li>
       ))}
     </ul>

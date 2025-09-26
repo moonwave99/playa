@@ -33,7 +33,11 @@ export const routes: Route[] = [
     path: "/",
     name: "",
     element: <HomePage />,
-    renderBreadcrumb: () => <GoHomeFill />,
+    renderBreadcrumb: ({ className }) => (
+      <span className={className}>
+        <GoHomeFill /> Library
+      </span>
+    ),
   },
   {
     path: "/releases",

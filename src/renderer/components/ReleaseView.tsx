@@ -13,6 +13,7 @@ type ReleaseViewProps = {
   release: ReleaseWithArtistAndSubReleases;
   onClick: (event: MouseEvent) => void;
   onContextMenu?: () => void;
+  className?: string;
   selected?: boolean;
   hasFocus?: boolean;
 };
@@ -20,6 +21,7 @@ type ReleaseViewProps = {
 export default function ReleaseView({
   release,
   selected,
+  className,
   hasFocus,
   onClick,
   onContextMenu,
@@ -28,7 +30,7 @@ export default function ReleaseView({
   const releaseTitle = getReleaseTitle(release);
   return (
     <article
-      className={cx(styles.releaseView, {
+      className={cx(styles.releaseView, className, {
         [styles.selected]: selected,
         [styles.hasFocus]: selected && hasFocus,
       })}

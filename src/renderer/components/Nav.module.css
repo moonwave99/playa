@@ -67,6 +67,11 @@
     outline-color: var(--accent-color);
     border: none;
   }
+
+  .shortcut {
+    margin-left: auto;
+    font-size: 0.7rem;
+  }
 }
 
 .link:hover {

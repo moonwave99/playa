@@ -97,7 +97,7 @@
   border-bottom: 0.5px solid var(--neutral-border-color);
 
   .content {
-    margin-top: 1rem;
+    margin-top: 2rem;
   }
 
   .title {
@@ -121,9 +121,9 @@
   font-weight: 300;
   user-select: none;
   display: flex;
-  align-items: center;
   gap: 0.25rem;
   flex-wrap: wrap;
+  flex-direction: column;
   &.isInline {
     flex-wrap: nowrap;
   }

@@ -3,22 +3,26 @@ import {
   getAllGroups,
   getGroups,
   createGroup,
-  updateGroup,
+  updateGroup as _updateGroup,
   addArtistsToGroup,
   removeArtistsFromGroup as _removeArtistsFromGroup,
   deleteGroup,
   deleteGroups,
-  setGroupCoverArtist
-} from '../db/group';
+  setGroupCoverArtist,
+} from "../db/group";
 
-import { dialog } from 'electron';
+import { dialog } from "electron";
 
-export function groupController() {
+type GroupControllerParams = {
+  send: (channel: string, ...args: unknown[]) => void;
+};
+
+export function groupController({ send }: GroupControllerParams) {
   async function removeArtistsFromGroup(id: number, artist_ids: number[]) {
     const cancel = dialog.showMessageBoxSync(null, {
       message: `Are you sure to remove ${artist_ids.length} entries from this Group?`,
-      type: 'warning',
-      buttons: ['OK', 'Cancel'],
+      type: "warning",
+      buttons: ["OK", "Cancel"],
       defaultId: 1,
     });
 
@@ -27,6 +31,17 @@ export function groupController() {
     }
 
     return await _removeArtistsFromGroup(id, artist_ids);
+  }
+
+  async function updateGroup(...params: Parameters<typeof _updateGroup>) {
+    const updatedGroup = await _updateGroup(...params);
+    if (updatedGroup) {
+      send("notify", {
+        type: "success",
+        message: "Group renamed",
+      });
+    }
+    return updatedGroup;
   }
 
   return {
@@ -39,19 +54,19 @@ export function groupController() {
     removeArtistsFromGroup,
     deleteGroup,
     deleteGroups,
-    setGroupCoverArtist
+    setGroupCoverArtist,
   };
 }
 
 export const actions = [
-  'getGroup',
-  'getAllGroups',
-  'getGroups',
-  'createGroup',
-  'updateGroup',
-  'addArtistsToGroup',
-  'removeArtistsFromGroup',
-  'deleteGroup',
-  'deleteGroups',
-  'setGroupCoverArtist'
+  "getGroup",
+  "getAllGroups",
+  "getGroups",
+  "createGroup",
+  "updateGroup",
+  "addArtistsToGroup",
+  "removeArtistsFromGroup",
+  "deleteGroup",
+  "deleteGroups",
+  "setGroupCoverArtist",
 ];

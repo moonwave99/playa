@@ -27,7 +27,7 @@ import {
   unGroupRelease,
   deleteRelease,
   addTracksToRelease,
-  hideRelease,
+  toggleHomepageVisibility,
   addAdditionalArtist as _addAdditionalArtist,
   removeAdditionalArtist as _removeAdditionalArtist,
   groupReleases as _groupReleases,
@@ -540,6 +540,16 @@ export function releaseController({
     });
   }
 
+  async function hideRelease(id: number) {
+    await toggleHomepageVisibility(id);
+    send("mutate", [["releases", "latest"]]);
+  }
+
+  async function showRelease(id: number) {
+    await toggleHomepageVisibility(id, false);
+    send("mutate", [["releases", "latest"]]);
+  }
+
   return {
     getRelease,
     getReleases,
@@ -561,6 +571,7 @@ export function releaseController({
     importFolderFromDialog,
     refreshEntityRelease,
     hideRelease,
+    showRelease,
     addAdditionalArtist,
     removeAdditionalArtist,
   };
@@ -587,6 +598,7 @@ export const actions = [
   "importFolderFromDialog",
   "refreshEntityRelease",
   "hideRelease",
+  "showRelease",
   "addAdditionalArtist",
   "removeAdditionalArtist",
 ];

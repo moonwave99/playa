@@ -74,7 +74,7 @@ export default function Layout() {
       collisionDetection={fixCursorSnapOffset}
     >
       <div
-        className={cx(styles.main, {
+        className={cx(styles.view, {
           [styles.showSidebar]: showSidebar,
           [styles.isDetailPage]: isDetailPage,
         })}

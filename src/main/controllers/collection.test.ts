@@ -13,11 +13,15 @@ import {
 
 afterEach(clearPrisma);
 
+const defaultParams = {
+  send: vi.fn(),
+};
+
 describe("getAllCollections function", () => {
   it("returns all the collections", async () => {
     const collections = getFakeCollections({ length: 2 });
     await prisma.collection.createMany({ data: collections });
-    const { getAllCollections } = collectionController();
+    const { getAllCollections } = collectionController(defaultParams);
     const result = await getAllCollections();
     expect(result).toMatchObject(collections);
   });
@@ -36,7 +40,7 @@ describe("getCollection function", () => {
       },
     });
 
-    const { getCollection } = collectionController();
+    const { getCollection } = collectionController(defaultParams);
     {
       const result = await getCollection(1);
       expect(result.releases).toMatchObject(releases);
@@ -65,14 +69,14 @@ describe("getCollections function", () => {
 
   it("returns as many collections as per the take parameter", async () => {
     await prisma.collection.createMany({ data: collections });
-    const { getCollections } = collectionController();
+    const { getCollections } = collectionController(defaultParams);
     const result = await getCollections({ take: 5 });
     expect(result.length).toBe(5);
   });
 
   it("returns max 50 collections if no take parameter is specified", async () => {
     await prisma.collection.createMany({ data: collections });
-    const { getCollections } = collectionController();
+    const { getCollections } = collectionController(defaultParams);
     const result = await getCollections({});
     expect(result.length).toBe(50);
   });
@@ -94,7 +98,7 @@ describe("setCollectionCoverRelease function", () => {
         },
       },
     });
-    const { setCollectionCoverRelease } = collectionController();
+    const { setCollectionCoverRelease } = collectionController(defaultParams);
     await setCollectionCoverRelease(1, 2);
     const updatedCollection = await prisma.collection.findFirst({
       where: { id: 1 },
@@ -113,7 +117,7 @@ describe("addReleasesToCollection function", () => {
     await prisma.release.createMany({ data: releases });
     await prisma.collection.create({ data: collection });
 
-    const { addReleasesToCollection } = collectionController();
+    const { addReleasesToCollection } = collectionController(defaultParams);
     await addReleasesToCollection(1, releases);
     const updatedCollection = await prisma.collection.findFirst({
       where: { id: 1 },
@@ -138,7 +142,7 @@ describe("createCollection function", () => {
     await prisma.artist.create({ data: artist });
     await prisma.release.createMany({ data: releases });
 
-    const { createCollection } = collectionController();
+    const { createCollection } = collectionController(defaultParams);
     const newCollection = await createCollection({
       title: "new collection",
       releases: releases.map(({ id }) => id),
@@ -160,7 +164,7 @@ describe("deleteCollection function", () => {
     const collection = getFakeCollections({ length: 1 }).at(0);
     await prisma.collection.create({ data: collection });
 
-    const { deleteCollection } = collectionController();
+    const { deleteCollection } = collectionController(defaultParams);
     await deleteCollection(1);
     const result = await prisma.collection.findFirst({ where: { id: 1 } });
 
@@ -173,7 +177,7 @@ describe("deleteCollections function", () => {
     const collections = getFakeCollections({ length: 3 });
     await prisma.collection.createMany({ data: collections });
 
-    const { deleteCollections } = collectionController();
+    const { deleteCollections } = collectionController(defaultParams);
     await deleteCollections([2, 3]);
     const result = await prisma.collection.findMany();
 
@@ -182,6 +186,17 @@ describe("deleteCollections function", () => {
 });
 
 describe("updateCollection function", () => {
+  it("does nothing if no collection is found", async () => {
+    const send = vi.fn();
+    const { updateCollection } = collectionController({ send });
+    const result = await updateCollection(1, {
+      title: "new title",
+      releases: [],
+    });
+    expect(result).toBe(null);
+    expect(send).not.toHaveBeenCalled();
+  });
+
   it("updates the collection", async () => {
     const artist = getFakeArtists({ length: 1 }).at(0);
     const releases = getFakeReleasesForArtist(artist.id);
@@ -191,7 +206,9 @@ describe("updateCollection function", () => {
     await prisma.release.createMany({ data: releases });
     await prisma.collection.create({ data: collection });
 
-    const { updateCollection } = collectionController();
+    const send = vi.fn();
+
+    const { updateCollection } = collectionController({ send });
 
     const result = await updateCollection(1, {
       title: "new title",
@@ -201,6 +218,11 @@ describe("updateCollection function", () => {
     expect(result).toMatchObject({
       title: "new title",
       releases: releases.map(({ id }) => ({ id })),
+    });
+
+    expect(send).toHaveBeenCalledWith("notify", {
+      type: "success",
+      message: "Collection renamed",
     });
   });
 });
@@ -225,7 +247,8 @@ describe("removeReleasesFromCollection function", () => {
     const dialogSpy = vi.spyOn(dialog, "showMessageBoxSync");
     dialogSpy.mockReturnValueOnce(1);
 
-    const { removeReleasesFromCollection } = collectionController();
+    const { removeReleasesFromCollection } =
+      collectionController(defaultParams);
     await removeReleasesFromCollection(1, [2]);
 
     const result = await prisma.collection.findFirst({
@@ -249,7 +272,8 @@ describe("removeReleasesFromCollection function", () => {
         },
       },
     });
-    const { removeReleasesFromCollection } = collectionController();
+    const { removeReleasesFromCollection } =
+      collectionController(defaultParams);
     const updatedCollection = await removeReleasesFromCollection(1, [2, 4]);
     expect(updatedCollection.releases).toMatchObject([
       { id: 1 },
@@ -270,7 +294,8 @@ describe("removeReleasesFromCollection function", () => {
         coverReleaseId: 2,
       },
     });
-    const { removeReleasesFromCollection } = collectionController();
+    const { removeReleasesFromCollection } =
+      collectionController(defaultParams);
     const updatedCollection = await removeReleasesFromCollection(1, [2]);
     expect(updatedCollection.coverReleaseId).toBe(null);
   });

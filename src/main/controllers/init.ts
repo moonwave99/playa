@@ -93,8 +93,8 @@ export function init(mainWindow: BrowserWindow) {
       state,
       openFolderDialog,
     }),
-    collection: collectionController(),
-    group: groupController(),
+    collection: collectionController({ send }),
+    group: groupController({ send }),
     searchResult: searchResultController(),
     stats: statsController(),
     importExport: importExportController({

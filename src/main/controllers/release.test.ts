@@ -34,6 +34,55 @@ const defaultParams = {
   openFolderDialog: vi.fn(),
 };
 
+describe("hideRelease function", () => {
+  it("hides the release from the homepage", async () => {
+    const releases = getFakeReleasesForArtist(1, 20);
+    const artist = getFakeArtist(1);
+    await prisma.artist.create({ data: artist });
+    await prisma.release.createMany({ data: releases });
+
+    const send = vi.fn();
+    const { getReleases, hideRelease } = releaseController({
+      ...defaultParams,
+      send,
+    });
+    await hideRelease(1);
+    expect(send).toHaveBeenCalledWith("mutate", [["releases", "latest"]]);
+
+    const results = await getReleases({ take: 20, skip: 0 });
+    expect(results.results.find((x) => x.id === 1)).toBeFalsy();
+  });
+});
+
+describe("showRelease function", () => {
+  it("shows a previously hidden release on the homepage", async () => {
+    const releases = getFakeReleasesForArtist(1, 20);
+    const artist = getFakeArtist(1);
+    await prisma.artist.create({ data: artist });
+    await prisma.release.createMany({ data: releases });
+
+    const send = vi.fn();
+    const { getReleases, hideRelease, showRelease } = releaseController({
+      ...defaultParams,
+      send,
+    });
+
+    {
+      await hideRelease(1);
+      expect(send).toHaveBeenCalledWith("mutate", [["releases", "latest"]]);
+      const results = await getReleases({ take: 20, skip: 0 });
+      expect(results.results.find((x) => x.id === 1)).toBeFalsy();
+    }
+
+    {
+      await showRelease(1);
+      expect(send).toHaveBeenCalledWith("mutate", [["releases", "latest"]]);
+      const results = await getReleases({ take: 20, skip: 0 });
+      expect(results.results.find((x) => x.id === 1)).toBeTruthy();
+    }
+  });
+});
+
 describe("getReleases function", () => {
   it("returns the releases with the given pagination params", async () => {
     const releases = getFakeReleasesForArtist(1, 20);

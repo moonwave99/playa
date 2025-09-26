@@ -16,9 +16,15 @@ type UseReleases = {
   hideRelease: (release_id: number) => void;
 };
 
-const pageSize = 50;
+type UseReleasesParams = {
+  pageSize: number;
+};
 
-export default function useReleases(): UseReleases {
+export default function useReleases(
+  { pageSize }: UseReleasesParams = {
+    pageSize: 50,
+  }
+): UseReleases {
   const queryClient = useQueryClient();
   const {
     data,
@@ -28,13 +34,13 @@ export default function useReleases(): UseReleases {
     hasNextPage,
     fetchNextPage,
   } = useInfiniteQuery({
-    queryKey: ["releases", "latest"],
-    queryFn: (context) =>
+    queryKey: ["releases", "latest", pageSize],
+    queryFn: ({ pageParam }) =>
       api.release.getReleases({
         take: pageSize,
-        skip: context.pageParam,
+        skip: pageParam,
       }),
-    getNextPageParam: (lastGroup) => lastGroup.pagination.skip + pageSize,
+    getNextPageParam: ({ pagination }) => pagination.skip + pageSize,
     initialPageParam: 0,
   });
 

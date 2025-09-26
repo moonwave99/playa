@@ -7,17 +7,21 @@ import { sortBy } from "@/lib/utils";
 
 afterEach(clearPrisma);
 
+const defaultParams = {
+  send: vi.fn(),
+};
+
 describe("getGroups function", () => {
   it("returns as many groups as per the take parameter", async () => {
     await prisma.group.createMany({ data: getFakeGroups({ length: 10 }) });
-    const { getGroups } = groupController();
+    const { getGroups } = groupController(defaultParams);
     const result = await getGroups({ take: 5 });
     expect(result.length).toBe(5);
   });
 
   it("returns max 50 groups if no take parameter is specified", async () => {
     await prisma.group.createMany({ data: getFakeGroups({ length: 100 }) });
-    const { getGroups } = groupController();
+    const { getGroups } = groupController(defaultParams);
     const result = await getGroups({});
     expect(result.length).toBe(50);
   });
@@ -27,7 +31,7 @@ describe("getAllGroups function", () => {
   it("returns all groups", async () => {
     const groups = getFakeGroups({ length: 10 });
     await prisma.group.createMany({ data: groups });
-    const { getAllGroups } = groupController();
+    const { getAllGroups } = groupController(defaultParams);
     const result = await getAllGroups();
     expect(result).toMatchObject(
       (groups as { title: string }[]).toSorted(sortBy("title"))
@@ -37,7 +41,7 @@ describe("getAllGroups function", () => {
 
 describe("getGroup function", () => {
   it("returns null if no group is found", async () => {
-    const { getGroup } = groupController();
+    const { getGroup } = groupController(defaultParams);
     const result = await getGroup(1);
     expect(result).toBe(null);
   });
@@ -45,7 +49,7 @@ describe("getGroup function", () => {
   it("returns the group by given id", async () => {
     const groups = getFakeGroups({ length: 10 });
     await prisma.group.createMany({ data: groups });
-    const { getGroup } = groupController();
+    const { getGroup } = groupController(defaultParams);
     const result = await getGroup(1);
     expect(result).toMatchObject(groups[0]);
   });
@@ -55,7 +59,7 @@ describe("createGroup function", () => {
   it("creates a new group", async () => {
     const artists = getFakeArtists({ length: 3 });
     await prisma.artist.createMany({ data: artists });
-    const { createGroup } = groupController();
+    const { createGroup } = groupController(defaultParams);
     await createGroup({
       title: "new group",
       artists: artists.map(({ id }) => id),
@@ -74,12 +78,14 @@ describe("createGroup function", () => {
 
 describe("updateGroup function", () => {
   it("does nothing if no group is found", async () => {
-    const { updateGroup } = groupController();
+    const send = vi.fn();
+    const { updateGroup } = groupController({ send });
     const result = await updateGroup(1, {
       title: "new title",
       artists: [],
     });
     expect(result).toBe(null);
+    expect(send).not.toHaveBeenCalled();
   });
 
   it("updates the group with the given information", async () => {
@@ -95,7 +101,8 @@ describe("updateGroup function", () => {
       },
     });
 
-    const { updateGroup } = groupController();
+    const send = vi.fn();
+    const { updateGroup } = groupController({ send });
     await updateGroup(1, {
       title: "new title",
       artists: [3, 4],
@@ -110,6 +117,11 @@ describe("updateGroup function", () => {
       title: "new title",
       artists: [{ id: 3 }, { id: 4 }],
     });
+
+    expect(send).toHaveBeenCalledWith("notify", {
+      type: "success",
+      message: "Group renamed",
+    });
   });
 });
 
@@ -118,7 +130,7 @@ describe("deleteGroup function", () => {
     const group = getFakeGroups({ length: 1 }).at(0);
     await prisma.group.create({ data: group });
 
-    const { deleteGroup } = groupController();
+    const { deleteGroup } = groupController(defaultParams);
     await deleteGroup(1);
     const result = await prisma.group.findFirst({ where: { id: 1 } });
 
@@ -131,7 +143,7 @@ describe("deleteGroups function", () => {
     const groups = getFakeGroups({ length: 3 });
     await prisma.group.createMany({ data: groups });
 
-    const { deleteGroups } = groupController();
+    const { deleteGroups } = groupController(defaultParams);
     await deleteGroups([2, 3]);
     const result = await prisma.group.findMany();
 
@@ -146,7 +158,7 @@ describe("addArtistsToGroup function", async () => {
     await prisma.group.create({
       data: getFakeGroups({ length: 1 }).at(0),
     });
-    const { addArtistsToGroup } = groupController();
+    const { addArtistsToGroup } = groupController(defaultParams);
     await addArtistsToGroup(1, artists);
     const updatedGroup = await prisma.group.findFirst({
       where: { id: 1 },
@@ -161,7 +173,7 @@ describe("addArtistsToGroup function", async () => {
     await prisma.group.createMany({
       data: getFakeGroups({ length: 1, artists }),
     });
-    const { removeArtistsFromGroup } = groupController();
+    const { removeArtistsFromGroup } = groupController(defaultParams);
     const updatedGroup = await removeArtistsFromGroup(1, [1]);
     expect(updatedGroup.coverArtistId).toBe(null);
   });
@@ -178,7 +190,7 @@ describe("removeArtistsFromGroup function", async () => {
     const dialogSpy = vi.spyOn(dialog, "showMessageBoxSync");
     dialogSpy.mockReturnValueOnce(1);
 
-    const { removeArtistsFromGroup } = groupController();
+    const { removeArtistsFromGroup } = groupController(defaultParams);
     await removeArtistsFromGroup(1, [2]);
 
     const result = await prisma.group.findFirst({
@@ -197,7 +209,7 @@ describe("removeArtistsFromGroup function", async () => {
     await prisma.group.create({
       data: getFakeGroups({ length: 1, artists }).at(0),
     });
-    const { removeArtistsFromGroup } = groupController();
+    const { removeArtistsFromGroup } = groupController(defaultParams);
     const updatedGroup = await removeArtistsFromGroup(1, [2, 3]);
     expect(updatedGroup.artists).toMatchObject([{ id: 1 }]);
   });
@@ -208,7 +220,7 @@ describe("removeArtistsFromGroup function", async () => {
     await prisma.group.createMany({
       data: getFakeGroups({ length: 1, artists }),
     });
-    const { removeArtistsFromGroup } = groupController();
+    const { removeArtistsFromGroup } = groupController(defaultParams);
     const updatedGroup = await removeArtistsFromGroup(1, [1]);
     expect(updatedGroup.coverArtistId).toBe(null);
   });
@@ -228,7 +240,7 @@ describe("setGroupCoverArtist function", () => {
         coverArtistId: 1,
       },
     });
-    const { setGroupCoverArtist } = groupController();
+    const { setGroupCoverArtist } = groupController(defaultParams);
     const updatedGroup = await setGroupCoverArtist(1, 2);
     expect(updatedGroup.coverArtistId).toBe(2);
   });
