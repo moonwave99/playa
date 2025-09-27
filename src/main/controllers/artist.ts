@@ -64,6 +64,11 @@ export function artistController({
       ...(updatedArtist as Artist),
     });
 
+    send("notify", {
+      type: "success",
+      message: `Artist renamed`,
+    });
+
     return updatedArtist;
   }
 

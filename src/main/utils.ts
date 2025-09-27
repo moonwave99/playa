@@ -86,7 +86,6 @@ export function parsePath(path: string): ParsePath {
   if (path.startsWith("/")) {
     path = path.slice(1);
   }
-
   if (path.startsWith(VARIOUS_ARTISTS_FOLDER)) {
     path = path.replace(
       VARIOUS_ARTISTS_FOLDER,
@@ -124,7 +123,7 @@ export function parsePath(path: string): ParsePath {
   };
 }
 
-function parseTitle(title = ""): Pick<Release, "year" | "title"> {
+function parseTitle(title: string): Pick<Release, "year" | "title"> {
   const match = title.match(/^(\d{4}) - (.*)/);
   if (!match) {
     return {

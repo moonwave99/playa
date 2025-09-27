@@ -60,10 +60,7 @@ export async function deleteRelease(id: number) {
       },
     },
   });
-}
-
-export async function deleteReleases(ids: number[]) {
-  return Promise.all(ids.map(deleteRelease));
+  return release;
 }
 
 export async function addTracksToRelease(id: number, trackInfo: TrackInfo[]) {
@@ -200,7 +197,10 @@ export async function unGroupRelease(release: Release & WithSubReleases) {
   ]);
 }
 
-export async function getReleases({ take = 50, skip = 0 }: PaginationParams) {
+export async function getReleases({
+  take = 50,
+  skip = 0,
+}: PaginationParams = {}) {
   const [results, total] = await prisma.$transaction([
     prisma.release.findMany({
       take,
@@ -236,7 +236,7 @@ export async function getLatestAdditions(
     where: {
       mainRelease: null,
       createdAt: {
-        gte: new Date(from || null),
+        gte: new Date(from),
       },
     },
     select: {

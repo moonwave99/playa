@@ -84,6 +84,26 @@ describe("showRelease function", () => {
 });
 
 describe("getReleases function", () => {
+  it("returns the releases with default pagination params", async () => {
+    const releases = getFakeReleasesForArtist(1, 100);
+    const artist = getFakeArtist(1);
+    await prisma.artist.create({ data: artist });
+    await prisma.release.createMany({ data: releases });
+
+    const { getReleases } = releaseController(defaultParams);
+    const result = await getReleases();
+
+    expect(result.pagination).toMatchObject({
+      take: 50,
+      skip: 0,
+      total: releases.length,
+    });
+
+    expect(result.results).toMatchObject(
+      releases.toSorted(sortBy("createdAt", "desc")).slice(0, 50)
+    );
+  });
+
   it("returns the releases with the given pagination params", async () => {
     const releases = getFakeReleasesForArtist(1, 20);
     const artist = getFakeArtist(1);
@@ -1073,6 +1093,12 @@ describe("removeAdditionalArtist function", () => {
 });
 
 describe("deleteRelease function", () => {
+  it("does nothing if no release is found", async () => {
+    const { deleteRelease } = releaseController(defaultParams);
+    const result = await deleteRelease(1);
+    expect(result).toBeFalsy();
+  });
+
   it("deletes the passed release from library", async () => {
     const releases = getFakeReleasesForArtist(1);
     const artist = getFakeArtist(1);

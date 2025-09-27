@@ -118,7 +118,7 @@ export async function getArtist(id: number) {
 export async function getLatestArtists({
   take = 50,
   skip = 0,
-}: PaginationParams) {
+}: PaginationParams = {}) {
   const [results, total] = await prisma.$transaction([
     prisma.artist.findMany({
       take,
