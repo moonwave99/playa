@@ -105,6 +105,24 @@ export function useOnOpenEditGroupDialog(callback: (group: Group) => void) {
   }, []);
 }
 
+export function useOnToggleSearch(callback: () => void) {
+  useEffect(() => {
+    const unsubscribe = api.onToggleSearch(callback);
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+}
+
+export function useOnExportData(callback: (status: string) => void) {
+  useEffect(() => {
+    const unsubscribe = api.importExport.onExportData(callback);
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+}
+
 export function useClearSelectionOnLeave() {
   useEffect(() => {
     return () => {

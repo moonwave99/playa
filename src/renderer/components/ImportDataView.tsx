@@ -71,7 +71,7 @@ export default function ImportDataView({
 
   return (
     <div className={styles.view}>
-      <h2 className={styles.title}>Import Data from Archive</h2>
+      <h2>Import Data from Archive</h2>
       {!inProgress && (
         <div className={styles.description}>
           <p>

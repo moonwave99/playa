@@ -153,7 +153,7 @@ export function init(mainWindow: BrowserWindow) {
   );
   ipc.on("state:navigate", async (_, path: string) => state.setPath(path));
   ipc.on("state:clearSelection", () => send("clearSelection"));
-  ipc.on("state:toggleSidebar", () => send("toggleSidebar"));
+  ipc.on("state:toggleSearch", () => send("toggleSearch"));
   ipc.on("state:refreshMenu", () => refreshMenu(state.getState()));
   ipc.on("state:refreshCurrentArtist", () => state.refreshCurrentArtist());
 }

@@ -1,0 +1,17 @@
+.view {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  background-color: black;
+
+  h2 {
+    user-select: none;
+  }
+}
+
+.description {
+  font-size: 0.9rem;
+  line-height: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}

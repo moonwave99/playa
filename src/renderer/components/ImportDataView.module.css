@@ -9,10 +9,6 @@
   }
 }
 
-.view > * {
-  margin: 0;
-}
-
 .description {
   font-size: 0.9rem;
   line-height: 1.5rem;

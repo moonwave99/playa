@@ -6,7 +6,6 @@ import {
   useLocation,
   matchPath,
 } from "react-router";
-import { useMediaQuery } from "react-responsive";
 import { ToastContainer, toast } from "react-toastify";
 import {
   DndContext,
@@ -29,6 +28,8 @@ import {
   useOnSwipe,
   useOnOpenImportData,
   useOnOpenEditGroupDialog,
+  useOnToggleSearch,
+  useOnExportData,
 } from "./hooks/ipc";
 import api from "./api";
 import useRefetch from "./hooks/useRefetch";
@@ -39,7 +40,6 @@ import { handleDropEnd, fixCursorSnapOffset } from "./dnd";
 import { routes } from "./routes";
 
 import Nav from "./components/Nav";
-import SidebarView from "./components/SidebarView";
 import Modal from "./Modal";
 import ToastView from "./components/ToastView";
 
@@ -58,14 +58,8 @@ import {
 } from "@/types/types";
 
 export default function Layout() {
-  const {
-    showSidebar,
-    setContext,
-    isDetailPage,
-    onDragStart,
-    onDragEnd,
-    draggedItem,
-  } = init();
+  const { setContext, isDetailPage, onDragStart, onDragEnd, draggedItem } =
+    init();
 
   return (
     <DndContext
@@ -75,7 +69,6 @@ export default function Layout() {
     >
       <div
         className={cx(styles.view, {
-          [styles.showSidebar]: showSidebar,
           [styles.isDetailPage]: isDetailPage,
         })}
       >
@@ -88,11 +81,6 @@ export default function Layout() {
               ))}
             </Routes>
           </main>
-          {showSidebar && (
-            <div className={styles.sidebar}>
-              <SidebarView />
-            </div>
-          )}
         </div>
         <Modal setContext={setContext} />
         <ToastContainer />
@@ -105,10 +93,8 @@ export default function Layout() {
 }
 
 type Init = {
-  showSidebar: boolean;
   useDarkText: boolean;
   setContext: (context: string) => void;
-  toggleSidebar: () => void;
   isDetailPage: boolean;
   draggedItem: Artist | Release | null;
   onDragStart: (event: DragStartEvent) => void;
@@ -124,24 +110,13 @@ function init(): Init {
     path,
     toggleViewMode,
     setPath,
-    showSidebar,
-    toggleSidebar,
     useDarkText,
     setSettings,
     setModalContents,
+    modalContents,
   } = useStore();
 
-  const isSmallScreen = useMediaQuery({
-    query: "(max-width: 900px)",
-  });
-
   const [draggedItem, setDraggedItem] = useState<Artist | Release>(null);
-
-  useEffect(() => {
-    if (isSmallScreen) {
-      toggleSidebar(false);
-    }
-  }, [isSmallScreen]);
 
   useOnOpenSettings(() => setModalContents({ name: "settings" }));
   useOnOpenImportData(() => setModalContents({ name: "importData" }));
@@ -159,6 +134,12 @@ function init(): Init {
   );
   useOnOpenEditGroupDialog((group: Group) =>
     setModalContents({ name: "editGroup", params: { group } })
+  );
+  useOnExportData(() => setModalContents({ name: "exportData" }));
+  useOnToggleSearch(() =>
+    setModalContents(
+      modalContents?.name === "search" ? null : { name: "search" }
+    )
   );
 
   useOnSwipe(navigate);
@@ -232,7 +213,6 @@ function init(): Init {
         setContext("list");
       }),
       api.onCoverUpdate(refreshCovers),
-      api.onToggleSidebar(toggleSidebar),
     ];
 
     api.settings.getSettings().then(setSettings);
@@ -252,9 +232,7 @@ function init(): Init {
   }
 
   return {
-    showSidebar,
     useDarkText,
-    toggleSidebar,
     draggedItem,
     setContext,
     isDetailPage,

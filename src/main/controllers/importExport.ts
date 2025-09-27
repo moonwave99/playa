@@ -71,12 +71,19 @@ export function importExportController({
       return;
     }
 
-    return await exportData({
+    send("exportData", "start");
+
+    const exportPath = await exportData({
       userDataPath,
       outputPath,
       appVersion,
     });
+
+    send("exportData", "done");
+
+    return exportPath;
   }
+
   return {
     importDataFromDialog,
     exportDataFromDialog,

@@ -57,6 +57,7 @@ declare global {
           handler: (step: string, completed?: boolean) => void
         ) => () => void;
         onError: (handler: (message: string) => void) => () => void;
+        onExportData: (handler: (status: string) => void) => () => void;
       };
       settings: {
         getSettings: () => Promise<ReturnType<getSettings>>;
@@ -81,7 +82,7 @@ declare global {
       onNotify: (handler: (notification: Notification) => void) => () => void;
       onClearSelection: (handler: () => void) => () => void;
       onToggleViewMode: (handler: () => void) => () => void;
-      onToggleSidebar: (handler: (showSidebar: boolean) => void) => () => void;
+      onToggleSearch: (handler: () => void) => () => void;
       onOpenSettings: (handler: () => void) => () => void;
       onOpenImportData: (handler: () => void) => () => void;
       onCoverUpdate: (handler: (releases: Release[]) => void) => () => void;
@@ -105,7 +106,7 @@ declare global {
         clearSelection: () => void;
         refreshCurrentArtist: () => void;
         refreshMenu: () => void;
-        toggleSidebar: (showSidebar?: boolean) => void;
+        toggleSearch: (showSearch?: boolean) => void;
       };
       dialog: {
         open: (options: Partial<OpenDialogSyncOptions>) => Promise<string>;

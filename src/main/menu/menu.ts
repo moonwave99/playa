@@ -402,9 +402,9 @@ export function initMenu({ controllers, state, send }: InitMenuParams) {
           click: () => send("toggleViewMode"),
         },
         {
-          label: "Toggle Sidebar",
+          label: "Search Library",
           accelerator: "Cmd+\\",
-          click: () => send("toggleSidebar"),
+          click: () => send("toggleSearch"),
         },
         { type: "separator" },
         {

@@ -124,9 +124,17 @@
   gap: 1rem;
 }
 
+.homepageTitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .homepageList {
   height: auto;
-  padding-left: 0;
+  padding: 0;
+  max-width: 100vw;
+  overflow-x: auto;
 }
 
 .releaseView {

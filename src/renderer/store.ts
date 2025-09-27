@@ -13,7 +13,6 @@ function getNextViewMode(current: ViewMode): ViewMode {
 
 type Store = {
   viewMode: ViewMode;
-  showSidebar: boolean;
   useDarkText: boolean;
   path: string;
   modalContents: ModalContents | null;
@@ -21,7 +20,6 @@ type Store = {
   settings: Settings;
   setSettings: (settings: Settings) => void;
   toggleViewMode: () => void;
-  toggleSidebar: (showSidebar?: boolean) => void;
   setUseDarkText: (useDarkText: boolean) => void;
   setPath: (path: string) => void;
   setModalContents: (modalContents: ModalContents) => void;
@@ -33,17 +31,11 @@ const useStore = create<Store>()(
     (set) => ({
       viewMode: "grid",
       path: "/",
-      showSidebar: false,
       useDarkText: false,
       modalContents: null as ModalContents,
       isModalFixed: false,
       settings: null as Settings,
       setSettings: (settings) => set({ settings }),
-      toggleSidebar: (showSidebar?: boolean) =>
-        set((prev) => ({
-          showSidebar:
-            showSidebar === undefined ? !prev.showSidebar : showSidebar,
-        })),
       toggleViewMode: () =>
         set(({ viewMode }) => ({ viewMode: getNextViewMode(viewMode) })),
       setUseDarkText: (useDarkText) => set({ useDarkText }),

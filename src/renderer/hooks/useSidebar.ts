@@ -43,7 +43,7 @@ export default function useSidebar({
     context: "sidebar:input",
     handlers: {
       "\\": withMeta(() => {
-        api.state.toggleSidebar(false);
+        api.state.toggleSearch(false);
         setContext("list");
       }),
       ArrowRight: withMeta(() => {

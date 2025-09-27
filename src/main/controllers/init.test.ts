@@ -55,7 +55,7 @@ describe("init function", () => {
       "state:selectReleases",
       "state:navigate",
       "state:clearSelection",
-      "state:toggleSidebar",
+      "state:toggleSearch",
       "state:refreshMenu",
       "state:refreshCurrentArtist",
     ].forEach((eventName) => {

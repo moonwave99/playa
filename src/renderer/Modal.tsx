@@ -18,6 +18,8 @@ import GroupReleasesView from "./components/GroupReleasesView";
 import ImportDataView from "./components/ImportDataView";
 import SettingsView from "./components/SettingsView";
 import EditGroupView from "./components/EditGroupView";
+import SearchView from "./components/SearchView";
+import ExportDataView from "./components/ExportDataView";
 
 function getModalOverrides(name: string) {
   if (name === "lightbox") {
@@ -27,6 +29,11 @@ function getModalOverrides(name: string) {
       overflow: "visible",
       border: "none",
       background: "transparent",
+    };
+  }
+  if (name === "search") {
+    return {
+      width: "min(90vw, 1000px)",
     };
   }
   if (name === "stats") {
@@ -98,6 +105,9 @@ export default function Modal({ setContext }: ModalProps) {
     if (name === "importData") {
       return <ImportDataView onDone={closeModal} onCancel={closeModal} />;
     }
+    if (name === "exportData") {
+      return <ExportDataView onDone={closeModal} />;
+    }
     if (name === "groupReleases") {
       return (
         <GroupReleasesView
@@ -142,6 +152,9 @@ export default function Modal({ setContext }: ModalProps) {
           onCancel={closeModal}
         />
       );
+    }
+    if (name === "search") {
+      return <SearchView onClose={closeModal} />;
     }
     if (name === "lightbox") {
       return (

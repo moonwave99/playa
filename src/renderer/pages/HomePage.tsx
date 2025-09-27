@@ -6,18 +6,21 @@ import {
   Release,
 } from "@/types/types";
 import api from "../api";
+import useStore from "../store";
 import ErrorView from "../components/ErrorView";
 import List from "../components/List";
+import Link from "../components/Link";
 import Loading from "../components/Loading";
 import ReleaseView from "../components/ReleaseView";
 import StatsView from "../components/StatsView";
 import { releaseColumnsConfig } from "../hooks/useResponsiveColumns";
 import useReleases from "../query/useReleases";
-import styles from "./Page.module.css";
 import { getReleaseLink } from "@/lib/links";
 import { useNavigate } from "react-router";
 import { withPrevent } from "../hooks/useKeyboardManager";
-import useStore from "../store";
+import cx from "clsx";
+import styles from "./Page.module.css";
+import formStyles from "../forms.module.css";
 
 export default function HomePage() {
   return (
@@ -64,7 +67,15 @@ function LatestReleases() {
 
   return (
     <section className={styles.section}>
-      <h2>Latest Releases</h2>
+      <h2 className={styles.homepageTitle}>
+        Latest Releases
+        <Link
+          className={cx(formStyles.button, formStyles.primary)}
+          to="/releases"
+        >
+          See All
+        </Link>
+      </h2>
       {!releases?.length ? (
         <div className={styles.placeholder}>There are no releases yet.</div>
       ) : (
@@ -75,6 +86,7 @@ function LatestReleases() {
           columnsConfig={releaseColumnsConfig}
           onEnter={onEnter}
           keyHandlers={keyHandlers}
+          paddingEnd={0}
           render={({ item, selection, ...rest }) => (
             <ReleaseView
               {...rest}

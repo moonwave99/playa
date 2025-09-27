@@ -5,7 +5,7 @@ import { useKeyManager } from "../hooks/useKeyboardManager";
 import useClickOutside from "../hooks/useClickOutside";
 import useStore from "../store";
 import cx from "clsx";
-import { IoClose, IoMenu } from "react-icons/io5";
+import { IoMenu } from "react-icons/io5";
 import styles from "./Nav.module.css";
 import buttonStyles from "../buttons.module.css";
 import { MdOutlineSearch } from "react-icons/md";
@@ -63,8 +63,7 @@ export default function Nav({ isDetailPage }: NavProps) {
   const [isNavOpen, setNavOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(-1);
   const ref = useClickOutside(() => setNavOpen(false));
-  const { setModalContents, useDarkText, toggleSidebar, showSidebar } =
-    useStore();
+  const { setModalContents, useDarkText } = useStore();
   const { setContext } = useKeyManager({
     context: "nav",
     handlers: {
@@ -89,7 +88,6 @@ export default function Nav({ isDetailPage }: NavProps) {
     <nav
       className={cx(styles.nav, {
         [styles.isOpen]: isNavOpen,
-        [styles.isSidebarOpen]: showSidebar,
         [styles.isDetailPage]: isDetailPage,
       })}
       ref={ref}
@@ -108,14 +106,13 @@ export default function Nav({ isDetailPage }: NavProps) {
         </button>
         <button
           type="button"
-          aria-label="Toggle Sidebar"
-          onClick={() => toggleSidebar()}
+          aria-label="Toggle Search"
+          onClick={() => setModalContents({ name: "search" })}
           className={cx(buttonStyles.button, styles.toggleSidebarButton, {
-            [styles.showSidebar]: showSidebar,
             [buttonStyles.useDarkText]: useDarkText,
           })}
         >
-          {showSidebar ? <IoClose /> : <MdOutlineSearch />}
+          <MdOutlineSearch />
         </button>
       </div>
       <div className={styles.entries} ref={ref}>
