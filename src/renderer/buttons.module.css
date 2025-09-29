@@ -27,10 +27,13 @@
     &:hover {
       background-color: var(--secondary-color);
     }
+    &.active {
+      border: 1px solid black;
+    }
   }
 
   &.active {
-    color: var(--accent-color);
+    border: 1px solid var(--tertiary-color);
   }
 }
 

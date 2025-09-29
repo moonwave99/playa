@@ -8,16 +8,22 @@
       font-size: 0.8rem;
     }
   }
+  &.useDarkText {
+    li:not(:last-of-type):after {
+      color: black;
+    }
+  }
   li {
     display: flex;
     align-items: center;
     &:not(:last-of-type) {
       padding-right: 0.5rem;
       &:after {
-        color: var(--tertiary-color);
+        color: var(--secondary-color);
         content: "/";
         font-size: 1.2rem;
         margin-left: 0.5rem;
+        padding-bottom: 0.065rem;
       }
     }
   }

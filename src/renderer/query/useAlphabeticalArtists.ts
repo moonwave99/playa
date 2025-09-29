@@ -5,7 +5,7 @@ import api from "../api";
 type UseAlphabeticalArtists = {
   isPending: boolean;
   error: Error;
-  artists: Artist[];
+  artists: [string, Artist[]][];
 };
 
 export default function useAlphabeticalArtists(): UseAlphabeticalArtists {
@@ -15,7 +15,7 @@ export default function useAlphabeticalArtists(): UseAlphabeticalArtists {
   });
 
   return {
-    artists: data as Artist[],
+    artists: data as [string, Artist[]][],
     isPending,
     error,
   };

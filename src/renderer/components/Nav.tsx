@@ -9,9 +9,8 @@ import useStore from "../store";
 import Breadcrumbs from "./Breadcrumbs";
 import { IoMenu } from "react-icons/io5";
 import { MdOutlineSearch } from "react-icons/md";
-import { TiSortAlphabetically } from "react-icons/ti";
 import { IoMdTime } from "react-icons/io";
-import { BsGrid, BsGrid3X2Gap, BsListOl } from "react-icons/bs";
+import { BsGrid, BsGrid3X2Gap, BsListOl, BsAlphabet } from "react-icons/bs";
 
 import cx from "clsx";
 import styles from "./Nav.module.css";
@@ -115,6 +114,7 @@ export default function Nav({ isDetailPage }: NavProps) {
           className={cx(buttonStyles.button, {
             [buttonStyles.useDarkText]: useDarkText,
           })}
+          style={{ marginLeft: "1.5rem" }}
         >
           <IoMenu />
         </button>
@@ -243,7 +243,7 @@ function ArtistListActions() {
           [buttonStyles.active]: artistsViewMode === "alphabetical",
         })}
       >
-        <TiSortAlphabetically />
+        <BsAlphabet />
       </button>
     </>
   );

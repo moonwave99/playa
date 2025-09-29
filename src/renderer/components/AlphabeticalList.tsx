@@ -1,66 +1,60 @@
+import { useState } from "react";
 import type { Artist, Release } from "@/types/types";
+import List from "./List";
 import Link from "./Link";
-import styles from "./AlphabeticalList.module.css";
 import { getArtistLink, getReleaseLink } from "@/lib/links";
-import { groupItemsByLetter } from "@/lib/utils";
+import styles from "./AlphabeticalList.module.css";
 
 type Item = Artist | Release;
 
 type AlphabeticalListProps = {
-  items: Item[];
+  items: [string, Item[]][];
 };
 
 export default function AlphabeticalList({ items }: AlphabeticalListProps) {
-  const groupedItems = groupItemsByLetter(items);
+  const [initialIndex, setInitialIndex] = useState(0);
 
   function renderEntry(item: Item) {
     if (item.entityType === "Artist") {
       return <Link to={getArtistLink(item)}>{item.name}</Link>;
     }
-
     return <Link to={getReleaseLink(item)}>{item.title}</Link>;
   }
 
-  function onLetterClick(letter: string) {
-    const target = document.querySelector(`[data-letter="${letter}"]`);
-    target?.scrollIntoView();
-  }
+  const letters = items.map((x) => x[0]);
 
   return (
     <div className={styles.view}>
-      <LettersView onClick={onLetterClick} />
-      <div className={styles.list}>
-        {Object.entries(groupedItems).flatMap(
-          ([letter, entries]: [string, Item[]]) => (
-            <article key={letter} data-letter={letter}>
-              <h3>{letter}</h3>
-              <ul>
-                {entries.map((entry) => (
-                  <li key={entry.id}>{renderEntry(entry)}</li>
-                ))}
-              </ul>
-            </article>
-          )
-        )}
+      <div className={styles.letters}>
+        {letters.map((x, index) => (
+          <button key={x} onClick={() => setInitialIndex(index)}>
+            {x}
+          </button>
+        ))}
       </div>
-    </div>
-  );
-}
-
-const letters = "#abcdefghijklmnopqrstuvwxyz".split("");
-
-type LettersViewProps = {
-  onClick: (letter: string) => void;
-};
-
-function LettersView({ onClick }: LettersViewProps) {
-  return (
-    <div className={styles.letters}>
-      {letters.map((x) => (
-        <button key={x} onClick={() => onClick(x)}>
-          {x}
-        </button>
-      ))}
+      <List
+        className={styles.list}
+        items={items}
+        overscan={1}
+        initialIndex={initialIndex}
+        columnsConfig={[{ count: 1, width: 400 }]}
+        estimateSize={(_, index: number) => ({
+          width: "100%",
+          height: (Math.floor(items[index][1].length / 5) + 3) * 24,
+        })}
+        render={({ item }) => (
+          <article key={item[0]} data-letter={item[0]}>
+            <h3>
+              {item[0]} <span className={styles.count}>({item[1].length})</span>
+            </h3>
+            <ul>
+              {item[1].map((entry) => (
+                <li key={entry.id}>{renderEntry(entry)}</li>
+              ))}
+            </ul>
+          </article>
+        )}
+      />
     </div>
   );
 }

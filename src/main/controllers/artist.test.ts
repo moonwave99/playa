@@ -44,8 +44,13 @@ describe("artist - getAllArtists function", () => {
     await prisma.artist.createMany({ data: artists });
     const { getAllArtists } = artistController(defaultParams);
     const result = await getAllArtists();
-    // eslint-disable-next-line  @typescript-eslint/no-unused-vars
-    expect(result).toMatchObject(artists.map(({ createdAt, ...x }) => x));
+    expect(result).toMatchObject([
+      [
+        "a",
+        // eslint-disable-next-line  @typescript-eslint/no-unused-vars
+        artists.map(({ createdAt, ...x }) => x),
+      ],
+    ]);
   });
 });
 

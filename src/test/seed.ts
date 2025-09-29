@@ -1,7 +1,7 @@
 import prisma from "../main/db/prisma";
 import sha1 from "sha1";
 import { hashArtistName, hashRelease } from "../main/hash";
-import type { Release, HasId } from "@/types/types";
+import type { Release, HasId, EntityType } from "@/types/types";
 
 export function getFakeArtist(id = 1) {
   const artist = getFakeArtists({ length: 1 }).at(0);
@@ -13,6 +13,7 @@ export function getFakeArtist(id = 1) {
 
 export function getFakeArtists({ length = 10 }) {
   return Array.from({ length }, (_, i) => ({
+    entityType: "Artist" as EntityType,
     id: i + 1,
     name: `Artist ${i + 1}`,
     normalizedName: `Artist ${i + 1}`,

@@ -67,6 +67,7 @@ export default function BreadCrumbs({
   return (
     <ul
       className={cx(styles.view, {
+        [styles.useDarkText]: useDarkText,
         [styles.isDetailPage]: isDetailPage,
       })}
     >

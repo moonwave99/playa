@@ -1,6 +1,7 @@
 import prisma from "./prisma";
 import {
   countReleasesByType,
+  groupItemsByLetter,
   normalizeDiacritics,
   sortReleasesByTypeAndYear,
   withCoverRelease,
@@ -12,6 +13,7 @@ import type {
   Release,
   ReleaseWithArtistAndSubReleases,
   Track,
+  Artist,
 } from "@/types/types";
 
 export async function getArtist(id: number) {
@@ -154,7 +156,7 @@ export async function getLatestArtists({
 }
 
 export async function getAllArtists() {
-  return prisma.artist.findMany({
+  const artists = await prisma.artist.findMany({
     orderBy: { name: "asc" },
     select: {
       id: true,
@@ -165,6 +167,7 @@ export async function getAllArtists() {
       path: true,
     },
   });
+  return groupItemsByLetter(artists as Artist[]);
 }
 
 function withReleaseCount(artist: ArtistWithReleases) {

@@ -28,6 +28,7 @@ type ListProps<T> = {
   onRight?: (event: KeyboardEvent) => boolean | void;
   shouldCallOnLeft?: () => boolean;
   shouldCallOnRight?: () => boolean;
+  onUnmount?: (virtualIndexes: number[]) => void;
   context?: string;
   className?: string;
   columnsConfig?: ColumnsConfigEntry[];
@@ -70,6 +71,7 @@ export default function List<T>({
   onUp,
   onLeft,
   onRight,
+  onUnmount,
   shouldCallOnLeft = () => true,
   shouldCallOnRight = () => true,
   items,
@@ -125,6 +127,15 @@ export default function List<T>({
   });
 
   useEffect(() => {
+    return () => {
+      if (!onUnmount) {
+        return;
+      }
+      onUnmount(virtualizer.getVirtualIndexes());
+    };
+  }, []);
+
+  useEffect(() => {
     if (firstRender.current) {
       firstRender.current = false;
       return;
@@ -147,9 +158,10 @@ export default function List<T>({
   }, [currentIndex, initialIndex, scrollBehavior]);
 
   useEffect(() => {
-    if (onSelectionChange) {
-      onSelectionChange(selection);
+    if (!onSelectionChange) {
+      return;
     }
+    onSelectionChange(selection);
   }, [selection]);
 
   const isVertical = columnsConfig.length === 1 && columns === 1;

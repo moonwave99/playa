@@ -8,16 +8,16 @@
       }
     }
 
+    &.even {
+      background-color: var(--tracklist-entry-alternate-background-color);
+    }
+
     &.hasFocus {
       background-color: var(--accent-color);
 
       &:hover {
         opacity: 0.9;
       }
-    }
-
-    &.even {
-      background-color: var(--tracklist-entry-alternate-background-color);
     }
   }
   &.isFlipped {
