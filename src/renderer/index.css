@@ -8,14 +8,11 @@
   --accent-color-light: #627be9;
   --accent-color-dark: #183ee6;
   --selected-no-focus-color: #4f4d4d;
-  --sidebar-background-color: #232323;
-  --sidebar-secondary-color: #7d7d7d;
-  --sidebar-nav-button-background-color: #4f4d4d;
+  --breadcrumb-background-color: #4f4d4d;
   --release-group-background-color: #1f1f1f;
   --release-view-background-color: #18181a;
   --release-view-background-color-light: #363636;
   --header-height: 3.5rem;
-  --sidebar-width: 24rem;
   --navbar-width: 12rem;
   --release-group-height-small: 4rem;
   --release-group-height: 6rem;

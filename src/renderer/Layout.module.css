@@ -19,34 +19,6 @@
   padding-top: var(--header-height);
 }
 
-.sidebar {
-  width: var(--sidebar-width);
-  display: flex;
-  flex-direction: column;
-  background-color: var(--sidebar-background-color);
-  border-left: 0.5px solid var(--neutral-border-color);
-}
-
 .isDetailPage > div {
   padding-top: 0;
-}
-
-.isDetailPage .toggleSidebarButton {
-  left: calc(var(--release-tracklist-single-cover-size) + 0.5rem);
-}
-
-.showSidebar.isDetailPage .toggleSidebarButton {
-  left: calc(
-    var(--release-tracklist-single-cover-size) + var(--sidebar-width) + 0.5rem
-  );
-}
-
-.toggleSidebarButton {
-  position: fixed;
-  top: 0.75rem;
-  left: 5rem;
-
-  &.showSidebar {
-    left: calc(var(--sidebar-width) + 0.5rem);
-  }
 }

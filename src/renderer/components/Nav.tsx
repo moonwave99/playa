@@ -3,6 +3,7 @@ import type { MouseEvent } from "react";
 import { NavLink } from "react-router";
 import { useKeyManager } from "../hooks/useKeyboardManager";
 import useClickOutside from "../hooks/useClickOutside";
+import useOnLocationChange from "../hooks/useOnLocationChange";
 import useStore from "../store";
 import cx from "clsx";
 import { IoMenu } from "react-icons/io5";
@@ -84,6 +85,8 @@ export default function Nav({ isDetailPage }: NavProps) {
     target?.focus();
   }, [currentIndex]);
 
+  useOnLocationChange(() => setNavOpen(false));
+
   return (
     <nav
       className={cx(styles.nav, {
@@ -108,7 +111,7 @@ export default function Nav({ isDetailPage }: NavProps) {
           type="button"
           aria-label="Toggle Search"
           onClick={() => setModalContents({ name: "search" })}
-          className={cx(buttonStyles.button, styles.toggleSidebarButton, {
+          className={cx(buttonStyles.button, {
             [buttonStyles.useDarkText]: useDarkText,
           })}
         >

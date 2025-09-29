@@ -10,19 +10,7 @@ type ExportDataViewProps = {
 };
 
 export default function ExportDataView({ onDone }: ExportDataViewProps) {
-  const [isDone, setDone] = useState(false);
-  const { setModalFixed } = useStore();
-
-  useEffect(() => {
-    setModalFixed(true);
-    const unsubscribe = api.importExport.onExportData((status) => {
-      if (status === "done") {
-        setDone(true);
-        setModalFixed(false);
-      }
-    });
-    return () => unsubscribe();
-  }, []);
+  const isDone = useExportData();
 
   return (
     <div className={styles.view}>
@@ -40,4 +28,21 @@ export default function ExportDataView({ onDone }: ExportDataViewProps) {
       </div>
     </div>
   );
+}
+
+function useExportData() {
+  const [isDone, setDone] = useState(false);
+  const { setModalFixed } = useStore();
+
+  useEffect(() => {
+    setModalFixed(true);
+    const unsubscribe = api.importExport.onExportData((status) => {
+      if (status === "done") {
+        setDone(true);
+        setModalFixed(false);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+  return isDone;
 }

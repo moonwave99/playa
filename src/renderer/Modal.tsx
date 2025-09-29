@@ -33,7 +33,8 @@ function getModalOverrides(name: string) {
   }
   if (name === "search") {
     return {
-      width: "min(90vw, 1000px)",
+      width: "min(90vw, 1400px)",
+      marginTop: "0",
     };
   }
   if (name === "stats") {

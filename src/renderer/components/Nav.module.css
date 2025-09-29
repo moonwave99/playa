@@ -44,15 +44,6 @@
       display: block;
     }
   }
-
-  &.isSidebarOpen {
-    .buttons {
-      right: calc(var(--sidebar-width) - 2.25rem);
-    }
-    .entries {
-      right: calc(var(--sidebar-width) - 0.5rem);
-    }
-  }
 }
 
 .link {

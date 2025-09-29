@@ -1,10 +1,9 @@
 import { useState, useRef, useEffect, useLayoutEffect } from "react";
 import type { MouseEvent, ReactNode } from "react";
 import { useVirtualizer, type ScrollToOptions } from "@tanstack/react-virtual";
-import useStore from "../store";
 import { useKeyManager, withPrevent } from "../hooks/useKeyboardManager";
 import useResponsiveColumns from "../hooks/useResponsiveColumns";
-import { useClearSelection } from "../hooks/ipc";
+import { useApi } from "../hooks/useApi";
 import type { ColumnsConfigEntry } from "../hooks/useResponsiveColumns";
 import type { HasId } from "@/types/types";
 
@@ -35,8 +34,7 @@ type ListProps<T> = {
   render: (params: RenderParams<T>) => ReactNode;
   estimateSize?: (
     columns: number,
-    index: number,
-    showSidebar: boolean
+    index: number
   ) => { width: number | string; height: number };
   gap?: number;
   paddingEnd?: number;
@@ -55,10 +53,8 @@ type ListProps<T> = {
   keyHandlers?: Record<string, ListKeyHandler<T>>;
 };
 
-function defaultEstimateSize(columns: number, _: number, showSidebar: boolean) {
-  const containerWidth = showSidebar
-    ? window.innerWidth - 384
-    : window.innerWidth;
+function defaultEstimateSize(columns: number) {
+  const containerWidth = window.innerWidth;
 
   const width = containerWidth / columns;
   return {
@@ -112,7 +108,6 @@ export default function List<T>({
 
   const ref = useRef<HTMLDivElement>(null);
   const firstRender = useRef(true);
-  const { showSidebar } = useStore();
 
   const { columns } = useResponsiveColumns({
     config: columnsConfig,
@@ -122,13 +117,11 @@ export default function List<T>({
     },
   });
 
-  useEffect(() => {
-    virtualizer.measure();
-  }, [showSidebar]);
-
-  useClearSelection(() => {
-    setCurrentIndex(selection[0]);
-    setSelection([]);
+  useApi({
+    onClearSelection: () => {
+      setCurrentIndex(selection[0]);
+      setSelection([]);
+    },
   });
 
   useEffect(() => {
@@ -161,31 +154,35 @@ export default function List<T>({
 
   const isVertical = columnsConfig.length === 1 && columns === 1;
 
-  const horizontalHandlers = isVertical
-    ? {}
-    : {
-        ArrowLeft: (event: KeyboardEvent) => {
-          if (
-            (columns === 1 || currentIndex == 0) &&
-            onLeft &&
-            !event.metaKey &&
-            shouldCallOnLeft()
-          ) {
-            if (onLeft(event)) {
-              return;
-            }
-          }
-          setCurrentIndex((prev) => Math.max(0, prev - 1));
-        },
-        ArrowRight: (event: KeyboardEvent) => {
-          if (onRight && shouldCallOnRight()) {
-            if (onRight(event)) {
-              return;
-            }
-          }
-          setCurrentIndex((prev) => Math.min(items.length - 1, prev + 1));
-        },
-      };
+  const horizontalHandlers = {
+    ArrowLeft: (event: KeyboardEvent) => {
+      if (
+        (columns === 1 || currentIndex == 0) &&
+        onLeft &&
+        !event.metaKey &&
+        shouldCallOnLeft()
+      ) {
+        if (onLeft(event)) {
+          return;
+        }
+      }
+      if (isVertical) {
+        return;
+      }
+      setCurrentIndex((prev) => Math.max(0, prev - 1));
+    },
+    ArrowRight: (event: KeyboardEvent) => {
+      if (onRight && shouldCallOnRight()) {
+        if (onRight(event)) {
+          return;
+        }
+      }
+      if (isVertical) {
+        return;
+      }
+      setCurrentIndex((prev) => Math.min(items.length - 1, prev + 1));
+    },
+  };
 
   const { currentContext, setContext } = useKeyManager({
     context,
@@ -259,8 +256,7 @@ export default function List<T>({
   const virtualizer = useVirtualizer({
     count: items.length,
     getScrollElement: () => ref.current,
-    estimateSize: (index: number) =>
-      estimateSize(columns, index, showSidebar).height,
+    estimateSize: (index: number) => estimateSize(columns, index).height,
     overscan,
     gap,
     lanes: columns,
@@ -322,7 +318,7 @@ export default function List<T>({
               position: "absolute",
               top: 0,
               left: `${(lane / columns) * 100}%`,
-              height: `${estimateSize(columns, index, showSidebar)}px`,
+              height: `${estimateSize(columns, index)}px`,
               width: `${100 / columns}%`,
               transform: `translateY(${start}px)`,
               paddingRight: `${paddingRight}px`,

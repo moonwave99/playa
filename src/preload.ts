@@ -62,7 +62,6 @@ contextBridge.exposeInMainWorld("api", {
     searchResult: (result: SearchResult) =>
       ipc.invoke("menu:searchResult", result),
   },
-  onNavigateSidebar: getHandler("navigateSidebar"),
   onNavigate: getHandler("navigate"),
   onSwipe: getHandler("swipe"),
   onMutate: getHandler("mutate"),
@@ -86,8 +85,6 @@ contextBridge.exposeInMainWorld("api", {
     navigate: (path: string) => ipc.send("state:navigate", path),
     clearSelection: () => ipc.send("state:clearSelection"),
     refreshCurrentArtist: () => ipc.send("state:refreshCurrentArtist"),
-    toggleSidebar: (showSidebar?: boolean) =>
-      ipc.send("state:toggleSidebar", showSidebar),
     refreshMenu: () => ipc.send("state:refreshMenu"),
   },
   dialog: {

@@ -1,8 +1,6 @@
 import { useNavigate } from "react-router";
-import { useKeyManager } from "@/renderer/hooks/useKeyboardManager";
 import { compactColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
 import api from "../api";
-import useStore from "@/renderer/store";
 import { getCollectionLink } from "@/lib/links";
 import { estimateListCardSize } from "@/lib/utils";
 import useCollections from "@/renderer/query/useCollections";
@@ -16,8 +14,6 @@ import styles from "./Page.module.css";
 
 export default function LatestCollections() {
   const navigate = useNavigate();
-  const { showSidebar } = useStore();
-  const { setContext } = useKeyManager();
   const { isPending, error, collections, deleteCollections } = useCollections();
 
   if (isPending) {
@@ -51,8 +47,6 @@ export default function LatestCollections() {
             navigate(getCollectionLink(collection))
           }
           onBackspace={onDelete}
-          onLeft={() => setContext("sidebar")}
-          shouldCallOnLeft={() => showSidebar}
           render={({ item, ...rest }) => (
             <ListCard
               showMultipleCovers

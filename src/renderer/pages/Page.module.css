@@ -36,7 +36,7 @@
   padding: 0 0.5rem;
   margin: 1rem;
   font-size: 1rem;
-  background-color: var(--sidebar-background-color);
+  background-color: var(--background-color-light);
   border: none;
   color: var(--main-color);
   width: 30rem;

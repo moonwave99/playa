@@ -30,7 +30,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--sidebar-nav-button-background-color);
+  background-color: var(--breadcrumb-background-color);
   color: var(--primary-color);
   border-radius: 0.25rem;
   appearance: none;

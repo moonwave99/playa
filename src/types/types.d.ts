@@ -9,7 +9,6 @@ import type {
   Collection,
   Group,
   SearchResult,
-  Sidebars,
   ReleaseWithArtistAndSubReleases,
   GroupWithArtists,
   Notification,
@@ -77,7 +76,6 @@ declare global {
       };
       onNavigate: (handler: (path: string) => void) => () => void;
       onSwipe: (handler: (direction: 1 | -1) => void) => () => void;
-      onNavigateSidebar: (handler: (sidebar: Sidebars) => void) => () => void;
       onMutate: (handler: (keys: QueryKey) => void) => () => void;
       onNotify: (handler: (notification: Notification) => void) => () => void;
       onClearSelection: (handler: () => void) => () => void;

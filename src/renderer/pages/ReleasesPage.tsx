@@ -5,16 +5,12 @@ import type {
   ReleaseWithArtistAndSubReleases,
   ReleaseWithArtistAndTracksAndSubreleases,
 } from "@/types/types";
-import api from "../api";
-import { releaseColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
-import {
-  useKeyManager,
-  withMeta,
-  withPrevent,
-} from "@/renderer/hooks/useKeyboardManager";
-import useReleases from "@/renderer/query/useReleases";
-import { useClearSelectionOnLeave } from "@/renderer/hooks/ipc";
+import api from "@/renderer/api";
 import useStore from "@/renderer/store";
+import { releaseColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
+import { withPrevent } from "@/renderer/hooks/useKeyboardManager";
+import useReleases from "@/renderer/query/useReleases";
+import { useClearSelectionOnLeave } from "@/renderer/hooks/useApi";
 import { getReleaseLink } from "@/lib/links";
 import { getReleaseContextMenuParams } from "@/lib/utils";
 import Loading from "@/renderer/components/Loading";
@@ -24,10 +20,9 @@ import ReleaseView from "@/renderer/components/ReleaseView";
 
 import styles from "./Page.module.css";
 
-export default function LatestReleases() {
+export default function ReleasesPage() {
   const navigate = useNavigate();
-  const { showSidebar, setModalContents } = useStore();
-  const { setContext } = useKeyManager();
+  const { setModalContents } = useStore();
   const {
     releases,
     error,
@@ -85,11 +80,6 @@ export default function LatestReleases() {
           hasNextPage={hasNextPage}
           isFetchingNextPage={isFetchingNextPage}
           onEnter={onEnter}
-          onRight={withMeta(() => {
-            setContext("sidebar");
-            return true;
-          })}
-          shouldCallOnRight={() => showSidebar}
           onSelectionChange={(selection) =>
             api.state.selectReleases(selection.map((index) => releases[index]))
           }

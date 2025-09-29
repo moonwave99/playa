@@ -1,7 +1,6 @@
 import { Fragment } from "react";
 import type { MouseEvent } from "react";
 import api from "../api";
-import { useKeyManager } from "../hooks/useKeyboardManager";
 import type {
   Track,
   ReleaseWithArtistAndTracksAndSubreleases,
@@ -31,8 +30,6 @@ export default function Tracklist({
   onDoubleClick,
   onContextMenu,
 }: TracklistProps) {
-  const { setContext } = useKeyManager();
-
   const allTracks = [
     ...(release.tracks || []),
     ...release.subReleases.flatMap((x) => x.tracks || []),
@@ -108,7 +105,6 @@ export default function Tracklist({
       })}
       paddingRight={0}
       gap={4}
-      onLeft={() => setContext("sidebar")}
       render={({ item, index, selected, onClick }) => (
         <TrackEntry
           key={item.id}

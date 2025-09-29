@@ -1,8 +1,6 @@
 import { useNavigate } from "react-router";
-import { useKeyManager } from "@/renderer/hooks/useKeyboardManager";
 import { compactColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
 import api from "../api";
-import useStore from "@/renderer/store";
 import { getGroupLink } from "@/lib/links";
 import { estimateListCardSize } from "@/lib/utils";
 import useGroups from "@/renderer/query/useGroups";
@@ -16,8 +14,6 @@ import styles from "./Page.module.css";
 
 export default function LatestGroups() {
   const navigate = useNavigate();
-  const { showSidebar } = useStore();
-  const { setContext } = useKeyManager();
   const { isPending, error, groups, deleteGroups } = useGroups();
 
   if (isPending) {
@@ -49,8 +45,6 @@ export default function LatestGroups() {
           estimateSize={estimateListCardSize}
           onEnter={(group: GroupWithArtists) => navigate(getGroupLink(group))}
           onBackspace={onDelete}
-          onLeft={() => setContext("sidebar")}
-          shouldCallOnLeft={() => showSidebar}
           render={({ item, ...rest }) => (
             <ListCard
               showMultipleCovers

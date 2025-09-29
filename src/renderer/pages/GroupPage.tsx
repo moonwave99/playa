@@ -2,10 +2,8 @@ import { useParams, Navigate, useNavigate } from "react-router";
 import api from "../api";
 import type { ArtistWithReleases } from "@/types/types";
 import useGroup from "../query/useGroup";
-import useStore from "../store";
-import { useKeyManager } from "@/renderer/hooks/useKeyboardManager";
 import { compactColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
-import { useClearSelectionOnLeave } from "@/renderer/hooks/ipc";
+import { useClearSelectionOnLeave } from "@/renderer/hooks/useApi";
 import { getArtistLink } from "@/lib/links";
 import { estimateListCardSize } from "@/lib/utils";
 import List from "../components/List";
@@ -18,9 +16,7 @@ import styles from "./Page.module.css";
 
 export default function GroupPage() {
   const navigate = useNavigate();
-  const { showSidebar } = useStore();
   const { id } = useParams();
-  const { setContext } = useKeyManager();
   const { group, isPending, error, removeArtistsFromGroup } = useGroup(+id);
 
   useClearSelectionOnLeave();
@@ -62,8 +58,6 @@ export default function GroupPage() {
               navigate(getArtistLink(artist))
             }
             onBackspace={onDelete}
-            onLeft={() => setContext("sidebar")}
-            shouldCallOnLeft={() => showSidebar}
             render={({ item, ...rest }) => (
               <ListCard
                 showMultipleCovers

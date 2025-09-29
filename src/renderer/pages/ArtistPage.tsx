@@ -2,7 +2,7 @@ import { Navigate, useParams } from "react-router";
 import type { ReleaseWithArtist } from "@/types/types";
 import useArtist from "@/renderer/query/useArtist";
 import api from "@/renderer/api";
-import { useClearSelectionOnLeave } from "@/renderer/hooks/ipc";
+import { useClearSelectionOnLeave } from "@/renderer/hooks/useApi";
 import { getReleaseContextMenuParams } from "@/lib/utils";
 import useStore from "@/renderer/store";
 import ReleaseList from "@/renderer/components/ReleaseList";
@@ -14,69 +14,66 @@ import { withoutShift } from "../hooks/useKeyboardManager";
 import styles from "./Page.module.css";
 
 export default function ArtistPage() {
-    const { id } = useParams();
-    const { setUseDarkText } = useStore();
+  const { id } = useParams();
+  const { setUseDarkText } = useStore();
 
-    const { isPending, error, artist, deleteReleases, setArtistCover } =
-        useArtist(+id);
+  const { isPending, error, artist, deleteReleases, setArtistCover } =
+    useArtist(+id);
 
-    useClearSelectionOnLeave();
+  useClearSelectionOnLeave();
 
-    if (isPending) {
-        return <Loading />;
-    }
+  if (isPending) {
+    return <Loading />;
+  }
 
-    if (error) {
-        return <ErrorView error={error} />;
-    }
+  if (error) {
+    return <ErrorView error={error} />;
+  }
 
-    if (!artist) {
-        return <Navigate replace to="/" />;
-    }
+  if (!artist) {
+    return <Navigate replace to="/" />;
+  }
 
-    function onContextMenu(selection: ReleaseWithArtist[], target_id: number) {
-        api.menu.release(
-            ...getReleaseContextMenuParams({
-                selection,
-                target_id,
-                context: artist,
-            })
-        );
-    }
-
-    function onDelete(selection: ReleaseWithArtist[], event: KeyboardEvent) {
-        if (!event.metaKey) {
-            return;
-        }
-        deleteReleases(selection.map(({ id }) => id));
-    }
-
-    const keyHandlers = {
-        c: withoutShift(
-            (_event: KeyboardEvent, selection: ReleaseWithArtist[]) =>
-                selection.length && setArtistCover(selection[0].id)
-        ),
-    };
-
-    return (
-        <div
-            className={styles.page}
-            onContextMenu={() => api.menu.artist(artist)}
-        >
-            <ListCard isSingle item={artist} onColorChange={setUseDarkText} />
-            {!artist?.releases.length ? (
-                <div className={styles.placeholder}>
-                    There are no releases for this artist yet.
-                </div>
-            ) : (
-                <ReleaseList
-                    releases={artist.releases}
-                    onContextMenu={onContextMenu}
-                    onDelete={onDelete}
-                    className={styles.hasHeaderWithCover}
-                    keyHandlers={keyHandlers}
-                />
-            )}
-        </div>
+  function onContextMenu(selection: ReleaseWithArtist[], target_id: number) {
+    api.menu.release(
+      ...getReleaseContextMenuParams({
+        selection,
+        target_id,
+        context: artist,
+      })
     );
+  }
+
+  function onDelete(selection: ReleaseWithArtist[], event: KeyboardEvent) {
+    if (!event.metaKey) {
+      return;
+    }
+    deleteReleases(selection.map(({ id }) => id));
+  }
+
+  const keyHandlers = {
+    c: withoutShift(
+      (_event: KeyboardEvent, selection: ReleaseWithArtist[]) =>
+        selection.length && setArtistCover(selection[0].id)
+    ),
+  };
+
+  return (
+    <div className={styles.page} onContextMenu={() => api.menu.artist(artist)}>
+      <ListCard isSingle item={artist} onColorChange={setUseDarkText} />
+      {!artist?.releases.length ? (
+        <div className={styles.placeholder}>
+          There are no releases for this artist yet.
+        </div>
+      ) : (
+        <ReleaseList
+          releases={artist.releases}
+          onContextMenu={onContextMenu}
+          onDelete={onDelete}
+          className={styles.hasHeaderWithCover}
+          keyHandlers={keyHandlers}
+        />
+      )}
+    </div>
+  );
 }

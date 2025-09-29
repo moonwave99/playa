@@ -10,32 +10,11 @@ type ImportDataViewProps = {
   onCancel: () => void;
 };
 
-const ON_DONE_DELAY = 3000;
-
 export default function ImportDataView({
   onDone,
   onCancel,
 }: ImportDataViewProps) {
-  const [progress, setProgress] = useState<Record<string, boolean>>({});
-  const { setModalFixed } = useStore();
-
-  useEffect(() => {
-    const unsubscribe = [
-      api.importExport.onProgress((step, completed) => {
-        setModalFixed(true);
-        if (step === "done") {
-          setTimeout(onDone, ON_DONE_DELAY);
-        }
-        setProgress((prev) => ({ ...prev, [step]: completed }));
-      }),
-      api.importExport.onError((message) => {
-        window.alert(message);
-        setModalFixed(false);
-      }),
-    ];
-
-    return () => unsubscribe.forEach((u) => u());
-  }, []);
+  const { progress, inProgress } = useImportData({ onDone });
 
   async function onImportClick() {
     if (
@@ -66,8 +45,6 @@ export default function ImportDataView({
       </>
     );
   }
-
-  const inProgress = !!Object.keys(progress).length;
 
   return (
     <div className={styles.view}>
@@ -111,4 +88,35 @@ export default function ImportDataView({
       </div>
     </div>
   );
+}
+
+type UseImportDataParams = {
+  onDone: () => void;
+};
+
+const ON_DONE_DELAY = 3000;
+
+function useImportData({ onDone }: UseImportDataParams) {
+  const [progress, setProgress] = useState<Record<string, boolean>>({});
+  const { setModalFixed } = useStore();
+
+  useEffect(() => {
+    const unsubscribe = [
+      api.importExport.onProgress((step, completed) => {
+        setModalFixed(true);
+        if (step === "done") {
+          setTimeout(onDone, ON_DONE_DELAY);
+        }
+        setProgress((prev) => ({ ...prev, [step]: completed }));
+      }),
+      api.importExport.onError((message) => {
+        window.alert(message);
+        setModalFixed(false);
+      }),
+    ];
+
+    return () => unsubscribe.forEach((u) => u());
+  }, []);
+
+  return { progress, inProgress: !!Object.keys(progress).length };
 }

@@ -10,11 +10,7 @@ import {
   releaseColumnsConfig,
   compactColumnsConfig,
 } from "../hooks/useResponsiveColumns";
-import {
-  useKeyManager,
-  withoutShift,
-  withPrevent,
-} from "../hooks/useKeyboardManager";
+import { withoutShift, withPrevent } from "../hooks/useKeyboardManager";
 import useStore from "../store";
 import api from "../api";
 import { getReleaseLink } from "@/lib/links";
@@ -48,8 +44,7 @@ export default function ReleaseList({
   keyHandlers = {},
 }: ReleaseListProps) {
   const navigate = useNavigate();
-  const { viewMode, showSidebar, setModalContents } = useStore();
-  const { setContext } = useKeyManager();
+  const { viewMode, setModalContents } = useStore();
 
   function onEnter(
     release: ReleaseWithArtistAndTracksAndSubreleases,
@@ -137,8 +132,6 @@ export default function ReleaseList({
       className={cx(styles.list, styles[viewMode], className)}
       onEnter={onEnter}
       onBackspace={onDelete}
-      onLeft={() => setContext("sidebar")}
-      shouldCallOnLeft={() => showSidebar}
       onSelectionChange={(selection) =>
         api.state.selectReleases(selection.map((index) => releases[index]))
       }

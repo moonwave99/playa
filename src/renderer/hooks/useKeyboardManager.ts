@@ -1,14 +1,14 @@
-import type { PropsWithChildren, } from 'react';
+import type { PropsWithChildren } from "react";
 import {
   createElement,
   createContext,
   useContext,
   useEffect,
   useRef,
-  useState
-} from 'react';
+  useState,
+} from "react";
 
-import { throttle } from 'lodash';
+import { throttle } from "lodash";
 
 export const KeyManagerContext = createContext<{
   register: (context: string, handlers: KeyHandlers) => void;
@@ -17,11 +17,11 @@ export const KeyManagerContext = createContext<{
   toggleGlobal: (toggle?: boolean) => void;
   currentContext: string;
 }>({
-  register: () => void (0),
-  unregister: () => void (0),
-  setContext: () => void (0),
-  toggleGlobal: () => void (0),
-  currentContext: ''
+  register: () => void 0,
+  unregister: () => void 0,
+  setContext: () => void 0,
+  toggleGlobal: () => void 0,
+  currentContext: "",
 });
 
 type UseKeyManagerParams = Partial<{
@@ -36,11 +36,9 @@ type UseKeyManager = {
 };
 
 export function useKeyManager(params?: UseKeyManagerParams): UseKeyManager {
-  const { register, unregister, setContext, toggleGlobal, currentContext } = useContext(KeyManagerContext);
-  const {
-    context,
-    handlers,
-  } = params || {};
+  const { register, unregister, setContext, toggleGlobal, currentContext } =
+    useContext(KeyManagerContext);
+  const { context, handlers } = params || {};
   useEffect(() => {
     if (context && handlers) {
       register(context, handlers);
@@ -78,8 +76,8 @@ export function KeyManagerProvider(props: PropsWithChildren) {
     const onKeyDown = throttle((event: KeyboardEvent) => {
       keyManagerRef.current?.keydown(event);
     }, 50);
-    document.addEventListener('keydown', onKeyDown);
-    return () => document.removeEventListener('keydown', onKeyDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
   }, []);
 
   return createElement(KeyManagerContext.Provider, {
@@ -96,24 +94,26 @@ export function KeyManagerProvider(props: PropsWithChildren) {
 
 type KeyHandler = (event: KeyboardEvent, ...params: unknown[]) => void;
 type KeyHandlers = Record<string, KeyHandler>;
-type ModifierKeys = 'metaKey' | 'shiftKey' | 'altKey';
+type ModifierKeys = "metaKey" | "shiftKey" | "altKey";
 
-const withModifier = (key: ModifierKeys, without = false) => (handler: KeyHandler) => {
-  return (event: KeyboardEvent, ...params: unknown[]) => {
-    if (without ? event[key] : !event[key]) {
-      return;
-    }
-    handler(event, ...params);
+const withModifier =
+  (key: ModifierKeys, without = false) =>
+  (handler: KeyHandler) => {
+    return (event: KeyboardEvent, ...params: unknown[]) => {
+      if (without ? event[key] : !event[key]) {
+        return;
+      }
+      handler(event, ...params);
+    };
   };
-}
 
-export const withMeta = withModifier('metaKey');
-export const withShift = withModifier('metaKey');
-export const withAlt = withModifier('metaKey');
+export const withMeta = withModifier("metaKey");
+export const withShift = withModifier("metaKey");
+export const withAlt = withModifier("metaKey");
 
-export const withoutMeta = withModifier('metaKey', true);
-export const withoutShift = withModifier('metaKey', true);
-export const withoutAlt = withModifier('metaKey', true);
+export const withoutMeta = withModifier("metaKey", true);
+export const withoutShift = withModifier("metaKey", true);
+export const withoutAlt = withModifier("metaKey", true);
 
 export function withPrevent(handler: KeyHandler): KeyHandler {
   return (event: KeyboardEvent, ...params: unknown[]) => {
@@ -123,13 +123,13 @@ export function withPrevent(handler: KeyHandler): KeyHandler {
 }
 
 export class KeyManager {
-  static global = '__global__';
+  static global = "__global__";
   private handlers: Record<string, KeyHandlers>;
   private currentContext: string;
   private enableGlobal: boolean;
   constructor() {
     this.handlers = {};
-    this.currentContext = '';
+    this.currentContext = "";
     this.enableGlobal = true;
   }
   keydown(event: KeyboardEvent) {
@@ -141,7 +141,7 @@ export class KeyManager {
         }
         handler(event);
       }
-    })
+    });
     if (!this.enableGlobal) {
       return;
     }
@@ -154,7 +154,7 @@ export class KeyManager {
     if (context === KeyManager.global) {
       this.handlers[context] = {
         ...this.handlers[context],
-        ...handlers
+        ...handlers,
       };
       return;
     }
@@ -171,6 +171,6 @@ export class KeyManager {
   }
 }
 
-export function doContextsMatch(a: string, b: string) {
-  return a.split(':').at(0) === b.split(':').at(0);
+export function doContextsMatch(key: string, currentContext: string) {
+  return currentContext.startsWith(key);
 }

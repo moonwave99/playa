@@ -1,9 +1,7 @@
 import { useNavigate } from "react-router";
-import { useKeyManager } from "@/renderer/hooks/useKeyboardManager";
 import { compactColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
 import useArtists from "@/renderer/query/useArtists";
 import api from "../api";
-import useStore from "@/renderer/store";
 import { getArtistLink } from "@/lib/links";
 import { estimateListCardSize } from "@/lib/utils";
 import ErrorView from "@/renderer/components/ErrorView";
@@ -15,8 +13,6 @@ import styles from "./Page.module.css";
 
 export default function ArtistsPage() {
   const navigate = useNavigate();
-  const { showSidebar } = useStore();
-  const { setContext } = useKeyManager();
   const {
     artists,
     error,
@@ -51,8 +47,6 @@ export default function ArtistsPage() {
           hasNextPage={hasNextPage}
           isFetchingNextPage={isFetchingNextPage}
           onEnter={(artist) => navigate(getArtistLink(artist))}
-          onLeft={() => setContext("sidebar")}
-          shouldCallOnLeft={() => showSidebar}
           render={({ item, ...rest }) => (
             <ListCard
               showMultipleCovers

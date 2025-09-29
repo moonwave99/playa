@@ -19,18 +19,7 @@ import {
   withMeta,
   KeyManager,
 } from "./hooks/useKeyboardManager";
-import {
-  useOnOpenSettings,
-  useOnOpenGroupDialog,
-  useOnOpenEditReleaseDialog,
-  useOnOpenEditArtistDialog,
-  useOnOpenEditCollectionDialog,
-  useOnSwipe,
-  useOnOpenImportData,
-  useOnOpenEditGroupDialog,
-  useOnToggleSearch,
-  useOnExportData,
-} from "./hooks/ipc";
+import { useOnExportData, useApi } from "./hooks/useApi";
 import api from "./api";
 import useRefetch from "./hooks/useRefetch";
 import useStore from "./store";
@@ -51,10 +40,10 @@ import {
   ArtistWithReleases,
   Release,
   ReleaseWithArtist,
-  ReleaseWithArtistAndSubReleases,
   Notification,
   Collection,
   Group,
+  ReleaseWithArtistAndTracksAndSubreleases,
 } from "@/types/types";
 
 export default function Layout() {
@@ -118,31 +107,28 @@ function init(): Init {
 
   const [draggedItem, setDraggedItem] = useState<Artist | Release>(null);
 
-  useOnOpenSettings(() => setModalContents({ name: "settings" }));
-  useOnOpenImportData(() => setModalContents({ name: "importData" }));
-  useOnOpenGroupDialog((releases: ReleaseWithArtist[]) =>
-    setModalContents({ name: "groupReleases", params: { releases } })
-  );
-  useOnOpenEditReleaseDialog((release: ReleaseWithArtistAndSubReleases) =>
-    setModalContents({ name: "editRelease", params: { release } })
-  );
-  useOnOpenEditArtistDialog((artist: ArtistWithReleases) =>
-    setModalContents({ name: "editArtist", params: { artist } })
-  );
-  useOnOpenEditCollectionDialog((collection: Collection) =>
-    setModalContents({ name: "editCollection", params: { collection } })
-  );
-  useOnOpenEditGroupDialog((group: Group) =>
-    setModalContents({ name: "editGroup", params: { group } })
-  );
-  useOnExportData(() => setModalContents({ name: "exportData" }));
-  useOnToggleSearch(() =>
-    setModalContents(
-      modalContents?.name === "search" ? null : { name: "search" }
-    )
-  );
+  useApi({
+    onOpenSettings: () => setModalContents({ name: "settings" }),
+    onOpenImportData: () => setModalContents({ name: "importData" }),
+    onOpenGroupDialog: (releases: ReleaseWithArtist[]) =>
+      setModalContents({ name: "groupReleases", params: { releases } }),
+    onOpenEditReleaseDialog: (
+      release: ReleaseWithArtistAndTracksAndSubreleases
+    ) => setModalContents({ name: "editRelease", params: { release } }),
+    onOpenEditArtistDialog: (artist: ArtistWithReleases) =>
+      setModalContents({ name: "editArtist", params: { artist } }),
+    onOpenEditCollectionDialog: (collection: Collection) =>
+      setModalContents({ name: "editCollection", params: { collection } }),
+    onOpenEditGroupDialog: (group: Group) =>
+      setModalContents({ name: "editGroup", params: { group } }),
+    onToggleSearch: () =>
+      setModalContents(
+        modalContents?.name === "search" ? null : { name: "search" }
+      ),
+    onSwipe: navigate,
+  });
 
-  useOnSwipe(navigate);
+  useOnExportData(() => setModalContents({ name: "exportData" }));
 
   const isDetailPage = !!(
     matchPath("/releases/:id", location.pathname) ||
@@ -153,14 +139,20 @@ function init(): Init {
     context: KeyManager.global,
     handlers: {
       ArrowLeft: withMeta((event: KeyboardEvent) => {
-        if (currentContext === "modal" || currentContext.includes("input")) {
+        if (
+          currentContext.includes("modal") ||
+          currentContext.includes("input")
+        ) {
           return;
         }
         event.preventDefault();
         navigate(-1);
       }),
       ArrowRight: withMeta((event: KeyboardEvent) => {
-        if (currentContext === "modal" || currentContext.includes("input")) {
+        if (
+          currentContext.includes("modal") ||
+          currentContext.includes("input")
+        ) {
           return;
         }
         event.preventDefault();

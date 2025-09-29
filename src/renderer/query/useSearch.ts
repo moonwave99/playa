@@ -1,4 +1,8 @@
-import { useQuery, keepPreviousData, type QueryKey } from "@tanstack/react-query";
+import {
+  useQuery,
+  keepPreviousData,
+  type QueryKey,
+} from "@tanstack/react-query";
 
 type UseSearchParams<T> = {
   query: string;
@@ -6,7 +10,7 @@ type UseSearchParams<T> = {
   take: number;
   queryKey: QueryKey;
   queryFn: (query: string, take?: number) => Promise<T[]>;
-}
+};
 
 type UseSearch<T> = {
   isPending: boolean;
@@ -23,7 +27,11 @@ export default function useSearch<T>({
   queryKey,
   queryFn,
 }: UseSearchParams<T>): UseSearch<T> {
-  const { isPending, error, data: results } = useQuery({
+  const {
+    isPending,
+    error,
+    data: results,
+  } = useQuery({
     queryKey,
     queryFn: async () => {
       if (query?.length < minLength) {
@@ -36,8 +44,8 @@ export default function useSearch<T>({
   });
 
   return {
-    results,
+    results: results || [],
     isPending,
     error,
-  }
+  };
 }
