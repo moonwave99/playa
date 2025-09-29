@@ -1,0 +1,61 @@
+.view {
+  margin-left: 2rem;
+
+  .list {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+  }
+  ul {
+    list-style: none;
+    columns: 5;
+    color: var(--secondary-color);
+    a:hover {
+      text-decoration: underline;
+    }
+  }
+  article {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    line-height: 1.5rem;
+  }
+}
+
+.letters {
+  position: fixed;
+  left: 0;
+  top: calc(var(--header-height) + 1rem);
+  width: var(--letters-menu-width);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: calc(100vh - 10.5rem);
+  overflow: auto;
+}
+
+.letters button {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--primary-color);
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(var(--letters-menu-width) * 0.75);
+  padding: 0.25rem;
+  width: 100%;
+
+  &:hover {
+    background: var(--accent-color);
+  }
+}

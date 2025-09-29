@@ -28,6 +28,10 @@
       background-color: var(--secondary-color);
     }
   }
+
+  &.active {
+    color: var(--accent-color);
+  }
 }
 
 .CornerActionButton {

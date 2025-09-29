@@ -97,7 +97,6 @@ function init(): Init {
   const refetch = useRefetch();
   const {
     path,
-    toggleViewMode,
     setPath,
     useDarkText,
     setSettings,
@@ -197,7 +196,6 @@ function init(): Init {
     setContext("list");
 
     const removeHandlers = [
-      api.onToggleViewMode(toggleViewMode),
       api.onMutate(refetch),
       api.onNotify(onNotification),
       api.onNavigate((path: string) => {

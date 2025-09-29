@@ -3,13 +3,14 @@ import type {
   Release,
   ReleaseWithArtist,
   ReleaseWithArtistAndTracksAndSubreleases,
-  ViewMode,
+  ReleaseListViewMode,
 } from "@/types/types";
 import type { ScrollToOptions } from "@tanstack/react-virtual";
 import {
   releaseColumnsConfig,
   compactColumnsConfig,
 } from "../hooks/useResponsiveColumns";
+import { useApi } from "../hooks/useApi";
 import { withoutShift, withPrevent } from "../hooks/useKeyboardManager";
 import useStore from "../store";
 import api from "../api";
@@ -44,7 +45,11 @@ export default function ReleaseList({
   keyHandlers = {},
 }: ReleaseListProps) {
   const navigate = useNavigate();
-  const { viewMode, setModalContents } = useStore();
+  const { releaseListViewMode, toggleViewMode, setModalContents } = useStore();
+
+  useApi({
+    onToggleViewMode: () => toggleViewMode("releaseList"),
+  });
 
   function onEnter(
     release: ReleaseWithArtistAndTracksAndSubreleases,
@@ -64,7 +69,7 @@ export default function ReleaseList({
     );
   }
 
-  function getListConfig(viewMode: ViewMode) {
+  function getListConfig(viewMode: ReleaseListViewMode) {
     if (viewMode === "grid") {
       return {
         columnsConfig: releaseColumnsConfig,
@@ -127,15 +132,15 @@ export default function ReleaseList({
   return (
     <List
       shouldPreventSpace
-      key={`${viewMode}-${getTotalTracks(releases)}`}
+      key={`${releaseListViewMode}-${getTotalTracks(releases)}`}
       items={releases}
-      className={cx(styles.list, styles[viewMode], className)}
+      className={cx(styles.list, styles[releaseListViewMode], className)}
       onEnter={onEnter}
       onBackspace={onDelete}
       onSelectionChange={(selection) =>
         api.state.selectReleases(selection.map((index) => releases[index]))
       }
-      {...getListConfig(viewMode)}
+      {...getListConfig(releaseListViewMode)}
       keyHandlers={{
         ...keyHandlers,
         " ": withPrevent((_event: KeyboardEvent, selection: Release[]) => {

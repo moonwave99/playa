@@ -1,25 +1,37 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import type { ViewMode, Settings } from "@/types/types";
+import type {
+  ReleaseListViewMode,
+  ArtistsViewMode,
+  Settings,
+} from "@/types/types";
 
 export type ModalContents = { name: string; params?: Record<string, unknown> };
 
-const viewModes = ["grid", "list", "compact"] as ViewMode[];
+const viewModes = {
+  releaseList: ["grid", "list", "compact"] as ReleaseListViewMode[],
+  artists: ["latest", "alphabetical"] as ArtistsViewMode[],
+};
 
-function getNextViewMode(current: ViewMode): ViewMode {
-  const currentIndex = viewModes.indexOf(current);
-  return viewModes[(currentIndex + 1) % viewModes.length];
+function getNextViewMode<T>(entity: keyof typeof viewModes, current: T) {
+  const currentIndex = (viewModes[entity] as T[]).indexOf(current);
+  return viewModes[entity][(currentIndex + 1) % viewModes[entity].length] as T;
 }
 
 type Store = {
-  viewMode: ViewMode;
+  releaseListViewMode: ReleaseListViewMode;
+  artistsViewMode: ArtistsViewMode;
   useDarkText: boolean;
   path: string;
   modalContents: ModalContents | null;
   isModalFixed: boolean;
   settings: Settings;
   setSettings: (settings: Settings) => void;
-  toggleViewMode: () => void;
+  toggleViewMode: (entity: keyof typeof viewModes) => void;
+  setViewMode: (
+    entity: keyof typeof viewModes,
+    viewMode: ReleaseListViewMode | ArtistsViewMode
+  ) => void;
   setUseDarkText: (useDarkText: boolean) => void;
   setPath: (path: string) => void;
   setModalContents: (modalContents: ModalContents) => void;
@@ -29,24 +41,41 @@ type Store = {
 const useStore = create<Store>()(
   persist(
     (set) => ({
-      viewMode: "grid",
+      releaseListViewMode: "grid",
+      artistsViewMode: "latest",
       path: "/",
       useDarkText: false,
       modalContents: null as ModalContents,
       isModalFixed: false,
       settings: null as Settings,
       setSettings: (settings) => set({ settings }),
-      toggleViewMode: () =>
-        set(({ viewMode }) => ({ viewMode: getNextViewMode(viewMode) })),
       setUseDarkText: (useDarkText) => set({ useDarkText }),
       setPath: (path) => set({ path }),
       setModalContents: (modalContents) => set({ modalContents }),
       setModalFixed: (isModalFixed) => set({ isModalFixed }),
+      toggleViewMode: (entity: keyof typeof viewModes) =>
+        set((state) => ({
+          [`${entity}ViewMode`]: getNextViewMode(
+            entity,
+            state[`${entity}ViewMode`]
+          ),
+        })),
+      setViewMode: (
+        entity: keyof typeof viewModes,
+        viewMode: ReleaseListViewMode | ArtistsViewMode
+      ) =>
+        set({
+          [`${entity}ViewMode`]: viewMode,
+        }),
     }),
     {
       name: "playa-storage",
       storage: createJSONStorage(() => window.localStorage),
-      partialize: ({ viewMode, path }) => ({ viewMode, path }),
+      partialize: ({ releaseListViewMode, artistsViewMode, path }) => ({
+        releaseListViewMode,
+        artistsViewMode,
+        path,
+      }),
     }
   )
 );

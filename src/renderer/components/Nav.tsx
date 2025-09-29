@@ -1,16 +1,21 @@
 import { useState, useEffect } from "react";
-import type { MouseEvent } from "react";
-import { NavLink } from "react-router";
+import type { MouseEvent, ReactNode } from "react";
+import { NavLink, Routes, Route } from "react-router";
+import { ReleaseListViewMode } from "@/types/types";
 import { useKeyManager } from "../hooks/useKeyboardManager";
 import useClickOutside from "../hooks/useClickOutside";
 import useOnLocationChange from "../hooks/useOnLocationChange";
 import useStore from "../store";
-import cx from "clsx";
+import Breadcrumbs from "./Breadcrumbs";
 import { IoMenu } from "react-icons/io5";
+import { MdOutlineSearch } from "react-icons/md";
+import { TiSortAlphabetically } from "react-icons/ti";
+import { IoMdTime } from "react-icons/io";
+import { BsGrid, BsGrid3X2Gap, BsListOl } from "react-icons/bs";
+
+import cx from "clsx";
 import styles from "./Nav.module.css";
 import buttonStyles from "../buttons.module.css";
-import { MdOutlineSearch } from "react-icons/md";
-import Breadcrumbs from "./Breadcrumbs";
 
 const navMap: {
   type: "link" | "modal";
@@ -97,9 +102,15 @@ export default function Nav({ isDetailPage }: NavProps) {
     >
       <Breadcrumbs isDetailPage={isDetailPage} useDarkText={useDarkText} />
       <div className={styles.buttons}>
+        <Routes>
+          <Route path="/artists" element={<ArtistListActions />} />
+          <Route path="/artists/:id" element={<ReleaseListActions />} />
+          <Route path="/collections/:id" element={<ReleaseListActions />} />
+        </Routes>
         <button
           type="button"
           aria-label="Toggle Navigation"
+          title="Toggle Navigation"
           onClick={() => setNavOpen((prev) => !prev)}
           className={cx(buttonStyles.button, {
             [buttonStyles.useDarkText]: useDarkText,
@@ -110,6 +121,7 @@ export default function Nav({ isDetailPage }: NavProps) {
         <button
           type="button"
           aria-label="Toggle Search"
+          title="Toggle Search"
           onClick={() => setModalContents({ name: "search" })}
           className={cx(buttonStyles.button, {
             [buttonStyles.useDarkText]: useDarkText,
@@ -157,5 +169,82 @@ export default function Nav({ isDetailPage }: NavProps) {
         )}
       </div>
     </nav>
+  );
+}
+
+const releaseListActions: {
+  viewMode: ReleaseListViewMode;
+  ariaLabel: string;
+  icon: ReactNode;
+}[] = [
+  {
+    viewMode: "grid",
+    ariaLabel: "Show Grid View",
+    icon: <BsGrid />,
+  },
+  {
+    viewMode: "list",
+    ariaLabel: "Show List View",
+    icon: <BsListOl />,
+  },
+  {
+    viewMode: "compact",
+    ariaLabel: "Show Compact View",
+    icon: <BsGrid3X2Gap />,
+  },
+];
+
+function ReleaseListActions() {
+  const { useDarkText, releaseListViewMode, setViewMode } = useStore();
+  return (
+    <>
+      {releaseListActions.map(({ viewMode, ariaLabel, icon }) => (
+        <button
+          key={viewMode}
+          type="button"
+          aria-label={ariaLabel}
+          title={ariaLabel}
+          onClick={() => setViewMode("releaseList", viewMode)}
+          className={cx(buttonStyles.button, {
+            [buttonStyles.useDarkText]: useDarkText,
+            [buttonStyles.active]: releaseListViewMode === viewMode,
+          })}
+        >
+          {icon}
+        </button>
+      ))}
+    </>
+  );
+}
+
+function ArtistListActions() {
+  const { useDarkText, artistsViewMode, setViewMode } = useStore();
+  return (
+    <>
+      <button
+        type="button"
+        aria-label="Show Latest Artists"
+        title="Show Latest Artists"
+        onClick={() => setViewMode("artists", "latest")}
+        className={cx(buttonStyles.button, {
+          [buttonStyles.useDarkText]: useDarkText,
+          [buttonStyles.active]: artistsViewMode === "latest",
+        })}
+      >
+        <IoMdTime />
+      </button>
+      <button
+        type="button"
+        aria-label="Show Artist List"
+        title="Show Artist List"
+        onClick={() => setViewMode("artists", "alphabetical")}
+        className={cx(buttonStyles.button, {
+          [buttonStyles.useDarkText]: useDarkText,
+          [buttonStyles.active]: artistsViewMode === "alphabetical",
+        })}
+      >
+        <TiSortAlphabetically />
+      </button>
+    </>
   );
 }

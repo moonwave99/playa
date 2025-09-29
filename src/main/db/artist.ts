@@ -158,6 +158,7 @@ export async function getAllArtists() {
     orderBy: { name: "asc" },
     select: {
       id: true,
+      entityType: true,
       name: true,
       normalizedName: true,
       hash: true,

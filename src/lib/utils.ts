@@ -337,3 +337,18 @@ export function normalizeDiacritics(input: string) {
       .trim()
   );
 }
+
+export function groupItemsByLetter(items: (Artist | Release)[]) {
+  return Object.groupBy(items, (item) => {
+    let letter;
+    if (item.entityType === "Artist") {
+      letter = item.name.at(0).toLowerCase();
+    } else {
+      letter = item.title.at(0).toLowerCase();
+    }
+    if (!letter.match(/^[A-Za-z]/)) {
+      return "#";
+    }
+    return letter;
+  });
+}

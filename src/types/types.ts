@@ -174,7 +174,8 @@ export type Entries<T> = {
   [K in keyof T]: [K, T[K]];
 }[keyof T][];
 
-export type ViewMode = "grid" | "list" | "compact";
+export type ReleaseListViewMode = "grid" | "list" | "compact";
+export type ArtistsViewMode = "latest" | "alphabetical";
 
 export type Settings = Record<string, string | number | boolean>;
 
