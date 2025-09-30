@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useEffect, useState } from "react";
 import { throttle } from "lodash";
 
 type UseResponsiveColumns = {
@@ -58,6 +58,13 @@ export default function useResponsiveColumns({
     window.addEventListener("resize", _onResize);
     return () => window.removeEventListener("resize", _onResize);
   }, [config]);
+
+  useEffect(() => {
+    if (!onResize) {
+      return;
+    }
+    onResize();
+  }, [columns]);
 
   return {
     columns,

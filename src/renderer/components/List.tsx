@@ -96,6 +96,9 @@ export default function List<T>({
   keyHandlers = {},
   scrollBehavior,
 }: ListProps<T>) {
+  const ref = useRef<HTMLDivElement>(null);
+  const firstRender = useRef(true);
+
   const [currentIndex, setCurrentIndex] = useState(() => {
     if (initialSelection.length) {
       return initialSelection[0];
@@ -107,9 +110,6 @@ export default function List<T>({
   });
 
   const [selection, setSelection] = useState<number[]>(initialSelection);
-
-  const ref = useRef<HTMLDivElement>(null);
-  const firstRender = useRef(true);
 
   const { columns } = useResponsiveColumns({
     config: columnsConfig,
@@ -208,7 +208,6 @@ export default function List<T>({
           setCurrentIndex(0);
           return;
         }
-
         setCurrentIndex((prev) =>
           prev === -1 ? 0 : Math.max(0, prev - columns)
         );
