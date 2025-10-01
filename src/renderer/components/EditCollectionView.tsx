@@ -46,19 +46,18 @@ export default function EditCollectionView({
       <div className={formStyles.container}>
         <h2>Edit Collection</h2>
         <form onSubmit={onSubmit} className={formStyles.form}>
-          <label className={cx(formStyles.label, styles.label)}>
-            Title
-            <input
-              autoFocus
-              className={cx(formStyles.input, styles.input)}
-              required
-              name="title"
-              placeholder="Enter the collection title"
-              defaultValue={collection.title}
-            />
-          </label>
-
           <div className={formStyles.actions}>
+            <label className={cx(formStyles.label, styles.label)}>
+              Title
+              <input
+                autoFocus
+                className={cx(formStyles.input, styles.input)}
+                required
+                name="title"
+                placeholder="Enter the collection title"
+                defaultValue={collection.title}
+              />
+            </label>
             <button type="submit" className={formStyles.button}>
               Save
             </button>
@@ -71,18 +70,18 @@ export default function EditCollectionView({
             </button>
           </div>
         </form>
-        {collection.releases.length ? (
-          <section>
-            <h3>Releases</h3>
-            <EntityCardList
-              items={collection.releases}
-              onRemoveEntityClick={(release) =>
-                removeReleasesFromCollection([release])
-              }
-            />
-          </section>
-        ) : null}
       </div>
+      {collection.releases.length ? (
+        <div className={formStyles.container}>
+          <h3>Releases</h3>
+          <EntityCardList
+            items={collection.releases}
+            onRemoveEntityClick={(release) =>
+              removeReleasesFromCollection([release])
+            }
+          />
+        </div>
+      ) : null}
     </div>
   );
 }

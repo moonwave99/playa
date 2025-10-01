@@ -41,19 +41,18 @@ export default function EditGroupView({
       <div className={formStyles.container}>
         <h2>Edit Group</h2>
         <form onSubmit={onSubmit} className={formStyles.form}>
-          <label className={cx(formStyles.label, styles.label)}>
-            Title
-            <input
-              autoFocus
-              className={cx(formStyles.input, styles.input)}
-              required
-              name="title"
-              placeholder="Enter the group title"
-              defaultValue={group.title}
-            />
-          </label>
-
           <div className={formStyles.actions}>
+            <label className={cx(formStyles.label, styles.label)}>
+              Title
+              <input
+                autoFocus
+                className={cx(formStyles.input, styles.input)}
+                required
+                name="title"
+                placeholder="Enter the group title"
+                defaultValue={group.title}
+              />
+            </label>
             <button type="submit" className={formStyles.button}>
               Save
             </button>
@@ -66,16 +65,16 @@ export default function EditGroupView({
             </button>
           </div>
         </form>
-        {group.artists.length ? (
-          <section>
-            <h3>Artists</h3>
-            <EntityCardList
-              items={group.artists}
-              onRemoveEntityClick={(artist) => removeArtistsFromGroup([artist])}
-            />
-          </section>
-        ) : null}
       </div>
+      {group.artists.length ? (
+        <div className={formStyles.container}>
+          <h3>Artists</h3>
+          <EntityCardList
+            items={group.artists}
+            onRemoveEntityClick={(artist) => removeArtistsFromGroup([artist])}
+          />
+        </div>
+      ) : null}
     </div>
   );
 }

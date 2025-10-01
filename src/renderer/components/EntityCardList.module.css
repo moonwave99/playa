@@ -1,13 +1,22 @@
 .view {
-  overflow-y: hidden;
-  padding-top: 1.5rem;
+  padding-top: 1rem;
   max-height: 50vh;
   overflow-y: auto;
 }
 
 .list {
+  --columns: 7;
   list-style: none;
   display: grid;
   row-gap: 1.5rem;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(var(--columns), 1fr);
+  @media screen and (max-width: 960px) {
+    --columns: 6;
+  }
+  @media screen and (max-width: 750px) {
+    --columns: 4;
+  }
+  @media screen and (max-width: 650px) {
+    --columns: 3;
+  }
 }

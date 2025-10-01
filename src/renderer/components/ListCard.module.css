@@ -8,7 +8,7 @@
   opacity: 0;
 
   &.hideCover {
-    padding: 1rem 2rem;
+    padding: 1rem 1rem;
     border-bottom: none;
   }
 
