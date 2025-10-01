@@ -59,16 +59,26 @@ export default function useCollections(): UseCollections {
     onSuccess,
   });
 
+  function onAddReleasesToCollectionSuccess(
+    collection: CollectionWithReleases,
+    { releases }: { releases: HasId[] }
+  ) {
+    [
+      ["collections", collection.id],
+      ...releases.map((x) => ["releases", x.id]),
+    ].forEach((queryKey) => queryClient.invalidateQueries({ queryKey }));
+  }
+
   const addReleasesToCollection = useMutation({
     mutationFn: ({ id, releases }: AddReleasesToCollectionParams) =>
       api.collection.addReleasesToCollection(id, releases),
-    onSuccess,
+    onSuccess: onAddReleasesToCollectionSuccess,
   });
 
   const addReleasesToNewCollection = useMutation({
     mutationFn: ({ title, releases }: AddReleasesToNewCollectionParams) =>
       api.collection.addReleasesToNewCollection(title, releases),
-    onSuccess,
+    onSuccess: onAddReleasesToCollectionSuccess,
   });
 
   return {

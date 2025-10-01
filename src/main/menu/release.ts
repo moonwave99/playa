@@ -117,7 +117,7 @@ export const releaseMenu =
           : { type: "separator" },
         { type: "separator" },
         {
-          label: "Add to Collection",
+          label: "Add Release to Collection",
           click: () => send("openAddReleasesToCollectionDialog", [release]),
         },
         context?.entityType === "Collection"
@@ -155,7 +155,7 @@ export const releaseMenu =
         type: "separator",
       },
       {
-        label: `Add ${selection.length} Release(s) to Collection`,
+        label: `Add ${selection.length} Releases to Collection`,
         click: () => send("openAddReleasesToCollectionDialog", selection),
       },
       context?.entityType === "Collection"

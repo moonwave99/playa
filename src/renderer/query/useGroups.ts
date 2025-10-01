@@ -55,16 +55,25 @@ export default function useGroups(): UseGroups {
     onSuccess,
   });
 
+  function onAddArtistToGroupSuccess(
+    group: GroupWithArtists,
+    { artists }: { artists: HasId[] }
+  ) {
+    [["groups", group.id], ...artists.map((x) => ["artists", x.id])].forEach(
+      (queryKey) => queryClient.invalidateQueries({ queryKey })
+    );
+  }
+
   const addArtistsToGroup = useMutation({
     mutationFn: ({ id, artists }: AddArtistsToGroupParams) =>
       api.group.addArtistsToGroup(id, artists),
-    onSuccess,
+    onSuccess: onAddArtistToGroupSuccess,
   });
 
   const addArtistsToNewGroup = useMutation({
     mutationFn: ({ title, artists }: AddArtistsToNewGroupParams) =>
       api.group.addArtistsToNewGroup(title, artists),
-    onSuccess,
+    onSuccess: onAddArtistToGroupSuccess,
   });
 
   return {

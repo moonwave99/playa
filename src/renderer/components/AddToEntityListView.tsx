@@ -44,7 +44,7 @@ export default function AddToEntityListView({
         </ul>
         <form onSubmit={onSubmit} className={formStyles.form}>
           <label className={formStyles.label}>
-            Choose {to}
+            Choose existing {to}
             <select name={to.toLowerCase()} className={formStyles.select}>
               {itemsTo?.map(({ id, title }) => (
                 <option key={id} value={id}>

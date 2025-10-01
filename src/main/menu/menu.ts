@@ -286,6 +286,11 @@ export function initMenu({ controllers, state, send }: InitMenuParams) {
           click: () => searchArtistOnRYM(state.getCurrentArtist()),
         },
         { type: "separator" },
+        {
+          label: `Add Artist to Group`,
+          click: () =>
+            send("openAddArtistsToGroupDialog", [state.getCurrentArtist()]),
+        },
       ],
     })
   );
