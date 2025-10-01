@@ -47,7 +47,7 @@
 .isNavigable {
   max-height: calc(100vh - var(--release-tracklist-single-cover-size) - 1rem);
   overflow: auto;
-  padding: 0 1rem;
+  padding: 0 0.5rem;
 }
 
 .tracklist:not(.isNavigable) {
@@ -58,6 +58,10 @@
 
 .isNavigable .discTitle {
   margin-top: 2rem;
+}
+
+.isInsideModal.isNavigable .discTitle.isFirst {
+  margin-top: 0;
 }
 
 .discTitle {

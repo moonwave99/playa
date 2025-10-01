@@ -39,7 +39,11 @@ export default function Tracklist({
 
   if (!isNavigable) {
     return (
-      <div className={cx(styles.tracklist, { [styles.isFlipped]: isFlipped })}>
+      <div
+        className={cx(styles.tracklist, {
+          [styles.isFlipped]: isFlipped,
+        })}
+      >
         <div
           className={styles.discWrapper}
           style={{
@@ -95,11 +99,14 @@ export default function Tracklist({
       }
       className={cx(styles.tracklist, styles.isNavigable, {
         [styles.isFlipped]: isFlipped,
+        [styles.isInsideModal]: context === "modal:list",
       })}
       estimateSize={(_: number, index: number) => ({
         height:
           discsCount > 1 && titlesInfo.find((x) => x.index === index)
-            ? 112
+            ? index === 0
+              ? 80
+              : 112
             : 40,
         width: 200,
       })}
@@ -109,6 +116,7 @@ export default function Tracklist({
         <TrackEntry
           key={item.id}
           {...item}
+          isFirst={index === 0}
           onClick={onClick}
           onDoubleClick={onDoubleClick}
           onContextMenu={() => onContextMenu(item.releaseId)}
@@ -125,6 +133,7 @@ type TrackEntryProps = Track & {
   discTitle?: string;
   selected?: boolean;
   isEven?: boolean;
+  isFirst?: boolean;
   onClick?: (event: MouseEvent) => void;
   onDoubleClick: (id: number) => void;
   onContextMenu: () => void;
@@ -137,6 +146,7 @@ function TrackEntry({
   duration,
   discTitle,
   selected,
+  isFirst,
   isEven,
   onClick,
   onDoubleClick,
@@ -146,7 +156,7 @@ function TrackEntry({
     <>
       {discTitle ? (
         <h2
-          className={styles.discTitle}
+          className={cx(styles.discTitle, { [styles.isFirst]: isFirst })}
           onContextMenu={withStopPropagation(onContextMenu)}
         >
           {discTitle}
