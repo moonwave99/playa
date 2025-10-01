@@ -18,11 +18,22 @@ export default function ReleaseCard({
   item,
   onRemoveEntityClick,
 }: EntityCardProps) {
-  const coverRelease = item.entityType === "Artist" ? item.coverRelease : item;
-  const title =
+  const coverRelease =
     item.entityType === "Artist"
-      ? item.name
-      : getReleaseTitle(item as ReleaseWithArtistAndSubReleases);
+      ? item.coverRelease || item.releases.at(0)
+      : item;
+
+  const title =
+    item.entityType === "Artist" ? (
+      item.name
+    ) : (
+      <>
+        {item.artist.name}
+        <br />
+        {getReleaseTitle(item as ReleaseWithArtistAndSubReleases)}
+      </>
+    );
+
   return (
     <article className={styles.view}>
       {onRemoveEntityClick && (
