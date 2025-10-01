@@ -463,16 +463,17 @@ export function releaseController({
     if (!folders) {
       return;
     }
-    const releases = await Promise.all(folders.map(importFolder));
+    const output = await Promise.all(folders.map(importFolder));
+    const importedReleases = output.flat();
 
     send("mutate", [
       ["releases", "latest"],
-      ...releases.flat().map((x) => ["artists", x.artist_id]),
+      ...importedReleases.map((x) => ["artists", x.artist_id]),
     ]);
 
     send("notify", {
       type: "success",
-      message: `${releases.length} releases imported`,
+      message: `${importedReleases.length} releases imported`,
     });
   }
 
