@@ -249,7 +249,7 @@ describe("updateCollection function", () => {
 
     expect(send).toHaveBeenCalledWith("notify", {
       type: "success",
-      message: "Collection renamed",
+      message: "Collection updated",
     });
   });
 });

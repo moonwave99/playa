@@ -1,0 +1,13 @@
+.view {
+  overflow-y: hidden;
+  padding-top: 1.5rem;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.list {
+  list-style: none;
+  display: grid;
+  row-gap: 1.5rem;
+  grid-template-columns: repeat(7, 1fr);
+}

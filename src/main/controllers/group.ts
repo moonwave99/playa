@@ -39,7 +39,7 @@ export function groupController({ send }: GroupControllerParams) {
     if (updatedGroup) {
       send("notify", {
         type: "success",
-        message: "Group renamed",
+        message: "Group updated",
       });
     }
     return updatedGroup;

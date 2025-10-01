@@ -120,7 +120,7 @@ describe("updateGroup function", () => {
 
     expect(send).toHaveBeenCalledWith("notify", {
       type: "success",
-      message: "Group renamed",
+      message: "Group updated",
     });
   });
 });

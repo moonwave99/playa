@@ -1,28 +1,44 @@
 import type { FormEvent } from "react";
-import type { Collection } from "@/types/types";
+import useCollection from "../query/useCollection";
+import EntityCardList from "./EntityCardList";
+import ErrorView from "./ErrorView";
+import Loading from "./Loading";
 import cx from "clsx";
 import styles from "./EditCollectionView.module.css";
 import formStyles from "../forms.module.css";
-import useCollection from "../query/useCollection";
 
 type EditCollectionViewProps = {
-  collection: Collection;
+  id: number;
   onSave: () => void;
   onCancel: () => void;
 };
 
 export default function EditCollectionView({
-  collection,
+  id,
   onSave,
   onCancel,
 }: EditCollectionViewProps) {
-  const { updateTitle } = useCollection(collection.id);
+  const {
+    collection,
+    isPending,
+    error,
+    updateTitle,
+    removeReleasesFromCollection,
+  } = useCollection(id);
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
     const data = new FormData(event.target as HTMLFormElement);
     updateTitle(data.get("title") as string);
     onSave();
+  }
+
+  if (isPending) {
+    return <Loading />;
+  }
+
+  if (error) {
+    return <ErrorView error={error} />;
   }
 
   return (
@@ -55,6 +71,17 @@ export default function EditCollectionView({
             </button>
           </div>
         </form>
+        {collection.releases.length ? (
+          <section>
+            <h3>Releases</h3>
+            <EntityCardList
+              items={collection.releases}
+              onRemoveEntityClick={(release) =>
+                removeReleasesFromCollection([release])
+              }
+            />
+          </section>
+        ) : null}
       </div>
     </div>
   );

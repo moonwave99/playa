@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { GroupWithArtists, HasId } from "@/types/types";
-import api from '../api';
+import api from "../api";
 
 type UseGroup = {
   isPending: boolean;
@@ -12,25 +12,28 @@ type UseGroup = {
 
 export default function useGroup(id: number): UseGroup {
   const queryClient = useQueryClient();
-  const { isPending, error, data: group } = useQuery({
+  const {
+    isPending,
+    error,
+    data: group,
+  } = useQuery({
     queryKey: ["groups", id],
-    queryFn: () => api.group.getGroup(id),
+    queryFn: () => api.group.getGroup(id) as Promise<GroupWithArtists>,
   });
 
   function onSuccess() {
-    [
-      ["groups"],
-      ["groups", "latest"],
-      ["groups", id],
-    ].forEach(queryKey => queryClient.invalidateQueries({ queryKey }));
+    [["groups"], ["groups", "latest"], ["groups", id]].forEach((queryKey) =>
+      queryClient.invalidateQueries({ queryKey })
+    );
   }
 
   const updateTitle = useMutation({
-    mutationFn: (title: string) => api.group.updateGroup(id, {
-      title,
-      artists: group.artists.map(({ id }: HasId) => id),
-    }),
-    onSuccess
+    mutationFn: (title: string) =>
+      api.group.updateGroup(id, {
+        title,
+        artists: group.artists.map(({ id }: HasId) => id),
+      }),
+    onSuccess,
   });
 
   const removeArtistsFromGroup = useMutation({
@@ -50,7 +53,7 @@ export default function useGroup(id: number): UseGroup {
           .filter((id: number) => !ids.includes(id)),
       });
     },
-    onSuccess
+    onSuccess,
   });
 
   return {
@@ -58,6 +61,6 @@ export default function useGroup(id: number): UseGroup {
     isPending,
     error,
     updateTitle: updateTitle.mutate,
-    removeArtistsFromGroup: removeArtistsFromGroup.mutate
-  }
+    removeArtistsFromGroup: removeArtistsFromGroup.mutate,
+  };
 }

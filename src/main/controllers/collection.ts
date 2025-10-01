@@ -44,7 +44,7 @@ export function collectionController({ send }: CollectionControllerParams) {
     if (updatedCollection) {
       send("notify", {
         type: "success",
-        message: "Collection renamed",
+        message: "Collection updated",
       });
     }
     return updatedCollection;

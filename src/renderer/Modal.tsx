@@ -6,8 +6,7 @@ import {
   ReleaseWithArtistAndSubReleases,
   ArtistWithReleases,
   Release,
-  Collection,
-  Group,
+  HasId,
 } from "@/types/types";
 import api from "./api";
 import CoverLightbox from "./components/CoverLightbox";
@@ -39,7 +38,7 @@ function getModalOverrides(name: string) {
       marginTop: "0",
     };
   }
-  if (name === "stats") {
+  if (name === "editCollection" || name === "editGroup") {
     return {
       width: "min(90vw, 1000px)",
     };
@@ -141,7 +140,7 @@ export default function Modal({ setContext }: ModalProps) {
     if (name === "editCollection") {
       return (
         <EditCollectionView
-          collection={params.collection as Collection}
+          id={(params.collection as HasId).id}
           onSave={closeModal}
           onCancel={closeModal}
         />
@@ -150,7 +149,7 @@ export default function Modal({ setContext }: ModalProps) {
     if (name === "editGroup") {
       return (
         <EditGroupView
-          group={params.group as Group}
+          id={(params.group as HasId).id}
           onSave={closeModal}
           onCancel={closeModal}
         />

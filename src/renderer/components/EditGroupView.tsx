@@ -1,28 +1,39 @@
 import type { FormEvent } from "react";
-import type { Group } from "@/types/types";
+import useGroup from "../query/useGroup";
+import EntityCardList from "./EntityCardList";
+import ErrorView from "./ErrorView";
+import Loading from "./Loading";
 import cx from "clsx";
 import styles from "./EditGroupView.module.css";
 import formStyles from "../forms.module.css";
-import useGroup from "../query/useGroup";
 
 type EditGroupViewProps = {
-  group: Group;
+  id: number;
   onSave: () => void;
   onCancel: () => void;
 };
 
 export default function EditGroupView({
-  group,
+  id,
   onSave,
   onCancel,
 }: EditGroupViewProps) {
-  const { updateTitle } = useGroup(group.id);
+  const { group, isPending, error, updateTitle, removeArtistsFromGroup } =
+    useGroup(id);
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
     const data = new FormData(event.target as HTMLFormElement);
     updateTitle(data.get("title") as string);
     onSave();
+  }
+
+  if (isPending) {
+    return <Loading />;
+  }
+
+  if (error) {
+    return <ErrorView error={error} />;
   }
 
   return (
@@ -55,6 +66,15 @@ export default function EditGroupView({
             </button>
           </div>
         </form>
+        {group.artists.length ? (
+          <section>
+            <h3>Artists</h3>
+            <EntityCardList
+              items={group.artists}
+              onRemoveEntityClick={(artist) => removeArtistsFromGroup([artist])}
+            />
+          </section>
+        ) : null}
       </div>
     </div>
   );
