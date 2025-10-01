@@ -5,6 +5,7 @@ import {
   createCollection,
   updateCollection as _updateCollection,
   addReleasesToCollection,
+  addReleasesToNewCollection,
   removeReleasesFromCollection as _removeReleasesFromCollection,
   deleteCollections,
   deleteCollection,
@@ -56,6 +57,7 @@ export function collectionController({ send }: CollectionControllerParams) {
     createCollection,
     updateCollection,
     addReleasesToCollection,
+    addReleasesToNewCollection,
     removeReleasesFromCollection,
     deleteCollections,
     deleteCollection,
@@ -63,13 +65,14 @@ export function collectionController({ send }: CollectionControllerParams) {
   };
 }
 
-export const actions = [
+export const actions: (keyof ReturnType<typeof collectionController>)[] = [
   "getCollections",
   "getAllCollections",
   "getCollection",
   "createCollection",
   "updateCollection",
   "addReleasesToCollection",
+  "addReleasesToNewCollection",
   "removeReleasesFromCollection",
   "deleteCollections",
   "deleteCollection",

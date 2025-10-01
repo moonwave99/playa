@@ -285,6 +285,7 @@ export function initMenu({ controllers, state, send }: InitMenuParams) {
           accelerator: "Shift+R",
           click: () => searchArtistOnRYM(state.getCurrentArtist()),
         },
+        { type: "separator" },
       ],
     })
   );
@@ -354,6 +355,16 @@ export function initMenu({ controllers, state, send }: InitMenuParams) {
           accelerator: "Cmd+Shift+G",
           visible: false,
           click: controllers.release.unGroupSelectedRelease,
+        },
+        {
+          id: "addReleasesToCollection",
+          label: `Add Selected Releases to Collection`,
+          accelerator: "a",
+          click: () =>
+            send(
+              "openAddReleasesToCollectionDialog",
+              state.getSelectedReleases()
+            ),
         },
       ],
     })

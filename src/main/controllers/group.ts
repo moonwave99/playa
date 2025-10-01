@@ -5,6 +5,7 @@ import {
   createGroup,
   updateGroup as _updateGroup,
   addArtistsToGroup,
+  addArtistsToNewGroup,
   removeArtistsFromGroup as _removeArtistsFromGroup,
   deleteGroup,
   deleteGroups,
@@ -51,6 +52,7 @@ export function groupController({ send }: GroupControllerParams) {
     createGroup,
     updateGroup,
     addArtistsToGroup,
+    addArtistsToNewGroup,
     removeArtistsFromGroup,
     deleteGroup,
     deleteGroups,
@@ -58,13 +60,14 @@ export function groupController({ send }: GroupControllerParams) {
   };
 }
 
-export const actions = [
+export const actions: (keyof ReturnType<typeof groupController>)[] = [
   "getGroup",
   "getAllGroups",
   "getGroups",
   "createGroup",
   "updateGroup",
   "addArtistsToGroup",
+  "addArtistsToNewGroup",
   "removeArtistsFromGroup",
   "deleteGroup",
   "deleteGroups",

@@ -1,28 +1,44 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { GroupWithArtists } from "@/types/types";
-import api from '../api';
+import type { GroupWithArtists, HasId } from "@/types/types";
+import api from "../api";
+
+type AddArtistsToGroupParams = {
+  id: number;
+  artists: HasId[];
+};
+
+type AddArtistsToNewGroupParams = {
+  title: string;
+  artists: HasId[];
+};
 
 type UseGroups = {
   isPending: boolean;
   error: Error;
   groups: GroupWithArtists[];
   deleteGroups: (ids: number[]) => void;
+  addArtistsToGroup: (params: AddArtistsToGroupParams) => void;
+  addArtistsToNewGroup: (params: AddArtistsToNewGroupParams) => void;
 };
 
 const pageSize = 50;
 
 export default function useGroups(): UseGroups {
   const queryClient = useQueryClient();
-  const { isPending, error, data: groups } = useQuery({
+  const {
+    isPending,
+    error,
+    data: groups,
+  } = useQuery({
     queryKey: ["groups", "latest"],
-    queryFn: () => api.group.getGroups({ take: pageSize }),
+    queryFn: () =>
+      api.group.getGroups({ take: pageSize }) as Promise<GroupWithArtists[]>,
   });
 
   function onSuccess() {
-    [
-      ["groups"],
-      ["groups", "latest"],
-    ].forEach(queryKey => queryClient.invalidateQueries({ queryKey }));
+    [["groups"], ["groups", "latest"]].forEach((queryKey) =>
+      queryClient.invalidateQueries({ queryKey })
+    );
   }
 
   const deleteGroups = useMutation({
@@ -36,13 +52,27 @@ export default function useGroups(): UseGroups {
       }
       return api.group.deleteGroups(ids);
     },
-    onSuccess
+    onSuccess,
+  });
+
+  const addArtistsToGroup = useMutation({
+    mutationFn: ({ id, artists }: AddArtistsToGroupParams) =>
+      api.group.addArtistsToGroup(id, artists),
+    onSuccess,
+  });
+
+  const addArtistsToNewGroup = useMutation({
+    mutationFn: ({ title, artists }: AddArtistsToNewGroupParams) =>
+      api.group.addArtistsToNewGroup(title, artists),
+    onSuccess,
   });
 
   return {
     groups,
     isPending,
     error,
-    deleteGroups: deleteGroups.mutate
-  }
+    deleteGroups: deleteGroups.mutate,
+    addArtistsToGroup: addArtistsToGroup.mutate,
+    addArtistsToNewGroup: addArtistsToNewGroup.mutate,
+  };
 }

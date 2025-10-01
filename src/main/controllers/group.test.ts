@@ -152,7 +152,7 @@ describe("deleteGroups function", () => {
 });
 
 describe("addArtistsToGroup function", async () => {
-  it("adds the artists by given ids from the group", async () => {
+  it("adds the artists by given ids to the group", async () => {
     const artists = getFakeArtists({ length: 3 });
     await prisma.artist.createMany({ data: artists });
     await prisma.group.create({
@@ -166,16 +166,21 @@ describe("addArtistsToGroup function", async () => {
     });
     expect(updatedGroup.artists).toMatchObject(artists);
   });
+});
 
-  it("sets the cover artist to empty if the current cover artist is removed", async () => {
+describe("addArtistsToNewGroup function", async () => {
+  it("adds the artists by given ids to a new group", async () => {
     const artists = getFakeArtists({ length: 3 });
     await prisma.artist.createMany({ data: artists });
-    await prisma.group.createMany({
-      data: getFakeGroups({ length: 1, artists }),
+    const { addArtistsToNewGroup } = groupController(defaultParams);
+    await addArtistsToNewGroup("new group", artists);
+
+    const newGroup = await prisma.group.findFirst({
+      where: { id: 1 },
+      include: { artists: true },
     });
-    const { removeArtistsFromGroup } = groupController(defaultParams);
-    const updatedGroup = await removeArtistsFromGroup(1, [1]);
-    expect(updatedGroup.coverArtistId).toBe(null);
+    expect(newGroup.title).toBe("new group");
+    expect(newGroup.artists).toMatchObject(artists);
   });
 });
 

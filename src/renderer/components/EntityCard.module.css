@@ -1,0 +1,28 @@
+.view {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+  text-align: center;
+  border-radius: 0.25rem;
+  padding: 0.5rem;
+  background-color: var(--tertiary-color);
+  height: 100%;
+  width: calc(var(--related-artists-cover-size) + 1rem);
+}
+
+.title {
+  font-size: 0.65rem;
+  line-height: 0.8rem;
+  width: 100%;
+  letter-spacing: -0.03rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.cover {
+  width: var(--related-artists-cover-size);
+  height: var(--related-artists-cover-size);
+}

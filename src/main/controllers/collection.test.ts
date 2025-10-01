@@ -134,6 +134,33 @@ describe("addReleasesToCollection function", () => {
   });
 });
 
+describe("addReleasesToNewCollection function", () => {
+  it("adds the releases by given ids to a new collection", async () => {
+    const artist = getFakeArtists({ length: 1 }).at(0);
+    const releases = getFakeReleasesForArtist(artist.id);
+
+    await prisma.artist.create({ data: artist });
+    await prisma.release.createMany({ data: releases });
+
+    const { addReleasesToNewCollection } = collectionController(defaultParams);
+    await addReleasesToNewCollection("new collection", releases);
+    const newCollection = await prisma.collection.findFirst({
+      where: { id: 1 },
+      include: { releases: true },
+    });
+
+    expect(newCollection.title).toBe("new collection");
+
+    expect(newCollection.releases).toMatchObject([
+      { id: 1 },
+      { id: 2 },
+      { id: 3 },
+      { id: 4 },
+      { id: 5 },
+    ]);
+  });
+});
+
 describe("createCollection function", () => {
   it("creates a new collection", async () => {
     const artist = getFakeArtists({ length: 1 }).at(0);

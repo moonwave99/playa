@@ -7,30 +7,6 @@ import type {
 } from "@/types/types";
 import { buildMenu, getCoverEntityEntry } from "./menu";
 import { searchArtistOnRYM, searchArtistOnDiscogs } from "@/lib/external_links";
-import { getGroupLink } from "@/lib/links";
-
-function getAddToGroupEntry(
-  artist: Artist,
-  groups: GroupWithArtists[],
-  { controllers, send }: MenuParams
-) {
-  return {
-    label: "Add Artist to Group...",
-    submenu: groups
-      .filter((g) => !g.artists.find((a) => a.id === artist.id))
-      .map(({ title, id }) => ({
-        label: title,
-        click: async () => {
-          await controllers.group.addArtistsToGroup(id, [artist]);
-          send("mutate", [
-            ["groups", "latest"],
-            ["groups", id],
-            ["artists", artist.id],
-          ]);
-        },
-      })),
-  };
-}
 
 function getRemoveFromGroupEntry(
   artist: Artist,
@@ -54,16 +30,6 @@ export const artistMenu =
   ({ controllers, send }: MenuParams) =>
   async (artist: ArtistWithReleases, context?: GroupWithArtists) => {
     const { id, name, releases } = artist;
-    const groups = await controllers.group.getAllGroups();
-
-    const newGroupHandler = async () => {
-      const newGroup = await controllers.group.createGroup({
-        title: "New Group",
-        artists: [artist.id],
-      });
-      send("mutate", [["groups"], ["groups", "latest"]]);
-      send("navigate", `${getGroupLink(newGroup)}?new=true`);
-    };
 
     buildMenu([
       {
@@ -84,15 +50,9 @@ export const artistMenu =
       },
       { type: "separator" },
       {
-        label: "Add to New Group",
-        click: newGroupHandler,
+        label: `Add Artist to Group`,
+        click: () => send("openAddArtistsToGroupDialog", [artist]),
       },
-      groups.length
-        ? getAddToGroupEntry(artist, groups as GroupWithArtists[], {
-            controllers,
-            send,
-          })
-        : { type: "separator" },
       context?.entityType === "Group"
         ? getRemoveFromGroupEntry(artist, context, { controllers, send })
         : { type: "separator" },

@@ -1,0 +1,17 @@
+.view {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  background-color: black;
+
+  h2,
+  h3 {
+    user-select: none;
+  }
+}
+
+.entityList {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+}

@@ -1,28 +1,48 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { CollectionWithReleases } from "@/types/types";
-import api from '../api';
+import { type CollectionWithReleases, type HasId } from "@/types/types";
+import api from "../api";
+
+type AddReleasesToCollectionParams = {
+  id: number;
+  releases: HasId[];
+};
+
+type AddReleasesToNewCollectionParams = {
+  title: string;
+  releases: HasId[];
+};
 
 type UseCollections = {
   isPending: boolean;
   error: Error;
   collections: CollectionWithReleases[];
   deleteCollections: (ids: number[]) => void;
+  addReleasesToCollection: (params: AddReleasesToCollectionParams) => void;
+  addReleasesToNewCollection: (
+    params: AddReleasesToNewCollectionParams
+  ) => void;
 };
 
 const pageSize = 50;
 
 export default function useCollections(): UseCollections {
   const queryClient = useQueryClient();
-  const { isPending, error, data: collections } = useQuery({
+  const {
+    isPending,
+    error,
+    data: collections,
+  } = useQuery({
     queryKey: ["collections", "latest"],
-    queryFn: () => api.collection.getCollections({ take: pageSize }),
+    queryFn: () =>
+      api.collection.getCollections({
+        take: pageSize,
+      }) as Promise<CollectionWithReleases[]>,
   });
 
   function onSuccess() {
-    [
-      ["collections"],
-      ["collections", "latest"],
-    ].forEach(queryKey => queryClient.invalidateQueries({ queryKey }));
+    [["collections"], ["collections", "latest"]].forEach((queryKey) =>
+      queryClient.invalidateQueries({ queryKey })
+    );
   }
 
   const deleteCollections = useMutation({
@@ -36,13 +56,27 @@ export default function useCollections(): UseCollections {
       }
       return api.collection.deleteCollections(ids);
     },
-    onSuccess
+    onSuccess,
+  });
+
+  const addReleasesToCollection = useMutation({
+    mutationFn: ({ id, releases }: AddReleasesToCollectionParams) =>
+      api.collection.addReleasesToCollection(id, releases),
+    onSuccess,
+  });
+
+  const addReleasesToNewCollection = useMutation({
+    mutationFn: ({ title, releases }: AddReleasesToNewCollectionParams) =>
+      api.collection.addReleasesToNewCollection(title, releases),
+    onSuccess,
   });
 
   return {
     collections,
     isPending,
     error,
-    deleteCollections: deleteCollections.mutate
-  }
+    deleteCollections: deleteCollections.mutate,
+    addReleasesToCollection: addReleasesToCollection.mutate,
+    addReleasesToNewCollection: addReleasesToNewCollection.mutate,
+  };
 }

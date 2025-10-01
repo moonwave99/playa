@@ -20,6 +20,8 @@ import SettingsView from "./components/SettingsView";
 import EditGroupView from "./components/EditGroupView";
 import SearchView from "./components/SearchView";
 import ExportDataView from "./components/ExportDataView";
+import AddReleasesToCollectionView from "./components/AddReleasesToCollectionView";
+import AddArtistsToGroupView from "./components/AddArtistsToGroupView";
 
 function getModalOverrides(name: string) {
   if (name === "lightbox") {
@@ -149,6 +151,24 @@ export default function Modal({ setContext }: ModalProps) {
       return (
         <EditGroupView
           group={params.group as Group}
+          onSave={closeModal}
+          onCancel={closeModal}
+        />
+      );
+    }
+    if (name === "addReleasesToCollection") {
+      return (
+        <AddReleasesToCollectionView
+          releases={params.releases as ReleaseWithArtist[]}
+          onSave={closeModal}
+          onCancel={closeModal}
+        />
+      );
+    }
+    if (name === "addArtistsToGroup") {
+      return (
+        <AddArtistsToGroupView
+          artists={params.artists as ArtistWithReleases[]}
           onSave={closeModal}
           onCancel={closeModal}
         />

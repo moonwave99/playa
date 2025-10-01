@@ -141,6 +141,21 @@ export async function updateCollection(
   });
 }
 
+export async function addReleasesToNewCollection(
+  title: string,
+  releases: HasId[]
+) {
+  return prisma.collection.create({
+    data: {
+      title,
+      releases: {
+        connect: releases.map(({ id }) => ({ id })),
+      },
+      coverReleaseId: releases.at(0).id,
+    },
+  });
+}
+
 export async function addReleasesToCollection(id: number, releases: HasId[]) {
   return prisma.collection.update({
     where: {

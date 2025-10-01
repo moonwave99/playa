@@ -94,6 +94,12 @@ declare global {
       onOpenEditCollectionDialog: (
         handler: (collection: Collection) => void
       ) => () => void;
+      onOpenAddReleasesToCollectionDialog: (
+        handler: (releases: Release[], collection: Collection) => void
+      ) => () => void;
+      onOpenAddArtistsToGroupDialog: (
+        handler: (artist: Artist, group: Group) => void
+      ) => () => void;
       onOpenEditGroupDialog: (handler: (group: Group) => void) => () => void;
       state: {
         selectReleases: (

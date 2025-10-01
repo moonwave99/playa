@@ -76,6 +76,10 @@ contextBridge.exposeInMainWorld("api", {
   onOpenEditReleaseDialog: getHandler("openEditReleaseDialog"),
   onOpenEditArtistDialog: getHandler("openEditArtistDialog"),
   onOpenEditCollectionDialog: getHandler("openEditCollectionDialog"),
+  onOpenAddReleasesToCollectionDialog: getHandler(
+    "openAddReleasesToCollectionDialog"
+  ),
+  onOpenAddArtistsToGroupDialog: getHandler("openAddArtistsToGroupDialog"),
   onOpenEditGroupDialog: getHandler("openEditGroupDialog"),
   state: {
     setInputFocused: (inputFocused: boolean) =>

@@ -20,7 +20,10 @@ export default function useCollection(id: number): UseCollection {
   } = useQuery<CollectionWithReleases>({
     queryKey: ["collections", id],
     queryFn: () =>
-      api.collection.getCollection(id, { sortBy: "artistName", order: "asc" }),
+      api.collection.getCollection(id, {
+        sortBy: "artistName",
+        order: "asc",
+      }) as Promise<CollectionWithReleases>,
   });
 
   function onSuccess() {

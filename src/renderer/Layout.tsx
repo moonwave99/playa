@@ -120,6 +120,16 @@ function init(): Init {
       setModalContents({ name: "editCollection", params: { collection } }),
     onOpenEditGroupDialog: (group: Group) =>
       setModalContents({ name: "editGroup", params: { group } }),
+    onOpenAddReleasesToCollectionDialog: (releases: ReleaseWithArtist[]) =>
+      setModalContents({
+        name: "addReleasesToCollection",
+        params: { releases },
+      }),
+    onOpenAddArtistsToGroupDialog: (artists: ArtistWithReleases[]) =>
+      setModalContents({
+        name: "addArtistsToGroup",
+        params: { artists },
+      }),
     onToggleSearch: () =>
       setModalContents(
         modalContents?.name === "search" ? null : { name: "search" }

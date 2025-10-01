@@ -6,36 +6,12 @@ import type {
   MenuParams,
   Collection,
 } from "@/types/types";
-import { getCollectionLink } from "@/lib/links";
 import { buildMenu, getDeleteEntry, getCoverEntityEntry } from "./menu";
 import { getReleaseTitle } from "@/lib/utils";
 import {
   searchReleaseOnDiscogs,
   searchReleaseOnRYM,
 } from "@/lib/external_links";
-
-function getAddToCollectionEntry(
-  selection: Release[],
-  collections: CollectionWithReleases[],
-  { controllers, send }: MenuParams
-) {
-  return {
-    label: `Add ${selection.length} Release(s) to Collection...`,
-    submenu: collections
-      .filter((c) => !c.releases.find((r) => r.id === selection[0].id))
-      .map(({ title, id }) => ({
-        label: title,
-        click: async () => {
-          await controllers.collection.addReleasesToCollection(id, selection);
-          send("mutate", [
-            ["collections", "latest"],
-            ["collections", id],
-            ["releases", selection[0].id],
-          ]);
-        },
-      })),
-  };
-}
 
 function getRemoveFromCollectionEntry(
   selection: Release[],
@@ -77,16 +53,6 @@ export const releaseMenu =
     selection: ReleaseWithArtistAndSubReleases[],
     context?: CollectionWithReleases | ArtistWithReleases
   ) => {
-    const collections = await controllers.collection.getAllCollections();
-    const newCollectionHandler = async () => {
-      const newCollection = await controllers.collection.createCollection({
-        title: "New Collection",
-        releases: selection.map(({ id }) => id),
-      });
-      send("mutate", [["collections"], ["collections", "latest"]]);
-      send("navigate", `${getCollectionLink(newCollection)}?new=true`);
-    };
-
     if (selection.length === 1) {
       const release = selection[0];
       const title = `${release.artist.name} - ${getReleaseTitle(release)}`;
@@ -151,19 +117,9 @@ export const releaseMenu =
           : { type: "separator" },
         { type: "separator" },
         {
-          label: "Add to New Collection",
-          click: newCollectionHandler,
+          label: "Add to Collection",
+          click: () => send("openAddReleasesToCollectionDialog", [release]),
         },
-        collections.length
-          ? getAddToCollectionEntry(
-              selection,
-              collections as CollectionWithReleases[],
-              {
-                controllers,
-                send,
-              }
-            )
-          : { type: "separator" },
         context?.entityType === "Collection"
           ? getRemoveFromCollectionEntry(
               selection,
@@ -199,14 +155,9 @@ export const releaseMenu =
         type: "separator",
       },
       {
-        label: `Add ${selection.length} Release(s) to New Collection`,
-        click: newCollectionHandler,
+        label: `Add ${selection.length} Release(s) to Collection`,
+        click: () => send("openAddReleasesToCollectionDialog", selection),
       },
-      getAddToCollectionEntry(
-        selection,
-        collections as CollectionWithReleases[],
-        { controllers, send }
-      ),
       context?.entityType === "Collection"
         ? getRemoveFromCollectionEntry(
             selection,

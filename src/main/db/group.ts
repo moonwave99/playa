@@ -141,6 +141,17 @@ export async function addArtistsToGroup(id: number, artists: HasId[]) {
   });
 }
 
+export async function addArtistsToNewGroup(title: string, artists: HasId[]) {
+  return prisma.group.create({
+    data: {
+      title,
+      artists: {
+        connect: artists.map(({ id }) => ({ id })),
+      },
+    },
+  });
+}
+
 export async function removeArtistsFromGroup(id: number, artist_ids: number[]) {
   let result = await prisma.group.update({
     where: { id },
