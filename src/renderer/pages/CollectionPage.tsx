@@ -8,7 +8,6 @@ import { getReleaseContextMenuParams } from "@/lib/utils";
 import useCollection from "@/renderer/query/useCollection";
 import { useClearSelectionOnLeave } from "@/renderer/hooks/useApi";
 import ReleaseList from "@/renderer/components/ReleaseList";
-import Droppable from "../components/Droppable";
 import Loading from "@/renderer/components/Loading";
 import ErrorView from "../components/ErrorView";
 import styles from "./Page.module.css";
@@ -60,21 +59,19 @@ export default function CollectionPage() {
 
   return (
     <div className={styles.page}>
-      <Droppable item={collection}>
-        {!collection?.releases.length ? (
-          <div className={styles.placeholder}>
-            There are no releases in this collection yet.
-          </div>
-        ) : (
-          <ReleaseList
-            releases={collection.releases}
-            onDelete={removeReleasesFromCollection}
-            onContextMenu={onContextMenu}
-            className={styles.list}
-            keyHandlers={keyHandlers}
-          />
-        )}
-      </Droppable>
+      {!collection?.releases.length ? (
+        <div className={styles.placeholder}>
+          There are no releases in this collection yet.
+        </div>
+      ) : (
+        <ReleaseList
+          releases={collection.releases}
+          onDelete={removeReleasesFromCollection}
+          onContextMenu={onContextMenu}
+          className={styles.list}
+          keyHandlers={keyHandlers}
+        />
+      )}
     </div>
   );
 }

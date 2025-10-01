@@ -10,7 +10,6 @@ import List from "../components/List";
 import ListCard from "../components/ListCard";
 import Loading from "@/renderer/components/Loading";
 import ErrorView from "../components/ErrorView";
-import Droppable from "../components/Droppable";
 
 import styles from "./Page.module.css";
 
@@ -42,36 +41,34 @@ export default function GroupPage() {
 
   return (
     <div className={styles.page}>
-      <Droppable item={group}>
-        {!group?.artists.length ? (
-          <div className={styles.placeholder}>
-            There are no artists in this group yet.
-          </div>
-        ) : (
-          <List
-            shouldPreventSpace
-            items={group.artists}
-            className={styles.list}
-            columnsConfig={compactColumnsConfig}
-            estimateSize={estimateListCardSize}
-            onEnter={(artist: ArtistWithReleases) =>
-              navigate(getArtistLink(artist))
-            }
-            onBackspace={onDelete}
-            render={({ item, ...rest }) => (
-              <ListCard
-                showMultipleCovers
-                item={item}
-                onContextMenu={() => api.menu.artist(item, group)}
-                onCoverDoubleClick={(release_id) =>
-                  api.system.playback({ release_id })
-                }
-                {...rest}
-              />
-            )}
-          />
-        )}
-      </Droppable>
+      {!group?.artists.length ? (
+        <div className={styles.placeholder}>
+          There are no artists in this group yet.
+        </div>
+      ) : (
+        <List
+          shouldPreventSpace
+          items={group.artists}
+          className={styles.list}
+          columnsConfig={compactColumnsConfig}
+          estimateSize={estimateListCardSize}
+          onEnter={(artist: ArtistWithReleases) =>
+            navigate(getArtistLink(artist))
+          }
+          onBackspace={onDelete}
+          render={({ item, ...rest }) => (
+            <ListCard
+              showMultipleCovers
+              item={item}
+              onContextMenu={() => api.menu.artist(item, group)}
+              onCoverDoubleClick={(release_id) =>
+                api.system.playback({ release_id })
+              }
+              {...rest}
+            />
+          )}
+        />
+      )}
     </div>
   );
 }
