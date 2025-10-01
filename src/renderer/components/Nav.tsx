@@ -105,6 +105,7 @@ export default function Nav({ isDetailPage }: NavProps) {
           <Route path="/artists" element={<ArtistListActions />} />
           <Route path="/artists/:id" element={<ReleaseListActions />} />
           <Route path="/collections/:id" element={<ReleaseListActions />} />
+          <Route path="*" element={null} />
         </Routes>
         <button
           type="button"
