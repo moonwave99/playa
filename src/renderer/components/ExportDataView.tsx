@@ -10,7 +10,7 @@ type ExportDataViewProps = {
 };
 
 export default function ExportDataView({ onDone }: ExportDataViewProps) {
-  const isDone = useExportData();
+  const isDone = useExportData(onDone);
 
   return (
     <div className={styles.view}>
@@ -30,7 +30,9 @@ export default function ExportDataView({ onDone }: ExportDataViewProps) {
   );
 }
 
-function useExportData() {
+const ON_DONE_DELAY = 3000;
+
+function useExportData(onDone: () => void) {
   const [isDone, setDone] = useState(false);
   const { setModalFixed } = useStore();
 
@@ -40,9 +42,11 @@ function useExportData() {
       if (status === "done") {
         setDone(true);
         setModalFixed(false);
+        setTimeout(onDone, ON_DONE_DELAY);
       }
     });
     return () => unsubscribe();
   }, []);
+
   return isDone;
 }

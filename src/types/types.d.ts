@@ -51,13 +51,7 @@ declare global {
       collection: ReturnType<typeof collectionController>;
       group: ReturnType<typeof groupController>;
       system: ReturnType<typeof systemController>;
-      importExport: ReturnType<typeof importExportController> & {
-        onProgress: (
-          handler: (step: string, completed?: boolean) => void
-        ) => () => void;
-        onError: (handler: (message: string) => void) => () => void;
-        onExportData: (handler: (status: string) => void) => () => void;
-      };
+      importExport: ReturnType<typeof importExportController>;
       settings: {
         getSettings: () => Promise<ReturnType<getSettings>>;
         setSettings: (
@@ -83,6 +77,8 @@ declare global {
       onToggleSearch: (handler: () => void) => () => void;
       onOpenSettings: (handler: () => void) => () => void;
       onOpenImportData: (handler: () => void) => () => void;
+      onOpenImportFolders: (handler: () => void) => () => void;
+      onOpenExportData: (handler: () => void) => () => void;
       onCoverUpdate: (handler: (releases: Release[]) => void) => () => void;
       onOpenGroupDialog: (handler: (releases: Release[]) => void) => () => void;
       onOpenEditReleaseDialog: (
@@ -114,6 +110,12 @@ declare global {
       };
       dialog: {
         open: (options: Partial<OpenDialogSyncOptions>) => Promise<string>;
+      };
+      import: {
+        onProgress: (
+          handler: (step: string, completed?: boolean) => void
+        ) => () => void;
+        onError: (handler: (message: string) => void) => () => void;
       };
     };
   }

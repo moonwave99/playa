@@ -58,6 +58,8 @@ type ReleaseControllerParams = {
   ) => string[];
 };
 
+type ProgressCallback = (folder: string, completed?: boolean) => void;
+
 export function releaseController({
   withPath,
   getSetting,
@@ -194,39 +196,47 @@ export function releaseController({
     }
   }
 
-  async function importFolder(folder: string) {
+  async function importFolder(folder: string, onProgress: ProgressCallback) {
     const folders = await globby("**", {
       onlyDirectories: true,
       cwd: folder,
     });
 
     if (!folders.length) {
-      const release = await importSingleFolder(folder);
+      const release = await importSingleFolder(folder, onProgress);
       return release ? [release] : [];
     }
 
     const releases = await Promise.all(
       folders
         .filter((x) => !x.endsWith("]"))
-        .map((f) => importSingleFolder(path.join(folder, f)))
+        .map((f) => importSingleFolder(path.join(folder, f), onProgress))
     );
 
+    onProgress("done");
     return releases.filter((x: unknown) => !!x);
   }
 
-  async function importSingleFolder(folder: string) {
+  async function importSingleFolder(
+    folder: string,
+    onProgress: ProgressCallback
+  ) {
     log("release:importSingleFolder", "Crawling:", folder);
     const contents = await crawlFolder(folder);
 
     if (!contents.length) {
       return null;
     }
+
     const LIBRARY_PATH = getSetting("LIBRARY_PATH") as string;
     const releaseData = parsePath(folder.split(LIBRARY_PATH).at(1));
 
     if (!releaseData) {
       return null;
     }
+
+    onProgress(folder);
+
     const artistPath = releaseData.fullPath.split("/").slice(0, 2).join("/");
     const artistHash = hashArtistName(releaseData.artist.name);
     const normalizedName = normalizeDiacritics(releaseData.artist.name);
@@ -306,6 +316,8 @@ export function releaseController({
         DISCOGS_SECRET,
       }
     );
+
+    onProgress(folder, true);
     return fullRelease;
   }
 
@@ -463,8 +475,19 @@ export function releaseController({
     if (!folders) {
       return;
     }
-    const output = await Promise.all(folders.map(importFolder));
+
+    send("openImportFolders");
+
+    function onProgress(folder: string, completed = false) {
+      send("import:progress", folder, completed);
+    }
+
+    const output = await Promise.all(
+      folders.map((folder) => importFolder(folder, onProgress))
+    );
     const importedReleases = output.flat();
+
+    send("import:progress", "done");
 
     send("mutate", [
       ["releases", "latest"],
@@ -578,7 +601,7 @@ export function releaseController({
   };
 }
 
-export const actions = [
+export const actions: (keyof ReturnType<typeof releaseController>)[] = [
   "getRelease",
   "getReleases",
   "getLatestAdditions",

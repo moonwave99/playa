@@ -52,13 +52,13 @@ export function importExportController({
         userDataPath,
         appVersion,
         onProgress: (step, completed = false) =>
-          send("importData:progress", step, completed),
+          send("import:progress", step, completed),
       });
       await wait(getDelay());
       app.relaunch();
       app.exit();
     } catch (error) {
-      send("importData:error", error.message);
+      send("import:error", error.message);
     }
   }
 

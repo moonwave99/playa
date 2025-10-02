@@ -39,15 +39,7 @@ contextBridge.exposeInMainWorld("api", {
   ...getHandlersFromActions("stats", statsActions),
   ...getHandlersFromActions("searchResult", searchResultActions),
   ...getHandlersFromActions("system", systemActions),
-  ...{
-    importExport: {
-      ...getHandlersFromActions("importExport", importExportActions)
-        .importExport,
-      onProgress: getHandler("importData:progress"),
-      onError: getHandler("importData:error"),
-      onExportData: getHandler("exportData"),
-    },
-  },
+  ...getHandlersFromActions("importExport", importExportActions),
   settings: getHandlers({ getSettings, setSettings }),
   menu: {
     release: (
@@ -71,6 +63,8 @@ contextBridge.exposeInMainWorld("api", {
   onToggleSearch: getHandler("toggleSearch"),
   onOpenSettings: getHandler("openSettings"),
   onOpenImportData: getHandler("openImportData"),
+  onOpenExportData: getHandler("openExportData"),
+  onOpenImportFolders: getHandler("openImportFolders"),
   onCoverUpdate: getHandler("coverUpdate"),
   onOpenGroupDialog: getHandler("openGroupDialog"),
   onOpenEditReleaseDialog: getHandler("openEditReleaseDialog"),
@@ -94,6 +88,10 @@ contextBridge.exposeInMainWorld("api", {
   dialog: {
     open: async (options: Partial<OpenDialogSyncOptions>) =>
       ipc.invoke("dialog:open", options),
+  },
+  import: {
+    onProgress: getHandler("import:progress"),
+    onError: getHandler("import:error"),
   },
 });
 

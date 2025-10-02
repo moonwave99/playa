@@ -1,8 +1,7 @@
-import { useState, useEffect } from "react";
-import useStore from "../store";
+import useImportData from "../hooks/useImportData";
 import api from "../api";
 import cx from "clsx";
-import styles from "./ImportDataView.module.css";
+import styles from "../importData.module.css";
 import formStyles from "../forms.module.css";
 
 type ImportDataViewProps = {
@@ -14,7 +13,7 @@ export default function ImportDataView({
   onDone,
   onCancel,
 }: ImportDataViewProps) {
-  const { progress, inProgress } = useImportData({ onDone });
+  const { isDone, steps } = useImportData({ onDone, closeAfter: 3000 });
 
   async function onImportClick() {
     if (
@@ -27,29 +26,10 @@ export default function ImportDataView({
     await api.importExport.importDataFromDialog();
   }
 
-  function renderStep(step: string, completed: boolean) {
-    if (step === "done") {
-      return (
-        <span className={styles.step}>
-          Import successful! Playa will restart now.
-        </span>
-      );
-    }
-    return (
-      <>
-        <span className={styles.step}>
-          {step}
-          {!completed ? "..." : ""}
-        </span>
-        {completed ? <span className={styles.completed}>Done</span> : ""}
-      </>
-    );
-  }
-
   return (
     <div className={styles.view}>
       <h2>Import Data from Archive</h2>
-      {!inProgress && (
+      {!steps.length && (
         <div className={styles.description}>
           <p>
             Please select an exported archive in the{" "}
@@ -64,16 +44,27 @@ export default function ImportDataView({
         </div>
       )}
       <ul className={styles.progress}>
-        {Object.entries(progress).map(([step, completed]) => (
-          <li key={step}>{renderStep(step, completed)}</li>
+        {steps.map(([step, completed]) => (
+          <li key={step}>
+            <span className={styles.step}>
+              {step}
+              {!completed ? "..." : ""}
+            </span>
+            {completed ? <span className={styles.completed}>Done</span> : ""}
+          </li>
         ))}
       </ul>
+      {isDone && (
+        <div className={styles.description}>
+          Import successful! Playa will restart now.
+        </div>
+      )}
       <div className={formStyles.actions}>
         <button
           type="button"
           className={cx(formStyles.button, formStyles.primary)}
           onClick={onImportClick}
-          disabled={inProgress}
+          disabled={!!steps.length}
         >
           Select File
         </button>
@@ -81,42 +72,11 @@ export default function ImportDataView({
           type="button"
           className={formStyles.button}
           onClick={onCancel}
-          disabled={inProgress}
+          disabled={!!steps.length && !isDone}
         >
           Cancel
         </button>
       </div>
     </div>
   );
-}
-
-type UseImportDataParams = {
-  onDone: () => void;
-};
-
-const ON_DONE_DELAY = 3000;
-
-function useImportData({ onDone }: UseImportDataParams) {
-  const [progress, setProgress] = useState<Record<string, boolean>>({});
-  const { setModalFixed } = useStore();
-
-  useEffect(() => {
-    const unsubscribe = [
-      api.importExport.onProgress((step, completed) => {
-        setModalFixed(true);
-        if (step === "done") {
-          setTimeout(onDone, ON_DONE_DELAY);
-        }
-        setProgress((prev) => ({ ...prev, [step]: completed }));
-      }),
-      api.importExport.onError((message) => {
-        window.alert(message);
-        setModalFixed(false);
-      }),
-    ];
-
-    return () => unsubscribe.forEach((u) => u());
-  }, []);
-
-  return { progress, inProgress: !!Object.keys(progress).length };
 }

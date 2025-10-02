@@ -187,8 +187,13 @@ describe("getLatestAdditions function", () => {
 describe("importFolder function", () => {
   it("returns null if the folder has no tracks", async () => {
     const { importFolder } = releaseController(defaultParams);
-    const releases = await importFolder("empty/folder");
+
+    const onProgress = vi.fn();
+
+    const releases = await importFolder("empty/folder", onProgress);
+
     expect(releases).toEqual([]);
+    expect(onProgress).not.toHaveBeenCalled();
   });
 
   it("returns null if the folder is malformed", async (context) => {
@@ -213,10 +218,15 @@ describe("importFolder function", () => {
         key === "LIBRARY_PATH" ? LIBRARY_PATH : key,
     });
 
+    const onProgress = vi.fn();
+
     const releases = await importFolder(
-      path.join(LIBRARY_PATH, "malformed/folder")
+      path.join(LIBRARY_PATH, "malformed/folder"),
+      onProgress
     );
+
     expect(releases).toEqual([]);
+    expect(onProgress).not.toHaveBeenCalled();
   });
 
   it("parses the given path, updates the db and returns the created release", async (context) => {
@@ -244,11 +254,25 @@ describe("importFolder function", () => {
       getSetting: (key: string) =>
         key === "LIBRARY_PATH" ? LIBRARY_PATH : key,
     });
+
+    const onProgress = vi.fn();
+
     const releases = await importFolder(
-      path.join(LIBRARY_PATH, "A/Artist 1/[Album]")
+      path.join(LIBRARY_PATH, "A/Artist 1/[Album]"),
+      onProgress
     );
+
     expect(releases.length).toBe(1);
     expect(releases[0].tracks.length).toBe(5);
+
+    expect(onProgress).toHaveBeenCalledWith(
+      path.join(LIBRARY_PATH, "A/Artist 1/[Album]/2000 - Release 1")
+    );
+    expect(onProgress).toHaveBeenCalledWith(
+      path.join(LIBRARY_PATH, "A/Artist 1/[Album]/2000 - Release 1"),
+      true
+    );
+    expect(onProgress).toHaveBeenCalledWith("done");
   });
 
   it("parses the given path, updates the db and returns the created releases", async (context) => {
@@ -283,8 +307,12 @@ describe("importFolder function", () => {
       getSetting: (key: string) =>
         key === "LIBRARY_PATH" ? LIBRARY_PATH : key,
     });
+
+    const onProgress = vi.fn();
+
     const importedReleases = await importFolder(
-      path.join(LIBRARY_PATH, "A/Artist 1/[Album]")
+      path.join(LIBRARY_PATH, "A/Artist 1/[Album]"),
+      onProgress
     );
 
     expect(importedReleases.length).toBe(2);
@@ -312,6 +340,8 @@ describe("importFolder function", () => {
     ]);
     expect(importedReleases[0].tracks.length).toBe(5);
     expect(importedReleases[1].tracks.length).toBe(5);
+
+    expect(onProgress).toHaveBeenCalledWith("done");
   });
 });
 

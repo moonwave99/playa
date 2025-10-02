@@ -19,7 +19,7 @@ import {
   withMeta,
   KeyManager,
 } from "./hooks/useKeyboardManager";
-import { useOnExportData, useApi } from "./hooks/useApi";
+import { useApi } from "./hooks/useApi";
 import api from "./api";
 import useRefetch from "./hooks/useRefetch";
 import useStore from "./store";
@@ -108,6 +108,8 @@ function init(): Init {
 
   useApi({
     onOpenSettings: () => setModalContents({ name: "settings" }),
+    onOpenImportFolders: () => setModalContents({ name: "importFolders" }),
+    onOpenExportData: () => setModalContents({ name: "exportData" }),
     onOpenImportData: () => setModalContents({ name: "importData" }),
     onOpenGroupDialog: (releases: ReleaseWithArtist[]) =>
       setModalContents({ name: "groupReleases", params: { releases } }),
@@ -136,8 +138,6 @@ function init(): Init {
       ),
     onSwipe: navigate,
   });
-
-  useOnExportData(() => setModalContents({ name: "exportData" }));
 
   const isDetailPage = !!(
     matchPath("/releases/:id", location.pathname) ||

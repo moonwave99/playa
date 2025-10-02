@@ -34,12 +34,3 @@ export function useClearSelectionOnLeave() {
     };
   }, []);
 }
-
-export function useOnExportData(callback: (status: string) => void) {
-  useEffect(() => {
-    const unsubscribe = api.importExport.onExportData(callback);
-    return () => {
-      unsubscribe();
-    };
-  }, []);
-}

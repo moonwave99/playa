@@ -14,11 +14,12 @@ import EditArtistView from "./components/EditArtistView";
 import EditReleaseView from "./components/EditReleaseView";
 import EditCollectionView from "./components/EditCollectionView";
 import GroupReleasesView from "./components/GroupReleasesView";
-import ImportDataView from "./components/ImportDataView";
 import SettingsView from "./components/SettingsView";
 import EditGroupView from "./components/EditGroupView";
 import SearchView from "./components/SearchView";
+import ImportDataView from "./components/ImportDataView";
 import ExportDataView from "./components/ExportDataView";
+import ImportFoldersView from "./components/ImportFoldersView";
 import AddReleasesToCollectionView from "./components/AddReleasesToCollectionView";
 import AddArtistsToGroupView from "./components/AddArtistsToGroupView";
 
@@ -46,6 +47,11 @@ function getModalOverrides(name: string) {
   if (name === "importData") {
     return {
       width: "min(80vw, 600px)",
+    };
+  }
+  if (name === "importFolders") {
+    return {
+      width: "min(80vw, 1000px)",
     };
   }
   return {};
@@ -109,6 +115,9 @@ export default function Modal({ setContext }: ModalProps) {
     }
     if (name === "exportData") {
       return <ExportDataView onDone={closeModal} />;
+    }
+    if (name === "importFolders") {
+      return <ImportFoldersView onDone={closeModal} />;
     }
     if (name === "groupReleases") {
       return (
