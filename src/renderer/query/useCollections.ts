@@ -64,6 +64,7 @@ export default function useCollections(): UseCollections {
     { releases }: { releases: HasId[] }
   ) {
     [
+      ["collections", "latest"],
       ["collections", collection.id],
       ...releases.map((x) => ["releases", x.id]),
     ].forEach((queryKey) => queryClient.invalidateQueries({ queryKey }));
