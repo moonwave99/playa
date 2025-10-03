@@ -60,7 +60,7 @@
   margin-top: 2rem;
 }
 
-.isInsideModal.isNavigable .discTitle.isFirst {
+.discTitle.isFirst {
   margin-top: 0;
 }
 
