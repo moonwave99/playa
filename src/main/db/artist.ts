@@ -14,6 +14,7 @@ import type {
   ReleaseWithArtistAndSubReleases,
   Track,
   Artist,
+  ArtistWithReleasesAndAppearances,
 } from "@/types/types";
 
 export async function getArtist(id: number) {
@@ -103,6 +104,7 @@ export async function getArtist(id: number) {
   }
 
   const { releases, appearsIn } = result;
+
   return {
     ...result,
     entityType: "Artist" as const,
@@ -140,6 +142,9 @@ export async function getLatestArtists({
             artist: true,
           },
         },
+        appearsIn: {
+          include: { artist: true },
+        },
       },
     }),
     prisma.artist.count(),
@@ -151,7 +156,9 @@ export async function getLatestArtists({
       skip,
       total,
     },
-    results: results.map((x) => withReleaseCount(x as ArtistWithReleases)),
+    results: results.map((x) =>
+      withReleaseCount(x as ArtistWithReleasesAndAppearances)
+    ),
   };
 }
 

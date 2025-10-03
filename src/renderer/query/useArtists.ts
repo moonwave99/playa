@@ -1,11 +1,11 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import type { ArtistWithReleases } from "@/types/types";
+import type { ArtistWithReleasesAndAppearances } from "@/types/types";
 import api from "../api";
 
 type UseArtists = {
   isPending: boolean;
   error: Error;
-  artists: ArtistWithReleases[];
+  artists: ArtistWithReleasesAndAppearances[];
   isFetchingNextPage: boolean;
   hasNextPage: boolean;
   fetchNextPage: () => void;

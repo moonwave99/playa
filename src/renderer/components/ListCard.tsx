@@ -18,7 +18,7 @@ import {
   getGroupLink,
 } from "@/lib/links";
 import type {
-  ArtistWithReleases,
+  ArtistWithReleasesAndAppearances,
   ReleaseWithArtistAndSubReleases,
   ReleaseWithArtistAndTracksAndSubreleases,
   CollectionWithReleases,
@@ -38,7 +38,7 @@ import styles from "./ListCard.module.css";
 
 type Item =
   | CollectionWithReleases
-  | ArtistWithReleases
+  | ArtistWithReleasesAndAppearances
   | ReleaseWithArtistAndSubReleases
   | ReleaseWithArtistAndTracksAndSubreleases
   | GroupWithArtists;
@@ -130,6 +130,9 @@ export default function ListCard({
     }
 
     if (item.entityType === "Artist") {
+      const releaseCount = isSingle
+        ? item.releases.length
+        : item.releases.length + item.appearsIn.length;
       return (
         <>
           <Link
@@ -140,7 +143,7 @@ export default function ListCard({
             {normalizeArtistDisplayName(item.name)}
           </Link>
 
-          <div className={styles.info}>{item.releases.length} releases</div>
+          <div className={styles.info}>{releaseCount} releases</div>
           {isSingle && (
             <>
               <RelatedArtistsList useDarkText={useDarkText} id={item.id} />
@@ -191,9 +194,13 @@ export default function ListCard({
     if (!showMultipleCovers || item.entityType === "Release") {
       return false;
     }
-    return item.entityType === "Group"
-      ? item.artists.length > 1
-      : item.releases.length > 1;
+    if (item.entityType === "Group") {
+      return item.artists.length > 1;
+    }
+    if (item.entityType === "Artist") {
+      return item.releases.length + item.appearsIn.length > 1;
+    }
+    return item.releases.length > 1;
   }
 
   function renderCover() {
@@ -266,7 +273,10 @@ export default function ListCard({
 }
 
 type MultipleCoversProps = {
-  item: CollectionWithReleases | ArtistWithReleases | GroupWithArtists;
+  item:
+    | CollectionWithReleases
+    | ArtistWithReleasesAndAppearances
+    | GroupWithArtists;
   count?: number;
   isHover: boolean;
   onLoad: () => void;
@@ -323,12 +333,23 @@ type GetCovers = {
 
 function getCovers(item: MultipleCoversProps["item"], count = 5): GetCovers {
   const coverRelease = getCoverRelease(item);
+
+  let otherReleases: ReleaseWithArtistAndSubReleases[];
+
+  if (item.entityType === "Group") {
+    otherReleases = item.artists.map(getCoverRelease);
+  } else if (item.entityType === "Artist") {
+    otherReleases = [
+      ...item.releases,
+      ...item.appearsIn,
+    ] as ReleaseWithArtistAndSubReleases[];
+  } else {
+    otherReleases = item.releases;
+  }
+
   return {
     coverRelease,
-    otherReleases: (item.entityType === "Group"
-      ? item.artists.map(getCoverRelease)
-      : item.releases
-    )
+    otherReleases: otherReleases
       .filter((x) => x.id !== coverRelease.id)
       .slice(0, count - 1),
   };

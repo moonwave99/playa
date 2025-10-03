@@ -102,6 +102,9 @@ export type WithAppearances = {
 
 export type ArtistWithRelatedArtists = Artist & WithRelatedArtists;
 export type ArtistWithReleases = Artist & WithReleasesAndSubreleases;
+export type ArtistWithReleasesAndAppearances = Artist &
+  WithReleasesAndSubreleases &
+  WithAppearances;
 export type ArtistWithReleasesFull = Artist &
   WithRelatedArtists &
   WithReleasesAndSubreleasesAndTracks &
