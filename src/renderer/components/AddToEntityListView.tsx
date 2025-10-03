@@ -1,13 +1,24 @@
-import { type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
+import {
+  Combobox,
+  ComboboxInput,
+  ComboboxButton,
+  ComboboxOption,
+  ComboboxOptions,
+} from "@headlessui/react";
 import type {
   Group,
   Collection,
   ArtistWithReleases,
   ReleaseWithArtist,
 } from "@/types/types";
+import { lowerCaseCompare } from "@/lib/utils";
+import EntityCard from "./EntityCard";
+import { IoChevronDownOutline } from "react-icons/io5";
+import { IoMdCheckmark } from "react-icons/io";
+import cx from "clsx";
 import styles from "./AddToEntityListView.module.css";
 import formStyles from "../forms.module.css";
-import EntityCard from "./EntityCard";
 
 type ItemFrom = ArtistWithReleases | ReleaseWithArtist;
 type ItemTo = Group | Collection;
@@ -17,7 +28,7 @@ type AddToEntityListViewProps = {
   to: "Group" | "Collection";
   itemsFrom: ItemFrom[];
   itemsTo: ItemTo[];
-  onSubmit: (event: FormEvent) => void;
+  onSubmit: ({ title, itemTo }: { title?: string; itemTo?: ItemTo }) => void;
   onCancel: () => void;
 };
 
@@ -29,6 +40,22 @@ export default function AddToEntityListView({
   onSubmit,
   onCancel,
 }: AddToEntityListViewProps) {
+  const [itemTo, setItemTo] = useState(null);
+  const [title, setTitle] = useState("");
+
+  function _onSubmit(event: FormEvent) {
+    event.preventDefault();
+    onSubmit({
+      title,
+      itemTo,
+    });
+  }
+
+  function onItemChange(item: ItemTo) {
+    setItemTo(item);
+    setTitle("");
+  }
+
   return (
     <div className={styles.view}>
       <div className={formStyles.container}>
@@ -42,16 +69,14 @@ export default function AddToEntityListView({
             </li>
           ))}
         </ul>
-        <form onSubmit={onSubmit} className={formStyles.form}>
+        <form onSubmit={_onSubmit} className={formStyles.form}>
           <label className={formStyles.label}>
             Choose existing {to}
-            <select name={to.toLowerCase()} className={formStyles.select}>
-              {itemsTo?.map(({ id, title }) => (
-                <option key={id} value={id}>
-                  {title}
-                </option>
-              ))}
-            </select>
+            <ItemsToList
+              itemTo={itemTo}
+              itemsList={itemsTo}
+              onChange={onItemChange}
+            />
           </label>
           <label className={formStyles.label}>
             Or add to a new {to}
@@ -59,6 +84,11 @@ export default function AddToEntityListView({
               name="title"
               className={formStyles.input}
               placeholder={`Enter ${to} name`}
+              value={title}
+              onInput={(event: FormEvent) => {
+                setTitle((event.target as HTMLInputElement).value);
+                setItemTo(null);
+              }}
             />
           </label>
           <div className={formStyles.actions}>
@@ -75,6 +105,60 @@ export default function AddToEntityListView({
           </div>
         </form>
       </div>
+    </div>
+  );
+}
+
+type ItemsToListProps = {
+  itemTo: ItemTo;
+  itemsList: ItemTo[];
+  onChange: (item: ItemTo) => void;
+};
+
+function ItemsToList({ itemTo, itemsList = [], onChange }: ItemsToListProps) {
+  const [query, setQuery] = useState("");
+
+  const results =
+    query === ""
+      ? itemsList
+      : itemsList.filter(({ title }) => lowerCaseCompare(title, query));
+
+  return (
+    <div className={styles.ItemsToList}>
+      <Combobox
+        value={itemTo}
+        by="id"
+        onChange={onChange}
+        onClose={() => setQuery("")}
+      >
+        <div className={styles.ItemsToListInputWrapper}>
+          <ComboboxInput
+            placeholder="Search for entry"
+            className={styles.ItemsToListInput}
+            onChange={(event) => setQuery(event.target.value)}
+            displayValue={(x: ItemTo) => x?.title}
+          />
+          <ComboboxButton className={styles.ItemsToListButton}>
+            <IoChevronDownOutline />
+          </ComboboxButton>
+        </div>
+        <ComboboxOptions className={styles.ItemsToListOptions}>
+          {results.map((x) => (
+            <ComboboxOption key={x.id} value={x}>
+              {({ selected, active }) => (
+                <span
+                  className={cx(styles.ItemsToListOption, {
+                    [styles.active]: active,
+                  })}
+                >
+                  {x.title}
+                  {selected && <IoMdCheckmark />}
+                </span>
+              )}
+            </ComboboxOption>
+          ))}
+        </ComboboxOptions>
+      </Combobox>
     </div>
   );
 }

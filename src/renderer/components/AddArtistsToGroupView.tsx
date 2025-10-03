@@ -1,5 +1,4 @@
-import type { FormEvent } from "react";
-import { ArtistWithReleases } from "@/types/types";
+import { ArtistWithReleases, GroupWithArtists } from "@/types/types";
 import AddToEntityListView from "./AddToEntityListView";
 import useGroups from "../query/useGroups";
 
@@ -16,16 +15,17 @@ export default function AddArtistsToGroupView({
 }: AddArtistsToGroupViewProps) {
   const { groups, addArtistsToGroup, addArtistsToNewGroup } = useGroups();
 
-  async function onSubmit(event: FormEvent) {
-    event.preventDefault();
-    const data = new FormData(event.target as HTMLFormElement);
-    const groupId = data.get("group");
-    const title = data.get("title") as string;
-
+  async function onSubmit({
+    title,
+    itemTo,
+  }: {
+    title: string;
+    itemTo: GroupWithArtists;
+  }) {
     if (title) {
       addArtistsToNewGroup({ title, artists });
-    } else if (groupId) {
-      addArtistsToGroup({ id: +groupId, artists });
+    } else if (itemTo) {
+      addArtistsToGroup({ id: itemTo.id, artists });
     }
     onSave();
   }
