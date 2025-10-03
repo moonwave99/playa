@@ -18,6 +18,7 @@ import {
 
 import type { Controllers } from "../controllers/init";
 
+import { navigateMenu } from "./navigate";
 import { releaseMenu } from "./release";
 import { artistMenu } from "./artist";
 import { collectionMenu } from "./collection";
@@ -185,34 +186,6 @@ type MenuEntry = {
   label: string;
   accelerator: string;
 };
-
-const navigateMenu: (MenuEntry & { link: string })[] = [
-  {
-    label: "Home",
-    accelerator: "Cmd+Shift+H",
-    link: "/",
-  },
-  {
-    label: "Releases",
-    accelerator: "Cmd+1",
-    link: "/releases",
-  },
-  {
-    label: "Artists",
-    accelerator: "Cmd+2",
-    link: "/artists",
-  },
-  {
-    label: "Collections",
-    accelerator: "Cmd+3",
-    link: "/collections",
-  },
-  {
-    label: "Groups",
-    accelerator: "Cmd+4",
-    link: "/groups",
-  },
-];
 
 const randomMenu: (MenuEntry & { entity: Entities })[] = [
   {

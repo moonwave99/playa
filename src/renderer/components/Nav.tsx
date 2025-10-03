@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import type { MouseEvent, ReactNode } from "react";
 import { NavLink, Routes, Route } from "react-router";
+import { navigateMenu } from "@/main/menu/navigate";
 import { ReleaseListViewMode } from "@/types/types";
 import { useKeyManager } from "../hooks/useKeyboardManager";
 import useClickOutside from "../hooks/useClickOutside";
@@ -20,43 +21,14 @@ const navMap: {
   type: "link" | "modal";
   label: string;
   link: string;
-  shortcut: string;
+  accelerator: string;
 }[] = [
-  {
-    type: "link",
-    link: "/",
-    label: "Library",
-    shortcut: "Cmd+Shift+H",
-  },
-  {
-    type: "link",
-    link: "/releases",
-    label: "Releases",
-    shortcut: "Cmd+1",
-  },
-  {
-    type: "link",
-    link: "/artists",
-    label: "Artists",
-    shortcut: "Cmd+2",
-  },
-  {
-    type: "link",
-    link: "/collections",
-    label: "Collections",
-    shortcut: "Cmd+3",
-  },
-  {
-    type: "link",
-    link: "/groups",
-    label: "Groups",
-    shortcut: "Cmd+4",
-  },
+  ...navigateMenu.map((x) => ({ ...x, type: "link" as const })),
   {
     type: "modal",
     link: "settings",
     label: "Settings",
-    shortcut: "Cmd+,",
+    accelerator: "Cmd+,",
   },
 ];
 
@@ -132,7 +104,7 @@ export default function Nav({ isDetailPage }: NavProps) {
         </button>
       </div>
       <div className={styles.entries} ref={ref}>
-        {navMap.map(({ link, label, type, shortcut }, index) =>
+        {navMap.map(({ link, label, type, accelerator }, index) =>
           type === "link" ? (
             <NavLink
               data-nav-id={index}
@@ -149,7 +121,7 @@ export default function Nav({ isDetailPage }: NavProps) {
               }}
             >
               {label}
-              <span className={styles.shortcut}>{shortcut}</span>
+              <span className={styles.accelerator}>{accelerator}</span>
             </NavLink>
           ) : (
             <button
@@ -164,7 +136,7 @@ export default function Nav({ isDetailPage }: NavProps) {
               }}
             >
               {label}
-              <span className={styles.shortcut}>{shortcut}</span>
+              <span className={styles.accelerator}>{accelerator}</span>
             </button>
           )
         )}
