@@ -137,6 +137,7 @@ function ItemsToList({ itemTo, itemsList = [], onChange }: ItemsToListProps) {
             className={styles.ItemsToListInput}
             onChange={(event) => setQuery(event.target.value)}
             displayValue={(x: ItemTo) => x?.title}
+            autoFocus
           />
           <ComboboxButton className={styles.ItemsToListButton}>
             <IoChevronDownOutline />

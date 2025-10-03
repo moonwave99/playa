@@ -229,7 +229,7 @@ export function initMenu({ controllers, state, send }: InitMenuParams) {
             ),
         },
         {
-          label: "Refresh release contents",
+          label: "Refresh all Releases content",
           accelerator: "Cmd+Shift+A",
           id: "refresh-releases",
           click: controllers.release.refreshCurrentArtistReleases,
@@ -261,6 +261,7 @@ export function initMenu({ controllers, state, send }: InitMenuParams) {
         { type: "separator" },
         {
           label: `Add Artist to Group`,
+          accelerator: "a",
           click: () =>
             send("openAddArtistsToGroupDialog", [state.getCurrentArtist()]),
         },
