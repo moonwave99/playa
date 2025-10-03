@@ -25,6 +25,7 @@ import List, { type RenderParams, type ListKeyHandler } from "./List";
 import ListCard from "./ListCard";
 import cx from "clsx";
 import styles from "./ReleaseList.module.css";
+import useRestoreListPosition from "../hooks/useRestoreListPosition";
 
 type ReleaseListProps = {
   releases: ReleaseWithArtistAndTracksAndSubreleases[];
@@ -35,6 +36,7 @@ type ReleaseListProps = {
   ) => void;
   className?: string;
   keyHandlers?: Record<string, ListKeyHandler<ReleaseWithArtist>>;
+  context: unknown[];
 };
 
 export default function ReleaseList({
@@ -43,12 +45,18 @@ export default function ReleaseList({
   onContextMenu,
   className,
   keyHandlers = {},
+  context,
 }: ReleaseListProps) {
   const navigate = useNavigate();
+
   const { releaseListViewMode, toggleViewMode, setModalContents } = useStore();
 
   useApi({
     onToggleViewMode: () => toggleViewMode("releaseList"),
+  });
+
+  const { scrollInfo, storeScrollInfo } = useRestoreListPosition({
+    key: context,
   });
 
   function onEnter(
@@ -90,6 +98,7 @@ export default function ReleaseList({
     }
     if (viewMode === "list") {
       return {
+        overscan: 3,
         scrollBehavior: { align: "start" } as ScrollToOptions,
         estimateSize: (_: number, index: number) => ({
           width: "100%",
@@ -141,6 +150,8 @@ export default function ReleaseList({
         api.state.selectReleases(selection.map((index) => releases[index]))
       }
       {...getListConfig(releaseListViewMode)}
+      onUnmount={storeScrollInfo}
+      scrollInfo={scrollInfo}
       keyHandlers={{
         ...keyHandlers,
         " ": withPrevent((_event: KeyboardEvent, selection: Release[]) => {

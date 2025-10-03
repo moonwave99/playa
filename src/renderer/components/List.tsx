@@ -1,6 +1,16 @@
-import { useState, useRef, useEffect, useLayoutEffect } from "react";
-import type { MouseEvent, ReactNode } from "react";
-import { useVirtualizer, type ScrollToOptions } from "@tanstack/react-virtual";
+import {
+  useState,
+  useRef,
+  useEffect,
+  useLayoutEffect,
+  useImperativeHandle,
+} from "react";
+import type { MouseEvent, ReactNode, Ref } from "react";
+import {
+  useVirtualizer,
+  type ScrollToOptions,
+  VirtualItem,
+} from "@tanstack/react-virtual";
 import { useKeyManager, withPrevent } from "../hooks/useKeyboardManager";
 import useResponsiveColumns from "../hooks/useResponsiveColumns";
 import { useApi } from "../hooks/useApi";
@@ -16,6 +26,11 @@ export type RenderParams<T> = {
   onClick: (event: MouseEvent) => void;
 };
 
+export type ScrollInfo = {
+  measurementsCache: VirtualItem[];
+  scrollOffset: number;
+};
+
 export type ListKeyHandler<T> = (event: KeyboardEvent, selection: T[]) => void;
 
 type ListProps<T> = {
@@ -28,7 +43,7 @@ type ListProps<T> = {
   onRight?: (event: KeyboardEvent) => boolean | void;
   shouldCallOnLeft?: () => boolean;
   shouldCallOnRight?: () => boolean;
-  onUnmount?: (virtualIndexes: number[]) => void;
+  onUnmount?: (scrollInfo: ScrollInfo) => void;
   context?: string;
   className?: string;
   columnsConfig?: ColumnsConfigEntry[];
@@ -49,9 +64,12 @@ type ListProps<T> = {
   onSelectionChange?: (selection: number[]) => void;
   shouldPreventSpace?: boolean;
   initialSelection?: number[];
-  initialIndex?: number;
   scrollBehavior?: ScrollToOptions;
   keyHandlers?: Record<string, ListKeyHandler<T>>;
+  ref?: Ref<{
+    scrollToIndex: (index: number) => void;
+  }>;
+  scrollInfo?: ScrollInfo;
 };
 
 function defaultEstimateSize(columns: number) {
@@ -92,19 +110,17 @@ export default function List<T>({
   onSelectionChange,
   shouldPreventSpace,
   initialSelection = [],
-  initialIndex,
   keyHandlers = {},
   scrollBehavior,
+  ref,
+  scrollInfo,
 }: ListProps<T>) {
-  const ref = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const firstRender = useRef(true);
 
   const [currentIndex, setCurrentIndex] = useState(() => {
     if (initialSelection.length) {
       return initialSelection[0];
-    }
-    if (initialIndex) {
-      return initialIndex;
     }
     return -1;
   });
@@ -115,6 +131,9 @@ export default function List<T>({
     config: columnsConfig,
     onResize: () => {
       virtualizer.measure();
+      if (currentIndex === -1) {
+        return;
+      }
       virtualizer.scrollToIndex(currentIndex);
     },
   });
@@ -131,7 +150,10 @@ export default function List<T>({
       if (!onUnmount) {
         return;
       }
-      onUnmount(virtualizer.getVirtualIndexes());
+      onUnmount({
+        measurementsCache: virtualizer.measurementsCache,
+        scrollOffset: virtualizer.scrollOffset,
+      });
     };
   }, []);
 
@@ -147,15 +169,11 @@ export default function List<T>({
   }, [currentIndex]);
 
   useLayoutEffect(() => {
-    if (initialIndex > -1) {
-      virtualizer.scrollToIndex(initialIndex, {
-        ...scrollBehavior,
-        align: "start",
-      });
+    if (currentIndex === -1) {
       return;
     }
     virtualizer.scrollToIndex(currentIndex, scrollBehavior);
-  }, [currentIndex, initialIndex, scrollBehavior]);
+  }, [currentIndex, scrollBehavior]);
 
   useEffect(() => {
     if (!onSelectionChange) {
@@ -163,6 +181,14 @@ export default function List<T>({
     }
     onSelectionChange(selection);
   }, [selection]);
+
+  useImperativeHandle(ref, () => {
+    return {
+      scrollToIndex: (index: number) => {
+        setCurrentIndex(index);
+      },
+    };
+  }, []);
 
   const isVertical = columnsConfig.length === 1 && columns === 1;
 
@@ -257,21 +283,16 @@ export default function List<T>({
     },
   });
 
-  useEffect(() => {
-    if (currentContext !== context) {
-      return;
-    }
-    setCurrentIndex((prev) => (prev == -1 ? 0 : prev));
-  }, [context, currentContext]);
-
   const virtualizer = useVirtualizer({
     count: items.length,
-    getScrollElement: () => ref.current,
+    getScrollElement: () => scrollRef.current,
     estimateSize: (index: number) => estimateSize(columns, index).height,
     overscan,
     gap,
     lanes: columns,
     paddingEnd,
+    initialMeasurementsCache: scrollInfo?.measurementsCache,
+    initialOffset: scrollInfo?.scrollOffset,
   });
 
   useEffect(() => {
@@ -314,7 +335,11 @@ export default function List<T>({
   }
 
   return (
-    <div ref={ref} className={className} onClick={() => setContext(context)}>
+    <div
+      ref={scrollRef}
+      className={className}
+      onClick={() => setContext(context)}
+    >
       <div
         style={{
           height: `${virtualizer.getTotalSize()}px`,

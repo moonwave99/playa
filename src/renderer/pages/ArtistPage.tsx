@@ -72,6 +72,7 @@ export default function ArtistPage() {
           onDelete={onDelete}
           className={styles.hasHeaderWithCover}
           keyHandlers={keyHandlers}
+          context={["artists", id]}
         />
       )}
     </div>

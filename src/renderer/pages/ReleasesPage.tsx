@@ -19,6 +19,7 @@ import List from "@/renderer/components/List";
 import ReleaseView from "@/renderer/components/ReleaseView";
 
 import styles from "./Page.module.css";
+import useRestoreListPosition from "../hooks/useRestoreListPosition";
 
 export default function ReleasesPage() {
   const navigate = useNavigate();
@@ -33,6 +34,10 @@ export default function ReleasesPage() {
   } = useReleases();
 
   useClearSelectionOnLeave();
+
+  const { scrollInfo, storeScrollInfo } = useRestoreListPosition({
+    key: ["latestReleases"],
+  });
 
   if (isPending) {
     return <Loading />;
@@ -71,6 +76,7 @@ export default function ReleasesPage() {
         <div className={styles.placeholder}>There are no releases yet.</div>
       ) : (
         <List
+          onUnmount={storeScrollInfo}
           shouldPreventSpace
           items={releases}
           className={styles.list}
@@ -83,6 +89,7 @@ export default function ReleasesPage() {
           onSelectionChange={(selection) =>
             api.state.selectReleases(selection.map((index) => releases[index]))
           }
+          scrollInfo={scrollInfo}
           keyHandlers={keyHandlers}
           render={({ item, selection, ...rest }) => (
             <ReleaseView

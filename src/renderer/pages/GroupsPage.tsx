@@ -4,6 +4,7 @@ import api from "../api";
 import { getGroupLink } from "@/lib/links";
 import { estimateListCardSize } from "@/lib/utils";
 import useGroups from "@/renderer/query/useGroups";
+import useRestoreListPosition from "@/renderer/hooks/useRestoreListPosition";
 import { GroupWithArtists } from "@/types/types";
 import Loading from "@/renderer/components/Loading";
 import ErrorView from "../components/ErrorView";
@@ -15,6 +16,10 @@ import styles from "./Page.module.css";
 export default function LatestGroups() {
   const navigate = useNavigate();
   const { isPending, error, groups, deleteGroups } = useGroups();
+
+  const { scrollInfo, storeScrollInfo } = useRestoreListPosition({
+    key: ["latestGroups"],
+  });
 
   if (isPending) {
     return <Loading />;
@@ -45,6 +50,8 @@ export default function LatestGroups() {
           estimateSize={estimateListCardSize}
           onEnter={(group: GroupWithArtists) => navigate(getGroupLink(group))}
           onBackspace={onDelete}
+          onUnmount={storeScrollInfo}
+          scrollInfo={scrollInfo}
           render={({ item, ...rest }) => (
             <ListCard
               showMultipleCovers

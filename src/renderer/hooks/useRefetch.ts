@@ -1,5 +1,4 @@
-import { useQueryClient } from "@tanstack/react-query";
-import type { QueryKey } from "@tanstack/react-query";
+import { useQueryClient, type QueryKey } from "@tanstack/react-query";
 
 export type UseRefetch = (queryKey: QueryKey) => void;
 

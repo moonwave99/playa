@@ -4,6 +4,7 @@ import api from "../api";
 import { getCollectionLink } from "@/lib/links";
 import { estimateListCardSize } from "@/lib/utils";
 import useCollections from "@/renderer/query/useCollections";
+import useRestoreListPosition from "@/renderer/hooks/useRestoreListPosition";
 import { CollectionWithReleases } from "@/types/types";
 import Loading from "@/renderer/components/Loading";
 import ErrorView from "../components/ErrorView";
@@ -15,6 +16,10 @@ import styles from "./Page.module.css";
 export default function LatestCollections() {
   const navigate = useNavigate();
   const { isPending, error, collections, deleteCollections } = useCollections();
+
+  const { scrollInfo, storeScrollInfo } = useRestoreListPosition({
+    key: ["latestCollections"],
+  });
 
   if (isPending) {
     return <Loading />;
@@ -47,6 +52,8 @@ export default function LatestCollections() {
             navigate(getCollectionLink(collection))
           }
           onBackspace={onDelete}
+          onUnmount={storeScrollInfo}
+          scrollInfo={scrollInfo}
           render={({ item, ...rest }) => (
             <ListCard
               showMultipleCovers

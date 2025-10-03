@@ -14,6 +14,7 @@ import AlphabeticalList from "../components/AlphabeticalList";
 
 import styles from "./Page.module.css";
 import useStore from "../store";
+import useRestoreListPosition from "../hooks/useRestoreListPosition";
 
 export default function ArtistsPage() {
   const { artistsViewMode, toggleViewMode } = useStore();
@@ -58,6 +59,10 @@ function LatestArtistsView() {
     fetchNextPage,
   } = useArtists();
 
+  const { scrollInfo, storeScrollInfo } = useRestoreListPosition({
+    key: ["latestArtists"],
+  });
+
   if (isPending) {
     return <Loading />;
   }
@@ -81,6 +86,8 @@ function LatestArtistsView() {
       hasNextPage={hasNextPage}
       isFetchingNextPage={isFetchingNextPage}
       onEnter={(artist) => navigate(getArtistLink(artist))}
+      onUnmount={storeScrollInfo}
+      scrollInfo={scrollInfo}
       render={({ item, ...rest }) => (
         <ListCard
           showMultipleCovers

@@ -1,5 +1,5 @@
-import { useState } from "react";
 import type { Artist, Release } from "@/types/types";
+import useRestoreListPosition from "../hooks/useRestoreListPosition";
 import List from "./List";
 import Link from "./Link";
 import { getArtistLink, getReleaseLink } from "@/lib/links";
@@ -12,7 +12,9 @@ type AlphabeticalListProps = {
 };
 
 export default function AlphabeticalList({ items }: AlphabeticalListProps) {
-  const [initialIndex, setInitialIndex] = useState(0);
+  const { scrollInfo, storeScrollInfo, ref } = useRestoreListPosition({
+    key: ["artistList"],
+  });
 
   function renderEntry(item: Item) {
     if (item.entityType === "Artist") {
@@ -27,16 +29,17 @@ export default function AlphabeticalList({ items }: AlphabeticalListProps) {
     <div className={styles.view}>
       <div className={styles.letters}>
         {letters.map((x, index) => (
-          <button key={x} onClick={() => setInitialIndex(index)}>
+          <button key={x} onClick={() => ref.current.scrollToIndex(index)}>
             {x}
           </button>
         ))}
       </div>
       <List
+        ref={ref}
         className={styles.list}
         items={items}
         overscan={1}
-        initialIndex={initialIndex}
+        onUnmount={storeScrollInfo}
         columnsConfig={[{ count: 1, width: 400 }]}
         estimateSize={(_, index: number) => ({
           width: "100%",
@@ -54,6 +57,10 @@ export default function AlphabeticalList({ items }: AlphabeticalListProps) {
             </ul>
           </article>
         )}
+        scrollBehavior={{
+          align: "start",
+        }}
+        scrollInfo={scrollInfo}
       />
     </div>
   );
