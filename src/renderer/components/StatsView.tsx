@@ -1,7 +1,7 @@
 import useStats from "../query/useStats";
 import Loading from "./Loading";
 import ErrorView from "./ErrorView";
-import LatestAdditionsView from "./LatestActivityView";
+import ImportActivityView from "./ImportActivityView";
 import Link from "./Link";
 import styles from "./StatsView.module.css";
 import type { Stats } from "@/types/types";
@@ -65,7 +65,7 @@ export default function StatsView() {
           ))}
         </ul>
       </section>
-      <LatestAdditionsView />
+      <ImportActivityView />
     </div>
   );
 }
