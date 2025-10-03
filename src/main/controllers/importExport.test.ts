@@ -77,6 +77,10 @@ describe("exportDataFromDialog function", () => {
         );
       })
     );
+
+    expect(send).toHaveBeenCalledWith("openExportData");
+    expect(send).toHaveBeenCalledWith("export:progress", "start");
+    expect(send).toHaveBeenCalledWith("export:progress", "done");
   });
 });
 

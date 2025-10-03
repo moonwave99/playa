@@ -71,7 +71,11 @@ export function importExportController({
       return;
     }
 
-    send("exportData", "start");
+    send("openExportData");
+
+    await wait(300);
+
+    send("export:progress", "start");
 
     const exportPath = await exportData({
       userDataPath,
@@ -79,7 +83,7 @@ export function importExportController({
       appVersion,
     });
 
-    send("exportData", "done");
+    send("export:progress", "done");
 
     return exportPath;
   }

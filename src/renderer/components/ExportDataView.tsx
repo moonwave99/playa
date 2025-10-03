@@ -38,7 +38,7 @@ function useExportData(onDone: () => void) {
 
   useEffect(() => {
     setModalFixed(true);
-    const unsubscribe = api.importExport.onExportData((status) => {
+    const unsubscribe = api.export.onProgress((status) => {
       if (status === "done") {
         setDone(true);
         setModalFixed(false);

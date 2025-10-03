@@ -117,6 +117,12 @@ declare global {
         ) => () => void;
         onError: (handler: (message: string) => void) => () => void;
       };
+      export: {
+        onProgress: (
+          handler: (step: string, completed?: boolean) => void
+        ) => () => void;
+        onError: (handler: (message: string) => void) => () => void;
+      };
     };
   }
 }

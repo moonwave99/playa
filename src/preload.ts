@@ -93,6 +93,10 @@ contextBridge.exposeInMainWorld("api", {
     onProgress: getHandler("import:progress"),
     onError: getHandler("import:error"),
   },
+  export: {
+    onProgress: getHandler("export:progress"),
+    onError: getHandler("export:error"),
+  },
 });
 
 function getHandlers(entity: Record<string, (...args: unknown[]) => unknown>) {
