@@ -89,6 +89,7 @@ function SearchResultsView({
   listHandlers,
 }: SearchResultsViewProps) {
   const navigate = useNavigate();
+
   if (isPending) {
     return <Loading />;
   }

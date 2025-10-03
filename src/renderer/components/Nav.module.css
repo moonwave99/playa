@@ -52,6 +52,7 @@
   align-items: center;
   padding: 0 1rem;
   font-size: 0.8rem;
+  gap: 0.5rem;
 
   &.hasFocus {
     background-color: var(--accent-color);
@@ -63,25 +64,25 @@
     margin-left: auto;
     font-size: 0.7rem;
   }
-}
 
-.link:hover {
-  background-color: var(--accent-color);
-}
-
-.link:is(button) {
-  background-color: transparent;
-  color: var(--primary-color);
-  appearance: none;
-  border: none;
-  width: 100%;
-
-  &:focus {
-    outline-color: var(--accent-color);
+  &:hover {
+    background-color: var(--accent-color);
   }
-}
 
-.link:is(button):hover {
-  background-color: var(--accent-color);
-  cursor: pointer;
+  &:is(button) {
+    background-color: transparent;
+    color: var(--primary-color);
+    appearance: none;
+    border: none;
+    width: 100%;
+
+    &:hover {
+      background-color: var(--accent-color);
+      cursor: pointer;
+    }
+
+    &:focus {
+      outline-color: var(--accent-color);
+    }
+  }
 }

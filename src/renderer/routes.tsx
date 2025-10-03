@@ -19,7 +19,7 @@ import useRelease from "./query/useRelease";
 
 import { getReleaseTitle } from "@/lib/utils";
 
-import { GoHomeFill } from "react-icons/go";
+import { Icon } from "./icons";
 
 export type Route = {
   path: string;
@@ -35,7 +35,7 @@ export const routes: Route[] = [
     element: <HomePage />,
     renderBreadcrumb: ({ className }) => (
       <span className={className}>
-        <GoHomeFill /> Library
+        <Icon isFor="home" /> Home
       </span>
     ),
   },
@@ -43,6 +43,11 @@ export const routes: Route[] = [
     path: "/releases",
     name: "Releases",
     element: <ReleasesPage />,
+    renderBreadcrumb: ({ className }) => (
+      <span className={className}>
+        <Icon isFor="release" /> Releases
+      </span>
+    ),
   },
   {
     path: "/releases/:id",
@@ -54,6 +59,11 @@ export const routes: Route[] = [
     path: "/artists",
     name: "Artists",
     element: <ArtistsPage />,
+    renderBreadcrumb: ({ className }) => (
+      <span className={className}>
+        <Icon isFor="artist" /> Artists
+      </span>
+    ),
   },
   {
     path: "/artists/:id",
@@ -65,6 +75,11 @@ export const routes: Route[] = [
     path: "/collections",
     name: "Collections",
     element: <CollectionsPage />,
+    renderBreadcrumb: ({ className }) => (
+      <span className={className}>
+        <Icon isFor="collection" /> Collections
+      </span>
+    ),
   },
   {
     path: "/collections/:id",
@@ -76,6 +91,11 @@ export const routes: Route[] = [
     path: "/groups",
     name: "Groups",
     element: <GroupsPage />,
+    renderBreadcrumb: ({ className }) => (
+      <span className={className}>
+        <Icon isFor="group" /> Groups
+      </span>
+    ),
   },
   {
     path: "/groups/:id",

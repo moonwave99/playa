@@ -11,9 +11,15 @@ type UseArtists = {
   fetchNextPage: () => void;
 };
 
-const pageSize = 50;
+type UseArtistsParams = {
+  pageSize: number;
+};
 
-export default function useArtists(): UseArtists {
+export default function useArtists(
+  { pageSize }: UseArtistsParams = {
+    pageSize: 50,
+  }
+): UseArtists {
   const {
     data,
     error,
@@ -22,7 +28,7 @@ export default function useArtists(): UseArtists {
     hasNextPage,
     fetchNextPage,
   } = useInfiniteQuery({
-    queryKey: ["artists", "latest"],
+    queryKey: ["artists", "latest", pageSize],
     queryFn: (context) =>
       api.artist.getLatestArtists({
         take: pageSize,

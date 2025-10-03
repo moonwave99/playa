@@ -23,9 +23,15 @@ type UseCollections = {
   ) => void;
 };
 
-const pageSize = 50;
+type UseCollectionsParams = {
+  pageSize: number;
+};
 
-export default function useCollections(): UseCollections {
+export default function useCollections(
+  { pageSize }: UseCollectionsParams = {
+    pageSize: 50,
+  }
+): UseCollections {
   const queryClient = useQueryClient();
   const {
     isPending,

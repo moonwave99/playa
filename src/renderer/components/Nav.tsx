@@ -7,12 +7,14 @@ import { useKeyManager } from "../hooks/useKeyboardManager";
 import useClickOutside from "../hooks/useClickOutside";
 import useOnLocationChange from "../hooks/useOnLocationChange";
 import useStore from "../store";
+import api from "../api";
 import Breadcrumbs from "./Breadcrumbs";
 import { IoMenu } from "react-icons/io5";
-import { MdOutlineSearch } from "react-icons/md";
+import { MdOutlineSearch, MdOutlineDriveFolderUpload } from "react-icons/md";
 import { IoMdTime } from "react-icons/io";
 import { BsGrid, BsGrid3X2Gap, BsListOl, BsAlphabet } from "react-icons/bs";
 
+import { Icon, type SupportedIcons } from "../icons";
 import cx from "clsx";
 import styles from "./Nav.module.css";
 import buttonStyles from "../buttons.module.css";
@@ -22,6 +24,7 @@ const navMap: {
   label: string;
   link: string;
   accelerator: string;
+  section: SupportedIcons;
 }[] = [
   ...navigateMenu.map((x) => ({ ...x, type: "link" as const })),
   {
@@ -29,6 +32,7 @@ const navMap: {
     link: "settings",
     label: "Settings",
     accelerator: "Cmd+,",
+    section: "settings",
   },
 ];
 
@@ -74,8 +78,18 @@ export default function Nav({ isDetailPage }: NavProps) {
       <Breadcrumbs isDetailPage={isDetailPage} useDarkText={useDarkText} />
       <div className={styles.buttons}>
         <Routes>
+          <Route path="/" element={<ImportActions />} />
+          <Route path="/releases" element={<ImportActions />} />
           <Route path="/artists" element={<ArtistListActions />} />
-          <Route path="/artists/:id" element={<ReleaseListActions />} />
+          <Route
+            path="/artists/:id"
+            element={
+              <>
+                <ReleaseListActions />
+                <ImportActions />
+              </>
+            }
+          />
           <Route path="/collections/:id" element={<ReleaseListActions />} />
           <Route path="*" element={null} />
         </Routes>
@@ -104,7 +118,7 @@ export default function Nav({ isDetailPage }: NavProps) {
         </button>
       </div>
       <div className={styles.entries} ref={ref}>
-        {navMap.map(({ link, label, type, accelerator }, index) =>
+        {navMap.map(({ link, label, type, accelerator, section }, index) =>
           type === "link" ? (
             <NavLink
               data-nav-id={index}
@@ -120,6 +134,7 @@ export default function Nav({ isDetailPage }: NavProps) {
                 setNavOpen(false);
               }}
             >
+              <Icon isFor={section} />
               {label}
               <span className={styles.accelerator}>{accelerator}</span>
             </NavLink>
@@ -135,6 +150,7 @@ export default function Nav({ isDetailPage }: NavProps) {
                 setNavOpen(false);
               }}
             >
+              <Icon isFor={section} />
               {label}
               <span className={styles.accelerator}>{accelerator}</span>
             </button>
@@ -142,6 +158,23 @@ export default function Nav({ isDetailPage }: NavProps) {
         )}
       </div>
     </nav>
+  );
+}
+
+function ImportActions() {
+  const { useDarkText } = useStore();
+  return (
+    <button
+      type="button"
+      aria-label="Import Releases"
+      title="Import Releases"
+      onClick={() => api.release.importFolderFromDialog()}
+      className={cx(buttonStyles.button, {
+        [buttonStyles.useDarkText]: useDarkText,
+      })}
+    >
+      <MdOutlineDriveFolderUpload />
+    </button>
   );
 }
 

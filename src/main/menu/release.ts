@@ -166,7 +166,7 @@ export const releaseMenu =
           )
         : { type: "separator" },
       {
-        label: `${selection.length} Releases`,
+        label: `Remove ${selection.length} Releases from Library`,
         click: () =>
           controllers.release.deleteReleases(selection.map((x) => x.id)),
       },

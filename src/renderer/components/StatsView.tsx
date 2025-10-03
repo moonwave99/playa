@@ -46,7 +46,7 @@ export default function StatsView() {
   return (
     <div className={styles.view}>
       <section>
-        <h2 className={styles.title}>Your Library</h2>
+        <h2 className={styles.title}>Your Library Stats</h2>
         <ul className={styles.stats}>
           {sortedStatKeys.map(({ key, link }) => (
             <li key={key}>

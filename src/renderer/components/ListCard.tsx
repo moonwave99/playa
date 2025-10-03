@@ -36,7 +36,7 @@ import Droppable, { type DroppableRender } from "./Droppable";
 import cx from "clsx";
 import styles from "./ListCard.module.css";
 
-type Item =
+export type Item =
   | CollectionWithReleases
   | ArtistWithReleasesAndAppearances
   | ReleaseWithArtistAndSubReleases

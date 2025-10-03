@@ -21,9 +21,13 @@ type UseGroups = {
   addArtistsToNewGroup: (params: AddArtistsToNewGroupParams) => void;
 };
 
-const pageSize = 50;
+type UseGroupsParams = {
+  pageSize: number;
+};
 
-export default function useGroups(): UseGroups {
+export default function useGroups(
+  { pageSize }: UseGroupsParams = { pageSize: 50 }
+): UseGroups {
   const queryClient = useQueryClient();
   const {
     isPending,

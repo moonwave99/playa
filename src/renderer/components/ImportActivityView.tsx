@@ -59,7 +59,7 @@ export default function ImportActivityView() {
   return (
     <section className={styles.view}>
       <header className={styles.header}>
-        <h2 className={styles.title}>Import Activity</h2>
+        <h2 className={styles.title}>Your Import Activity</h2>
         <label>
           From
           <input

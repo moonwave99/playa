@@ -321,6 +321,15 @@ export default function List<T>({
     virtualizer.getVirtualItems(),
   ]);
 
+  useEffect(() => {
+    if (firstRender.current || scrollInfo) {
+      return;
+    }
+    if (context === currentContext) {
+      setCurrentIndex(0);
+    }
+  }, [context, currentContext, scrollInfo]);
+
   function onClick(index: number, event: MouseEvent) {
     if (!event.metaKey) {
       setCurrentIndex(index);
