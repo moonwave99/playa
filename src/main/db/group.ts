@@ -13,6 +13,11 @@ export async function getGroups({ take = 50 }: PaginationParams) {
     include: {
       coverArtist: {
         include: {
+          appearsIn: {
+            include: {
+              artist: true,
+            },
+          },
           coverRelease: {
             include: {
               artist: true,
@@ -31,6 +36,11 @@ export async function getGroups({ take = 50 }: PaginationParams) {
       },
       artists: {
         include: {
+          appearsIn: {
+            include: {
+              artist: true,
+            },
+          },
           coverRelease: {
             include: {
               artist: true,
@@ -72,6 +82,11 @@ export async function getGroup(id: number) {
         orderBy: { name: "asc" },
         include: {
           coverRelease: {
+            include: {
+              artist: true,
+            },
+          },
+          appearsIn: {
             include: {
               artist: true,
             },
