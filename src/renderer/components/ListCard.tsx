@@ -77,7 +77,8 @@ export default function ListCard({
 }: ListCardProps) {
   const [loadCount, setLoadCount] = useState(0);
   const coverRelease = getCoverRelease(item);
-  const { color, useDarkText, loaded } = useDominantColor(
+
+  const { color, useDarkText, loaded, fromCache } = useDominantColor(
     coverRelease ? getCover(coverRelease.hash) : null,
     loadCount,
     hideCover
@@ -258,11 +259,12 @@ export default function ListCard({
             [styles.isHover]: isHover,
             [styles.canDrop]: canDrop,
             [styles.hideCover]: hideCover,
+            [styles.fromCache]: fromCache,
             className,
           })}
           onClick={onClick}
           onContextMenu={getContextMenu()}
-          style={canDrop ? null : { background: color }}
+          style={canDrop ? null : { background: color || null }}
         >
           {renderCover()}
           <div className={styles.content}>{getContent()}</div>

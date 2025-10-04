@@ -5,15 +5,18 @@
   transition: background-color 0.3s ease-in-out;
   overflow: hidden;
   border-radius: 0.25rem;
-  opacity: 0;
+  background-color: var(--neutral-border-color);
+
+  &.fromCache {
+    transition: none;
+    .cover img {
+      transition: opacity 0.1s ease-in-out;
+    }
+  }
 
   &.hideCover {
     padding: 1rem 1rem;
     border-bottom: none;
-  }
-
-  &.loaded {
-    opacity: 1;
   }
 
   &:has(.multipleCovers.isHover) {

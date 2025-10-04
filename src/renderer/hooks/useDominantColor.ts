@@ -1,6 +1,11 @@
 import { useState, useEffect } from "react";
 
-type ColorInfo = { color: string; useDarkText: boolean; loaded: boolean };
+type ColorInfo = {
+  color?: string;
+  useDarkText: boolean;
+  loaded: boolean;
+  fromCache?: boolean;
+};
 
 export default function useDominantColor(
   url: string,
@@ -8,7 +13,6 @@ export default function useDominantColor(
   hideCover: boolean = false
 ): ColorInfo {
   const [color, setColor] = useState({
-    color: "transparent",
     useDarkText: false,
     loaded: !url,
   });
@@ -16,7 +20,6 @@ export default function useDominantColor(
   useEffect(() => {
     if (hideCover) {
       setColor({
-        color: "transparent",
         useDarkText: false,
         loaded: true,
       });
@@ -40,7 +43,10 @@ function getDominantColor(url: string, count = 0): Promise<ColorInfo> {
 
   return new Promise((resolve) => {
     if (cache[`${url}-${count}`]) {
-      resolve(cache[`${url}-${count}`]);
+      resolve({
+        ...cache[`${url}-${count}`],
+        fromCache: true,
+      });
       return;
     }
     image.onload = () => {
