@@ -1,8 +1,8 @@
 {
   "meta": {
     "title": "Playa",
-    "description": "The music player that thinks in albums",
-    "keywords": "player, mp3, javascript, electron, react, redux"
+    "description": "The music manager that thinks in albums",
+    "keywords": "javascript, mp3, electron, react, prisma, sqlite"
   },
   "nav": {
     "home": "Home",
@@ -16,7 +16,7 @@
     }
   },
   "home": {
-    "description": "Playa - The music player that thinks in albums",
+    "description": "Playa - The music manager that thinks in albums",
     "hero": {
       "title": "Playa",
       "caption": "The music manager that thinks in albums",

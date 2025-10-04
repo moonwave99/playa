@@ -1,6 +1,7 @@
 import { load, render } from "goffre";
 import marked from "marked";
 import pkg from "../package.json" with { type: "json" };
+import * as cheerio from "cheerio";
 
 const dateFormats = {
   long: {
@@ -75,7 +76,16 @@ const appInfo = {
 
 const posts = pages
   .filter((x) => x.slug.startsWith("blog") && x.published)
-  .sort((a, b) => (a.date > b.date ? -1 : 1));
+  .sort((a, b) => (a.date > b.date ? -1 : 1))
+  .map((x) => {
+    const $ = cheerio.load(marked(x.content));
+    const firstParagraph = $("p").eq(0).text();
+    let excerpt = firstParagraph;
+    if (firstParagraph.startsWith("Note:")) {
+      excerpt = $("p").eq(1).text();
+    }
+    return { ...x, excerpt };
+  });
 
 try {
   await render({
@@ -104,7 +114,8 @@ try {
           priority: 0.8,
         },
       },
-      ...pages.filter((x) => x.published),
+      ...pages.filter((x) => x.published && !x.slug.startsWith("blog")),
+      ...posts,
     ],
     locals: {
       ...json,

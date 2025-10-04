@@ -16,6 +16,7 @@
     "clean": "rm -rf ./dist"
   },
   "dependencies": {
+    "cheerio": "^1.1.2",
     "copy-webpack-plugin": "^13.0.1",
     "css-loader": "^7.1.2",
     "goffre": "^0.0.3",

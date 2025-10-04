@@ -1,9 +1,10 @@
-{{#if description}}
-<meta name="description" content="{{description}}" />
+<meta name="keywords" value="{{labels.meta.keywords}}"/>
+{{#if excerpt}}
+<meta name="description" content="{{excerpt}}" />
 {{else}}
-<meta name="description" content="{{title}}" />
+<meta name="description" content="{{description}}" />
 {{/if}}
-<meta property="og:site_name" content="{{config.title}}" />
+<meta property="og:site_name" content="{{labels.meta.title}} - {{labels.meta.description}}" />
 <meta property="og:url" content="{{getUrl slug}}" />
 <meta property="og:title" content="{{title}}" />
 {{#if cover}}
@@ -11,11 +12,9 @@
 {{/if}}
 {{#if excerpt}}
 <meta property="og:type" content="article" />
-{{/if}}
-{{#if description}}
-<meta name="og:description" content="{{description}}" />
+<meta name="og:description" content="{{excerpt}}" />
 {{else}}
-<meta name="og:description" content="{{title}}" />
+<meta name="og:description" content="{{description}}" />
 {{/if}}
 {{#if date}}
 <meta property="article:published_time" content="{{getTimestamp date}}" />
