@@ -36,26 +36,57 @@ describe("searchResult - search function", () => {
   it("returns the tracks for the given query string", async () => {
     await prisma.artist.create({ data: getFakeArtist(1) });
     await prisma.release.createMany({ data: getFakeReleasesForArtist(1, 2) });
-    await prisma.track.createMany({ data: getFakeTracksForRelease(1, 3) });
+    await prisma.track.createMany({
+      data: getFakeTracksForRelease(1, 10).map((x) => ({
+        ...x,
+        trackArtist: "Artist 1",
+      })),
+    });
 
     const { getSearchResults } = searchResultController();
-    const results = await getSearchResults({ query: "Track" });
+    const results = await getSearchResults({ query: "Track 1" });
 
     expect(results).toMatchObject([
       {
         id: 1,
         type: "track",
+        artist: "Artist 1",
         links: { artist: "/artists/1", track: "/releases/1?track_id=1" },
       },
       {
-        id: 2,
+        id: 10,
         type: "track",
-        links: { artist: "/artists/1", track: "/releases/1?track_id=2" },
+        artist: "Artist 1",
+        links: { artist: "/artists/1", track: "/releases/1?track_id=10" },
+      },
+    ]);
+  });
+
+  it("formats the tracks titles correctly if they differ from the containing release artist", async () => {
+    await prisma.artist.create({ data: getFakeArtist(1) });
+    await prisma.release.createMany({ data: getFakeReleasesForArtist(1, 2) });
+    await prisma.track.createMany({
+      data: getFakeTracksForRelease(1, 10).map((x) => ({
+        ...x,
+        trackArtist: "Track Artist",
+      })),
+    });
+
+    const { getSearchResults } = searchResultController();
+    const results = await getSearchResults({ query: "Track 1" });
+
+    expect(results).toMatchObject([
+      {
+        id: 1,
+        type: "track",
+        artist: "Track Artist",
+        links: { artist: null, track: "/releases/1?track_id=1" },
       },
       {
-        id: 3,
+        id: 10,
         type: "track",
-        links: { artist: "/artists/1", track: "/releases/1?track_id=3" },
+        artist: "Track Artist",
+        links: { artist: null, track: "/releases/1?track_id=10" },
       },
     ]);
   });

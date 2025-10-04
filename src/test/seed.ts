@@ -76,7 +76,6 @@ export function getFakeTracksForRelease(releaseId: number, length = 5) {
   return Array.from({ length }, (_, i) => ({
     id: (releaseId - 1) * length + i + 1,
     title: `Track ${i + 1}`,
-    trackArtist: `Track Artist ${releaseId}`,
     normalizedTitle: `Track ${i + 1}`,
     path: `0${i + 1} - Track ${i + 1}.mp3`,
     hash: sha1(

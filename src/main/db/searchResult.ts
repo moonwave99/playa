@@ -279,12 +279,15 @@ const transformers: Transformers = {
     title,
     description: "Track",
     artist:
-      release.artist.name !== trackArtist
+      trackArtist && release.artist.name !== trackArtist
         ? trackArtist
         : normalizeArtistDisplayName(release.artist.name),
     links: {
       track: `/releases/${release.mainReleaseId || release.id}?track_id=${id}`,
-      artist: `/artists/${release.artist.id}`,
+      artist:
+        trackArtist && release.artist.name !== trackArtist
+          ? null
+          : `/artists/${release.artist.id}`,
     },
     coverRelease: release,
   }),

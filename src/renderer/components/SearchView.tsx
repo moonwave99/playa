@@ -227,13 +227,17 @@ function SearchResultView({
           </Link>
           <span className={styles.type}>
             Track by{" "}
-            <Link
-              to={item.links.artist}
-              className={styles.trackArtist}
-              onClick={onLinkClick}
-            >
-              {artist}
-            </Link>
+            {item.links.artist ? (
+              <Link
+                to={item.links.artist}
+                className={styles.trackArtist}
+                onClick={onLinkClick}
+              >
+                {artist}
+              </Link>
+            ) : (
+              <span>{artist}</span>
+            )}
           </span>
         </>
       );

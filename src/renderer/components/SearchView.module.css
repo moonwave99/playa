@@ -100,7 +100,6 @@
 
 .type {
   color: var(--secondary-color);
-  text-transform: capitalize;
   font-size: 0.75rem;
   font-weight: 300;
   user-select: none;
