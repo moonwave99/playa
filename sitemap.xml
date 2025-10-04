@@ -12,7 +12,10 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://moonwave99.github.io/playa/blog/dev-environment</loc>
+    <loc>https://moonwave99.github.io/playa/about</loc>
+  </url>
+  <url>
+    <loc>https://moonwave99.github.io/playa/terms</loc>
   </url>
   <url>
     <loc>https://moonwave99.github.io/playa/blog/end-to-end-testing</loc>
@@ -21,15 +24,12 @@
     <loc>https://moonwave99.github.io/playa/blog/how-playa-stores-data</loc>
   </url>
   <url>
-    <loc>https://moonwave99.github.io/playa/blog/react-redux-architecture</loc>
+    <loc>https://moonwave99.github.io/playa/blog/dev-environment</loc>
   </url>
   <url>
     <loc>https://moonwave99.github.io/playa/blog/testing</loc>
   </url>
   <url>
-    <loc>https://moonwave99.github.io/playa/about</loc>
-  </url>
-  <url>
-    <loc>https://moonwave99.github.io/playa/terms</loc>
+    <loc>https://moonwave99.github.io/playa/blog/react-redux-architecture</loc>
   </url>
 </urlset>
