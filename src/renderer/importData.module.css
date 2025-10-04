@@ -29,6 +29,8 @@
   flex-direction: column;
   font-size: 0.9rem;
   line-height: 1.5rem;
+  height: 16rem;
+  overflow: auto;
   li {
     display: flex;
     align-items: center;

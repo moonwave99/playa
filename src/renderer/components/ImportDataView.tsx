@@ -13,7 +13,11 @@ export default function ImportDataView({
   onDone,
   onCancel,
 }: ImportDataViewProps) {
-  const { isDone, steps } = useImportData({ onDone, closeAfter: 3000 });
+  const { isDone, steps, lastStepRef } = useImportData<HTMLLIElement>({
+    onDone,
+    onCancel,
+    closeAfter: 3000,
+  });
 
   async function onImportClick() {
     if (
@@ -43,17 +47,22 @@ export default function ImportDataView({
           </p>
         </div>
       )}
-      <ul className={styles.progress}>
-        {steps.map(([step, completed]) => (
-          <li key={step}>
-            <span className={styles.step}>
-              {step}
-              {!completed ? "..." : ""}
-            </span>
-            {completed ? <span className={styles.completed}>Done</span> : ""}
-          </li>
-        ))}
-      </ul>
+      {steps.length ? (
+        <ul className={styles.progress}>
+          {steps.map(([step, completed], index) => (
+            <li
+              key={step}
+              ref={index === steps.length - 1 ? lastStepRef : null}
+            >
+              <span className={styles.step}>
+                {step}
+                {!completed ? "..." : ""}
+              </span>
+              {completed ? <span className={styles.completed}>Done</span> : ""}
+            </li>
+          ))}
+        </ul>
+      ) : null}
       {isDone && (
         <div className={styles.description}>
           Import successful! Playa will restart now.

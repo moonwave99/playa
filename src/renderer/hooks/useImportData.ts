@@ -1,19 +1,22 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import useStore from "../store";
 import api from "../api";
 
 type UseImportDataParams = {
   onDone: () => void;
+  onCancel?: () => void;
   closeAfter?: number;
 };
 
-export default function useImportData({
+export default function useImportData<T extends HTMLElement>({
   onDone,
+  onCancel,
   closeAfter,
 }: UseImportDataParams) {
   const [steps, setSteps] = useState<Record<string, boolean>>({});
   const [isDone, setDone] = useState(false);
   const { setModalFixed } = useStore();
+  const lastStepRef = useRef<T>(null);
 
   useEffect(() => {
     const unsubscribe = [
@@ -32,14 +35,25 @@ export default function useImportData({
       api.import.onError((message) => {
         window.alert(message);
         setModalFixed(false);
+        if (onCancel) {
+          onCancel();
+        }
       }),
     ];
 
     return () => unsubscribe.forEach((u) => u());
   }, [closeAfter]);
 
+  useEffect(() => {
+    if (!lastStepRef.current) {
+      return;
+    }
+    lastStepRef.current.scrollIntoView({ behavior: "smooth" });
+  }, [steps]);
+
   return {
     steps: Object.entries(steps),
     isDone,
+    lastStepRef,
   };
 }
