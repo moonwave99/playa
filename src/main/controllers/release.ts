@@ -39,6 +39,7 @@ import {
   crawlFolder,
   getFolderContents,
   parsePath,
+  getArtistPathFromReleaseData,
 } from "../utils";
 import { hashRelease, hashArtistName } from "../hash";
 import { searchCover, getImageFromURL } from "../covers";
@@ -236,7 +237,7 @@ export function releaseController({
 
     onProgress(folder);
 
-    const artistPath = releaseData.fullPath.split("/").slice(0, 2).join("/");
+    const artistPath = getArtistPathFromReleaseData(releaseData);
     const artistHash = hashArtistName(releaseData.artist.name);
     const normalizedName = normalizeDiacritics(releaseData.artist.name);
 
