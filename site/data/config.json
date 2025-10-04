@@ -1,0 +1,24 @@
+{
+  "domain": "https://moonwave99.github.com/playa",
+  "defaultTitle": "Playa",
+  "screenshots": [
+    "images/screenshots/library.png",
+    "images/screenshots/playlist.png",
+    "images/screenshots/search.png"
+  ],
+  "stack": [
+    {
+      "name": "Electron",
+      "link": "#"
+    }
+  ],
+  "links": {
+    "github": "https://github.com/moonwave99/playa",
+    "author": {
+      "site": "https://www.diegocaponera.com",
+      "email": "hello@diegocaponera.com"
+    },
+    "goffre": "https://moonwave99.github.io/goffre",
+    "tachyons": "https://tachyons.io"
+  }
+}

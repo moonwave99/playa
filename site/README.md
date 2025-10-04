@@ -5,13 +5,13 @@
 - dev: `npm start`;
 - prod: `npm run build`;
 
----------------
+---
+
 ## License
+
 The MIT license.
 
-Copyright (c) 2012 Paul Miller (https://paulmillr.com/) [brunch]
-
-Copyright (c) 2020 Diego Caponera (https://www.diegocaponera.com) [this skeleton]
+Copyright (c) 2025 Diego Caponera (https://www.diegocaponera.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in

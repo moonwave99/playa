@@ -1,0 +1,34 @@
+<section class="hero bg-yellow pt5 pb0 pb4-l">
+  <div class="h-100 cf">
+    <header class="fl w-100 w-50-xl h-100 pl3 pl5-ns pr4 flex flex-column justify-center">
+      <h1 class="f1 f-headline-ns lh-solid mv0 black tr-l tc">{{ labels.home.hero.title }}</h1>
+      <p class="f5 lh-copy ttu tracked mb4 black-80 tr-l tc">{{ labels.home.hero.caption }}</p>
+      <ul class="list pl3 lh-copy tr-l tc">
+        <li>{{{ labels.home.hero.description.files }}}</li>
+        <li>{{{ labels.home.hero.description.artwork }}}</li>
+        <li>
+          {{ labels.home.hero.description.stack.intro }}
+          {{#each config.stack}}
+          <a class="link blue underline-hover" href="{{ link }}" target="_blank">{{ name }}</a>
+          {{/each}}
+          {{ labels.home.hero.description.stack.outro }}
+        </li>
+      </ul>
+      <p class="mt5 mb4 mb0-l db-ns dn tr-l tc">
+        <a href="{{ appInfo.downloadURL }}" class="f5 br2 ph4 pv3 lh-copy white bg-black link underline-hover">
+          Download version <strong>{{  appInfo.version }}</strong> for Mac OS
+        </a>
+      </p>
+    </header>
+    <div class="hero-screenshots fl w-100 w-50-xl h-100 pa3 pa0-l flex flex-column justify-center">
+      <div class="screenshot-wrapper relative pv5-l h-100">
+        {{#each config.screenshots}}
+        <div class="screenshot absolute">
+          <img class="search" alt="{{ . }}" data-src="{{ getUrl . }}" />
+        </div>
+        {{/each}}
+      </div>
+    </div>
+  </div>
+  </div>
+</section>

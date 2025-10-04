@@ -15,6 +15,7 @@
   "ignorePatterns": [
     "out",
     "scripts/",
+    "site/",
     "src/playground.ts",
     "src/mobile-sync.ts"
   ],

@@ -1,9 +1,11 @@
 ---
 title: "How Playa stores data"
-slug: how-playa-stores-data
+slug: blog/how-playa-stores-data
+template: pages/blog/single
 date: 2020-02-22T00:00:00.000Z
 published: true
 ---
+
 We all love a slick user interface that incarnates the _zeitgeist_, but without a well structured persistence layer it is of no use. Here I will give an overview of how I tried to make up for the lack of total outward slickness with sound invisible choices.
 
 ## What should be stored?
@@ -86,7 +88,7 @@ export default class Database {
   async findAll<T>(): Promise<Array<T>> {...}
   async get<T>(_id: string): Promise<T> {...}
   async getList<T>(ids: Entity['_id'][]): Promise<Array<T>> {...}
-  
+
   async save<T extends Entity>(entity: T): Promise<T> {...}
   async saveBulk<T>(entities: T[]): Promise<T[]> {...}
 
@@ -212,10 +214,10 @@ I load it when the app starts and I use the values accordingly. Some are needed 
 What about persistence timing? Window values are set and saved on app quit:
 
 ```javascript
-app.on('will-quit', () => {
+app.on("will-quit", () => {
   appState.setState({
     lastWindowSize: mainWindow.getSize(),
-    lastWindowPosition: mainWindow.getPosition()
+    lastWindowPosition: mainWindow.getPosition(),
   });
   appState.save();
 });
@@ -228,7 +230,9 @@ The values determined by user interaction, like the last opened playlist, the pl
 ipc.send(IPC_UI_STATE_UPDATE, params);
 
 // main
-ipc.on(IPC_UI_STATE_UPDATE, (_event, params: object) => appState.setState(params));
+ipc.on(IPC_UI_STATE_UPDATE, (_event, params: object) =>
+  appState.setState(params)
+);
 ```
 
 While the Electron persistence strategies have still room for improvement in my opinion, I consider myself more than satisfied for the moment.

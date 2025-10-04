@@ -1,0 +1,18 @@
+<section class="blog w-100 bg-gold">
+  <div class="w-80-ns center ph3 ph0-ns pv4 pv5-ns">
+    <h2 class="f4 f2-ns mb5 lh-copy">{{ labels.home.latestPosts.title }}</h2>
+    <div class="flex flex-wrap">
+      {{#each latestPosts }}
+      <article class="blog-post-content w-100 w-50-l pr4-l mb5">
+        <header>
+          <time class="tracked ttu">{{ formatDate date }}</time>
+          <h3 class="f5 f4-ns lh-copy">
+            <a class="link blue underline-hover" href="{{ getUrl slug }}">{{ title }}</a>
+          </h3>
+        </header>
+        <p class="measure lh-copy">{{{ formatExcerpt excerpt }}}</p>
+      </article>
+      {{/each}}
+    </div>
+  </div>
+</section>

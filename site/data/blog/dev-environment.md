@@ -1,6 +1,7 @@
 ---
 title: Dev environment
-slug: dev-environment
+slug: blog/dev-environment
+template: pages/blog/single
 date: 2020-02-15T00:00:00.000Z
 published: true
 ---
@@ -108,8 +109,8 @@ This loads the `main.ts` file, that requests `index.html` (inside whom webpack i
 ```javascript
 mainWindow.loadURL(
   url.format({
-    pathname: Path.join(__dirname, './index.html'),
-    protocol: 'file:',
+    pathname: Path.join(__dirname, "./index.html"),
+    protocol: "file:",
     slashes: true,
   })
 );
@@ -124,23 +125,19 @@ Nothing too fancy here as well. Do not forget to use `react-hooks/rules-of-hooks
 ```javascript
 //.eslintrc.js
 module.exports = {
-	root: true,
-	parser: '@typescript-eslint/parser',
-	plugins: [
-		'@typescript-eslint',
-		'react',
-		'react-hooks'
-	],
-	rules: {
-		'react/jsx-uses-react': 'error',
-		'react/jsx-uses-vars': 'error',
-		'react-hooks/rules-of-hooks': 'error'
-	},
-	extends: [
-		'eslint:recommended',
-		'plugin:@typescript-eslint/eslint-recommended',
-		'plugin:@typescript-eslint/recommended',
-	],
+  root: true,
+  parser: "@typescript-eslint/parser",
+  plugins: ["@typescript-eslint", "react", "react-hooks"],
+  rules: {
+    "react/jsx-uses-react": "error",
+    "react/jsx-uses-vars": "error",
+    "react-hooks/rules-of-hooks": "error",
+  },
+  extends: [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+  ],
 };
 ```
 
@@ -179,7 +176,7 @@ It is enough to `⌘+1-5`, then `↑ + Enter` to rerun the command if needed.
 
 It may look trivial, but not to have to think much to which tab I have to switch [saves time][xkcd]!
 
-[terminal]: /playa/images/screenshots/terminal_setup.png
+[terminal]: images/screenshots/terminal_setup.png
 [xkcd]: https://xkcd.com/1205/
 [test]: /playa/devblog/2020-02-08/testing
 [e2e]: /playa/devblog/2020-02-29/end-to-end-testing

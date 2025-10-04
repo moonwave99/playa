@@ -1,0 +1,20 @@
+<section class="navigation">
+  <input type="checkbox" class="navigation-toggler" id="navToggler">
+  <label for="navToggler" class="navigation-toggler-label tracked ttu">
+    <span class="open">{{ labels.nav.toggler.open }}</span>
+    <span class="close">{{ labels.nav.toggler.open }}</span>
+  </label>
+  <nav
+    class="navigation-content w-100 text-right v-mid ph3 ph4-ns avenir bg-yellow">
+    <a class="link black underline-hover mr4-ns {{#if (isCurrent . 'index')}}b{{/if}}" href="{{ getUrl '' }}">{{
+      labels.nav.home }}</a>
+    <a class="link black underline-hover mr4-ns {{#if (isCurrent . 'about')}}b{{/if}}" href="{{ getUrl 'about' }}">{{
+      labels.nav.about }}</a>
+    <a class="link black underline-hover mr4-ns {{#if (isCurrent . 'blog')}}b{{/if}}"
+      href="{{ getUrl 'blog' }}">{{ labels.nav.blog }}</a>
+    <a class="link black underline-hover mr4-ns" href="{{ config.links.github }}" target="_blank">{{ labels.nav.github
+      }}</a>
+    <a class="link black underline-hover mr4-ns" href="mailto:{{ config.links.author.email }}?subject=Playa">{{
+      labels.nav.contact }}</a>
+  </nav>
+</section>

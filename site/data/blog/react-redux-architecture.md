@@ -1,9 +1,11 @@
 ---
 title: The React/Redux architecture
-slug: react-redux-architecture
+slug: blog/react-redux-architecture
+template: pages/blog/single
 date: 2020-02-1T00:00:00.000Z
 published: true
 ---
+
 Many practices flourished in the React ecosystems, addressing from project files hierarchy to where and how store the app state, to components styles. Here are my choices in regard.
 
 ## The `src` organisation
@@ -47,7 +49,7 @@ export const PlaylistContainer = (): ReactElement => {
 
   function onAlbumContextMenu() { ... }
   function onAlbumDoubleClick() { ... }
-  
+
   const shouldShowPlaylist = !isLoading && playlist.albums.length === Object.keys(albums).length;
   if (!shouldShowPlaylist) {
     return null;
@@ -171,22 +173,22 @@ Bonus: you test the selector in the store context, leaving the UI to its UI thin
 I use the the standard `redux-thunk` as async handler middleware. Here we have an example of **sync** vs **async** action:
 
 ```typescript
-export const getAlbumListResponse = (results: Album[]): Function =>
+export const getAlbumListResponse =
+  (results: Album[]): Function =>
   (dispatch: Function): void => {
     dispatch({
       type: ALBUM_GET_LIST_RESPONSE,
-      results
+      results,
     });
-  }
+  };
 
-export const getAlbumListRequest = (ids: Album['_id'][]): Function =>
+export const getAlbumListRequest =
+  (ids: Album["_id"][]): Function =>
   async (dispatch: Function): Promise<void> => {
     dispatch(
-      getAlbumListResponse(
-        await ipc.invoke(IPC_ALBUM_GET_LIST_REQUEST, ids)
-      )
+      getAlbumListResponse(await ipc.invoke(IPC_ALBUM_GET_LIST_REQUEST, ids))
     );
-  }
+  };
 ```
 
 In the first case (`getAlbumListResponse`), an action of type `ALBUM_GET_LIST_RESPONSE` is dispatched (and thus handled by the reducer).
@@ -215,10 +217,10 @@ export const getDataRequest = (query: string): Function =>
       dispatch({
         type: GET_DATA_ERROR,
         error
-      });      
+      });
     }
   }
-  
+
 // reducer
 function reducer(state, action) {
   switch (action.type) {
@@ -240,21 +242,21 @@ function reducer(state, action) {
         loading: false,
         error: action.error
       };
-  } 
+  }
 );
 
 // compo
 function Compo() {
   const { data, loading, error } = useSelector( ... );
-  
+
   if (loading) {
     return <div>Loading...</div>;
   }
-  
+
   if (error) {
     return <div>{ error.message }</div>;
   }
-  
+
   // do something with data
   return ...;
 }

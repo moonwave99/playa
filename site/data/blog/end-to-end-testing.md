@@ -1,9 +1,11 @@
 ---
 title: End to End Testing
-slug: end-to-end-testing
+slug: blog/end-to-end-testing
+template: pages/blog/single
 date: 2020-02-29T00:00:00.000Z
 published: true
 ---
+
 This week I focused mostly on **end to end testing** (_e2e_ from now on). I am fairly new to e2e, as I usually never adventures myself outside of the green pastures of unit and integration.
 
 Electron is a fairly new technology and a lot of practices are yet to settle as mature. My research prompted me with the choice between [testcafe][testcafe] and [spectron][spectron]. I gave the in-house solution a try first.
@@ -25,16 +27,12 @@ Where the `jest.config.e2e.js` configuration files contains:
 
 ```javascript
 module.exports = {
-  roots: [
-    "<rootDir>/e2e/tests"
-  ],
-  testMatch: [
-    "**/?(*.)+(spec|test).+(ts|tsx|js)"
-  ],
+  roots: ["<rootDir>/e2e/tests"],
+  testMatch: ["**/?(*.)+(spec|test).+(ts|tsx|js)"],
   transform: {
-    "^.+\\.(ts|tsx)$": "ts-jest"
-  }
-}
+    "^.+\\.(ts|tsx)$": "ts-jest",
+  },
+};
 ```
 
 Test suite runs with `$ yarn/npm run test:e2e`.
@@ -84,12 +82,12 @@ Now I can store all the temp data in the `.spectron` folder!
 This is how I populate the database before each test: I simply wipe out then the database folder, then add some fresh data to it afterwards.
 
 ```typescript
-import * as Path from 'path';
-import * as fs from 'fs-extra';
-import Database from '../src/main/lib/database';
+import * as Path from "path";
+import * as fs from "fs-extra";
+import Database from "../src/main/lib/database";
 
-const SPECTRON_BASEPATH = Path.join(process.cwd(), '.spectron');
-const DB_PATH = Path.join(SPECTRON_BASEPATH, 'databases');
+const SPECTRON_BASEPATH = Path.join(process.cwd(), ".spectron");
+const DB_PATH = Path.join(SPECTRON_BASEPATH, "databases");
 
 async function prepareDir(): Promise<void> {
   await fs.remove(SPECTRON_BASEPATH);
@@ -101,22 +99,21 @@ export async function populateTestDB(): Promise<void> {
   await prepareDir();
   const playlistDB = new Database({
     path: DB_PATH + Path.sep,
-    name: 'playlist'
+    name: "playlist",
   });
 
   const now = new Date().toISOString();
   await playlistDB.save({
-    _id: '1',
+    _id: "1",
     _rev: null,
-    title: 'New Playlist 1',
+    title: "New Playlist 1",
     created: now,
     accessed: now,
-    albums: [] as string[]
+    albums: [] as string[],
   });
 
   await playlistDB.close();
 }
-
 ```
 
 ## Dipping my feet into the Spectron API
@@ -124,21 +121,21 @@ export async function populateTestDB(): Promise<void> {
 Let's peek at `application-launch.test.js`:
 
 ```javascript
-const Application = require('spectron').Application;
-const electronPath = require('electron');
-const path = require('path');
-const { populateTestDB } = require('../utils');
+const Application = require("spectron").Application;
+const electronPath = require("electron");
+const path = require("path");
+const { populateTestDB } = require("../utils");
 
 const TEN_SECONDS = 10000;
 
-describe('Application launch', () => {
+describe("Application launch", () => {
   let app;
   beforeEach(async () => {
     await populateTestDB();
     app = new Application({
       path: electronPath,
-      env: { RUNNING_IN_SPECTRON: '1' },
-      args: [path.join(__dirname, '../..')]
+      env: { RUNNING_IN_SPECTRON: "1" },
+      args: [path.join(__dirname, "../..")],
     });
     return app.start();
   });
@@ -149,14 +146,20 @@ describe('Application launch', () => {
     }
   });
 
-  it('recalls last opened playlist', async () => {
-    await app.client.waitUntilWindowLoaded();
-    await app.client.click('.playlist-list .playlist-list-item');
-    await app.client.waitUntil(async() => await app.client.getText('h1') === 'New Playlist 1');
-    await app.restart();
-    await app.client.waitUntilWindowLoaded();
-    expect(await app.client.getText('h1')).toBe('New Playlist 1');
-  }, TEN_SECONDS);
+  it(
+    "recalls last opened playlist",
+    async () => {
+      await app.client.waitUntilWindowLoaded();
+      await app.client.click(".playlist-list .playlist-list-item");
+      await app.client.waitUntil(
+        async () => (await app.client.getText("h1")) === "New Playlist 1"
+      );
+      await app.restart();
+      await app.client.waitUntilWindowLoaded();
+      expect(await app.client.getText("h1")).toBe("New Playlist 1");
+    },
+    TEN_SECONDS
+  );
 });
 ```
 
@@ -216,7 +219,7 @@ export async function populateTestDB({
       accessed: now
     });
   }));
-  
+
 // testfile
 const { populateTestDB, TestPlaylists } = require('../utils/databaseUtils');
 

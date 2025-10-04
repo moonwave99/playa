@@ -4,33 +4,36 @@
   "description": "Playa website",
   "author": "Diego Caponera <diego.caponera@gmail.com>",
   "homepage": "https://moonwave99.github.com/playa",
+  "type": "module",
   "scripts": {
-    "start": "GIT_REV=`git rev-parse HEAD` brunch watch --server",
-    "build": "GIT_REV=`git rev-parse HEAD` brunch b -p --env production",
-    "clean": "rm -rf public production",
+    "clean": "rm -rf ./dist",
+    "dev:client": "webpack serve --mode development",
+    "dev:site": "NODE_ENV=development nodemon -e js,json,md,handlebars --watch data --watch src/views --watch index.js",
+    "build:client": "webpack --mode production",
+    "build:site": "node index.js",
+    "build": "npm run clean && npm run build:site && npm run build:client",
     "publish": "gh-pages -d production"
   },
   "dependencies": {
-    "@cloudraker/sass-brunch": "^3.0.1",
-    "assetsmanager-brunch": "^1.8.1",
-    "autoprefixer": "^9.7.4",
-    "brunch": "^2.10.17",
-    "coffee-script-brunch": "^2.1.0",
-    "css-brunch": "^2.6.1",
-    "cssnano-brunch": "^1.2.1",
-    "gh-pages": "^2.2.0",
-    "git-rev-sync": "^2.0.0",
-    "javascript-brunch": "^2.0.0",
-    "lodash": "^4.17.13",
-    "marked": "^0.8.0",
-    "postcss-brunch": "^3.0.0",
+    "copy-webpack-plugin": "^13.0.1",
+    "css-loader": "^7.1.2",
+    "goffre": "^0.0.3",
+    "marked": "^0.8.2",
+    "mini-css-extract-plugin": "^2.9.4",
+    "postcss": "^8.5.6",
+    "postcss-loader": "^8.2.0",
+    "postcss-normalize": "^13.0.1",
+    "postcss-preset-env": "^10.4.0",
     "prismjs": "^1.19.0",
     "stickybits": "^3.7.4",
     "tachyons": "^4.11.1",
-    "uglify-es": "^3.3.9",
-    "waffel": "^0.1.19"
+    "webpack": "^5.102.0",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.2",
+    "write-file-webpack-plugin": "^4.5.1"
   },
   "devDependencies": {
-    "auto-reload-brunch": "^2.7.1"
+    "nodemon": "^3.1.10",
+    "gh-pages": "^2.2.0"
   }
 }

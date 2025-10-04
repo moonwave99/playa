@@ -1,6 +1,8 @@
 ---
 title: About Playa
+slug: about
 ---
+
 Playa is a **digital audio files player** for desktop, developed using web technologies inside the [Electron][electron] framework.
 
 It is my reconciliation with development after a long break, since I decided to devote my life to music. Why have I chosen such an anachronistic project, in this streamable era of eternal present?
@@ -61,7 +63,7 @@ After a very slow and at times painful process, my music collection now looks li
 
 ```bash
 Music
-  A  
+  A
     ...
     Alice in Chains
       [Album]
