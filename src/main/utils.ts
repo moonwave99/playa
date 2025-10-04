@@ -39,6 +39,13 @@ export function getEntityPath(entity: GetEntityPathParam) {
   );
 }
 
+export function getArtistPathFromReleaseData(data: ParsePath) {
+  if (data.fullPath.startsWith(VARIOUS_ARTISTS_FOLDER)) {
+    return VARIOUS_ARTISTS_FOLDER;
+  }
+  return data.fullPath.split("/").slice(0, 2).join("/");
+}
+
 export async function crawlFolder(folder: string) {
   const files = await globby("*.{mp3,m4a,flac,wav,ogg,ape}", {
     cwd: folder,

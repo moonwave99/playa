@@ -1,6 +1,10 @@
 import prisma from "./db/prisma";
 import { clearPrisma } from "@/test/prisma-utils";
-import { getFolderContents, parsePath } from "./utils";
+import {
+  getFolderContents,
+  parsePath,
+  getArtistPathFromReleaseData,
+} from "./utils";
 import { getFakeArtist, getFakeReleasesForArtist } from "../test/seed";
 import path from "path";
 import { testFs } from "@moonwave99/test-fs";
@@ -136,5 +140,20 @@ describe("getFolderContents function", () => {
         position: 5,
       },
     ]);
+  });
+});
+
+describe("getArtistPathFromReleaseData function", () => {
+  it("returns the artist path from the given release data", () => {
+    {
+      const releaseData = parsePath("A/Artist/[Album]/1999 - My Title");
+      const artistPath = getArtistPathFromReleaseData(releaseData);
+      expect(artistPath).toBe("A/Artist");
+    }
+    {
+      const releaseData = parsePath("[V:A]/[Album]/1999 - My Title");
+      const artistPath = getArtistPathFromReleaseData(releaseData);
+      expect(artistPath).toBe("[V:A]");
+    }
   });
 });
