@@ -349,15 +349,16 @@ export default function List<T>({
       className={className}
       onClick={() => setContext(context)}
     >
-      <div
+      <ul
         style={{
           height: `${virtualizer.getTotalSize()}px`,
           width: "100%",
           position: "relative",
+          listStyle: "none",
         }}
       >
         {virtualizer.getVirtualItems().map(({ index, lane, start }) => (
-          <div
+          <li
             key={index}
             style={{
               position: "absolute",
@@ -377,9 +378,9 @@ export default function List<T>({
               selection,
               onClick: (event: MouseEvent) => onClick(index, event),
             })}
-          </div>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }

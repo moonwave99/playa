@@ -27,7 +27,6 @@
   }
 
   .entries {
-    margin-right: 1rem;
     width: var(--navbar-width);
     border-radius: 0.5rem;
     overflow: hidden;
@@ -36,7 +35,7 @@
     display: none;
     position: absolute;
     top: 3rem;
-    right: 2.75rem;
+    right: 3.5rem;
   }
 
   &.isOpen {
