@@ -5,7 +5,7 @@
   transition: background-color 0.3s ease-in-out;
   overflow: hidden;
   border-radius: 0.25rem;
-  background-color: var(--neutral-border-color);
+  background-color: var(--default-listcard-background-color);
 
   &.fromCache {
     transition: none;
@@ -98,6 +98,7 @@
 .isSingle {
   border-radius: 0;
   border-bottom: 0.5px solid var(--neutral-border-color);
+  background-color: transparent;
 
   .content {
     margin-top: 2rem;

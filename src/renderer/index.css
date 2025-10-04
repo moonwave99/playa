@@ -30,6 +30,7 @@
   --droppable-glow-color: #f5f5f55d;
   --letters-menu-width: 2rem;
   --default-cover-background-color: #1f1f1f;
+  --default-listcard-background-color: rgba(120, 120, 120, 0.3);
   --toastify-toast-padding: 0.5rem;
   --toastify-toast-min-height: 3rem;
   --toastify-text-color-light: var(--primary-color);
