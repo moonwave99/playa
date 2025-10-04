@@ -6,13 +6,14 @@
   "homepage": "https://moonwave99.github.com/playa",
   "type": "module",
   "scripts": {
-    "clean": "rm -rf ./dist",
     "dev:client": "webpack serve --mode development",
-    "dev:site": "NODE_ENV=development nodemon -e js,json,md,handlebars --watch data --watch src/views --watch index.js",
+    "dev:site": "NODE_ENV=development npx nodemon -e js,json,md,handlebars --watch data --watch src/views --watch index.js",
+    "dev": "npx concurrently 'npm run dev:site' 'npm run dev:client'",
     "build:client": "webpack --mode production",
     "build:site": "node index.js",
     "build": "npm run clean && npm run build:site && npm run build:client",
-    "publish": "gh-pages -d dist"
+    "publish": "npx gh-pages -d dist",
+    "clean": "rm -rf ./dist"
   },
   "dependencies": {
     "copy-webpack-plugin": "^13.0.1",
@@ -31,9 +32,5 @@
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.2",
     "write-file-webpack-plugin": "^4.5.1"
-  },
-  "devDependencies": {
-    "nodemon": "^3.1.10",
-    "gh-pages": "^2.2.0"
   }
 }

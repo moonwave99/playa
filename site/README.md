@@ -2,14 +2,13 @@
 
 ## Dev
 
-In two separate terminals:
-
-- `npm run dev:site`;
-- `npm run dev:client`;
+```txt
+npm run dev
+```
 
 ## Build
 
-```bash
+```txt
 npm run build
 npm run publish
 ```
