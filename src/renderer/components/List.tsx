@@ -326,7 +326,7 @@ export default function List<T>({
       return;
     }
     if (context === currentContext) {
-      setCurrentIndex(0);
+      setCurrentIndex((prev) => (prev === -1 ? 0 : prev));
     }
   }, [context, currentContext, scrollInfo]);
 
