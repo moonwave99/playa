@@ -166,11 +166,11 @@ I find very useful to have a fixed terminal tab setup when dealing with repeated
 - the **electron logs** (watching);
 - **lint** output;
 - **test** output;
-- **e2d** test output.
+- **e2e** test output.
 
 I renamed the tab accordingly and saved them as a session:
 
-![terminal][terminal]
+![My terminal setup][terminal]
 
 It is enough to `⌘+1-5`, then `↑ + Enter` to rerun the command if needed.
 

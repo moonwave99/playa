@@ -38,7 +38,7 @@ Like many others I guess, I like to give silly names to my projects. The aforeme
 
 It was a chance to learn this React thing everybody was talking about. The `JSX` syntax definitely sold it to me, as it allowed to write the UI in a familiar, declarative way - `HTML` basically.
 
-![Early Playa][playa]
+![Screenshot of an early Playa version][playa]
 
 The waveform background in the playback bar! The artwork from Discogs! The last.fm scrobbles! The playlist tabs! Ah, THE TRACKS AUTOMAGICALLY GROUPED BY FREAKING ALBUM.
 

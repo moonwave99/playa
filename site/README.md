@@ -1,9 +1,18 @@
 # Playa Website
 
-## Run
+## Dev
 
-- dev: `npm start`;
-- prod: `npm run build`;
+In two separate terminals:
+
+- `npm run dev:site`;
+- `npm run dev:client`;
+
+## Build
+
+```bash
+npm run build
+npm run publish
+```
 
 ---
 

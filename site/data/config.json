@@ -9,7 +9,19 @@
   "stack": [
     {
       "name": "Electron",
-      "link": "#"
+      "link": "https://electronjs.org"
+    },
+    {
+      "name": "React",
+      "link": "https://react.dev"
+    },
+    {
+      "name": "TanStack",
+      "link": "https://tanstack.com/"
+    },
+    {
+      "name": "Prisma",
+      "link": "https://prisma.io"
     }
   ],
   "links": {
