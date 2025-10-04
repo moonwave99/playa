@@ -12,7 +12,7 @@
     "build:client": "webpack --mode production",
     "build:site": "node index.js",
     "build": "npm run clean && npm run build:site && npm run build:client",
-    "publish": "gh-pages -d production"
+    "publish": "gh-pages -d dist"
   },
   "dependencies": {
     "copy-webpack-plugin": "^13.0.1",

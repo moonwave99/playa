@@ -1,6 +1,7 @@
 ---
 title: About Playa
 slug: about
+published: true
 ---
 
 Playa is a **digital audio files player** for desktop, developed using web technologies inside the [Electron][electron] framework.

@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width,minimum-scale=1.0,initial-scale=1,user-scalable=yes" />
   <title>{{title}} | {{config.defaultTitle}}</title>
   {{> meta}}
-  <link rel="stylesheet" href="/bundle.css">
+  <link rel="stylesheet" href="{{ getUrl 'bundle.css' }}">
   </link>
 </head>
 
@@ -17,7 +17,7 @@
     {{{body}}}
   </main>
   {{>footer}}
-  <script src="/bundle.js"></script>
+  <script src="{{ getUrl 'bundle.js' }}"></script>
   <script>
     init({
       domain: '{{ options.domain }}'

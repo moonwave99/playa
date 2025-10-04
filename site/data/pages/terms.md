@@ -1,6 +1,7 @@
 ---
 title: Terms of Use
 slug: terms
+published: true
 ---
 
 The contents of the Playa software are covered under the MIT license.
