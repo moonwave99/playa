@@ -59,7 +59,7 @@ function init(_options) {
   }
 
   const defaultOptions = {
-    basePath: "http://localhost:9000",
+    domain: "http://localhost:9000",
     hero: {
       interval: 5000,
     },
@@ -85,7 +85,7 @@ function init(_options) {
         element,
         observer,
         images: albums.map((alt, i) => ({
-          src: `${options.basePath}/images/albums/${i}.jpg`,
+          src: `${options.domain}/images/albums/${i}.jpg`,
           alt,
         })),
       })
