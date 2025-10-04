@@ -16,14 +16,21 @@ const dateFormats = {
   },
 };
 
+function getDomain(context) {
+  if (!context) {
+    return process.env.NODE_ENV === "development"
+      ? "http://localhost:900"
+      : pkg.homepage;
+  }
+  return context.data.root.options.domain;
+}
+
 const helpers = {
   getUrl: (url, context) => {
     if (url.startsWith("http")) {
       return url;
     }
-    return [context?.data.root.options.domain, url]
-      .join("/")
-      .replace(/index$/, "");
+    return [getDomain(context), url].join("/").replace(/index$/, "");
   },
   isCurrent: (page, section) => page.slug.startsWith(section),
   formatDate: (date) => date.toLocaleDateString(undefined, dateFormats.short),
