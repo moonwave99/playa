@@ -1,67 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  
+<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://moonwave99.github.io/playa</loc>
-    <lastmod>2025-04-09</lastmod>
-    
-    
+    <loc>https://moonwave99.github.io/playa/index</loc>
+    <priority>1</priority>
   </url>
-  
   <url>
-    <loc>https://moonwave99.github.io/playa/about</loc>
-    <lastmod>2025-04-09</lastmod>
-    
-    
+    <loc>https://moonwave99.github.io/playa/blog</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
-  
   <url>
-    <loc>https://moonwave99.github.io/playa/terms-of-use</loc>
-    <lastmod>2025-04-09</lastmod>
-    
-    
+    <loc>https://moonwave99.github.io/playa/blog/dev-environment</loc>
   </url>
-  
   <url>
-    <loc>https://moonwave99.github.io/playa/devblog</loc>
-    <lastmod>2025-04-09</lastmod>
-    
-    
+    <loc>https://moonwave99.github.io/playa/blog/end-to-end-testing</loc>
   </url>
-  
   <url>
-    <loc>https://moonwave99.github.io/playa/devblog/2020-02-15/dev-environment</loc>
-    <lastmod>2020-02-15</lastmod>
-    
-    
+    <loc>https://moonwave99.github.io/playa/blog/how-playa-stores-data</loc>
   </url>
-  
   <url>
-    <loc>https://moonwave99.github.io/playa/devblog/2020-02-29/end-to-end-testing</loc>
-    <lastmod>2020-02-29</lastmod>
-    
-    
+    <loc>https://moonwave99.github.io/playa/blog/react-redux-architecture</loc>
   </url>
-  
   <url>
-    <loc>https://moonwave99.github.io/playa/devblog/2020-02-22/how-playa-stores-data</loc>
-    <lastmod>2020-02-22</lastmod>
-    
-    
+    <loc>https://moonwave99.github.io/playa/blog/testing</loc>
   </url>
-  
-  <url>
-    <loc>https://moonwave99.github.io/playa/devblog/2020-02-01/react-redux-architecture</loc>
-    <lastmod>2020-02-01</lastmod>
-    
-    
-  </url>
-  
-  <url>
-    <loc>https://moonwave99.github.io/playa/devblog/2020-02-08/testing</loc>
-    <lastmod>2020-02-08</lastmod>
-    
-    
-  </url>
-  
 </urlset>
