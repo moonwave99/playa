@@ -5,7 +5,11 @@ import type {
   Track,
   ReleaseWithArtistAndTracksAndSubreleases,
 } from "@/types/types";
-import { formatDuration, withStopPropagation } from "@/lib/utils";
+import {
+  formatDuration,
+  withStopPropagation,
+  lowerCaseCompare,
+} from "@/lib/utils";
 import List from "./List";
 import cx from "clsx";
 
@@ -158,7 +162,7 @@ function TrackEntry({
   onContextMenu,
 }: TrackEntryProps) {
   function renderTitle() {
-    if (trackArtist && trackArtist !== releaseArtistName) {
+    if (trackArtist && !lowerCaseCompare(trackArtist, releaseArtistName)) {
       return (
         <>
           <span className={styles.trackArtist}>{trackArtist}</span> - {title}
