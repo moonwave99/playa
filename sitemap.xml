@@ -3,33 +3,33 @@
   xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"
   xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>http://localhost:9000/index</loc>
+    <loc>https://moonwave99.github.io/playa/index</loc>
     <priority>1</priority>
   </url>
   <url>
-    <loc>http://localhost:9000/blog</loc>
+    <loc>https://moonwave99.github.io/playa/blog</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>http://localhost:9000/blog/dev-environment</loc>
+    <loc>https://moonwave99.github.io/playa/blog/dev-environment</loc>
   </url>
   <url>
-    <loc>http://localhost:9000/blog/end-to-end-testing</loc>
+    <loc>https://moonwave99.github.io/playa/blog/end-to-end-testing</loc>
   </url>
   <url>
-    <loc>http://localhost:9000/blog/how-playa-stores-data</loc>
+    <loc>https://moonwave99.github.io/playa/blog/how-playa-stores-data</loc>
   </url>
   <url>
-    <loc>http://localhost:9000/blog/react-redux-architecture</loc>
+    <loc>https://moonwave99.github.io/playa/blog/react-redux-architecture</loc>
   </url>
   <url>
-    <loc>http://localhost:9000/blog/testing</loc>
+    <loc>https://moonwave99.github.io/playa/blog/testing</loc>
   </url>
   <url>
-    <loc>http://localhost:9000/about</loc>
+    <loc>https://moonwave99.github.io/playa/about</loc>
   </url>
   <url>
-    <loc>http://localhost:9000/terms</loc>
+    <loc>https://moonwave99.github.io/playa/terms</loc>
   </url>
 </urlset>
