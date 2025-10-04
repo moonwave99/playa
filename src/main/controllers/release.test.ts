@@ -838,9 +838,14 @@ describe("downloadCover function", () => {
 
 describe("refreshReleaseContents function", () => {
   it("does nothing is no release if found", async () => {
-    const { refreshReleaseContents } = releaseController(defaultParams);
+    const send = vi.fn();
+    const { refreshReleaseContents } = releaseController({
+      ...defaultParams,
+      send,
+    });
     const result = await refreshReleaseContents(1);
     expect(result).toBeFalsy();
+    expect(send).not.toHaveBeenCalled();
   });
 
   it("updates the track information for the given release and returns it", async (context) => {
@@ -867,8 +872,11 @@ describe("refreshReleaseContents function", () => {
     await prisma.artist.create({ data: getFakeArtist(1) });
     await prisma.release.create({ data: release });
 
+    const send = vi.fn();
+
     const { refreshReleaseContents } = releaseController({
       ...defaultParams,
+      send,
       getSetting: (key: string) =>
         key === "LIBRARY_PATH" ? LIBRARY_PATH : key,
     });
@@ -878,6 +886,12 @@ describe("refreshReleaseContents function", () => {
 
     expect(result[0]).toMatchObject(release);
     expect(result[0].tracks.length).toBe(5);
+
+    expect(send).toHaveBeenCalledWith("mutate", [["releases", 1]]);
+    expect(send).toHaveBeenCalledWith("notify", {
+      type: "success",
+      message: `${release.title} contents refreshed`,
+    });
   });
 });
 

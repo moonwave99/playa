@@ -417,6 +417,10 @@ export function releaseController({
     );
 
     send("mutate", [["releases", release.id]]);
+    send("notify", {
+      type: "success",
+      message: `${release.title} contents refreshed`,
+    });
 
     return updatedRelease;
   }
