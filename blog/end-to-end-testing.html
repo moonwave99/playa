@@ -6,12 +6,12 @@
   <meta name="generator" content="goffre" />
   <meta name="viewport" content="width=device-width,minimum-scale=1.0,initial-scale=1,user-scalable=yes" />
   <title>End to End Testing | Playa</title>
-  <meta name="description" content="This week I focused mostly on **end to end testing** (_e2e_ from now on). I am fairly new to e2e, as I usually never adventures myself outside of the green pastures of unit and integration." />
+  <meta name="description" content="_Note: this post refers to a [previous version of Playa](https://github.com/moonwave99/playa/releases/tag/v0.4.2)._" />
   <meta property="og:site_name" content="" />
   <meta property="og:url" content="https://moonwave99.github.io/playa/blog/end-to-end-testing" />
   <meta property="og:title" content="End to End Testing" />
   <meta property="og:type" content="article" />
-  <meta name="og:description" content="This week I focused mostly on **end to end testing** (_e2e_ from now on). I am fairly new to e2e, as I usually never adventures myself outside of the green pastures of unit and integration." />
+  <meta name="og:description" content="_Note: this post refers to a [previous version of Playa](https://github.com/moonwave99/playa/releases/tag/v0.4.2)._" />
   <meta property="article:published_time" content="2020-02-29T00:00:00.000Z" />
   <link rel="stylesheet" href="https://moonwave99.github.io/playa/bundle.css">
   </link>
@@ -40,7 +40,7 @@
     <h1 class="f3 f1-ns lh-solid mt4 mb4">End to End Testing</h1>
   </header>
   <section class="blog-post-content">
-    <p class="lh-copy">This week I focused mostly on <strong>end to end testing</strong> (<em>e2e</em> from now on). I am fairly new to e2e, as I usually never adventures myself outside of the green pastures of unit and integration.</p><p class="lh-copy">Electron is a fairly new technology and a lot of practices are yet to settle as mature. My research prompted me with the choice between <a class="link blue underline-hover" href="https://github.com/DevExpress/testcafe-browser-provider-electron" target='_blank'>testcafe</a> and <a class="link blue underline-hover" href="https://github.com/electron-userland/spectron" target='_blank'>spectron</a>. I gave the in-house solution a try first.</p><p class="lh-copy">First I set up a <code class="dark-pink">npm</code> command in <code class="dark-pink">package.json</code> like this:</p><pre><code class="language-javascript">{
+    <p class="lh-copy"><em>Note: this post refers to a <a class="link blue underline-hover" href="https://github.com/moonwave99/playa/releases/tag/v0.4.2" target='_blank'>previous version of Playa</a>.</em></p><p class="lh-copy">This week I focused mostly on <strong>end to end testing</strong> (<em>e2e</em> from now on). I am fairly new to e2e, as I usually never adventures myself outside of the green pastures of unit and integration.</p><p class="lh-copy">Electron is a fairly new technology and a lot of practices are yet to settle as mature. My research prompted me with the choice between <a class="link blue underline-hover" href="https://github.com/DevExpress/testcafe-browser-provider-electron" target='_blank'>testcafe</a> and <a class="link blue underline-hover" href="https://github.com/electron-userland/spectron" target='_blank'>spectron</a>. I gave the in-house solution a try first.</p><p class="lh-copy">First I set up a <code class="dark-pink">npm</code> command in <code class="dark-pink">package.json</code> like this:</p><pre><code class="language-javascript">{
   ...
     &quot;scripts&quot;: {
     ...
