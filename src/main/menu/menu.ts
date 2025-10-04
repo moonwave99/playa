@@ -401,7 +401,7 @@ export function initMenu({ controllers, state, send }: InitMenuParams) {
         },
         {
           label: "Search Library",
-          accelerator: "Cmd+\\",
+          accelerator: "Cmd+F",
           click: () => send("toggleSearch"),
         },
         { type: "separator" },

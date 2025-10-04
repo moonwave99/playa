@@ -10,6 +10,7 @@ import { SearchResult } from "@/types/types";
 import Link from "./Link";
 import Cover from "./Cover";
 import List from "./List";
+import { MdOutlineSearch } from "react-icons/md";
 import cx from "clsx";
 import styles from "./SearchView.module.css";
 
@@ -43,16 +44,17 @@ export default function SearchView({ onClose }: SearchViewProps) {
 
   return (
     <div className={styles.view}>
-      <header>
+      <label>
+        <MdOutlineSearch aria-label="Search" />
         <input
           autoFocus
           ref={inputRef}
           className={styles.input}
           type="search"
-          placeholder="Search Library"
+          placeholder="Enter search term"
           {...inputHandlers}
         />
-      </header>
+      </label>
       <SearchResultsView
         currentContext={currentContext}
         setContext={setContext}
