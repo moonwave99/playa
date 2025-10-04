@@ -275,7 +275,7 @@ export function initMenu({ controllers, state, send }: InitMenuParams) {
       label: "Release",
       submenu: [
         {
-          label: "Go to artist page",
+          label: "Go to Artist page",
           accelerator: "Shift+A",
           click: () =>
             send(
@@ -295,6 +295,14 @@ export function initMenu({ controllers, state, send }: InitMenuParams) {
           click: () =>
             controllers.system.revealEntityInFinder(
               "Release",
+              state.getSelectedReleases()[0].id
+            ),
+        },
+        {
+          label: "Refresh Folder Contents",
+          accelerator: "Cmd+Shift+R",
+          click: () =>
+            controllers.release.refreshReleaseContents(
               state.getSelectedReleases()[0].id
             ),
         },
