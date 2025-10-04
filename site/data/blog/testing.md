@@ -6,6 +6,8 @@ date: 2020-02-8T00:00:00.000Z
 published: true
 ---
 
+_Note: this post refers to a [previous version of Playa](https://github.com/moonwave99/playa/releases/tag/v0.4.2)._
+
 I have to be honest: I seldom tested my applications, at least not thoroughly. This time I wanted not only to strive for good coverage, but to use a **test-driven-development** approach, at least for when the prototype reached an usable level.
 
 I will talk about:

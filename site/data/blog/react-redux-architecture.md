@@ -6,6 +6,8 @@ date: 2020-02-1T00:00:00.000Z
 published: true
 ---
 
+_Note: this post refers to a [previous version of Playa](https://github.com/moonwave99/playa/releases/tag/v0.4.2)._
+
 Many practices flourished in the React ecosystems, addressing from project files hierarchy to where and how store the app state, to components styles. Here are my choices in regard.
 
 ## The `src` organisation

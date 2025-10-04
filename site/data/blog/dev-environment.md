@@ -6,6 +6,8 @@ date: 2020-02-15T00:00:00.000Z
 published: true
 ---
 
+_Note: this post refers to a [previous version of Playa](https://github.com/moonwave99/playa/releases/tag/v0.4.2)._
+
 In this post I give an overview of the app infrastructure and the tasks I run in the development environment, from watching to testing to the build step.
 
 1. [Typescript](#typescript)

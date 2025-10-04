@@ -6,6 +6,8 @@ date: 2020-02-29T00:00:00.000Z
 published: true
 ---
 
+_Note: this post refers to a [previous version of Playa](https://github.com/moonwave99/playa/releases/tag/v0.4.2)._
+
 This week I focused mostly on **end to end testing** (_e2e_ from now on). I am fairly new to e2e, as I usually never adventures myself outside of the green pastures of unit and integration.
 
 Electron is a fairly new technology and a lot of practices are yet to settle as mature. My research prompted me with the choice between [testcafe][testcafe] and [spectron][spectron]. I gave the in-house solution a try first.
