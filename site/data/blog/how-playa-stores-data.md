@@ -4,9 +4,8 @@ slug: blog/how-playa-stores-data
 template: pages/blog/single
 date: 2020-02-22T00:00:00.000Z
 published: true
+isOld: true
 ---
-
-_Note: this post refers to a [previous version of Playa](https://github.com/moonwave99/playa/releases/tag/v0.4.2)._
 
 We all love a slick user interface that incarnates the _zeitgeist_, but without a well structured persistence layer it is of no use. Here I will give an overview of how I tried to make up for the lack of total outward slickness with sound invisible choices.
 

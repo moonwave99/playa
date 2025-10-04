@@ -77,15 +77,10 @@ const appInfo = {
 const posts = pages
   .filter((x) => x.slug.startsWith("blog") && x.published)
   .sort((a, b) => (a.date > b.date ? -1 : 1))
-  .map((x) => {
-    const $ = cheerio.load(marked(x.content));
-    const firstParagraph = $("p").eq(0).text();
-    let excerpt = firstParagraph;
-    if (firstParagraph.startsWith("Note:")) {
-      excerpt = $("p").eq(1).text();
-    }
-    return { ...x, excerpt };
-  });
+  .map((x) => ({
+    ...x,
+    excerpt: cheerio.load(marked(x.content))("p").eq(0).text(),
+  }));
 
 try {
   await render({

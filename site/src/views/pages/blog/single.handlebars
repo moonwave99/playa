@@ -2,6 +2,12 @@
   <header class="blog-post-header mb5">
     <time class="tracked ttu">{{ formatDate date }}</time>
     <h1 class="f3 f1-ns lh-solid mt4 mb4">{{ title }}</h1>
+    {{#if isOld }}
+    <p class="lh-copy i">
+      <strong>Note:</strong> this post refers to a <a
+        href="https://github.com/moonwave99/playa/releases/tag/v0.4.2">previous version of Playa</a>.
+    </p>
+    {{/if}}
   </header>
   <section class="blog-post-content">
     {{{ content }}}

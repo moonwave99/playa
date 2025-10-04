@@ -44,7 +44,7 @@
   },
   "blog": {
     "title": "Playa Devblog",
-    "description": "Here I share my dev experience",
+    "description": "Here I share my dev experience.",
     "more": {
       "newer": "Newer entries",
       "older": "Older entries"

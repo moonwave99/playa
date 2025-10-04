@@ -22,6 +22,10 @@
     {
       "name": "Prisma",
       "link": "https://prisma.io"
+    },
+    {
+      "name": "SQLite",
+      "link": "https://sqlite.org/"
     }
   ],
   "links": {

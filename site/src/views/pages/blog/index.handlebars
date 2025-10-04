@@ -1,5 +1,8 @@
 <section class="blog w-80-ns center ph3 ph0-ns pv6-ns">  
-  <h1 class="f2 f1-ns lh-solid mt5 mt4-ns mb5 black">{{ labels.blog.title }}</h1>
+  <header class="mb5">
+    <h1 class="f2 f1-ns lh-solid mt5 mt4-ns black">{{ labels.blog.title }}</h1>
+    <p class="lh-copy black">{{ labels.blog.description }}</p>
+  </header>
   <div class="flex flex-wrap">
     {{#each posts }}
     <article class="blog-post-content w-100 w-50-l pr4-l mb5">
