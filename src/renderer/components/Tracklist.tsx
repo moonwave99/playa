@@ -65,6 +65,7 @@ export default function Tracklist({
                 {tracks.map((track, index) => (
                   <TrackEntry
                     key={track.id}
+                    releaseArtistName={release.artist.name}
                     {...track}
                     isEven={index % 2 === 0}
                     onDoubleClick={onDoubleClick}
@@ -116,6 +117,7 @@ export default function Tracklist({
         <TrackEntry
           key={item.id}
           {...item}
+          releaseArtistName={release.artist.name}
           isFirst={index === 0}
           onClick={onClick}
           onDoubleClick={onDoubleClick}
@@ -130,6 +132,7 @@ export default function Tracklist({
 }
 
 type TrackEntryProps = Track & {
+  releaseArtistName: string;
   discTitle?: string;
   selected?: boolean;
   isEven?: boolean;
@@ -143,6 +146,8 @@ function TrackEntry({
   id,
   position,
   title,
+  releaseArtistName,
+  trackArtist,
   duration,
   discTitle,
   selected,
@@ -152,6 +157,17 @@ function TrackEntry({
   onDoubleClick,
   onContextMenu,
 }: TrackEntryProps) {
+  function renderTitle() {
+    if (trackArtist && trackArtist !== releaseArtistName) {
+      return (
+        <>
+          <span className={styles.trackArtist}>{trackArtist}</span> - {title}
+        </>
+      );
+    }
+    return title;
+  }
+
   return (
     <>
       {discTitle ? (
@@ -174,7 +190,7 @@ function TrackEntry({
         })}
       >
         <span className={styles.position}>{position}</span>
-        <span className={styles.title}>{title}</span>
+        <span className={styles.title}>{renderTitle()}</span>
         <span className={styles.duration}>{formatDuration(duration)}</span>
       </div>
     </>

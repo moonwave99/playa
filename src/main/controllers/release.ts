@@ -9,7 +9,6 @@ import {
   EditReleaseParam,
   ReleaseWithArtist,
   ReleaseWithArtistAndTracks,
-  Context,
   Release,
   Track,
   Artist,
@@ -394,7 +393,7 @@ export function releaseController({
     return true;
   }
 
-  async function refreshReleaseContents(id: number, context?: Context) {
+  async function refreshReleaseContents(id: number) {
     const release = await prisma.release.findFirst({
       where: { id },
       include: { artist: true, subReleases: { include: { artist: true } } },
@@ -416,10 +415,7 @@ export function releaseController({
       })
     );
 
-    send("mutate", [
-      ["releases", release.id],
-      [`${context?.entityType.toLowerCase()}s`, context?.id],
-    ]);
+    send("mutate", [["releases", release.id]]);
 
     return updatedRelease;
   }

@@ -17,6 +17,8 @@ import {
   getReleaseTitle,
   getReleaseArtist,
   sortByQueryPosition,
+  normalizeArtistDisplayName,
+  VARIOUS_ARTISTS_NAME,
 } from "@/lib/utils";
 
 type GetSearchResultParams = {
@@ -115,9 +117,29 @@ const getters: Getters = {
     prisma.track.findMany({
       take,
       where: {
-        normalizedTitle: {
-          contains: query,
-        },
+        OR: [
+          {
+            normalizedTitle: {
+              contains: query,
+            },
+          },
+          {
+            AND: [
+              {
+                trackArtist: {
+                  contains: query,
+                },
+              },
+              {
+                release: {
+                  artist: {
+                    name: VARIOUS_ARTISTS_NAME,
+                  },
+                },
+              },
+            ],
+          },
+        ],
       },
       include: {
         release: {
@@ -250,13 +272,16 @@ const transformers: Transformers = {
     },
     coverRelease: coverArtist ? getCoverRelease(coverArtist) : null,
   }),
-  track: ({ id, title, release }: TrackWithRelease) => ({
+  track: ({ id, title, trackArtist, release }: TrackWithRelease) => ({
     entityType: "SearchResult",
     type: "track" as const,
     id,
     title,
     description: "Track",
-    artist: release.artist.name,
+    artist:
+      release.artist.name !== trackArtist
+        ? trackArtist
+        : normalizeArtistDisplayName(release.artist.name),
     links: {
       track: `/releases/${release.mainReleaseId || release.id}?track_id=${id}`,
       artist: `/artists/${release.artist.id}`,

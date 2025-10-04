@@ -67,6 +67,7 @@ async function getMetadata(
   return {
     path: path.basename(filePath),
     title: data.common.title || path.basename(filePath),
+    trackArtist: data.common.artist || "",
     duration: data.format.duration || 0,
     position: data.common.track.no || index + 1,
   };

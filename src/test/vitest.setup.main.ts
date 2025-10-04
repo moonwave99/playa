@@ -4,6 +4,7 @@ import { testFsCleanup } from "@moonwave99/test-fs";
 import type { PrismaClient } from "@prisma/client";
 import { createPrismock } from "prismock";
 import { clearPrisma } from "./prisma-utils";
+import { parsePath } from "@/main/utils";
 
 vi.mock("@prisma/client-generated", async () => {
   const actual = await vi.importActual<PrismaClient>(
@@ -46,9 +47,14 @@ vi.mock("electron", () => {
 
 vi.mock("music-metadata", () => ({
   parseFile: async (filePath: string) => {
+    const { artist } = parsePath(
+      filePath.split("LIBRARY_PATH").at(-1).split("/").slice(0, -1).join("/")
+    );
+
     const index = parseInt(path.basename(filePath).split("-").at(0));
     return Promise.resolve({
       common: {
+        artist: filePath.includes("Various") ? "Track Artist" : artist.name,
         title: `Track ${index}`,
         track: {
           no: index,

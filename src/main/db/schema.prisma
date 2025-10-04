@@ -64,6 +64,7 @@ model Track {
   updatedAt       DateTime   @updatedAt
   title           String
   normalizedTitle String     @default("")
+  trackArtist     String?    @default("")
   hash            String     @unique
   path            String
   duration        Int

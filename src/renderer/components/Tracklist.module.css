@@ -76,6 +76,10 @@
   }
 }
 
+.trackArtist {
+  color: var(--secondary-color);
+}
+
 .tracklist:not(.isNavigable) .tracklistEntry:not(:last-child) {
   margin-bottom: 4px;
 }

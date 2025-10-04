@@ -1,10 +1,11 @@
-import { useEffect, useRef } from 'react';
-import { useNavigate, useSearchParams } from 'react-router';
+import { useEffect, useRef } from "react";
+import { useNavigate, useSearchParams } from "react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import api from '../api';
+import api from "../api";
 import type {
   HasId,
-  ReleaseWithArtistAndTracksAndSubreleases, ReleaseWithArtistAndTracksAndSubreleasesAndCollections
+  ReleaseWithArtistAndTracksAndSubreleases,
+  ReleaseWithArtistAndTracksAndSubreleasesAndCollections,
 } from "@/types/types";
 
 type UseReleaseParams = {
@@ -27,16 +28,24 @@ type UseRelease = {
 export default function useRelease({
   id,
   refreshOnLoad,
-  selectOnLoad
+  selectOnLoad,
 }: UseReleaseParams): UseRelease {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const firstRefresh = useRef(true);
   const [params] = useSearchParams();
 
-  const { isPending, error, refetch, data: release } = useQuery({
+  const {
+    isPending,
+    error,
+    refetch,
+    data: release,
+  } = useQuery({
     queryKey: ["releases", id],
-    queryFn: () => api.release.getRelease(id),
+    queryFn: () =>
+      api.release.getRelease(
+        id
+      ) as unknown as Promise<ReleaseWithArtistAndTracksAndSubreleasesAndCollections>,
   });
 
   useEffect(() => {
@@ -44,10 +53,15 @@ export default function useRelease({
       return;
     }
     api.state.selectReleases([release]);
-  }, [release, selectOnLoad])
+  }, [release, selectOnLoad]);
 
   useEffect(() => {
-    if (!refreshOnLoad || !firstRefresh.current || !release || hasTracks(release)) {
+    if (
+      !refreshOnLoad ||
+      !firstRefresh.current ||
+      !release ||
+      hasTracks(release)
+    ) {
       return;
     }
     firstRefresh.current = false;
@@ -62,39 +76,43 @@ export default function useRelease({
     [
       ["releases", id],
       ["artists", release.artist.id],
-      ...release.collections.map((x: HasId) => ['collections', x.id]),
-    ].forEach(queryKey => queryClient.invalidateQueries({ queryKey }));
+      ...release.collections.map((x: HasId) => ["collections", x.id]),
+    ].forEach((queryKey) => queryClient.invalidateQueries({ queryKey }));
 
     queryClient.invalidateQueries({
-      predicate: ({ queryKey }) => queryKey.join(':').startsWith('artists:search')
+      predicate: ({ queryKey }) =>
+        queryKey.join(":").startsWith("artists:search"),
     });
   }
 
   const removeFromCollection = useMutation({
-    mutationFn: (collection_id: number) => api.collection.removeReleasesFromCollection(collection_id, [id]),
-    onSuccess
+    mutationFn: (collection_id: number) =>
+      api.collection.removeReleasesFromCollection(collection_id, [id]),
+    onSuccess,
   });
 
   const addAdditionalArtist = useMutation({
-    mutationFn: (artist_id: number) => api.release.addAdditionalArtist({ release_id: id, artist_id }),
-    onSuccess
+    mutationFn: (artist_id: number) =>
+      api.release.addAdditionalArtist({ release_id: id, artist_id }),
+    onSuccess,
   });
 
   const removeAdditionalArtist = useMutation({
-    mutationFn: (artist_id: number) => api.release.removeAdditionalArtist({ release_id: id, artist_id }),
-    onSuccess
+    mutationFn: (artist_id: number) =>
+      api.release.removeAdditionalArtist({ release_id: id, artist_id }),
+    onSuccess,
   });
 
   return {
     release,
     isPending,
     error,
-    selectedTrackId: +params.get('track_id'),
+    selectedTrackId: +params.get("track_id"),
     gotoArtistPage,
     removeFromCollection: removeFromCollection.mutate,
     addAdditionalArtist: addAdditionalArtist.mutate,
     removeAdditionalArtist: removeAdditionalArtist.mutate,
-  }
+  };
 }
 
 function hasTracks(release: ReleaseWithArtistAndTracksAndSubreleases) {
