@@ -17,8 +17,14 @@
   }
 }
 
-.latestReleases {
+.latestReleases,
+.latestReleasesLoader {
   min-height: 28rem;
+}
+
+.entityListSection,
+.entityListSectionLoader {
+  min-height: 20rem;
 }
 
 .entityListSection {
@@ -27,7 +33,6 @@
   flex-direction: column;
   gap: 1rem;
   padding: 1rem;
-  min-height: 20rem;
 }
 
 .releaseList {

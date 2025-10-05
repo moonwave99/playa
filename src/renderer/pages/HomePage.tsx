@@ -73,7 +73,7 @@ function LatestReleasesView({ count = 5 }: LatestReleasesViewProps) {
   const { isPending, error, releases } = useReleases({ pageSize: count });
 
   if (isPending) {
-    return <Loading />;
+    return <Loading className={homepageStyles.latestReleasesLoader} />;
   }
 
   if (error) {
@@ -105,7 +105,7 @@ function LatestReleasesView({ count = 5 }: LatestReleasesViewProps) {
 
   return (
     <section className={cx(styles.section, homepageStyles.latestReleases)}>
-      <h2 className={homepageStyles.title}>
+      <h1 className={homepageStyles.title}>
         <Icon isFor="release" />
         Latest Releases
         <Link
@@ -114,7 +114,7 @@ function LatestReleasesView({ count = 5 }: LatestReleasesViewProps) {
         >
           See All
         </Link>
-      </h2>
+      </h1>
       {!releases?.length ? (
         <div className={styles.placeholder}>There are no Releases yet.</div>
       ) : (
@@ -161,7 +161,7 @@ function LatestEntriesView<T extends Item>({
   entries,
 }: LatestEntriesViewProps<T>) {
   if (isPending) {
-    return <Loading />;
+    return <Loading className={homepageStyles.entityListSectionLoader} />;
   }
 
   if (error) {
