@@ -104,7 +104,7 @@ function LatestReleasesView({ count = 5 }: LatestReleasesViewProps) {
   };
 
   return (
-    <section className={styles.section}>
+    <section className={cx(styles.section, homepageStyles.latestReleases)}>
       <h2 className={homepageStyles.title}>
         <Icon isFor="release" />
         Latest Releases
@@ -116,7 +116,7 @@ function LatestReleasesView({ count = 5 }: LatestReleasesViewProps) {
         </Link>
       </h2>
       {!releases?.length ? (
-        <div className={styles.placeholder}>There are no releases yet.</div>
+        <div className={styles.placeholder}>There are no Releases yet.</div>
       ) : (
         <List
           shouldPreventSpace
@@ -183,7 +183,9 @@ function LatestEntriesView<T extends Item>({
         </Link>
       </h3>
       {!entries?.length ? (
-        <div className={styles.placeholder}>There are no {entityName} yet.</div>
+        <div className={styles.placeholder}>
+          There are no {capitalize(entityName)} yet.
+        </div>
       ) : (
         <ul className={homepageStyles.entityList}>
           {entries.map((x) => (

@@ -1,6 +1,6 @@
 import { useParams, Navigate, useNavigate } from "react-router";
 import api from "../api";
-import type { ArtistWithReleases } from "@/types/types";
+import type { ArtistWithReleasesAndAppearances } from "@/types/types";
 import useGroup from "../query/useGroup";
 import { compactColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
 import { useClearSelectionOnLeave } from "@/renderer/hooks/useApi";
@@ -32,7 +32,10 @@ export default function GroupPage() {
     return <Navigate replace to="/groups" />;
   }
 
-  function onDelete(selection: ArtistWithReleases[], event: KeyboardEvent) {
+  function onDelete(
+    selection: ArtistWithReleasesAndAppearances[],
+    event: KeyboardEvent
+  ) {
     if (!event.metaKey) {
       return;
     }
@@ -43,7 +46,7 @@ export default function GroupPage() {
     <div className={styles.page}>
       {!group?.artists.length ? (
         <div className={styles.placeholder}>
-          There are no artists in this group yet.
+          There are no Artists in this Group yet.
         </div>
       ) : (
         <List
@@ -52,7 +55,7 @@ export default function GroupPage() {
           className={styles.list}
           columnsConfig={compactColumnsConfig}
           estimateSize={estimateListCardSize}
-          onEnter={(artist: ArtistWithReleases) =>
+          onEnter={(artist: ArtistWithReleasesAndAppearances) =>
             navigate(getArtistLink(artist))
           }
           onBackspace={onDelete}

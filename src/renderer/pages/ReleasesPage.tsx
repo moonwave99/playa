@@ -73,7 +73,7 @@ export default function ReleasesPage() {
   return (
     <div className={styles.page}>
       {!releases?.length ? (
-        <div className={styles.placeholder}>There are no releases yet.</div>
+        <div className={styles.placeholder}>There are no Releases yet.</div>
       ) : (
         <List
           onUnmount={storeScrollInfo}

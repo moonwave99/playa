@@ -72,7 +72,7 @@ type WithArtist = {
 };
 
 type WithArtistsAndReleases = {
-  artists: ArtistWithReleases[];
+  artists: ArtistWithReleasesAndAppearances[];
 };
 
 type WithTracks = {

@@ -45,7 +45,11 @@ function AlphabeticalArtistsView() {
     return <ErrorView error={error} />;
   }
 
-  return <AlphabeticalList items={artists} />;
+  return !artists.length ? (
+    <div className={styles.placeholder}>There are no Artists yet.</div>
+  ) : (
+    <AlphabeticalList items={artists} />
+  );
 }
 
 function LatestArtistsView() {
@@ -72,7 +76,7 @@ function LatestArtistsView() {
   }
 
   return !artists?.length ? (
-    <div className={styles.placeholder}>There are no artists yet.</div>
+    <div className={styles.placeholder}>There are no Artists yet.</div>
   ) : (
     <List
       shouldPreventSpace

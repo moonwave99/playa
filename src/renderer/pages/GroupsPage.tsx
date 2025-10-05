@@ -39,7 +39,7 @@ export default function LatestGroups() {
   return (
     <div className={styles.page}>
       {!groups?.length ? (
-        <div className={styles.placeholder}>There are no groups yet.</div>
+        <div className={styles.placeholder}>There are no Groups yet.</div>
       ) : (
         <List
           shouldPreventSpace

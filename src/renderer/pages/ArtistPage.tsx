@@ -63,7 +63,7 @@ export default function ArtistPage() {
       <ListCard isSingle item={artist} onColorChange={setUseDarkText} />
       {!artist?.releases.length ? (
         <div className={styles.placeholder}>
-          There are no releases for this artist yet.
+          There are no Releases for this Artist yet.
         </div>
       ) : (
         <ReleaseList
