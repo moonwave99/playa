@@ -116,5 +116,5 @@ loggerConfig.json
 data.db
 data.db-journal
 
-# Playwring
-.last-run.json
+# Playwright
+test-results
