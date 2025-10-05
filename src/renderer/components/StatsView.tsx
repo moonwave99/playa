@@ -2,7 +2,6 @@ import useStats from "../query/useStats";
 import Loading from "./Loading";
 import ErrorView from "./ErrorView";
 import ImportActivityView from "./ImportActivityView";
-import Link from "./Link";
 import styles from "./StatsView.module.css";
 import type { Stats } from "@/types/types";
 
@@ -48,19 +47,12 @@ export default function StatsView() {
       <section>
         <h2 className={styles.title}>Your Library Stats</h2>
         <ul className={styles.stats}>
-          {sortedStatKeys.map(({ key, link }) => (
+          {sortedStatKeys.map(({ key }) => (
             <li key={key}>
-              {link ? (
-                <Link to={link} className={styles.entry}>
-                  <span>{`${key}s`}</span>
-                  <span>{stats[key].toLocaleString()}</span>
-                </Link>
-              ) : (
-                <span className={styles.entry}>
-                  <span>{`${key}s`}</span>
-                  <span>{stats[key].toLocaleString()}</span>
-                </span>
-              )}
+              <span className={styles.entry}>
+                <span>{`${key}s`}</span>
+                <span>{stats[key].toLocaleString()}</span>
+              </span>
             </li>
           ))}
         </ul>
