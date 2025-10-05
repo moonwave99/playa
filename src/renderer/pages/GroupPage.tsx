@@ -43,7 +43,7 @@ export default function GroupPage() {
   }
 
   return (
-    <div className={styles.page}>
+    <div className={styles.page} data-testid="GroupPage">
       {!group?.artists.length ? (
         <div className={styles.placeholder}>
           There are no Artists in this Group yet.

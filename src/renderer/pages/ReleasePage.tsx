@@ -9,45 +9,49 @@ import Loading from "@/renderer/components/Loading";
 import styles from "./Page.module.css";
 
 export default function ReleasePage() {
-    const { id } = useParams();
+  const { id } = useParams();
 
-    const { isPending, error, release, selectedTrackId, gotoArtistPage } =
-        useRelease({
-            id: +id,
-            selectOnLoad: true,
-            refreshOnLoad: true,
-        });
-
-    useKeyManager({
-        context: "list:release",
-        handlers: {
-            a: gotoArtistPage,
-        },
+  const { isPending, error, release, selectedTrackId, gotoArtistPage } =
+    useRelease({
+      id: +id,
+      selectOnLoad: true,
+      refreshOnLoad: true,
     });
 
-    if (isPending) {
-        return <Loading />;
-    }
+  useKeyManager({
+    context: "list:release",
+    handlers: {
+      a: gotoArtistPage,
+    },
+  });
 
-    if (error) {
-        return <ErrorView error={error} />;
-    }
+  if (isPending) {
+    return <Loading />;
+  }
 
-    if (!release) {
-        return <Navigate replace to="/" />;
-    }
+  if (error) {
+    return <ErrorView error={error} />;
+  }
 
-    function onContextMenu() {
-        api.menu.release([release]);
-    }
+  if (!release) {
+    return <Navigate replace to="/" />;
+  }
 
-    return (
-        <div className={styles.page} onContextMenu={onContextMenu}>
-            <ReleaseWithTracklistView
-                isSingle
-                release={release}
-                selectedTrackId={selectedTrackId}
-            />
-        </div>
-    );
+  function onContextMenu() {
+    api.menu.release([release]);
+  }
+
+  return (
+    <div
+      className={styles.page}
+      onContextMenu={onContextMenu}
+      data-testid="ReleasePage"
+    >
+      <ReleaseWithTracklistView
+        isSingle
+        release={release}
+        selectedTrackId={selectedTrackId}
+      />
+    </div>
+  );
 }

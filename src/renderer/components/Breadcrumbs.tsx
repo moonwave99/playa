@@ -70,6 +70,9 @@ export default function BreadCrumbs({
         [styles.useDarkText]: useDarkText,
         [styles.isDetailPage]: isDetailPage,
       })}
+      data-testid="breadcrumbs"
+      role="navigation"
+      aria-label="Breadcrumbs"
     >
       {breadcrumbs.map((entry, index) => (
         <li key={index}>

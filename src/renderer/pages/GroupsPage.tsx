@@ -37,7 +37,7 @@ export default function LatestGroups() {
   }
 
   return (
-    <div className={styles.page}>
+    <div className={styles.page} data-testid="GroupsPage">
       {!groups?.length ? (
         <div className={styles.placeholder}>There are no Groups yet.</div>
       ) : (

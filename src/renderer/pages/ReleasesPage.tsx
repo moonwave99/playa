@@ -71,7 +71,7 @@ export default function ReleasesPage() {
   };
 
   return (
-    <div className={styles.page}>
+    <div className={styles.page} data-testid="ReleasesPage">
       {!releases?.length ? (
         <div className={styles.placeholder}>There are no Releases yet.</div>
       ) : (

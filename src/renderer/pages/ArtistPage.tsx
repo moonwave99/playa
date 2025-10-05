@@ -59,7 +59,11 @@ export default function ArtistPage() {
   };
 
   return (
-    <div className={styles.page} onContextMenu={() => api.menu.artist(artist)}>
+    <div
+      className={styles.page}
+      onContextMenu={() => api.menu.artist(artist)}
+      data-testid="ArtistPage"
+    >
       <ListCard isSingle item={artist} onColorChange={setUseDarkText} />
       {!artist?.releases.length ? (
         <div className={styles.placeholder}>

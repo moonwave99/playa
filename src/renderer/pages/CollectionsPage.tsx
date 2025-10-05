@@ -37,7 +37,7 @@ export default function LatestCollections() {
   }
 
   return (
-    <div className={styles.page}>
+    <div className={styles.page} data-testid="CollectionsPage">
       {!collections?.length ? (
         <div className={styles.placeholder}>There are no Collections yet.</div>
       ) : (

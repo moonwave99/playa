@@ -362,12 +362,14 @@ export function initMenu({ controllers, state, send }: InitMenuParams) {
       id: "navigate",
       label: "Navigate",
       submenu: [
-        ...navigateMenu.map(({ label, accelerator, link }) => ({
+        ...navigateMenu.map(({ id, label, accelerator, link }) => ({
+          id,
           label,
           accelerator,
           click: () => send("navigate", link),
         })),
         {
+          id: "navigate-settings",
           label: "Settings",
           accelerator: "cmd+,",
           click: () => send("openSettings"),

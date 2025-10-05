@@ -36,52 +36,56 @@
     position: absolute;
     top: 3rem;
     right: 3.5rem;
+    list-style: none;
+    .entry {
+      line-height: 2.5rem;
+      display: flex;
+      align-items: center;
+      padding: 0 1rem;
+      font-size: 0.8rem;
+      gap: 0.5rem;
+      &:hover {
+        background-color: var(--accent-color);
+      }
+
+      &.hasFocus {
+        background-color: var(--accent-color);
+        outline-color: var(--accent-color);
+        border: none;
+      }
+
+      a,
+      button {
+        flex: 1;
+        &:focus {
+          outline: none;
+        }
+      }
+
+      button {
+        background-color: transparent;
+        color: var(--primary-color);
+        appearance: none;
+        border: none;
+        line-height: 2.5rem;
+        text-align: left;
+
+        &:hover {
+          background-color: var(--accent-color);
+          cursor: pointer;
+        }
+      }
+
+      .accelerator {
+        margin-left: auto;
+        font-size: 0.7rem;
+      }
+    }
   }
 
   &.isOpen {
     .entries {
       display: block;
-    }
-  }
-}
-
-.link {
-  line-height: 2.5rem;
-  display: flex;
-  align-items: center;
-  padding: 0 1rem;
-  font-size: 0.8rem;
-  gap: 0.5rem;
-
-  &.hasFocus {
-    background-color: var(--accent-color);
-    outline-color: var(--accent-color);
-    border: none;
-  }
-
-  .accelerator {
-    margin-left: auto;
-    font-size: 0.7rem;
-  }
-
-  &:hover {
-    background-color: var(--accent-color);
-  }
-
-  &:is(button) {
-    background-color: transparent;
-    color: var(--primary-color);
-    appearance: none;
-    border: none;
-    width: 100%;
-
-    &:hover {
-      background-color: var(--accent-color);
-      cursor: pointer;
-    }
-
-    &:focus {
-      outline-color: var(--accent-color);
     }
   }
 }

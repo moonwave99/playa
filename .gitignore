@@ -115,3 +115,6 @@ loggerConfig.json
 # SQLite
 data.db
 data.db-journal
+
+# Playwring
+.last-run.json

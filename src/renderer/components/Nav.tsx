@@ -74,6 +74,7 @@ export default function Nav({ isDetailPage }: NavProps) {
         [styles.isDetailPage]: isDetailPage,
       })}
       ref={ref}
+      data-testid="nav"
     >
       <Breadcrumbs isDetailPage={isDetailPage} useDarkText={useDarkText} />
       <div className={styles.buttons}>
@@ -117,46 +118,42 @@ export default function Nav({ isDetailPage }: NavProps) {
           <MdOutlineSearch />
         </button>
       </div>
-      <div className={styles.entries} ref={ref}>
-        {navMap.map(({ link, label, type, accelerator, section }, index) =>
-          type === "link" ? (
-            <NavLink
-              data-nav-id={index}
-              key={link}
-              to={link}
-              className={cx(styles.link, {
-                [styles.hasFocus]: index === currentIndex,
-              })}
-              onClick={(event: MouseEvent) => {
-                if (event.metaKey) {
-                  event.preventDefault();
-                }
-                setNavOpen(false);
-              }}
-            >
-              <Icon isFor={section} />
-              {label}
-              <span className={styles.accelerator}>{accelerator}</span>
-            </NavLink>
-          ) : (
-            <button
-              data-nav-id={index}
-              key={link}
-              className={cx(styles.link, {
-                [styles.hasFocus]: index === currentIndex,
-              })}
-              onClick={() => {
-                setModalContents({ name: link });
-                setNavOpen(false);
-              }}
-            >
-              <Icon isFor={section} />
-              {label}
-              <span className={styles.accelerator}>{accelerator}</span>
-            </button>
-          )
-        )}
-      </div>
+      <ul className={styles.entries} ref={ref}>
+        {navMap.map(({ link, label, type, accelerator, section }, index) => (
+          <li
+            key={link}
+            className={cx(styles.entry, {
+              [styles.hasFocus]: index === currentIndex,
+            })}
+          >
+            <Icon isFor={section} />
+            {type === "link" ? (
+              <NavLink
+                aria-label={`Go to the ${label} page`}
+                to={link}
+                onClick={(event: MouseEvent) => {
+                  if (event.metaKey) {
+                    event.preventDefault();
+                  }
+                  setNavOpen(false);
+                }}
+              >
+                {label}
+              </NavLink>
+            ) : (
+              <button
+                onClick={() => {
+                  setModalContents({ name: link });
+                  setNavOpen(false);
+                }}
+              >
+                {label}
+              </button>
+            )}
+            <span className={styles.accelerator}>{accelerator}</span>
+          </li>
+        ))}
+      </ul>
     </nav>
   );
 }

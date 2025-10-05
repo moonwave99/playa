@@ -39,7 +39,7 @@ export default function HomePage() {
   const groupData = useGroups({ pageSize });
 
   return (
-    <div className={styles.page}>
+    <div className={styles.page} data-testid="HomePage">
       <LatestReleasesView />
       <div className={homepageStyles.wrapper}>
         <LatestEntriesView
@@ -105,16 +105,18 @@ function LatestReleasesView({ count = 5 }: LatestReleasesViewProps) {
 
   return (
     <section className={cx(styles.section, homepageStyles.latestReleases)}>
-      <h1 className={homepageStyles.title}>
-        <Icon isFor="release" />
-        Latest Releases
+      <header className={homepageStyles.header}>
+        <h1>
+          <Icon isFor="release" />
+          Latest Releases
+        </h1>
         <Link
           className={cx(formStyles.button, formStyles.primary)}
           to="/releases"
         >
           See All
         </Link>
-      </h1>
+      </header>
       {!releases?.length ? (
         <div className={styles.placeholder}>There are no Releases yet.</div>
       ) : (
@@ -172,16 +174,18 @@ function LatestEntriesView<T extends Item>({
 
   return (
     <section className={homepageStyles.entityListSection}>
-      <h3 className={homepageStyles.title}>
-        <Icon isFor={entity} />
-        Latest {entityName}
+      <header className={homepageStyles.header}>
+        <h3>
+          <Icon isFor={entity} />
+          Latest {entityName}
+        </h3>
         <Link
           className={cx(formStyles.button, formStyles.primary)}
           to={`/${entity}s`}
         >
           See All
         </Link>
-      </h3>
+      </header>
       {!entries?.length ? (
         <div className={styles.placeholder}>
           There are no {capitalize(entityName)} yet.

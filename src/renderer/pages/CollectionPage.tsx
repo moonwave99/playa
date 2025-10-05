@@ -58,13 +58,14 @@ export default function CollectionPage() {
   };
 
   return (
-    <div className={styles.page}>
+    <div className={styles.page} data-testid="CollectionPage">
       {!collection?.releases.length ? (
         <div className={styles.placeholder}>
           There are no releases in this collection yet.
         </div>
       ) : (
         <ReleaseList
+          context={["collection"]}
           releases={collection.releases}
           onDelete={removeReleasesFromCollection}
           onContextMenu={onContextMenu}

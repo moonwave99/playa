@@ -24,7 +24,7 @@ export default function ArtistsPage() {
   });
 
   return (
-    <div className={styles.page}>
+    <div className={styles.page} data-testid="ArtistsPage">
       {artistsViewMode === "alphabetical" ? (
         <AlphabeticalArtistsView />
       ) : (
