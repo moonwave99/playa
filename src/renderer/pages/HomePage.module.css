@@ -3,6 +3,7 @@
   align-items: center;
   justify-content: start;
   gap: 0.5rem;
+  user-select: none;
   h1,
   h3,
   h3 {

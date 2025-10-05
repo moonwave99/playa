@@ -131,6 +131,7 @@ export default function Nav({ isDetailPage }: NavProps) {
               <NavLink
                 aria-label={`Go to the ${label} page`}
                 to={link}
+                onDragStart={(event) => event.preventDefault()}
                 onClick={(event: MouseEvent) => {
                   if (event.metaKey) {
                     event.preventDefault();
