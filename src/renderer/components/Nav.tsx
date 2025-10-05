@@ -137,6 +137,7 @@ export default function Nav({ isDetailPage }: NavProps) {
                   }
                   setNavOpen(false);
                 }}
+                onFocus={() => setCurrentIndex(index)}
               >
                 {label}
               </NavLink>
@@ -146,6 +147,7 @@ export default function Nav({ isDetailPage }: NavProps) {
                   setModalContents({ name: link });
                   setNavOpen(false);
                 }}
+                onFocus={() => setCurrentIndex(index)}
               >
                 {label}
               </button>
