@@ -54,6 +54,30 @@
   }
 }
 
+.checkbox {
+  border-radius: 0.25rem;
+  border: 1px solid var(--tertiary-color);
+  background-color: var(--background-color);
+  height: 2rem;
+  width: 2rem;
+  display: grid;
+  place-content: center;
+  appearance: none;
+
+  &::before {
+    content: "";
+    width: 1.5em;
+    height: 1.5em;
+    transform: scale(0);
+    transition: 120ms transform ease-in-out;
+    box-shadow: inset 1em 1em var(--accent-color);
+  }
+
+  &:checked::before {
+    transform: scale(1);
+  }
+}
+
 .button {
   font-size: 0.75rem;
   line-height: 2rem;

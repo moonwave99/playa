@@ -14,7 +14,7 @@ export function initSettings() {
 
 export function getSetting(key: string) {
   const value = settings.getSync(key);
-  if (!value) {
+  if (typeof value === "undefined") {
     throw new Error(`Cannot find ${key} in settings`);
   }
   return value;

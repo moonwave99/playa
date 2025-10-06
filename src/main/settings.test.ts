@@ -51,6 +51,15 @@ describe("getSetting", () => {
       `Cannot find NONEXISTING in settings`
     );
   });
+
+  it("should not throw if setting by given key is found but has a false value", () => {
+    initSettings();
+    setSettings({
+      SOME_VALUE: false,
+    });
+    expect(getSetting("SOME_VALUE")).toBe(false);
+    expect(() => getSetting("SOME_VALUE")).not.toThrowError();
+  });
 });
 
 describe("setSetting", () => {
