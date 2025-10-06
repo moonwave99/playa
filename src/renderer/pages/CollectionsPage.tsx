@@ -1,19 +1,21 @@
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 import { compactColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
-import api from "../api";
+import api from "@/renderer/api";
 import { getCollectionLink } from "@/lib/links";
 import { estimateListCardSize } from "@/lib/utils";
 import useCollections from "@/renderer/query/useCollections";
 import useRestoreListPosition from "@/renderer/hooks/useRestoreListPosition";
 import { CollectionWithReleases } from "@/types/types";
 import Loading from "@/renderer/components/Loading";
-import ErrorView from "../components/ErrorView";
+import ErrorView from "@/renderer/components/ErrorView";
 import List from "@/renderer/components/List";
 import ListCard from "@/renderer/components/ListCard";
 
 import styles from "./Page.module.css";
 
 export default function LatestCollections() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { isPending, error, collections, deleteCollections } = useCollections();
 
@@ -39,7 +41,9 @@ export default function LatestCollections() {
   return (
     <div className={styles.page} data-testid="CollectionsPage">
       {!collections?.length ? (
-        <div className={styles.placeholder}>There are no Collections yet.</div>
+        <div className={styles.placeholder}>
+          {t("placeholders.emptyList", { entity: "Collections" })}
+        </div>
       ) : (
         <List
           shouldPreventSpace

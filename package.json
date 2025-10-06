@@ -1,5 +1,6 @@
 {
   "name": "playa",
+  "description": "The music manager that thinks in albums",
   "productName": "Playa",
   "version": "0.5.0",
   "repository": {

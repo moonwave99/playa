@@ -1,19 +1,21 @@
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { compactColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
-import api from "../api";
+import api from "@/renderer/api";
 import { getGroupLink } from "@/lib/links";
 import { estimateListCardSize } from "@/lib/utils";
 import useGroups from "@/renderer/query/useGroups";
 import useRestoreListPosition from "@/renderer/hooks/useRestoreListPosition";
 import { GroupWithArtists } from "@/types/types";
 import Loading from "@/renderer/components/Loading";
-import ErrorView from "../components/ErrorView";
+import ErrorView from "@/renderer/components/ErrorView";
 import List from "@/renderer/components/List";
 import ListCard from "@/renderer/components/ListCard";
 
 import styles from "./Page.module.css";
 
 export default function LatestGroups() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { isPending, error, groups, deleteGroups } = useGroups();
 
@@ -39,7 +41,11 @@ export default function LatestGroups() {
   return (
     <div className={styles.page} data-testid="GroupsPage">
       {!groups?.length ? (
-        <div className={styles.placeholder}>There are no Groups yet.</div>
+        <div className={styles.placeholder}>
+          {t("placeholders.emptyList", {
+            entity: "Groups",
+          })}
+        </div>
       ) : (
         <List
           shouldPreventSpace

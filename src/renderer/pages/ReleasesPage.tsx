@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 import type {
   HasId,
   Release,
@@ -7,6 +8,7 @@ import type {
 } from "@/types/types";
 import api from "@/renderer/api";
 import useStore from "@/renderer/store";
+import useRestoreListPosition from "@/renderer/hooks/useRestoreListPosition";
 import { releaseColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
 import { withPrevent } from "@/renderer/hooks/useKeyboardManager";
 import useReleases from "@/renderer/query/useReleases";
@@ -14,14 +16,14 @@ import { useClearSelectionOnLeave } from "@/renderer/hooks/useApi";
 import { getReleaseLink } from "@/lib/links";
 import { getReleaseContextMenuParams } from "@/lib/utils";
 import Loading from "@/renderer/components/Loading";
-import ErrorView from "../components/ErrorView";
+import ErrorView from "@/renderer/components/ErrorView";
 import List from "@/renderer/components/List";
 import ReleaseView from "@/renderer/components/ReleaseView";
 
 import styles from "./Page.module.css";
-import useRestoreListPosition from "../hooks/useRestoreListPosition";
 
 export default function ReleasesPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { setModalContents } = useStore();
   const {
@@ -73,7 +75,9 @@ export default function ReleasesPage() {
   return (
     <div className={styles.page} data-testid="ReleasesPage">
       {!releases?.length ? (
-        <div className={styles.placeholder}>There are no Releases yet.</div>
+        <div className={styles.placeholder}>
+          {t("placeholders.emptyList", { entity: "Releases" })}
+        </div>
       ) : (
         <List
           onUnmount={storeScrollInfo}

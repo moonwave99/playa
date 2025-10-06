@@ -43,7 +43,8 @@
     }
   },
   "placeholders": {
-    "emptyList": "There are no {{entity}} yet."
+    "emptyList": "There are no {{entity}} yet.",
+    "emptyListForContainer": "There are no {{entity}} for this {{container}} yet."
   },
   "pages": {
     "HomePage": {

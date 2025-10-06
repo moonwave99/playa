@@ -12,8 +12,10 @@ import Loading from "@/renderer/components/Loading";
 import ErrorView from "../components/ErrorView";
 import styles from "./Page.module.css";
 import { withoutShift } from "../hooks/useKeyboardManager";
+import { useTranslation } from "react-i18next";
 
 export default function CollectionPage() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const {
     collection,
@@ -61,7 +63,10 @@ export default function CollectionPage() {
     <div className={styles.page} data-testid="CollectionPage">
       {!collection?.releases.length ? (
         <div className={styles.placeholder}>
-          There are no releases in this collection yet.
+          {t("placeholders.emptyListForContainer", {
+            entity: "Releases",
+            container: "Collection",
+          })}
         </div>
       ) : (
         <ReleaseList

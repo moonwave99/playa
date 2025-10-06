@@ -1,19 +1,21 @@
 import { useParams, Navigate, useNavigate } from "react-router";
-import api from "../api";
+import { useTranslation } from "react-i18next";
+import api from "@/renderer/api";
 import type { ArtistWithReleasesAndAppearances } from "@/types/types";
 import useGroup from "../query/useGroup";
 import { compactColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
 import { useClearSelectionOnLeave } from "@/renderer/hooks/useApi";
 import { getArtistLink } from "@/lib/links";
 import { estimateListCardSize } from "@/lib/utils";
-import List from "../components/List";
-import ListCard from "../components/ListCard";
+import List from "@/renderer/components/List";
+import ListCard from "@/renderer/components/ListCard";
 import Loading from "@/renderer/components/Loading";
 import ErrorView from "../components/ErrorView";
 
 import styles from "./Page.module.css";
 
 export default function GroupPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { id } = useParams();
   const { group, isPending, error, removeArtistsFromGroup } = useGroup(+id);
@@ -46,7 +48,10 @@ export default function GroupPage() {
     <div className={styles.page} data-testid="GroupPage">
       {!group?.artists.length ? (
         <div className={styles.placeholder}>
-          There are no Artists in this Group yet.
+          {t("placeholders.emptyListForContainer", {
+            entity: "Artists",
+            container: "Group",
+          })}
         </div>
       ) : (
         <List

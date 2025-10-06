@@ -1,9 +1,12 @@
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 import { compactColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
 import useArtists from "@/renderer/query/useArtists";
 import useAlphabeticalArtists from "@/renderer/query/useAlphabeticalArtists";
 import { useApi } from "@/renderer/hooks/useApi";
-import api from "../api";
+import api from "@/renderer/api";
+import useStore from "@/renderer/store";
+import useRestoreListPosition from "@/renderer/hooks/useRestoreListPosition";
 import { getArtistLink } from "@/lib/links";
 import { estimateListCardSize } from "@/lib/utils";
 import ErrorView from "@/renderer/components/ErrorView";
@@ -13,8 +16,6 @@ import ListCard from "@/renderer/components/ListCard";
 import AlphabeticalList from "../components/AlphabeticalList";
 
 import styles from "./Page.module.css";
-import useStore from "../store";
-import useRestoreListPosition from "../hooks/useRestoreListPosition";
 
 export default function ArtistsPage() {
   const { artistsViewMode, toggleViewMode } = useStore();
@@ -35,6 +36,7 @@ export default function ArtistsPage() {
 }
 
 function AlphabeticalArtistsView() {
+  const { t } = useTranslation();
   const { artists, error, isPending } = useAlphabeticalArtists();
 
   if (isPending) {
@@ -46,13 +48,16 @@ function AlphabeticalArtistsView() {
   }
 
   return !artists.length ? (
-    <div className={styles.placeholder}>There are no Artists yet.</div>
+    <div className={styles.placeholder}>
+      {t("placeholders.emptyList", { artist: "Artists" })}
+    </div>
   ) : (
     <AlphabeticalList items={artists} />
   );
 }
 
 function LatestArtistsView() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const {
     artists,
@@ -76,7 +81,9 @@ function LatestArtistsView() {
   }
 
   return !artists?.length ? (
-    <div className={styles.placeholder}>There are no Artists yet.</div>
+    <div className={styles.placeholder}>
+      {t("placeholders.emptyList", { artist: "Artists" })}
+    </div>
   ) : (
     <List
       shouldPreventSpace
