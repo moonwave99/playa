@@ -27,6 +27,7 @@ export default function useImportData<T extends HTMLElement>({
           return;
         }
         setDone(true);
+        setModalFixed(false);
         if (!closeAfter) {
           return;
         }
