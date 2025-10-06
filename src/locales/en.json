@@ -1,0 +1,28 @@
+{
+  "nav": {
+    "common": {
+      "actions": {
+        "toggleMenu": "Toggle Menu",
+        "openSearch": "Open Search"
+      }
+    },
+    "release": {
+      "actions": {
+        "setGridViewMode": "Show Grid View",
+        "setListViewMode": "Show List View",
+        "setCompactViewMode": "Show Compact View"
+      }
+    },
+    "artist": {
+      "actions": {
+        "showLatestArtists": "Show latest Artists",
+        "showArtistsList": "Show Artist List"
+      }
+    },
+    "import": {
+      "actions": {
+        "importReleases": "Import Releases"
+      }
+    }
+  }
+}

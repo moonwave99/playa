@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import type { MouseEvent, ReactNode } from "react";
 import { NavLink, Routes, Route } from "react-router";
+import { useTranslation } from "react-i18next";
 import { navigateMenu } from "@/main/menu/navigate";
 import { ReleaseListViewMode } from "@/types/types";
 import { useKeyManager } from "../hooks/useKeyboardManager";
@@ -8,13 +9,14 @@ import useClickOutside from "../hooks/useClickOutside";
 import useOnLocationChange from "../hooks/useOnLocationChange";
 import useStore from "../store";
 import api from "../api";
+
 import Breadcrumbs from "./Breadcrumbs";
 import { IoMenu } from "react-icons/io5";
 import { MdOutlineSearch, MdOutlineDriveFolderUpload } from "react-icons/md";
 import { IoMdTime } from "react-icons/io";
 import { BsGrid, BsGrid3X2Gap, BsListOl, BsAlphabet } from "react-icons/bs";
-
 import { Icon, type SupportedIcons } from "../icons";
+
 import cx from "clsx";
 import styles from "./Nav.module.css";
 import buttonStyles from "../buttons.module.css";
@@ -45,6 +47,7 @@ export default function Nav({ isDetailPage }: NavProps) {
   const [currentIndex, setCurrentIndex] = useState(-1);
   const ref = useClickOutside(() => setNavOpen(false));
   const { setModalContents, useDarkText } = useStore();
+  const { t } = useTranslation();
   const { setContext } = useKeyManager({
     context: "nav",
     handlers: {
@@ -96,8 +99,8 @@ export default function Nav({ isDetailPage }: NavProps) {
         </Routes>
         <button
           type="button"
-          aria-label="Toggle Navigation"
-          title="Toggle Navigation"
+          aria-label={t("nav.common.actions.toggleMenu")}
+          title={t("nav.common.actions.toggleMenu")}
           onClick={() => setNavOpen((prev) => !prev)}
           className={cx(buttonStyles.button, {
             [buttonStyles.useDarkText]: useDarkText,
@@ -108,8 +111,8 @@ export default function Nav({ isDetailPage }: NavProps) {
         </button>
         <button
           type="button"
-          aria-label="Toggle Search"
-          title="Toggle Search"
+          aria-label={t("nav.common.actions.openSearch")}
+          title={t("nav.common.actions.openSearch")}
           onClick={() => {
             setModalContents({ name: "search" });
             setNavOpen(false);
@@ -166,11 +169,12 @@ export default function Nav({ isDetailPage }: NavProps) {
 
 function ImportActions() {
   const { useDarkText } = useStore();
+  const { t } = useTranslation();
   return (
     <button
       type="button"
-      aria-label="Import Releases"
-      title="Import Releases"
+      aria-label={t("nav.import.actions.importReleases")}
+      title={t("nav.import.actions.importReleases")}
       onClick={() => api.importFolders.importFolderFromDialog()}
       className={cx(buttonStyles.button, {
         [buttonStyles.useDarkText]: useDarkText,
@@ -183,36 +187,37 @@ function ImportActions() {
 
 const releaseListActions: {
   viewMode: ReleaseListViewMode;
-  ariaLabel: string;
+  key: string;
   icon: ReactNode;
 }[] = [
   {
     viewMode: "grid",
-    ariaLabel: "Show Grid View",
+    key: "nav.release.actions.setGridViewMode",
     icon: <BsGrid />,
   },
   {
     viewMode: "list",
-    ariaLabel: "Show List View",
+    key: "nav.release.actions.setListViewMode",
     icon: <BsListOl />,
   },
   {
     viewMode: "compact",
-    ariaLabel: "Show Compact View",
+    key: "nav.release.actions.setCompactViewMode",
     icon: <BsGrid3X2Gap />,
   },
 ];
 
 function ReleaseListActions() {
   const { useDarkText, releaseListViewMode, setViewMode } = useStore();
+  const { t } = useTranslation();
   return (
     <>
-      {releaseListActions.map(({ viewMode, ariaLabel, icon }) => (
+      {releaseListActions.map(({ viewMode, key, icon }) => (
         <button
           key={viewMode}
           type="button"
-          aria-label={ariaLabel}
-          title={ariaLabel}
+          aria-label={t(key)}
+          title={t(key)}
           onClick={() => setViewMode("releaseList", viewMode)}
           className={cx(buttonStyles.button, {
             [buttonStyles.useDarkText]: useDarkText,
@@ -228,12 +233,13 @@ function ReleaseListActions() {
 
 function ArtistListActions() {
   const { useDarkText, artistsViewMode, setViewMode } = useStore();
+  const { t } = useTranslation();
   return (
     <>
       <button
         type="button"
-        aria-label="Show Latest Artists"
-        title="Show Latest Artists"
+        aria-label={t("nav.artist.actions.showLatestArtists")}
+        title={t("nav.artist.actions.showLatestArtists")}
         onClick={() => setViewMode("artists", "latest")}
         className={cx(buttonStyles.button, {
           [buttonStyles.useDarkText]: useDarkText,
@@ -244,8 +250,8 @@ function ArtistListActions() {
       </button>
       <button
         type="button"
-        aria-label="Show Artist List"
-        title="Show Artist List"
+        aria-label={t("nav.artist.actions.showArtistsList")}
+        title={t("nav.artist.actions.showArtistsList")}
         onClick={() => setViewMode("artists", "alphabetical")}
         className={cx(buttonStyles.button, {
           [buttonStyles.useDarkText]: useDarkText,
