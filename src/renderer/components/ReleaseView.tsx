@@ -1,13 +1,13 @@
 import type { MouseEvent } from "react";
+import type { ReleaseWithArtistAndSubReleases } from "@/types/types";
+import { getReleaseTitle, getDiscInfo, withStopPropagation } from "@/lib/utils";
+import { getReleaseLink } from "@/lib/links";
 import api from "../api";
 import cx from "clsx";
 import Cover from "./Cover";
 import Link from "./Link";
-import { getReleaseTitle, getDiscInfo, withStopPropagation } from "@/lib/utils";
-import { getReleaseLink } from "@/lib/links";
-import type { ReleaseWithArtistAndSubReleases } from "@/types/types";
-import styles from "./ReleaseView.module.css";
 import EntityList from "./EntityList";
+import styles from "./ReleaseView.module.css";
 
 type ReleaseViewProps = {
   release: ReleaseWithArtistAndSubReleases;
@@ -51,6 +51,7 @@ export default function ReleaseView({
       />
       <div className={styles.footer}>
         <EntityList
+          className={styles.artists}
           canDeleteFirstEntry={false}
           items={[artist, ...additionalArtists]}
           onDelete={(artist_id) =>

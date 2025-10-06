@@ -111,14 +111,20 @@ export default function ListCard({
               })
             }
           />
-          <Link
-            className={styles.title}
-            to={getReleaseLink(item)}
-            title={`[${item.id}]`}
-            onClick={onLinkClick}
-          >
-            {getReleaseTitle(item)}
-          </Link>
+          {isSingle ? (
+            <span className={styles.title} title={`[${item.id}]`}>
+              {getReleaseTitle(item)}
+            </span>
+          ) : (
+            <Link
+              className={styles.title}
+              to={getReleaseLink(item)}
+              title={`[${item.id}]`}
+              onClick={onLinkClick}
+            >
+              {getReleaseTitle(item)}
+            </Link>
+          )}
           <ReleaseInfo
             release={item as ReleaseWithArtistAndTracksAndSubreleases}
             isSingle={isSingle}
@@ -136,14 +142,19 @@ export default function ListCard({
         : item.releases.length + item.appearsIn.length;
       return (
         <>
-          <Link
-            className={styles.title}
-            to={getArtistLink(item)}
-            title={`[${item.id}]`}
-          >
-            {normalizeArtistDisplayName(item.name)}
-          </Link>
-
+          {isSingle ? (
+            <span className={styles.title} title={`[${item.id}]`}>
+              {normalizeArtistDisplayName(item.name)}
+            </span>
+          ) : (
+            <Link
+              className={styles.title}
+              to={getArtistLink(item)}
+              title={`[${item.id}]`}
+            >
+              {normalizeArtistDisplayName(item.name)}
+            </Link>
+          )}
           <div className={styles.info}>{releaseCount} releases</div>
           {isSingle && (
             <>
@@ -154,6 +165,7 @@ export default function ListCard({
         </>
       );
     }
+
     if (item.entityType === "Group") {
       return (
         <>
@@ -208,6 +220,7 @@ export default function ListCard({
     if (hideCover) {
       return null;
     }
+
     if (shouldDisplayMultipleCovers()) {
       return (
         <MultipleCovers
@@ -220,6 +233,7 @@ export default function ListCard({
         />
       );
     }
+
     if (coverRelease) {
       return (
         <Cover
@@ -234,6 +248,7 @@ export default function ListCard({
         />
       );
     }
+
     return <div className={styles.ghost} />;
   }
 

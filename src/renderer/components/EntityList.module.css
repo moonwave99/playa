@@ -1,12 +1,11 @@
 .EntityList {
   display: flex;
-  gap: .25rem;
-  font-size: .8rem;
+  gap: 0.25rem;
+  font-size: 0.8rem;
   font-weight: 300;
   color: var(--primary-color);
   line-height: 1rem;
   white-space: nowrap;
-  overflow: hidden;
 
   &.useDarkText {
     color: black;
@@ -15,7 +14,7 @@
   ul {
     list-style: none;
     display: flex;
-    gap: .25rem;
+    gap: 0.25rem;
 
     li {
       display: flex;
@@ -25,7 +24,7 @@
         display: none;
         position: static;
         color: var(--secondary-color);
-        margin: 0 .25rem;
+        margin: 0 0.25rem;
       }
 
       &:hover .CornerActionButton {
@@ -33,7 +32,7 @@
       }
 
       &:not(:last-child)::after {
-        content: ',';
+        content: ",";
       }
     }
   }
@@ -41,7 +40,7 @@
 
 .link {
   font-weight: 700;
-  letter-spacing: -.035rem;
+  letter-spacing: -0.035rem;
 
   &:hover {
     text-decoration: underline;
@@ -49,6 +48,6 @@
 }
 
 .separator::after {
-  content: '|';
+  content: "|";
   font-family: Courier, monospace;
 }

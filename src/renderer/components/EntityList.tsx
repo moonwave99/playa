@@ -62,7 +62,7 @@ export default function EntityList({
 
   return (
     <div
-      className={cx(styles.EntityList, {
+      className={cx(styles.EntityList, className, {
         [styles.useDarkText]: useDarkText,
       })}
     >

@@ -78,7 +78,7 @@
   letter-spacing: -0.035rem;
   text-wrap: balance;
 
-  &:hover {
+  &:is(a):hover {
     text-decoration: underline;
   }
 }
@@ -110,6 +110,9 @@
 
   .artist {
     font-size: 1.2rem;
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
   .cover,
