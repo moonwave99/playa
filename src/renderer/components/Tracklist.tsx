@@ -5,11 +5,7 @@ import type {
   Track,
   ReleaseWithArtistAndTracksAndSubreleases,
 } from "@/types/types";
-import {
-  formatDuration,
-  withStopPropagation,
-  lowerCaseCompare,
-} from "@/lib/utils";
+import { formatDuration, withStopPropagation } from "@/lib/utils";
 import List from "./List";
 import cx from "clsx";
 
@@ -41,6 +37,12 @@ export default function Tracklist({
 
   const discsCount = release.subReleases.length + 1;
 
+  const shouldDisplayTrackArtist =
+    allTracks.every((x) => x.trackArtist) &&
+    allTracks.some(
+      (x) => x.trackArtist.toLowerCase() !== release.artist.name.toLowerCase()
+    );
+
   if (!isNavigable) {
     return (
       <div
@@ -69,11 +71,11 @@ export default function Tracklist({
                 {tracks.map((track, index) => (
                   <TrackEntry
                     key={track.id}
-                    releaseArtistName={release.artist.name}
                     {...track}
                     isEven={index % 2 === 0}
                     onDoubleClick={onDoubleClick}
                     onContextMenu={() => onContextMenu(id)}
+                    shouldDisplayTrackArtist={shouldDisplayTrackArtist}
                   />
                 ))}
               </Fragment>
@@ -121,7 +123,7 @@ export default function Tracklist({
         <TrackEntry
           key={item.id}
           {...item}
-          releaseArtistName={release.artist.name}
+          shouldDisplayTrackArtist={shouldDisplayTrackArtist}
           isFirst={index === 0}
           onClick={onClick}
           onDoubleClick={onDoubleClick}
@@ -136,11 +138,11 @@ export default function Tracklist({
 }
 
 type TrackEntryProps = Track & {
-  releaseArtistName: string;
   discTitle?: string;
   selected?: boolean;
   isEven?: boolean;
   isFirst?: boolean;
+  shouldDisplayTrackArtist?: boolean;
   onClick?: (event: MouseEvent) => void;
   onDoubleClick: (id: number) => void;
   onContextMenu: () => void;
@@ -150,7 +152,7 @@ function TrackEntry({
   id,
   position,
   title,
-  releaseArtistName,
+  shouldDisplayTrackArtist,
   trackArtist,
   duration,
   discTitle,
@@ -162,7 +164,7 @@ function TrackEntry({
   onContextMenu,
 }: TrackEntryProps) {
   function renderTitle() {
-    if (trackArtist && !lowerCaseCompare(trackArtist, releaseArtistName)) {
+    if (shouldDisplayTrackArtist) {
       return (
         <>
           <span className={styles.trackArtist}>{trackArtist}</span> - {title}
