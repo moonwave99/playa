@@ -41,5 +41,22 @@
         "importReleases": "Import Releases"
       }
     }
+  },
+  "placeholders": {
+    "emptyList": "There are no {{entity}} yet."
+  },
+  "pages": {
+    "HomePage": {
+      "latest": "Latest {{entity}}",
+      "seeAll": "See All",
+      "stats": {
+        "title": "Your Library Stats"
+      },
+      "importActivity": {
+        "title": "Your Import Activity",
+        "dateInputLabel": "From",
+        "plotAxisLabel": "Daily added releases"
+      }
+    }
   }
 }

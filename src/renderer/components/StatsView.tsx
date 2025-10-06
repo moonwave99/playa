@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import useStats from "../query/useStats";
 import Loading from "./Loading";
 import ErrorView from "./ErrorView";
@@ -32,6 +33,7 @@ const sortedStatKeys: {
 ];
 
 export default function StatsView() {
+  const { t } = useTranslation();
   const { isPending, error, stats } = useStats();
 
   if (isPending) {
@@ -45,7 +47,7 @@ export default function StatsView() {
   return (
     <div className={styles.view}>
       <section>
-        <h2 className={styles.title}>Your Library Stats</h2>
+        <h2 className={styles.title}>{t("pages.HomePage.stats.title")}</h2>
         <ul className={styles.stats}>
           {sortedStatKeys.map(({ key }) => (
             <li key={key}>

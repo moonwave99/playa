@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import useLatesAdditions from "../query/useLatestAdditions";
 import ErrorView from "./ErrorView";
 import * as Plot from "@observablehq/plot";
@@ -8,7 +9,8 @@ import type { Release } from "@/types/types";
 const defaultFrom = "2025-01-01";
 
 function getPlotConfig(
-  latestAdditions: Record<string, Pick<Release, "id" | "createdAt">[]>
+  latestAdditions: Record<string, Pick<Release, "id" | "createdAt">[]>,
+  plotAxisLabel: string
 ) {
   const data = Object.entries(latestAdditions).map(([createdAt, value]) => ({
     createdAt: new Date(createdAt),
@@ -23,7 +25,7 @@ function getPlotConfig(
     },
     y: {
       type: "sqrt" as const,
-      label: "Daily added releases",
+      label: plotAxisLabel,
       grid: true,
     },
     marks: [
@@ -34,6 +36,7 @@ function getPlotConfig(
 }
 
 export default function ImportActivityView() {
+  const { t } = useTranslation();
   const [from, setFrom] = useState(defaultFrom);
   const ref = useRef(null);
   const { error, latestAdditions } = useLatesAdditions(from);
@@ -42,7 +45,8 @@ export default function ImportActivityView() {
     if (!latestAdditions) {
       return;
     }
-    const barChart = Plot.plot(getPlotConfig(latestAdditions));
+    const plotAxisLabel = t("pages.HomePage.importActivity.plotAxisLabel");
+    const barChart = Plot.plot(getPlotConfig(latestAdditions, plotAxisLabel));
     ref.current.append(barChart);
     return () => barChart.remove();
   }, [latestAdditions]);
@@ -59,9 +63,11 @@ export default function ImportActivityView() {
   return (
     <section className={styles.view}>
       <header className={styles.header}>
-        <h2 className={styles.title}>Your Import Activity</h2>
+        <h2 className={styles.title}>
+          {t("pages.HomePage.importActivity.title")}
+        </h2>
         <label>
-          From
+          {t("pages.HomePage.importActivity.dateInputLabel")}
           <input
             type="date"
             value={from}

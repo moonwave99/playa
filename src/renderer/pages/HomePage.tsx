@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 import { getReleaseContextMenuParams } from "@/lib/utils";
 import {
   ReleaseWithArtistAndTracksAndSubreleases,
@@ -12,6 +13,8 @@ import { withPrevent } from "../hooks/useKeyboardManager";
 import { releaseColumnsConfig } from "../hooks/useResponsiveColumns";
 import useReleases from "../query/useReleases";
 import useArtists from "../query/useArtists";
+import useGroups from "../query/useGroups";
+import useCollections from "../query/useCollections";
 import { getReleaseLink } from "@/lib/links";
 
 import ErrorView from "../components/ErrorView";
@@ -22,14 +25,12 @@ import ListCard, { type Item } from "../components/ListCard";
 import ReleaseView from "../components/ReleaseView";
 import StatsView from "../components/StatsView";
 
+import { Icon } from "../icons";
+import { capitalize } from "lodash";
 import cx from "clsx";
 import styles from "./Page.module.css";
 import homepageStyles from "./HomePage.module.css";
 import formStyles from "../forms.module.css";
-import useCollections from "../query/useCollections";
-import { Icon } from "../icons";
-import { capitalize } from "lodash";
-import useGroups from "../query/useGroups";
 
 const pageSize = 5;
 
@@ -68,6 +69,7 @@ type LatestReleasesViewProps = {
 };
 
 function LatestReleasesView({ count = 5 }: LatestReleasesViewProps) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { setModalContents } = useStore();
   const { isPending, error, releases } = useReleases({ pageSize: count });
@@ -108,17 +110,19 @@ function LatestReleasesView({ count = 5 }: LatestReleasesViewProps) {
       <header className={homepageStyles.header}>
         <h1>
           <Icon isFor="release" />
-          Latest Releases
+          {t("pages.HomePage.latest", { entity: "Releases " })}
         </h1>
         <Link
           className={cx(formStyles.button, formStyles.primary)}
           to="/releases"
         >
-          See All
+          {t("pages.HomePage.seeAll")}
         </Link>
       </header>
       {!releases?.length ? (
-        <div className={styles.placeholder}>There are no Releases yet.</div>
+        <div className={styles.placeholder}>
+          {t("placeholders.emptyList", { entity: "Releases" })}
+        </div>
       ) : (
         <List
           shouldPreventSpace
@@ -162,6 +166,8 @@ function LatestEntriesView<T extends Item>({
   entity,
   entries,
 }: LatestEntriesViewProps<T>) {
+  const { t } = useTranslation();
+
   if (isPending) {
     return <Loading className={homepageStyles.entityListSectionLoader} />;
   }
@@ -170,14 +176,12 @@ function LatestEntriesView<T extends Item>({
     return <ErrorView error={error} />;
   }
 
-  const entityName = `${capitalize(entity)}s`;
-
   return (
     <section className={homepageStyles.entityListSection}>
       <header className={homepageStyles.header}>
         <h3>
           <Icon isFor={entity} />
-          Latest {entityName}
+          {t("pages.HomePage.latest", { entity: `${capitalize(entity)}s` })}
         </h3>
         <Link
           className={cx(formStyles.button, formStyles.primary)}
@@ -188,7 +192,7 @@ function LatestEntriesView<T extends Item>({
       </header>
       {!entries?.length ? (
         <div className={styles.placeholder}>
-          There are no {capitalize(entityName)} yet.
+          {t("placeholders.emptyList", { entity: `${capitalize(entity)}s` })}
         </div>
       ) : (
         <ul className={homepageStyles.entityList}>
