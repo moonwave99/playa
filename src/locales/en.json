@@ -1,4 +1,21 @@
 {
+  "entities": {
+    "releases": "Releases",
+    "artists": "Artists",
+    "groups": "Groups",
+    "collections": "Collections",
+    "tracks": "Tracks"
+  },
+  "breadcrumbs": {
+    "home": "Home",
+    "releases": "Releases",
+    "release": "Releases",
+    "artists": "Artists",
+    "groups": "Groups",
+    "collections": "Collections",
+    "group": "{{title}} ({{count}} artists)",
+    "collection": "{{title}} ({{count}} releases)"
+  },
   "nav": {
     "common": {
       "actions": {

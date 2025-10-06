@@ -1,4 +1,11 @@
 import type { ReactElement } from "react";
+import { useTranslation } from "react-i18next";
+import api from "./api";
+
+import useArtist from "./query/useArtist";
+import useGroup from "./query/useGroup";
+import useCollection from "./query/useCollection";
+import useRelease from "./query/useRelease";
 
 import HomePage from "./pages/HomePage";
 import ReleasesPage from "./pages/ReleasesPage";
@@ -10,105 +17,88 @@ import CollectionPage from "./pages/CollectionPage";
 import GroupsPage from "./pages/GroupsPage";
 import GroupPage from "./pages/GroupPage";
 
-import api from "./api";
-
-import useArtist from "./query/useArtist";
-import useGroup from "./query/useGroup";
-import useCollection from "./query/useCollection";
-import useRelease from "./query/useRelease";
-
 import { getReleaseTitle } from "@/lib/utils";
 
-import { Icon } from "./icons";
+import { Icon, type SupportedIcons } from "./icons";
 
 export type Route = {
   path: string;
-  name: string;
+  id: string;
   element: ReactElement;
-  renderBreadcrumb?: (props: BreadcrumbProps) => ReactElement;
+  Breadcrumb?: (props: BreadcrumbProps) => ReactElement;
 };
+
+type BreadcrumbProps = {
+  className?: string;
+  isFor?: string;
+  id?: number;
+};
+
+function BaseBreadcrumb({ className, isFor }: BreadcrumbProps) {
+  const { t } = useTranslation();
+  return (
+    <span className={className}>
+      <Icon isFor={isFor as SupportedIcons} /> {t(`breadcrumbs.${isFor}`)}
+    </span>
+  );
+}
 
 export const routes: Route[] = [
   {
     path: "/",
-    name: "",
+    id: "home",
     element: <HomePage />,
-    renderBreadcrumb: ({ className }) => (
-      <span className={className}>
-        <Icon isFor="home" /> Home
-      </span>
-    ),
+    Breadcrumb: BaseBreadcrumb,
   },
   {
     path: "/releases",
-    name: "Releases",
+    id: "release",
     element: <ReleasesPage />,
-    renderBreadcrumb: ({ className }) => (
-      <span className={className}>
-        <Icon isFor="release" /> Releases
-      </span>
-    ),
+    Breadcrumb: BaseBreadcrumb,
   },
   {
     path: "/releases/:id",
-    name: "",
+    id: "releases",
     element: <ReleasePage />,
-    renderBreadcrumb: (props) => <ReleaseBreadcrumb {...props} />,
+    Breadcrumb: ReleaseBreadcrumb,
   },
   {
     path: "/artists",
-    name: "Artists",
+    id: "artists",
     element: <ArtistsPage />,
-    renderBreadcrumb: ({ className }) => (
-      <span className={className}>
-        <Icon isFor="artist" /> Artists
-      </span>
-    ),
+    Breadcrumb: BaseBreadcrumb,
   },
   {
     path: "/artists/:id",
-    name: "",
+    id: "artist",
     element: <ArtistPage />,
-    renderBreadcrumb: (props) => <ArtistBreadcrumb {...props} />,
+    Breadcrumb: ArtistBreadcrumb,
   },
   {
     path: "/collections",
-    name: "Collections",
+    id: "collections",
     element: <CollectionsPage />,
-    renderBreadcrumb: ({ className }) => (
-      <span className={className}>
-        <Icon isFor="collection" /> Collections
-      </span>
-    ),
+    Breadcrumb: BaseBreadcrumb,
   },
   {
     path: "/collections/:id",
-    name: "",
+    id: "collection",
     element: <CollectionPage />,
-    renderBreadcrumb: (props) => <CollectionBreadcrumb {...props} />,
+    Breadcrumb: CollectionBreadcrumb,
   },
   {
     path: "/groups",
-    name: "Groups",
+    id: "groups",
     element: <GroupsPage />,
-    renderBreadcrumb: ({ className }) => (
-      <span className={className}>
-        <Icon isFor="group" /> Groups
-      </span>
-    ),
+    Breadcrumb: BaseBreadcrumb,
   },
   {
     path: "/groups/:id",
-    name: "",
+    id: "group",
     element: <GroupPage />,
-    renderBreadcrumb: (props) => <GroupBreadcrumb {...props} />,
+    Breadcrumb: GroupBreadcrumb,
   },
 ];
-
-type BreadcrumbProps = {
-  id: number;
-  className?: string;
-};
 
 function ReleaseBreadcrumb({ id, className }: BreadcrumbProps) {
   const { release, isPending } = useRelease({ id });
@@ -131,19 +121,23 @@ function ArtistBreadcrumb({ id, className }: BreadcrumbProps) {
 }
 
 function GroupBreadcrumb({ id, className }: BreadcrumbProps) {
+  const { t } = useTranslation();
   const { group, isPending } = useGroup(id);
   if (isPending || !group) {
     return null;
   }
   return (
     <span className={className} onContextMenu={() => api.menu.group(group)}>
-      <span>{group.title}</span>
-      <span>({group.artists.length} artists)</span>
+      {t("breadcrumbs.group", {
+        title: group.title,
+        count: group.artists.length,
+      })}
     </span>
   );
 }
 
 function CollectionBreadcrumb({ id, className }: BreadcrumbProps) {
+  const { t } = useTranslation();
   const { collection, isPending } = useCollection(id);
   if (isPending || !collection) {
     return null;
@@ -153,8 +147,10 @@ function CollectionBreadcrumb({ id, className }: BreadcrumbProps) {
       className={className}
       onContextMenu={() => api.menu.collection(collection)}
     >
-      <span>{collection.title}</span>
-      <span>({collection.releases.length} releases)</span>
+      {t("breadcrumbs.collection", {
+        title: collection.title,
+        count: collection.releases.length,
+      })}
     </span>
   );
 }

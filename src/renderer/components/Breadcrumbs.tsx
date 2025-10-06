@@ -1,4 +1,5 @@
 import { useLocation, matchRoutes, type Params } from "react-router";
+import { useTranslation } from "react-i18next";
 import Link from "./Link";
 import { routes, type Route } from "../routes";
 import cx from "clsx";
@@ -42,9 +43,10 @@ export default function BreadCrumbs({
   const breadcrumbs = getBreadCrumbs(location)
     .map(renderEntry)
     .filter((x) => !!x);
+  const { t } = useTranslation();
 
   function renderEntry(
-    { path, name, renderBreadcrumb, params }: RouteWithParams,
+    { path, id, Breadcrumb, params }: RouteWithParams,
     index: number,
     entries: RouteWithParams[]
   ) {
@@ -52,12 +54,11 @@ export default function BreadCrumbs({
     if (isLast && isDetailPage) {
       return null;
     }
-    const output = renderBreadcrumb
-      ? renderBreadcrumb({
-          id: +params.id,
-          className: styles.content,
-        })
-      : name;
+    const output = Breadcrumb ? (
+      <Breadcrumb id={+params.id} isFor={id} className={styles.content} />
+    ) : (
+      t(`breadcrumbs.${id}`)
+    );
     if (isLast) {
       return output;
     }
