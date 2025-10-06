@@ -110,7 +110,10 @@ export default function Nav({ isDetailPage }: NavProps) {
           type="button"
           aria-label="Toggle Search"
           title="Toggle Search"
-          onClick={() => setModalContents({ name: "search" })}
+          onClick={() => {
+            setModalContents({ name: "search" });
+            setNavOpen(false);
+          }}
           className={cx(buttonStyles.button, {
             [buttonStyles.useDarkText]: useDarkText,
           })}
