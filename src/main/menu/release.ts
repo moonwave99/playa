@@ -80,7 +80,8 @@ export const releaseMenu =
         },
         {
           label: "Refresh Folder Contents",
-          click: () => controllers.release.refreshReleaseContents(release.id),
+          click: () =>
+            controllers.importFolders.refreshReleaseContents(release.id),
         },
         release.hideOnHomepage
           ? {

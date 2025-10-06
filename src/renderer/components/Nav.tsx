@@ -171,7 +171,7 @@ function ImportActions() {
       type="button"
       aria-label="Import Releases"
       title="Import Releases"
-      onClick={() => api.release.importFolderFromDialog()}
+      onClick={() => api.importFolders.importFolderFromDialog()}
       className={cx(buttonStyles.button, {
         [buttonStyles.useDarkText]: useDarkText,
       })}

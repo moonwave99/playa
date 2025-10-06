@@ -232,7 +232,7 @@ export function initMenu({ controllers, state, send }: InitMenuParams) {
           label: "Refresh all Releases content",
           accelerator: "Cmd+Shift+A",
           id: "refresh-releases",
-          click: controllers.release.refreshCurrentArtistReleases,
+          click: controllers.importFolders.refreshCurrentArtistReleases,
         },
         {
           label: "Import missing covers",
@@ -302,7 +302,7 @@ export function initMenu({ controllers, state, send }: InitMenuParams) {
           label: "Refresh Folder Contents",
           accelerator: "Cmd+Shift+R",
           click: () =>
-            controllers.release.refreshReleaseContents(
+            controllers.importFolders.refreshReleaseContents(
               state.getSelectedReleases()[0].id
             ),
         },
@@ -386,7 +386,7 @@ export function initMenu({ controllers, state, send }: InitMenuParams) {
         {
           label: "Import Folder",
           accelerator: "Shift+I",
-          click: controllers.release.importFolderFromDialog,
+          click: controllers.importFolders.importFolderFromDialog,
         },
         { type: "separator" },
         ...randomMenu.map(({ label, accelerator, entity }) => ({

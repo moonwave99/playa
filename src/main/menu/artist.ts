@@ -42,7 +42,7 @@ export const artistMenu =
       },
       {
         label: `Refresh contents for all '${name}' Releases`,
-        click: () => controllers.release.refreshEntityRelease(artist),
+        click: () => controllers.importFolders.refreshEntityRelease(artist),
       },
       {
         label: "Edit Artist",

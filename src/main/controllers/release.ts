@@ -1,23 +1,14 @@
 import { existsSync, move, unlink } from "fs-extra";
-import path from "path";
 import prisma from "../db/prisma";
-import { dialog, type OpenDialogSyncOptions } from "electron";
-import { globby } from "globby";
+import { dialog } from "electron";
 import {
-  ArtistWithReleases,
-  CollectionWithReleases,
   EditReleaseParam,
   ReleaseWithArtist,
-  ReleaseWithArtistAndTracks,
   Release,
   Track,
   Artist,
 } from "@/types/types";
-import {
-  didReleaseInfoChange,
-  mapSeries,
-  normalizeDiacritics,
-} from "@/lib/utils";
+import { didReleaseInfoChange, mapSeries } from "@/lib/utils";
 import {
   getRelease,
   getReleases,
@@ -34,14 +25,8 @@ import {
   type GroupReleaseParams,
 } from "../db/release";
 import { getArtist } from "../db/artist";
-import {
-  getEntityPath,
-  crawlFolder,
-  getFolderContents,
-  parsePath,
-  getArtistPathFromReleaseData,
-} from "../utils";
-import { hashRelease, hashArtistName } from "../hash";
+import { getEntityPath } from "../utils";
+import { hashRelease } from "../hash";
 import { searchCover, getImageFromURL } from "../covers";
 import { log } from "../logger";
 import { getSetting } from "../settings";
@@ -52,20 +37,13 @@ type ReleaseControllerParams = {
   getSetting: (key: string) => ReturnType<typeof getSetting>;
   send: (channel: string, ...args: unknown[]) => void;
   state: StateManager;
-  openFolderDialog: (
-    defaultPath: string,
-    properties: OpenDialogSyncOptions["properties"]
-  ) => string[];
 };
-
-type ProgressCallback = (folder: string, completed?: boolean) => void;
 
 export function releaseController({
   withPath,
   getSetting,
   send,
   state,
-  openFolderDialog,
 }: ReleaseControllerParams) {
   async function editRelease(infos: EditReleaseParam[]) {
     if (!infos.length) {
@@ -196,131 +174,6 @@ export function releaseController({
     }
   }
 
-  async function importFolder(folder: string, onProgress: ProgressCallback) {
-    const folders = await globby("**", {
-      onlyDirectories: true,
-      cwd: folder,
-    });
-
-    if (!folders.length) {
-      const release = await importSingleFolder(folder, onProgress);
-      return release ? [release] : [];
-    }
-
-    const releases = await Promise.all(
-      folders
-        .filter((x) => !x.endsWith("]"))
-        .map((f) => importSingleFolder(path.join(folder, f), onProgress))
-    );
-
-    onProgress("done");
-    return releases.filter((x: unknown) => !!x);
-  }
-
-  async function importSingleFolder(
-    folder: string,
-    onProgress: ProgressCallback
-  ) {
-    log("release:importSingleFolder", "Crawling:", folder);
-    const contents = await crawlFolder(folder);
-
-    if (!contents.length) {
-      return null;
-    }
-
-    const LIBRARY_PATH = getSetting("LIBRARY_PATH") as string;
-    const releaseData = parsePath(folder.split(LIBRARY_PATH).at(1));
-
-    if (!releaseData) {
-      return null;
-    }
-
-    onProgress(folder);
-
-    const artistPath = getArtistPathFromReleaseData(releaseData);
-    const artistHash = hashArtistName(releaseData.artist.name);
-    const normalizedName = normalizeDiacritics(releaseData.artist.name);
-
-    const artist = await prisma.artist.upsert({
-      where: {
-        hash: artistHash,
-      },
-      update: {
-        hash: artistHash,
-        name: releaseData.artist.name,
-        normalizedName,
-        path: artistPath,
-      },
-      create: {
-        hash: artistHash,
-        name: releaseData.artist.name,
-        normalizedName,
-        path: artistPath,
-      },
-    });
-
-    log("release:importSingleFolder", "upserted artist", artist);
-
-    const releaseHash = hashRelease({ ...releaseData, artist_id: artist.id });
-    /* eslint-disable @typescript-eslint/no-unused-vars */
-    const {
-      artist: artistData,
-      fullPath,
-      title,
-      ...releaseWithoutArtist
-    } = releaseData;
-    /* eslint-enable @typescript-eslint/no-unused-vars */
-    const normalizedTitle = normalizeDiacritics(title);
-    const release = await prisma.release.upsert({
-      where: {
-        hash: releaseHash,
-      },
-      update: {
-        hash: releaseHash,
-        title,
-        normalizedTitle,
-        ...releaseWithoutArtist,
-        artist_id: artist.id,
-      },
-      create: {
-        hash: releaseHash,
-        title,
-        normalizedTitle,
-        ...releaseWithoutArtist,
-        artist_id: artist.id,
-      },
-    });
-
-    const trackInfo = await getFolderContents(
-      { ...release, artist: artist as Artist },
-      getSetting("LIBRARY_PATH") as string
-    );
-
-    const fullRelease = await addTracksToRelease(release.id, trackInfo);
-
-    log("release:importSingleFolder", "upserted release:", fullRelease);
-
-    const COVERS_PATH = getSetting("COVERS_PATH") as string;
-    const DISCOGS_KEY = getSetting("DISCOGS_KEY") as string;
-    const DISCOGS_SECRET = getSetting("DISCOGS_SECRET") as string;
-
-    await searchCover(
-      {
-        release,
-        artist,
-        track: fullRelease.tracks[0],
-        outputPath: COVERS_PATH,
-      },
-      {
-        DISCOGS_KEY,
-        DISCOGS_SECRET,
-      }
-    );
-
-    onProgress(folder, true);
-    return fullRelease;
-  }
-
   async function downloadCover({ id, url }: { id: number; url: string }) {
     const release = await prisma.release.findFirst({
       where: { id },
@@ -394,66 +247,6 @@ export function releaseController({
     return true;
   }
 
-  async function refreshReleaseContents(id: number) {
-    const release = await prisma.release.findFirst({
-      where: { id },
-      include: { artist: true, subReleases: { include: { artist: true } } },
-    });
-
-    if (!release) {
-      return false;
-    }
-
-    log("release:refreshReleaseContents", release);
-    const updatedRelease = await Promise.all(
-      [release, ...release.subReleases].map(async (release) => {
-        const tracks = await getFolderContents(
-          release as ReleaseWithArtist,
-          getSetting("LIBRARY_PATH") as string
-        );
-        log("release:refreshReleaseContents", "tracks", tracks);
-        return addTracksToRelease(release.id, tracks);
-      })
-    );
-
-    send("mutate", [["releases", release.id]]);
-    send("notify", {
-      type: "success",
-      message: `${release.title} contents refreshed`,
-    });
-
-    return updatedRelease;
-  }
-
-  async function refreshCurrentArtistReleases() {
-    const releasesToRefresh = state
-      .getCurrentArtist()
-      ?.releases.filter((x: ReleaseWithArtistAndTracks) => !x.tracks.length);
-
-    if (!releasesToRefresh.length) {
-      return;
-    }
-    state.setImporting(true);
-    try {
-      await Promise.all(
-        releasesToRefresh.map((x: ReleaseWithArtistAndTracks) =>
-          refreshReleaseContents(x.id)
-        )
-      );
-      send("mutate", ["artists", state.getCurrentArtist().id]);
-    } catch (error) {
-      log("release:refreshCurrentArtistRelease]", error);
-    }
-    state.setImporting(false);
-  }
-
-  async function refreshEntityRelease(
-    entity: ArtistWithReleases | CollectionWithReleases
-  ) {
-    await Promise.all(entity.releases.map((x) => refreshReleaseContents(x.id)));
-    send("mutate", [`${entity.entityType.toLowerCase()}s`, entity.id]);
-  }
-
   async function unGroupSelectedRelease() {
     const release = state.getSelectedReleases()[0];
     if (!release) {
@@ -466,39 +259,6 @@ export function releaseController({
     ]);
     send("clearSelection");
     send("notify", { type: "success", message: "releases unGrouped" });
-  }
-
-  async function importFolderFromDialog() {
-    const folders = openFolderDialog(
-      withPath("LIBRARY_PATH", state.getCurrentArtist()?.path || ""),
-      ["openDirectory", "multiSelections"]
-    );
-    if (!folders) {
-      return;
-    }
-
-    send("openImportFolders");
-
-    function onProgress(folder: string, completed = false) {
-      send("import:progress", folder, completed);
-    }
-
-    const output = await Promise.all(
-      folders.map((folder) => importFolder(folder, onProgress))
-    );
-    const importedReleases = output.flat();
-
-    send("import:progress", "done");
-
-    send("mutate", [
-      ["releases", "latest"],
-      ...importedReleases.map((x) => ["artists", x.artist_id]),
-    ]);
-
-    send("notify", {
-      type: "success",
-      message: `${importedReleases.length} releases imported`,
-    });
   }
 
   async function deleteReleases(release_ids: number[]) {
@@ -585,16 +345,11 @@ export function releaseController({
     deleteRelease,
     deleteReleases,
     addTracksToRelease,
-    importFolder,
     downloadCover,
     importCovers,
     importMissingCovers,
     deleteCover,
-    refreshReleaseContents,
-    refreshCurrentArtistReleases,
     unGroupSelectedRelease,
-    importFolderFromDialog,
-    refreshEntityRelease,
     hideRelease,
     showRelease,
     addAdditionalArtist,
@@ -612,16 +367,11 @@ export const actions: (keyof ReturnType<typeof releaseController>)[] = [
   "deleteRelease",
   "deleteReleases",
   "addTracksToRelease",
-  "importFolder",
   "downloadCover",
   "importCovers",
   "importMissingCovers",
   "deleteCover",
-  "refreshReleaseContents",
-  "refreshCurrentArtistReleases",
   "unGroupSelectedRelease",
-  "importFolderFromDialog",
-  "refreshEntityRelease",
   "hideRelease",
   "showRelease",
   "addAdditionalArtist",

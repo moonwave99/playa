@@ -13,7 +13,7 @@ export const collectionMenu =
       { type: "separator" },
       {
         label: "Refresh contents for all Releases in this Collection",
-        click: () => controllers.release.refreshEntityRelease(collection),
+        click: () => controllers.importFolders.refreshEntityRelease(collection),
       },
       {
         label: "Edit Collection",

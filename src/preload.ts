@@ -17,6 +17,7 @@ import { actions as collectionActions } from "./main/controllers/collection";
 import { actions as groupActions } from "./main/controllers/group";
 import { actions as statsActions } from "./main/controllers/stats";
 import { actions as searchResultActions } from "./main/controllers/searchResult";
+import { actions as importFoldersActions } from "./main/controllers/importFolders";
 import { actions as importExportActions } from "./main/controllers/importExport";
 
 function getHandlersFromActions(controllerName: string, actionNames: string[]) {
@@ -39,6 +40,7 @@ contextBridge.exposeInMainWorld("api", {
   ...getHandlersFromActions("stats", statsActions),
   ...getHandlersFromActions("searchResult", searchResultActions),
   ...getHandlersFromActions("system", systemActions),
+  ...getHandlersFromActions("importFolders", importFoldersActions),
   ...getHandlersFromActions("importExport", importExportActions),
   settings: getHandlers({ getSettings, setSettings }),
   menu: {

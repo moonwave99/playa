@@ -22,6 +22,7 @@ import { systemController } from "@/main/controllers/system";
 import { statsController } from "@/main/controllers/stats";
 import { searchResultController } from "@/main/controllers/searchResult";
 import { importExportController } from "@/main/controllers/importExport";
+import { importFoldersController } from "@/main/controllers/importFolders";
 
 declare module "*.module.css";
 
@@ -51,6 +52,7 @@ declare global {
       collection: ReturnType<typeof collectionController>;
       group: ReturnType<typeof groupController>;
       system: ReturnType<typeof systemController>;
+      importFolders: ReturnType<typeof importFoldersController>;
       importExport: ReturnType<typeof importExportController>;
       settings: {
         getSettings: () => Promise<ReturnType<getSettings>>;

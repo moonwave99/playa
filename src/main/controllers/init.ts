@@ -31,6 +31,7 @@ import { collectionController } from "./collection";
 import { groupController } from "./group";
 import { searchResultController } from "./searchResult";
 import { statsController } from "./stats";
+import { importFoldersController } from "./importFolders";
 import { importExportController } from "./importExport";
 
 export type Controllers = {
@@ -41,6 +42,7 @@ export type Controllers = {
   group: ReturnType<typeof groupController>;
   searchResult: ReturnType<typeof searchResultController>;
   stats: ReturnType<typeof statsController>;
+  importFolders: ReturnType<typeof importFoldersController>;
   importExport: ReturnType<typeof importExportController>;
 };
 
@@ -91,12 +93,18 @@ export function init(mainWindow: BrowserWindow) {
       getSetting,
       send,
       state,
-      openFolderDialog,
     }),
     collection: collectionController({ send }),
     group: groupController({ send }),
     searchResult: searchResultController(),
     stats: statsController(),
+    importFolders: importFoldersController({
+      withPath,
+      getSetting,
+      send,
+      state,
+      openFolderDialog,
+    }),
     importExport: importExportController({
       openFileDialog,
       openFolderDialog,

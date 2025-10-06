@@ -65,7 +65,7 @@ export default function useRelease({
       return;
     }
     firstRefresh.current = false;
-    api.release.refreshReleaseContents(release.id).then(() => refetch());
+    api.importFolders.refreshReleaseContents(release.id).then(() => refetch());
   }, [release, refreshOnLoad]);
 
   function gotoArtistPage() {
