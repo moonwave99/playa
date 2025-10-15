@@ -1,9 +1,11 @@
-import { getStats } from '../db/stats';
+import { getStats } from "../db/stats";
 
 export function statsController() {
   return {
-    getStats
+    getStats,
   };
 }
 
-export const actions = ['getStats'];
+export const actions: (keyof ReturnType<typeof statsController>)[] = [
+  "getStats",
+];

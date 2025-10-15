@@ -85,7 +85,7 @@ export function artistController({
   };
 }
 
-export const actions = [
+export const actions: (keyof ReturnType<typeof artistController>)[] = [
   "getArtist",
   "getAllArtists",
   "getLatestArtists",

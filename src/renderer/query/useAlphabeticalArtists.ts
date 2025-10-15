@@ -11,7 +11,7 @@ type UseAlphabeticalArtists = {
 export default function useAlphabeticalArtists(): UseAlphabeticalArtists {
   const { data, error, isPending } = useQuery({
     queryKey: ["artists", "alphabetical"],
-    queryFn: () => api.artist.getAllArtists(),
+    queryFn: api.artist.getAllArtists,
   });
 
   return {

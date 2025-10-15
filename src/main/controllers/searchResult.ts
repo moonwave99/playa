@@ -1,4 +1,4 @@
-import { getSearchResults } from '../db/searchResult';
+import { getSearchResults } from "../db/searchResult";
 
 export function searchResultController() {
   return {
@@ -6,4 +6,6 @@ export function searchResultController() {
   };
 }
 
-export const actions = ['getSearchResults'];
+export const actions: (keyof ReturnType<typeof searchResultController>)[] = [
+  "getSearchResults",
+];

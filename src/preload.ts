@@ -9,39 +9,71 @@ import type {
   ReleaseWithArtistAndSubReleases,
   GroupWithArtists,
 } from "./types/types";
+import {
+  systemController,
+  actions as systemActions,
+} from "./main/controllers/system";
+import {
+  actions as artistActions,
+  artistController,
+} from "./main/controllers/artist";
+import {
+  releaseController,
+  actions as releaseActions,
+} from "./main/controllers/release";
+import {
+  actions as collectionActions,
+  collectionController,
+} from "./main/controllers/collection";
+import {
+  actions as groupActions,
+  groupController,
+} from "./main/controllers/group";
+import {
+  statsController,
+  actions as statsActions,
+} from "./main/controllers/stats";
+import {
+  actions as searchResultActions,
+  searchResultController,
+} from "./main/controllers/searchResult";
+import {
+  actions as importFoldersActions,
+  importFoldersController,
+} from "./main/controllers/importFolders";
+import {
+  actions as importExportActions,
+  importExportController,
+} from "./main/controllers/importExport";
 
-import { actions as systemActions } from "./main/controllers/system";
-import { actions as artistActions } from "./main/controllers/artist";
-import { actions as releaseActions } from "./main/controllers/release";
-import { actions as collectionActions } from "./main/controllers/collection";
-import { actions as groupActions } from "./main/controllers/group";
-import { actions as statsActions } from "./main/controllers/stats";
-import { actions as searchResultActions } from "./main/controllers/searchResult";
-import { actions as importFoldersActions } from "./main/controllers/importFolders";
-import { actions as importExportActions } from "./main/controllers/importExport";
-
-function getHandlersFromActions(controllerName: string, actionNames: string[]) {
-  return {
-    [controllerName]: actionNames.reduce(
-      (memo, name) => ({
-        ...memo,
-        [name]: (...params: unknown[]) => ipc.invoke(name, ...params),
-      }),
-      {}
-    ),
-  };
-}
-
-contextBridge.exposeInMainWorld("api", {
-  ...getHandlersFromActions("artist", artistActions),
-  ...getHandlersFromActions("release", releaseActions),
-  ...getHandlersFromActions("collection", collectionActions),
-  ...getHandlersFromActions("group", groupActions),
-  ...getHandlersFromActions("stats", statsActions),
-  ...getHandlersFromActions("searchResult", searchResultActions),
-  ...getHandlersFromActions("system", systemActions),
-  ...getHandlersFromActions("importFolders", importFoldersActions),
-  ...getHandlersFromActions("importExport", importExportActions),
+const api = {
+  artist: getHandlersFromActions(artistActions) as ReturnType<
+    typeof artistController
+  >,
+  release: getHandlersFromActions(releaseActions) as ReturnType<
+    typeof releaseController
+  >,
+  collection: getHandlersFromActions(collectionActions) as ReturnType<
+    typeof collectionController
+  >,
+  group: getHandlersFromActions(groupActions) as ReturnType<
+    typeof groupController
+  >,
+  stats: getHandlersFromActions(statsActions) as ReturnType<
+    typeof statsController
+  >,
+  searchResult: getHandlersFromActions(searchResultActions) as ReturnType<
+    typeof searchResultController
+  >,
+  system: getHandlersFromActions(systemActions) as ReturnType<
+    typeof systemController
+  >,
+  importFolders: getHandlersFromActions(importFoldersActions) as ReturnType<
+    typeof importFoldersController
+  >,
+  importExport: getHandlersFromActions(importExportActions) as ReturnType<
+    typeof importExportController
+  >,
   settings: getHandlers({ getSettings, setSettings }),
   menu: {
     release: (
@@ -99,7 +131,11 @@ contextBridge.exposeInMainWorld("api", {
     onProgress: getHandler("export:progress"),
     onError: getHandler("export:error"),
   },
-});
+};
+
+export type Api = typeof api;
+
+contextBridge.exposeInMainWorld("api", api);
 
 function getHandlers(entity: Record<string, (...args: unknown[]) => unknown>) {
   return Object.entries(entity).reduce(
@@ -111,11 +147,11 @@ function getHandlers(entity: Record<string, (...args: unknown[]) => unknown>) {
           ipc.invoke(name, ...params),
       };
     },
-    {} as Record<keyof typeof entity, typeof entity>
+    {} as Record<keyof typeof entity, (...args: unknown[]) => Promise<unknown>>
   );
 }
 
-function getHandler(name: string): (...args: unknown[]) => void {
+function getHandler(name: string): (...args: unknown[]) => () => void {
   return (handler: (...args: unknown[]) => void) => {
     function withoutEvent(
       _: IpcRendererEvent,
@@ -128,4 +164,14 @@ function getHandler(name: string): (...args: unknown[]) => void {
       ipc.off(name, withoutEvent);
     };
   };
+}
+
+function getHandlersFromActions(actionNames: string[]) {
+  return actionNames.reduce(
+    (memo, name) => ({
+      ...memo,
+      [name]: (...params: unknown[]) => ipc.invoke(name as string, ...params),
+    }),
+    {}
+  );
 }

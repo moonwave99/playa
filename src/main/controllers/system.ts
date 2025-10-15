@@ -149,7 +149,7 @@ export function systemController({
   };
 }
 
-export const actions = [
+export const actions: (keyof ReturnType<typeof systemController>)[] = [
   "playback",
   "openTagger",
   "revealEntityInFinder",

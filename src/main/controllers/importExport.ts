@@ -94,4 +94,7 @@ export function importExportController({
   };
 }
 
-export const actions = ["importDataFromDialog", "exportDataFromDialog"];
+export const actions: (keyof ReturnType<typeof importExportController>)[] = [
+  "importDataFromDialog",
+  "exportDataFromDialog",
+];

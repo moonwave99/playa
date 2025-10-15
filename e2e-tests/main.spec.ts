@@ -45,7 +45,7 @@ test("navigates back to the Homepage", async () => {
   const page = await electronApp.firstWindow();
   await page.evaluate(() => window.localStorage.clear());
 
-  await page.getByRole("button", { name: "Toggle Navigation" }).click();
+  await page.getByRole("button", { name: "Toggle Menu" }).click();
 
   await page.getByLabel("Go to the Releases page").click();
   await page.waitForSelector('[data-testid="ReleasesPage"]');

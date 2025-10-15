@@ -20,7 +20,7 @@ export default function useImportData<T extends HTMLElement>({
 
   useEffect(() => {
     const unsubscribe = [
-      api.import.onProgress((step, completed) => {
+      api.import.onProgress((step: string, completed: boolean) => {
         setModalFixed(true);
         if (step !== "done") {
           setSteps((prev) => ({ ...prev, [step]: completed }));
@@ -33,7 +33,7 @@ export default function useImportData<T extends HTMLElement>({
         }
         setTimeout(onDone, closeAfter);
       }),
-      api.import.onError((message) => {
+      api.import.onError((message: string) => {
         window.alert(message);
         setModalFixed(false);
         if (onCancel) {
