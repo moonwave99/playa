@@ -35,24 +35,28 @@ export function getEventHandler(name: string): CallbackWithUnsubscribe {
   };
 }
 
-export function getHandlersFromActions(actionNames: string[]) {
+export function getHandlersFromActions<T extends Record<string, Callback>>(
+  actionNames: (keyof T)[]
+): T {
   return actionNames.reduce(
     (memo, name) => ({
       ...memo,
       [name]: (...params: unknown[]) => ipc.invoke(name as string, ...params),
     }),
     {}
-  );
+  ) as T;
 }
 
-export function getEventHandlersFromActions(actionNames: string[]) {
+export function getEventHandlersFromActions<T extends Record<string, Callback>>(
+  actionNames: (keyof T)[]
+): T {
   return actionNames.reduce(
     (memo, name) => ({
       ...memo,
-      [name]: getEventHandler(name),
+      [name]: getEventHandler(name as string),
     }),
     {}
-  );
+  ) as T;
 }
 
 function getEventName(prefixed: string) {

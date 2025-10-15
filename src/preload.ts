@@ -57,40 +57,42 @@ import {
   importExportController,
 } from "./main/controllers/importExport";
 
+const eventNames = Object.keys(getEvents());
+
 const api = {
-  artist: getHandlersFromActions(artistActions) as ReturnType<
-    typeof artistController
-  >,
-  release: getHandlersFromActions(releaseActions) as ReturnType<
-    typeof releaseController
-  >,
-  collection: getHandlersFromActions(collectionActions) as ReturnType<
-    typeof collectionController
-  >,
-  group: getHandlersFromActions(groupActions) as ReturnType<
-    typeof groupController
-  >,
-  stats: getHandlersFromActions(statsActions) as ReturnType<
-    typeof statsController
-  >,
-  state: getHandlersFromActions(stateActions) as ReturnType<
-    typeof stateController
-  >,
-  searchResult: getHandlersFromActions(searchResultActions) as ReturnType<
-    typeof searchResultController
-  >,
-  system: getHandlersFromActions(systemActions) as ReturnType<
-    typeof systemController
-  >,
-  importFolders: getHandlersFromActions(importFoldersActions) as ReturnType<
-    typeof importFoldersController
-  >,
-  importExport: getHandlersFromActions(importExportActions) as ReturnType<
-    typeof importExportController
-  >,
-  events: getEventHandlersFromActions(Object.keys(getEvents())) as ReturnType<
-    typeof getEvents
-  >,
+  artist:
+    getHandlersFromActions<ReturnType<typeof artistController>>(artistActions),
+  release:
+    getHandlersFromActions<ReturnType<typeof releaseController>>(
+      releaseActions
+    ),
+  collection:
+    getHandlersFromActions<ReturnType<typeof collectionController>>(
+      collectionActions
+    ),
+  group:
+    getHandlersFromActions<ReturnType<typeof groupController>>(groupActions),
+  stats:
+    getHandlersFromActions<ReturnType<typeof statsController>>(statsActions),
+  state:
+    getHandlersFromActions<ReturnType<typeof stateController>>(stateActions),
+  searchResult:
+    getHandlersFromActions<ReturnType<typeof searchResultController>>(
+      searchResultActions
+    ),
+  system:
+    getHandlersFromActions<ReturnType<typeof systemController>>(systemActions),
+  importFolders:
+    getHandlersFromActions<ReturnType<typeof importFoldersController>>(
+      importFoldersActions
+    ),
+  importExport:
+    getHandlersFromActions<ReturnType<typeof importExportController>>(
+      importExportActions
+    ),
+  events: getEventHandlersFromActions<ReturnType<typeof getEvents>>(
+    eventNames as (keyof ReturnType<typeof getEvents>)[]
+  ),
   settings: getHandlers({ getSettings, setSettings }),
   menu: {
     release: (
@@ -133,13 +135,6 @@ function getEvents() {
     onSwipe: (direction: number) => noOp(direction),
     onMutate: (queryKey: QueryKey) => noOp(queryKey),
     onNotify: (notification: Notification) => noOp(notification),
-    onClearSelection: () => {},
-    onToggleViewMode: () => {},
-    onToggleSearch: () => {},
-    onOpenSettings: () => {},
-    onOpenImportData: () => {},
-    onOpenExportData: () => {},
-    onOpenImportFolders: () => {},
     onCoverUpdate: (selection: ReleaseWithArtist[]) => noOp(selection),
     onOpenGroupDialog: (selection: ReleaseWithArtist[]) => noOp(selection),
     onOpenEditReleaseDialog: (release: ReleaseWithArtist) => noOp(release),
@@ -151,5 +146,12 @@ function getEvents() {
     onOpenAddArtistsToGroupDialog: (selection: ArtistWithReleases[]) =>
       noOp(selection),
     onOpenEditGroupDialog: (group: GroupWithArtists) => noOp(group),
+    onClearSelection: () => {},
+    onToggleViewMode: () => {},
+    onToggleSearch: () => {},
+    onOpenSettings: () => {},
+    onOpenImportData: () => {},
+    onOpenExportData: () => {},
+    onOpenImportFolders: () => {},
   };
 }
