@@ -1,12 +1,9 @@
 import { contextBridge, ipcRenderer as ipc } from "electron";
 import type { OpenDialogSyncOptions } from "electron";
 import {
-  getEventHandler,
-  getHandlers,
   getHandlersFromActions,
   getEventHandlersFromActions,
 } from "./handlerUtils";
-import { getSettings, setSettings } from "./main/settings";
 import type {
   ReleaseWithArtist,
   CollectionWithReleases,
@@ -14,6 +11,7 @@ import type {
   SearchResult,
   GroupWithArtists,
   Notification,
+  Settings,
 } from "./types/types";
 import { QueryKey } from "@tanstack/react-query";
 import {
@@ -57,7 +55,9 @@ import {
   importExportController,
 } from "./main/controllers/importExport";
 
-const eventNames = Object.keys(getEvents());
+const eventNames = Object.keys(getEvents()) as (keyof ReturnType<
+  typeof getEvents
+>)[];
 
 const api = {
   artist:
@@ -90,10 +90,11 @@ const api = {
     getHandlersFromActions<ReturnType<typeof importExportController>>(
       importExportActions
     ),
-  events: getEventHandlersFromActions<ReturnType<typeof getEvents>>(
-    eventNames as (keyof ReturnType<typeof getEvents>)[]
-  ),
-  settings: getHandlers({ getSettings, setSettings }),
+  events: getEventHandlersFromActions<ReturnType<typeof getEvents>>(eventNames),
+  settings: {
+    getSettings: () => ipc.invoke("getSettings") as Promise<Settings>,
+    setSettings: (settings: Settings) => ipc.invoke("setSettings", settings),
+  },
   menu: {
     release: (
       selection: ReleaseWithArtist[],
@@ -111,14 +112,6 @@ const api = {
   dialog: {
     open: async (options: Partial<OpenDialogSyncOptions>) =>
       ipc.invoke("dialog:open", options),
-  },
-  import: {
-    onProgress: getEventHandler("import:progress"),
-    onError: getEventHandler("import:error"),
-  },
-  export: {
-    onProgress: getEventHandler("export:progress"),
-    onError: getEventHandler("export:error"),
   },
 };
 
@@ -146,6 +139,12 @@ function getEvents() {
     onOpenAddArtistsToGroupDialog: (selection: ArtistWithReleases[]) =>
       noOp(selection),
     onOpenEditGroupDialog: (group: GroupWithArtists) => noOp(group),
+    onImportProgress: (step: string, completed: boolean) =>
+      noOp(step, completed),
+    onImportError: (message: string) => noOp(message),
+    onExportProgress: (step: string, completed: boolean) =>
+      noOp(step, completed),
+    onExportError: (message: string) => noOp(message),
     onClearSelection: () => {},
     onToggleViewMode: () => {},
     onToggleSearch: () => {},

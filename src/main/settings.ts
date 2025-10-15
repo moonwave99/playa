@@ -1,3 +1,4 @@
+import type { Settings } from "@/types/types";
 import settings from "electron-settings";
 import { isEmpty } from "@/lib/utils";
 import { readJSONSync } from "fs-extra";
@@ -21,11 +22,9 @@ export function getSetting(key: string) {
 }
 
 export function getSettings() {
-  return settings.getSync();
+  return settings.getSync() as Settings;
 }
 
-export function setSettings(
-  newSettings: Record<string, string | number | boolean>
-) {
+export function setSettings(newSettings: Settings) {
   return settings.setSync(newSettings);
 }

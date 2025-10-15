@@ -79,8 +79,8 @@ describe("exportDataFromDialog function", () => {
     );
 
     expect(send).toHaveBeenCalledWith("openExportData");
-    expect(send).toHaveBeenCalledWith("export:progress", "start");
-    expect(send).toHaveBeenCalledWith("export:progress", "done");
+    expect(send).toHaveBeenCalledWith("exportProgress", "start");
+    expect(send).toHaveBeenCalledWith("exportProgress", "done");
   });
 });
 
@@ -119,7 +119,7 @@ describe("importDataFromDialog function", () => {
     openFileDialog.mockReturnValueOnce("some/file.ext");
     await importDataFromDialog();
     expect(send).toHaveBeenCalledWith(
-      "import:error",
+      "importError",
       "Import file must be in .zip format"
     );
   });
@@ -184,10 +184,10 @@ describe("importDataFromDialog function", () => {
       ),
       "Importing additional relationships",
     ].forEach((x) => {
-      expect(send).toHaveBeenCalledWith("import:progress", x, false);
-      expect(send).toHaveBeenCalledWith("import:progress", x, true);
+      expect(send).toHaveBeenCalledWith("importProgress", x, false);
+      expect(send).toHaveBeenCalledWith("importProgress", x, true);
     });
-    expect(send).toHaveBeenCalledWith("import:progress", "done", false);
+    expect(send).toHaveBeenCalledWith("importProgress", "done", false);
   });
 });
 

@@ -128,7 +128,7 @@ export function importFoldersController({
     send("openImportFolders");
 
     function onProgress(folder: string, completed = false) {
-      send("import:progress", folder, completed);
+      send("importProgress", folder, completed);
     }
 
     const output = await Promise.all(
@@ -136,7 +136,7 @@ export function importFoldersController({
     );
     const importedReleases = output.flat();
 
-    send("import:progress", "done");
+    send("importProgress", "done");
 
     send("mutate", [
       ["releases", "latest"],

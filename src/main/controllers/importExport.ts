@@ -52,13 +52,13 @@ export function importExportController({
         userDataPath,
         appVersion,
         onProgress: (step, completed = false) =>
-          send("import:progress", step, completed),
+          send("importProgress", step, completed),
       });
       await wait(getDelay());
       app.relaunch();
       app.exit();
     } catch (error) {
-      send("import:error", error.message);
+      send("importError", error.message);
     }
   }
 
@@ -75,7 +75,7 @@ export function importExportController({
 
     await wait(300);
 
-    send("export:progress", "start");
+    send("exportProgress", "start");
 
     const exportPath = await exportData({
       userDataPath,
@@ -83,7 +83,7 @@ export function importExportController({
       appVersion,
     });
 
-    send("export:progress", "done");
+    send("exportProgress", "done");
 
     return exportPath;
   }

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
+import { useApiEvents } from "./useApiEvents";
 import useStore from "../store";
-import api from "../api";
 
 type UseImportDataParams = {
   onDone: () => void;
@@ -18,32 +18,28 @@ export default function useImportData<T extends HTMLElement>({
   const { setModalFixed } = useStore();
   const lastStepRef = useRef<T>(null);
 
-  useEffect(() => {
-    const unsubscribe = [
-      api.import.onProgress((step: string, completed: boolean) => {
-        setModalFixed(true);
-        if (step !== "done") {
-          setSteps((prev) => ({ ...prev, [step]: completed }));
-          return;
-        }
-        setDone(true);
-        setModalFixed(false);
-        if (!closeAfter) {
-          return;
-        }
-        setTimeout(onDone, closeAfter);
-      }),
-      api.import.onError((message: string) => {
-        window.alert(message);
-        setModalFixed(false);
-        if (onCancel) {
-          onCancel();
-        }
-      }),
-    ];
-
-    return () => unsubscribe.forEach((u) => u());
-  }, [closeAfter]);
+  useApiEvents({
+    onImportProgress: (step, completed) => {
+      setModalFixed(true);
+      if (step !== "done") {
+        setSteps((prev) => ({ ...prev, [step]: completed }));
+        return;
+      }
+      setDone(true);
+      setModalFixed(false);
+      if (!closeAfter) {
+        return;
+      }
+      setTimeout(onDone, closeAfter);
+    },
+    onImportError: (message) => {
+      window.alert(message);
+      setModalFixed(false);
+      if (onCancel) {
+        onCancel();
+      }
+    },
+  });
 
   useEffect(() => {
     if (!lastStepRef.current) {

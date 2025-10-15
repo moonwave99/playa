@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
+import { useApiEvents } from "../hooks/useApiEvents";
 import useStore from "../store";
-import api from "../api";
 import cx from "clsx";
 import styles from "./ExportDataView.module.css";
 import formStyles from "../forms.module.css";
@@ -36,16 +36,19 @@ function useExportData(onDone: () => void) {
   const [isDone, setDone] = useState(false);
   const { setModalFixed } = useStore();
 
+  useApiEvents({
+    onExportProgress: (status) => {
+      if (status !== "done") {
+        return;
+      }
+      setDone(true);
+      setModalFixed(false);
+      setTimeout(onDone, ON_DONE_DELAY);
+    },
+  });
+
   useEffect(() => {
     setModalFixed(true);
-    const unsubscribe = api.export.onProgress((status) => {
-      if (status === "done") {
-        setDone(true);
-        setModalFixed(false);
-        setTimeout(onDone, ON_DONE_DELAY);
-      }
-    });
-    return () => unsubscribe();
   }, []);
 
   return isDone;
