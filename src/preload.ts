@@ -6,7 +6,6 @@ import type {
   CollectionWithReleases,
   ArtistWithReleases,
   SearchResult,
-  ReleaseWithArtistAndSubReleases,
   GroupWithArtists,
 } from "./types/types";
 import {
@@ -33,6 +32,10 @@ import {
   statsController,
   actions as statsActions,
 } from "./main/controllers/stats";
+import {
+  stateController,
+  actions as stateActions,
+} from "./main/controllers/state";
 import {
   actions as searchResultActions,
   searchResultController,
@@ -62,6 +65,9 @@ const api = {
   stats: getHandlersFromActions(statsActions) as ReturnType<
     typeof statsController
   >,
+  state: getHandlersFromActions(stateActions) as ReturnType<
+    typeof stateController
+  >,
   searchResult: getHandlersFromActions(searchResultActions) as ReturnType<
     typeof searchResultController
   >,
@@ -87,6 +93,7 @@ const api = {
     group: (group: GroupWithArtists) => ipc.invoke("menu:group", group),
     searchResult: (result: SearchResult) =>
       ipc.invoke("menu:searchResult", result),
+    refresh: () => ipc.invoke("menu:refresh"),
   },
   onNavigate: getHandler("navigate"),
   onSwipe: getHandler("swipe"),
@@ -109,16 +116,6 @@ const api = {
   ),
   onOpenAddArtistsToGroupDialog: getHandler("openAddArtistsToGroupDialog"),
   onOpenEditGroupDialog: getHandler("openEditGroupDialog"),
-  state: {
-    setInputFocused: (inputFocused: boolean) =>
-      ipc.send("state:setInputFocused", inputFocused),
-    selectReleases: (selection: ReleaseWithArtistAndSubReleases[]) =>
-      ipc.send("state:selectReleases", selection),
-    navigate: (path: string) => ipc.send("state:navigate", path),
-    clearSelection: () => ipc.send("state:clearSelection"),
-    refreshCurrentArtist: () => ipc.send("state:refreshCurrentArtist"),
-    refreshMenu: () => ipc.send("state:refreshMenu"),
-  },
   dialog: {
     open: async (options: Partial<OpenDialogSyncOptions>) =>
       ipc.invoke("dialog:open", options),

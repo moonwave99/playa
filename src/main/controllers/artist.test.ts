@@ -4,7 +4,7 @@ import path from "path";
 import fsExtra, { pathExists } from "fs-extra";
 import { artistController } from "./artist";
 import { testFs } from "@moonwave99/test-fs";
-import { StateManager } from "../state";
+import { StateManager } from "../stateManager";
 import { clearPrisma } from "@/test/prisma-utils";
 import {
   getFakeArtist,
@@ -17,7 +17,7 @@ afterEach(clearPrisma);
 
 const defaultParams = {
   withPath,
-  state: {} as unknown as StateManager,
+  stateManager: {} as unknown as StateManager,
   send: vi.fn(),
 };
 
@@ -95,11 +95,13 @@ describe("artist - editArtist function", () => {
       { "/LIBRARY_PATH/A/Artist New": {} },
       context.task.id
     );
-    const state = { setCurrentArtist: vi.fn() } as unknown as StateManager;
+    const stateManager = {
+      setCurrentArtist: vi.fn(),
+    } as unknown as StateManager;
     const { editArtist } = artistController({
       ...defaultParams,
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
-      state,
+      stateManager,
     });
 
     const moveSpy = vi.spyOn(fsExtra, "move");
@@ -122,7 +124,7 @@ describe("artist - editArtist function", () => {
 
     expect(result).toBe(false);
     expect(moveSpy).not.toHaveBeenCalled();
-    expect(state.setCurrentArtist).not.toHaveBeenCalled();
+    expect(stateManager.setCurrentArtist).not.toHaveBeenCalled();
   });
 
   it("updates the artist with the given information", async (context) => {
@@ -131,14 +133,14 @@ describe("artist - editArtist function", () => {
       { "/LIBRARY_PATH/A/Artist 1": {} },
       context.task.id
     );
-    const state = {
+    const stateManager = {
       setCurrentArtist: vi.fn(),
       getCurrentArtist: () => artist,
     } as unknown as StateManager;
     const send = vi.fn();
     const { editArtist } = artistController({
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
-      state,
+      stateManager,
       send,
     });
 
@@ -158,7 +160,7 @@ describe("artist - editArtist function", () => {
     expect(await pathExists(previousPath)).toBe(false);
     expect(await pathExists(newPath)).toBe(true);
 
-    expect(state.setCurrentArtist).toHaveBeenCalled();
+    expect(stateManager.setCurrentArtist).toHaveBeenCalled();
 
     expect(send).toHaveBeenCalledWith("notify", {
       message: `Artist folder moved to ${newPath}`,
@@ -177,14 +179,14 @@ describe("artist - editArtist function", () => {
       { "/LIBRARY_PATH/A/Artist 1": {} },
       context.task.id
     );
-    const state = {
+    const stateManager = {
       setCurrentArtist: vi.fn(),
       getCurrentArtist: () => artist,
     } as unknown as StateManager;
     const send = vi.fn();
     const { editArtist } = artistController({
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
-      state,
+      stateManager,
       send,
     });
 
@@ -200,7 +202,7 @@ describe("artist - editArtist function", () => {
 
     expect(result).toBeTruthy();
     expect(await pathExists(previousPath)).toBe(true);
-    expect(state.setCurrentArtist).toHaveBeenCalled();
+    expect(stateManager.setCurrentArtist).toHaveBeenCalled();
 
     expect(send).toHaveBeenCalledWith("notify", {
       message: "Artist renamed",

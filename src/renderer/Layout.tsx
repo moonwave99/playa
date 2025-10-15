@@ -202,7 +202,7 @@ function init(): Init {
 
   useEffect(() => {
     api.state.setInputFocused(false);
-    api.state.refreshMenu();
+    api.menu.refresh();
     setContext("list");
 
     const removeHandlers = [

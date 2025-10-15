@@ -11,7 +11,7 @@ import {
   ReleaseWithArtist,
   ReleaseWithArtistAndSubReleases,
 } from "@/types/types";
-import { StateManager } from "../state";
+import { StateManager } from "../stateManager";
 import {
   getFakeArtist,
   getFakeArtists,
@@ -27,7 +27,7 @@ const defaultParams = {
   withPath,
   getSetting,
   send,
-  state: {} as StateManager,
+  stateManager: {} as StateManager,
 };
 
 describe("hideRelease function", () => {
@@ -677,7 +677,7 @@ describe("unGroupSelectedRelease function", () => {
     const { unGroupSelectedRelease } = releaseController({
       ...defaultParams,
       send,
-      state: {
+      stateManager: {
         getSelectedReleases: () => [],
       } as StateManager,
     });
@@ -701,7 +701,7 @@ describe("unGroupSelectedRelease function", () => {
     const { unGroupSelectedRelease } = releaseController({
       ...defaultParams,
       send,
-      state: {
+      stateManager: {
         getSelectedReleases: () =>
           [updatedRelease] as ReleaseWithArtistAndSubReleases[],
       } as StateManager,
@@ -731,7 +731,7 @@ describe("addAdditionalArtist function", () => {
     const { addAdditionalArtist } = releaseController({
       ...defaultParams,
       send,
-      state: {
+      stateManager: {
         getCurrentArtist: () => null,
       } as StateManager,
     });
@@ -763,7 +763,7 @@ describe("removeAdditionalArtist function", () => {
     const { addAdditionalArtist, removeAdditionalArtist } = releaseController({
       ...defaultParams,
       send,
-      state: {
+      stateManager: {
         getCurrentArtist: () => null,
       } as StateManager,
     });

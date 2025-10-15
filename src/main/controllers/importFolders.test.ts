@@ -5,7 +5,7 @@ import path from "path";
 import { importFoldersController } from "./importFolders";
 import { testFs } from "@moonwave99/test-fs";
 import { Release, ReleaseWithArtistAndTracks, Track } from "@/types/types";
-import { StateManager } from "../state";
+import { StateManager } from "../stateManager";
 import { getFakeArtist, getFakeReleasesForArtist } from "../../test/seed";
 
 afterEach(clearPrisma);
@@ -16,8 +16,9 @@ const defaultParams = {
   withPath,
   getSetting,
   send,
-  state: {} as StateManager,
+  stateManager: {} as StateManager,
   openFolderDialog: vi.fn(),
+  showErrorBox: vi.fn(),
 };
 
 describe("importFolder function", () => {
@@ -247,7 +248,7 @@ describe("refreshCurrentArtistReleases function", () => {
     const { refreshCurrentArtistReleases } = importFoldersController({
       ...defaultParams,
       send,
-      state: {
+      stateManager: {
         setImporting,
         getCurrentArtist: () => ({
           releases: [] as Release[],
@@ -271,7 +272,7 @@ describe("refreshCurrentArtistReleases function", () => {
     const { refreshCurrentArtistReleases } = importFoldersController({
       ...defaultParams,
       send,
-      state: {
+      stateManager: {
         setImporting: vi.fn(),
         getCurrentArtist: () => ({
           ...artist,
@@ -312,12 +313,42 @@ describe("importFolderFromDialog function", () => {
       ...defaultParams,
       openFolderDialog: vi.fn(),
       send,
-      state: {
+      stateManager: {
         getCurrentArtist: () => null,
       } as StateManager,
     });
 
     await importFolderFromDialog();
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("shows an error box if the selected folder is outside the library path", async (context) => {
+    const directory = await testFs({}, context.task.id);
+    const LIBRARY_PATH = path.join(directory, "LIBRARY_PATH");
+    const artist = getFakeArtist(1);
+
+    const showErrorBox = vi.fn();
+    const send = vi.fn();
+
+    const { importFolderFromDialog } = importFoldersController({
+      ...defaultParams,
+      getSetting: (key: string) =>
+        key === "LIBRARY_PATH" ? LIBRARY_PATH : key,
+      openFolderDialog: () => ["/some/other/folder"],
+      showErrorBox,
+      send,
+      stateManager: {
+        getCurrentArtist: () => artist,
+      } as StateManager,
+    });
+
+    await importFolderFromDialog();
+
+    expect(showErrorBox).toHaveBeenCalledWith(
+      "Error importing folders",
+      "The folders should be contained in your Library."
+    );
+
     expect(send).not.toHaveBeenCalled();
   });
 
@@ -338,14 +369,18 @@ describe("importFolderFromDialog function", () => {
       },
       context.task.id
     );
+    const LIBRARY_PATH = path.join(directory, "LIBRARY_PATH");
 
     const artist = getFakeArtist(1);
     const send = vi.fn();
+
     const { importFolderFromDialog } = importFoldersController({
       ...defaultParams,
       openFolderDialog: (folder: string) => [path.join(directory, folder)],
       send,
-      state: {
+      getSetting: (key: string) =>
+        key === "LIBRARY_PATH" ? LIBRARY_PATH : key,
+      stateManager: {
         getCurrentArtist: () => artist,
       } as StateManager,
     });

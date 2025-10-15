@@ -37,7 +37,8 @@ model Release {
   title             String
   normalizedTitle   String       @default("")
   hash              String       @unique
-  path              String
+  path              String       @default("")
+  completePath      String       @default("")
   type              ReleaseType  @default(Album)
   year              Int?
   discTitle         String?

@@ -4,7 +4,7 @@ import {
   ArtistWithReleasesFull,
   ReleaseWithArtistAndSubReleases,
 } from "@/types/types";
-import { StateManager } from "./state";
+import { StateManager } from "./stateManager";
 import { getFakeArtist } from "../test/seed";
 
 afterEach(clearPrisma);

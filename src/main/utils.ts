@@ -40,10 +40,10 @@ export function getEntityPath(entity: GetEntityPathParam) {
 }
 
 export function getArtistPathFromReleaseData(data: ParsePath) {
-  if (data.fullPath.startsWith(VARIOUS_ARTISTS_FOLDER)) {
+  if (data.completePath.startsWith(VARIOUS_ARTISTS_FOLDER)) {
     return VARIOUS_ARTISTS_FOLDER;
   }
-  return data.fullPath.split("/").slice(0, 2).join("/");
+  return data.completePath.split("/").slice(0, 2).join("/");
 }
 
 export async function crawlFolder(folder: string) {
@@ -83,7 +83,7 @@ async function getMetadata(
 type ParsePath =
   | (Pick<Release, "type" | "path" | "year" | "title"> & {
       artist: Pick<Artist, "name">;
-      fullPath: string;
+      completePath: string;
     })
   | null;
 
@@ -124,7 +124,7 @@ export function parsePath(path: string): ParsePath {
     year,
     title,
     path: title,
-    fullPath: path.replace(
+    completePath: path.replace(
       `[V-A]/${VARIOUS_ARTISTS_NAME}`,
       VARIOUS_ARTISTS_FOLDER
     ),

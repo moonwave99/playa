@@ -24,7 +24,7 @@ import { artistMenu } from "./artist";
 import { collectionMenu } from "./collection";
 import { groupMenu } from "./group";
 import { searchResultMenu } from "./searchResult";
-import type { StateManager, State } from "../state";
+import type { StateManager, State } from "../stateManager";
 import { send } from "../controllers/init";
 
 export { releaseMenu, artistMenu, collectionMenu, groupMenu, searchResultMenu };
@@ -207,11 +207,11 @@ const randomMenu: (MenuEntry & { entity: Entities })[] = [
 
 type InitMenuParams = {
   controllers: Controllers;
-  state: StateManager;
+  stateManager: StateManager;
   send: (channel: string, ...args: unknown[]) => void;
 };
 
-export function initMenu({ controllers, state, send }: InitMenuParams) {
+export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
   const menu = Menu.getApplicationMenu();
 
   menu.append(
@@ -225,7 +225,7 @@ export function initMenu({ controllers, state, send }: InitMenuParams) {
           click: () =>
             controllers.system.revealEntityInFinder(
               "Artist",
-              state.getCurrentArtist().id
+              stateManager.getCurrentArtist().id
             ),
         },
         {
@@ -239,31 +239,34 @@ export function initMenu({ controllers, state, send }: InitMenuParams) {
           accelerator: "Cmd+Shift+C",
           click: () =>
             controllers.release.importMissingCovers(
-              state.getCurrentArtist().releases
+              stateManager.getCurrentArtist().releases
             ),
         },
         {
           label: "Edit Artist",
           accelerator: "Shift+E",
-          click: () => send("openEditArtistDialog", state.getCurrentArtist()),
+          click: () =>
+            send("openEditArtistDialog", stateManager.getCurrentArtist()),
         },
         { type: "separator" },
         {
           label: "Search Artist on Discogs",
           accelerator: "Cmd+Shift+D",
-          click: () => searchArtistOnDiscogs(state.getCurrentArtist()),
+          click: () => searchArtistOnDiscogs(stateManager.getCurrentArtist()),
         },
         {
           label: "Search Artist on RYM",
           accelerator: "Shift+R",
-          click: () => searchArtistOnRYM(state.getCurrentArtist()),
+          click: () => searchArtistOnRYM(stateManager.getCurrentArtist()),
         },
         { type: "separator" },
         {
           label: `Add Artist to Group`,
           accelerator: "a",
           click: () =>
-            send("openAddArtistsToGroupDialog", [state.getCurrentArtist()]),
+            send("openAddArtistsToGroupDialog", [
+              stateManager.getCurrentArtist(),
+            ]),
         },
       ],
     })
@@ -280,14 +283,16 @@ export function initMenu({ controllers, state, send }: InitMenuParams) {
           click: () =>
             send(
               "navigate",
-              getArtistLink(state.getSelectedReleases()[0].artist)
+              getArtistLink(stateManager.getSelectedReleases()[0].artist)
             ),
         },
         {
           label: "Open Release in Tagger",
           accelerator: "Shift+T",
           click: () =>
-            controllers.system.openTagger(state.getSelectedReleases()[0].id),
+            controllers.system.openTagger(
+              stateManager.getSelectedReleases()[0].id
+            ),
         },
         {
           label: "Reveal Release in Finder",
@@ -295,7 +300,7 @@ export function initMenu({ controllers, state, send }: InitMenuParams) {
           click: () =>
             controllers.system.revealEntityInFinder(
               "Release",
-              state.getSelectedReleases()[0].id
+              stateManager.getSelectedReleases()[0].id
             ),
         },
         {
@@ -303,38 +308,46 @@ export function initMenu({ controllers, state, send }: InitMenuParams) {
           accelerator: "Cmd+Shift+R",
           click: () =>
             controllers.importFolders.refreshReleaseContents(
-              state.getSelectedReleases()[0].id
+              stateManager.getSelectedReleases()[0].id
             ),
         },
         {
           label: "Search Release Cover",
           accelerator: "Shift+C",
           click: () =>
-            controllers.release.importCovers(state.getSelectedReleases()),
+            controllers.release.importCovers(
+              stateManager.getSelectedReleases()
+            ),
         },
         { type: "separator" },
         {
           label: "Search Release on Discogs",
           accelerator: "Shift+D",
-          click: () => searchReleaseOnDiscogs(state.getSelectedReleases()[0]),
+          click: () =>
+            searchReleaseOnDiscogs(stateManager.getSelectedReleases()[0]),
         },
         {
           label: "Search Release on RYM",
           accelerator: "Shift+R",
-          click: () => searchReleaseOnRYM(state.getSelectedReleases()[0]),
+          click: () =>
+            searchReleaseOnRYM(stateManager.getSelectedReleases()[0]),
         },
         {
           id: "editRelease",
           label: `Edit Release`,
           accelerator: "Cmd+Shift+E",
           click: () =>
-            send("openEditReleaseDialog", state.getSelectedReleases().at(0)),
+            send(
+              "openEditReleaseDialog",
+              stateManager.getSelectedReleases().at(0)
+            ),
         },
         {
           id: "groupReleases",
           label: `Group Selected Releases`,
           accelerator: "Cmd+G",
-          click: () => send("openGroupDialog", state.getSelectedReleases()),
+          click: () =>
+            send("openGroupDialog", stateManager.getSelectedReleases()),
         },
         {
           id: "unGroupRelease",
@@ -350,7 +363,7 @@ export function initMenu({ controllers, state, send }: InitMenuParams) {
           click: () =>
             send(
               "openAddReleasesToCollectionDialog",
-              state.getSelectedReleases()
+              stateManager.getSelectedReleases()
             ),
         },
       ],

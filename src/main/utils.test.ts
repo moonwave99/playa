@@ -25,7 +25,7 @@ describe("parsePath function", () => {
         type: "Album",
         year: 1999,
         path: "My Title",
-        fullPath: "A/Artist/[Album]/1999 - My Title",
+        completePath: "A/Artist/[Album]/1999 - My Title",
         artist: {
           name: "Artist",
         },
@@ -40,7 +40,7 @@ describe("parsePath function", () => {
       type: "Compilation",
       year: 1999,
       path: "My Title",
-      fullPath: "[V:A]/[Compilation]/1999 - My Title",
+      completePath: "[V:A]/[Compilation]/1999 - My Title",
       artist: {
         name: "_VV_AA_",
       },
@@ -59,7 +59,7 @@ describe("parsePath function", () => {
       type: "Album",
       year: 0,
       path: "title",
-      fullPath: "A/Artist/[Album]/title",
+      completePath: "A/Artist/[Album]/title",
       artist: {
         name: "Artist",
       },

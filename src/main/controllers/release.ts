@@ -30,20 +30,20 @@ import { hashRelease } from "../hash";
 import { searchCover, getImageFromURL } from "../covers";
 import { log } from "../logger";
 import { getSetting } from "../settings";
-import { type StateManager } from "../state";
+import { type StateManager } from "../stateManager";
 
 type ReleaseControllerParams = {
   withPath: (key: string, folderPath: string) => string;
   getSetting: (key: string) => ReturnType<typeof getSetting>;
   send: (channel: string, ...args: unknown[]) => void;
-  state: StateManager;
+  stateManager: StateManager;
 };
 
 export function releaseController({
   withPath,
   getSetting,
   send,
-  state,
+  stateManager,
 }: ReleaseControllerParams) {
   async function editRelease(infos: EditReleaseParam[]) {
     if (!infos.length) {
@@ -248,7 +248,7 @@ export function releaseController({
   }
 
   async function unGroupSelectedRelease() {
-    const release = state.getSelectedReleases()[0];
+    const release = stateManager.getSelectedReleases()[0];
     if (!release) {
       return;
     }

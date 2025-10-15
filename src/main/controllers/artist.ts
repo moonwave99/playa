@@ -11,12 +11,12 @@ import {
   addRelatedArtist,
   removeRelatedArtist,
 } from "../db/artist";
-import { StateManager } from "../state";
+import { StateManager } from "../stateManager";
 
 type ArtistControllerParams = {
   withPath: (key: string, folderPath: string) => string;
   send: (channel: string, ...args: unknown[]) => void;
-  state: StateManager;
+  stateManager: StateManager;
 };
 
 type EditArtistParams = Pick<Artist, "path" | "id"> & {
@@ -27,7 +27,7 @@ type EditArtistParams = Pick<Artist, "path" | "id"> & {
 export function artistController({
   withPath,
   send,
-  state,
+  stateManager,
 }: ArtistControllerParams) {
   async function editArtist(infos: EditArtistParams) {
     const shouldMoveArtist = infos.newPath !== infos.path;
@@ -59,8 +59,8 @@ export function artistController({
       path: infos.newPath,
     });
 
-    state.setCurrentArtist({
-      ...state.getCurrentArtist(),
+    stateManager.setCurrentArtist({
+      ...stateManager.getCurrentArtist(),
       ...(updatedArtist as Artist),
     });
 

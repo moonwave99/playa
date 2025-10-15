@@ -15,7 +15,7 @@ import {
   getSettings,
   setSettings,
 } from "../settings";
-import { StateManager } from "../state";
+import { StateManager } from "../stateManager";
 import {
   initMenu,
   releaseMenu,
@@ -33,6 +33,7 @@ import { searchResultController } from "./searchResult";
 import { statsController } from "./stats";
 import { importFoldersController } from "./importFolders";
 import { importExportController } from "./importExport";
+import { stateController } from "./state";
 
 export type Controllers = {
   system: ReturnType<typeof systemController>;
@@ -42,12 +43,15 @@ export type Controllers = {
   group: ReturnType<typeof groupController>;
   searchResult: ReturnType<typeof searchResultController>;
   stats: ReturnType<typeof statsController>;
+  state: ReturnType<typeof stateController>;
   importFolders: ReturnType<typeof importFoldersController>;
   importExport: ReturnType<typeof importExportController>;
 };
 
 export function send(channel: string, ...args: unknown[]) {
-  BrowserWindow.getAllWindows()[0].webContents.send(channel, ...args);
+  BrowserWindow.getAllWindows()
+    .at(0)
+    ?.webContents.send(channel, ...args);
 }
 
 export function init(mainWindow: BrowserWindow) {
@@ -83,27 +87,33 @@ export function init(mainWindow: BrowserWindow) {
     return folders?.at(0);
   }
 
-  const state = new StateManager();
+  function showErrorBox(title: string, content: string) {
+    dialog.showErrorBox(title, content);
+  }
+
+  const stateManager = new StateManager();
 
   const controllers = {
     system: systemController({ withPath, getSetting }),
-    artist: artistController({ withPath, state, send }),
+    artist: artistController({ withPath, stateManager, send }),
     release: releaseController({
       withPath,
       getSetting,
       send,
-      state,
+      stateManager,
     }),
     collection: collectionController({ send }),
     group: groupController({ send }),
     searchResult: searchResultController(),
     stats: statsController(),
+    state: stateController({ send, stateManager }),
     importFolders: importFoldersController({
       withPath,
       getSetting,
       send,
-      state,
+      stateManager,
       openFolderDialog,
+      showErrorBox,
     }),
     importExport: importExportController({
       openFileDialog,
@@ -117,11 +127,11 @@ export function init(mainWindow: BrowserWindow) {
 
   const { refreshMenu } = initMenu({
     controllers,
-    state,
+    stateManager,
     send,
   });
 
-  state.onStateChange(refreshMenu);
+  stateManager.onStateChange(refreshMenu);
 
   [
     ...Object.values(controllers),
@@ -132,11 +142,12 @@ export function init(mainWindow: BrowserWindow) {
       "menu:collection": collectionMenu({ controllers, send }),
       "menu:group": groupMenu({ controllers, send }),
       "menu:searchResult": searchResultMenu({ controllers, send }),
+      "menu:refresh": () => refreshMenu(stateManager.getState()),
     },
   ].forEach(registerHandlers);
 
   mainWindow.on("swipe", (_, direction) => {
-    if (state.isInputFocused()) {
+    if (stateManager.isInputFocused()) {
       return;
     }
     if (
@@ -152,18 +163,6 @@ export function init(mainWindow: BrowserWindow) {
       mainWindow.webContents.send("swipe", 1);
     }
   });
-
-  ipc.on("state:setInputFocused", (_, inputFocused) =>
-    state.setInputFocused(inputFocused)
-  );
-  ipc.on("state:selectReleases", (_, selectedReleases) =>
-    state.setSelectedReleases(selectedReleases)
-  );
-  ipc.on("state:navigate", async (_, path: string) => state.setPath(path));
-  ipc.on("state:clearSelection", () => send("clearSelection"));
-  ipc.on("state:toggleSearch", () => send("toggleSearch"));
-  ipc.on("state:refreshMenu", () => refreshMenu(state.getState()));
-  ipc.on("state:refreshCurrentArtist", () => state.refreshCurrentArtist());
 }
 
 function registerHandlers(

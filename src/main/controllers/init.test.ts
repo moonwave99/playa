@@ -5,9 +5,12 @@ import { actions as artistActions } from "./artist";
 import { actions as releaseActions } from "./release";
 import { actions as groupActions } from "./group";
 import { actions as collectionActions } from "./collection";
+import { actions as statsActions } from "./stats";
+import { actions as stateActions } from "./state";
 import { actions as systemActions } from "./system";
 import { actions as searchResultActions } from "./searchResult";
 import { actions as importExportActions } from "./importExport";
+import { actions as importFoldersActions } from "./importFolders";
 
 vi.mock("../settings");
 
@@ -45,31 +48,22 @@ describe("init function", () => {
 
   it("should setup the ipc listeners", () => {
     const { mainWindow } = getMainWindow();
-    const ipcOnSpy = vi.spyOn(ipcMain, "on");
     const ipcHandleSpy = vi.spyOn(ipcMain, "handle");
 
     init(mainWindow);
-
-    [
-      "state:setInputFocused",
-      "state:selectReleases",
-      "state:navigate",
-      "state:clearSelection",
-      "state:toggleSearch",
-      "state:refreshMenu",
-      "state:refreshCurrentArtist",
-    ].forEach((eventName) => {
-      expect(ipcOnSpy).toHaveBeenCalledWith(eventName, expect.anything());
-    });
 
     [
       ...artistActions,
       ...releaseActions,
       ...groupActions,
       ...collectionActions,
+      ...statsActions,
+      ...stateActions,
       ...systemActions,
       ...searchResultActions,
       ...importExportActions,
+      ...importFoldersActions,
+      "menu:refresh",
       "menu:release",
       "menu:artist",
       "menu:collection",
