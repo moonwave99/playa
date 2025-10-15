@@ -6,7 +6,7 @@ import type {
 } from "@/types/types";
 import { getReleaseContextMenuParams } from "@/lib/utils";
 import useCollection from "@/renderer/query/useCollection";
-import { useClearSelectionOnLeave } from "@/renderer/hooks/useApi";
+import { useClearSelectionOnLeave } from "@/renderer/hooks/useApiEvents";
 import ReleaseList from "@/renderer/components/ReleaseList";
 import Loading from "@/renderer/components/Loading";
 import ErrorView from "../components/ErrorView";

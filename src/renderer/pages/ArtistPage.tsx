@@ -4,7 +4,7 @@ import type { ReleaseWithArtist } from "@/types/types";
 import useArtist from "@/renderer/query/useArtist";
 import api from "@/renderer/api";
 import { withoutShift } from "@/renderer/hooks/useKeyboardManager";
-import { useClearSelectionOnLeave } from "@/renderer/hooks/useApi";
+import { useClearSelectionOnLeave } from "@/renderer/hooks/useApiEvents";
 import { getReleaseContextMenuParams } from "@/lib/utils";
 import useStore from "@/renderer/store";
 import ReleaseList from "@/renderer/components/ReleaseList";

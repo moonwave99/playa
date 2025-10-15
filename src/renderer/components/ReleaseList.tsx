@@ -10,7 +10,7 @@ import {
   releaseColumnsConfig,
   compactColumnsConfig,
 } from "../hooks/useResponsiveColumns";
-import { useApi } from "../hooks/useApi";
+import { useApiEvents } from "../hooks/useApiEvents";
 import { withoutShift, withPrevent } from "../hooks/useKeyboardManager";
 import useStore from "../store";
 import api from "../api";
@@ -51,7 +51,7 @@ export default function ReleaseList({
 
   const { releaseListViewMode, toggleViewMode, setModalContents } = useStore();
 
-  useApi({
+  useApiEvents({
     onToggleViewMode: () => toggleViewMode("releaseList"),
   });
 

@@ -19,7 +19,7 @@ import {
   withMeta,
   KeyManager,
 } from "./hooks/useKeyboardManager";
-import { useApi } from "./hooks/useApi";
+import { useApiEvents } from "./hooks/useApiEvents";
 import api from "./api";
 import useRefetch from "./hooks/useRefetch";
 import useStore from "./store";
@@ -45,6 +45,15 @@ import {
   Group,
   ReleaseWithArtistAndTracksAndSubreleases,
 } from "@/types/types";
+
+function onNotify(data: Notification) {
+  toast(ToastView, {
+    data,
+    position: "bottom-right",
+    closeButton: false,
+    autoClose: 1500,
+  });
+}
 
 export default function Layout() {
   const { setContext, isDetailPage, onDragStart, onDragEnd, draggedItem } =
@@ -106,7 +115,10 @@ function init(): Init {
 
   const [draggedItem, setDraggedItem] = useState<Artist | Release>(null);
 
-  useApi({
+  useApiEvents({
+    onMutate: refetch,
+    onNotify,
+    onCoverUpdate: refreshCovers,
     onOpenSettings: () => setModalContents({ name: "settings" }),
     onOpenImportFolders: () => setModalContents({ name: "importFolders" }),
     onOpenExportData: () => setModalContents({ name: "exportData" }),
@@ -137,6 +149,10 @@ function init(): Init {
         modalContents?.name === "search" ? null : { name: "search" }
       ),
     onSwipe: navigate,
+    onNavigate: (path: string) => {
+      navigate(path);
+      setContext("list");
+    },
   });
 
   const isDetailPage = !!(
@@ -191,35 +207,11 @@ function init(): Init {
     setPath(fullLocation);
   }, [location]);
 
-  function onNotification(data: Notification) {
-    toast(ToastView, {
-      data,
-      position: "bottom-right",
-      closeButton: false,
-      autoClose: 1500,
-    });
-  }
-
   useEffect(() => {
     api.state.setInputFocused(false);
     api.menu.refresh();
-    setContext("list");
-
-    const removeHandlers = [
-      api.onMutate(refetch),
-      api.onNotify(onNotification),
-      api.onNavigate((path: string) => {
-        navigate(path);
-        setContext("list");
-      }),
-      api.onCoverUpdate(refreshCovers),
-    ];
-
     api.settings.getSettings().then(setSettings);
-
-    return () => {
-      removeHandlers.forEach((x) => x());
-    };
+    setContext("list");
   }, []);
 
   function onDragStart(event: DragStartEvent) {

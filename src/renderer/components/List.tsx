@@ -13,7 +13,7 @@ import {
 } from "@tanstack/react-virtual";
 import { useKeyManager, withPrevent } from "../hooks/useKeyboardManager";
 import useResponsiveColumns from "../hooks/useResponsiveColumns";
-import { useApi } from "../hooks/useApi";
+import { useApiEvents } from "../hooks/useApiEvents";
 import type { ColumnsConfigEntry } from "../hooks/useResponsiveColumns";
 import type { HasId } from "@/types/types";
 
@@ -138,7 +138,7 @@ export default function List<T>({
     },
   });
 
-  useApi({
+  useApiEvents({
     onClearSelection: () => {
       setCurrentIndex(selection[0]);
       setSelection([]);

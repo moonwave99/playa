@@ -12,7 +12,7 @@ import useRestoreListPosition from "@/renderer/hooks/useRestoreListPosition";
 import { releaseColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
 import { withPrevent } from "@/renderer/hooks/useKeyboardManager";
 import useReleases from "@/renderer/query/useReleases";
-import { useClearSelectionOnLeave } from "@/renderer/hooks/useApi";
+import { useClearSelectionOnLeave } from "@/renderer/hooks/useApiEvents";
 import { getReleaseLink } from "@/lib/links";
 import { getReleaseContextMenuParams } from "@/lib/utils";
 import Loading from "@/renderer/components/Loading";

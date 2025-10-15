@@ -4,7 +4,7 @@ import api from "@/renderer/api";
 import type { ArtistWithReleasesAndAppearances } from "@/types/types";
 import useGroup from "../query/useGroup";
 import { compactColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
-import { useClearSelectionOnLeave } from "@/renderer/hooks/useApi";
+import { useClearSelectionOnLeave } from "@/renderer/hooks/useApiEvents";
 import { getArtistLink } from "@/lib/links";
 import { estimateListCardSize } from "@/lib/utils";
 import List from "@/renderer/components/List";

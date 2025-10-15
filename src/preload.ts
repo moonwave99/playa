@@ -1,5 +1,11 @@
 import { contextBridge, ipcRenderer as ipc } from "electron";
-import type { IpcRendererEvent, OpenDialogSyncOptions } from "electron";
+import type { OpenDialogSyncOptions } from "electron";
+import {
+  getEventHandler,
+  getHandlers,
+  getHandlersFromActions,
+  getEventHandlersFromActions,
+} from "./handlerUtils";
 import { getSettings, setSettings } from "./main/settings";
 import type {
   ReleaseWithArtist,
@@ -7,7 +13,9 @@ import type {
   ArtistWithReleases,
   SearchResult,
   GroupWithArtists,
+  Notification,
 } from "./types/types";
+import { QueryKey } from "@tanstack/react-query";
 import {
   systemController,
   actions as systemActions,
@@ -80,6 +88,9 @@ const api = {
   importExport: getHandlersFromActions(importExportActions) as ReturnType<
     typeof importExportController
   >,
+  events: getEventHandlersFromActions(Object.keys(getEvents())) as ReturnType<
+    typeof getEvents
+  >,
   settings: getHandlers({ getSettings, setSettings }),
   menu: {
     release: (
@@ -95,38 +106,17 @@ const api = {
       ipc.invoke("menu:searchResult", result),
     refresh: () => ipc.invoke("menu:refresh"),
   },
-  onNavigate: getHandler("navigate"),
-  onSwipe: getHandler("swipe"),
-  onMutate: getHandler("mutate"),
-  onNotify: getHandler("notify"),
-  onClearSelection: getHandler("clearSelection"),
-  onToggleViewMode: getHandler("toggleViewMode"),
-  onToggleSearch: getHandler("toggleSearch"),
-  onOpenSettings: getHandler("openSettings"),
-  onOpenImportData: getHandler("openImportData"),
-  onOpenExportData: getHandler("openExportData"),
-  onOpenImportFolders: getHandler("openImportFolders"),
-  onCoverUpdate: getHandler("coverUpdate"),
-  onOpenGroupDialog: getHandler("openGroupDialog"),
-  onOpenEditReleaseDialog: getHandler("openEditReleaseDialog"),
-  onOpenEditArtistDialog: getHandler("openEditArtistDialog"),
-  onOpenEditCollectionDialog: getHandler("openEditCollectionDialog"),
-  onOpenAddReleasesToCollectionDialog: getHandler(
-    "openAddReleasesToCollectionDialog"
-  ),
-  onOpenAddArtistsToGroupDialog: getHandler("openAddArtistsToGroupDialog"),
-  onOpenEditGroupDialog: getHandler("openEditGroupDialog"),
   dialog: {
     open: async (options: Partial<OpenDialogSyncOptions>) =>
       ipc.invoke("dialog:open", options),
   },
   import: {
-    onProgress: getHandler("import:progress"),
-    onError: getHandler("import:error"),
+    onProgress: getEventHandler("import:progress"),
+    onError: getEventHandler("import:error"),
   },
   export: {
-    onProgress: getHandler("export:progress"),
-    onError: getHandler("export:error"),
+    onProgress: getEventHandler("export:progress"),
+    onError: getEventHandler("export:error"),
   },
 };
 
@@ -134,41 +124,32 @@ export type Api = typeof api;
 
 contextBridge.exposeInMainWorld("api", api);
 
-function getHandlers(entity: Record<string, (...args: unknown[]) => unknown>) {
-  return Object.entries(entity).reduce(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    (memo, [name, handler]) => {
-      return {
-        ...memo,
-        [name]: (...params: Parameters<typeof handler>) =>
-          ipc.invoke(name, ...params),
-      };
-    },
-    {} as Record<keyof typeof entity, (...args: unknown[]) => Promise<unknown>>
-  );
-}
-
-function getHandler(name: string): (...args: unknown[]) => () => void {
-  return (handler: (...args: unknown[]) => void) => {
-    function withoutEvent(
-      _: IpcRendererEvent,
-      ...args: Parameters<typeof handler>
-    ) {
-      handler(...args);
-    }
-    ipc.on(name, withoutEvent);
-    return () => {
-      ipc.off(name, withoutEvent);
-    };
+function getEvents() {
+  const noOp = (...args: unknown[]) => {
+    void args;
   };
-}
-
-function getHandlersFromActions(actionNames: string[]) {
-  return actionNames.reduce(
-    (memo, name) => ({
-      ...memo,
-      [name]: (...params: unknown[]) => ipc.invoke(name as string, ...params),
-    }),
-    {}
-  );
+  return {
+    onNavigate: (path: string) => noOp(path),
+    onSwipe: (direction: number) => noOp(direction),
+    onMutate: (queryKey: QueryKey) => noOp(queryKey),
+    onNotify: (notification: Notification) => noOp(notification),
+    onClearSelection: () => {},
+    onToggleViewMode: () => {},
+    onToggleSearch: () => {},
+    onOpenSettings: () => {},
+    onOpenImportData: () => {},
+    onOpenExportData: () => {},
+    onOpenImportFolders: () => {},
+    onCoverUpdate: (selection: ReleaseWithArtist[]) => noOp(selection),
+    onOpenGroupDialog: (selection: ReleaseWithArtist[]) => noOp(selection),
+    onOpenEditReleaseDialog: (release: ReleaseWithArtist) => noOp(release),
+    onOpenEditArtistDialog: (artist: ArtistWithReleases) => noOp(artist),
+    onOpenEditCollectionDialog: (collection: CollectionWithReleases) =>
+      noOp(collection),
+    onOpenAddReleasesToCollectionDialog: (selection: ReleaseWithArtist[]) =>
+      noOp(selection),
+    onOpenAddArtistsToGroupDialog: (selection: ArtistWithReleases[]) =>
+      noOp(selection),
+    onOpenEditGroupDialog: (group: GroupWithArtists) => noOp(group),
+  };
 }

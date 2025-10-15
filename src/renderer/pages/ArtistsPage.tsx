@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { compactColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
 import useArtists from "@/renderer/query/useArtists";
 import useAlphabeticalArtists from "@/renderer/query/useAlphabeticalArtists";
-import { useApi } from "@/renderer/hooks/useApi";
+import { useApiEvents } from "@/renderer/hooks/useApiEvents";
 import api from "@/renderer/api";
 import useStore from "@/renderer/store";
 import useRestoreListPosition from "@/renderer/hooks/useRestoreListPosition";
@@ -20,7 +20,7 @@ import styles from "./Page.module.css";
 export default function ArtistsPage() {
   const { artistsViewMode, toggleViewMode } = useStore();
 
-  useApi({
+  useApiEvents({
     onToggleViewMode: () => toggleViewMode("artists"),
   });
 
