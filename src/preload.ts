@@ -12,6 +12,7 @@ import type {
   GroupWithArtists,
   Notification,
   Settings,
+  ImportData,
 } from "./types/types";
 import { QueryKey } from "@tanstack/react-query";
 import {
@@ -139,6 +140,7 @@ function getEvents() {
     onOpenAddArtistsToGroupDialog: (selection: ArtistWithReleases[]) =>
       noOp(selection),
     onOpenEditGroupDialog: (group: GroupWithArtists) => noOp(group),
+    onOpenInteractiveImportDialog: (data: ImportData[]) => noOp(data),
     onImportProgress: (step: string, completed: boolean) =>
       noOp(step, completed),
     onImportError: (message: string) => noOp(message),

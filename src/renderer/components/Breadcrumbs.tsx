@@ -4,6 +4,7 @@ import Link from "./Link";
 import { routes, type Route } from "../routes";
 import cx from "clsx";
 import styles from "./Breadcrumbs.module.css";
+import { SupportedIcons } from "../icons";
 
 type RouteWithParams = Route & { params: Params };
 
@@ -55,7 +56,11 @@ export default function BreadCrumbs({
       return null;
     }
     const output = Breadcrumb ? (
-      <Breadcrumb id={+params.id} isFor={id} className={styles.content} />
+      <Breadcrumb
+        id={+params.id}
+        isFor={id as SupportedIcons}
+        className={styles.content}
+      />
     ) : (
       t(`breadcrumbs.${id}`)
     );

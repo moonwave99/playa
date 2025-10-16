@@ -44,6 +44,7 @@ import {
   Collection,
   Group,
   ReleaseWithArtistAndTracksAndSubreleases,
+  ImportData,
 } from "@/types/types";
 
 function onNotify(data: Notification) {
@@ -143,6 +144,11 @@ function init(): Init {
       setModalContents({
         name: "addArtistsToGroup",
         params: { artists },
+      }),
+    onOpenInteractiveImportDialog: (data: ImportData[]) =>
+      setModalContents({
+        name: "interactiveImport",
+        params: { data },
       }),
     onToggleSearch: () =>
       setModalContents(

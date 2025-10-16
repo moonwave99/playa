@@ -12,6 +12,14 @@ import type {
 import { globby } from "globby";
 import { VARIOUS_ARTISTS_NAME, VARIOUS_ARTISTS_FOLDER } from "@/lib/utils";
 
+export function stripPath(completePath: string, startPath: string) {
+  const stripped = completePath.replace(new RegExp(`^${startPath}`), "");
+  if (path.isAbsolute(stripped)) {
+    return stripped.slice(1);
+  }
+  return stripped;
+}
+
 type GetEntityPathParam = { entityType: EntityType } & (
   | Pick<Artist, "path">
   | Pick<ReleaseWithArtist, "artist" | "path" | "type" | "year">
@@ -24,6 +32,9 @@ export function getEntityPath(entity: GetEntityPathParam) {
   }
   if (entity.entityType === "Release") {
     const release = entity as ReleaseWithArtist;
+    if (release.completePath) {
+      return release.completePath;
+    }
     return path.join(
       release.artist.path,
       `[${release.type}]`,
@@ -31,6 +42,9 @@ export function getEntityPath(entity: GetEntityPathParam) {
     );
   }
   const track = entity as TrackWithRelease;
+  if (track.release.completePath) {
+    return path.join(track.release.completePath, track.path);
+  }
   return path.join(
     track.release.artist.path,
     `[${track.release.type}]`,
@@ -66,6 +80,13 @@ export async function getFolderContents(
   return Promise.all(contents.map(getMetadata));
 }
 
+export async function getFolderContentsFromAbsolutePath(
+  folder: string
+): Promise<TrackInfo[]> {
+  const contents = await crawlFolder(folder);
+  return Promise.all(contents.map(getMetadata));
+}
+
 async function getMetadata(
   filePath: string,
   index: number
@@ -77,6 +98,7 @@ async function getMetadata(
     trackArtist: data.common.artist || "",
     duration: data.format.duration || 0,
     position: data.common.track.no || index + 1,
+    meta: data.common,
   };
 }
 

@@ -8,4 +8,8 @@
 .LoadingIcon {
   width: var(--loading-icon-size);
   height: var(--loading-icon-size);
+  &.small {
+    width: var(--loading-icon-size-small);
+    height: var(--loading-icon-size-small);
+  }
 }

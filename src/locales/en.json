@@ -46,6 +46,10 @@
     "emptyList": "There are no {{entity}} yet.",
     "emptyListForContainer": "There are no {{entity}} for this {{container}} yet."
   },
+  "lookup": {
+    "placeholder": "Search for Entity",
+    "customValue": "Create \"{{value}}\""
+  },
   "pages": {
     "HomePage": {
       "latest": "Latest {{entity}}",
@@ -57,6 +61,57 @@
         "title": "Your Import Activity",
         "dateInputLabel": "From",
         "plotAxisLabel": "Daily added releases"
+      }
+    }
+  },
+  "modals": {
+    "InteractiveImport": {
+      "title": "Import Folders",
+      "actions": {
+        "import": "Import Folder",
+        "skip": "Skip Folder",
+        "cancel": "Cancel"
+      },
+      "folderView": {
+        "title": "Release Info"
+      },
+      "tracklistView": {
+        "title": "Tracklist ({{total}} tracks)"
+      },
+      "errors": {
+        "import": "Error importing Release"
+      },
+      "release": {
+        "artist": {
+          "label": "Artist",
+          "placeholder": "Select Artist"
+        },
+        "title": {
+          "label": "Title",
+          "placeholder": "Enter Release Title"
+        },
+        "year": {
+          "label": "Year",
+          "placeholder": "Enter Release Year"
+        },
+        "type": {
+          "label": "Type",
+          "placeholder": "Select Release Type"
+        }
+      },
+      "track": {
+        "title": {
+          "label": "Title",
+          "placeholder": "Enter Track Title"
+        },
+        "trackArtist": {
+          "label": "Artist",
+          "placeholder": "Enter Track Artist"
+        },
+        "position": {
+          "label": "Position",
+          "placeholder": "Enter Track Position"
+        }
       }
     }
   }

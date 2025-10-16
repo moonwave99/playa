@@ -71,7 +71,8 @@ export async function addTracksToRelease(id: number, trackInfo: TrackInfo[]) {
   });
 
   const tracks = await Promise.all(
-    trackInfo.map((track) =>
+    // eslint-disable-next-line  @typescript-eslint/no-unused-vars
+    trackInfo.map(({ meta, ...track }) =>
       prisma.track.create({
         data: {
           ...track,

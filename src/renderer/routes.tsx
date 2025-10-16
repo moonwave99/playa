@@ -30,7 +30,7 @@ export type Route = {
 
 type BreadcrumbProps = {
   className?: string;
-  isFor?: string;
+  isFor?: SupportedIcons;
   id?: number;
 };
 
@@ -38,7 +38,7 @@ function BaseBreadcrumb({ className, isFor }: BreadcrumbProps) {
   const { t } = useTranslation();
   return (
     <span className={className}>
-      <Icon isFor={isFor as SupportedIcons} /> {t(`breadcrumbs.${isFor}`)}
+      <Icon isFor={isFor} /> {t(`breadcrumbs.${isFor}`)}
     </span>
   );
 }

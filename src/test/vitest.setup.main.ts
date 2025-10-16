@@ -47,7 +47,7 @@ vi.mock("electron", () => {
 
 vi.mock("music-metadata", () => ({
   parseFile: async (filePath: string) => {
-    const { artist } = parsePath(
+    const { artist, title, year } = parsePath(
       filePath.split("LIBRARY_PATH").at(-1).split("/").slice(0, -1).join("/")
     );
 
@@ -56,6 +56,8 @@ vi.mock("music-metadata", () => ({
       common: {
         artist: filePath.includes("Various") ? "Track Artist" : artist.name,
         title: `Track ${index}`,
+        year: year || 1999,
+        album: title,
         track: {
           no: index,
         },

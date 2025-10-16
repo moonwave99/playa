@@ -77,8 +77,6 @@ describe("getFolderContents function", () => {
               "01 - Track 1.mp3": "",
               "02 - Track 2.mp3": "",
               "03 - Track 3.mp3": "",
-              "04 - Track 4.mp3": "",
-              "05 - Track 5.mp3": "",
             },
           },
         },
@@ -110,6 +108,15 @@ describe("getFolderContents function", () => {
         trackArtist: "Artist 1",
         duration: 123,
         position: 1,
+        meta: {
+          album: "Release 1",
+          artist: "Artist 1",
+          title: "Track 1",
+          track: {
+            no: 1,
+          },
+          year: 2000,
+        },
       },
       {
         path: "02 - Track 2.mp3",
@@ -117,6 +124,15 @@ describe("getFolderContents function", () => {
         trackArtist: "Artist 1",
         duration: 123,
         position: 2,
+        meta: {
+          album: "Release 1",
+          artist: "Artist 1",
+          title: "Track 2",
+          track: {
+            no: 2,
+          },
+          year: 2000,
+        },
       },
       {
         path: "03 - Track 3.mp3",
@@ -124,20 +140,15 @@ describe("getFolderContents function", () => {
         trackArtist: "Artist 1",
         duration: 123,
         position: 3,
-      },
-      {
-        path: "04 - Track 4.mp3",
-        title: "Track 4",
-        trackArtist: "Artist 1",
-        duration: 123,
-        position: 4,
-      },
-      {
-        path: "05 - Track 5.mp3",
-        title: "Track 5",
-        trackArtist: "Artist 1",
-        duration: 123,
-        position: 5,
+        meta: {
+          album: "Release 1",
+          artist: "Artist 1",
+          title: "Track 3",
+          track: {
+            no: 3,
+          },
+          year: 2000,
+        },
       },
     ]);
   });

@@ -7,6 +7,7 @@ import {
   ArtistWithReleases,
   Release,
   HasId,
+  ImportData,
 } from "@/types/types";
 import api from "./api";
 import CoverLightbox from "./components/CoverLightbox";
@@ -22,6 +23,7 @@ import ExportDataView from "./components/ExportDataView";
 import ImportFoldersView from "./components/ImportFoldersView";
 import AddReleasesToCollectionView from "./components/AddReleasesToCollectionView";
 import AddArtistsToGroupView from "./components/AddArtistsToGroupView";
+import InteractiveImportView from "./components/InteractiveImportView";
 
 function getModalOverrides(name: string) {
   if (name === "lightbox") {
@@ -37,6 +39,12 @@ function getModalOverrides(name: string) {
     return {
       width: "min(90vw, 1400px)",
       marginTop: "0",
+    };
+  }
+  if (name === "interactiveImport") {
+    return {
+      width: "min(90vw, 1000px)",
+      padding: 0,
     };
   }
   if (name === "editCollection" || name === "editGroup") {
@@ -179,6 +187,15 @@ export default function Modal({ setContext }: ModalProps) {
           artists={params.artists as ArtistWithReleases[]}
           onSave={closeModal}
           onCancel={closeModal}
+        />
+      );
+    }
+    if (name === "interactiveImport") {
+      return (
+        <InteractiveImportView
+          onCancel={closeModal}
+          onDone={closeModal}
+          data={params.data as ImportData[]}
         />
       );
     }

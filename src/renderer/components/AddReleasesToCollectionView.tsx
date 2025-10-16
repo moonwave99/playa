@@ -16,16 +16,10 @@ export default function AddReleasesToCollectionView({
   const { collections, addReleasesToCollection, addReleasesToNewCollection } =
     useCollections();
 
-  async function onSubmit({
-    title,
-    itemTo,
-  }: {
-    title: string;
-    itemTo: Collection;
-  }) {
-    if (title) {
-      addReleasesToNewCollection({ title, releases });
-    } else if (itemTo) {
+  async function onSubmit(itemTo: Collection) {
+    if (!itemTo.id) {
+      addReleasesToNewCollection({ title: itemTo.title, releases });
+    } else {
       addReleasesToCollection({ id: itemTo.id, releases });
     }
     onSave();

@@ -322,6 +322,31 @@ describe("importFolderFromDialog function", () => {
     expect(send).not.toHaveBeenCalled();
   });
 
+  it("shows an error box if too many folders are selected", async () => {
+    const showErrorBox = vi.fn();
+    const send = vi.fn();
+
+    const { importFolderFromDialog } = importFoldersController({
+      ...defaultParams,
+      openFolderDialog: () =>
+        Array.from({ length: 20 }, (_, i) => `folder-${i}`),
+      stateManager: {
+        getCurrentArtist: () => null,
+      } as StateManager,
+      showErrorBox,
+      send,
+    });
+
+    await importFolderFromDialog();
+
+    expect(showErrorBox).toHaveBeenCalledWith(
+      "Error importing folders",
+      "You can import at max 10 folders at once"
+    );
+
+    expect(send).not.toHaveBeenCalled();
+  });
+
   it("shows an error box if the selected folder is outside the library path", async (context) => {
     const directory = await testFs({}, context.task.id);
     const LIBRARY_PATH = path.join(directory, "LIBRARY_PATH");
@@ -350,6 +375,91 @@ describe("importFolderFromDialog function", () => {
     );
 
     expect(send).not.toHaveBeenCalled();
+  });
+
+  it("opens the interactive import dialog if the smart import setting is set to false", async (context) => {
+    const directory = await testFs(
+      {
+        "/LIBRARY_PATH/A/Artist 1": {
+          "[Album]": {
+            "2000 - Release 1": {
+              "01 - Track 1.mp3": "",
+              "02 - Track 2.mp3": "",
+            },
+          },
+        },
+      },
+      context.task.id
+    );
+    const LIBRARY_PATH = path.join(directory, "LIBRARY_PATH");
+    const artist = getFakeArtist(1);
+
+    const showErrorBox = vi.fn();
+    const send = vi.fn();
+
+    const { importFolderFromDialog } = importFoldersController({
+      ...defaultParams,
+      getSetting: (key: string) =>
+        key === "LIBRARY_PATH" ? LIBRARY_PATH : false,
+      openFolderDialog: (folder: string) => [
+        path.join(directory, folder, "[Album]", "2000 - Release 1"),
+      ],
+      showErrorBox,
+      send,
+      stateManager: {
+        getCurrentArtist: () => artist,
+      } as StateManager,
+    });
+
+    await importFolderFromDialog();
+
+    expect(send).toHaveBeenCalledWith("openInteractiveImportDialog", [
+      {
+        artist: {
+          id: null,
+          name: "Artist 1",
+        },
+        path: "2000 - Release 1",
+        completePath: path.join(artist.path, "[Album]", "2000 - Release 1"),
+        title: "Release 1",
+        year: 2000,
+        type: "Album",
+        tracks: [
+          {
+            duration: 123,
+            meta: {
+              album: "Release 1",
+              artist: "Artist 1",
+              title: "Track 1",
+              year: 2000,
+              track: {
+                no: 1,
+              },
+            },
+            path: "01 - Track 1.mp3",
+            position: 1,
+            title: "Track 1",
+            trackArtist: "Artist 1",
+          },
+          {
+            duration: 123,
+            meta: {
+              album: "Release 1",
+              artist: "Artist 1",
+              title: "Track 2",
+              year: 2000,
+              track: {
+                no: 2,
+              },
+            },
+            path: "02 - Track 2.mp3",
+            position: 2,
+            title: "Track 2",
+            trackArtist: "Artist 1",
+          },
+        ],
+      },
+    ]);
   });
 
   it("imports the contents of the folder picked in the dialog", async (context) => {

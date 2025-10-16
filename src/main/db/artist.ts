@@ -229,6 +229,16 @@ function getExcludeFilter(exclude: SearchArtistsParams["exclude"]) {
   };
 }
 
+export async function searchArtistByName(name: string) {
+  return prisma.artist.findFirst({
+    where: {
+      name: {
+        startsWith: name,
+      },
+    },
+  });
+}
+
 export async function searchArtists({
   query,
   exclude,

@@ -15,16 +15,10 @@ export default function AddArtistsToGroupView({
 }: AddArtistsToGroupViewProps) {
   const { groups, addArtistsToGroup, addArtistsToNewGroup } = useGroups();
 
-  async function onSubmit({
-    title,
-    itemTo,
-  }: {
-    title: string;
-    itemTo: GroupWithArtists;
-  }) {
-    if (title) {
-      addArtistsToNewGroup({ title, artists });
-    } else if (itemTo) {
+  async function onSubmit(itemTo: GroupWithArtists) {
+    if (!itemTo.id) {
+      addArtistsToNewGroup({ title: itemTo.title, artists });
+    } else {
       addArtistsToGroup({ id: itemTo.id, artists });
     }
     onSave();

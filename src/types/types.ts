@@ -1,6 +1,7 @@
 import { Controllers, send } from "@/main/controllers/init";
 // eslint-disable-next-line import/no-named-as-default
 import Prisma, { ReleaseType } from "@prisma/client-generated";
+import type { ICommonTagsResult } from "music-metadata/lib/type";
 
 export { EntityType } from "@prisma/client-generated";
 
@@ -25,6 +26,17 @@ type Track = Prisma.Track & {
 };
 
 export type { Artist, Release, Collection, Track, ReleaseType, Group };
+
+export const releaseTypes: ReleaseType[] = [
+  "Album",
+  "EP",
+  "Single",
+  "Compilation",
+  "Bootleg",
+  "Various",
+  "Tribute",
+  "Soundtrack",
+];
 
 export type Entities =
   | "collection"
@@ -51,7 +63,9 @@ export type ArtistUpdate = Pick<Artist, "name" | "path">;
 export type TrackInfo = Pick<
   Track,
   "path" | "duration" | "position" | "title" | "trackArtist"
->;
+> & {
+  meta: ICommonTagsResult;
+};
 export type ReleaseCountByType = Record<ReleaseType, number>;
 export type TrackWithRelease = Track & { release: ReleaseWithArtist };
 
@@ -227,4 +241,14 @@ export type BaseQuery = {
 export type Notification = {
   type: "success" | "info" | "warning" | "error";
   message: string;
+};
+
+export type ImportData = {
+  artist: Pick<Artist, "id" | "name">;
+  title: string;
+  year: number;
+  completePath: string;
+  path: string;
+  type: ReleaseType;
+  tracks: TrackInfo[];
 };

@@ -4,12 +4,16 @@ import LoadingIcon from "../../assets/loading.svg?react";
 
 type LoadingProps = {
   className?: string;
+  size?: "normal" | "small";
 };
 
-export default function Loading({ className }: LoadingProps) {
+export default function Loading({ className, size = "normal" }: LoadingProps) {
   return (
     <div className={cx(styles.Loading, className)}>
-      <LoadingIcon className={styles.LoadingIcon} aria-label="Loading..." />
+      <LoadingIcon
+        className={cx(styles.LoadingIcon, { [styles.small]: size === "small" })}
+        aria-label="Loading..."
+      />
     </div>
   );
 }

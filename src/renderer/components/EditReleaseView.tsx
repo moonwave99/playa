@@ -2,8 +2,8 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import api from "../api";
 import useRefetch from "../hooks/useRefetch";
+import { releaseTypes } from "@/types/types";
 import type {
-  ReleaseType,
   ReleaseWithArtist,
   ReleaseWithArtistAndSubReleases,
   NewReleaseInfo,
@@ -37,17 +37,6 @@ const labelMap = {
     placeholder: "Enter release type",
   },
 };
-
-const releaseTypes = [
-  "Album",
-  "EP",
-  "Single",
-  "Compilation",
-  "Bootleg",
-  "Various",
-  "Tribute",
-  "Soundtrack",
-] as ReleaseType[];
 
 type EditReleasesViewProps = {
   release: ReleaseWithArtistAndSubReleases;
