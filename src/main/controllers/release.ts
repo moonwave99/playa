@@ -162,7 +162,7 @@ export function releaseController({
             `${newInfos[index].hash}-cover.jpg`
           );
 
-          if (!existsSync(oldCoverPath)) {
+          if (!existsSync(oldCoverPath) || oldCoverPath === newCoverPath) {
             return true;
           }
 

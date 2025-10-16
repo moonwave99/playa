@@ -10,7 +10,9 @@ import {
   addRelatedArtist,
   removeRelatedArtist,
 } from "../db/artist";
+import prisma from "../db/prisma";
 import { StateManager } from "../stateManager";
+import { getEntityPath } from "../utils";
 
 type ArtistControllerParams = {
   withPath: (key: string, folderPath: string) => string;
@@ -58,10 +60,25 @@ export function artistController({
       path: infos.newPath,
     });
 
-    stateManager.setCurrentArtist({
-      ...stateManager.getCurrentArtist(),
-      ...(updatedArtist as Artist),
-    });
+    await stateManager.refreshCurrentArtist();
+
+    await Promise.all(
+      stateManager
+        .getCurrentArtist()
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        .releases.map(({ completePath, ...release }) =>
+          prisma.release.update({
+            where: {
+              id: release.id,
+            },
+            data: {
+              completePath: getEntityPath(release),
+            },
+          })
+        )
+    );
+
+    await stateManager.refreshCurrentArtist();
 
     send("notify", {
       type: "success",

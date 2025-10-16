@@ -99,7 +99,7 @@ export function importFoldersController({
       );
       send("mutate", ["artists", stateManager.getCurrentArtist().id]);
     } catch (error) {
-      log("importFolders:refreshCurrentArtistRelease]", error);
+      log("importFolders:refreshCurrentArtistRelease", error);
     }
     stateManager.setImporting(false);
   }
@@ -130,6 +130,9 @@ export function importFoldersController({
           name: tracks[0].trackArtist,
         },
         title: tracks[0].meta.album || path.basename(folders[index]),
+        normalizedTitle: normalizeDiacritics(
+          tracks[0].meta.album || path.basename(folders[index])
+        ),
         year: tracks[0].meta.year || 1999,
         path: path.basename(folders[index]),
         completePath: stripPath(folders[index], LIBRARY_PATH),
@@ -172,6 +175,7 @@ export function importFoldersController({
           completePath: data.completePath,
           path: data.path,
           title: data.title,
+          normalizedTitle: normalizeDiacritics(data.title),
           year: data.year,
           type: data.type,
         },

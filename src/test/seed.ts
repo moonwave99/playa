@@ -1,7 +1,7 @@
 import prisma from "../main/db/prisma";
 import sha1 from "sha1";
 import { hashArtistName, hashRelease } from "../main/hash";
-import type { Release, HasId, EntityType } from "@/types/types";
+import type { Release, HasId, EntityType, ReleaseType } from "@/types/types";
 
 export function getFakeArtist(id = 1) {
   const artist = getFakeArtists({ length: 1 }).at(0);
@@ -28,7 +28,7 @@ export function getFakeRelease(id = 1, override: Partial<Release> = {}) {
     id,
     title: `Release ${id}`,
     normalizedTitle: `Release ${id}`,
-    type: "Album" as const,
+    type: "Album" as ReleaseType,
     year: 2000,
     path: `Release ${id}`,
     completePath: `[Album]/2000 - Release ${id}`,
@@ -54,7 +54,7 @@ export function getFakeReleasesForArtist(artist_id: number, length = 5) {
     id: (artist_id - 1) * length + i + 1,
     title: `Release ${i + 1}`,
     normalizedTitle: `Release ${i + 1}`,
-    type: "Album" as const,
+    type: "Album" as ReleaseType,
     year: 2000,
     path: `Release ${i + 1}`,
     completePath: `A/Artist ${artist_id}/[Album]/2000 - Release ${i + 1}`,
@@ -78,6 +78,7 @@ export function getFakeTracksForRelease(releaseId: number, length = 5) {
   return Array.from({ length }, (_, i) => ({
     id: (releaseId - 1) * length + i + 1,
     title: `Track ${i + 1}`,
+    trackArtist: "Track Artist",
     normalizedTitle: `Track ${i + 1}`,
     path: `0${i + 1} - Track ${i + 1}.mp3`,
     hash: sha1(

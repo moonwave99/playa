@@ -138,7 +138,7 @@ export default function SettingsView({ onSave, onCancel }: SettingsViewProps) {
           placeholder={placeholder}
           value={(copy[key] as string) || ""}
           checked={!!copy[key]}
-          onInput={(event: FormEvent) =>
+          onChange={(event: FormEvent) =>
             setCopy((prev) => ({
               ...prev,
               [key]:

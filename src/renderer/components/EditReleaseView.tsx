@@ -1,13 +1,14 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
-import api from "../api";
+import useStore from "../store";
 import useRefetch from "../hooks/useRefetch";
-import { releaseTypes } from "@/types/types";
+import api from "../api";
 import type {
   ReleaseWithArtist,
   ReleaseWithArtistAndSubReleases,
   NewReleaseInfo,
 } from "@/types/types";
+import { releaseTypes } from "@/types/types";
 import { didReleaseInfoChange } from "@/lib/utils";
 import AdditionalArtistsEditor from "./AdditionalArtistsEditor";
 import cx from "clsx";
@@ -49,6 +50,7 @@ export default function EditReleasesView({
   onSave,
   onCancel,
 }: EditReleasesViewProps) {
+  const { settings } = useStore();
   const refetch = useRefetch();
   const [folderInfo, setFolderInfo] = useState(
     [release, ...release.subReleases].map((x, index) => ({
@@ -112,6 +114,8 @@ export default function EditReleasesView({
     return didReleaseInfoChange(folderInfo, folderInfo.length === 1);
   }
 
+  const { USE_SMART_IMPORT } = settings;
+
   return (
     <div className={styles.EditReleaseView}>
       <h2>Edit Release</h2>
@@ -130,10 +134,12 @@ export default function EditReleasesView({
           ))}
         </ul>
         <div className={formStyles.actions}>
-          <div className={formStyles.info}>
-            <MdInfoOutline />
-            This will move the Release folder in your Library.
-          </div>
+          {USE_SMART_IMPORT && (
+            <div className={formStyles.info}>
+              <MdInfoOutline />
+              This will move the Release folder in your Library.
+            </div>
+          )}
           <button
             type="submit"
             className={formStyles.button}
@@ -170,12 +176,16 @@ function FolderView({
   hasFocus,
   onInput,
 }: FolderViewProps) {
+  const { settings } = useStore();
+
   function getTitle() {
     if (isMainRelease || !hasMultipleDiscs || !release.discTitle) {
       return release.title;
     }
     return `${release.title} - ${release.discTitle}`;
   }
+
+  const { USE_SMART_IMPORT } = settings;
 
   return (
     <article className={styles.release}>
@@ -203,13 +213,15 @@ function FolderView({
         </>
       ) : null}
       <div className={formStyles.horizontalGroup}>
-        <Field
-          hasFocus={hasFocus && !isMainRelease}
-          name="newPath"
-          release={release}
-          onInput={onInput}
-          isVertical
-        />
+        {USE_SMART_IMPORT && (
+          <Field
+            hasFocus={hasFocus && !isMainRelease}
+            name="newPath"
+            release={release}
+            onInput={onInput}
+            isVertical
+          />
+        )}
         {hasMultipleDiscs ? (
           <Field
             name="newDiscTitle"

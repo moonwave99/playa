@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
+import useStore from "../store";
 import useRefetch from "../hooks/useRefetch";
 import api from "../api";
 import type { ArtistWithReleases } from "@/types/types";
@@ -10,114 +11,117 @@ import styles from "./EditArtistView.module.css";
 import formStyles from "../forms.module.css";
 
 type NewInfo = {
-    newPath: string;
-    newName?: string;
+  newPath: string;
+  newName?: string;
 };
 
 type EditArtistViewProps = {
-    artist: ArtistWithReleases;
-    onSave: () => void;
-    onCancel: () => void;
+  artist: ArtistWithReleases;
+  onSave: () => void;
+  onCancel: () => void;
 };
 
 export default function EditArtistView({
-    artist,
-    onSave,
-    onCancel,
+  artist,
+  onSave,
+  onCancel,
 }: EditArtistViewProps) {
-    const refetch = useRefetch();
-    const [artistInfo, setArtistInfo] = useState({
-        newPath: artist.path,
-        newName: artist.name,
+  const { settings } = useStore();
+  const refetch = useRefetch();
+  const [artistInfo, setArtistInfo] = useState({
+    newPath: artist.path,
+    newName: artist.name,
+  });
+
+  async function onSubmit(event: FormEvent) {
+    event.preventDefault();
+
+    const success = await api.artist.editArtist({
+      ...artist,
+      ...artistInfo,
     });
-
-    async function onSubmit(event: FormEvent) {
-        event.preventDefault();
-
-        const success = await api.artist.editArtist({
-            ...artist,
-            ...artistInfo,
-        });
-        if (!success) {
-            return;
-        }
-
-        refetch([["artists"], ["artists", "latest"], ["artists", artist.id]]);
-
-        onSave();
+    if (!success) {
+      return;
     }
 
-    function updateInfo(key: keyof NewInfo, value: string) {
-        setArtistInfo((prev) => ({ ...prev, [key]: value }));
-    }
+    refetch([["artists"], ["artists", "latest"], ["artists", artist.id]]);
 
-    function canSubmit() {
-        return (
-            artist.name !== artistInfo.newName ||
-            artist.path !== artistInfo.newPath
-        );
-    }
+    onSave();
+  }
 
+  function updateInfo(key: keyof NewInfo, value: string) {
+    setArtistInfo((prev) => ({ ...prev, [key]: value }));
+  }
+
+  function canSubmit() {
     return (
-        <div className={styles.EditArtistView}>
-            <div className={formStyles.container}>
-                <h2>Edit Artist</h2>
-                <form onSubmit={onSubmit} className={formStyles.form}>
-                    <label className={cx(formStyles.label, styles.label)}>
-                        New Name
-                        <input
-                            autoFocus
-                            className={cx(formStyles.input, styles.input)}
-                            required
-                            placeholder="Enter the artist name"
-                            value={artistInfo.newName}
-                            onInput={(event: FormEvent) =>
-                                updateInfo(
-                                    "newName",
-                                    (event.target as HTMLInputElement).value
-                                )
-                            }
-                        />
-                    </label>
-                    <label className={cx(formStyles.label, styles.label)}>
-                        New Path
-                        <input
-                            className={cx(formStyles.input, styles.input)}
-                            required
-                            placeholder="Enter the artist path"
-                            value={artistInfo.newPath}
-                            onInput={(event: FormEvent) =>
-                                updateInfo(
-                                    "newPath",
-                                    (event.target as HTMLInputElement).value
-                                )
-                            }
-                        />
-                    </label>
-
-                    <div className={formStyles.actions}>
-                        <div className={formStyles.info}>
-                            <MdInfoOutline />
-                            This will move the Artist folder in your Library.
-                        </div>
-                        <button
-                            type="submit"
-                            className={formStyles.button}
-                            disabled={!canSubmit()}
-                        >
-                            Edit Artist
-                        </button>
-                        <button
-                            type="button"
-                            className={formStyles.button}
-                            onClick={onCancel}
-                        >
-                            Cancel
-                        </button>
-                    </div>
-                </form>
-            </div>
-            <RelatedArtistsEditor id={artist.id} />
-        </div>
+      artist.name !== artistInfo.newName || artist.path !== artistInfo.newPath
     );
+  }
+
+  const { USE_SMART_IMPORT } = settings;
+
+  return (
+    <div className={styles.EditArtistView}>
+      <div className={formStyles.container}>
+        <h2>Edit Artist</h2>
+        <form onSubmit={onSubmit} className={formStyles.form}>
+          <label className={cx(formStyles.label, styles.label)}>
+            New Name
+            <input
+              autoFocus
+              className={cx(formStyles.input, styles.input)}
+              required
+              placeholder="Enter the artist name"
+              value={artistInfo.newName}
+              onInput={(event: FormEvent) =>
+                updateInfo("newName", (event.target as HTMLInputElement).value)
+              }
+            />
+          </label>
+          {USE_SMART_IMPORT && (
+            <label className={cx(formStyles.label, styles.label)}>
+              New Path
+              <input
+                className={cx(formStyles.input, styles.input)}
+                required
+                placeholder="Enter the artist path"
+                value={artistInfo.newPath}
+                onInput={(event: FormEvent) =>
+                  updateInfo(
+                    "newPath",
+                    (event.target as HTMLInputElement).value
+                  )
+                }
+              />
+            </label>
+          )}
+
+          <div className={formStyles.actions}>
+            {USE_SMART_IMPORT && (
+              <div className={formStyles.info}>
+                <MdInfoOutline />
+                This will move the Artist folder in your Library.
+              </div>
+            )}
+            <button
+              type="submit"
+              className={formStyles.button}
+              disabled={!canSubmit()}
+            >
+              Edit Artist
+            </button>
+            <button
+              type="button"
+              className={formStyles.button}
+              onClick={onCancel}
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+      <RelatedArtistsEditor id={artist.id} />
+    </div>
+  );
 }

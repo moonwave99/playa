@@ -11,6 +11,7 @@ import {
   getFakeReleasesForArtist,
 } from "@/test/seed";
 import { withPath } from "@/test/utils";
+import { ArtistWithReleases, Release } from "@/types/types";
 
 afterEach(clearPrisma);
 
@@ -129,16 +130,27 @@ describe("artist - editArtist function", () => {
   });
 
   it("updates the artist with the given information", async (context) => {
-    const artist = getFakeArtist();
     const directory = await testFs(
       { "/LIBRARY_PATH/A/Artist 1": {} },
       context.task.id
     );
+
+    const artist = getFakeArtist();
+    const releases = getFakeReleasesForArtist(1, 2);
+
+    let _currentArtist = null as ArtistWithReleases;
+
     const stateManager = {
-      setCurrentArtist: vi.fn(),
-      getCurrentArtist: () => artist,
+      getCurrentArtist: () => _currentArtist,
+      refreshCurrentArtist: async () =>
+        (_currentArtist = (await prisma.artist.findFirst({
+          where: { id: 1 },
+          include: { releases: { include: { artist: true } } },
+        })) as ArtistWithReleases),
     } as unknown as StateManager;
+
     const send = vi.fn();
+
     const { editArtist } = artistController({
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
       stateManager,
@@ -147,6 +159,8 @@ describe("artist - editArtist function", () => {
     });
 
     await prisma.artist.create({ data: artist });
+    await prisma.release.createMany({ data: releases });
+    await stateManager.refreshCurrentArtist();
 
     const result = await editArtist({
       ...artist,
@@ -162,7 +176,20 @@ describe("artist - editArtist function", () => {
     expect(await pathExists(previousPath)).toBe(false);
     expect(await pathExists(newPath)).toBe(true);
 
-    expect(stateManager.setCurrentArtist).toHaveBeenCalled();
+    expect(stateManager.getCurrentArtist()).toMatchObject({
+      name: "Artist New",
+      normalizedName: "Artist New",
+      hash: "5d0781bec3a1ed0d",
+      path: "A/Artist New",
+      releases: [
+        {
+          completePath: "A/Artist New/[Album]/2000 - Release 1",
+        },
+        {
+          completePath: "A/Artist New/[Album]/2000 - Release 2",
+        },
+      ],
+    });
 
     expect(send).toHaveBeenCalledWith("notify", {
       message: `Artist folder moved to ${newPath}`,
@@ -181,10 +208,17 @@ describe("artist - editArtist function", () => {
       { "/LIBRARY_PATH/A/Artist 1": {} },
       context.task.id
     );
+    let _currentArtist = { ...artist, releases: [] as Release[] };
+
     const stateManager = {
-      setCurrentArtist: vi.fn(),
-      getCurrentArtist: () => artist,
+      getCurrentArtist: () => _currentArtist,
+      refreshCurrentArtist: async () =>
+        (_currentArtist = (await prisma.artist.findFirst({
+          where: { id: 1 },
+          include: { releases: true },
+        })) as ArtistWithReleases),
     } as unknown as StateManager;
+
     const send = vi.fn();
     const { editArtist } = artistController({
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
@@ -201,11 +235,17 @@ describe("artist - editArtist function", () => {
       newPath: "A/Artist 1",
     });
 
+    expect(stateManager.getCurrentArtist()).toMatchObject({
+      name: "Artist New",
+      normalizedName: "Artist New",
+      hash: "5d0781bec3a1ed0d",
+      path: "A/Artist 1",
+    });
+
     const previousPath = path.join(directory, "LIBRARY_PATH/A/Artist 1");
 
     expect(result).toBeTruthy();
     expect(await pathExists(previousPath)).toBe(true);
-    expect(stateManager.setCurrentArtist).toHaveBeenCalled();
 
     expect(send).toHaveBeenCalledWith("notify", {
       message: "Artist renamed",
