@@ -1,7 +1,6 @@
 import prisma from "../db/prisma";
 import { clearPrisma } from "@/test/prisma-utils";
 import { withPath, getSetting, send } from "@/test/utils";
-import { dialog } from "electron";
 import path from "path";
 import fsExtra, { pathExists } from "fs-extra";
 import { releaseController } from "./release";
@@ -28,6 +27,8 @@ const defaultParams = {
   getSetting,
   send,
   stateManager: {} as StateManager,
+  showErrorBox: vi.fn(),
+  openConfirmDialog: vi.fn(),
 };
 
 describe("hideRelease function", () => {
@@ -249,6 +250,7 @@ describe("editRelease function", () => {
     const { editRelease } = releaseController({
       ...defaultParams,
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
+      getSetting: (key: string) => (key === "USE_SMART_IMPORT" ? true : key),
     });
     const spy = vi.spyOn(fsExtra, "move");
     const release = getFakeReleasesForArtist(1).at(0);
@@ -256,10 +258,11 @@ describe("editRelease function", () => {
     await prisma.release.create({ data: release });
 
     const newInfo = {
-      newPath: "Album One",
+      completePath: "A/Artist 1/[Album]/2000 - Release 1",
+      newPath: "Release 1",
       newDiscTitle: "Album Edited",
       newTitle: "Album Edited",
-      newYear: 1999,
+      newYear: 2000,
       newType: "Album" as ReleaseType,
     };
 
@@ -268,10 +271,11 @@ describe("editRelease function", () => {
     ])) as ReleaseWithArtist[];
 
     expect(result[0]).toMatchObject({
-      path: "Album One",
+      completePath: "A/Artist 1/[Album]/2000 - Release 1",
+      path: "Release 1",
       discTitle: null,
       title: "Album Edited",
-      year: 1999,
+      year: 2000,
       type: "Album" as ReleaseType,
     });
 
@@ -279,9 +283,13 @@ describe("editRelease function", () => {
   });
 
   it("shows a warning if the new path contains any ../ sequence", async () => {
-    const { editRelease } = releaseController(defaultParams);
+    const showErrorBox = vi.fn();
+    const { editRelease } = releaseController({
+      ...defaultParams,
+      showErrorBox,
+    });
     const moveSpy = vi.spyOn(fsExtra, "move");
-    const dialogSpy = vi.spyOn(dialog, "showMessageBoxSync");
+
     const newInfo = {
       newPath: "../Album One",
       newDiscTitle: "Album Edited",
@@ -301,12 +309,10 @@ describe("editRelease function", () => {
       },
     ]);
 
-    expect(dialogSpy).toHaveBeenCalledWith(null, {
-      message: "Error while renaming",
-      detail: "Path cannot contain any '../' sequence",
-      type: "error",
-      buttons: ["OK"],
-    });
+    expect(showErrorBox).toHaveBeenCalledWith(
+      "Error while renaming",
+      "Path cannot contain any '../' sequence"
+    );
 
     expect(result).toBe(false);
     expect(moveSpy).not.toHaveBeenCalled();
@@ -327,13 +333,14 @@ describe("editRelease function", () => {
     await prisma.artist.create({ data: getFakeArtist(1) });
     await prisma.release.create({ data: release });
 
+    const showErrorBox = vi.fn();
     const { editRelease } = releaseController({
       ...defaultParams,
+      showErrorBox,
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
     });
 
     const moveSpy = vi.spyOn(fsExtra, "move");
-    const dialogSpy = vi.spyOn(dialog, "showMessageBoxSync");
 
     const newInfo = {
       newPath: "New Album Path",
@@ -350,12 +357,10 @@ describe("editRelease function", () => {
       },
     ]);
 
-    expect(dialogSpy).toHaveBeenCalledWith(null, {
-      message: "Error while renaming",
-      detail: `Path ${newInfo.newPath} already exists`,
-      type: "error",
-      buttons: ["OK"],
-    });
+    expect(showErrorBox).toHaveBeenCalledWith(
+      "Error while renaming",
+      `Path ${newInfo.newPath} already exists`
+    );
 
     expect(result).toBe(false);
     expect(moveSpy).not.toHaveBeenCalled();
@@ -373,12 +378,14 @@ describe("editRelease function", () => {
     await prisma.artist.create({ data: getFakeArtist(1) });
     await prisma.release.create({ data: release });
 
+    const showErrorBox = vi.fn();
+
     const { editRelease } = releaseController({
       ...defaultParams,
+      showErrorBox,
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
     });
 
-    const dialogSpy = vi.spyOn(dialog, "showMessageBoxSync");
     const newInfo = {
       newPath: "New Album Path",
       newDiscTitle: "Album Edited",
@@ -394,12 +401,10 @@ describe("editRelease function", () => {
       },
     ]);
 
-    expect(dialogSpy).toHaveBeenCalledWith(null, {
-      message: "Error while renaming",
-      type: "warning",
-      detail: `Release 1 not found at: ${directory}/LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1`,
-      buttons: ["OK"],
-    });
+    expect(showErrorBox).toHaveBeenCalledWith(
+      "Error while renaming",
+      `Release 1 not found at: ${path.join(directory, "LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1")}`
+    );
 
     expect(result).toBe(false);
   });
@@ -424,10 +429,12 @@ describe("editRelease function", () => {
 
     const { editRelease } = releaseController({
       ...defaultParams,
+      getSetting: (key: string) => (key === "USE_SMART_IMPORT" ? true : key),
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
     });
 
     const newInfo = {
+      completePath: "A/Artist 1/[Album]/2000 - Release 1",
       newPath: "New Release Path",
       newDiscTitle: "Release Edited",
       newTitle: "Release Edited",
@@ -823,19 +830,15 @@ describe("deleteRelease function", () => {
 
 describe("deleteReleases function", () => {
   it("does nothing is the cancel button is pressed", async () => {
-    const showMessageBoxSync = vi
-      .spyOn(dialog, "showMessageBoxSync")
-      .mockImplementation(() => 1);
-
     const send = vi.fn();
     const { deleteReleases } = releaseController({
       ...defaultParams,
       send,
+      openConfirmDialog: () => 1,
     });
 
     await deleteReleases([4, 5]);
     expect(send).not.toHaveBeenCalled();
-    showMessageBoxSync.mockRestore();
   });
 
   it("deletes the passed releases from library", async () => {

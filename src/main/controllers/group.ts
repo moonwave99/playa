@@ -12,20 +12,20 @@ import {
   setGroupCoverArtist,
 } from "../db/group";
 
-import { dialog } from "electron";
-
 type GroupControllerParams = {
   send: (channel: string, ...args: unknown[]) => void;
+  openConfirmDialog: (message: string, detail: string) => number;
 };
 
-export function groupController({ send }: GroupControllerParams) {
+export function groupController({
+  send,
+  openConfirmDialog,
+}: GroupControllerParams) {
   async function removeArtistsFromGroup(id: number, artist_ids: number[]) {
-    const cancel = dialog.showMessageBoxSync(null, {
-      message: `Are you sure to remove ${artist_ids.length} entries from this Group?`,
-      type: "warning",
-      buttons: ["OK", "Cancel"],
-      defaultId: 1,
-    });
+    const cancel = openConfirmDialog(
+      `Are you sure to remove ${artist_ids.length} entries from this Group?`,
+      ""
+    );
 
     if (cancel) {
       return;

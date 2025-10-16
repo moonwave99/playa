@@ -87,6 +87,16 @@ export function init(mainWindow: BrowserWindow) {
     return folders?.at(0);
   }
 
+  function openConfirmDialog(message: string, detail: string) {
+    return dialog.showMessageBoxSync(null, {
+      message,
+      detail,
+      type: "warning",
+      buttons: ["OK", "Cancel"],
+      defaultId: 1,
+    });
+  }
+
   function showErrorBox(title: string, content: string) {
     dialog.showErrorBox(title, content);
   }
@@ -95,15 +105,17 @@ export function init(mainWindow: BrowserWindow) {
 
   const controllers = {
     system: systemController({ withPath, getSetting }),
-    artist: artistController({ withPath, stateManager, send }),
+    artist: artistController({ withPath, stateManager, send, showErrorBox }),
     release: releaseController({
       withPath,
       getSetting,
       send,
       stateManager,
+      showErrorBox,
+      openConfirmDialog,
     }),
-    collection: collectionController({ send }),
-    group: groupController({ send }),
+    collection: collectionController({ send, openConfirmDialog }),
+    group: groupController({ send, openConfirmDialog }),
     searchResult: searchResultController(),
     stats: statsController(),
     state: stateController({ send, stateManager }),

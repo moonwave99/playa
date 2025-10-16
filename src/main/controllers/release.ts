@@ -1,12 +1,10 @@
 import { existsSync, move, unlink } from "fs-extra";
 import prisma from "../db/prisma";
-import { dialog } from "electron";
 import {
   EditReleaseParam,
   ReleaseWithArtist,
   Release,
   Track,
-  Artist,
 } from "@/types/types";
 import { didReleaseInfoChange, mapSeries } from "@/lib/utils";
 import {
@@ -36,6 +34,8 @@ type ReleaseControllerParams = {
   withPath: (key: string, folderPath: string) => string;
   getSetting: (key: string) => ReturnType<typeof getSetting>;
   send: (channel: string, ...args: unknown[]) => void;
+  showErrorBox: (title: string, content: string) => void;
+  openConfirmDialog: (message: string, detail: string) => number;
   stateManager: StateManager;
 };
 
@@ -44,6 +44,8 @@ export function releaseController({
   getSetting,
   send,
   stateManager,
+  showErrorBox,
+  openConfirmDialog,
 }: ReleaseControllerParams) {
   async function editRelease(infos: EditReleaseParam[]) {
     if (!infos.length) {
@@ -72,12 +74,10 @@ export function releaseController({
 
     for (const info of infos) {
       if (info.newPath.includes("../")) {
-        dialog.showMessageBoxSync(null, {
-          message: "Error while renaming",
-          detail: "Path cannot contain any '../' sequence",
-          type: "error",
-          buttons: ["OK"],
-        });
+        showErrorBox(
+          "Error while renaming",
+          "Path cannot contain any '../' sequence"
+        );
         return false;
       }
       const targetPath = withPath(
@@ -87,22 +87,21 @@ export function releaseController({
           year: info.newYear,
           type: info.newType,
           path: info.newPath,
-          artist: artist as unknown as Artist,
+          artist,
         })
       );
 
       if (existsSync(targetPath)) {
-        dialog.showMessageBoxSync(null, {
-          message: "Error while renaming",
-          detail: `Path ${info.newPath} already exists`,
-          type: "error",
-          buttons: ["OK"],
-        });
+        showErrorBox(
+          "Error while renaming",
+          `Path ${info.newPath} already exists`
+        );
         return false;
       }
     }
 
     try {
+      const USE_SMART_IMPORT = getSetting("USE_SMART_IMPORT");
       const newInfos = infos.map((x) => ({
         ...x,
         hash: hashRelease({
@@ -112,6 +111,15 @@ export function releaseController({
         }),
         discTitle: infos.length === 1 ? null : x.newDiscTitle,
         path: x.newPath,
+        completePath: USE_SMART_IMPORT
+          ? getEntityPath({
+              entityType: "Release",
+              year: x.newYear,
+              type: x.newType,
+              path: x.newPath,
+              artist,
+            })
+          : x.completePath,
         title: x.newTitle,
         type: x.newType,
         year: x.newYear,
@@ -123,15 +131,14 @@ export function releaseController({
             "LIBRARY_PATH",
             getEntityPath({
               ...x,
-              artist: artist as unknown as Artist,
+              artist,
               entityType: "Release",
             })
           );
           const newPath = withPath(
             "LIBRARY_PATH",
             getEntityPath({
-              ...x,
-              artist: artist as unknown as Artist,
+              artist,
               entityType: "Release",
               type: x.newType,
               year: x.newYear,
@@ -141,6 +148,10 @@ export function releaseController({
 
           if (!existsSync(oldPath)) {
             throw new Error(`Release ${x.id} not found at: ${oldPath}`);
+          }
+
+          if (oldPath === newPath) {
+            return true;
           }
 
           await move(oldPath, newPath);
@@ -156,6 +167,7 @@ export function releaseController({
           }
 
           await move(oldCoverPath, newCoverPath);
+
           return true;
         })
       );
@@ -164,12 +176,7 @@ export function releaseController({
     } catch (error) {
       log("release:renameRelease", error);
       log("release:renameRelease", infos);
-      dialog.showMessageBoxSync(null, {
-        message: "Error while renaming",
-        detail: error.message,
-        type: "warning",
-        buttons: ["OK"],
-      });
+      showErrorBox("Error while renaming", error.message);
       return false;
     }
   }
@@ -262,13 +269,10 @@ export function releaseController({
   }
 
   async function deleteReleases(release_ids: number[]) {
-    const cancel = dialog.showMessageBoxSync(null, {
-      message: `Are you sure to delete ${release_ids.length} Releases from library?`,
-      detail: "This action is not reversible!",
-      type: "warning",
-      buttons: ["OK", "Cancel"],
-      defaultId: 1,
-    });
+    const cancel = openConfirmDialog(
+      `Are you sure to delete ${release_ids.length} Releases from library?`,
+      "This action is not reversible!"
+    );
 
     if (cancel) {
       return;

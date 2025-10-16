@@ -1,6 +1,5 @@
 import prisma from "../db/prisma";
 import { clearPrisma } from "../../test/prisma-utils";
-import { dialog } from "electron";
 import { collectionController } from "./collection";
 import { sortBy } from "@/lib/utils";
 import {
@@ -15,6 +14,7 @@ afterEach(clearPrisma);
 
 const defaultParams = {
   send: vi.fn(),
+  openConfirmDialog: vi.fn(),
 };
 
 describe("getAllCollections function", () => {
@@ -215,7 +215,10 @@ describe("deleteCollections function", () => {
 describe("updateCollection function", () => {
   it("does nothing if no collection is found", async () => {
     const send = vi.fn();
-    const { updateCollection } = collectionController({ send });
+    const { updateCollection } = collectionController({
+      ...defaultParams,
+      send,
+    });
     const result = await updateCollection(1, {
       title: "new title",
       releases: [],
@@ -235,7 +238,10 @@ describe("updateCollection function", () => {
 
     const send = vi.fn();
 
-    const { updateCollection } = collectionController({ send });
+    const { updateCollection } = collectionController({
+      ...defaultParams,
+      send,
+    });
 
     const result = await updateCollection(1, {
       title: "new title",
@@ -271,11 +277,10 @@ describe("removeReleasesFromCollection function", () => {
       },
     });
 
-    const dialogSpy = vi.spyOn(dialog, "showMessageBoxSync");
-    dialogSpy.mockReturnValueOnce(1);
-
-    const { removeReleasesFromCollection } =
-      collectionController(defaultParams);
+    const { removeReleasesFromCollection } = collectionController({
+      ...defaultParams,
+      openConfirmDialog: () => 1,
+    });
     await removeReleasesFromCollection(1, [2]);
 
     const result = await prisma.collection.findFirst({
@@ -284,8 +289,6 @@ describe("removeReleasesFromCollection function", () => {
     });
 
     expect(result.releases.length).toBe(5);
-
-    dialogSpy.mockReset();
   });
 
   it("removes the releases by given ids from the collection", async () => {

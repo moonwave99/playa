@@ -1,5 +1,4 @@
 import { existsSync, move } from "fs-extra";
-import { dialog } from "electron";
 import { Artist } from "@/types/types";
 import {
   getArtist,
@@ -16,6 +15,7 @@ import { StateManager } from "../stateManager";
 type ArtistControllerParams = {
   withPath: (key: string, folderPath: string) => string;
   send: (channel: string, ...args: unknown[]) => void;
+  showErrorBox: (title: string, content: string) => void;
   stateManager: StateManager;
 };
 
@@ -27,6 +27,7 @@ type EditArtistParams = Pick<Artist, "path" | "id"> & {
 export function artistController({
   withPath,
   send,
+  showErrorBox,
   stateManager,
 }: ArtistControllerParams) {
   async function editArtist(infos: EditArtistParams) {
@@ -36,12 +37,10 @@ export function artistController({
       shouldMoveArtist &&
       existsSync(withPath("LIBRARY_PATH", infos.newPath))
     ) {
-      dialog.showMessageBoxSync(null, {
-        message: "Error while renaming",
-        detail: `Path ${infos.newPath} already exists`,
-        type: "error",
-        buttons: ["OK"],
-      });
+      showErrorBox(
+        "Error while renaming",
+        `Path ${infos.newPath} already exists`
+      );
       return false;
     }
 

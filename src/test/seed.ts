@@ -31,6 +31,7 @@ export function getFakeRelease(id = 1, override: Partial<Release> = {}) {
     type: "Album" as const,
     year: 2000,
     path: `Release ${id}`,
+    completePath: `[Album]/2000 - Release ${id}`,
     hash: hashRelease({
       title: `Release ${id}`,
       type: "Album",
@@ -56,6 +57,7 @@ export function getFakeReleasesForArtist(artist_id: number, length = 5) {
     type: "Album" as const,
     year: 2000,
     path: `Release ${i + 1}`,
+    completePath: `A/Artist ${artist_id}/[Album]/2000 - Release ${i + 1}`,
     hash: hashRelease({
       title: `Release ${i + 1}`,
       type: "Album",

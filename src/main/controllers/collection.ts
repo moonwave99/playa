@@ -12,23 +12,23 @@ import {
   setCollectionCoverRelease,
 } from "../db/collection";
 
-import { dialog } from "electron";
-
 type CollectionControllerParams = {
   send: (channel: string, ...args: unknown[]) => void;
+  openConfirmDialog: (message: string, detail: string) => number;
 };
 
-export function collectionController({ send }: CollectionControllerParams) {
+export function collectionController({
+  send,
+  openConfirmDialog,
+}: CollectionControllerParams) {
   async function removeReleasesFromCollection(
     id: number,
     release_ids: number[]
   ) {
-    const cancel = dialog.showMessageBoxSync(null, {
-      message: `Are you sure to remove ${release_ids.length} entries from this Collection?`,
-      type: "warning",
-      buttons: ["OK", "Cancel"],
-      defaultId: 1,
-    });
+    const cancel = openConfirmDialog(
+      `Are you sure to remove ${release_ids.length} entries from this Collection?`,
+      ""
+    );
 
     if (cancel) {
       return;

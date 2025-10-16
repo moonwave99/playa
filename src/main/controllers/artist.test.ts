@@ -1,5 +1,4 @@
 import prisma from "../db/prisma";
-import { dialog } from "electron";
 import path from "path";
 import fsExtra, { pathExists } from "fs-extra";
 import { artistController } from "./artist";
@@ -19,6 +18,7 @@ const defaultParams = {
   withPath,
   stateManager: {} as unknown as StateManager,
   send: vi.fn(),
+  showErrorBox: vi.fn(),
 };
 
 describe("artist - getArtist function", () => {
@@ -98,14 +98,17 @@ describe("artist - editArtist function", () => {
     const stateManager = {
       setCurrentArtist: vi.fn(),
     } as unknown as StateManager;
+
+    const showErrorBox = vi.fn();
+
     const { editArtist } = artistController({
       ...defaultParams,
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
+      showErrorBox,
       stateManager,
     });
 
     const moveSpy = vi.spyOn(fsExtra, "move");
-    const dialogSpy = vi.spyOn(dialog, "showMessageBoxSync");
     const artist = getFakeArtist();
     await prisma.artist.create({ data: artist });
 
@@ -115,12 +118,10 @@ describe("artist - editArtist function", () => {
       newPath: "A/Artist New",
     });
 
-    expect(dialogSpy).toHaveBeenCalledWith(null, {
-      message: "Error while renaming",
-      detail: `Path A/Artist New already exists`,
-      type: "error",
-      buttons: ["OK"],
-    });
+    expect(showErrorBox).toHaveBeenCalledWith(
+      "Error while renaming",
+      `Path A/Artist New already exists`
+    );
 
     expect(result).toBe(false);
     expect(moveSpy).not.toHaveBeenCalled();
@@ -142,6 +143,7 @@ describe("artist - editArtist function", () => {
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
       stateManager,
       send,
+      showErrorBox: vi.fn(),
     });
 
     await prisma.artist.create({ data: artist });
@@ -188,6 +190,7 @@ describe("artist - editArtist function", () => {
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
       stateManager,
       send,
+      showErrorBox: vi.fn(),
     });
 
     await prisma.artist.create({ data: artist });

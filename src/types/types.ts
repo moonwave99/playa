@@ -211,6 +211,7 @@ export type EditReleaseParam = Pick<
   Release,
   | "id"
   | "path"
+  | "completePath"
   | "hash"
   | "title"
   | "artist_id"
