@@ -17,6 +17,7 @@ export default function useImportData<T extends HTMLElement>({
   const [isDone, setDone] = useState(false);
   const { setModalFixed } = useStore();
   const lastStepRef = useRef<T>(null);
+  const closeAfterRef = useRef(null);
 
   useApiEvents({
     onImportProgress: (step, completed) => {
@@ -30,7 +31,7 @@ export default function useImportData<T extends HTMLElement>({
       if (!closeAfter) {
         return;
       }
-      setTimeout(onDone, closeAfter);
+      closeAfterRef.current = setTimeout(onDone, closeAfter);
     },
     onImportError: (message) => {
       window.alert(message);
@@ -40,6 +41,14 @@ export default function useImportData<T extends HTMLElement>({
       }
     },
   });
+
+  useEffect(() => {
+    return () => {
+      if (closeAfterRef.current) {
+        clearTimeout(closeAfterRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (!lastStepRef.current) {
