@@ -1,0 +1,54 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`getFolderContents function > returns the track information for the given release 1`] = `
+[
+  {
+    "duration": 123,
+    "meta": {
+      "album": "Release 1",
+      "artist": "Artist 1",
+      "title": "Track 1",
+      "track": {
+        "no": 1,
+      },
+      "year": 2000,
+    },
+    "path": "01 - Track 1.mp3",
+    "position": 1,
+    "title": "Track 1",
+    "trackArtist": "Artist 1",
+  },
+  {
+    "duration": 123,
+    "meta": {
+      "album": "Release 1",
+      "artist": "Artist 1",
+      "title": "Track 2",
+      "track": {
+        "no": 2,
+      },
+      "year": 2000,
+    },
+    "path": "02 - Track 2.mp3",
+    "position": 2,
+    "title": "Track 2",
+    "trackArtist": "Artist 1",
+  },
+  {
+    "duration": 123,
+    "meta": {
+      "album": "Release 1",
+      "artist": "Artist 1",
+      "title": "Track 3",
+      "track": {
+        "no": 3,
+      },
+      "year": 2000,
+    },
+    "path": "03 - Track 3.mp3",
+    "position": 3,
+    "title": "Track 3",
+    "trackArtist": "Artist 1",
+  },
+]
+`;

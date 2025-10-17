@@ -25,6 +25,7 @@ export function getFakeArtists({ length = 10 }) {
 
 export function getFakeRelease(id = 1, override: Partial<Release> = {}) {
   return {
+    entityType: "Release" as EntityType,
     id,
     title: `Release ${id}`,
     normalizedTitle: `Release ${id}`,
@@ -51,6 +52,7 @@ export function getFakeRelease(id = 1, override: Partial<Release> = {}) {
 
 export function getFakeReleasesForArtist(artist_id: number, length = 5) {
   return Array.from({ length }, (_, i) => ({
+    entityType: "Release" as EntityType,
     id: (artist_id - 1) * length + i + 1,
     title: `Release ${i + 1}`,
     normalizedTitle: `Release ${i + 1}`,
@@ -76,6 +78,7 @@ export function getFakeReleasesForArtist(artist_id: number, length = 5) {
 
 export function getFakeTracksForRelease(releaseId: number, length = 5) {
   return Array.from({ length }, (_, i) => ({
+    entityType: "Track" as EntityType,
     id: (releaseId - 1) * length + i + 1,
     title: `Track ${i + 1}`,
     trackArtist: "Track Artist",
@@ -107,6 +110,7 @@ export function getFakeCollections({
 }) {
   const connect = releases?.length ? { releases: { connect: releases } } : {};
   return Array.from({ length }, (_, i) => ({
+    entityType: "Collection" as EntityType,
     id: i + 1,
     title: `Collection ${i + 1}`,
     ...connect,
@@ -122,6 +126,7 @@ export function getFakeGroups({
 }) {
   const connect = artists?.length ? { artists: { connect: artists } } : {};
   return Array.from({ length }, (_, i) => ({
+    entityType: "Group" as EntityType,
     id: i + 1,
     title: `Group ${i + 1}`,
     coverArtistId: artists?.at(0)?.id || null,

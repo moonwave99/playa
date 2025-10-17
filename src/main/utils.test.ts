@@ -4,8 +4,13 @@ import {
   getFolderContents,
   parsePath,
   getArtistPathFromReleaseData,
+  getEntityPath,
 } from "./utils";
-import { getFakeArtist, getFakeReleasesForArtist } from "../test/seed";
+import {
+  getFakeArtist,
+  getFakeReleasesForArtist,
+  getFakeTracksForRelease,
+} from "../test/seed";
 import path from "path";
 import { testFs } from "@moonwave99/test-fs";
 
@@ -101,56 +106,7 @@ describe("getFolderContents function", () => {
       path.join(directory, "LIBRARY_PATH")
     );
 
-    expect(trackInfo).toEqual([
-      {
-        path: "01 - Track 1.mp3",
-        title: "Track 1",
-        trackArtist: "Artist 1",
-        duration: 123,
-        position: 1,
-        meta: {
-          album: "Release 1",
-          artist: "Artist 1",
-          title: "Track 1",
-          track: {
-            no: 1,
-          },
-          year: 2000,
-        },
-      },
-      {
-        path: "02 - Track 2.mp3",
-        title: "Track 2",
-        trackArtist: "Artist 1",
-        duration: 123,
-        position: 2,
-        meta: {
-          album: "Release 1",
-          artist: "Artist 1",
-          title: "Track 2",
-          track: {
-            no: 2,
-          },
-          year: 2000,
-        },
-      },
-      {
-        path: "03 - Track 3.mp3",
-        title: "Track 3",
-        trackArtist: "Artist 1",
-        duration: 123,
-        position: 3,
-        meta: {
-          album: "Release 1",
-          artist: "Artist 1",
-          title: "Track 3",
-          track: {
-            no: 3,
-          },
-          year: 2000,
-        },
-      },
-    ]);
+    expect(trackInfo).toMatchSnapshot();
   });
 });
 
@@ -166,5 +122,55 @@ describe("getArtistPathFromReleaseData function", () => {
       const artistPath = getArtistPathFromReleaseData(releaseData);
       expect(artistPath).toBe("[V:A]");
     }
+  });
+});
+
+describe("getEntityPath function", () => {
+  it("returns the path for an Artist", () => {
+    const artist = getFakeArtist();
+    const path = getEntityPath(artist);
+    expect(path).toBe("A/Artist 1");
+  });
+
+  it("returns the path for a Release", () => {
+    const release = getFakeReleasesForArtist(1).at(0);
+    const path = getEntityPath(release);
+    expect(path).toBe("A/Artist 1/[Album]/2000 - Release 1");
+  });
+
+  it("returns the path for a Release with a completePath", () => {
+    const release = {
+      ...getFakeReleasesForArtist(1).at(0),
+      completePath: "complete/path/to/release",
+    };
+    const path = getEntityPath(release);
+    expect(path).toBe("complete/path/to/release");
+  });
+
+  it("returns the path for a Track", () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { completePath, ...release } = getFakeReleasesForArtist(1).at(0);
+    const artist = getFakeArtist();
+    const track = {
+      ...getFakeTracksForRelease(1).at(0),
+      release: {
+        ...release,
+        artist,
+      },
+    };
+    const path = getEntityPath(track);
+    expect(path).toBe("A/Artist 1/[Album]/2000 - Release 1/01 - Track 1.mp3");
+  });
+
+  it("returns the path for a Track from a Release with a completePath", () => {
+    const track = {
+      ...getFakeTracksForRelease(1).at(0),
+      release: {
+        ...getFakeReleasesForArtist(1).at(0),
+        completePath: "complete/path/to/release",
+      },
+    };
+    const path = getEntityPath(track);
+    expect(path).toBe("complete/path/to/release/01 - Track 1.mp3");
   });
 });

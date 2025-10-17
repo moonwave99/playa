@@ -12,11 +12,6 @@ import type {
 import { globby } from "globby";
 import { VARIOUS_ARTISTS_NAME, VARIOUS_ARTISTS_FOLDER } from "@/lib/utils";
 
-export function updateCompletePath(oldCompletePath: string, newPath: string) {
-  const oldPath = path.basename(oldCompletePath);
-  return oldCompletePath.replace(oldPath, newPath);
-}
-
 export function stripPath(completePath: string, startPath: string) {
   const stripped = completePath.replace(new RegExp(`^${startPath}`), "");
   if (path.isAbsolute(stripped)) {
