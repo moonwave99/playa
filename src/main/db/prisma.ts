@@ -3,12 +3,18 @@ import { PrismaClient } from "@prisma/client-generated";
 import path from "node:path";
 
 function getUrl() {
-  const { NODE_ENV } = process.env;
+  const { NODE_ENV, npm_lifecycle_event } = process.env;
   if (NODE_ENV === "test") {
     return "";
   }
   if (NODE_ENV === "development") {
     return "file:data.db";
+  }
+  if (npm_lifecycle_event === "test:e2e") {
+    return `file:${path.join(
+      process.cwd(),
+      "out/Playa-darwin-arm64/Playa.app/Contents/Resources/data.db"
+    )}`;
   }
   return `file:${path.join(process.resourcesPath, "data.db")}`;
 }

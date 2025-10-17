@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { electronApp } from "./setup";
+import { electronApp } from "../electronApp";
 
 test.describe.configure({ mode: "serial" });
 

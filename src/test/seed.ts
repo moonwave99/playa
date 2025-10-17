@@ -135,8 +135,10 @@ export function getFakeGroups({
 }
 
 export async function seed() {
+  await cleanup();
   const artists = getFakeArtists({ length: 10 });
   const releases = artists.flatMap((x) => getFakeReleasesForArtist(x.id));
+
   await prisma.artist.createMany({ data: artists });
   await prisma.release.createMany({ data: releases });
   await prisma.track.createMany({
@@ -249,3 +251,11 @@ function getDate(id: number) {
 }
 
 const pad = (n = 1) => (n < 10 ? `0${n}` : n);
+
+export async function cleanup() {
+  await prisma.track.deleteMany({});
+  await prisma.group.deleteMany({});
+  await prisma.collection.deleteMany({});
+  await prisma.release.deleteMany({});
+  await prisma.artist.deleteMany({});
+}

@@ -33,5 +33,3 @@ test.afterEach(async () => {
   const page = await electronApp.firstWindow();
   await page.evaluate(() => window.localStorage.clear());
 });
-
-test.afterAll(() => electronApp.close());

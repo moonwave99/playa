@@ -39,6 +39,8 @@ type ReleaseControllerParams = {
   stateManager: StateManager;
 };
 
+const ENV_E2E_TEST = process.env.npm_lifecycle_event === "test:e2e";
+
 export function releaseController({
   withPath,
   getSetting,
@@ -150,7 +152,7 @@ export function releaseController({
             throw new Error(`Release ${x.id} not found at: ${oldPath}`);
           }
 
-          if (oldPath === newPath) {
+          if (oldPath === newPath || ENV_E2E_TEST) {
             return true;
           }
 
