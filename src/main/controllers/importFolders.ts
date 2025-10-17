@@ -140,7 +140,21 @@ export function importFoldersController({
         tracks,
       }));
 
-    if (!foldersToImport.length) {
+    const groupedByDisc = Object.values(
+      Object.groupBy(foldersToImport, (x) => x.title)
+    ).flatMap((items) =>
+      items.length === 1
+        ? items
+        : items
+            .sort((a, b) => (a.completePath > b.completePath ? 1 : -1))
+            .map((item, index) => ({
+              ...item,
+              discNumber: index + 1,
+              title: `${item.title} (Disc ${index + 1})`,
+            }))
+    );
+
+    if (!groupedByDisc.length) {
       showErrorBox(
         "Error importing Folders",
         "All selected folders are empty."
@@ -148,7 +162,7 @@ export function importFoldersController({
       return;
     }
 
-    send("openInteractiveImportDialog", foldersToImport);
+    send("openInteractiveImportDialog", groupedByDisc);
   }
 
   async function importFromInteractiveData(data: ImportData) {

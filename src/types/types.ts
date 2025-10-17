@@ -251,5 +251,6 @@ export type ImportData = {
   completePath: string;
   path: string;
   type: ReleaseType;
+  discNumber?: number;
   tracks: TrackInfo[];
 };
