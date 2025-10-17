@@ -76,10 +76,10 @@ export default function LookupView<T extends HasId>({
           )}
           {results?.map((x) => (
             <ComboboxOption key={x.id} value={x}>
-              {({ selected, active }) => (
+              {({ selected, focus }) => (
                 <span
                   className={cx(styles.LookupViewOption, {
-                    [styles.active]: active,
+                    [styles.focus]: focus,
                   })}
                 >
                   {getText(x)}

@@ -23,7 +23,7 @@
     :last-child {
       margin-left: auto;
     }
-    &.active,
+    &.focus,
     &:hover {
       background-color: var(--accent-color);
     }
