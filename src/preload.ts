@@ -13,6 +13,7 @@ import type {
   Notification,
   Settings,
   ImportData,
+  WithReleases,
 } from "./types/types";
 import { QueryKey } from "@tanstack/react-query";
 import {
@@ -99,7 +100,7 @@ const api = {
   menu: {
     release: (
       selection: ReleaseWithArtist[],
-      context?: CollectionWithReleases | ArtistWithReleases
+      context?: WithReleases & { entityType: "Artist" | "Collection" | null }
     ) => ipc.invoke("menu:release", selection, context),
     artist: (artist: ArtistWithReleases, context?: GroupWithArtists) =>
       ipc.invoke("menu:artist", artist, context),

@@ -58,6 +58,7 @@ type ListCardProps = {
   showMultipleCovers?: boolean;
   onCoverDoubleClick?: (release_id: number) => void;
   onLinkClick?: () => void;
+  testId?: string;
 };
 
 export default function ListCard({
@@ -74,6 +75,7 @@ export default function ListCard({
   showMultipleCovers,
   onCoverDoubleClick,
   onLinkClick,
+  testId,
 }: ListCardProps) {
   const [loadCount, setLoadCount] = useState(0);
   const coverRelease = getCoverRelease(item);
@@ -280,6 +282,7 @@ export default function ListCard({
           onClick={onClick}
           onContextMenu={getContextMenu()}
           style={canDrop ? null : { background: color || null }}
+          data-testid={testId}
         >
           {renderCover()}
           <div className={styles.content}>{getContent()}</div>

@@ -104,7 +104,7 @@ export default function ReleasesPage() {
                   ...getReleaseContextMenuParams({
                     selection: selection.map((index) => releases[index]),
                     target_id: (item as HasId).id,
-                    context: { releases },
+                    context: { releases, entityType: null },
                   })
                 )
               }

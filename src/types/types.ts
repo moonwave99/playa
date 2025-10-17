@@ -227,10 +227,10 @@ export type MenuParams = {
   send: typeof send;
 };
 
-export type Context =
-  | CollectionWithReleases
-  | ArtistWithReleases
-  | GroupWithArtists;
+export type Context = {
+  id?: number;
+  entityType: "Artist" | "Collection" | "Group" | null;
+};
 
 export type Unpacked<T> = T extends (infer U)[] ? U : T;
 

@@ -66,7 +66,12 @@ export default function ArtistPage() {
       onContextMenu={() => api.menu.artist(artist)}
       data-testid="ArtistPage"
     >
-      <ListCard isSingle item={artist} onColorChange={setUseDarkText} />
+      <ListCard
+        isSingle
+        item={artist}
+        onColorChange={setUseDarkText}
+        testId="ArtistPageHeader"
+      />
       {!artist?.releases.length ? (
         <div className={styles.placeholder}>
           {t("placeholders.emptyListForContainer", {

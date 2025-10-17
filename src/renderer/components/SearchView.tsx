@@ -151,6 +151,7 @@ function SearchResultsView({
               paddingRight={0}
               gap={12}
               onEnter={onEnter}
+              testId={`SearchResultsView-${type}`}
               render={({ item, selected, onClick }) => (
                 <SearchResultView
                   index={index}

@@ -68,6 +68,7 @@ export default function ReleaseWithTracklistView({
           setModalContents({ name: "lightbox", params: { release } })
         }
         onColorChange={isSingle ? setUseDarkText : null}
+        testId="ReleaseWithTracklistHeader"
       />
       <Tracklist
         isFlipped={hideCover && isSingle}

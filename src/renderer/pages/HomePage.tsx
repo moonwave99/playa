@@ -141,7 +141,7 @@ function LatestReleasesView({ count = 5 }: LatestReleasesViewProps) {
                   ...getReleaseContextMenuParams({
                     selection: selection.map((index) => releases[index]),
                     target_id: (item as HasId).id,
-                    context: { releases },
+                    context: { releases, entityType: null },
                   })
                 )
               }

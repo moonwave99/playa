@@ -2,9 +2,10 @@ import type {
   Release,
   ReleaseWithArtistAndSubReleases,
   CollectionWithReleases,
-  ArtistWithReleases,
   MenuParams,
   Collection,
+  WithReleases,
+  HasId,
 } from "@/types/types";
 import { buildMenu, getDeleteEntry, getCoverEntityEntry } from "./menu";
 import { getReleaseTitle, normalizeArtistDisplayName } from "@/lib/utils";
@@ -51,7 +52,7 @@ export const releaseMenu =
   ({ controllers, send }: MenuParams) =>
   async (
     selection: ReleaseWithArtistAndSubReleases[],
-    context?: CollectionWithReleases | ArtistWithReleases
+    context?: WithReleases & { entityType: "Artist" | "Collection" | null }
   ) => {
     if (selection.length === 1) {
       const release = selection[0];
@@ -125,7 +126,10 @@ export const releaseMenu =
           ? getRemoveFromCollectionEntry(
               selection,
               context as CollectionWithReleases,
-              { controllers, send }
+              {
+                controllers,
+                send,
+              }
             )
           : { type: "separator" },
         { type: "separator" },
@@ -144,7 +148,9 @@ export const releaseMenu =
           queryKeys: [
             ["releases", "latest"],
             ["releases", release.id],
-            [`${context?.entityType}s`, context?.id],
+            context.entityType
+              ? [`${context.entityType}s`, (context as unknown as HasId)?.id]
+              : null,
           ],
         }),
       ]);

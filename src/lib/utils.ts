@@ -8,7 +8,6 @@ import type {
   Artist,
   ReleaseCountByType,
   ReleaseWithArtistAndTracksAndSubreleases,
-  HasId,
   WithReleases,
   CollectionWithReleases,
   ArtistWithReleases,
@@ -215,17 +214,17 @@ export function wait(ms = 100) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export function getReleaseContextMenuParams({
+export function getReleaseContextMenuParams<T extends WithReleases>({
   selection,
   target_id,
   context,
 }: {
   selection: ReleaseWithArtist[];
   target_id: number;
-  context: WithReleases;
-}): [ReleaseWithArtist[], WithReleases] {
-  const target = context.releases.find(({ id }: HasId) => id === target_id);
-  const isTargetSelected = !!selection.find((x) => x.id === target_id);
+  context: T;
+}): [ReleaseWithArtist[], T] {
+  const target = context.releases.find(({ id }) => id === target_id);
+  const isTargetSelected = !!selection.find(({ id }) => id === target_id);
 
   return [
     !isTargetSelected || !selection.length ? [target] : selection,

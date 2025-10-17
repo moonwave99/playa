@@ -1,10 +1,10 @@
 import { Menu, MenuItem, dialog } from "electron";
 import type { MenuItemConstructorOptions } from "electron";
 import type {
+  ArtistWithReleases,
   Context,
   Entities,
   GroupWithArtists,
-  WithReleases,
 } from "@/types/types";
 import type { QueryKey } from "@tanstack/react-query";
 import { getArtistLink, getRandomLink } from "@/lib/links";
@@ -42,14 +42,14 @@ type GetCoverEntityEntry = {
 };
 
 function shouldDisplayCoverEntityEntry(context: Context) {
-  if (!context) {
+  if (!context || !context.entityType) {
     return false;
   }
-  if (context?.entityType === "Group") {
+  if (context.entityType === "Group") {
     return (context as GroupWithArtists)?.artists.length > 1;
   }
-  if (context?.entityType === "Artist") {
-    return (context as WithReleases)?.releases.length > 1;
+  if (context.entityType === "Artist") {
+    return (context as ArtistWithReleases)?.releases.length > 1;
   }
 }
 
@@ -58,6 +58,9 @@ export function getCoverEntityEntry({
   context,
   controllers,
 }: GetCoverEntityEntry): MenuItemConstructorOptions {
+  if (!context.entityType) {
+    return { type: "separator" };
+  }
   if (!shouldDisplayCoverEntityEntry(context)) {
     return { type: "separator" };
   }
