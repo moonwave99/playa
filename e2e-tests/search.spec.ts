@@ -34,6 +34,7 @@ test.describe("Search", () => {
     ).toBeInViewport();
 
     await page.keyboard.press("Escape");
+    await expect(page.getByPlaceholder("Enter search term")).not.toBeVisible();
   });
 
   test("it navigates the search results", async () => {
@@ -63,7 +64,5 @@ test.describe("Search", () => {
     await expect(
       page.locator('[data-testid="ArtistPageHeader"]').getByText("Artist 2")
     ).toBeInViewport();
-
-    await page.keyboard.press("Escape");
   });
 });
