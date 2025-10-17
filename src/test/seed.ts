@@ -54,7 +54,7 @@ export function getFakeReleasesForArtist(artist_id: number, length = 5) {
   return Array.from({ length }, (_, i) => ({
     entityType: "Release" as EntityType,
     id: (artist_id - 1) * length + i + 1,
-    title: `Release ${i + 1}`,
+    title: `Release ${artist_id}-${i + 1}`,
     normalizedTitle: `Release ${i + 1}`,
     type: "Album" as ReleaseType,
     year: 2000,

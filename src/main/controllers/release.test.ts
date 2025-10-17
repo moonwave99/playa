@@ -474,7 +474,7 @@ describe("editRelease function", () => {
     ).toBe(false);
     expect(
       await pathExists(
-        path.join(directory, "COVERS_PATH/e1d0657d4ba3bd51-cover.jpg")
+        path.join(directory, "COVERS_PATH/fefd4689cea9a44d-cover.jpg")
       )
     ).toBe(true);
   });

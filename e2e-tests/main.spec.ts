@@ -38,11 +38,31 @@ test.describe.serial("Main", () => {
 
     await page.waitForSelector('[data-testid="HomePage"]');
 
-    expect(page.getByText("Latest Releases")).toBeTruthy();
-    expect(page.getByText("Home")).toBeTruthy();
+    expect(page.getByText("Latest Releases")).toBeVisible();
+    expect(
+      page.locator("span").filter({ hasText: "Home" }).first()
+    ).toBeVisible();
+
+    expect(page.getByText("Release 1-5")).toBeVisible();
+    expect(page.getByText("Release 2-5")).toBeVisible();
+    expect(page.getByText("Release 3-5")).toBeVisible();
+    expect(page.getByText("Release 4-5")).toBeVisible();
+    expect(page.getByText("Release 5-5")).toBeVisible();
+
+    expect(page.getByText("Artist 10")).toBeVisible();
+    expect(page.getByText("Artist 9")).toBeVisible();
+    expect(page.getByText("Artist 8")).toBeVisible();
+
+    expect(page.getByText("Collection 1")).toBeTruthy();
+    expect(page.getByText("Collection 2")).toBeTruthy();
+    expect(page.getByText("Collection 3")).toBeTruthy();
+
+    expect(page.getByText("Group 1")).toBeTruthy();
+    expect(page.getByText("Group 2")).toBeTruthy();
+    expect(page.getByText("Group 3")).toBeTruthy();
   });
 
-  test("navigates back to the Homepage", async () => {
+  test("navigates to the Releases page", async () => {
     const page = await electronApp.firstWindow();
     await page.evaluate(() => window.localStorage.clear());
 
@@ -51,7 +71,12 @@ test.describe.serial("Main", () => {
     await page.getByLabel("Go to the Releases page").click();
     await page.waitForSelector('[data-testid="ReleasesPage"]');
 
-    expect(page.getByText("Home")).toBeTruthy();
-    expect(page.getByText("Releases")).toBeTruthy();
+    expect(
+      page.locator("span").filter({ hasText: "Home" }).first()
+    ).toBeVisible();
+
+    expect(
+      page.locator("span").filter({ hasText: "Releases" }).first()
+    ).toBeVisible();
   });
 });
