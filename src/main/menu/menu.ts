@@ -261,7 +261,8 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
         },
         { type: "separator" },
         {
-          label: `Add Artist to Group`,
+          label: "Add Artist to Group",
+          id: "addArtistToGroup",
           accelerator: "a",
           click: () =>
             send("openAddArtistsToGroupDialog", [

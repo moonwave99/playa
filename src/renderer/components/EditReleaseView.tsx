@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
+import { useTranslation } from "react-i18next";
 import useStore from "../store";
 import useRefetch from "../hooks/useRefetch";
 import api from "../api";
@@ -16,29 +17,6 @@ import { MdInfoOutline } from "react-icons/md";
 import styles from "./EditReleaseView.module.css";
 import formStyles from "../forms.module.css";
 
-const labelMap = {
-  newTitle: {
-    label: "Title",
-    placeholder: "Enter title",
-  },
-  newDiscTitle: {
-    label: "Disc Title",
-    placeholder: "Enter disc title",
-  },
-  newPath: {
-    label: "Path",
-    placeholder: "Enter path",
-  },
-  newYear: {
-    label: "Year",
-    placeholder: "Enter year",
-  },
-  newType: {
-    label: "Release Type",
-    placeholder: "Enter release type",
-  },
-};
-
 type EditReleasesViewProps = {
   release: ReleaseWithArtistAndSubReleases;
   onSave: () => void;
@@ -50,6 +28,7 @@ export default function EditReleasesView({
   onSave,
   onCancel,
 }: EditReleasesViewProps) {
+  const { t } = useTranslation();
   const { settings } = useStore();
   const refetch = useRefetch();
   const [folderInfo, setFolderInfo] = useState(
@@ -118,7 +97,7 @@ export default function EditReleasesView({
 
   return (
     <div className={styles.EditReleaseView}>
-      <h2>Edit Release</h2>
+      <h2>{t(`modals.EditReleaseView.title`)}</h2>
       <form onSubmit={onSubmit} className={formStyles.form}>
         <ul className={styles.releaseList}>
           {folderInfo.map((release, index) => (
@@ -137,7 +116,7 @@ export default function EditReleasesView({
           {USE_SMART_IMPORT && (
             <div className={formStyles.info}>
               <MdInfoOutline />
-              This will move the Release folder in your Library.
+              {t(`modals.EditReleaseView.moveInfo`)}
             </div>
           )}
           <button
@@ -145,14 +124,14 @@ export default function EditReleasesView({
             className={formStyles.button}
             disabled={!canSubmit()}
           >
-            Edit Release
+            {t(`modals.EditReleaseView.actions.submit`)}
           </button>
           <button
             type="button"
             className={formStyles.button}
             onClick={onCancel}
           >
-            Cancel
+            {t(`modals.EditReleaseView.actions.cancel`)}
           </button>
         </div>
         <AdditionalArtistsEditor releaseId={release.id} />
@@ -251,19 +230,20 @@ function Field({
   isVertical = false,
   className,
 }: FieldProps) {
+  const { t } = useTranslation();
   return (
     <label
       className={cx(formStyles.label, styles.label, className, {
         [formStyles.vertical]: isVertical,
       })}
     >
-      {labelMap[name].label}
+      {t(`modals.EditReleaseView.fields.${name}.label`)}
       <input
         type={type}
         autoFocus={hasFocus}
         className={cx(formStyles.input, styles.input)}
         required
-        placeholder={labelMap[name].placeholder}
+        placeholder={t(`modals.EditReleaseView.fields.${name}.placeholder`)}
         value={release[name]}
         onInput={(event: FormEvent) => {
           const value = (event.target as HTMLInputElement).value;
@@ -284,13 +264,14 @@ function ReleaseTypeField({
   onInput,
   isVertical = false,
 }: ReleaseTypeFieldProps) {
+  const { t } = useTranslation();
   return (
     <label
       className={cx(formStyles.label, styles.label, {
         [formStyles.vertical]: isVertical,
       })}
     >
-      {labelMap.newType.label}
+      {t(`modals.EditReleaseView.fields.newType.label`)}
       <select
         className={cx(formStyles.select, styles.select)}
         autoFocus={hasFocus}

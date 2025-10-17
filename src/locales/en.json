@@ -65,6 +65,36 @@
     }
   },
   "modals": {
+    "EditReleaseView": {
+      "title": "Edit Release",
+      "moveInfo": "This will move the Release folder in your Library.",
+      "fields": {
+        "newTitle": {
+          "label": "Title",
+          "placeholder": "Enter title"
+        },
+        "newDiscTitle": {
+          "label": "Disc Title",
+          "placeholder": "Enter disc title"
+        },
+        "newPath": {
+          "label": "Path",
+          "placeholder": "Enter path"
+        },
+        "newYear": {
+          "label": "Year",
+          "placeholder": "Enter year"
+        },
+        "newType": {
+          "label": "Release Type",
+          "placeholder": "Enter release type"
+        }
+      },
+      "actions": {
+        "submit": "Edit Release",
+        "cancel": "Cancel"
+      }
+    },
     "InteractiveImport": {
       "title": "Import Folders",
       "actions": {

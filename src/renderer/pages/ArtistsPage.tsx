@@ -48,7 +48,7 @@ function AlphabeticalArtistsView() {
   }
 
   return !artists.length ? (
-    <div className={styles.placeholder}>
+    <div className={styles.placeholder} data-testid="ArtistsPage">
       {t("placeholders.emptyList", { artist: "Artists" })}
     </div>
   ) : (
@@ -99,6 +99,7 @@ function LatestArtistsView() {
       onEnter={(artist) => navigate(getArtistLink(artist))}
       onUnmount={storeScrollInfo}
       scrollInfo={scrollInfo}
+      testId="LatestArtistsView"
       render={({ item, ...rest }) => (
         <ListCard
           showMultipleCovers

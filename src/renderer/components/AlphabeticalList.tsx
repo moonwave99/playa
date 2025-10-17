@@ -61,6 +61,7 @@ export default function AlphabeticalList({ items }: AlphabeticalListProps) {
           align: "start",
         }}
         scrollInfo={scrollInfo}
+        testId="AlphabeticalList"
       />
     </div>
   );

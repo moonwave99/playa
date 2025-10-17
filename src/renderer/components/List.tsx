@@ -70,6 +70,7 @@ type ListProps<T> = {
     scrollToIndex: (index: number) => void;
   }>;
   scrollInfo?: ScrollInfo;
+  testId?: string;
 };
 
 function defaultEstimateSize(columns: number) {
@@ -114,6 +115,7 @@ export default function List<T>({
   scrollBehavior,
   ref,
   scrollInfo,
+  testId,
 }: ListProps<T>) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const firstRender = useRef(true);
@@ -345,6 +347,7 @@ export default function List<T>({
 
   return (
     <div
+      data-testid={testId}
       ref={scrollRef}
       className={className}
       onClick={() => setContext(context)}
