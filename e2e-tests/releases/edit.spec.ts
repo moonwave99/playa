@@ -44,9 +44,11 @@ test.describe("Releases", () => {
     ).toBeInViewport();
 
     await page.getByPlaceholder("Enter title").fill("New Release Title");
+    await page.getByPlaceholder("Enter year").fill("2999");
     await page.keyboard.press("Enter");
 
     await expect(page.locator(".ReactModalPortal")).not.toBeVisible();
     await expect(page.getByText("New Release Title").first()).toBeVisible();
+    await expect(page.getByText("2999").first()).toBeVisible();
   });
 });

@@ -127,52 +127,54 @@ export function releaseController({
         year: x.newYear,
       }));
 
-      await Promise.all(
-        infos.map(async (x, index) => {
-          const oldPath = withPath(
-            "LIBRARY_PATH",
-            getEntityPath({
-              ...x,
-              artist,
-              entityType: "Release",
-            })
-          );
-          const newPath = withPath(
-            "LIBRARY_PATH",
-            getEntityPath({
-              artist,
-              entityType: "Release",
-              type: x.newType,
-              year: x.newYear,
-              path: x.newPath,
-            })
-          );
+      if (!ENV_E2E_TEST) {
+        await Promise.all(
+          infos.map(async (x, index) => {
+            const oldPath = withPath(
+              "LIBRARY_PATH",
+              getEntityPath({
+                ...x,
+                artist,
+                entityType: "Release",
+              })
+            );
+            const newPath = withPath(
+              "LIBRARY_PATH",
+              getEntityPath({
+                artist,
+                entityType: "Release",
+                type: x.newType,
+                year: x.newYear,
+                path: x.newPath,
+              })
+            );
 
-          if (!existsSync(oldPath)) {
-            throw new Error(`Release ${x.id} not found at: ${oldPath}`);
-          }
+            if (!existsSync(oldPath)) {
+              throw new Error(`Release ${x.id} not found at: ${oldPath}`);
+            }
 
-          if (oldPath === newPath || ENV_E2E_TEST) {
+            if (oldPath === newPath) {
+              return true;
+            }
+
+            await move(oldPath, newPath);
+
+            const oldCoverPath = withPath("COVERS_PATH", `${x.hash}-cover.jpg`);
+            const newCoverPath = withPath(
+              "COVERS_PATH",
+              `${newInfos[index].hash}-cover.jpg`
+            );
+
+            if (!existsSync(oldCoverPath) || oldCoverPath === newCoverPath) {
+              return true;
+            }
+
+            await move(oldCoverPath, newCoverPath);
+
             return true;
-          }
-
-          await move(oldPath, newPath);
-
-          const oldCoverPath = withPath("COVERS_PATH", `${x.hash}-cover.jpg`);
-          const newCoverPath = withPath(
-            "COVERS_PATH",
-            `${newInfos[index].hash}-cover.jpg`
-          );
-
-          if (!existsSync(oldCoverPath) || oldCoverPath === newCoverPath) {
-            return true;
-          }
-
-          await move(oldCoverPath, newCoverPath);
-
-          return true;
-        })
-      );
+          })
+        );
+      }
 
       return await updateReleases(newInfos);
     } catch (error) {
