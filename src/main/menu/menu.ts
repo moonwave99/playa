@@ -246,6 +246,7 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
             ),
         },
         {
+          id: "editArtist",
           label: "Edit Artist",
           accelerator: "Shift+E",
           click: () =>

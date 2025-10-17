@@ -1,6 +1,7 @@
 import { test } from "@playwright/test";
 import { findLatestBuild, parseElectronApp } from "electron-playwright-helpers";
 import { ElectronApplication, _electron as electron } from "playwright";
+import { seed } from "../src/test/seed";
 
 export let electronApp: ElectronApplication;
 
@@ -27,6 +28,10 @@ test.beforeAll(async () => {
       console.log(msg.text());
     });
   });
+});
+
+test.beforeEach(async () => {
+  await seed();
 });
 
 test.afterEach(async () => {

@@ -37,9 +37,8 @@ type ReleaseControllerParams = {
   showErrorBox: (title: string, content: string) => void;
   openConfirmDialog: (message: string, detail: string) => number;
   stateManager: StateManager;
+  skipMove?: boolean;
 };
-
-const ENV_E2E_TEST = process.env.npm_lifecycle_event === "test:e2e";
 
 export function releaseController({
   withPath,
@@ -48,6 +47,7 @@ export function releaseController({
   stateManager,
   showErrorBox,
   openConfirmDialog,
+  skipMove = false,
 }: ReleaseControllerParams) {
   async function editRelease(infos: EditReleaseParam[]) {
     if (!infos.length) {
@@ -127,7 +127,7 @@ export function releaseController({
         year: x.newYear,
       }));
 
-      if (!ENV_E2E_TEST) {
+      if (!skipMove) {
         await Promise.all(
           infos.map(async (x, index) => {
             const oldPath = withPath(

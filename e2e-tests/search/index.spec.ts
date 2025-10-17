@@ -4,7 +4,7 @@ import { electronApp } from "../electronApp";
 test.describe.configure({ mode: "serial" });
 
 test.describe("Search", () => {
-  test("displays the search results for the given query", async () => {
+  test("search by given query", async () => {
     const page = await electronApp.firstWindow();
     await page.getByRole("button", { name: "Open Search" }).click();
     const input = page.getByPlaceholder("Enter search term");
@@ -37,7 +37,7 @@ test.describe("Search", () => {
     await expect(page.getByPlaceholder("Enter search term")).not.toBeVisible();
   });
 
-  test("it navigates the search results", async () => {
+  test("navigate the search results", async () => {
     const page = await electronApp.firstWindow();
     await page.getByRole("button", { name: "Open Search" }).click();
     const input = page.getByPlaceholder("Enter search term");

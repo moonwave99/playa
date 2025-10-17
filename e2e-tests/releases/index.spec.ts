@@ -4,7 +4,7 @@ import { electronApp } from "../electronApp";
 test.describe.configure({ mode: "serial" });
 
 test.describe("Releases", () => {
-  test("navigates the Releases list", async () => {
+  test("navigate to the Releases list", async () => {
     const page = await electronApp.firstWindow();
 
     await page.getByRole("button", { name: "Toggle Menu" }).click();

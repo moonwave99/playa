@@ -19,6 +19,7 @@ type ArtistControllerParams = {
   send: (channel: string, ...args: unknown[]) => void;
   showErrorBox: (title: string, content: string) => void;
   stateManager: StateManager;
+  skipMove?: boolean;
 };
 
 type EditArtistParams = Pick<Artist, "path" | "id"> & {
@@ -31,9 +32,10 @@ export function artistController({
   send,
   showErrorBox,
   stateManager,
+  skipMove = false,
 }: ArtistControllerParams) {
   async function editArtist(infos: EditArtistParams) {
-    const shouldMoveArtist = infos.newPath !== infos.path;
+    const shouldMoveArtist = !skipMove && infos.newPath !== infos.path;
 
     if (
       shouldMoveArtist &&

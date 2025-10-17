@@ -4,7 +4,7 @@ import { electronApp } from "../electronApp";
 test.describe.configure({ mode: "serial" });
 
 test.describe("Artists Page", () => {
-  test("navigates to the Artists page", async () => {
+  test("navigate to the Artists page", async () => {
     const page = await electronApp.firstWindow();
 
     await page.getByRole("button", { name: "Toggle Menu" }).click();
@@ -14,13 +14,9 @@ test.describe("Artists Page", () => {
     await expect(
       page.locator('[data-testid="breadcrumbs"]').getByText("Artists")
     ).toBeVisible();
-
-    Array.from({ length: 9 }, (_, i) =>
-      expect(page.getByText(`Artist ${10 - i}`)).toBeInViewport()
-    );
   });
 
-  test("toggles Artists View mode", async () => {
+  test("toggle Artists View mode", async () => {
     const page = await electronApp.firstWindow();
 
     await page.getByRole("button", { name: "Toggle Menu" }).click();

@@ -54,6 +54,8 @@ export function send(channel: string, ...args: unknown[]) {
     ?.webContents.send(channel, ...args);
 }
 
+const skipMove = process.env.npm_lifecycle_event === "test:e2e";
+
 export function init(mainWindow: BrowserWindow) {
   initSettings();
 
@@ -105,7 +107,13 @@ export function init(mainWindow: BrowserWindow) {
 
   const controllers = {
     system: systemController({ withPath, getSetting }),
-    artist: artistController({ withPath, stateManager, send, showErrorBox }),
+    artist: artistController({
+      withPath,
+      stateManager,
+      send,
+      showErrorBox,
+      skipMove,
+    }),
     release: releaseController({
       withPath,
       getSetting,
@@ -113,6 +121,7 @@ export function init(mainWindow: BrowserWindow) {
       stateManager,
       showErrorBox,
       openConfirmDialog,
+      skipMove,
     }),
     collection: collectionController({ send, openConfirmDialog }),
     group: groupController({ send, openConfirmDialog }),
