@@ -266,6 +266,8 @@ export default function ListCard({
       item={item}
       render={({ canDrop }) => (
         <div
+          data-selected={selected}
+          data-hasfocus={selected && hasFocus}
           onMouseLeave={onMouseLeave}
           className={cx(styles.listCard, {
             [styles.loaded]: loaded,

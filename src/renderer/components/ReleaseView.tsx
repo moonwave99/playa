@@ -30,6 +30,8 @@ export default function ReleaseView({
   const releaseTitle = getReleaseTitle(release);
   return (
     <article
+      data-selected={selected}
+      data-hasfocus={selected && hasFocus}
       className={cx(styles.releaseView, className, {
         [styles.selected]: selected,
         [styles.hasFocus]: selected && hasFocus,
