@@ -59,18 +59,16 @@ export class StateManager {
     this.state.isImporting = isImporting;
     this.onUpdate();
   }
-  isSingleArtistPage() {
-    const artistMatch = matchPath("/artists/:id", this.state.path);
-    return +artistMatch?.params.id;
+  getRouteMatch(pattern: string) {
+    return matchPath(pattern, this.state.path);
   }
   async setPath(path: string) {
-    const artistMatch = matchPath("/artists/:id", path);
     this.state.path = path;
     const id = this.isSingleArtistPage();
     if (id) {
       this.state.currentArtist = (await getArtist(
-        +artistMatch.params.id
-      )) as unknown as ArtistWithReleasesFull;
+        id
+      )) as ArtistWithReleasesFull;
     } else {
       this.state.currentArtist = null;
     }
@@ -91,5 +89,9 @@ export class StateManager {
         this.state.currentArtist.id
       )) as unknown as ArtistWithReleasesFull
     );
+  }
+  private isSingleArtistPage() {
+    const artistMatch = matchPath("/artists/:id", this.state.path);
+    return +artistMatch?.params.id;
   }
 }

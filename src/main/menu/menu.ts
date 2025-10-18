@@ -24,7 +24,7 @@ import { artistMenu } from "./artist";
 import { collectionMenu } from "./collection";
 import { groupMenu } from "./group";
 import { searchResultMenu } from "./searchResult";
-import type { StateManager, State } from "../stateManager";
+import type { StateManager } from "../stateManager";
 import { send } from "../controllers/init";
 
 export { releaseMenu, artistMenu, collectionMenu, groupMenu, searchResultMenu };
@@ -58,43 +58,28 @@ export function getCoverEntityEntry({
   context,
   controllers,
 }: GetCoverEntityEntry): MenuItemConstructorOptions {
-  if (!context.entityType) {
-    return { type: "separator" };
-  }
   if (!shouldDisplayCoverEntityEntry(context)) {
     return { type: "separator" };
   }
   return {
     label: `Set as ${context.entityType} Cover`,
     click: async () => {
+      let action, queryKey;
       if (context.entityType === "Artist") {
-        await controllers.artist.setArtistCoverRelease(
-          context.id,
-          selection_id
-        );
-        send("mutate", [
-          ["artists", "latest"],
-          ["artists", context.id],
-        ]);
-        return;
+        queryKey = "artists";
+        action = controllers.artist.setArtistCoverRelease;
       }
-
       if (context.entityType === "Group") {
-        await controllers.group.setGroupCoverArtist(context.id, selection_id);
-        send("mutate", [
-          ["group", "latest"],
-          ["group", context.id],
-        ]);
-        return;
+        queryKey = "groups";
+        action = controllers.group.setGroupCoverArtist;
+      } else {
+        queryKey = "collections";
+        action = controllers.collection.setCollectionCoverRelease;
       }
-
-      await controllers.collection.setCollectionCoverRelease(
-        context.id,
-        selection_id
-      );
+      await action(context.id, selection_id);
       send("mutate", [
-        ["collections", "latest"],
-        ["collections", context.id],
+        [queryKey, "latest"],
+        [queryKey, context.id],
       ]);
     },
   };
@@ -131,14 +116,21 @@ export function getDeleteEntry({
   };
 }
 
-function refreshMenu(
-  menu: Menu,
-  { isInputFocused, selectedReleases, currentArtist, isImporting }: State
-) {
+function refreshMenu(menu: Menu, stateManager: StateManager) {
+  const { isInputFocused, selectedReleases, currentArtist, isImporting } =
+    stateManager.getState();
+
   ["navigate", "library"].forEach((id) => {
-    menu.items
-      .find((x) => x.id == id)
+    menu
+      .getMenuItemById(id)
       .submenu.items.forEach((x) => (x.enabled = !isInputFocused));
+  });
+
+  ["collection", "group"].forEach((entity) => {
+    const isEntityPage = !!stateManager.getRouteMatch(`/${entity}s/:id`);
+    menu.getMenuItemById(entity).submenu.items.forEach((item) => {
+      item.enabled = isEntityPage;
+    });
   });
 
   menu.getMenuItemById("artist").submenu.items.forEach((item) => {
@@ -377,6 +369,42 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
 
   menu.append(
     new MenuItem({
+      id: "collection",
+      label: "Collection",
+      submenu: [
+        {
+          id: "editCollection",
+          label: "Edit Collection",
+          accelerator: "Shift+E",
+          click: async () => {
+            const { params } = stateManager.getRouteMatch("/collections/:id");
+            send("openEditCollectionDialog", { id: +params.id });
+          },
+        },
+      ],
+    })
+  );
+
+  menu.append(
+    new MenuItem({
+      id: "group",
+      label: "Group",
+      submenu: [
+        {
+          id: "editGroup",
+          label: "Edit Group",
+          accelerator: "Shift+E",
+          click: async () => {
+            const { params } = stateManager.getRouteMatch("/groups/:id");
+            send("openEditGroupDialog", { id: +params.id });
+          },
+        },
+      ],
+    })
+  );
+
+  menu.append(
+    new MenuItem({
       id: "navigate",
       label: "Navigate",
       submenu: [
@@ -440,6 +468,7 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
   Menu.setApplicationMenu(menu);
 
   return {
-    refreshMenu: (state: State) => refreshMenu(menu, state),
+    refreshMenu: (stateManager: StateManager) =>
+      refreshMenu(menu, stateManager),
   };
 }

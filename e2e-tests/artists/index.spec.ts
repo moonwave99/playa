@@ -27,6 +27,6 @@ test.describe("Artists Page", () => {
     ).toBeVisible();
 
     await page.getByRole("button", { name: "Show Artist List" }).click();
-    await expect(page.getByText("A (10)")).toBeInViewport();
+    await expect(page.getByTestId("AlphabeticalList")).toBeInViewport();
   });
 });

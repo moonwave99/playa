@@ -152,7 +152,7 @@ export function init(mainWindow: BrowserWindow) {
     send,
   });
 
-  stateManager.onStateChange(refreshMenu);
+  stateManager.onStateChange(() => refreshMenu(stateManager));
 
   [
     ...Object.values(controllers),
@@ -163,7 +163,7 @@ export function init(mainWindow: BrowserWindow) {
       "menu:collection": collectionMenu({ controllers, send }),
       "menu:group": groupMenu({ controllers, send }),
       "menu:searchResult": searchResultMenu({ controllers, send }),
-      "menu:refresh": () => refreshMenu(stateManager.getState()),
+      "menu:refresh": () => refreshMenu(stateManager),
     },
   ].forEach(registerHandlers);
 

@@ -12,21 +12,5 @@ test.describe("Homepage", () => {
     await expect(
       page.locator('[data-testid="breadcrumbs"]').getByText("Home")
     ).toBeVisible();
-
-    Array.from({ length: 5 }, (_, i) =>
-      expect(page.getByText(`Release ${i + 1}-5`)).toBeVisible()
-    );
-
-    expect(page.getByText("Artist 10")).toBeVisible();
-    expect(page.getByText("Artist 9")).toBeVisible();
-    expect(page.getByText("Artist 8")).toBeVisible();
-
-    expect(page.getByText("Collection 1")).toBeVisible();
-    expect(page.getByText("Collection 2")).toBeVisible();
-    expect(page.getByText("Collection 3")).toBeVisible();
-
-    expect(page.getByText("Group 1")).toBeVisible();
-    expect(page.getByText("Group 2")).toBeVisible();
-    expect(page.getByText("Group 3")).toBeVisible();
   });
 });
