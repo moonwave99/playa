@@ -2,6 +2,7 @@ import { Menu, MenuItem, dialog } from "electron";
 import type { MenuItemConstructorOptions } from "electron";
 import type {
   ArtistWithReleases,
+  ArtistWithReleasesFull,
   Context,
   Entities,
   GroupWithArtists,
@@ -117,7 +118,7 @@ export function getDeleteEntry({
 }
 
 function refreshMenu(menu: Menu, stateManager: StateManager) {
-  const { isInputFocused, selectedReleases, currentArtist, isImporting } =
+  const { isInputFocused, selectedReleases, isImporting } =
     stateManager.getState();
 
   ["navigate", "library"].forEach((id) => {
@@ -127,22 +128,23 @@ function refreshMenu(menu: Menu, stateManager: StateManager) {
   });
 
   ["collection" as const, "group" as const].forEach((entity) => {
-    const { match } = stateManager.isPage(entity);
+    const enabled = stateManager.isPage(entity);
     menu.getMenuItemById(entity).submenu.items.forEach((item) => {
-      item.enabled = match;
+      item.enabled = enabled;
     });
   });
 
   menu.getMenuItemById("artist").submenu.items.forEach((item) => {
+    const enabled = stateManager.isPage("artist");
     if (isInputFocused) {
       item.enabled = false;
       return;
     }
     if (item.id === "refresh-releases") {
-      item.enabled = currentArtist && !isImporting;
+      item.enabled = enabled && !isImporting;
       return;
     }
-    item.enabled = !!currentArtist;
+    item.enabled = enabled;
   });
 
   menu.getMenuItemById("release").submenu.items.forEach((item) => {
@@ -217,52 +219,68 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
         {
           label: "Reveal Artist in Finder",
           accelerator: "Cmd+Shift+F",
-          click: () =>
+          click: async () =>
             controllers.system.revealEntityInFinder(
               "Artist",
-              stateManager.getCurrentArtist().id
+              (
+                (await stateManager.getCurrentEntity()) as ArtistWithReleasesFull
+              ).id
             ),
         },
         {
           label: "Refresh all Releases content",
           accelerator: "Cmd+Shift+A",
           id: "refresh-releases",
-          click: controllers.importFolders.refreshCurrentArtistReleases,
+          click: async () =>
+            controllers.importFolders.refreshArtistReleases(
+              (await stateManager.getCurrentEntity()) as ArtistWithReleasesFull
+            ),
         },
         {
           label: "Import missing covers",
           accelerator: "Cmd+Shift+C",
-          click: () =>
+          click: async () =>
             controllers.release.importMissingCovers(
-              stateManager.getCurrentArtist().releases
+              (
+                (await stateManager.getCurrentEntity()) as ArtistWithReleasesFull
+              ).releases
             ),
         },
         {
           id: "editArtist",
           label: "Edit Artist",
           accelerator: "Shift+E",
-          click: () =>
-            send("openEditArtistDialog", stateManager.getCurrentArtist()),
+          click: async () =>
+            send(
+              "openEditArtistDialog",
+              (await stateManager.getCurrentEntity()) as ArtistWithReleasesFull
+            ),
         },
         { type: "separator" },
         {
           label: "Search Artist on Discogs",
           accelerator: "Cmd+Shift+D",
-          click: () => searchArtistOnDiscogs(stateManager.getCurrentArtist()),
+          click: async () =>
+            searchArtistOnDiscogs(
+              (await stateManager.getCurrentEntity()) as ArtistWithReleasesFull
+            ),
         },
         {
           label: "Search Artist on RYM",
           accelerator: "Shift+R",
-          click: () => searchArtistOnRYM(stateManager.getCurrentArtist()),
+          click: async () =>
+            searchArtistOnRYM(
+              (await stateManager.getCurrentEntity()) as ArtistWithReleasesFull
+            ),
         },
         { type: "separator" },
         {
           label: "Add Artist to Group",
           id: "addArtistToGroup",
           accelerator: "a",
-          click: () =>
+          click: async () =>
             send("openAddArtistsToGroupDialog", [
-              stateManager.getCurrentArtist(),
+              (await stateManager.getCurrentEntity()) as ArtistWithReleasesFull,
             ]),
         },
       ],

@@ -109,7 +109,6 @@ export function init(mainWindow: BrowserWindow) {
     system: systemController({ withPath, getSetting }),
     artist: artistController({
       withPath,
-      stateManager,
       send,
       showErrorBox,
       skipMove,

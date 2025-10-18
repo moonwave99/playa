@@ -13,7 +13,6 @@ export function stateController({ stateManager, send }: StateControllerParams) {
     selectReleases: (selection: ReleaseWithArtistAndSubReleases[]) =>
       stateManager.setSelectedReleases(selection),
     navigate: (path: string) => stateManager.setPath(path),
-    refreshCurrentArtist: () => stateManager.refreshCurrentArtist(),
     clearSelection: () => send("clearSelection"),
   };
 }
@@ -23,5 +22,4 @@ export const actions: (keyof ReturnType<typeof stateController>)[] = [
   "selectReleases",
   "navigate",
   "clearSelection",
-  "refreshCurrentArtist",
 ];

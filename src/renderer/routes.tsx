@@ -1,4 +1,4 @@
-import { matchPath } from "react-router";
+import { matchPath, matchRoutes } from "react-router";
 
 export type Route = {
   path: string;
@@ -47,14 +47,13 @@ export const routes: Route[] = [
 export function isPage(page: string, path: string) {
   const route = routes.find(({ id }) => id === page);
   if (!route) {
-    return {
-      match: false,
-      params: null,
-    };
+    return false;
   }
   const match = matchPath(route.path, path);
-  return {
-    match: !!match,
-    params: match?.params,
-  };
+  return !!match;
+}
+
+export function getRouteMatch(path: string) {
+  const allRoutes = matchRoutes(routes, path);
+  return allRoutes ? allRoutes[0] : null;
 }

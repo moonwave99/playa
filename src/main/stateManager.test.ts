@@ -1,11 +1,13 @@
 import prisma from "./db/prisma";
 import { clearPrisma } from "@/test/prisma-utils";
-import {
-  ArtistWithReleasesFull,
-  ReleaseWithArtistAndSubReleases,
-} from "@/types/types";
+import { ReleaseWithArtistAndSubReleases } from "@/types/types";
 import { StateManager } from "./stateManager";
-import { getFakeArtist } from "../test/seed";
+import {
+  getFakeArtist,
+  getFakeCollection,
+  getFakeGroup,
+  getFakeReleasesForArtist,
+} from "../test/seed";
 
 afterEach(clearPrisma);
 
@@ -14,7 +16,6 @@ describe("StateManager - constructor", () => {
     const state = new StateManager();
     expect(state.getState()).toEqual({
       selectedReleases: [],
-      currentArtist: null,
       isInputFocused: false,
       isImporting: false,
       path: "",
@@ -25,21 +26,6 @@ describe("StateManager - constructor", () => {
       const state = new StateManager();
       state.setInputFocused(true);
     }).not.toThrowError();
-  });
-});
-
-describe("StateManager - setCurrentArtist / getCurrentArtist", () => {
-  it("should set and get the corresponding value", () => {
-    const onChange = vi.fn();
-    const state = new StateManager();
-    state.onStateChange(onChange);
-    state.setCurrentArtist({ id: 1 } as ArtistWithReleasesFull);
-    expect(state.getCurrentArtist()).toMatchObject({ id: 1 });
-    expect(onChange).toHaveBeenCalledWith(
-      expect.objectContaining({
-        currentArtist: { id: 1 },
-      })
-    );
   });
 });
 
@@ -92,58 +78,81 @@ describe("StateManager - setImporting / isImporting", () => {
 });
 
 describe("StateManager - setPath", () => {
-  it("should set path and update the current artist correspondingly", async () => {
-    {
-      const artist = getFakeArtist(1);
-      await prisma.artist.create({ data: artist });
-      const onChange = vi.fn();
-      const state = new StateManager();
-      state.onStateChange(onChange);
-      await state.setPath("/artists/1");
-      expect(state.getCurrentArtist()).toMatchObject({ id: 1 });
-      expect(onChange).toHaveBeenCalledWith(
-        expect.objectContaining({
-          path: "/artists/1",
-          currentArtist: expect.objectContaining(artist),
-        })
-      );
-    }
-    {
-      const onChange = vi.fn();
-      const state = new StateManager();
-      state.onStateChange(onChange);
-      await state.setPath("/");
-      expect(state.getCurrentArtist()).toBe(null);
-      expect(onChange).toHaveBeenCalledWith(
-        expect.objectContaining({
-          path: "/",
-          currentArtist: null,
-        })
-      );
-    }
+  it("should set the path", () => {
+    const onChange = vi.fn();
+    const state = new StateManager();
+    state.onStateChange(onChange);
+    state.setPath("/artists/1");
+    expect(onChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        path: "/artists/1",
+      })
+    );
   });
 });
 
-describe("StateManager - refreshCurrentArtist", () => {
-  it("should do nothing if no current artist is stored in state", async () => {
+describe("StateManager - getRouteMatch", () => {
+  it("should return null if the current path doesn't match the passed pattern", () => {
     const state = new StateManager();
-    expect(state.getCurrentArtist()).toBe(null);
-    await state.refreshCurrentArtist();
-    expect(state.getCurrentArtist()).toBe(null);
+    state.setPath("/");
+    expect(state.getRouteMatch("/collections/:id")).toBe(null);
   });
-  it("should refresh current artist", async () => {
-    const artist = getFakeArtist(1);
-    await prisma.artist.create({ data: artist });
+  it("should get the route params it the current path matches the passed pattern", () => {
     const state = new StateManager();
-    state.setCurrentArtist(artist as ArtistWithReleasesFull);
-    expect(state.getCurrentArtist()).toMatchObject({ id: 1 });
-
-    await prisma.artist.update({
-      where: { id: 1 },
-      data: { name: "new name" },
+    state.setPath("/collections/1");
+    expect(state.getRouteMatch("/collections/:id")).toMatchObject({
+      params: { id: "1" },
     });
+  });
+});
 
-    await state.refreshCurrentArtist();
-    expect(state.getCurrentArtist()).toMatchObject({ name: "new name" });
+describe("StateManager - isPath", () => {
+  it("should return false if the current path doesn't match the passed pattern", () => {
+    const state = new StateManager();
+    state.setPath("/");
+    expect(state.isPage("collection")).toBe(false);
+  });
+  it("should return true if the current path doesn't match the passed pattern", () => {
+    const state = new StateManager();
+    state.setPath("/collections/1");
+    expect(state.isPage("collection")).toBe(true);
+  });
+});
+
+describe("StateManager - getCurrentEntity", () => {
+  it("returns null if the current location has no associated entity", async () => {
+    const state = new StateManager();
+    state.setPath("/");
+    expect(await state.getCurrentEntity()).toBe(null);
+  });
+  it("returns the current entity if the page is /{entity}/:id", async () => {
+    {
+      const artist = getFakeArtist(1);
+      await prisma.artist.create({ data: artist });
+      const state = new StateManager();
+      state.setPath("/artists/1");
+      expect(await state.getCurrentEntity()).toMatchObject(artist);
+    }
+    {
+      const release = getFakeReleasesForArtist(1).at(0);
+      await prisma.release.create({ data: release });
+      const state = new StateManager();
+      state.setPath("/releases/1");
+      expect(await state.getCurrentEntity()).toMatchObject(release);
+    }
+    {
+      const collection = getFakeCollection(1);
+      await prisma.collection.create({ data: collection });
+      const state = new StateManager();
+      state.setPath("/collections/1");
+      expect(await state.getCurrentEntity()).toMatchObject(collection);
+    }
+    {
+      const group = getFakeGroup(1);
+      await prisma.group.create({ data: group });
+      const state = new StateManager();
+      state.setPath("/groups/1");
+      expect(await state.getCurrentEntity()).toMatchObject(group);
+    }
   });
 });

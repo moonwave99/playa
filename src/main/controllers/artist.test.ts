@@ -3,7 +3,6 @@ import path from "path";
 import fsExtra, { pathExists } from "fs-extra";
 import { artistController } from "./artist";
 import { testFs } from "@moonwave99/test-fs";
-import { StateManager } from "../stateManager";
 import { clearPrisma } from "@/test/prisma-utils";
 import {
   getFakeArtist,
@@ -11,13 +10,11 @@ import {
   getFakeReleasesForArtist,
 } from "@/test/seed";
 import { withPath } from "@/test/utils";
-import { ArtistWithReleases, Release } from "@/types/types";
 
 afterEach(clearPrisma);
 
 const defaultParams = {
   withPath,
-  stateManager: {} as unknown as StateManager,
   send: vi.fn(),
   showErrorBox: vi.fn(),
 };
@@ -96,9 +93,6 @@ describe("artist - editArtist function", () => {
       { "/LIBRARY_PATH/A/Artist New": {} },
       context.task.id
     );
-    const stateManager = {
-      setCurrentArtist: vi.fn(),
-    } as unknown as StateManager;
 
     const showErrorBox = vi.fn();
 
@@ -106,7 +100,6 @@ describe("artist - editArtist function", () => {
       ...defaultParams,
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
       showErrorBox,
-      stateManager,
     });
 
     const moveSpy = vi.spyOn(fsExtra, "move");
@@ -126,7 +119,6 @@ describe("artist - editArtist function", () => {
 
     expect(result).toBe(false);
     expect(moveSpy).not.toHaveBeenCalled();
-    expect(stateManager.setCurrentArtist).not.toHaveBeenCalled();
   });
 
   it("updates the artist with the given information", async (context) => {
@@ -138,29 +130,16 @@ describe("artist - editArtist function", () => {
     const artist = getFakeArtist();
     const releases = getFakeReleasesForArtist(1, 2);
 
-    let _currentArtist = null as ArtistWithReleases;
-
-    const stateManager = {
-      getCurrentArtist: () => _currentArtist,
-      refreshCurrentArtist: async () =>
-        (_currentArtist = (await prisma.artist.findFirst({
-          where: { id: 1 },
-          include: { releases: { include: { artist: true } } },
-        })) as ArtistWithReleases),
-    } as unknown as StateManager;
-
     const send = vi.fn();
 
     const { editArtist } = artistController({
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
-      stateManager,
       send,
       showErrorBox: vi.fn(),
     });
 
     await prisma.artist.create({ data: artist });
     await prisma.release.createMany({ data: releases });
-    await stateManager.refreshCurrentArtist();
 
     const result = await editArtist({
       ...artist,
@@ -175,21 +154,6 @@ describe("artist - editArtist function", () => {
 
     expect(await pathExists(previousPath)).toBe(false);
     expect(await pathExists(newPath)).toBe(true);
-
-    expect(stateManager.getCurrentArtist()).toMatchObject({
-      name: "Artist New",
-      normalizedName: "Artist New",
-      hash: "5d0781bec3a1ed0d",
-      path: "A/Artist New",
-      releases: [
-        {
-          completePath: "A/Artist New/[Album]/2000 - Release 1",
-        },
-        {
-          completePath: "A/Artist New/[Album]/2000 - Release 2",
-        },
-      ],
-    });
 
     expect(send).toHaveBeenCalledWith("notify", {
       message: `Artist folder moved to ${newPath}`,
@@ -208,21 +172,10 @@ describe("artist - editArtist function", () => {
       { "/LIBRARY_PATH/A/Artist 1": {} },
       context.task.id
     );
-    let _currentArtist = { ...artist, releases: [] as Release[] };
-
-    const stateManager = {
-      getCurrentArtist: () => _currentArtist,
-      refreshCurrentArtist: async () =>
-        (_currentArtist = (await prisma.artist.findFirst({
-          where: { id: 1 },
-          include: { releases: true },
-        })) as ArtistWithReleases),
-    } as unknown as StateManager;
 
     const send = vi.fn();
     const { editArtist } = artistController({
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
-      stateManager,
       send,
       showErrorBox: vi.fn(),
     });
@@ -233,13 +186,6 @@ describe("artist - editArtist function", () => {
       ...artist,
       newName: "Artist New",
       newPath: "A/Artist 1",
-    });
-
-    expect(stateManager.getCurrentArtist()).toMatchObject({
-      name: "Artist New",
-      normalizedName: "Artist New",
-      hash: "5d0781bec3a1ed0d",
-      path: "A/Artist 1",
     });
 
     const previousPath = path.join(directory, "LIBRARY_PATH/A/Artist 1");

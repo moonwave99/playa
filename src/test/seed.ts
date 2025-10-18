@@ -117,6 +117,14 @@ export function getFakeCollections({
   }));
 }
 
+export function getFakeGroup(id = 1) {
+  const group = getFakeGroups({ length: 1 }).at(0);
+  return {
+    ...group,
+    id,
+  };
+}
+
 export function getFakeGroups({
   length = 3,
   artists = [],

@@ -11,14 +11,12 @@ import {
   removeRelatedArtist,
 } from "../db/artist";
 import prisma from "../db/prisma";
-import { StateManager } from "../stateManager";
 import { getEntityPath } from "../utils";
 
 type ArtistControllerParams = {
   withPath: (key: string, folderPath: string) => string;
   send: (channel: string, ...args: unknown[]) => void;
   showErrorBox: (title: string, content: string) => void;
-  stateManager: StateManager;
   skipMove?: boolean;
 };
 
@@ -31,7 +29,6 @@ export function artistController({
   withPath,
   send,
   showErrorBox,
-  stateManager,
   skipMove = false,
 }: ArtistControllerParams) {
   async function editArtist(infos: EditArtistParams) {
@@ -62,13 +59,11 @@ export function artistController({
       path: infos.newPath,
     });
 
-    await stateManager.refreshCurrentArtist();
+    const artist = await getArtist(infos.id);
 
     await Promise.all(
-      stateManager
-        .getCurrentArtist()
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        .releases.map(({ completePath, ...release }) =>
+      artist.releases // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        .map(({ completePath, ...release }) =>
           prisma.release.update({
             where: {
               id: release.id,
@@ -80,7 +75,10 @@ export function artistController({
         )
     );
 
-    await stateManager.refreshCurrentArtist();
+    send("mutate", [
+      ["artists", "latest"],
+      ["artists", infos.id],
+    ]);
 
     send("notify", {
       type: "success",

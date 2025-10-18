@@ -738,9 +738,6 @@ describe("addAdditionalArtist function", () => {
     const { addAdditionalArtist } = releaseController({
       ...defaultParams,
       send,
-      stateManager: {
-        getCurrentArtist: () => null,
-      } as StateManager,
     });
 
     const updatedRelease = await addAdditionalArtist({
@@ -770,9 +767,6 @@ describe("removeAdditionalArtist function", () => {
     const { addAdditionalArtist, removeAdditionalArtist } = releaseController({
       ...defaultParams,
       send,
-      stateManager: {
-        getCurrentArtist: () => null,
-      } as StateManager,
     });
 
     await addAdditionalArtist({

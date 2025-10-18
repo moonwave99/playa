@@ -1,14 +1,20 @@
 import { matchPath } from "react-router";
-import type {
-  ReleaseWithArtistAndSubReleases,
-  ArtistWithReleasesFull,
-} from "@/types/types";
+import type { ReleaseWithArtistAndSubReleases } from "@/types/types";
 import { getArtist } from "./db/artist";
-import { isPage } from "@/renderer/routes";
+import { getRelease } from "./db/release";
+import { getCollection } from "./db/collection";
+import { getGroup } from "./db/group";
+import { isPage, getRouteMatch } from "@/renderer/routes";
+
+const getEntityMap = {
+  artist: getArtist,
+  release: getRelease,
+  collection: getCollection,
+  group: getGroup,
+};
 
 export type State = {
   selectedReleases: ReleaseWithArtistAndSubReleases[];
-  currentArtist: ArtistWithReleasesFull;
   isInputFocused: boolean;
   isImporting: boolean;
   path: string;
@@ -20,7 +26,6 @@ export class StateManager {
   constructor() {
     this.state = {
       selectedReleases: [],
-      currentArtist: null,
       isInputFocused: false,
       isImporting: false,
       path: "",
@@ -29,8 +34,9 @@ export class StateManager {
   getState(): State {
     return this.state;
   }
-  getCurrentArtist(): ArtistWithReleasesFull {
-    return this.state.currentArtist;
+  setPath(path: string) {
+    this.state.path = path;
+    this.onUpdate();
   }
   getSelectedReleases(): ReleaseWithArtistAndSubReleases[] {
     return this.state.selectedReleases;
@@ -48,10 +54,6 @@ export class StateManager {
     this.state.selectedReleases = selectedReleases;
     this.onUpdate();
   }
-  setCurrentArtist(currentArtist: ArtistWithReleasesFull) {
-    this.state.currentArtist = currentArtist;
-    this.onUpdate();
-  }
   setInputFocused(isInputFocused: boolean) {
     this.state.isInputFocused = isInputFocused;
     this.onUpdate();
@@ -63,35 +65,22 @@ export class StateManager {
   getRouteMatch(pattern: string) {
     return matchPath(pattern, this.state.path);
   }
-  async setPath(path: string) {
-    this.state.path = path;
-    const { params } = this.isPage("artist");
-    if (params?.id) {
-      this.state.currentArtist = (await getArtist(
-        +params.id
-      )) as ArtistWithReleasesFull;
-    } else {
-      this.state.currentArtist = null;
+  isPage(page: string) {
+    return isPage(page, this.state.path);
+  }
+  async getCurrentEntity() {
+    const match = getRouteMatch(this.state.path);
+    if (!match || !match.params.id) {
+      return null;
     }
-    this.onUpdate();
+    return getEntityMap[match.route.id as keyof typeof getEntityMap](
+      +match.params.id
+    );
   }
   private onUpdate() {
     if (!this.handler) {
       return;
     }
     this.handler(this.state);
-  }
-  async refreshCurrentArtist() {
-    if (!this.state.currentArtist?.id) {
-      return;
-    }
-    this.setCurrentArtist(
-      (await getArtist(
-        this.state.currentArtist.id
-      )) as unknown as ArtistWithReleasesFull
-    );
-  }
-  isPage(page: string) {
-    return isPage(page, this.state.path);
   }
 }

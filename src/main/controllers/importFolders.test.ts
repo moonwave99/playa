@@ -4,7 +4,10 @@ import { withPath, getSetting, send } from "@/test/utils";
 import path from "path";
 import { importFoldersController } from "./importFolders";
 import { testFs } from "@moonwave99/test-fs";
-import { Release, ReleaseWithArtistAndTracks, Track } from "@/types/types";
+import {
+  ArtistWithReleasesFull,
+  ReleaseWithArtistAndTracks,
+} from "@/types/types";
 import { StateManager } from "../stateManager";
 import {
   getFakeArtist,
@@ -21,7 +24,11 @@ const defaultParams = {
   withPath,
   getSetting,
   send,
-  stateManager: {} as StateManager,
+  stateManager: {
+    setImporting: (_: boolean) => {
+      void _;
+    },
+  } as StateManager,
   openFolderDialog: vi.fn(),
   showErrorBox: vi.fn(),
 };
@@ -246,22 +253,18 @@ describe("refreshReleaseContents function", () => {
   });
 });
 
-describe("refreshCurrentArtistReleases function", () => {
+describe("refreshArtistReleases function", () => {
   it("does nothing is no release should be refreshed", async () => {
     const send = vi.fn();
     const setImporting = vi.fn();
-    const { refreshCurrentArtistReleases } = importFoldersController({
+    const { refreshArtistReleases } = importFoldersController({
       ...defaultParams,
       send,
-      stateManager: {
-        setImporting,
-        getCurrentArtist: () => ({
-          releases: [] as Release[],
-        }),
-      } as unknown as StateManager,
     });
 
-    await refreshCurrentArtistReleases();
+    await refreshArtistReleases({
+      releases: [],
+    } as ArtistWithReleasesFull);
 
     expect(send).not.toHaveBeenCalled();
     expect(setImporting).not.toHaveBeenCalled();
@@ -274,18 +277,14 @@ describe("refreshCurrentArtistReleases function", () => {
     await prisma.release.create({ data: release });
 
     const send = vi.fn();
-    const { refreshCurrentArtistReleases } = importFoldersController({
+    const { refreshArtistReleases } = importFoldersController({
       ...defaultParams,
       send,
-      stateManager: {
-        setImporting: vi.fn(),
-        getCurrentArtist: () => ({
-          ...artist,
-          releases: [{ ...release, tracks: [] as Track[] }],
-        }),
-      } as unknown as StateManager,
     });
-    await refreshCurrentArtistReleases();
+    await refreshArtistReleases({
+      id: 1,
+      releases: [{ id: 1, tracks: [] }],
+    } as ArtistWithReleasesFull);
     expect(send).toHaveBeenCalledWith("mutate", ["artists", 1]);
   });
 });
@@ -319,8 +318,9 @@ describe("importFolderFromDialog function", () => {
       openFolderDialog: vi.fn(),
       send,
       stateManager: {
-        getCurrentArtist: () => null,
-      } as StateManager,
+        getCurrentEntity: () => null as unknown,
+        isPage: () => false,
+      } as unknown as StateManager,
     });
 
     await importFolderFromDialog();
@@ -336,8 +336,9 @@ describe("importFolderFromDialog function", () => {
       openFolderDialog: () =>
         Array.from({ length: 20 }, (_, i) => `folder-${i}`),
       stateManager: {
-        getCurrentArtist: () => null,
-      } as StateManager,
+        getCurrentEntity: () => null as unknown,
+        isPage: () => false,
+      } as unknown as StateManager,
       showErrorBox,
       send,
     });
@@ -368,8 +369,9 @@ describe("importFolderFromDialog function", () => {
       showErrorBox,
       send,
       stateManager: {
-        getCurrentArtist: () => artist,
-      } as StateManager,
+        getCurrentEntity: () => artist,
+        isPage: () => true,
+      } as unknown as StateManager,
     });
 
     await importFolderFromDialog();
@@ -411,8 +413,9 @@ describe("importFolderFromDialog function", () => {
       getSetting: (key: string) =>
         key === "LIBRARY_PATH" ? LIBRARY_PATH : key,
       stateManager: {
-        getCurrentArtist: () => artist,
-      } as StateManager,
+        getCurrentEntity: () => artist,
+        isPage: () => true,
+      } as unknown as StateManager,
     });
 
     await importFolderFromDialog();
@@ -457,8 +460,9 @@ describe("importFolderFromDialog function", () => {
         showErrorBox,
         send,
         stateManager: {
-          getCurrentArtist: () => artist,
-        } as StateManager,
+          getCurrentEntity: () => artist,
+          isPage: () => true,
+        } as unknown as StateManager,
       });
 
       await importFolderFromDialog();
@@ -542,8 +546,9 @@ describe("importFolderFromDialog function", () => {
         showErrorBox,
         send,
         stateManager: {
-          getCurrentArtist: () => artist,
-        } as StateManager,
+          getCurrentEntity: () => artist,
+          isPage: () => true,
+        } as unknown as StateManager,
       });
 
       await importFolderFromDialog();

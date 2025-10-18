@@ -6,11 +6,11 @@ import { StateManager } from "../stateManager";
 import { normalizeDiacritics } from "@/lib/utils";
 import {
   ReleaseWithArtist,
-  ReleaseWithArtistAndTracks,
   ArtistWithReleases,
   CollectionWithReleases,
   Artist,
   ImportData,
+  ArtistWithReleasesFull,
 } from "@/types/types";
 import { globby } from "globby";
 import { searchCover } from "../covers";
@@ -82,10 +82,10 @@ export function importFoldersController({
     return updatedRelease;
   }
 
-  async function refreshCurrentArtistReleases() {
-    const releasesToRefresh = stateManager
-      .getCurrentArtist()
-      ?.releases.filter((x: ReleaseWithArtistAndTracks) => !x.tracks.length);
+  async function refreshArtistReleases(artist: ArtistWithReleasesFull) {
+    const releasesToRefresh = artist.releases.filter(
+      ({ tracks }) => !tracks.length
+    );
 
     if (!releasesToRefresh.length) {
       return;
@@ -93,13 +93,15 @@ export function importFoldersController({
     stateManager.setImporting(true);
     try {
       await Promise.all(
-        releasesToRefresh.map((x: ReleaseWithArtistAndTracks) =>
-          refreshReleaseContents(x.id)
-        )
+        releasesToRefresh.map(({ id }) => refreshReleaseContents(id))
       );
-      send("mutate", ["artists", stateManager.getCurrentArtist().id]);
+      send("mutate", ["artists", artist.id]);
     } catch (error) {
-      log("importFolders:refreshCurrentArtistRelease", error);
+      log("importFolders:refreshArtistReleases", error);
+      send("notify", {
+        type: "error",
+        message: "Error refreshing Artist Releases",
+      });
     }
     stateManager.setImporting(false);
   }
@@ -238,10 +240,16 @@ export function importFoldersController({
   }
 
   async function importFolderFromDialog() {
-    const folders = openFolderDialog(
-      withPath("LIBRARY_PATH", stateManager.getCurrentArtist()?.path || ""),
-      ["openDirectory", "multiSelections"]
-    );
+    let path = "";
+    if (stateManager.isPage("artist")) {
+      const artist = (await stateManager.getCurrentEntity()) as Artist;
+      path = artist?.path;
+    }
+
+    const folders = openFolderDialog(withPath("LIBRARY_PATH", path), [
+      "openDirectory",
+      "multiSelections",
+    ]);
 
     if (!folders) {
       return;
@@ -438,7 +446,7 @@ export function importFoldersController({
     importFromInteractiveData,
     refreshReleaseContents,
     refreshEntityRelease,
-    refreshCurrentArtistReleases,
+    refreshArtistReleases,
   };
 }
 
@@ -448,5 +456,5 @@ export const actions: (keyof ReturnType<typeof importFoldersController>)[] = [
   "importFromInteractiveData",
   "refreshReleaseContents",
   "refreshEntityRelease",
-  "refreshCurrentArtistReleases",
+  "refreshArtistReleases",
 ];
