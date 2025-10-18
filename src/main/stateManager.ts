@@ -4,6 +4,7 @@ import type {
   ArtistWithReleasesFull,
 } from "@/types/types";
 import { getArtist } from "./db/artist";
+import { isPage } from "@/renderer/routes";
 
 export type State = {
   selectedReleases: ReleaseWithArtistAndSubReleases[];
@@ -64,10 +65,10 @@ export class StateManager {
   }
   async setPath(path: string) {
     this.state.path = path;
-    const id = this.isSingleArtistPage();
-    if (id) {
+    const { params } = this.isPage("artist");
+    if (params?.id) {
       this.state.currentArtist = (await getArtist(
-        id
+        +params.id
       )) as ArtistWithReleasesFull;
     } else {
       this.state.currentArtist = null;
@@ -90,8 +91,7 @@ export class StateManager {
       )) as unknown as ArtistWithReleasesFull
     );
   }
-  private isSingleArtistPage() {
-    const artistMatch = matchPath("/artists/:id", this.state.path);
-    return +artistMatch?.params.id;
+  isPage(page: string) {
+    return isPage(page, this.state.path);
   }
 }

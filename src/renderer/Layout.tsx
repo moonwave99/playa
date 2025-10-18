@@ -47,6 +47,28 @@ import {
   ImportData,
 } from "@/types/types";
 
+import HomePage from "./pages/HomePage";
+import ReleasesPage from "./pages/ReleasesPage";
+import ReleasePage from "./pages/ReleasePage";
+import ArtistsPage from "./pages/ArtistsPage";
+import ArtistPage from "./pages/ArtistPage";
+import CollectionsPage from "./pages/CollectionsPage";
+import CollectionPage from "./pages/CollectionPage";
+import GroupsPage from "./pages/GroupsPage";
+import GroupPage from "./pages/GroupPage";
+
+const routesMap = {
+  home: <HomePage />,
+  releases: <ReleasesPage />,
+  release: <ReleasePage />,
+  artists: <ArtistsPage />,
+  artist: <ArtistPage />,
+  collections: <CollectionsPage />,
+  collection: <CollectionPage />,
+  groups: <GroupsPage />,
+  group: <GroupPage />,
+};
+
 function onNotify(data: Notification) {
   toast(ToastView, {
     data,
@@ -75,8 +97,11 @@ export default function Layout() {
         <div className={styles.page}>
           <main className={styles.main}>
             <Routes>
-              {routes.map(({ path, element }) => (
-                <Route path={path} element={element} />
+              {routes.map(({ path, id }) => (
+                <Route
+                  path={path}
+                  element={routesMap[id as keyof typeof routesMap]}
+                />
               ))}
             </Routes>
           </main>

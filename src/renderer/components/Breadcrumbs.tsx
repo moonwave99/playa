@@ -4,9 +4,27 @@ import Link from "./Link";
 import { routes, type Route } from "../routes";
 import cx from "clsx";
 import styles from "./Breadcrumbs.module.css";
-import { SupportedIcons } from "../icons";
+import { Icon, SupportedIcons } from "../icons";
+import { getReleaseTitle } from "@/lib/utils";
+import api from "../api";
+import useArtist from "../query/useArtist";
+import useCollection from "../query/useCollection";
+import useGroup from "../query/useGroup";
+import useRelease from "../query/useRelease";
 
 type RouteWithParams = Route & { params: Params };
+
+const breadcrumbsMap = {
+  home: BaseBreadcrumb,
+  releases: BaseBreadcrumb,
+  release: ReleaseBreadcrumb,
+  artists: BaseBreadcrumb,
+  artist: ArtistBreadcrumb,
+  collections: BaseBreadcrumb,
+  collection: CollectionBreadcrumb,
+  groups: BaseBreadcrumb,
+  group: GroupBreadcrumb,
+};
 
 function getBreadCrumbs(location: ReturnType<typeof useLocation>) {
   const allRoutes = matchRoutes(routes, location);
@@ -47,7 +65,7 @@ export default function BreadCrumbs({
   const { t } = useTranslation();
 
   function renderEntry(
-    { path, id, Breadcrumb, params }: RouteWithParams,
+    { path, id, params }: RouteWithParams,
     index: number,
     entries: RouteWithParams[]
   ) {
@@ -55,6 +73,9 @@ export default function BreadCrumbs({
     if (isLast && isDetailPage) {
       return null;
     }
+
+    const Breadcrumb = breadcrumbsMap[id as keyof typeof breadcrumbsMap];
+
     const output = Breadcrumb ? (
       <Breadcrumb
         id={+params.id}
@@ -93,5 +114,75 @@ export default function BreadCrumbs({
         </li>
       ))}
     </ul>
+  );
+}
+
+type BreadcrumbProps = {
+  className?: string;
+  isFor?: SupportedIcons;
+  id?: number;
+};
+
+function BaseBreadcrumb({ className, isFor }: BreadcrumbProps) {
+  const { t } = useTranslation();
+  return (
+    <span className={className}>
+      <Icon isFor={isFor} /> {t(`breadcrumbs.${isFor}`)}
+    </span>
+  );
+}
+
+function ReleaseBreadcrumb({ id, className }: BreadcrumbProps) {
+  const { release, isPending } = useRelease({ id });
+  if (isPending || !release) {
+    return null;
+  }
+  return (
+    <span className={className}>
+      {release.artist.name} - {getReleaseTitle(release)}
+    </span>
+  );
+}
+
+function ArtistBreadcrumb({ id, className }: BreadcrumbProps) {
+  const { artist, isPending } = useArtist(id);
+  if (isPending || !artist) {
+    return null;
+  }
+  return <span className={className}>{artist.name}</span>;
+}
+
+function GroupBreadcrumb({ id, className }: BreadcrumbProps) {
+  const { t } = useTranslation();
+  const { group, isPending } = useGroup(id);
+  if (isPending || !group) {
+    return null;
+  }
+  return (
+    <span className={className} onContextMenu={() => api.menu.group(group)}>
+      {t("breadcrumbs.group", {
+        title: group.title,
+        count: group.artists.length,
+      })}
+    </span>
+  );
+}
+
+function CollectionBreadcrumb({ id, className }: BreadcrumbProps) {
+  const { t } = useTranslation();
+  const { collection, isPending } = useCollection(id);
+  if (isPending || !collection) {
+    return null;
+  }
+  return (
+    <span
+      className={className}
+      onContextMenu={() => api.menu.collection(collection)}
+    >
+      {t("breadcrumbs.collection", {
+        title: collection.title,
+        count: collection.releases.length,
+      })}
+    </span>
   );
 }

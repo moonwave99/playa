@@ -126,10 +126,10 @@ function refreshMenu(menu: Menu, stateManager: StateManager) {
       .submenu.items.forEach((x) => (x.enabled = !isInputFocused));
   });
 
-  ["collection", "group"].forEach((entity) => {
-    const isEntityPage = !!stateManager.getRouteMatch(`/${entity}s/:id`);
+  ["collection" as const, "group" as const].forEach((entity) => {
+    const { match } = stateManager.isPage(entity);
     menu.getMenuItemById(entity).submenu.items.forEach((item) => {
-      item.enabled = isEntityPage;
+      item.enabled = match;
     });
   });
 
