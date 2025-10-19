@@ -13,6 +13,8 @@ export function setupElectron() {
   let electronApp: ElectronApplication;
 
   test.beforeAll(async ({}, { testId }) => {
+    await seed(testId);
+
     electronApp = await electron.launch({
       args: [appInfo.main],
       executablePath: appInfo.executable,
@@ -22,32 +24,22 @@ export function setupElectron() {
       },
     });
 
-    electronApp.on("window", async (page) => {
-      const filename = page.url()?.split("/").pop();
+    electronApp.on("window", (page) => {
+      const filename = page.url()?.split("/").at(-1);
       console.log(`Window opened: ${filename}`);
-
-      page.on("pageerror", (error) => {
-        console.error(error);
-      });
-
-      page.on("console", (msg) => {
-        console.log(msg.text());
-      });
+      page.on("pageerror", console.error);
+      page.on("console", (msg) => console.log(msg.text()));
     });
   });
 
-  test.beforeEach(async ({}, { testId }) => {
-    await seed(testId);
-  });
-
-  test.afterEach(async ({}, { testId }) => {
+  test.afterEach(async () => {
     const page = await electronApp.firstWindow();
     await page.evaluate(() => window.localStorage.clear());
-    await removeDb(testId);
   });
 
-  test.afterAll(async () => {
+  test.afterAll(async ({}, { testId }) => {
     await electronApp.close();
+    await removeDb(testId);
   });
 
   return () => electronApp;

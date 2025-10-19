@@ -1,10 +1,14 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { getFakeArtist } from "@/test/seed";
-import { withQueryClientProvider } from "@/test/utils";
+import { withQueryClientProvider, withI18n } from "@/test/utils";
 import RelatedArtistsEditor from "./RelatedArtistsEditor";
 import api from "../__mocks__/api";
-import { Artist, ArtistWithReleasesFull } from "@/types/types";
+import {
+  Artist,
+  ArtistWithReleases,
+  ArtistWithReleasesFull,
+} from "@/types/types";
 
 vi.mock("../api");
 
@@ -20,7 +24,7 @@ describe("RelatedArtistsEditor component", () => {
       relatedArtists: [],
     } as ArtistWithReleasesFull);
 
-    render(withQueryClientProvider(<RelatedArtistsEditor id={1} />));
+    render(withQueryClientProvider(withI18n(<RelatedArtistsEditor id={1} />)));
     const title = await screen.findByText("Related Artists");
     expect(title).toBeInTheDocument();
     const placeholder = await screen.findByText("No artists yet.");
@@ -33,7 +37,7 @@ describe("RelatedArtistsEditor component", () => {
       relatedArtists,
     } as ArtistWithReleasesFull);
 
-    render(withQueryClientProvider(<RelatedArtistsEditor id={1} />));
+    render(withQueryClientProvider(withI18n(<RelatedArtistsEditor id={1} />)));
     await Promise.all(
       relatedArtists.map(async ({ name }) => {
         const artist = await screen.findByText(name);
@@ -63,7 +67,9 @@ describe("RelatedArtistsEditor component", () => {
     expect(artist).toBeInTheDocument();
 
     await userEvent.click(
-      screen.getByLabelText(`Remove artist: ${relatedArtists[0].name}`)
+      screen.getByLabelText(
+        `Remove ${relatedArtists[0].name} from related Artists`
+      )
     );
     expect(artist).not.toBeInTheDocument();
   });
@@ -88,11 +94,11 @@ describe("RelatedArtistsEditor component", () => {
         (clicked
           ? [relatedArtists[3]]
           : [relatedArtists[2], relatedArtists[3]]
-        ).filter(({ name }) => name.includes(query))
+        ).filter(({ name }) => name.includes(query)) as ArtistWithReleases[]
       )
     );
 
-    render(withQueryClientProvider(<RelatedArtistsEditor id={1} />));
+    render(withQueryClientProvider(withI18n(<RelatedArtistsEditor id={1} />)));
     const artist = await screen.findByText(relatedArtists[0].name);
     expect(artist).toBeInTheDocument();
     user.click(screen.getByLabelText("Lookup Artists"));
@@ -101,7 +107,9 @@ describe("RelatedArtistsEditor component", () => {
     const suggestion = await screen.findByText("East");
     expect(suggestion).toBeInTheDocument();
 
-    await userEvent.click(await screen.findByLabelText("Add artist: East"));
+    await userEvent.click(
+      await screen.findByLabelText("Add East to related Artists")
+    );
 
     expect(suggestion).not.toBeInTheDocument();
     const addedArtist = await screen.findByTitle("[3]");

@@ -100,6 +100,14 @@
         "cancel": "Cancel"
       }
     },
+    "EditArtistView": {
+      "relatedArtists": {
+        "actions": {
+          "add": "Add {{name}} to related Artists",
+          "remove": "Remove {{name}} from related Artists"
+        }
+      }
+    },
     "InteractiveImport": {
       "title": "Import Folders",
       "actions": {
