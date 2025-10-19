@@ -125,7 +125,7 @@ export type ArtistWithReleasesAndAppearances = Artist &
 export type ArtistWithReleasesFull = Artist &
   WithRelatedArtists &
   WithReleasesAndSubreleasesAndTracks &
-  WithAppearances & { groups: Pick<Group, "id" | "title">[] };
+  WithAppearances & { groups: Pick<Group, "id" | "title" | "entityType">[] };
 export type CollectionWithReleases = Collection &
   WithReleasesAndSubreleasesAndTracks;
 export type ReleaseWithArtist = Release & WithArtist & WithAdditionalArtists;

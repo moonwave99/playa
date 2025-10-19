@@ -101,7 +101,8 @@ export default function ListCard({
       return (
         <>
           <EntityList
-            className={styles.artist}
+            context={item}
+            itemClassName={styles.artist}
             useDarkText={useDarkText}
             canDeleteFirstEntry={false}
             items={[item.artist, ...item.additionalArtists]}
@@ -144,25 +145,37 @@ export default function ListCard({
         : item.releases.length + item.appearsIn.length;
       return (
         <>
-          {isSingle ? (
-            <span className={styles.title} title={`[${item.id}]`}>
-              {normalizeArtistDisplayName(item.name)}
-            </span>
-          ) : (
-            <Link
-              className={styles.title}
-              to={getArtistLink(item)}
-              title={`[${item.id}]`}
-            >
-              {normalizeArtistDisplayName(item.name)}
-            </Link>
-          )}
-          <div className={styles.info}>{releaseCount} releases</div>
+          <header className={styles.header}>
+            {isSingle ? (
+              <span className={styles.title} title={`[${item.id}]`}>
+                {normalizeArtistDisplayName(item.name)}
+              </span>
+            ) : (
+              <Link
+                className={styles.title}
+                to={getArtistLink(item)}
+                title={`[${item.id}]`}
+              >
+                {normalizeArtistDisplayName(item.name)}
+              </Link>
+            )}
+            <div className={styles.info}>{releaseCount} releases</div>
+          </header>
           {isSingle && (
-            <>
-              <RelatedArtistsList useDarkText={useDarkText} id={item.id} />
-              <ContainingGroupsList useDarkText={useDarkText} id={item.id} />
-            </>
+            <div className={styles.listInfo}>
+              <RelatedArtistsList
+                useDarkText={useDarkText}
+                id={item.id}
+                className={styles.entityList}
+                itemClassName={styles.entityListEntry}
+              />
+              <ContainingGroupsList
+                useDarkText={useDarkText}
+                id={item.id}
+                className={styles.entityList}
+                itemClassName={styles.entityListEntry}
+              />
+            </div>
           )}
         </>
       );
@@ -271,6 +284,7 @@ export default function ListCard({
           onMouseLeave={onMouseLeave}
           className={cx(styles.listCard, {
             [styles.loaded]: loaded,
+            [styles.isArtist]: item.entityType === "Artist",
             [styles.isSingle]: isSingle,
             [styles.selected]: selected,
             [styles.hasFocus]: selected && hasFocus,
@@ -425,6 +439,8 @@ function ReleaseInfo({
       </span>
       {isSingle && (
         <ContainingCollectionsList
+          className={styles.entityList}
+          itemClassName={styles.entityListEntry}
           useDarkText={useDarkText}
           onLinkClick={onLinkClick}
           id={id}

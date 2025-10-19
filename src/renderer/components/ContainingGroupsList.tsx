@@ -1,31 +1,37 @@
 import useArtist from "../query/useArtist";
-import EntityList from "./EntityList";
+import EntityList, { type EntityListProps } from "./EntityList";
 import styles from "./EntityList.module.css";
 
-type ContainingGroupsListProps = {
-    id: number;
-    useDarkText?: boolean;
-    prependSeparator?: boolean;
+type ContainingGroupsListProps = Pick<
+  EntityListProps,
+  "className" | "itemClassName" | "useDarkText"
+> & {
+  id: number;
+  prependSeparator?: boolean;
 };
 
 export default function ContainingGroupsList({
-    id,
-    useDarkText,
-    prependSeparator,
+  id,
+  prependSeparator,
+  ...rest
 }: ContainingGroupsListProps) {
-    const { artist, removeFromGroup } = useArtist(id);
-    if (!artist?.groups.length) {
-        return null;
-    }
-    return (
-        <>
-            {prependSeparator && <span className={styles.separator} />}
-            <EntityList
-                items={artist.groups}
-                label="Appears in:"
-                useDarkText={useDarkText}
-                onDelete={removeFromGroup}
-            />
-        </>
-    );
+  const { artist, removeFromGroup } = useArtist(id);
+
+  if (!artist?.groups.length) {
+    return null;
+  }
+
+  return (
+    <>
+      {prependSeparator && <span className={styles.separator} />}
+      <EntityList
+        i18nkey="entityList.actions.delete.containingGroups"
+        context={artist}
+        items={artist.groups}
+        label="Appears in"
+        onDelete={removeFromGroup}
+        {...rest}
+      />
+    </>
+  );
 }

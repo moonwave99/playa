@@ -53,6 +53,8 @@ export default function ReleaseView({
       />
       <div className={styles.footer}>
         <EntityList
+          context={release}
+          i18nkey="entityList.actions.delete.additionalArtists"
           className={styles.artists}
           canDeleteFirstEntry={false}
           items={[artist, ...additionalArtists]}

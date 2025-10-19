@@ -1,5 +1,6 @@
 .EntityList {
   display: flex;
+  align-items: center;
   gap: 0.25rem;
   font-size: 0.8rem;
   font-weight: 300;
@@ -19,6 +20,7 @@
     li {
       display: flex;
       align-items: center;
+      position: relative;
 
       .CornerActionButton {
         display: none;
@@ -29,6 +31,9 @@
 
       &:hover .CornerActionButton {
         display: initial;
+        position: absolute;
+        top: -0.5rem;
+        right: -1rem;
       }
 
       &:not(:last-child)::after {

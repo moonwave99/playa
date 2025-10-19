@@ -280,7 +280,7 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
         {
           label: "Add Artist to Group",
           id: "addArtistToGroup",
-          accelerator: "a",
+          accelerator: "Shift+A",
           click: async () =>
             openModal("addArtistsToGroup", {
               artists: [await stateManager.getCurrentEntity()],

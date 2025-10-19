@@ -1,55 +1,53 @@
+import { useTranslation } from "react-i18next";
 import Link from "./Link";
-import { Artist, Collection, Group } from "@/types/types";
+import { Artist, Collection, Group, HasId, Release } from "@/types/types";
+import { normalizeArtistDisplayName } from "@/lib/utils";
 import { MdRemoveCircle } from "react-icons/md";
 import cx from "clsx";
 import styles from "./EntityList.module.css";
 import buttonStyles from "../buttons.module.css";
-import { normalizeArtistDisplayName } from "@/lib/utils";
 
-type EntityListProps = {
-  items: (Artist | Collection | Group)[];
+type Item = HasId &
+  (
+    | Pick<Artist, "name" | "entityType">
+    | Pick<Collection, "title" | "entityType">
+    | Pick<Group, "title" | "entityType">
+  );
+
+type ContextItem = Item | Pick<Release, "title" | "entityType">;
+
+export type EntityListProps = {
+  items: Item[];
+  context: ContextItem;
   label?: string;
   useDarkText?: boolean;
   className?: string;
+  itemClassName?: string;
   canDeleteFirstEntry?: boolean;
   onDelete?: (id: number) => void;
   onLinkClick?: () => void;
+  i18nkey?: string;
 };
+
+function getTitle(item: ContextItem) {
+  return item.entityType === "Artist"
+    ? normalizeArtistDisplayName(item.name)
+    : item.title;
+}
 
 export default function EntityList({
   items,
+  context,
   label,
   useDarkText,
   className,
+  itemClassName,
   canDeleteFirstEntry = true,
   onDelete,
   onLinkClick,
+  i18nkey = "entityList.actions.delete.default",
 }: EntityListProps) {
-  function getLink(item: Artist | Collection | Group) {
-    if (item.entityType === "Artist") {
-      return (
-        <Link
-          className={cx(className || styles.link)}
-          title={`[${item.id}]`}
-          to={`/artists/${item.id}`}
-          onClick={onLinkClick}
-        >
-          {normalizeArtistDisplayName(item.name)}
-        </Link>
-      );
-    }
-    return (
-      <Link
-        className={cx(className || styles.link)}
-        title={`[${item.id}]`}
-        to={`/${item.entityType.toLowerCase()}s/${item.id}`}
-        onClick={onLinkClick}
-      >
-        {item.title}
-      </Link>
-    );
-  }
-
+  const { t } = useTranslation();
   function showDeleteButton(index: number) {
     if (!onDelete) {
       return false;
@@ -70,7 +68,14 @@ export default function EntityList({
       <ul>
         {items.map((item, index) => (
           <li key={item.id}>
-            {getLink(item)}
+            <Link
+              className={cx(itemClassName || styles.link)}
+              title={`[${item.id}]`}
+              to={`/${item.entityType.toLowerCase()}s/${item.id}`}
+              onClick={onLinkClick}
+            >
+              {getTitle(item)}
+            </Link>
             {showDeleteButton(index) && (
               <button
                 className={cx(
@@ -79,7 +84,10 @@ export default function EntityList({
                   styles.CornerActionButton
                 )}
                 onClick={() => onDelete(item.id)}
-                aria-label={`Remove entry ${item.id} from list`}
+                aria-label={t(i18nkey, {
+                  item: getTitle(item),
+                  context: getTitle(context),
+                })}
               >
                 <MdRemoveCircle />
               </button>

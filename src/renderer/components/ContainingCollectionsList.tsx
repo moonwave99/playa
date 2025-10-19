@@ -1,33 +1,39 @@
 import useRelease from "../query/useRelease";
-import EntityList from "./EntityList";
+import EntityList, { type EntityListProps } from "./EntityList";
 import styles from "./EntityList.module.css";
 
-type ContainingCollectionsListProps = {
+type ContainingCollectionsListProps = Pick<
+  EntityListProps,
+  "className" | "itemClassName" | "useDarkText"
+> & {
   id: number;
-  useDarkText?: boolean;
   prependSeparator?: boolean;
   onLinkClick?: () => void;
 };
 
 export default function ContainingCollectionsList({
   id,
-  useDarkText,
   prependSeparator,
   onLinkClick,
+  ...rest
 }: ContainingCollectionsListProps) {
   const { release, removeFromCollection } = useRelease({ id });
+
   if (!release?.collections.length) {
     return null;
   }
+
   return (
     <>
       {prependSeparator && <span className={styles.separator} />}
       <EntityList
+        i18nkey="entityList.actions.delete.containingCollections"
+        context={release}
         items={release.collections}
         label="Appears in:"
-        useDarkText={useDarkText}
         onDelete={removeFromCollection}
         onLinkClick={onLinkClick}
+        {...rest}
       />
     </>
   );
