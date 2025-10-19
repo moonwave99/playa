@@ -152,6 +152,7 @@ export default function ReleaseList({
       {...getListConfig(releaseListViewMode)}
       onUnmount={storeScrollInfo}
       scrollInfo={scrollInfo}
+      testId="ReleaseList"
       keyHandlers={{
         ...keyHandlers,
         " ": withPrevent((_event: KeyboardEvent, selection: Release[]) => {
