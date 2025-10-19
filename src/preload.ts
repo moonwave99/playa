@@ -110,6 +110,7 @@ const api = {
     searchResult: (result: SearchResult) =>
       ipc.invoke("menu:searchResult", result),
     refresh: () => ipc.invoke("menu:refresh"),
+    click: (id: string) => ipc.invoke("menu:click", id),
   },
   dialog: {
     open: async (options: Partial<OpenDialogSyncOptions>) =>

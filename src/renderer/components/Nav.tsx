@@ -12,7 +12,11 @@ import api from "../api";
 
 import Breadcrumbs from "./Breadcrumbs";
 import { IoMenu } from "react-icons/io5";
-import { MdOutlineSearch, MdOutlineDriveFolderUpload } from "react-icons/md";
+import {
+  MdOutlineSearch,
+  MdOutlineDriveFolderUpload,
+  MdEdit,
+} from "react-icons/md";
 import { IoMdTime } from "react-icons/io";
 import { BsGrid, BsGrid3X2Gap, BsListOl, BsAlphabet } from "react-icons/bs";
 import { Icon, type SupportedIcons } from "../icons";
@@ -20,6 +24,7 @@ import { Icon, type SupportedIcons } from "../icons";
 import cx from "clsx";
 import styles from "./Nav.module.css";
 import buttonStyles from "../buttons.module.css";
+import { Modals } from "../Modal";
 
 const navMap: {
   type: "link" | "modal";
@@ -84,45 +89,62 @@ export default function Nav({ isDetailPage }: NavProps) {
         <Routes>
           <Route path="/" element={<ImportActions />} />
           <Route path="/releases" element={<ImportActions />} />
+          <Route
+            path="/releases/:id"
+            element={<EditActions entity="Release" />}
+          />
           <Route path="/artists" element={<ArtistListActions />} />
           <Route
             path="/artists/:id"
             element={
               <>
                 <ReleaseListActions />
-                <ImportActions />
+                <ActionsGroup>
+                  <ImportActions />
+                  <EditActions entity="Artist" />
+                </ActionsGroup>
               </>
             }
           />
-          <Route path="/collections/:id" element={<ReleaseListActions />} />
+          <Route
+            path="/collections/:id"
+            element={
+              <>
+                <ReleaseListActions />
+                <EditActions entity="Collection" />
+              </>
+            }
+          />
+          <Route path="/groups/:id" element={<EditActions entity="Group" />} />
           <Route path="*" element={null} />
         </Routes>
-        <button
-          type="button"
-          aria-label={t("nav.common.actions.toggleMenu")}
-          title={t("nav.common.actions.toggleMenu")}
-          onClick={() => setNavOpen((prev) => !prev)}
-          className={cx(buttonStyles.button, {
-            [buttonStyles.useDarkText]: useDarkText,
-          })}
-          style={{ marginLeft: "1.5rem" }}
-        >
-          <IoMenu />
-        </button>
-        <button
-          type="button"
-          aria-label={t("nav.common.actions.openSearch")}
-          title={t("nav.common.actions.openSearch")}
-          onClick={() => {
-            setModalContents({ name: "search" });
-            setNavOpen(false);
-          }}
-          className={cx(buttonStyles.button, {
-            [buttonStyles.useDarkText]: useDarkText,
-          })}
-        >
-          <MdOutlineSearch />
-        </button>
+        <ActionsGroup>
+          <button
+            type="button"
+            aria-label={t("nav.common.actions.toggleMenu")}
+            title={t("nav.common.actions.toggleMenu")}
+            onClick={() => setNavOpen((prev) => !prev)}
+            className={cx(buttonStyles.button, {
+              [buttonStyles.useDarkText]: useDarkText,
+            })}
+          >
+            <IoMenu />
+          </button>
+          <button
+            type="button"
+            aria-label={t("nav.common.actions.openSearch")}
+            title={t("nav.common.actions.openSearch")}
+            onClick={() => {
+              setModalContents({ name: "search" });
+              setNavOpen(false);
+            }}
+            className={cx(buttonStyles.button, {
+              [buttonStyles.useDarkText]: useDarkText,
+            })}
+          >
+            <MdOutlineSearch />
+          </button>
+        </ActionsGroup>
       </div>
       <ul className={styles.entries} ref={ref}>
         {navMap.map(({ link, label, type, accelerator, section }, index) => (
@@ -151,7 +173,7 @@ export default function Nav({ isDetailPage }: NavProps) {
             ) : (
               <button
                 onClick={() => {
-                  setModalContents({ name: link });
+                  setModalContents({ name: link as Modals });
                   setNavOpen(false);
                 }}
                 onFocus={() => setCurrentIndex(index)}
@@ -175,12 +197,34 @@ function ImportActions() {
       type="button"
       aria-label={t("nav.import.actions.importReleases")}
       title={t("nav.import.actions.importReleases")}
-      onClick={() => api.importFolders.importFolderFromDialog()}
+      onClick={() => api.menu.click("importFolder")}
       className={cx(buttonStyles.button, {
         [buttonStyles.useDarkText]: useDarkText,
       })}
     >
       <MdOutlineDriveFolderUpload />
+    </button>
+  );
+}
+
+type EditActionsProps = {
+  entity: "Artist" | "Release" | "Collection" | "Group";
+};
+
+function EditActions({ entity }: EditActionsProps) {
+  const { useDarkText } = useStore();
+  const { t } = useTranslation();
+  return (
+    <button
+      type="button"
+      aria-label={t("nav.edit.actions.editEntity", { entity })}
+      title={t("nav.edit.actions.editEntity", { entity })}
+      onClick={() => api.menu.click(`edit${entity}`)}
+      className={cx(buttonStyles.button, {
+        [buttonStyles.useDarkText]: useDarkText,
+      })}
+    >
+      <MdEdit />
     </button>
   );
 }
@@ -211,7 +255,7 @@ function ReleaseListActions() {
   const { useDarkText, releaseListViewMode, setViewMode } = useStore();
   const { t } = useTranslation();
   return (
-    <>
+    <ActionsGroup>
       {releaseListActions.map(({ viewMode, key, icon }) => (
         <button
           key={viewMode}
@@ -227,7 +271,7 @@ function ReleaseListActions() {
           {icon}
         </button>
       ))}
-    </>
+    </ActionsGroup>
   );
 }
 
@@ -235,7 +279,7 @@ function ArtistListActions() {
   const { useDarkText, artistsViewMode, setViewMode } = useStore();
   const { t } = useTranslation();
   return (
-    <>
+    <ActionsGroup>
       <button
         type="button"
         aria-label={t("nav.artist.actions.showLatestArtists")}
@@ -260,6 +304,10 @@ function ArtistListActions() {
       >
         <BsAlphabet />
       </button>
-    </>
+    </ActionsGroup>
   );
+}
+
+function ActionsGroup({ children }: { children: ReactNode }) {
+  return <div className={styles.ActionsGroup}>{children}</div>;
 }

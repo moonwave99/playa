@@ -152,7 +152,7 @@ export function init(mainWindow: BrowserWindow) {
     }),
   };
 
-  const { refreshMenu } = initMenu({
+  const { refreshMenu, clickEntry } = initMenu({
     controllers,
     stateManager,
     send,
@@ -170,6 +170,7 @@ export function init(mainWindow: BrowserWindow) {
       "menu:group": groupMenu({ controllers, send, openModal }),
       "menu:searchResult": searchResultMenu({ controllers, send, openModal }),
       "menu:refresh": () => refreshMenu(stateManager),
+      "menu:click": clickEntry,
     },
   ].forEach(registerHandlers);
 

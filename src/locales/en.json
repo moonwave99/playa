@@ -40,6 +40,11 @@
       "actions": {
         "importReleases": "Import Releases"
       }
+    },
+    "edit": {
+      "actions": {
+        "editEntity": "Edit {{entity}}"
+      }
     }
   },
   "placeholders": {

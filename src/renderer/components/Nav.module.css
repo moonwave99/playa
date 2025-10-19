@@ -19,10 +19,16 @@
     border-bottom: none;
   }
 
-  .buttons {
+  .ActionsGroup {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+  }
+
+  .buttons {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
     height: 3.5rem;
   }
 

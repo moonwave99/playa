@@ -451,6 +451,7 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
       label: "Library",
       submenu: [
         {
+          id: "importFolder",
           label: "Import Folder",
           accelerator: "Shift+I",
           click: controllers.importFolders.importFolderFromDialog,
@@ -491,5 +492,6 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
   return {
     refreshMenu: (stateManager: StateManager) =>
       refreshMenu(menu, stateManager),
+    clickEntry: (id: string) => menu.getMenuItemById(id)?.click(),
   };
 }
