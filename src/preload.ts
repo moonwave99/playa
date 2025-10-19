@@ -4,6 +4,7 @@ import {
   getHandlersFromActions,
   getEventHandlersFromActions,
 } from "./handlerUtils";
+import { QueryKey } from "@tanstack/react-query";
 import type {
   ReleaseWithArtist,
   CollectionWithReleases,
@@ -12,10 +13,9 @@ import type {
   GroupWithArtists,
   Notification,
   Settings,
-  ImportData,
   WithReleases,
 } from "./types/types";
-import { QueryKey } from "@tanstack/react-query";
+import type { Modals } from "./renderer/Modal";
 import {
   systemController,
   actions as systemActions,
@@ -121,33 +121,30 @@ export type Api = typeof api;
 
 contextBridge.exposeInMainWorld("api", api);
 
+const noOp = (...args: unknown[]) => {
+  void args;
+};
+
 function getEvents() {
-  const noOp = (...args: unknown[]) => {
-    void args;
-  };
   return {
     onNavigate: (path: string) => noOp(path),
     onSwipe: (direction: number) => noOp(direction),
     onMutate: (queryKey: QueryKey) => noOp(queryKey),
     onNotify: (notification: Notification) => noOp(notification),
     onCoverUpdate: (selection: ReleaseWithArtist[]) => noOp(selection),
-    onOpenGroupDialog: (selection: ReleaseWithArtist[]) => noOp(selection),
-    onOpenEditReleaseDialog: (release: ReleaseWithArtist) => noOp(release),
-    onOpenEditArtistDialog: (artist: ArtistWithReleases) => noOp(artist),
-    onOpenEditCollectionDialog: (collection: CollectionWithReleases) =>
-      noOp(collection),
-    onOpenAddReleasesToCollectionDialog: (selection: ReleaseWithArtist[]) =>
-      noOp(selection),
-    onOpenAddArtistsToGroupDialog: (selection: ArtistWithReleases[]) =>
-      noOp(selection),
-    onOpenEditGroupDialog: (group: GroupWithArtists) => noOp(group),
-    onOpenInteractiveImportDialog: (data: ImportData[]) => noOp(data),
     onImportProgress: (step: string, completed: boolean) =>
       noOp(step, completed),
     onImportError: (message: string) => noOp(message),
     onExportProgress: (step: string, completed: boolean) =>
       noOp(step, completed),
     onExportError: (message: string) => noOp(message),
+    onOpenModal: ({
+      name,
+      params,
+    }: {
+      name: Modals;
+      params: Record<string, unknown>;
+    }) => noOp(name, params),
     onClearSelection: () => {},
     onToggleViewMode: () => {},
     onToggleSearch: () => {},

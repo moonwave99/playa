@@ -37,19 +37,19 @@ function getRemoveFromCollectionEntry(
 
 function getGroupReleasesEntry(
   selection: ReleaseWithArtistAndSubReleases[],
-  { send }: MenuParams
+  { openModal }: MenuParams
 ) {
   if (selection.some((x) => x.subReleases?.length)) {
     return null;
   }
   return {
     label: `Group ${selection.length} Releases`,
-    click: () => send("openGroupDialog", selection),
+    click: () => openModal("groupReleases", { releases: { selection } }),
   };
 }
 
 export const releaseMenu =
-  ({ controllers, send }: MenuParams) =>
+  ({ controllers, send, openModal }: MenuParams) =>
   async (
     selection: ReleaseWithArtistAndSubReleases[],
     context?: WithReleases & { entityType: "Artist" | "Collection" | null }
@@ -96,12 +96,12 @@ export const releaseMenu =
         {
           id: "editRelease",
           label: `Edit Release`,
-          click: () => send("openEditReleaseDialog", release),
+          click: () => openModal("editRelease", { release }),
         },
         {
           id: "editArtist",
           label: `Edit Artist`,
-          click: () => send("openEditArtistDialog", release.artist),
+          click: () => openModal("editArtist", { artist: release.artist }),
         },
         getCoverEntityEntry({ selection_id: release.id, context, controllers }),
         release.subReleases?.length
@@ -120,7 +120,8 @@ export const releaseMenu =
         { type: "separator" },
         {
           label: "Add Release to Collection",
-          click: () => send("openAddReleasesToCollectionDialog", [release]),
+          click: () =>
+            openModal("addReleasesToCollection", { releases: [release] }),
         },
         context?.entityType === "Collection"
           ? getRemoveFromCollectionEntry(
@@ -129,6 +130,7 @@ export const releaseMenu =
               {
                 controllers,
                 send,
+                openModal,
               }
             )
           : { type: "separator" },
@@ -158,18 +160,19 @@ export const releaseMenu =
     }
 
     buildMenu([
-      getGroupReleasesEntry(selection, { controllers, send }) || {
+      getGroupReleasesEntry(selection, { controllers, send, openModal }) || {
         type: "separator",
       },
       {
         label: `Add ${selection.length} Releases to Collection`,
-        click: () => send("openAddReleasesToCollectionDialog", selection),
+        click: () =>
+          openModal("addReleasesToCollection", { releases: selection }),
       },
       context?.entityType === "Collection"
         ? getRemoveFromCollectionEntry(
             selection,
             context as CollectionWithReleases,
-            { controllers, send }
+            { controllers, send, openModal }
           )
         : { type: "separator" },
       {

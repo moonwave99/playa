@@ -5,8 +5,9 @@ import type {
   ArtistsViewMode,
   Settings,
 } from "@/types/types";
+import { Modals } from "./Modal";
 
-export type ModalContents = { name: string; params?: Record<string, unknown> };
+export type ModalContents = { name: Modals; params?: Record<string, unknown> };
 
 const viewModes = {
   releaseList: ["grid", "list", "compact"] as ReleaseListViewMode[],

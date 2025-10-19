@@ -26,11 +26,13 @@ import {
   parsePath,
   stripPath,
 } from "../utils";
+import type { send, openModal } from "./init";
 
 type ImportFoldersControllerParams = {
   withPath: (key: string, folderPath: string) => string;
   getSetting: (key: string) => ReturnType<typeof getSetting>;
-  send: (channel: string, ...args: unknown[]) => void;
+  send: typeof send;
+  openModal: typeof openModal;
   stateManager: StateManager;
   openFolderDialog: (
     defaultPath: string,
@@ -47,6 +49,7 @@ export function importFoldersController({
   withPath,
   getSetting,
   send,
+  openModal,
   stateManager,
   openFolderDialog,
   showErrorBox,
@@ -163,8 +166,7 @@ export function importFoldersController({
       );
       return;
     }
-
-    send("openInteractiveImportDialog", groupedByDisc);
+    openModal("interactiveImport", { data: groupedByDisc });
   }
 
   async function importFromInteractiveData(data: ImportData) {
@@ -291,7 +293,7 @@ export function importFoldersController({
       return;
     }
 
-    send("openImportFolders");
+    openModal("importFolders");
 
     function onProgress(folder: string, completed = false) {
       send("importProgress", folder, completed);

@@ -31,6 +31,7 @@ const defaultParams = {
   } as StateManager,
   openFolderDialog: vi.fn(),
   showErrorBox: vi.fn(),
+  openModal: vi.fn(),
 };
 
 describe("importFolder function", () => {
@@ -405,11 +406,13 @@ describe("importFolderFromDialog function", () => {
 
     const artist = getFakeArtist(1);
     const send = vi.fn();
+    const openModal = vi.fn();
 
     const { importFolderFromDialog } = importFoldersController({
       ...defaultParams,
       openFolderDialog: (folder: string) => [path.join(directory, folder)],
       send,
+      openModal,
       getSetting: (key: string) =>
         key === "LIBRARY_PATH" ? LIBRARY_PATH : key,
       stateManager: {
@@ -449,6 +452,7 @@ describe("importFolderFromDialog function", () => {
 
       const showErrorBox = vi.fn();
       const send = vi.fn();
+      const openModal = vi.fn();
 
       const { importFolderFromDialog } = importFoldersController({
         ...defaultParams,
@@ -459,6 +463,7 @@ describe("importFolderFromDialog function", () => {
         ],
         showErrorBox,
         send,
+        openModal,
         stateManager: {
           getCurrentEntity: () => artist,
           isPage: () => true,
@@ -467,54 +472,56 @@ describe("importFolderFromDialog function", () => {
 
       await importFolderFromDialog();
 
-      expect(send).toHaveBeenCalledWith("openInteractiveImportDialog", [
-        {
-          artist: {
-            id: null,
-            name: "Artist 1",
-          },
-          path: "2000 - Release 1",
-          completePath: path.join(artist.path, "[Album]", "2000 - Release 1"),
-          title: "Release 1",
-          normalizedTitle: "Release 1",
-          year: 2000,
-          type: "Album",
-          tracks: [
-            {
-              duration: 123,
-              meta: {
-                album: "Release 1",
-                artist: "Artist 1",
+      expect(openModal).toHaveBeenCalledWith("interactiveImport", {
+        data: [
+          {
+            artist: {
+              id: null,
+              name: "Artist 1",
+            },
+            path: "2000 - Release 1",
+            completePath: path.join(artist.path, "[Album]", "2000 - Release 1"),
+            title: "Release 1",
+            normalizedTitle: "Release 1",
+            year: 2000,
+            type: "Album",
+            tracks: [
+              {
+                duration: 123,
+                meta: {
+                  album: "Release 1",
+                  artist: "Artist 1",
+                  title: "Track 1",
+                  year: 2000,
+                  track: {
+                    no: 1,
+                  },
+                },
+                path: "01 - Track 1.mp3",
+                position: 1,
                 title: "Track 1",
-                year: 2000,
-                track: {
-                  no: 1,
-                },
+                trackArtist: "Artist 1",
               },
-              path: "01 - Track 1.mp3",
-              position: 1,
-              title: "Track 1",
-              trackArtist: "Artist 1",
-            },
-            {
-              duration: 123,
-              meta: {
-                album: "Release 1",
-                artist: "Artist 1",
+              {
+                duration: 123,
+                meta: {
+                  album: "Release 1",
+                  artist: "Artist 1",
+                  title: "Track 2",
+                  year: 2000,
+                  track: {
+                    no: 2,
+                  },
+                },
+                path: "02 - Track 2.mp3",
+                position: 2,
                 title: "Track 2",
-                year: 2000,
-                track: {
-                  no: 2,
-                },
+                trackArtist: "Artist 1",
               },
-              path: "02 - Track 2.mp3",
-              position: 2,
-              title: "Track 2",
-              trackArtist: "Artist 1",
-            },
-          ],
-        },
-      ]);
+            ],
+          },
+        ],
+      });
     });
 
     it("shows an error box if all selected folders are empty", async (context) => {

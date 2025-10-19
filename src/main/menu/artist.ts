@@ -11,7 +11,7 @@ import { searchArtistOnRYM, searchArtistOnDiscogs } from "@/lib/external_links";
 function getRemoveFromGroupEntry(
   artist: Artist,
   group: Group,
-  { controllers, send }: MenuParams
+  { controllers, send }: Omit<MenuParams, "openModal">
 ) {
   return {
     label: "Remove Artist from Group",
@@ -27,7 +27,7 @@ function getRemoveFromGroupEntry(
 }
 
 export const artistMenu =
-  ({ controllers, send }: MenuParams) =>
+  ({ controllers, send, openModal }: MenuParams) =>
   async (artist: ArtistWithReleases, context?: GroupWithArtists) => {
     const { id, name, releases } = artist;
 
@@ -46,12 +46,12 @@ export const artistMenu =
       },
       {
         label: "Edit Artist",
-        click: () => send("openEditArtistDialog", artist),
+        click: () => openModal("editArtist", { artist }),
       },
       { type: "separator" },
       {
         label: `Add Artist to Group`,
-        click: () => send("openAddArtistsToGroupDialog", [artist]),
+        click: () => openModal("addArtistsToGroup", { artists: [artist] }),
       },
       context?.entityType === "Group"
         ? getRemoveFromGroupEntry(artist, context, { controllers, send })

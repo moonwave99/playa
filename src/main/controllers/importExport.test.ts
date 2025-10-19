@@ -17,6 +17,7 @@ describe("exportDataFromDialog function", () => {
       openFolderDialog,
       openFileDialog: vi.fn(),
       send: vi.fn(),
+      openModal: vi.fn(),
       desktopPath: "",
       userDataPath: "",
       appVersion: "0.5",
@@ -44,6 +45,7 @@ describe("exportDataFromDialog function", () => {
 
     const send = vi.fn();
     const openFileDialog = vi.fn();
+    const openModal = vi.fn();
     const openFolderDialog = () => [path.join(directory, "Desktop/dumpFolder")];
 
     const { exportDataFromDialog } = importExportController({
@@ -53,6 +55,7 @@ describe("exportDataFromDialog function", () => {
       userDataPath,
       appVersion: "0.5",
       send,
+      openModal,
     });
 
     const archivePath = await exportDataFromDialog();
@@ -78,7 +81,7 @@ describe("exportDataFromDialog function", () => {
       })
     );
 
-    expect(send).toHaveBeenCalledWith("openExportData");
+    expect(openModal).toHaveBeenCalledWith("exportData");
     expect(send).toHaveBeenCalledWith("exportProgress", "start");
     expect(send).toHaveBeenCalledWith("exportProgress", "done");
   });
@@ -88,6 +91,7 @@ describe("importDataFromDialog function", () => {
   it("does nothing if no file is chosen", async () => {
     const send = vi.fn();
     const openFileDialog = vi.fn();
+    const openModal = vi.fn();
 
     const { importDataFromDialog } = importExportController({
       openFolderDialog: vi.fn(),
@@ -96,11 +100,13 @@ describe("importDataFromDialog function", () => {
       userDataPath: "",
       appVersion: "0.5",
       send,
+      openModal,
     });
 
     openFileDialog.mockReturnValueOnce(false);
     await importDataFromDialog();
     expect(send).not.toHaveBeenCalled();
+    expect(openModal).not.toHaveBeenCalled();
   });
 
   it("sends an error if the chosen file is not in the .zip format", async () => {
@@ -114,6 +120,7 @@ describe("importDataFromDialog function", () => {
       userDataPath: "",
       appVersion: "0.5",
       send,
+      openModal: vi.fn(),
     });
 
     openFileDialog.mockReturnValueOnce("some/file.ext");
@@ -150,6 +157,7 @@ describe("importDataFromDialog function", () => {
         userDataPath,
         appVersion: "0.5",
         send,
+        openModal: vi.fn(),
       });
 
     const archivePath = await exportDataFromDialog();

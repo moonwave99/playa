@@ -1,6 +1,6 @@
 import { app, type OpenDialogSyncOptions } from "electron";
 import { importData, exportData } from "../db/importExport";
-import { send } from "./init";
+import type { send, openModal } from "./init";
 import { wait } from "@/lib/utils";
 
 type ImportExportControllerParams = {
@@ -16,6 +16,7 @@ type ImportExportControllerParams = {
   userDataPath: string;
   appVersion: string;
   send: typeof send;
+  openModal: typeof openModal;
 };
 
 const ON_DONE_DELAY = 5000;
@@ -34,6 +35,7 @@ export function importExportController({
   userDataPath,
   appVersion,
   send,
+  openModal,
 }: ImportExportControllerParams) {
   async function importDataFromDialog() {
     const file = openFileDialog(desktopPath, [
@@ -71,7 +73,7 @@ export function importExportController({
       return;
     }
 
-    send("openExportData");
+    openModal("exportData");
 
     await wait(300);
 

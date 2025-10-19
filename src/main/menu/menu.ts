@@ -26,7 +26,7 @@ import { collectionMenu } from "./collection";
 import { groupMenu } from "./group";
 import { searchResultMenu } from "./searchResult";
 import type { StateManager } from "../stateManager";
-import { send } from "../controllers/init";
+import { send, openModal } from "../controllers/init";
 
 export { releaseMenu, artistMenu, collectionMenu, groupMenu, searchResultMenu };
 
@@ -153,10 +153,14 @@ function refreshMenu(menu: Menu, stateManager: StateManager) {
       return;
     }
     item.enabled = selectedReleases.length === 1;
+    if (item.id === "addReleasesToCollection") {
+      item.enabled = true;
+    }
   });
 
   const groupReleasesEntry = menu.getMenuItemById("groupReleases");
   const unGroupReleasesEntry = menu.getMenuItemById("unGroupRelease");
+
   const isSomeReleaseMain = selectedReleases.some((x) => x?.subReleases.length);
 
   if (isSomeReleaseMain) {
@@ -251,10 +255,9 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
           label: "Edit Artist",
           accelerator: "Shift+E",
           click: async () =>
-            send(
-              "openEditArtistDialog",
-              (await stateManager.getCurrentEntity()) as ArtistWithReleasesFull
-            ),
+            openModal("editArtist", {
+              artist: await stateManager.getCurrentEntity(),
+            }),
         },
         { type: "separator" },
         {
@@ -279,9 +282,9 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
           id: "addArtistToGroup",
           accelerator: "a",
           click: async () =>
-            send("openAddArtistsToGroupDialog", [
-              (await stateManager.getCurrentEntity()) as ArtistWithReleasesFull,
-            ]),
+            openModal("addArtistsToGroup", {
+              artists: [await stateManager.getCurrentEntity()],
+            }),
         },
       ],
     })
@@ -352,17 +355,18 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
           label: `Edit Release`,
           accelerator: "Cmd+Shift+E",
           click: () =>
-            send(
-              "openEditReleaseDialog",
-              stateManager.getSelectedReleases().at(0)
-            ),
+            openModal("editRelease", {
+              release: stateManager.getSelectedReleases().at(0),
+            }),
         },
         {
           id: "groupReleases",
           label: `Group Selected Releases`,
           accelerator: "Cmd+G",
           click: () =>
-            send("openGroupDialog", stateManager.getSelectedReleases()),
+            openModal("groupReleases", {
+              releases: stateManager.getSelectedReleases(),
+            }),
         },
         {
           id: "unGroupRelease",
@@ -376,10 +380,9 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
           label: `Add Selected Releases to Collection`,
           accelerator: "a",
           click: () =>
-            send(
-              "openAddReleasesToCollectionDialog",
-              stateManager.getSelectedReleases()
-            ),
+            openModal("addReleasesToCollection", {
+              releases: stateManager.getSelectedReleases(),
+            }),
         },
       ],
     })
@@ -394,10 +397,10 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
           id: "editCollection",
           label: "Edit Collection",
           accelerator: "Shift+E",
-          click: async () => {
-            const { params } = stateManager.getRouteMatch("/collections/:id");
-            send("openEditCollectionDialog", { id: +params.id });
-          },
+          click: async () =>
+            openModal("editCollection", {
+              collection: await stateManager.getCurrentEntity(),
+            }),
         },
       ],
     })
@@ -412,10 +415,10 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
           id: "editGroup",
           label: "Edit Group",
           accelerator: "Shift+E",
-          click: async () => {
-            const { params } = stateManager.getRouteMatch("/groups/:id");
-            send("openEditGroupDialog", { id: +params.id });
-          },
+          click: async () =>
+            openModal("editGroup", {
+              group: await stateManager.getCurrentEntity(),
+            }),
         },
       ],
     })
@@ -436,7 +439,7 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
           id: "navigate-settings",
           label: "Settings",
           accelerator: "cmd+,",
-          click: () => send("openSettings"),
+          click: () => openModal("settings"),
         },
       ],
     })
@@ -477,7 +480,7 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
         },
         {
           label: "Import Data from Archive",
-          click: () => send("openImportData"),
+          click: () => openModal("importData"),
         },
       ],
     })

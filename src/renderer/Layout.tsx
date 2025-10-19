@@ -35,17 +35,7 @@ import ToastView from "./components/ToastView";
 import cx from "clsx";
 import styles from "./Layout.module.css";
 import dragStyles from "./dnd.module.css";
-import {
-  Artist,
-  ArtistWithReleases,
-  Release,
-  ReleaseWithArtist,
-  Notification,
-  Collection,
-  Group,
-  ReleaseWithArtistAndTracksAndSubreleases,
-  ImportData,
-} from "@/types/types";
+import { Artist, Release, Notification } from "@/types/types";
 
 import HomePage from "./pages/HomePage";
 import ReleasesPage from "./pages/ReleasesPage";
@@ -145,41 +135,12 @@ function init(): Init {
     onMutate: refetch,
     onNotify,
     onCoverUpdate: refreshCovers,
-    onOpenSettings: () => setModalContents({ name: "settings" }),
-    onOpenImportFolders: () => setModalContents({ name: "importFolders" }),
-    onOpenExportData: () => setModalContents({ name: "exportData" }),
-    onOpenImportData: () => setModalContents({ name: "importData" }),
-    onOpenGroupDialog: (releases: ReleaseWithArtist[]) =>
-      setModalContents({ name: "groupReleases", params: { releases } }),
-    onOpenEditReleaseDialog: (
-      release: ReleaseWithArtistAndTracksAndSubreleases
-    ) => setModalContents({ name: "editRelease", params: { release } }),
-    onOpenEditArtistDialog: (artist: ArtistWithReleases) =>
-      setModalContents({ name: "editArtist", params: { artist } }),
-    onOpenEditCollectionDialog: (collection: Collection) =>
-      setModalContents({ name: "editCollection", params: { collection } }),
-    onOpenEditGroupDialog: (group: Group) =>
-      setModalContents({ name: "editGroup", params: { group } }),
-    onOpenAddReleasesToCollectionDialog: (releases: ReleaseWithArtist[]) =>
-      setModalContents({
-        name: "addReleasesToCollection",
-        params: { releases },
-      }),
-    onOpenAddArtistsToGroupDialog: (artists: ArtistWithReleases[]) =>
-      setModalContents({
-        name: "addArtistsToGroup",
-        params: { artists },
-      }),
-    onOpenInteractiveImportDialog: (data: ImportData[]) =>
-      setModalContents({
-        name: "interactiveImport",
-        params: { data },
-      }),
+    onSwipe: navigate,
+    onOpenModal: setModalContents,
     onToggleSearch: () =>
       setModalContents(
         modalContents?.name === "search" ? null : { name: "search" }
       ),
-    onSwipe: navigate,
     onNavigate: (path: string) => {
       navigate(path);
       setContext("list");

@@ -2,7 +2,7 @@ import type { GroupWithArtists, MenuParams } from "@/types/types";
 import { buildMenu, getDeleteEntry } from "./menu";
 
 export const groupMenu =
-  ({ controllers, send }: MenuParams) =>
+  ({ controllers, openModal }: MenuParams) =>
   (group: GroupWithArtists) => {
     buildMenu([
       getDeleteEntry({
@@ -13,7 +13,7 @@ export const groupMenu =
       { type: "separator" },
       {
         label: "Edit Group",
-        click: () => send("openEditGroupDialog", group),
+        click: () => openModal("editGroup", { group }),
       },
     ]);
     return true;

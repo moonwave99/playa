@@ -2,7 +2,7 @@ import type { CollectionWithReleases, MenuParams } from "@/types/types";
 import { buildMenu, getDeleteEntry } from "./menu";
 
 export const collectionMenu =
-  ({ controllers, send }: MenuParams) =>
+  ({ controllers, openModal }: MenuParams) =>
   (collection: CollectionWithReleases) => {
     buildMenu([
       getDeleteEntry({
@@ -17,7 +17,7 @@ export const collectionMenu =
       },
       {
         label: "Edit Collection",
-        click: () => send("openEditCollectionDialog", collection),
+        click: () => openModal("editCollection", { collection }),
       },
     ]);
     return true;

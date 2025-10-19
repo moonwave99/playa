@@ -1,4 +1,4 @@
-import { Controllers, send } from "@/main/controllers/init";
+import { Controllers, send, openModal } from "@/main/controllers/init";
 // eslint-disable-next-line import/no-named-as-default
 import Prisma, { ReleaseType } from "@prisma/client-generated";
 import type { ICommonTagsResult } from "music-metadata/lib/type";
@@ -225,6 +225,7 @@ export type EditReleaseParam = Pick<
 export type MenuParams = {
   controllers: Controllers;
   send: typeof send;
+  openModal: typeof openModal;
 };
 
 export type Context = {

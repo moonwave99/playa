@@ -34,6 +34,7 @@ import { statsController } from "./stats";
 import { importFoldersController } from "./importFolders";
 import { importExportController } from "./importExport";
 import { stateController } from "./state";
+import { Modals } from "@/renderer/Modal";
 
 export type Controllers = {
   system: ReturnType<typeof systemController>;
@@ -52,6 +53,10 @@ export function send(channel: string, ...args: unknown[]) {
   BrowserWindow.getAllWindows()
     .at(0)
     ?.webContents.send(channel, ...args);
+}
+
+export function openModal(name: Modals, params?: unknown) {
+  send("openModal", { name, params });
 }
 
 const skipMove = process.env.npm_lifecycle_event === "test:e2e";
@@ -131,6 +136,7 @@ export function init(mainWindow: BrowserWindow) {
       withPath,
       getSetting,
       send,
+      openModal,
       stateManager,
       openFolderDialog,
       showErrorBox,
@@ -142,6 +148,7 @@ export function init(mainWindow: BrowserWindow) {
       userDataPath,
       appVersion,
       send,
+      openModal,
     }),
   };
 
@@ -157,11 +164,11 @@ export function init(mainWindow: BrowserWindow) {
     ...Object.values(controllers),
     { getSettings, setSettings },
     {
-      "menu:release": releaseMenu({ controllers, send }),
-      "menu:artist": artistMenu({ controllers, send }),
-      "menu:collection": collectionMenu({ controllers, send }),
-      "menu:group": groupMenu({ controllers, send }),
-      "menu:searchResult": searchResultMenu({ controllers, send }),
+      "menu:release": releaseMenu({ controllers, send, openModal }),
+      "menu:artist": artistMenu({ controllers, send, openModal }),
+      "menu:collection": collectionMenu({ controllers, send, openModal }),
+      "menu:group": groupMenu({ controllers, send, openModal }),
+      "menu:searchResult": searchResultMenu({ controllers, send, openModal }),
       "menu:refresh": () => refreshMenu(stateManager),
     },
   ].forEach(registerHandlers);

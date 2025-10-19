@@ -121,7 +121,7 @@ describe("system revealEntityInFinder function", () => {
     expect(result).toBeFalsy();
   });
 
-  it("opens the folder in finder if release is found", async () => {
+  it("opens the folder in finder if a release is found", async () => {
     const release = getFakeReleasesForArtist(1).at(0);
     await prisma.artist.create({ data: getFakeArtist(1) });
     await prisma.release.create({ data: release });
@@ -147,6 +147,26 @@ describe("system revealEntityInFinder function", () => {
     const result = await revealEntityInFinder("Artist", 1);
     expect(result).toBeTruthy();
     expect(spy).toHaveBeenCalledWith("LIBRARY_PATH/A/Artist 1");
+  });
+
+  it("opens the folder in finder if a track is found", async () => {
+    const release = getFakeReleasesForArtist(1).at(0);
+    const tracks = getFakeTracksForRelease(1);
+    await prisma.artist.create({ data: getFakeArtist(1) });
+    await prisma.release.create({ data: release });
+    await prisma.track.createMany({ data: tracks });
+
+    const { revealEntityInFinder } = systemController({
+      getSetting,
+      withPath,
+    });
+    const spy = vi.spyOn(shell, "openPath");
+
+    const result = await revealEntityInFinder("Track", 1);
+    expect(result).toBeTruthy();
+    expect(spy).toHaveBeenCalledWith(
+      "LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1/01 - Track 1.mp3"
+    );
   });
 });
 

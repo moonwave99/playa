@@ -25,7 +25,7 @@ import AddReleasesToCollectionView from "./components/AddReleasesToCollectionVie
 import AddArtistsToGroupView from "./components/AddArtistsToGroupView";
 import InteractiveImportView from "./components/InteractiveImportView";
 
-function getModalOverrides(name: string) {
+function getModalOverrides(name: Modals) {
   if (name === "lightbox") {
     return {
       width: "calc(400px + var(--cover-lightbox-size))",
@@ -65,7 +65,7 @@ function getModalOverrides(name: string) {
   return {};
 }
 
-function getModalStyle(name: string) {
+function getModalStyle(name: Modals) {
   const modalStyle = {
     overlay: {
       background: "rgba(100,100,100, 0.1)",
@@ -92,6 +92,22 @@ ReactModal.setAppElement("#root");
 type ModalProps = {
   setContext: (context: string) => void;
 };
+
+export type Modals =
+  | "settings"
+  | "importData"
+  | "exportData"
+  | "importFolders"
+  | "groupReleases"
+  | "editRelease"
+  | "editArtist"
+  | "editCollection"
+  | "editGroup"
+  | "addReleasesToCollection"
+  | "addArtistsToGroup"
+  | "interactiveImport"
+  | "search"
+  | "lightbox";
 
 export default function Modal({ setContext }: ModalProps) {
   const [isModalOpen, setModalOpen] = useState(false);
