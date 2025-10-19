@@ -1,4 +1,6 @@
-import prisma from "../main/db/prisma";
+import path from "node:path";
+import { copy, remove } from "fs-extra";
+import { PrismaClient } from "@prisma/client-generated";
 import sha1 from "sha1";
 import { hashArtistName, hashRelease } from "../main/hash";
 import type { Release, HasId, EntityType, ReleaseType } from "@/types/types";
@@ -142,8 +144,60 @@ export function getFakeGroups({
   }));
 }
 
-export async function seed() {
-  await cleanup();
+const BUILD_PATH = path.join(
+  process.cwd(),
+  "out/Playa-darwin-arm64/Playa.app/Contents/Resources"
+);
+
+function getUrl(id?: string) {
+  const { NODE_ENV, npm_lifecycle_event } = process.env;
+  if (NODE_ENV === "test") {
+    return "";
+  }
+  if (NODE_ENV === "development") {
+    return "file:data.db";
+  }
+  if (npm_lifecycle_event === "test:e2e") {
+    const dbName = id ? `data-${id}.db` : "data.db";
+    return `file:${path.join(BUILD_PATH, dbName)}`;
+  }
+  return `file:${path.join(process.resourcesPath, "data.db")}`;
+}
+
+async function cloneDb(id: string) {
+  const original = path.join(
+    BUILD_PATH,
+    id === "test" ? "data.db" : "data-test.db"
+  );
+  const target = path.join(BUILD_PATH, `data-${id}.db`);
+  await copy(original, target);
+}
+
+export async function removeDb(id: string) {
+  const target = path.join(BUILD_PATH, `data-${id}.db`);
+  await remove(path.normalize(target));
+}
+
+export async function cleanup(prisma: PrismaClient) {
+  await prisma.track.deleteMany({});
+  await prisma.group.deleteMany({});
+  await prisma.collection.deleteMany({});
+  await prisma.release.deleteMany({});
+  await prisma.artist.deleteMany({});
+}
+
+export async function seed(id?: string) {
+  if (id) {
+    await cloneDb(id);
+  }
+  const prisma = new PrismaClient({
+    datasources: {
+      db: {
+        url: getUrl(id),
+      },
+    },
+  });
+  await cleanup(prisma);
   const artists = getFakeArtists({ length: 10 });
   const releases = artists.flatMap((x) => getFakeReleasesForArtist(x.id));
 
@@ -231,6 +285,13 @@ export async function seed() {
 }
 
 export async function getData() {
+  const prisma = new PrismaClient({
+    datasources: {
+      db: {
+        url: getUrl(),
+      },
+    },
+  });
   return {
     artists: await prisma.artist.findMany({
       include: {
@@ -259,11 +320,3 @@ function getDate(id: number) {
 }
 
 const pad = (n = 1) => (n < 10 ? `0${n}` : n);
-
-export async function cleanup() {
-  await prisma.track.deleteMany({});
-  await prisma.group.deleteMany({});
-  await prisma.collection.deleteMany({});
-  await prisma.release.deleteMany({});
-  await prisma.artist.deleteMany({});
-}

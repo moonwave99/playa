@@ -5,6 +5,7 @@ const config: PlaywrightTestConfig = {
   maxFailures: 2,
   workers: 1,
   globalSetup: require.resolve("./e2e-tests/global.setup.ts"),
+  globalTeardown: require.resolve("./e2e-tests/global.teardown.ts"),
 };
 
 export default config;

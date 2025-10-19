@@ -1,21 +1,12 @@
 import { expect, test } from "@playwright/test";
 import { clickMenuItemById } from "electron-playwright-helpers";
-import { electronApp } from "../electronApp";
+import { setupElectron } from "../electron";
 
-import { seed } from "../../src/test/seed";
-
-test.beforeEach(async () => {
-  await seed();
-});
-
-test.afterAll(async () => {
-  await seed();
-});
-
-test.describe.configure({ mode: "serial" });
+const getElectronApp = setupElectron();
 
 test.describe("Edit Artist", () => {
   test("edit the selected Artist", async () => {
+    const electronApp = getElectronApp();
     const page = await electronApp.firstWindow();
 
     await page.getByRole("button", { name: "Toggle Menu" }).click();

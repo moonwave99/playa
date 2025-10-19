@@ -1,11 +1,13 @@
 import { expect, test } from "@playwright/test";
-import { electronApp } from "../electronApp";
+import { setupElectron } from "../electron";
 
 test.describe.configure({ mode: "serial" });
 
+const getElectronApp = setupElectron();
+
 test.describe("Search", () => {
   test("search by given query", async () => {
-    const page = await electronApp.firstWindow();
+    const page = await getElectronApp().firstWindow();
     await page.getByRole("button", { name: "Open Search" }).click();
     const input = page.getByPlaceholder("Enter search term");
     expect(input).toBeVisible();
@@ -38,7 +40,7 @@ test.describe("Search", () => {
   });
 
   test("navigate the search results", async () => {
-    const page = await electronApp.firstWindow();
+    const page = await getElectronApp().firstWindow();
     await page.getByRole("button", { name: "Open Search" }).click();
     const input = page.getByPlaceholder("Enter search term");
     expect(input).toBeVisible();

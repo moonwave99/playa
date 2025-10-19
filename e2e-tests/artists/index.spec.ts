@@ -1,11 +1,13 @@
 import { expect, test } from "@playwright/test";
-import { electronApp } from "../electronApp";
+import { setupElectron } from "../electron";
 
 test.describe.configure({ mode: "serial" });
 
+const getElectronApp = setupElectron();
+
 test.describe("Artists Page", () => {
   test("navigate to the Artists page", async () => {
-    const page = await electronApp.firstWindow();
+    const page = await getElectronApp().firstWindow();
 
     await page.getByRole("button", { name: "Toggle Menu" }).click();
     await page.getByLabel("Go to the Artists page").click();
@@ -17,7 +19,7 @@ test.describe("Artists Page", () => {
   });
 
   test("toggle Artists View mode", async () => {
-    const page = await electronApp.firstWindow();
+    const page = await getElectronApp().firstWindow();
 
     await page.getByRole("button", { name: "Toggle Menu" }).click();
     await page.getByLabel("Go to the Artists page").click();

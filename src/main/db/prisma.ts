@@ -11,9 +11,12 @@ function getUrl() {
     return "file:data.db";
   }
   if (npm_lifecycle_event === "test:e2e") {
+    const dbName = process.env.testId
+      ? `data-${process.env.testId}.db`
+      : "data.db";
     return `file:${path.join(
       process.cwd(),
-      "out/Playa-darwin-arm64/Playa.app/Contents/Resources/data.db"
+      `out/Playa-darwin-arm64/Playa.app/Contents/Resources/${dbName}`
     )}`;
   }
   return `file:${path.join(process.resourcesPath, "data.db")}`;
