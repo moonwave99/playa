@@ -1,6 +1,6 @@
 import prisma from "../db/prisma";
 import { clearPrisma } from "@/test/prisma-utils";
-import { withPath, getSetting, send } from "@/test/utils";
+import { withPath, getSetting } from "@/test/utils";
 import path from "path";
 import fsExtra, { pathExists } from "fs-extra";
 import { releaseController } from "./release";
@@ -25,7 +25,7 @@ vi.mock("../covers");
 const defaultParams = {
   withPath,
   getSetting,
-  send,
+  send: vi.fn(),
   stateManager: {} as StateManager,
   showErrorBox: vi.fn(),
   openConfirmDialog: vi.fn(),

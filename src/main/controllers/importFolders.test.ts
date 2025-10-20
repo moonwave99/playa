@@ -170,7 +170,6 @@ describe("importFolder function", () => {
       importedReleases.sort((a, b) => (a.title > b.title ? 1 : -1))
     ).toMatchObject([
       {
-        entityType: "Release",
         path: "Release 1",
         title: "Release 1",
         hash: "ee1478c38c24f36e",
@@ -179,7 +178,6 @@ describe("importFolder function", () => {
         artist_id: 1,
       },
       {
-        entityType: "Release",
         path: "Release 2",
         title: "Release 2",
         hash: "4af3d5d9da84e183",
