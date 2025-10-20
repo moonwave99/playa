@@ -53,7 +53,8 @@
   },
   "lookup": {
     "placeholder": "Search for Entity",
-    "customValue": "Create \"{{value}}\""
+    "customValue": "Create \"{{value}}\"",
+    "noResults": "No results for \"{{value}}\""
   },
   "pages": {
     "HomePage": {

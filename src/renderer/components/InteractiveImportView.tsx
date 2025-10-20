@@ -91,6 +91,7 @@ function FolderView({
   onSkip,
 }: FolderViewProps) {
   const { t } = useTranslation();
+  const [artistQuery, setArtistQuery] = useState("");
   const [tempData, setTempData] = useState({ ...data });
   const [isImporting, setImporting] = useState(false);
   const { artists, isPending, error } = useArtists();
@@ -137,13 +138,15 @@ function FolderView({
             className={styles.artist}
             value={tempData.artist}
             items={artists}
+            query={artistQuery}
+            onQueryChange={setArtistQuery}
             onChange={(artist) =>
               setTempData((prev) => ({
                 ...prev,
                 artist,
               }))
             }
-            getText={({ name }) => name}
+            getText={(artist) => artist?.name}
             getCustomValue={(name) => ({ id: null as number, name })}
           />
         </label>

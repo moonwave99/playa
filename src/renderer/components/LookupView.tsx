@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Combobox,
   ComboboxInput,
@@ -13,7 +13,6 @@ import { IoMdCheckmark } from "react-icons/io";
 import { IoChevronDownOutline } from "react-icons/io5";
 import cx from "clsx";
 import styles from "./LookupView.module.css";
-import { useTranslation } from "react-i18next";
 
 type LookupViewProps<T extends HasId> = {
   value?: T;
@@ -41,15 +40,14 @@ export default function LookupView<T extends HasId>({
   getCustomValue,
 }: LookupViewProps<T>) {
   const { t } = useTranslation();
-  const [_query, setQuery] = useState(query);
 
   const results =
     query === ""
       ? items
-      : items.filter((x) => lowerCaseCompare(getText(x), _query));
+      : items.filter((x) => lowerCaseCompare(getText(x), query));
 
   const displayCustomInput =
-    allowCustomValue && _query.length > 0 && !results.length;
+    allowCustomValue && query.length > 0 && !results.length;
 
   return (
     <div className={cx(styles.LookupView, className)}>
@@ -57,7 +55,7 @@ export default function LookupView<T extends HasId>({
         value={value}
         by="id"
         onChange={onChange}
-        onClose={() => setQuery("")}
+        onClose={() => onQueryChange("")}
       >
         <div className={styles.LookupViewInputWrapper}>
           <ComboboxInput
@@ -65,42 +63,51 @@ export default function LookupView<T extends HasId>({
             placeholder={t("lookup.placeholder")}
             className={styles.LookupViewInput}
             onChange={(event) => {
-              if (onQueryChange) {
-                onQueryChange(event.target.value);
+              if (!onQueryChange) {
                 return;
               }
-              setQuery(event.target.value);
+              onQueryChange(event.target.value);
             }}
             displayValue={getText}
             autoFocus={autoFocus}
           />
-          <ComboboxButton className={styles.LookupViewButton}>
-            <IoChevronDownOutline />
-          </ComboboxButton>
+          {results?.length ? (
+            <ComboboxButton className={styles.LookupViewButton}>
+              <IoChevronDownOutline />
+            </ComboboxButton>
+          ) : null}
         </div>
-        <ComboboxOptions className={styles.LookupViewOptions}>
-          {displayCustomInput && (
-            <ComboboxOption value={getCustomValue(_query)}>
-              <span className={cx(styles.LookupViewOption, styles.active)}>
-                {t("lookup.customValue", { value: _query })}
-              </span>
-            </ComboboxOption>
-          )}
-          {results?.map((x) => (
-            <ComboboxOption key={x.id} value={x}>
-              {({ selected, focus }) => (
-                <span
-                  className={cx(styles.LookupViewOption, {
-                    [styles.focus]: focus,
-                  })}
-                >
-                  {getText(x)}
-                  {selected && <IoMdCheckmark />}
+        {query.length >= 3 && (
+          <ComboboxOptions className={styles.LookupViewOptions}>
+            {displayCustomInput && (
+              <ComboboxOption value={getCustomValue(query)}>
+                <span className={cx(styles.LookupViewOption, styles.active)}>
+                  {t("lookup.customValue", { value: query })}
                 </span>
-              )}
-            </ComboboxOption>
-          ))}
-        </ComboboxOptions>
+              </ComboboxOption>
+            )}
+            {!allowCustomValue && !results?.length && query ? (
+              <span className={styles.LookupViewOption}>
+                {t("lookup.noResults", { value: query })}
+              </span>
+            ) : (
+              results?.map((x) => (
+                <ComboboxOption key={x.id} value={x}>
+                  {({ selected, focus }) => (
+                    <span
+                      className={cx(styles.LookupViewOption, {
+                        [styles.focus]: focus,
+                      })}
+                    >
+                      {getText(x)}
+                      {selected && <IoMdCheckmark />}
+                    </span>
+                  )}
+                </ComboboxOption>
+              ))
+            )}
+          </ComboboxOptions>
+        )}
       </Combobox>
     </div>
   );

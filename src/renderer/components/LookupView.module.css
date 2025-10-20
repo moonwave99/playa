@@ -20,6 +20,7 @@
     align-items: center;
     line-height: var(--item-height);
     padding: 0 0.5rem;
+    font-size: 0.75rem;
     :last-child {
       margin-left: auto;
     }

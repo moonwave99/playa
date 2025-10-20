@@ -38,6 +38,7 @@ export default function AddToEntityListView({
 }: AddToEntityListViewProps) {
   const { t } = useTranslation();
   const [itemTo, setItemTo] = useState(null);
+  const [query, setQuery] = useState("");
 
   function _onSubmit(event: FormEvent) {
     event.preventDefault();
@@ -63,6 +64,8 @@ export default function AddToEntityListView({
             {t("modals.AddToEntityListView.label", { to })}
             <LookupView
               className={styles.lookup}
+              query={query}
+              onQueryChange={setQuery}
               value={itemTo}
               items={itemsTo}
               onChange={setItemTo}

@@ -93,7 +93,7 @@ test.describe("Import", () => {
         .getByText("Album 1")
     ).toBeVisible();
 
-    const tracklist = page.locator('[data-testid="Tracklist-51"]');
+    const tracklist = page.locator('[data-testid="Tracklist"]');
 
     await expect(tracklist).toBeVisible();
 

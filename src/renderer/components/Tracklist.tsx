@@ -120,7 +120,7 @@ export default function Tracklist({
       })}
       paddingRight={0}
       gap={4}
-      testId={`Tracklist-${release.id}`}
+      testId="Tracklist"
       render={({ item, index, selected, onClick }) => (
         <TrackEntry
           key={item.id}
