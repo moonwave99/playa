@@ -30,7 +30,7 @@ export default function ContainingCollectionsList({
         i18nkey="entityList.actions.delete.containingCollections"
         context={release}
         items={release.collections}
-        label="Appears in:"
+        label="Appears in"
         onDelete={removeFromCollection}
         onLinkClick={onLinkClick}
         {...rest}

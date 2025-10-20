@@ -156,6 +156,14 @@
           "placeholder": "Enter Track Position"
         }
       }
+    },
+    "AddToEntityListView": {
+      "title": "Add {{from}}s to {{to}}",
+      "label": "Add to {{to}}",
+      "actions": {
+        "add": "Add",
+        "cancel": "Cancel"
+      }
     }
   },
   "entityList": {

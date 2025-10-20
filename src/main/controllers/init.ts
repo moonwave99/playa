@@ -95,6 +95,9 @@ export function init(mainWindow: BrowserWindow) {
   }
 
   function openConfirmDialog(message: string, detail: string) {
+    if (process.env.npm_lifecycle_event === "test:e2e") {
+      return 0;
+    }
     return dialog.showMessageBoxSync(null, {
       message,
       detail,

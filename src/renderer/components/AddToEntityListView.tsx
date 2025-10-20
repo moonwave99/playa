@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react";
+import { useTranslation } from "react-i18next";
 
 import type {
   Group,
@@ -33,6 +34,7 @@ export default function AddToEntityListView({
   onSubmit,
   onCancel,
 }: AddToEntityListViewProps) {
+  const { t } = useTranslation();
   const [itemTo, setItemTo] = useState(null);
 
   function _onSubmit(event: FormEvent) {
@@ -46,9 +48,7 @@ export default function AddToEntityListView({
   return (
     <div className={styles.view}>
       <div className={formStyles.container}>
-        <h2>
-          Add {from}s to {to}
-        </h2>
+        <h2>{t("modals.AddToEntityListView.title", { from, to })}</h2>
         <ul className={styles.entityList}>
           {itemsFrom.map((item) => (
             <li key={item.id}>
@@ -58,7 +58,7 @@ export default function AddToEntityListView({
         </ul>
         <form onSubmit={_onSubmit} className={formStyles.form}>
           <label className={formStyles.label}>
-            Add to {to}
+            {t("modals.AddToEntityListView.label", { to })}
             <LookupView
               className={styles.lookup}
               value={itemTo}
@@ -71,14 +71,14 @@ export default function AddToEntityListView({
           </label>
           <div className={formStyles.actions}>
             <button type="submit" className={formStyles.button}>
-              Add
+              {t("modals.AddToEntityListView.actions.add")}
             </button>
             <button
               type="button"
               className={formStyles.button}
               onClick={onCancel}
             >
-              Cancel
+              {t("modals.AddToEntityListView.actions.cancel")}
             </button>
           </div>
         </form>
