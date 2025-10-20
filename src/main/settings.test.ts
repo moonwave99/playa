@@ -7,6 +7,7 @@ vi.mock("electron-settings", () => {
       setSync: (newSettings: Record<string, unknown>) =>
         (settings = newSettings),
       getSync: (key?: string) => (key ? settings[key] : settings),
+      configure: vi.fn(),
     },
   };
 });

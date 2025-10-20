@@ -93,6 +93,8 @@ out/
 
 # App sensitive data
 settings.json
+settings-dev.json
+.dev-settings
 
 # Personal scripts
 scripts/
