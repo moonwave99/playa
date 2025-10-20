@@ -108,6 +108,40 @@
         }
       }
     },
+    "EditCollectionView": {
+      "title": "Edit Collection",
+      "fields": {
+        "title": {
+          "label": "Title",
+          "placeholder": "Enter the Collection title"
+        }
+      },
+      "actions": {
+        "save": "Save",
+        "cancel": "Cancel"
+      },
+      "releases": {
+        "title": "Releases",
+        "placeholder": "There are no Releases in this Collection yet"
+      }
+    },
+    "EditGroupView": {
+      "title": "Edit Group",
+      "fields": {
+        "title": {
+          "label": "Title",
+          "placeholder": "Enter the Group title"
+        }
+      },
+      "actions": {
+        "save": "Save",
+        "cancel": "Cancel"
+      },
+      "artists": {
+        "title": "Artists",
+        "placeholder": "There are no Artists in this Group yet"
+      }
+    },
     "InteractiveImport": {
       "title": "Import Folders",
       "actions": {

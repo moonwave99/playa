@@ -64,6 +64,7 @@ export default function GroupPage() {
             navigate(getArtistLink(artist))
           }
           onBackspace={onDelete}
+          testId="ArtistList"
           render={({ item, ...rest }) => (
             <ListCard
               showMultipleCovers

@@ -81,6 +81,7 @@ function getModalStyle(name: Modals) {
       borderColor: "var(--tertiary-color)",
       borderRadius: ".5rem",
       padding: name === "lightbox" ? 0 : "1.5rem",
+      overflow: "initial",
       ...getModalOverrides(name),
     },
   };

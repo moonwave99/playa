@@ -1,0 +1,41 @@
+import { expect, test } from "@playwright/test";
+import { clickMenuItemById } from "electron-playwright-helpers";
+import { setupElectron } from "../electron";
+
+const getElectronApp = setupElectron();
+
+test.describe("Group", () => {
+  test("add an Artist to the selected Group", async () => {
+    const electronApp = getElectronApp();
+    const page = await electronApp.firstWindow();
+
+    await page.getByRole("button", { name: "Toggle Menu" }).click();
+    await page.getByLabel("Go to the Groups page").click();
+
+    await expect(
+      page.locator('[data-testid="breadcrumbs"]').getByText("Groups")
+    ).toBeVisible();
+
+    await expect(page.locator('[data-testid="GroupsPage"]')).toBeVisible();
+    await page.keyboard.press("Enter");
+
+    await expect(page.locator('[data-testid="GroupPage"]')).toBeVisible();
+    await expect(page.locator('[data-testid="ArtistList"]')).toBeVisible();
+    await clickMenuItemById(electronApp, "editGroup");
+
+    const modal = page.locator(".ReactModalPortal");
+
+    await expect(modal.getByText("Edit Group").first()).toBeVisible();
+
+    await page.getByPlaceholder("Search for Entity").fill("Art");
+    await modal.getByText("Artist 4").click();
+    await page.keyboard.press("Enter");
+    await page.keyboard.press("Escape");
+
+    await expect(modal).not.toBeVisible();
+
+    await expect(
+      page.locator('[data-testid="ArtistList"]').getByText("Artist 4")
+    ).toBeVisible();
+  });
+});

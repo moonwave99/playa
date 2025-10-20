@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { CollectionWithReleases, Release } from "@/types/types";
+import type { CollectionWithReleases, HasId } from "@/types/types";
 import api from "../api";
 
 type UseCollection = {
@@ -8,7 +8,8 @@ type UseCollection = {
   collection: CollectionWithReleases;
   updateTitle: (title: string) => void;
   setCollectionCover: (release_id: number) => void;
-  removeReleasesFromCollection: (releases: Release[]) => void;
+  removeReleasesFromCollection: (releases: HasId[]) => void;
+  addReleasesToCollection: (releases: HasId[]) => void;
 };
 
 export default function useCollection(id: number): UseCollection {
@@ -42,11 +43,17 @@ export default function useCollection(id: number): UseCollection {
   });
 
   const removeReleasesFromCollection = useMutation({
-    mutationFn: async (releases: Release[]) =>
+    mutationFn: async (releases: HasId[]) =>
       api.collection.removeReleasesFromCollection(
         id,
         releases.map((x) => x.id)
       ),
+    onSuccess,
+  });
+
+  const addReleasesToCollection = useMutation({
+    mutationFn: async (releases: HasId[]) =>
+      api.collection.addReleasesToCollection(id, releases),
     onSuccess,
   });
 
@@ -62,6 +69,7 @@ export default function useCollection(id: number): UseCollection {
     error,
     updateTitle: updateTitle.mutate,
     removeReleasesFromCollection: removeReleasesFromCollection.mutate,
+    addReleasesToCollection: addReleasesToCollection.mutate,
     setCollectionCover: setCollectionCover.mutate,
   };
 }

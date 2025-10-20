@@ -1,6 +1,9 @@
-import type { FormEvent } from "react";
+import { type FormEvent } from "react";
+import { useTranslation } from "react-i18next";
+import { type SearchResult } from "@/types/types";
 import useCollection from "../query/useCollection";
 import EntityCardList from "./EntityCardList";
+import LookupEntityForm from "./LookupEntityForm";
 import ErrorView from "./ErrorView";
 import Loading from "./Loading";
 import cx from "clsx";
@@ -18,12 +21,14 @@ export default function EditCollectionView({
   onSave,
   onCancel,
 }: EditCollectionViewProps) {
+  const { t } = useTranslation();
   const {
     collection,
     isPending,
     error,
     updateTitle,
     removeReleasesFromCollection,
+    addReleasesToCollection,
   } = useCollection(id);
 
   async function onSubmit(event: FormEvent) {
@@ -44,44 +49,54 @@ export default function EditCollectionView({
   return (
     <div className={styles.view}>
       <div className={formStyles.container}>
-        <h2>Edit Collection</h2>
+        <h2>{t("modals.EditCollectionView.title")}</h2>
         <form onSubmit={onSubmit} className={formStyles.form}>
           <div className={formStyles.actions}>
             <label className={cx(formStyles.label, styles.label)}>
-              Title
+              {t("modals.EditCollectionView.fields.title.label")}
               <input
                 autoFocus
                 className={cx(formStyles.input, styles.input)}
                 required
                 name="title"
-                placeholder="Enter the collection title"
+                placeholder={t(
+                  "modals.EditCollectionView.fields.title.placeholder"
+                )}
                 defaultValue={collection.title}
               />
             </label>
             <button type="submit" className={formStyles.button}>
-              Save
+              {t("modals.EditCollectionView.actions.save")}
             </button>
             <button
               type="button"
               className={formStyles.button}
               onClick={onCancel}
             >
-              Cancel
+              {t("modals.EditCollectionView.actions.cancel")}
             </button>
           </div>
         </form>
       </div>
-      {collection.releases.length ? (
-        <div className={formStyles.container}>
-          <h3>Releases</h3>
+      <div className={formStyles.container}>
+        <h3>{t("modals.EditCollectionView.releases.title")}</h3>
+        {collection.releases.length ? (
           <EntityCardList
             items={collection.releases}
             onRemoveEntityClick={(release) =>
               removeReleasesFromCollection([release])
             }
           />
-        </div>
-      ) : null}
+        ) : (
+          <p>{t("modals.EditCollectionView.releases.placeholder")}</p>
+        )}
+        <LookupEntityForm
+          className={styles.lookupView}
+          existingIds={collection.releases.map(({ id }) => id)}
+          type="release"
+          onSubmit={(result: SearchResult) => addReleasesToCollection([result])}
+        />
+      </div>
     </div>
   );
 }

@@ -19,3 +19,7 @@
     }
   }
 }
+
+.lookupView {
+  flex: 1;
+}

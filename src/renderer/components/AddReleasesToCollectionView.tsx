@@ -33,6 +33,7 @@ export default function AddReleasesToCollectionView({
       itemsTo={collections}
       onSubmit={onSubmit}
       onCancel={onCancel}
+      autoFocus
     />
   );
 }

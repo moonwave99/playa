@@ -22,6 +22,7 @@ type AddToEntityListViewProps = {
   to: "Group" | "Collection";
   itemsFrom: ItemFrom[];
   itemsTo: ItemTo[];
+  autoFocus?: boolean;
   onSubmit: (itemTo: ItemTo) => void;
   onCancel: () => void;
 };
@@ -31,6 +32,7 @@ export default function AddToEntityListView({
   to,
   itemsFrom,
   itemsTo,
+  autoFocus,
   onSubmit,
   onCancel,
 }: AddToEntityListViewProps) {
@@ -65,6 +67,7 @@ export default function AddToEntityListView({
               items={itemsTo}
               onChange={setItemTo}
               allowCustomValue
+              autoFocus={autoFocus}
               getText={(item) => item?.title}
               getCustomValue={(title) => ({ id: null as number, title })}
             />

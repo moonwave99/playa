@@ -7,6 +7,7 @@ type UseGroup = {
   error: Error;
   group: GroupWithArtists;
   updateTitle: (title: string) => void;
+  addArtistsToGroup: (artists: HasId[]) => void;
   removeArtistsFromGroup: (artists: HasId[]) => void;
 };
 
@@ -36,6 +37,12 @@ export default function useGroup(id: number): UseGroup {
     onSuccess,
   });
 
+  const addArtistsToGroup = useMutation({
+    mutationFn: async (artists: HasId[]) =>
+      api.group.addArtistsToGroup(id, artists),
+    onSuccess,
+  });
+
   const removeArtistsFromGroup = useMutation({
     mutationFn: async (artists: HasId[]) => {
       if (
@@ -61,6 +68,7 @@ export default function useGroup(id: number): UseGroup {
     isPending,
     error,
     updateTitle: updateTitle.mutate,
+    addArtistsToGroup: addArtistsToGroup.mutate,
     removeArtistsFromGroup: removeArtistsFromGroup.mutate,
   };
 }

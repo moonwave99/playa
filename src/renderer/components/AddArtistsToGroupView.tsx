@@ -32,6 +32,7 @@ export default function AddArtistsToGroupView({
       itemsTo={groups}
       onSubmit={onSubmit}
       onCancel={onCancel}
+      autoFocus
     />
   );
 }
