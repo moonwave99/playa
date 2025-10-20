@@ -9,12 +9,6 @@ import {
 import path from "path";
 import { homedir } from "os";
 import { version as appVersion } from "../../../package.json";
-import {
-  initSettings,
-  getSetting,
-  getSettings,
-  setSettings,
-} from "../settings";
 import { StateManager } from "../stateManager";
 import {
   initMenu,
@@ -35,6 +29,9 @@ import { importFoldersController } from "./importFolders";
 import { importExportController } from "./importExport";
 import { stateController } from "./state";
 import { Modals } from "@/renderer/Modal";
+import { getE2ETmpPath, IS_E2E_TEST } from "@/test/utils";
+import { settingsController } from "./settings";
+import { Settings } from "@/types/types";
 
 export type Controllers = {
   system: ReturnType<typeof systemController>;
@@ -45,6 +42,7 @@ export type Controllers = {
   searchResult: ReturnType<typeof searchResultController>;
   stats: ReturnType<typeof statsController>;
   state: ReturnType<typeof stateController>;
+  settings: ReturnType<typeof settingsController>;
   importFolders: ReturnType<typeof importFoldersController>;
   importExport: ReturnType<typeof importExportController>;
 };
@@ -59,15 +57,17 @@ export function openModal(name: Modals, params?: unknown) {
   send("openModal", { name, params });
 }
 
-const skipMove = process.env.npm_lifecycle_event === "test:e2e";
+export async function init(mainWindow: BrowserWindow) {
+  const settings = settingsController();
 
-export function init(mainWindow: BrowserWindow) {
-  initSettings();
+  await settings.init();
+
+  const { getSetting } = settings;
 
   const desktopPath = path.resolve(homedir(), "Desktop");
   const userDataPath = app.getPath("userData");
 
-  function withPath(key: string, folderPath: string) {
+  function withPath(key: keyof Omit<Settings, "id">, folderPath: string) {
     return path.join(getSetting(key) as string, folderPath);
   }
 
@@ -75,6 +75,9 @@ export function init(mainWindow: BrowserWindow) {
     defaultPath: string,
     properties: OpenDialogSyncOptions["properties"]
   ) {
+    if (IS_E2E_TEST) {
+      return [path.join(getE2ETmpPath(process.env.testId), "Library")];
+    }
     const folders = dialog.showOpenDialogSync(mainWindow, {
       properties,
       defaultPath,
@@ -95,7 +98,7 @@ export function init(mainWindow: BrowserWindow) {
   }
 
   function openConfirmDialog(message: string, detail: string) {
-    if (process.env.npm_lifecycle_event === "test:e2e") {
+    if (IS_E2E_TEST) {
       return 0;
     }
     return dialog.showMessageBoxSync(null, {
@@ -108,6 +111,9 @@ export function init(mainWindow: BrowserWindow) {
   }
 
   function showErrorBox(title: string, content: string) {
+    if (IS_E2E_TEST) {
+      return;
+    }
     dialog.showErrorBox(title, content);
   }
 
@@ -119,7 +125,7 @@ export function init(mainWindow: BrowserWindow) {
       withPath,
       send,
       showErrorBox,
-      skipMove,
+      skipMove: IS_E2E_TEST,
     }),
     release: releaseController({
       withPath,
@@ -128,13 +134,14 @@ export function init(mainWindow: BrowserWindow) {
       stateManager,
       showErrorBox,
       openConfirmDialog,
-      skipMove,
+      skipMove: IS_E2E_TEST,
     }),
     collection: collectionController({ send, openConfirmDialog }),
     group: groupController({ send, openConfirmDialog }),
     searchResult: searchResultController(),
     stats: statsController(),
     state: stateController({ send, stateManager }),
+    settings,
     importFolders: importFoldersController({
       withPath,
       getSetting,
@@ -165,7 +172,6 @@ export function init(mainWindow: BrowserWindow) {
 
   [
     ...Object.values(controllers),
-    { getSettings, setSettings },
     {
       "menu:release": releaseMenu({ controllers, send, openModal }),
       "menu:artist": artistMenu({ controllers, send, openModal }),

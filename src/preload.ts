@@ -12,7 +12,6 @@ import type {
   SearchResult,
   GroupWithArtists,
   Notification,
-  Settings,
   WithReleases,
 } from "./types/types";
 import type { Modals } from "./renderer/Modal";
@@ -44,6 +43,10 @@ import {
   stateController,
   actions as stateActions,
 } from "./main/controllers/state";
+import {
+  settingsController,
+  actions as settingsActions,
+} from "./main/controllers/settings";
 import {
   actions as searchResultActions,
   searchResultController,
@@ -78,6 +81,10 @@ const api = {
     getHandlersFromActions<ReturnType<typeof statsController>>(statsActions),
   state:
     getHandlersFromActions<ReturnType<typeof stateController>>(stateActions),
+  settings:
+    getHandlersFromActions<ReturnType<typeof settingsController>>(
+      settingsActions
+    ),
   searchResult:
     getHandlersFromActions<ReturnType<typeof searchResultController>>(
       searchResultActions
@@ -93,10 +100,6 @@ const api = {
       importExportActions
     ),
   events: getEventHandlersFromActions<ReturnType<typeof getEvents>>(eventNames),
-  settings: {
-    getSettings: () => ipc.invoke("getSettings") as Promise<Settings>,
-    setSettings: (settings: Settings) => ipc.invoke("setSettings", settings),
-  },
   menu: {
     release: (
       selection: ReleaseWithArtist[],

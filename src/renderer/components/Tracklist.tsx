@@ -49,6 +49,7 @@ export default function Tracklist({
         className={cx(styles.tracklist, {
           [styles.isFlipped]: isFlipped,
         })}
+        data-testId={`Tracklist-${release.id}`}
       >
         <div
           className={styles.discWrapper}
@@ -119,6 +120,7 @@ export default function Tracklist({
       })}
       paddingRight={0}
       gap={4}
+      testId={`Tracklist-${release.id}`}
       render={({ item, index, selected, onClick }) => (
         <TrackEntry
           key={item.id}

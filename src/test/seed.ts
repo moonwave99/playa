@@ -4,6 +4,8 @@ import { PrismaClient } from "@prisma/client-generated";
 import sha1 from "sha1";
 import { hashArtistName, hashRelease } from "../main/hash";
 import type { Release, HasId, EntityType, ReleaseType } from "@/types/types";
+import { pad } from "@/lib/utils";
+import { getE2ETmpPath } from "./utils";
 
 export function getFakeArtist(id = 1) {
   const artist = getFakeArtists({ length: 1 }).at(0);
@@ -144,6 +146,18 @@ export function getFakeGroups({
   }));
 }
 
+export function getFakeSettings() {
+  return {
+    PLAYER_PATH: "PLAYER_PATH",
+    TAGGER_PATH: "PLAYER_PATH",
+    DISCOGS_KEY: "DISCOGS_KEY",
+    DISCOGS_SECRET: "DISCOGS_SECRET",
+    LIBRARY_PATH: "LIBRARY_PATH",
+    COVERS_PATH: "COVERS_PATH",
+    USE_SMART_IMPORT: false,
+  };
+}
+
 const BUILD_PATH = path.join(
   process.cwd(),
   "out/Playa-darwin-arm64/Playa.app/Contents/Resources"
@@ -178,12 +192,34 @@ export async function removeDb(id: string) {
   await remove(path.normalize(target));
 }
 
-export async function cleanup(prisma: PrismaClient) {
+type CleanupParams = {
+  id: string;
+  prisma?: PrismaClient;
+  preserveSettings?: boolean;
+};
+
+export async function cleanup({
+  id,
+  prisma,
+  preserveSettings = false,
+}: CleanupParams) {
+  if (!prisma) {
+    prisma = new PrismaClient({
+      datasources: {
+        db: {
+          url: getUrl(id),
+        },
+      },
+    });
+  }
   await prisma.track.deleteMany({});
   await prisma.group.deleteMany({});
   await prisma.collection.deleteMany({});
   await prisma.release.deleteMany({});
   await prisma.artist.deleteMany({});
+  if (!preserveSettings) {
+    await prisma.settings.deleteMany({});
+  }
 }
 
 export async function seed(id?: string) {
@@ -197,7 +233,21 @@ export async function seed(id?: string) {
       },
     },
   });
-  await cleanup(prisma);
+  await cleanup({ id, prisma });
+
+  await prisma.settings.create({
+    data: {
+      ...getFakeSettings(),
+      ...(id && id !== "test"
+        ? {
+            USE_SMART_IMPORT: true,
+            LIBRARY_PATH: path.join(getE2ETmpPath(id), "Library"),
+            COVERS_PATH: path.join(getE2ETmpPath(id), "Covers"),
+          }
+        : {}),
+    },
+  });
+
   const artists = getFakeArtists({ length: 10 });
   const releases = artists.flatMap((x) => getFakeReleasesForArtist(x.id));
 
@@ -310,6 +360,7 @@ export async function getData() {
     tracks: await prisma.track.findMany(),
     groups: await prisma.group.findMany(),
     collections: await prisma.collection.findMany(),
+    settings: await prisma.settings.findMany(),
   };
 }
 
@@ -318,5 +369,3 @@ function getDate(id: number) {
   const day = (id % 28) + 1;
   return new Date(`2025-${pad(month)}-${pad(day)}T21:41:31.693Z`);
 }
-
-const pad = (n = 1) => (n < 10 ? `0${n}` : n);

@@ -24,9 +24,8 @@ export function setupElectron() {
       },
     });
 
+    electronApp.on("console", console.log);
     electronApp.on("window", (page) => {
-      const filename = page.url()?.split("/").at(-1);
-      console.log(`Window opened: ${filename}`);
       page.on("pageerror", console.error);
       page.on("console", (msg) => console.log(msg.text()));
     });

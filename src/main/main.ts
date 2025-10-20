@@ -1,3 +1,4 @@
+import prisma from "./db/prisma";
 import {
   app,
   BrowserWindow,
@@ -11,7 +12,6 @@ import {
 import type { IpcMainEvent, OpenDialogSyncOptions } from "electron";
 import path from "node:path";
 import started from "electron-squirrel-startup";
-import { getSetting } from "./settings";
 import { init } from "./controllers/init";
 import { log } from "./logger";
 import { getCoverPlaceholder } from "./cover-placeholder";
@@ -55,12 +55,14 @@ async function createWindow() {
     }
   );
 
-  const COVERS_PATH = getSetting("COVERS_PATH") as string;
-  const customProtocol = "playa-cover";
-  protocol.handle(customProtocol, async ({ url }) => {
+  const settings = await prisma.settings.findFirst();
+
+  protocol.handle("playa-cover", async ({ url }) => {
     const { hostname } = new URL(url);
     try {
-      return await net.fetch(`file://${path.join(COVERS_PATH, hostname)}`);
+      return await net.fetch(
+        `file://${path.join(settings?.COVERS_PATH, hostname)}`
+      );
     } catch (error) {
       log("covers", "cover not found:", url);
       log("covers", error);
@@ -68,7 +70,7 @@ async function createWindow() {
     }
   });
 
-  init(mainWindow);
+  await init(mainWindow);
 }
 
 app.on("ready", createWindow);

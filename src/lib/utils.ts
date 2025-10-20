@@ -353,3 +353,5 @@ export function groupItemsByLetter(items: (Artist | Release)[]) {
     })
   );
 }
+
+export const pad = (n = 1) => (n < 10 ? `0${n}` : `${n}`);

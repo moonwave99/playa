@@ -1,3 +1,5 @@
+import prisma from "../db/prisma";
+import { clearPrisma } from "@/test/prisma-utils";
 import type { BrowserWindow } from "electron";
 import { ipcMain } from "electron";
 import { init } from "./init";
@@ -7,12 +9,14 @@ import { actions as groupActions } from "./group";
 import { actions as collectionActions } from "./collection";
 import { actions as statsActions } from "./stats";
 import { actions as stateActions } from "./state";
+import { actions as settingsActions } from "./settings";
 import { actions as systemActions } from "./system";
 import { actions as searchResultActions } from "./searchResult";
 import { actions as importExportActions } from "./importExport";
 import { actions as importFoldersActions } from "./importFolders";
+import { getFakeSettings } from "@/test/seed";
 
-vi.mock("../settings");
+afterEach(clearPrisma);
 
 function getMainWindow() {
   const onSwipe = vi.fn();
@@ -32,9 +36,10 @@ function getMainWindow() {
 }
 
 describe("init function", () => {
-  it("should setup the window swipe listener", () => {
+  it("should setup the window swipe listener", async () => {
+    await prisma.settings.create({ data: getFakeSettings() });
     const { mainWindow, onSwipe } = getMainWindow();
-    init(mainWindow);
+    await init(mainWindow);
 
     expect(mainWindow.on).toHaveBeenCalledWith("swipe", expect.anything());
 
@@ -46,11 +51,12 @@ describe("init function", () => {
     });
   });
 
-  it("should setup the ipc listeners", () => {
+  it("should setup the ipc listeners", async () => {
+    await prisma.settings.create({ data: getFakeSettings() });
     const { mainWindow } = getMainWindow();
     const ipcHandleSpy = vi.spyOn(ipcMain, "handle");
 
-    init(mainWindow);
+    await init(mainWindow);
 
     [
       ...artistActions,
@@ -59,6 +65,7 @@ describe("init function", () => {
       ...collectionActions,
       ...statsActions,
       ...stateActions,
+      ...settingsActions,
       ...systemActions,
       ...searchResultActions,
       ...importExportActions,
@@ -69,6 +76,7 @@ describe("init function", () => {
       "menu:collection",
       "menu:group",
       "menu:searchResult",
+      "menu:click",
     ].forEach((eventName) => {
       expect(ipcHandleSpy).toHaveBeenCalledWith(eventName, expect.anything());
     });

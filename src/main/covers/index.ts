@@ -5,6 +5,7 @@ import type { Release, Artist, Track } from "@/types/types";
 import { searchCover as deezerSearch } from "./deezer";
 import { searchCover as discogsSearch, type DiscogsSecrets } from "./discogs";
 import { VARIOUS_ARTISTS_NAME } from "@/lib/utils";
+import { IS_E2E_TEST } from "@/test/utils";
 
 export type GetImageFromURLParams = {
   outputPath: string;
@@ -49,6 +50,10 @@ export async function searchCover(
   { release, artist, track, outputPath }: SearchCoverParams,
   secrets: DiscogsSecrets
 ) {
+  if (IS_E2E_TEST) {
+    return false;
+  }
+
   const [deezerResult, discogsResult] = await Promise.all([
     deezerSearch({ release, artist, track }),
     discogsSearch({ release, artist }, secrets),

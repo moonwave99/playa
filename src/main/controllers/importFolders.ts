@@ -1,7 +1,6 @@
 import { OpenDialogSyncOptions } from "electron";
 import prisma from "../db/prisma";
 import path from "node:path";
-import { getSetting } from "../settings";
 import { StateManager } from "../stateManager";
 import { normalizeDiacritics } from "@/lib/utils";
 import {
@@ -27,10 +26,11 @@ import {
   stripPath,
 } from "../utils";
 import type { send, openModal } from "./init";
+import type { GetSetting } from "./settings";
 
 type ImportFoldersControllerParams = {
   withPath: (key: string, folderPath: string) => string;
-  getSetting: (key: string) => ReturnType<typeof getSetting>;
+  getSetting: GetSetting;
   send: typeof send;
   openModal: typeof openModal;
   stateManager: StateManager;
@@ -307,6 +307,7 @@ export function importFoldersController({
     send("importProgress", "done");
 
     send("mutate", [
+      ["artists", "latest"],
       ["releases", "latest"],
       ...importedReleases.map((x) => ["artists", x.artist_id]),
     ]);

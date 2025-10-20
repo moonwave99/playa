@@ -178,6 +178,7 @@ describe("importDataFromDialog function", () => {
 
     const data = await getData();
     const entities = Object.keys(data);
+
     await Promise.all(
       entities.map(async (entity: keyof typeof data) => {
         expect(data[entity].map(withoutDates)).toMatchObject(

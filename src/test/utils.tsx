@@ -38,8 +38,6 @@ export function withPath(key: keyof typeof settings, folderPath: string) {
   return path.join(getSetting(key), folderPath);
 }
 
-export const send = vi.fn();
-
 export function withoutDates<T>(
   x: T & { createdAt: string | Date; updatedAt: string | Date }
 ): Omit<T, "createdAt" | "updatedAt"> {
@@ -47,3 +45,9 @@ export function withoutDates<T>(
   const { createdAt, updatedAt, ...rest } = x;
   return rest;
 }
+
+export function getE2ETmpPath(id: string) {
+  return path.join(process.cwd(), "e2e-tests", "_tmp", id);
+}
+
+export const IS_E2E_TEST = process.env.npm_lifecycle_event === "test:e2e";

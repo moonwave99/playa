@@ -71,6 +71,7 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "jimp": "^1.6.0",
     "jsdom": "^26.0.0",
+    "node-lame": "^1.5.0",
     "playwright": "^1.55.1",
     "playwright-core": "^1.55.1",
     "prismock": "github:moonwave99/prismock",

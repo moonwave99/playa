@@ -24,8 +24,17 @@ type Group = Prisma.Group & {
 type Track = Prisma.Track & {
   entityType: "Track";
 };
+type Settings = Prisma.Settings;
 
-export type { Artist, Release, Collection, Track, ReleaseType, Group };
+export type {
+  Artist,
+  Release,
+  Collection,
+  Track,
+  ReleaseType,
+  Group,
+  Settings,
+};
 
 export const releaseTypes: ReleaseType[] = [
   "Album",
@@ -196,8 +205,6 @@ export type Entries<T> = {
 
 export type ReleaseListViewMode = "grid" | "list" | "compact";
 export type ArtistsViewMode = "latest" | "alphabetical";
-
-export type Settings = Record<string, string | number | boolean>;
 
 export type NewReleaseInfo = {
   newPath: string;

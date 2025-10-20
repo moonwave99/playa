@@ -26,8 +26,8 @@ export async function exportData({
   };
 
   await Promise.all(
-    ["artist", "release", "track", "collection", "group"].map((table) =>
-      dumpTable(table, tempPath)
+    ["artist", "release", "track", "collection", "group", "settings"].map(
+      (table) => dumpTable(table, tempPath)
     )
   );
 
@@ -64,7 +64,8 @@ const includeMap: Record<string, object> = {
 async function dumpTable(table: string, outputPath: string) {
   const include = includeMap[table] || {};
   const data = await (prisma as any)[table].findMany({ include });
-  await outputJSON(path.join(outputPath, `${table}s.json`), data, {
+  const fileName = table === "settings" ? "settings.json" : `${table}s.json`;
+  await outputJSON(path.join(outputPath, fileName), data, {
     spaces: 2,
   });
 }
@@ -99,9 +100,15 @@ export async function importData({
 
   if (
     files.map((x) => path.basename(x, ".json")).join("-") !==
-    ["_info", "artists", "collections", "groups", "releases", "tracks"].join(
-      "-"
-    )
+    [
+      "_info",
+      "artists",
+      "collections",
+      "groups",
+      "releases",
+      "settings",
+      "tracks",
+    ].join("-")
   ) {
     throw new Error("Wrong import format");
   }
@@ -117,6 +124,7 @@ export async function importData({
   const tracks = await readJSON(path.join(tempPath, "tracks.json"));
   const groups = await readJSON(path.join(tempPath, "groups.json"));
   const collections = await readJSON(path.join(tempPath, "collections.json"));
+  const settings = await readJSON(path.join(tempPath, "settings.json"));
 
   try {
     log("importExport:importData", "Resetting database...");
@@ -140,6 +148,10 @@ export async function importData({
     onProgress("Clearing artists");
     await prisma.artist.deleteMany();
     onProgress("Clearing artists", true);
+
+    onProgress("Clearing settings");
+    await prisma.settings.deleteMany();
+    onProgress("Clearing settings", true);
 
     log("importExport:importData", "Importing artists...");
     onProgress("Importing artists");
@@ -208,6 +220,11 @@ export async function importData({
     onProgress("Importing groups");
     await prisma.group.createMany({ data: groups });
     onProgress("Importing groups", true);
+
+    log("importExport:importData", "Importing settings...");
+    onProgress("Importing settings");
+    await prisma.settings.createMany({ data: settings });
+    onProgress("Importing settings", true);
 
     log("importExport:importData", "Importing additional relationships...");
     onProgress("Importing additional relationships");

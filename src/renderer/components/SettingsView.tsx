@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { Settings } from "@/types/types";
 import type { OpenDialogSyncOptions } from "electron";
 import type { FormEvent } from "react";
 import api from "../api";
@@ -19,7 +20,7 @@ type SettingsViewProps = {
 };
 
 type Field = {
-  key: string;
+  key: keyof Settings;
   label: string;
   placeholder?: string;
   type: "string" | "checkbox" | "path";
@@ -80,16 +81,16 @@ const fieldsMap: Field[] = [
     },
   },
   {
-    type: "string",
     key: "DISCOGS_KEY",
     label: "Discogs Key",
     placeholder: "Insert your Discogs API key",
+    type: "string",
   },
   {
-    type: "string",
     key: "DISCOGS_SECRET",
     label: "Discogs Secret",
     placeholder: "Insert your Discogs API Secret",
+    type: "string",
   },
 ];
 
@@ -99,7 +100,7 @@ export default function SettingsView({ onSave, onCancel }: SettingsViewProps) {
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
-    await api.settings.setSettings(copy);
+    await api.settings.updateSettings(copy);
     setSettings(copy);
     onSave();
   }

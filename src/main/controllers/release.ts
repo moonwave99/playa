@@ -27,12 +27,12 @@ import { getEntityPath } from "../utils";
 import { hashRelease } from "../hash";
 import { searchCover, getImageFromURL } from "../covers";
 import { log } from "../logger";
-import { getSetting } from "../settings";
 import { type StateManager } from "../stateManager";
+import type { GetSetting } from "./settings";
 
 type ReleaseControllerParams = {
   withPath: (key: string, folderPath: string) => string;
-  getSetting: (key: string) => ReturnType<typeof getSetting>;
+  getSetting: GetSetting;
   send: (channel: string, ...args: unknown[]) => void;
   showErrorBox: (title: string, content: string) => void;
   openConfirmDialog: (message: string, detail: string) => number;

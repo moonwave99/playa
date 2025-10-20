@@ -49,7 +49,7 @@ function AlphabeticalArtistsView() {
 
   return !artists.length ? (
     <div className={styles.placeholder} data-testid="ArtistsPage">
-      {t("placeholders.emptyList", { artist: "Artists" })}
+      {t("placeholders.emptyList", { entity: "Artists" })}
     </div>
   ) : (
     <AlphabeticalList items={artists} />
@@ -82,7 +82,7 @@ function LatestArtistsView() {
 
   return !artists?.length ? (
     <div className={styles.placeholder}>
-      {t("placeholders.emptyList", { artist: "Artists" })}
+      {t("placeholders.emptyList", { entity: "Artists" })}
     </div>
   ) : (
     <List

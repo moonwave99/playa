@@ -120,3 +120,7 @@ data.db-journal
 
 # Playwright
 test-results
+e2e-tests/_tmp
+
+# Lame
+temp

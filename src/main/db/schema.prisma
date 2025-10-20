@@ -99,6 +99,17 @@ model Group {
   coverArtist   Artist?    @relation("GroupCover", fields: [coverArtistId], references: [id])
 }
 
+model Settings {
+  id               Int     @id @default(1)
+  USE_SMART_IMPORT Boolean @default(false)
+  PLAYER_PATH      String  @default("")
+  TAGGER_PATH      String  @default("")
+  LIBRARY_PATH     String  @default("")
+  COVERS_PATH      String  @default("")
+  DISCOGS_KEY      String  @default("")
+  DISCOGS_SECRET   String  @default("")
+}
+
 enum ReleaseType {
   Album
   EP

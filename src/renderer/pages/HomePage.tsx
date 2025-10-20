@@ -132,6 +132,7 @@ function LatestReleasesView({ count = 5 }: LatestReleasesViewProps) {
           onEnter={onEnter}
           keyHandlers={keyHandlers}
           paddingEnd={0}
+          testId="LatestReleases"
           render={({ item, selection, ...rest }) => (
             <ReleaseView
               {...rest}
@@ -176,12 +177,17 @@ function LatestEntriesView<T extends Item>({
     return <ErrorView error={error} />;
   }
 
+  const formattedEntity = `${capitalize(entity)}s`;
+
   return (
-    <section className={homepageStyles.entityListSection}>
+    <section
+      className={homepageStyles.entityListSection}
+      data-testid={`Latest${formattedEntity}`}
+    >
       <header className={homepageStyles.header}>
         <h3>
           <Icon isFor={entity} />
-          {t("pages.HomePage.latest", { entity: `${capitalize(entity)}s` })}
+          {t("pages.HomePage.latest", { entity: formattedEntity })}
         </h3>
         <Link
           className={cx(formStyles.button, formStyles.primary)}
@@ -192,7 +198,7 @@ function LatestEntriesView<T extends Item>({
       </header>
       {!entries?.length ? (
         <div className={styles.placeholder}>
-          {t("placeholders.emptyList", { entity: `${capitalize(entity)}s` })}
+          {t("placeholders.emptyList", { entity: formattedEntity })}
         </div>
       ) : (
         <ul className={homepageStyles.entityList}>

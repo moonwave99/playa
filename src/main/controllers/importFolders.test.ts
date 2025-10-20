@@ -1,6 +1,6 @@
 import prisma from "../db/prisma";
 import { clearPrisma } from "@/test/prisma-utils";
-import { withPath, getSetting, send } from "@/test/utils";
+import { withPath, getSetting } from "@/test/utils";
 import path from "path";
 import { importFoldersController } from "./importFolders";
 import { testFs } from "@moonwave99/test-fs";
@@ -23,7 +23,7 @@ vi.mock("../covers");
 const defaultParams = {
   withPath,
   getSetting,
-  send,
+  send: vi.fn(),
   stateManager: {
     setImporting: (_: boolean) => {
       void _;
@@ -421,6 +421,7 @@ describe("importFolderFromDialog function", () => {
 
     await importFolderFromDialog();
     expect(send).toHaveBeenCalledWith("mutate", [
+      ["artists", "latest"],
       ["releases", "latest"],
       ["artists", 1],
     ]);

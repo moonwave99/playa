@@ -1,14 +1,14 @@
 import prisma from "../db/prisma";
 import path from "path";
 import { shell, type IpcMainEvent } from "electron";
-import { getSetting } from "../settings";
 import { run } from "../run";
 import { getEntityPath } from "../utils";
 import { getRelease } from "../db/release";
 import { ReleaseWithArtistAndSubReleases, Track } from "@/types/types";
+import type { GetSetting } from "./settings";
 
 type SystemControllerParams = {
-  getSetting: (key: string) => ReturnType<typeof getSetting>;
+  getSetting: GetSetting;
   withPath: (key: string, folderPath: string) => string;
 };
 
