@@ -31,30 +31,29 @@ export default function ArtistEditor({
   inputHandlers,
   title,
 }: ArtistEditorProps) {
+  const { t } = useTranslation();
   return (
     <div className={formStyles.container}>
       <h2>{title}</h2>
       {!artists.length ? (
-        <p className={styles.Placeholder}>No artists yet.</p>
+        <p className={styles.Placeholder}>
+          {t("components.ArtistEditor.noArtists")}
+        </p>
       ) : (
         <ArtistList artists={artists} type="remove" onClick={onRemove} />
       )}
       <label className={cx(formStyles.label)}>
-        Lookup Artists
+        {t("components.ArtistEditor.lookup.label")}
         <input
           className={formStyles.input}
           type="search"
-          placeholder="Search related Artist"
+          placeholder={t("components.ArtistEditor.lookup.placeholder")}
           {...inputHandlers}
         />
       </label>
       {!results?.length ? (
         <p className={styles.Placeholder}>
-          {query && (
-            <>
-              No results for <strong>{query}</strong>.
-            </>
-          )}
+          {query && t("components.ArtistEditor.lookup.label", { query })}
         </p>
       ) : (
         results && <ArtistList artists={results} type="add" onClick={onAdd} />
@@ -102,9 +101,10 @@ function ArtistCard({ artist, type, onClick }: ArtistCardProps) {
         type="button"
         className={buttonStyles.CornerActionButton}
         onClick={onClick}
-        aria-label={t(`modals.EditArtistView.relatedArtists.actions.${type}`, {
-          name: artist.name,
-        })}
+        aria-label={t(
+          `modals.EditArtistView.relatedArtists.actions.${type}`,
+          artist
+        )}
       >
         {type === "add" ? <MdAddCircle /> : <MdRemoveCircle />}
       </button>

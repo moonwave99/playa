@@ -31,9 +31,7 @@ test.describe("Edit Artist", () => {
       page.locator(".ReactModalPortal").getByText("Edit Artist").first()
     ).toBeVisible();
 
-    await page
-      .getByPlaceholder("Enter the artist name")
-      .fill("New Artist Name");
+    await page.getByPlaceholder("Enter Artist Name").fill("New Artist Name");
     await page.keyboard.press("Enter");
 
     await expect(page.locator(".ReactModalPortal")).not.toBeVisible();

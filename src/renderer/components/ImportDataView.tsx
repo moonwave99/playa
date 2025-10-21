@@ -3,6 +3,7 @@ import api from "../api";
 import cx from "clsx";
 import styles from "../importData.module.css";
 import formStyles from "../forms.module.css";
+import { useTranslation, Trans } from "react-i18next";
 
 type ImportDataViewProps = {
   onDone: () => void;
@@ -13,6 +14,7 @@ export default function ImportDataView({
   onDone,
   onCancel,
 }: ImportDataViewProps) {
+  const { t } = useTranslation();
   const { isDone, steps, lastStepRef } = useImportData<HTMLLIElement>({
     onDone,
     onCancel,
@@ -20,11 +22,7 @@ export default function ImportDataView({
   });
 
   async function onImportClick() {
-    if (
-      !window.confirm(
-        "This will overwrite your current data, are you sure to proceed?"
-      )
-    ) {
+    if (!window.confirm(t("modals.ImportDataView.confirm"))) {
       return;
     }
     await api.importExport.importDataFromDialog();
@@ -32,18 +30,24 @@ export default function ImportDataView({
 
   return (
     <div className={styles.view}>
-      <h2>Import Data from Archive</h2>
+      <h2>{t("modals.ImportDataView.title")}</h2>
       {!steps.length && (
         <div className={styles.description}>
           <p>
-            Please select an exported archive in the{" "}
-            <code>playa-data-XXXXXX.zip</code> format.
+            <Trans
+              i18nKey="modals.ImportDataView.description.first"
+              components={{
+                code: <code />,
+              }}
+            />
           </p>
           <p>
-            <span className={styles.warning}>Important</span> - this action is
-            not reversible.
+            <span className={styles.warning}>
+              {t("modals.ImportDataView.description.important")}
+            </span>{" "}
+            {t("modals.ImportDataView.description.second")}
             <br />
-            Please export an archive of your data first in order to be safe.
+            {t("modals.ImportDataView.description.third")}
           </p>
         </div>
       )}
@@ -58,14 +62,20 @@ export default function ImportDataView({
                 {step}
                 {!completed ? "..." : ""}
               </span>
-              {completed ? <span className={styles.completed}>Done</span> : ""}
+              {completed ? (
+                <span className={styles.completed}>
+                  {t("modals.ImportDataView.status.done")}
+                </span>
+              ) : (
+                ""
+              )}
             </li>
           ))}
         </ul>
       ) : null}
       {isDone && (
         <div className={styles.description}>
-          Import successful! Playa will restart now.
+          {t("modals.ImportDataView.success")}
         </div>
       )}
       <div className={formStyles.actions}>
@@ -75,7 +85,7 @@ export default function ImportDataView({
           onClick={onImportClick}
           disabled={!!steps.length}
         >
-          Select File
+          {t("modals.ImportDataView.actions.selectFile")}
         </button>
         <button
           type="button"
@@ -83,7 +93,7 @@ export default function ImportDataView({
           onClick={onCancel}
           disabled={!!steps.length && !isDone}
         >
-          Cancel
+          {t("modals.ImportDataView.actions.cancel")}
         </button>
       </div>
     </div>

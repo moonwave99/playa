@@ -27,7 +27,7 @@ describe("RelatedArtistsEditor component", () => {
     render(withQueryClientProvider(withI18n(<RelatedArtistsEditor id={1} />)));
     const title = await screen.findByText("Related Artists");
     expect(title).toBeInTheDocument();
-    const placeholder = await screen.findByText("No artists yet.");
+    const placeholder = await screen.findByText("No Artists yet");
     expect(placeholder).toBeInTheDocument();
   });
 

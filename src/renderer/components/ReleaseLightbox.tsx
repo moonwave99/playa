@@ -1,25 +1,27 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ReleaseWithArtist } from "@/types/types";
+import { useKeyManager, withPrevent } from "../hooks/useKeyboardManager";
 import useRelease from "../query/useRelease";
 import ReleaseWithTracklistView from "./ReleaseWithTracklistView";
-import { useKeyManager, withPrevent } from "../hooks/useKeyboardManager";
-import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
-
-import cx from "clsx";
-import styles from "./CoverLightbox.module.css";
 import Cover from "./Cover";
 
-type CoverLightboxProps = {
+import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
+import cx from "clsx";
+import styles from "./ReleaseLightbox.module.css";
+
+type ReleaseLightboxProps = {
   id: number;
   context?: ReleaseWithArtist[];
   onClose: () => void;
 };
 
-export default function CoverLightbox({
+export default function ReleaseLightbox({
   id,
   context,
   onClose,
-}: CoverLightboxProps) {
+}: ReleaseLightboxProps) {
+  const { t } = useTranslation();
   const [currentId, setCurrentId] = useState(id);
   const { release, isPending } = useRelease({ id: currentId });
   const currentIndex = context?.findIndex((x) => x.id === currentId);
@@ -55,11 +57,11 @@ export default function CoverLightbox({
   });
 
   return (
-    <div className={styles.CoverLightbox}>
+    <div className={styles.view}>
       {context?.length > 1 && (
         <button
           className={cx(styles.button, styles.prev)}
-          aria-label="See previous Release Cover"
+          aria-label={t("modals.ReleaseLightbox.actions.prev")}
           onClick={showPrevRelease}
         >
           <IoChevronBackOutline />
@@ -83,7 +85,7 @@ export default function CoverLightbox({
       {context?.length > 1 && (
         <button
           className={cx(styles.button, styles.next)}
-          aria-label="See next Release Cover"
+          aria-label={t("modals.ReleaseLightbox.actions.next")}
           onClick={showNextRelease}
         >
           <IoChevronForwardOutline />

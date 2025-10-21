@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import {
   Routes,
   Route,
@@ -7,13 +7,6 @@ import {
   matchPath,
 } from "react-router";
 import { ToastContainer, toast } from "react-toastify";
-import {
-  DndContext,
-  DragOverlay,
-  type DragEndEvent,
-  type DragStartEvent,
-} from "@dnd-kit/core";
-import { snapCenterToCursor } from "@dnd-kit/modifiers";
 import {
   useKeyManager,
   withMeta,
@@ -24,18 +17,12 @@ import api from "./api";
 import useRefetch from "./hooks/useRefetch";
 import useStore from "./store";
 import { refreshCovers } from "@/lib/utils";
-import { handleDropEnd, fixCursorSnapOffset } from "./dnd";
-
-import { routes } from "./routes";
 
 import Nav from "./components/Nav";
 import Modal from "./Modal";
 import ToastView from "./components/ToastView";
 
-import cx from "clsx";
-import styles from "./Layout.module.css";
-import dragStyles from "./dnd.module.css";
-import { Artist, Release, Notification } from "@/types/types";
+import { routes } from "./routes";
 
 import HomePage from "./pages/HomePage";
 import ReleasesPage from "./pages/ReleasesPage";
@@ -46,6 +33,9 @@ import CollectionsPage from "./pages/CollectionsPage";
 import CollectionPage from "./pages/CollectionPage";
 import GroupsPage from "./pages/GroupsPage";
 import GroupPage from "./pages/GroupPage";
+
+import cx from "clsx";
+import styles from "./Layout.module.css";
 
 const routesMap = {
   home: <HomePage />,
@@ -59,81 +49,56 @@ const routesMap = {
   group: <GroupPage />,
 };
 
-function onNotify(data: Notification) {
-  toast(ToastView, {
-    data,
-    position: "bottom-right",
-    closeButton: false,
-    autoClose: 1500,
-  });
-}
-
 export default function Layout() {
-  const { setContext, isDetailPage, onDragStart, onDragEnd, draggedItem } =
-    init();
+  const { setContext, isDetailPage } = useLayout();
 
   return (
-    <DndContext
-      onDragStart={onDragStart}
-      onDragEnd={onDragEnd}
-      collisionDetection={fixCursorSnapOffset}
+    <div
+      className={cx(styles.view, {
+        [styles.isDetailPage]: isDetailPage,
+      })}
     >
-      <div
-        className={cx(styles.view, {
-          [styles.isDetailPage]: isDetailPage,
-        })}
-      >
-        <Nav isDetailPage={isDetailPage} />
-        <div className={styles.page}>
-          <main className={styles.main}>
-            <Routes>
-              {routes.map(({ path, id }) => (
-                <Route
-                  path={path}
-                  element={routesMap[id as keyof typeof routesMap]}
-                />
-              ))}
-            </Routes>
-          </main>
-        </div>
-        <Modal setContext={setContext} />
-        <ToastContainer />
+      <Nav isDetailPage={isDetailPage} />
+      <div className={styles.page}>
+        <main className={styles.main}>
+          <Routes>
+            {routes.map(({ path, id }) => (
+              <Route
+                path={path}
+                element={routesMap[id as keyof typeof routesMap]}
+              />
+            ))}
+          </Routes>
+        </main>
       </div>
-      <DragOverlay modifiers={[snapCenterToCursor]}>
-        {draggedItem && <div className={dragStyles.DragOverlay}>1</div>}
-      </DragOverlay>
-    </DndContext>
+      <Modal setContext={setContext} />
+      <ToastContainer />
+    </div>
   );
 }
 
-type Init = {
-  useDarkText: boolean;
+type UseLayout = {
   setContext: (context: string) => void;
   isDetailPage: boolean;
-  draggedItem: Artist | Release | null;
-  onDragStart: (event: DragStartEvent) => void;
-  onDragEnd: (event: DragEndEvent) => void;
 };
 
-function init(): Init {
+function useLayout(): UseLayout {
   const firstRender = useRef(true);
   const navigate = useNavigate();
   const location = useLocation();
   const refetch = useRefetch();
-  const {
-    path,
-    setPath,
-    useDarkText,
-    setSettings,
-    setModalContents,
-    modalContents,
-  } = useStore();
-
-  const [draggedItem, setDraggedItem] = useState<Artist | Release>(null);
+  const { path, setPath, setSettings, setModalContents, modalContents } =
+    useStore();
 
   useApiEvents({
     onMutate: refetch,
-    onNotify,
+    onNotify: (data) =>
+      toast(ToastView, {
+        data,
+        position: "bottom-right",
+        closeButton: false,
+        autoClose: 1500,
+      }),
     onCoverUpdate: refreshCovers,
     onSwipe: navigate,
     onOpenModal: setModalContents,
@@ -146,11 +111,6 @@ function init(): Init {
       setContext("list");
     },
   });
-
-  const isDetailPage = !!(
-    matchPath("/releases/:id", location.pathname) ||
-    matchPath("/artists/:id", location.pathname)
-  );
 
   const { setContext, currentContext } = useKeyManager({
     context: KeyManager.global,
@@ -206,21 +166,13 @@ function init(): Init {
     setContext("list");
   }, []);
 
-  function onDragStart(event: DragStartEvent) {
-    setDraggedItem(event.active.data.current as Artist | Release);
-  }
-
-  async function onDragEnd(event: DragEndEvent) {
-    await handleDropEnd(event, refetch);
-    setDraggedItem(null);
-  }
+  const isDetailPage = !!(
+    matchPath("/releases/:id", location.pathname) ||
+    matchPath("/artists/:id", location.pathname)
+  );
 
   return {
-    useDarkText,
-    draggedItem,
     setContext,
     isDetailPage,
-    onDragStart,
-    onDragEnd,
   };
 }

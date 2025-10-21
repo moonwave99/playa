@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { type CollectionWithReleases, type HasId } from "@/types/types";
 import api from "../api";
 
@@ -32,6 +33,7 @@ export default function useCollections(
     pageSize: 50,
   }
 ): UseCollections {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const {
     isPending,
@@ -55,7 +57,9 @@ export default function useCollections(
     mutationFn: (ids: number[]) => {
       if (
         !window.confirm(
-          `Are you sure to remove ${ids.length} Collections from Library?`
+          t("confirm.deleteCollections", {
+            count: ids.length,
+          })
         )
       ) {
         return;

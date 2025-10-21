@@ -11,10 +11,7 @@ TBD
 - [ ] artist sidebar;
 - [ ] smart import vs interactive import;
 - [ ] entity tags;
-- [ ] i18n;
 - [ ] e2e for critical path (music import / library manipulation);
-  - [ ] isolate settings
-  - [ ] create mock import tracks
 
 ## License
 

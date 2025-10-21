@@ -10,7 +10,8 @@ import {
   ImportData,
 } from "@/types/types";
 import api from "./api";
-import CoverLightbox from "./components/CoverLightbox";
+
+import ReleaseLightbox from "./components/ReleaseLightbox";
 import EditArtistView from "./components/EditArtistView";
 import EditReleaseView from "./components/EditReleaseView";
 import EditCollectionView from "./components/EditCollectionView";
@@ -221,7 +222,7 @@ export default function Modal({ setContext }: ModalProps) {
     }
     if (name === "lightbox") {
       return (
-        <CoverLightbox
+        <ReleaseLightbox
           onClose={closeModal}
           id={(params.release as Release).id}
           context={params.context as ReleaseWithArtist[]}

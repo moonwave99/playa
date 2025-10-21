@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
+import { useTranslation } from "react-i18next";
 import api from "../api";
 import {
   DndContext,
@@ -20,13 +21,13 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import type { ReleaseWithArtist } from "@/types/types";
 import Cover from "./Cover";
+import { lowerCaseCompare } from "@/lib/utils";
 
 import { PiDotsThreeVerticalBold } from "react-icons/pi";
 import { MdInfoOutline } from "react-icons/md";
 import cx from "clsx";
 import styles from "./GroupReleasesView.module.css";
 import formStyles from "../forms.module.css";
-import { lowerCaseCompare } from "@/lib/utils";
 
 type GroupReleasesViewProps = {
   releases: ReleaseWithArtist[];
@@ -39,6 +40,7 @@ export default function GroupReleasesView({
   onSave,
   onCancel,
 }: GroupReleasesViewProps) {
+  const { t } = useTranslation();
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -114,16 +116,18 @@ export default function GroupReleasesView({
     >
       <SortableContext items={discInfo} strategy={verticalListSortingStrategy}>
         <div className={styles.GroupReleasesView}>
-          <h2>Group Releases</h2>
+          <h2>{t("modals.GroupReleasesView.title")}</h2>
           <form onSubmit={onSubmit} className={formStyles.form}>
             <label className={cx(formStyles.label)}>
-              Main Release Title
+              {t("modals.GroupReleasesView.fields.mainReleaseTitle.label")}
               <input
                 autoFocus
                 name="mainReleaseTitle"
                 className={formStyles.input}
                 required
-                placeholder="Enter disc title"
+                placeholder={t(
+                  "modals.GroupReleasesView.fields.mainReleaseTitle.placeholder"
+                )}
                 defaultValue={getMainReleaseTitle()}
               />
               <button
@@ -131,7 +135,7 @@ export default function GroupReleasesView({
                 className={formStyles.button}
                 onClick={fillInfo}
               >
-                Fill Progressively
+                {t("modals.GroupReleasesView.actions.fillProgressively")}
               </button>
             </label>
 
@@ -159,18 +163,18 @@ export default function GroupReleasesView({
             </ul>
             <div className={formStyles.info}>
               <MdInfoOutline />
-              You can rearrange the order of discs.
+              {t("modals.GroupReleasesView.rearrangeInfo")}
             </div>
             <div className={formStyles.actions}>
               <button type="submit" className={formStyles.button}>
-                Group Releases
+                {t("modals.GroupReleasesView.actions.submit")}
               </button>
               <button
                 type="button"
                 className={formStyles.button}
                 onClick={onCancel}
               >
-                Cancel
+                {t("modals.GroupReleasesView.actions.cancel")}
               </button>
             </div>
           </form>
@@ -186,6 +190,7 @@ type DiscViewProps = {
 };
 
 function DiscView({ release, onInput }: DiscViewProps) {
+  const { t } = useTranslation();
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: release.id });
 
@@ -213,11 +218,13 @@ function DiscView({ release, onInput }: DiscViewProps) {
           styles.vertical
         )}
       >
-        Disc title for: {release.title}
+        {t("modals.GroupReleasesView.fields.subReleaseTitle.label", release)}
         <input
           className={cx(formStyles.input, styles.input)}
           required
-          placeholder="Enter disc title"
+          placeholder={t(
+            "modals.GroupReleasesView.fields.subReleaseTitle.placeholder"
+          )}
           value={release.discTitle}
           onInput={onInput}
         />

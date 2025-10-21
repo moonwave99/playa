@@ -49,7 +49,7 @@ export default function Tracklist({
         className={cx(styles.tracklist, {
           [styles.isFlipped]: isFlipped,
         })}
-        data-testId={`Tracklist-${release.id}`}
+        data-testId="Tracklist"
       >
         <div
           className={styles.discWrapper}

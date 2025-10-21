@@ -1,10 +1,10 @@
-import { useState } from "react";
-import api from "../api";
-import type { DragEvent } from "react";
-import cx from "clsx";
-import { getCover } from "@/lib/links";
-import styles from "./Cover.module.css";
+import { useState, type DragEvent } from "react";
+import { useTranslation } from "react-i18next";
 import type { Release } from "@/types/types";
+import { getCover } from "@/lib/links";
+import api from "../api";
+import cx from "clsx";
+import styles from "./Cover.module.css";
 
 type CoverProps = Pick<Release, "id" | "title" | "hash"> & {
   path?: string;
@@ -48,6 +48,7 @@ export default function Cover({
   droppable = true,
   dragOutside = true,
 }: CoverProps) {
+  const { t } = useTranslation();
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
 
@@ -80,7 +81,7 @@ export default function Cover({
         data-id={id}
         className={cx(styles.cover, { [styles.loaded]: loaded })}
         src={src}
-        alt={`Cover of ${title}`}
+        alt={t("components.Cover.altText", { title })}
         loading="lazy"
         onError={() => {
           setError(true);

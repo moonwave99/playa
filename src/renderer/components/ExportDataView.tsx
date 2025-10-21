@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useApiEvents } from "../hooks/useApiEvents";
 import useStore from "../store";
 import cx from "clsx";
@@ -10,12 +11,17 @@ type ExportDataViewProps = {
 };
 
 export default function ExportDataView({ onDone }: ExportDataViewProps) {
+  const { t } = useTranslation();
   const isDone = useExportData(onDone);
 
   return (
     <div className={styles.view}>
-      <h2>Exporting Data to Archive</h2>
-      <p className={styles.description}>{isDone ? "Done!" : "Exporting..."}</p>
+      <h2>{t("modals.ExportDataView.title")}</h2>
+      <p className={styles.description}>
+        {isDone
+          ? t("modals.ExportDataView.status.done")
+          : t("modals.ExportDataView.status.exporting")}
+      </p>
       <div className={formStyles.actions}>
         <button
           type="button"
@@ -23,7 +29,7 @@ export default function ExportDataView({ onDone }: ExportDataViewProps) {
           onClick={onDone}
           disabled={!isDone}
         >
-          Close
+          {t("modals.ExportDataView.actions.close")}
         </button>
       </div>
     </div>

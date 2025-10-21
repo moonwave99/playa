@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import type { GroupWithArtists, HasId } from "@/types/types";
 import api from "../api";
 
@@ -12,6 +13,7 @@ type UseGroup = {
 };
 
 export default function useGroup(id: number): UseGroup {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const {
     isPending,
@@ -47,7 +49,9 @@ export default function useGroup(id: number): UseGroup {
     mutationFn: async (artists: HasId[]) => {
       if (
         !window.confirm(
-          `Are you sure to remove ${artists.length} Artists from Group?`
+          t("confirm.removeArtistsFromGroup", {
+            count: artists.length,
+          })
         )
       ) {
         return;

@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import type { GroupWithArtists, HasId } from "@/types/types";
 import api from "../api";
 
@@ -28,6 +29,7 @@ type UseGroupsParams = {
 export default function useGroups(
   { pageSize }: UseGroupsParams = { pageSize: 50 }
 ): UseGroups {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const {
     isPending,
@@ -49,7 +51,9 @@ export default function useGroups(
     mutationFn: (ids: number[]) => {
       if (
         !window.confirm(
-          `Are you sure to remove ${ids.length} Groups from Library?`
+          t("confirm.deleteGroups", {
+            count: ids.length,
+          })
         )
       ) {
         return;

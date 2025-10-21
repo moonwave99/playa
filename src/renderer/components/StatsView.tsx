@@ -6,30 +6,12 @@ import ImportActivityView from "./ImportActivityView";
 import styles from "./StatsView.module.css";
 import type { Stats } from "@/types/types";
 
-const sortedStatKeys: {
-  key: keyof Stats;
-  link: string;
-}[] = [
-  {
-    key: "release",
-    link: "/releases",
-  },
-  {
-    key: "artist",
-    link: "/artists",
-  },
-  {
-    key: "track",
-    link: null,
-  },
-  {
-    key: "collection",
-    link: "/collections",
-  },
-  {
-    key: "group",
-    link: "/groups",
-  },
+const sortedStats: (keyof Stats)[] = [
+  "release",
+  "artist",
+  "track",
+  "collection",
+  "group",
 ];
 
 export default function StatsView() {
@@ -49,7 +31,7 @@ export default function StatsView() {
       <section>
         <h2 className={styles.title}>{t("pages.HomePage.stats.title")}</h2>
         <ul className={styles.stats}>
-          {sortedStatKeys.map(({ key }) => (
+          {sortedStats.map((key) => (
             <li key={key}>
               <span className={styles.entry}>
                 <span>{`${key}s`}</span>

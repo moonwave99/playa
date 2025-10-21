@@ -1,4 +1,5 @@
 import type { MouseEvent } from "react";
+import { useTranslation } from "react-i18next";
 import type { ReleaseWithArtistAndSubReleases } from "@/types/types";
 import { getReleaseTitle, getDiscInfo, withStopPropagation } from "@/lib/utils";
 import { getReleaseLink } from "@/lib/links";
@@ -26,6 +27,7 @@ export default function ReleaseView({
   onClick,
   onContextMenu,
 }: ReleaseViewProps) {
+  const { t } = useTranslation();
   const { artist, year, type, id, additionalArtists } = release;
   const releaseTitle = getReleaseTitle(release);
   return (
@@ -59,7 +61,7 @@ export default function ReleaseView({
           canDeleteFirstEntry={false}
           items={[artist, ...additionalArtists]}
           onDelete={(artist_id) =>
-            window.api.release.removeAdditionalArtist({
+            api.release.removeAdditionalArtist({
               release_id: id,
               artist_id,
             })
@@ -68,7 +70,7 @@ export default function ReleaseView({
         <Link
           className={styles.title}
           to={getReleaseLink(release)}
-          title={`See ${releaseTitle} Tracks`}
+          title={t("components.ReleaseView.link", { title: releaseTitle })}
         >
           {releaseTitle}
         </Link>

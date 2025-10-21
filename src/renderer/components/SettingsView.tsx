@@ -1,11 +1,11 @@
-import { useState } from "react";
-import type { Settings } from "@/types/types";
+import { useState, type FormEvent } from "react";
+import { useTranslation } from "react-i18next";
 import type { OpenDialogSyncOptions } from "electron";
-import type { FormEvent } from "react";
+import type { Settings } from "@/types/types";
 import api from "../api";
 import useStore from "../store";
-import Loading from "./Loading";
 import { isEmpty } from "@/lib/utils";
+import Loading from "./Loading";
 
 import { MdInfoOutline } from "react-icons/md";
 import { IoFolderOpenOutline } from "react-icons/io5";
@@ -21,8 +21,6 @@ type SettingsViewProps = {
 
 type Field = {
   key: keyof Settings;
-  label: string;
-  placeholder?: string;
   type: "string" | "checkbox" | "path";
   options?: {
     title?: string;
@@ -35,13 +33,10 @@ type Field = {
 const fieldsMap: Field[] = [
   {
     key: "USE_SMART_IMPORT",
-    label: "Use Smart Import",
     type: "checkbox",
   },
   {
     key: "LIBRARY_PATH",
-    label: "Library Path",
-    placeholder: "Insert the folder where your music is located",
     type: "path",
     options: {
       defaultPath: "~/Documents",
@@ -50,8 +45,6 @@ const fieldsMap: Field[] = [
   },
   {
     key: "COVERS_PATH",
-    label: "Cover Path",
-    placeholder: "Insert the folder where the artwork is downloaded",
     type: "path",
     options: {
       defaultPath: "~/Documents",
@@ -60,8 +53,6 @@ const fieldsMap: Field[] = [
   },
   {
     key: "PLAYER_PATH",
-    label: "Player Path",
-    placeholder: "Insert the location of the Player App",
     type: "path",
     options: {
       title: "Insert the location of the Player App",
@@ -71,8 +62,6 @@ const fieldsMap: Field[] = [
   },
   {
     key: "TAGGER_PATH",
-    label: "Tagger Path",
-    placeholder: "Insert the location of the Tagger App",
     type: "path",
     options: {
       title: "Insert the location of the Tagger App",
@@ -82,19 +71,16 @@ const fieldsMap: Field[] = [
   },
   {
     key: "DISCOGS_KEY",
-    label: "Discogs Key",
-    placeholder: "Insert your Discogs API key",
     type: "string",
   },
   {
     key: "DISCOGS_SECRET",
-    label: "Discogs Secret",
-    placeholder: "Insert your Discogs API Secret",
     type: "string",
   },
 ];
 
 export default function SettingsView({ onSave, onCancel }: SettingsViewProps) {
+  const { t } = useTranslation();
   const { settings, setSettings } = useStore();
   const [copy, setCopy] = useState(settings);
 
@@ -123,11 +109,11 @@ export default function SettingsView({ onSave, onCancel }: SettingsViewProps) {
     }));
   }
 
-  function renderField({ key, label, type, placeholder, options }: Field) {
+  function renderField({ key, type, options }: Field) {
     const className = formStyles[type === "checkbox" ? "checkbox" : "input"];
     return (
       <label key={key} className={formStyles.label}>
-        <span>{label}</span>
+        <span>{t(`modals.SearchView.fields.${key}.label`)}</span>
         <input
           type={type === "checkbox" ? "checkbox" : "input"}
           tabIndex={type === "path" ? -1 : 0}
@@ -136,7 +122,7 @@ export default function SettingsView({ onSave, onCancel }: SettingsViewProps) {
           name={key}
           className={className}
           required={type !== "checkbox"}
-          placeholder={placeholder}
+          placeholder={t(`modals.SearchView.fields.${key}.placeholder`)}
           value={(copy[key] as string) || ""}
           checked={!!copy[key]}
           onChange={(event: FormEvent) =>
@@ -154,7 +140,7 @@ export default function SettingsView({ onSave, onCancel }: SettingsViewProps) {
             className={cx(buttonStyles.button, styles.fileButton)}
             type="button"
             onClick={() => openFile(key, options)}
-            aria-label={`Choose a location for ${label}`}
+            aria-label={t(`modals.SearchView.fields.${key}.label`)}
           >
             <IoFolderOpenOutline />
           </button>
@@ -165,25 +151,25 @@ export default function SettingsView({ onSave, onCancel }: SettingsViewProps) {
 
   return (
     <div className={styles.view}>
-      <h2 className={styles.title}>Settings</h2>
+      <h2 className={styles.title}>{t("modals.SettingsView.title")}</h2>
       <form onSubmit={onSubmit} className={formStyles.form}>
         {fieldsMap.map(renderField)}
         <div className={formStyles.info}>
           <MdInfoOutline />
-          <a href="https://www.discogs.com/settings/developers" target="_blank">
-            You can set up your Discogs Credentials from here
+          <a href={t("modals.SettingsView.discogs.link")} target="_blank">
+            {t("modals.SettingsView.discogs.info")}
           </a>
         </div>
         <div className={formStyles.actions}>
           <button type="submit" className={formStyles.button}>
-            Save Settings
+            {t("modals.SettingsView.actions.submit")}
           </button>
           <button
             type="button"
             className={formStyles.button}
             onClick={onCancel}
           >
-            Cancel
+            {t("modals.SettingsView.actions.cancel")}
           </button>
         </div>
       </form>

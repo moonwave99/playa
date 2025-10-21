@@ -1,10 +1,11 @@
-import { useState } from "react";
-import type { FormEvent } from "react";
+import { useState, type FormEvent } from "react";
+import { useTranslation } from "react-i18next";
+import type { ArtistWithReleases } from "@/types/types";
 import useStore from "../store";
 import useRefetch from "../hooks/useRefetch";
 import api from "../api";
-import type { ArtistWithReleases } from "@/types/types";
 import RelatedArtistsEditor from "./RelatedArtistsEditor";
+
 import cx from "clsx";
 import { MdInfoOutline } from "react-icons/md";
 import styles from "./EditArtistView.module.css";
@@ -26,6 +27,7 @@ export default function EditArtistView({
   onSave,
   onCancel,
 }: EditArtistViewProps) {
+  const { t } = useTranslation();
   const { settings } = useStore();
   const refetch = useRefetch();
   const [artistInfo, setArtistInfo] = useState({
@@ -64,15 +66,15 @@ export default function EditArtistView({
   return (
     <div className={styles.EditArtistView}>
       <div className={formStyles.container}>
-        <h2>Edit Artist</h2>
+        <h2>{t("modals.EditArtistView.title")}</h2>
         <form onSubmit={onSubmit} className={formStyles.form}>
           <label className={cx(formStyles.label, styles.label)}>
-            New Name
+            {t("modals.EditArtistView.fields.name.label")}
             <input
               autoFocus
               className={cx(formStyles.input, styles.input)}
               required
-              placeholder="Enter the artist name"
+              placeholder={t("modals.EditArtistView.fields.name.placeholder")}
               value={artistInfo.newName}
               onInput={(event: FormEvent) =>
                 updateInfo("newName", (event.target as HTMLInputElement).value)
@@ -81,11 +83,11 @@ export default function EditArtistView({
           </label>
           {USE_SMART_IMPORT && (
             <label className={cx(formStyles.label, styles.label)}>
-              New Path
+              {t("modals.EditArtistView.fields.path.label")}
               <input
                 className={cx(formStyles.input, styles.input)}
                 required
-                placeholder="Enter the artist path"
+                placeholder={t("modals.EditArtistView.fields.path.label")}
                 value={artistInfo.newPath}
                 onInput={(event: FormEvent) =>
                   updateInfo(
@@ -101,7 +103,7 @@ export default function EditArtistView({
             {USE_SMART_IMPORT && (
               <div className={formStyles.info}>
                 <MdInfoOutline />
-                This will move the Artist folder in your Library.
+                {t("modals.EditArtistView.moveInfo")}
               </div>
             )}
             <button
@@ -109,14 +111,14 @@ export default function EditArtistView({
               className={formStyles.button}
               disabled={!canSubmit()}
             >
-              Edit Artist
+              {t("modals.EditArtistView.actions.submit")}
             </button>
             <button
               type="button"
               className={formStyles.button}
               onClick={onCancel}
             >
-              Cancel
+              {t("modals.EditArtistView.actions.cancel")}
             </button>
           </div>
         </form>

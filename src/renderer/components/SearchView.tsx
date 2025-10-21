@@ -1,15 +1,17 @@
 import { useState, type MouseEvent } from "react";
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 import { useDebounce } from "use-debounce";
+import { SearchableEntities, SearchResult } from "@/types/types";
 import api from "../api";
 import useSearchInput from "../hooks/useSearchInput";
 import useSearch from "../query/useSearch";
 import ErrorView from "./ErrorView";
 import Loading from "./Loading";
-import { SearchResult } from "@/types/types";
 import Link from "./Link";
 import Cover from "./Cover";
 import List from "./List";
+
 import { MdOutlineSearch } from "react-icons/md";
 import cx from "clsx";
 import styles from "./SearchView.module.css";
@@ -21,6 +23,7 @@ type SearchViewProps = {
 };
 
 export default function SearchView({ onClose }: SearchViewProps) {
+  const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const [debouncedQuery] = useDebounce(query, DEBOUNCE_MS, {
     leading: false,
@@ -45,13 +48,15 @@ export default function SearchView({ onClose }: SearchViewProps) {
   return (
     <div className={styles.view}>
       <label>
-        <MdOutlineSearch aria-label="Search" />
+        <MdOutlineSearch
+          aria-label={t("components.SearchView.fields.search.label")}
+        />
         <input
           autoFocus
           ref={inputRef}
           className={styles.input}
           type="search"
-          placeholder="Enter search term"
+          placeholder={t("components.SearchView.fields.search.placeholder")}
           {...inputHandlers}
         />
       </label>
@@ -72,7 +77,7 @@ type SearchResultsViewProps = Pick<
   ReturnType<typeof useSearch>,
   "error" | "isPending"
 > & {
-  groupedResults: Record<string, SearchResult[]>;
+  groupedResults: Partial<Record<SearchableEntities, SearchResult[]>>;
   currentContext: string;
   setContext: (context: string) => void;
   onLinkClick: () => void;
@@ -90,6 +95,7 @@ function SearchResultsView({
   onLinkClick,
   listHandlers,
 }: SearchResultsViewProps) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   if (isPending) {
@@ -122,55 +128,51 @@ function SearchResultsView({
 
   return (
     <div className={styles.searchResultsView}>
-      {Object.entries(groupedResults).map(
-        ([type, entries]: [string, SearchResult[]], index, groups) => (
-          <section key={type}>
-            <h3>
-              {`${type}s`}{" "}
-              <span className={styles.count}>({entries.length})</span>
-            </h3>
-            <List
-              disableMultipleSelection
-              context={`modal:search:results(${index})`}
-              className={styles.listWrapper}
-              items={entries}
-              estimateSize={() => ({
-                width: 300,
-                height: 64,
-              })}
-              onLeft={() =>
-                setContext(
-                  `modal:search:results(${index === 0 ? groups.length - 1 : index - 1})`
-                )
-              }
-              onRight={() =>
-                setContext(
-                  `modal:search:results(${(index + 1) % groups.length})`
-                )
-              }
-              paddingRight={0}
-              gap={12}
-              onEnter={onEnter}
-              testId={`SearchResultsView-${type}`}
-              render={({ item, selected, onClick }) => (
-                <SearchResultView
-                  index={index}
-                  currentContext={currentContext}
-                  item={item}
-                  selected={selected}
-                  onClick={(event: MouseEvent) => {
-                    setContext(`modal:search:results(${index})`);
-                    onClick(event);
-                  }}
-                  onContextMenu={() => api.menu.searchResult(item)}
-                  onLinkClick={onLinkClick}
-                />
-              )}
-              {...listHandlers}
-            />
-          </section>
-        )
-      )}
+      {Object.entries(groupedResults).map(([type, entries], index, groups) => (
+        <section key={type}>
+          <h3>
+            {t(`entities.${type}s`)}{" "}
+            <span className={styles.count}>({entries.length})</span>
+          </h3>
+          <List
+            disableMultipleSelection
+            context={`modal:search:results(${index})`}
+            className={styles.listWrapper}
+            items={entries}
+            estimateSize={() => ({
+              width: 300,
+              height: 64,
+            })}
+            onLeft={() =>
+              setContext(
+                `modal:search:results(${index === 0 ? groups.length - 1 : index - 1})`
+              )
+            }
+            onRight={() =>
+              setContext(`modal:search:results(${(index + 1) % groups.length})`)
+            }
+            paddingRight={0}
+            gap={12}
+            onEnter={onEnter}
+            testId={`SearchResultsView-${type}`}
+            render={({ item, selected, onClick }) => (
+              <SearchResultView
+                index={index}
+                currentContext={currentContext}
+                item={item}
+                selected={selected}
+                onClick={(event: MouseEvent) => {
+                  setContext(`modal:search:results(${index})`);
+                  onClick(event);
+                }}
+                onContextMenu={() => api.menu.searchResult(item)}
+                onLinkClick={onLinkClick}
+              />
+            )}
+            {...listHandlers}
+          />
+        </section>
+      ))}
     </div>
   );
 }
@@ -194,6 +196,7 @@ function SearchResultView({
   onClick,
   onLinkClick,
 }: SearchResultViewProps) {
+  const { t } = useTranslation();
   const { title, type, artist, links, description, coverRelease } = item;
 
   function getTitle(): string {
@@ -229,7 +232,7 @@ function SearchResultView({
             {getTitle()}
           </Link>
           <span className={styles.type}>
-            Track by{" "}
+            {t("components.SearchView.results.trackBy")}
             {item.links.artist ? (
               <Link
                 to={item.links.artist}

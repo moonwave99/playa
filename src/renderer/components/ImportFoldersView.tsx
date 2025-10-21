@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import useImportData from "../hooks/useImportData";
 import cx from "clsx";
 import styles from "../importData.module.css";
@@ -8,6 +9,7 @@ type ImportFoldersViewProps = {
 };
 
 export default function ImportFoldersView({ onDone }: ImportFoldersViewProps) {
+  const { t } = useTranslation();
   const { steps, isDone } = useImportData({
     onDone,
     closeAfter: 10000,
@@ -15,7 +17,7 @@ export default function ImportFoldersView({ onDone }: ImportFoldersViewProps) {
 
   return (
     <div className={styles.view}>
-      <h2>Importing Folders</h2>
+      <h2>{t("modals.ImportFoldersView.title")}</h2>
       <ul className={styles.progress}>
         {steps.map(([folder, completed]) => (
           <li key={folder}>
@@ -23,7 +25,13 @@ export default function ImportFoldersView({ onDone }: ImportFoldersViewProps) {
               {folder}
               {!completed ? "..." : ""}
             </span>
-            {completed ? <span className={styles.completed}>Done</span> : ""}
+            {completed ? (
+              <span className={styles.completed}>
+                {t("modals.ImportFoldersView.status.done")}
+              </span>
+            ) : (
+              ""
+            )}
           </li>
         ))}
       </ul>
@@ -34,7 +42,7 @@ export default function ImportFoldersView({ onDone }: ImportFoldersViewProps) {
           onClick={onDone}
           disabled={!isDone}
         >
-          Close
+          {t("modals.ImportFoldersView.actions.close")}
         </button>
       </div>
     </div>

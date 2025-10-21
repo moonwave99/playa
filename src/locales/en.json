@@ -71,6 +71,49 @@
     }
   },
   "modals": {
+    "ReleaseLightbox": {
+      "actions": {
+        "prev": "See prev Release",
+        "next": "See next Release"
+      }
+    },
+    "ExportDataView": {
+      "title": "Exporting Data to Archive",
+      "status": {
+        "done": "Done!",
+        "exporting": "Exporting..."
+      },
+      "actions": {
+        "close": "Close"
+      }
+    },
+    "ImportDataView": {
+      "title": "Import Data from Archive",
+      "description": {
+        "important": "Important",
+        "first": "Please select an exported archive in the <code>playa-data-XXXXXX.zip</code> format.",
+        "second": "- this action is not reversible.",
+        "third": "Please export an archive of your data first in order to be safe."
+      },
+      "confirm": "This will overwrite your current data, are you sure to proceed?",
+      "success": "Import successful! Playa will restart now.",
+      "status": {
+        "done": "Done"
+      },
+      "actions": {
+        "selectFile": "Select a File",
+        "close": "Close"
+      }
+    },
+    "ImportFoldersView": {
+      "title": "Importing Folders",
+      "status": {
+        "done": "Done"
+      },
+      "actions": {
+        "close": "Close"
+      }
+    },
     "EditReleaseView": {
       "title": "Edit Release",
       "moveInfo": "This will move the Release folder in your Library.",
@@ -84,8 +127,8 @@
           "placeholder": "Enter disc title"
         },
         "newPath": {
-          "label": "Path",
-          "placeholder": "Enter path"
+          "label": "Release Path",
+          "placeholder": "Enter release path"
         },
         "newYear": {
           "label": "Year",
@@ -102,6 +145,22 @@
       }
     },
     "EditArtistView": {
+      "title": "Edit Artist",
+      "moveInfo": "This will move the Artist folder in your Library.",
+      "fields": {
+        "name": {
+          "label": "Artist Name",
+          "placeholder": "Enter Artist Name"
+        },
+        "path": {
+          "label": "Artist Path",
+          "placeholder": "Enter Artist Path"
+        }
+      },
+      "actions": {
+        "submit": "Edit Artist",
+        "cancel": "Cancel"
+      },
       "relatedArtists": {
         "actions": {
           "add": "Add {{name}} to related Artists",
@@ -192,12 +251,104 @@
         }
       }
     },
+    "GroupReleasesView": {
+      "title": "Group Releases",
+      "fields": {
+        "mainReleaseTitle": {
+          "label": "Main Release Title",
+          "placeholder": "Enter Disc Title"
+        },
+        "subReleaseTitle": {
+          "label": "Disc Title for: {{title}}",
+          "placeholder": "Enter Disc Title"
+        }
+      },
+      "rearrangeInfo": "You can rearrange the order of discs.",
+      "actions": {
+        "fillProgressively": "Fill Progressively",
+        "submit": "Group Releases",
+        "cancel": "Cancel"
+      }
+    },
+    "SettingsView": {
+      "title": "Settings",
+      "discogs": {
+        "link": "https://www.discogs.com/settings/developers",
+        "info": "You can set up your Discogs Credentials from here"
+      },
+      "fields": {
+        "USE_SMART_IMPORT": {
+          "label": "Use Smart Import"
+        },
+        "LIBRARY_PATH": {
+          "label": "Library Path",
+          "placeholder": "Insert the folder where your music is located"
+        },
+        "COVERS_PATH": {
+          "label": "Cover Path",
+          "placeholder": "Insert the folder where the artwork is downloaded"
+        },
+        "PLAYER_PATH": {
+          "label": "Player Path",
+          "placeholder": "Insert the location of the Player App"
+        },
+        "TAGGER_PATH": {
+          "label": "Tagger Path",
+          "placeholder": "Insert the location of the Tagger App"
+        },
+        "DISCOGS_KEY": {
+          "label": "Discogs Key",
+          "placeholder": "Insert your Discogs API key"
+        },
+        "DISCOGS_SECRET": {
+          "label": "Discogs Secret",
+          "placeholder": "Insert your Discogs API Secret"
+        }
+      },
+      "actions": {
+        "submit": "Save Settings",
+        "cancel": "Cancel"
+      }
+    },
     "AddToEntityListView": {
       "title": "Add {{from}}s to {{to}}",
       "label": "Add to {{to}}",
       "actions": {
         "add": "Add",
         "cancel": "Cancel"
+      }
+    }
+  },
+  "components": {
+    "Cover": {
+      "altText": "Cover of {{title}}"
+    },
+    "ErrorView": {
+      "message": "Something went wrong"
+    },
+    "Loading": {
+      "text": "Loading..."
+    },
+    "ArtistEditor": {
+      "noArtists": "No Artists yet",
+      "lookup": {
+        "label": "Lookup Artists",
+        "placeholder": "Search related Artist"
+      },
+      "noResults": "No results for \"{query}\""
+    },
+    "ReleaseView": {
+      "link": "See {{title}} Tracks"
+    },
+    "SearchView": {
+      "fields": {
+        "search": {
+          "label": "Search",
+          "placeholder": "Enter search term"
+        }
+      },
+      "results": {
+        "trackBy": "Track by"
       }
     }
   },
@@ -211,5 +362,10 @@
         "containingCollections": "Remove {{context}} from {{item}}"
       }
     }
+  },
+  "confirm": {
+    "deleteCollections": "Are you sure you want to remove {{count}} Collections from your Library?",
+    "deleteGroups": "Are you sure you want to remove {{count}} Groups from your Library?",
+    "removeArtistsFromGroup": "Are you sure you want to remove {{count}} Artists from this Group?"
   }
 }

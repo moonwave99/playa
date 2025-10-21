@@ -25,13 +25,14 @@ import type {
   GroupWithArtists,
 } from "@/types/types";
 
+import api from "../api";
+
 import EntityList from "./EntityList";
 import Cover from "./Cover";
 import Link from "./Link";
 import RelatedArtistsList from "./RelatedArtistsList";
 import ContainingCollectionsList from "./ContainingCollectionsList";
 import ContainingGroupsList from "./ContainingGroupsList";
-import Droppable, { type DroppableRender } from "./Droppable";
 
 import cx from "clsx";
 import styles from "./ListCard.module.css";
@@ -108,7 +109,7 @@ export default function ListCard({
             items={[item.artist, ...item.additionalArtists]}
             onLinkClick={onLinkClick}
             onDelete={(artist_id) =>
-              window.api.release.removeAdditionalArtist({
+              api.release.removeAdditionalArtist({
                 release_id: item.id,
                 artist_id,
               })
@@ -275,36 +276,31 @@ export default function ListCard({
   }
 
   return (
-    <MaybeDroppable
-      item={item}
-      render={({ canDrop }) => (
-        <div
-          data-selected={selected}
-          data-hasfocus={selected && hasFocus}
-          onMouseLeave={onMouseLeave}
-          className={cx(styles.listCard, {
-            [styles.loaded]: loaded,
-            [styles.isArtist]: item.entityType === "Artist",
-            [styles.isSingle]: isSingle,
-            [styles.selected]: selected,
-            [styles.hasFocus]: selected && hasFocus,
-            [styles.useDarkText]: useDarkText,
-            [styles.isHover]: isHover,
-            [styles.canDrop]: canDrop,
-            [styles.hideCover]: hideCover,
-            [styles.fromCache]: fromCache,
-            className,
-          })}
-          onClick={onClick}
-          onContextMenu={getContextMenu()}
-          style={canDrop ? null : { background: color || null }}
-          data-testid={testId}
-        >
-          {renderCover()}
-          <div className={styles.content}>{getContent()}</div>
-        </div>
-      )}
-    />
+    <div
+      data-selected={selected}
+      data-hasfocus={selected && hasFocus}
+      onMouseLeave={onMouseLeave}
+      className={cx(styles.listCard, {
+        [styles.loaded]: loaded,
+        [styles.isArtist]: item.entityType === "Artist",
+        [styles.isSingle]: isSingle,
+        [styles.selected]: selected,
+        [styles.hasFocus]: selected && hasFocus,
+        [styles.useDarkText]: useDarkText,
+        [styles.isHover]: isHover,
+
+        [styles.hideCover]: hideCover,
+        [styles.fromCache]: fromCache,
+        className,
+      })}
+      onClick={onClick}
+      onContextMenu={getContextMenu()}
+      style={{ background: color || null }}
+      data-testid={testId}
+    >
+      {renderCover()}
+      <div className={styles.content}>{getContent()}</div>
+    </div>
   );
 }
 
@@ -389,18 +385,6 @@ function getCovers(item: MultipleCoversProps["item"], count = 5): GetCovers {
       .filter((x) => x.id !== coverRelease.id)
       .slice(0, count - 1),
   };
-}
-
-type MaybeDroppableProps = {
-  item: Item;
-  render: DroppableRender;
-};
-
-function MaybeDroppable({ item, render }: MaybeDroppableProps) {
-  if (item.entityType === "Group" || item.entityType === "Collection") {
-    return <Droppable item={item} render={render} />;
-  }
-  return render({ isOver: false, canDrop: false });
 }
 
 type ReleaseInfoProps = {
