@@ -79,7 +79,7 @@ function getModalStyle(name: Modals) {
       height: "min-content",
       maxHeight: "95vh",
       margin: "auto",
-      borderColor: "var(--tertiary-color)",
+      borderColor: "var(--modal-border-color)",
       borderRadius: ".5rem",
       padding: name === "lightbox" ? 0 : "1.5rem",
       overflow: "initial",

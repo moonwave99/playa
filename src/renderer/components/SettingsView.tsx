@@ -113,7 +113,7 @@ export default function SettingsView({ onSave, onCancel }: SettingsViewProps) {
     const className = formStyles[type === "checkbox" ? "checkbox" : "input"];
     return (
       <label key={key} className={formStyles.label}>
-        <span>{t(`modals.SearchView.fields.${key}.label`)}</span>
+        <span>{t(`modals.SettingsView.fields.${key}.label`)}</span>
         <input
           type={type === "checkbox" ? "checkbox" : "input"}
           tabIndex={type === "path" ? -1 : 0}
@@ -122,7 +122,7 @@ export default function SettingsView({ onSave, onCancel }: SettingsViewProps) {
           name={key}
           className={className}
           required={type !== "checkbox"}
-          placeholder={t(`modals.SearchView.fields.${key}.placeholder`)}
+          placeholder={t(`modals.SettingsView.fields.${key}.placeholder`)}
           value={(copy[key] as string) || ""}
           checked={!!copy[key]}
           onChange={(event: FormEvent) =>
@@ -140,7 +140,7 @@ export default function SettingsView({ onSave, onCancel }: SettingsViewProps) {
             className={cx(buttonStyles.button, styles.fileButton)}
             type="button"
             onClick={() => openFile(key, options)}
-            aria-label={t(`modals.SearchView.fields.${key}.label`)}
+            aria-label={t(`modals.SettingsView.fields.${key}.label`)}
           >
             <IoFolderOpenOutline />
           </button>

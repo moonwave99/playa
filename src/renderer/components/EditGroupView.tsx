@@ -48,7 +48,7 @@ export default function EditGroupView({
 
   return (
     <div className={styles.view}>
-      <div className={formStyles.container}>
+      <div className={cx(formStyles.container, formStyles.separator)}>
         <h2>{t("modals.EditGroupView.title")}</h2>
         <form onSubmit={onSubmit} className={formStyles.form}>
           <div className={formStyles.actions}>

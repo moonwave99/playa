@@ -70,6 +70,7 @@ export default function AddToEntityListView({
               items={itemsTo}
               onChange={setItemTo}
               allowCustomValue
+              fixedList
               autoFocus={autoFocus}
               getText={(item) => item?.title}
               getCustomValue={(title) => ({ id: null as number, title })}

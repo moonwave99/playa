@@ -65,7 +65,7 @@ export default function EditArtistView({
 
   return (
     <div className={styles.EditArtistView}>
-      <div className={formStyles.container}>
+      <div className={cx(formStyles.container, formStyles.separator)}>
         <h2>{t("modals.EditArtistView.title")}</h2>
         <form onSubmit={onSubmit} className={formStyles.form}>
           <label className={cx(formStyles.label, styles.label)}>

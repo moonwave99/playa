@@ -98,40 +98,42 @@ export default function EditReleasesView({
     <div className={styles.EditReleaseView}>
       <h2>{t(`modals.EditReleaseView.title`)}</h2>
       <form onSubmit={onSubmit} className={formStyles.form}>
-        <ul className={styles.releaseList}>
-          {folderInfo.map((release, index) => (
-            <li key={release.id}>
-              <FolderView
-                hasFocus={index === 0}
-                isMainRelease={index === 0}
-                hasMultipleDiscs={folderInfo.length > 1}
-                release={release}
-                onInput={(key, value) => updateInfo(index, key, value)}
-              />
-            </li>
-          ))}
-        </ul>
-        <div className={formStyles.actions}>
-          {USE_SMART_IMPORT && (
-            <div className={formStyles.info}>
-              <MdInfoOutline />
-              {t(`modals.EditReleaseView.moveInfo`)}
-            </div>
-          )}
-          <button
-            type="submit"
-            className={formStyles.button}
-            disabled={!canSubmit()}
-          >
-            {t(`modals.EditReleaseView.actions.submit`)}
-          </button>
-          <button
-            type="button"
-            className={formStyles.button}
-            onClick={onCancel}
-          >
-            {t(`modals.EditReleaseView.actions.cancel`)}
-          </button>
+        <div className={cx(formStyles.container, formStyles.separator)}>
+          <ul className={styles.releaseList}>
+            {folderInfo.map((release, index) => (
+              <li key={release.id}>
+                <FolderView
+                  hasFocus={index === 0}
+                  isMainRelease={index === 0}
+                  hasMultipleDiscs={folderInfo.length > 1}
+                  release={release}
+                  onInput={(key, value) => updateInfo(index, key, value)}
+                />
+              </li>
+            ))}
+          </ul>
+          <div className={formStyles.actions}>
+            {USE_SMART_IMPORT && (
+              <div className={formStyles.info}>
+                <MdInfoOutline />
+                {t(`modals.EditReleaseView.moveInfo`)}
+              </div>
+            )}
+            <button
+              type="submit"
+              className={formStyles.button}
+              disabled={!canSubmit()}
+            >
+              {t(`modals.EditReleaseView.actions.submit`)}
+            </button>
+            <button
+              type="button"
+              className={formStyles.button}
+              onClick={onCancel}
+            >
+              {t(`modals.EditReleaseView.actions.cancel`)}
+            </button>
+          </div>
         </div>
         <AdditionalArtistsEditor releaseId={release.id} />
       </form>

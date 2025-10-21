@@ -89,10 +89,10 @@
   align-items: center;
   justify-content: center;
   color: var(--secondary-color);
-  border-radius: 0.25rem;
+  border-radius: 0.35rem;
   appearance: none;
-  border: none;
-  background-color: var(--tertiary-color);
+  border: 1px solid var(--tertiary-color);
+  background-color: var(--button-background-color);
   padding: 0 1rem;
 
   &:hover {
@@ -107,6 +107,7 @@
   &.primary {
     background-color: var(--accent-color);
     color: var(--primary-color);
+    border: none;
   }
 
   &[disabled] {
@@ -123,6 +124,7 @@
   gap: 0.25rem;
   font-size: 0.8rem;
   user-select: none;
+  color: var(--secondary-color);
 
   > a {
     color: var(--accent-color);
@@ -150,10 +152,11 @@
 }
 
 .container {
-  border-radius: 0.25rem;
-  padding: 1rem;
-  background-color: var(--background-color-light);
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  &.separator {
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--tertiary-color);
+  }
 }

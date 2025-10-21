@@ -207,6 +207,11 @@ const randomMenu: (MenuEntry & { entity: Entities })[] = [
     accelerator: "Alt+C",
     entity: "collection",
   },
+  {
+    label: "Show Random Group",
+    accelerator: "Alt+G",
+    entity: "group",
+  },
 ];
 
 type InitMenuParams = {

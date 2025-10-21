@@ -21,6 +21,7 @@ type LookupViewProps<T extends HasId> = {
   allowCustomValue?: boolean;
   className?: string;
   autoFocus?: boolean;
+  fixedList?: boolean;
   onChange: (item: T) => void;
   onQueryChange?: (query: string) => void;
   getText: (item: T) => string;
@@ -34,6 +35,7 @@ export default function LookupView<T extends HasId>({
   allowCustomValue,
   className,
   autoFocus,
+  fixedList,
   onChange,
   onQueryChange,
   getText,
@@ -77,7 +79,7 @@ export default function LookupView<T extends HasId>({
             </ComboboxButton>
           ) : null}
         </div>
-        {query.length >= 3 && (
+        {(fixedList || query.length >= 3) && (
           <ComboboxOptions className={styles.LookupViewOptions}>
             {displayCustomInput && (
               <ComboboxOption value={getCustomValue(query)}>

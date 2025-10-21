@@ -1,7 +1,7 @@
 .EditReleaseView {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1rem;
   background-color: black;
 
   h2,
@@ -28,7 +28,7 @@
   gap: 1rem;
   background-color: var(--release-view-background-color);
   padding: 1rem;
-  border-radius: .25rem;
+  border-radius: 0.25rem;
   overflow: hidden;
 }
 

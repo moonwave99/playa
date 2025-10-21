@@ -5,7 +5,7 @@ import { setupElectron } from "../electron";
 const getElectronApp = setupElectron();
 
 test.describe("Group", () => {
-  test("add an Artist to the selected Group", async () => {
+  test("add an Artist to an existing Group", async () => {
     const electronApp = getElectronApp();
     const page = await electronApp.firstWindow();
 
