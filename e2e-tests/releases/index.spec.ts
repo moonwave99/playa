@@ -10,9 +10,8 @@ test.describe("Releases", () => {
     await page.getByRole("button", { name: "Toggle Menu" }).click();
     await page.getByLabel("Go to the Releases page").click();
 
-    await expect(
-      page.locator('[data-testid="breadcrumbs"]').getByText("Releases")
-    ).toBeVisible();
+    const breadcrumbs = page.locator('[data-testid="breadcrumbs"]');
+    await expect(breadcrumbs).toContainText("Releases");
 
     await page
       .locator('[data-testid="ReleasesPage"]')

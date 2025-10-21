@@ -14,9 +14,9 @@ test.describe("Containing Groups", () => {
     await page.getByRole("button", { name: "Toggle Menu" }).click();
     await page.getByLabel("Go to the Artists page").click();
 
-    await expect(
-      page.locator('[data-testid="breadcrumbs"]').getByText("Artists")
-    ).toBeVisible();
+    await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
+      "Artists"
+    );
 
     await page.getByRole("button", { name: "Show latest Artists" }).click();
 
@@ -51,9 +51,9 @@ test.describe("Containing Groups", () => {
     await page.getByRole("button", { name: "Toggle Menu" }).click();
     await page.getByLabel("Go to the Artists page").click();
 
-    await expect(
-      page.locator('[data-testid="breadcrumbs"]').getByText("Artists")
-    ).toBeVisible();
+    await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
+      "Artists"
+    );
 
     await page.getByRole("button", { name: "Show latest Artists" }).click();
 
@@ -88,9 +88,9 @@ test.describe("Containing Groups", () => {
     await page.getByRole("button", { name: "Toggle Menu" }).click();
     await page.getByLabel("Go to the Artists page").click();
 
-    await expect(
-      page.locator('[data-testid="breadcrumbs"]').getByText("Artists")
-    ).toBeVisible();
+    await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
+      "Artists"
+    );
 
     await page.getByRole("button", { name: "Show latest Artists" }).click();
 
@@ -101,29 +101,19 @@ test.describe("Containing Groups", () => {
 
     await expect(page.locator('[data-testid="ArtistPage"]')).toBeVisible();
 
-    await page
-      .locator('[data-testid="ArtistPageHeader"]')
-      .getByText("Group 1")
-      .hover();
+    const artistHeader = page.locator('[data-testid="ArtistPageHeader"]');
 
-    await page
-      .locator('[data-testid="ArtistPageHeader"]')
-      .getByLabel("Remove Artist 10 from Group 1")
-      .click();
+    await artistHeader.getByText("Group 1").hover();
+    await artistHeader.getByLabel("Remove Artist 10 from Group 1").click();
 
-    await expect(
-      page.locator('[data-testid="ArtistPageHeader"]').getByText("Group 1")
-    ).not.toBeVisible();
-
+    await artistHeader.getByText("New Group").hover();
     await page
       .locator('[data-testid="ArtistPageHeader"]')
       .getByLabel("Remove Artist 10 from New Group")
       .click();
 
-    await expect(
-      page.locator('[data-testid="ArtistPageHeader"]').getByText("New Group")
-    ).not.toBeVisible();
-
-    await expect(page.getByText("Appears in")).not.toBeVisible();
+    await expect(artistHeader).not.toContainText("Group 1");
+    await expect(artistHeader).not.toContainText("New Group");
+    await expect(artistHeader).not.toContainText("Appears in");
   });
 });

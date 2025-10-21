@@ -14,9 +14,9 @@ test.describe("Related Artists", () => {
     await page.getByRole("button", { name: "Toggle Menu" }).click();
     await page.getByLabel("Go to the Artists page").click();
 
-    await expect(
-      page.locator('[data-testid="breadcrumbs"]').getByText("Artists")
-    ).toBeVisible();
+    await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
+      "Artists"
+    );
 
     await page.getByRole("button", { name: "Show latest Artists" }).click();
 
@@ -29,7 +29,7 @@ test.describe("Related Artists", () => {
 
     await clickMenuItemById(electronApp, "editArtist");
     const modal = page.locator(".ReactModalPortal");
-    await expect(modal.getByText("Edit Artist").first()).toBeVisible();
+    await expect(modal).toContainText("Edit Artist");
 
     await modal.getByPlaceholder("Search related Artist").fill("Artist 2");
     await page.waitForTimeout(100);
@@ -37,10 +37,10 @@ test.describe("Related Artists", () => {
 
     await page.keyboard.press("Escape");
 
-    await expect(page.getByText("Related artists")).toBeVisible();
-    await expect(
-      page.locator('[data-testid="ArtistPageHeader"]').getByText("Artist 2")
-    ).toBeVisible();
+    const artistHeader = page.locator('[data-testid="ArtistPageHeader"]');
+
+    await expect(artistHeader).toContainText("Related artists");
+    await expect(artistHeader).toContainText("Artist 2");
   });
 
   test("remove a related Artist from current Artist", async () => {
@@ -50,9 +50,9 @@ test.describe("Related Artists", () => {
     await page.getByRole("button", { name: "Toggle Menu" }).click();
     await page.getByLabel("Go to the Artists page").click();
 
-    await expect(
-      page.locator('[data-testid="breadcrumbs"]').getByText("Artists")
-    ).toBeVisible();
+    await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
+      "Artists"
+    );
 
     await page.getByRole("button", { name: "Show latest Artists" }).click();
 
@@ -62,20 +62,12 @@ test.describe("Related Artists", () => {
       .click();
 
     await expect(page.locator('[data-testid="ArtistPage"]')).toBeVisible();
+    const artistHeader = page.locator('[data-testid="ArtistPageHeader"]');
 
-    await page
-      .locator('[data-testid="ArtistPageHeader"]')
-      .getByText("Artist 2")
-      .hover();
+    await artistHeader.getByText("Artist 2").hover();
+    await artistHeader.getByLabel("Disconnect Artist 2 from Artist 10").click();
 
-    await page
-      .locator('[data-testid="ArtistPageHeader"]')
-      .getByLabel("Disconnect Artist 2 from Artist 10")
-      .click();
-
-    await expect(page.getByText("Related artists")).not.toBeVisible();
-    await expect(
-      page.locator('[data-testid="ArtistPageHeader"]').getByText("Artist 2")
-    ).not.toBeVisible();
+    await expect(artistHeader).not.toContainText("Related artists");
+    await expect(artistHeader).not.toContainText("Artist 2");
   });
 });

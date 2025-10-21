@@ -93,6 +93,23 @@ test.describe("Import", () => {
       .filter({ hasText: "Album 1" });
     await expect(groupedRelease).toContainText("2 discs");
 
+    await groupedRelease.getByText("Album 1").first().click();
+
+    const releaseHeader = page.locator(
+      '[data-testid="ReleaseWithTracklistHeader"]'
+    );
+
+    await expect(releaseHeader).toContainText("Album 1");
+    await expect(releaseHeader).toContainText("2 discs");
+    await expect(releaseHeader).toContainText("10 tracks");
+
+    const tracklist = page.locator('[data-testid="Tracklist"]');
+
+    await expect(tracklist).toContainText("Disc 1");
+    await expect(tracklist).toContainText("Disc 2");
+
+    await page.goBack();
+
     await groupedRelease.click();
     await page.waitForTimeout(100);
 

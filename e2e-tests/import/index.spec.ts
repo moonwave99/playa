@@ -32,7 +32,7 @@ test.describe("Import", () => {
     await page.getByLabel("Go to the Home page").click();
     await expect(page.getByText("Latest Releases")).toBeVisible();
     const breadcrumbs = page.locator('[data-testid="breadcrumbs"]');
-    await expect(breadcrumbs.getByText("Home")).toBeVisible();
+    await expect(breadcrumbs).toContainText("Home");
 
     await clickMenuItemById(electronApp, "importFolder");
 
@@ -44,47 +44,40 @@ test.describe("Import", () => {
         .getByText("Album 1", { exact: true })
     ).toBeVisible();
 
-    await expect(
-      page.locator('[data-testid="LatestArtists"]').getByText("Artist 1")
-    ).toBeVisible();
+    await expect(page.locator('[data-testid="LatestArtists"]')).toContainText(
+      "Artist 1"
+    );
 
     await clickMenuItemById(electronApp, "navigate-artists");
     await expect(breadcrumbs.getByText("Artists")).toBeVisible();
 
     const artistsList = page.locator('[data-testid="LatestArtistsView"]');
 
-    await expect(artistsList.getByText("Artist 1")).toBeVisible();
+    await expect(artistsList).toContainText("Artist 1");
 
     await artistsList.getByText("Artist 1").click();
-    await expect(
-      page.locator('[data-testid="ArtistPageHeader"]').getByText("Artist 1")
-    ).toBeVisible();
-    await expect(
-      page.locator('[data-testid="ArtistPageHeader"]').getByText("1 Releases")
-    ).toBeVisible();
+    const artistHeader = page.locator('[data-testid="ArtistPageHeader"]');
+    await expect(artistHeader).toContainText("Artist 1");
+    await expect(artistHeader).toContainText("1 releases");
 
-    const releaseList = page.locator('[data-testid="ReleaseList"]');
-    await expect(releaseList).toBeVisible();
-    const releaseLink = releaseList
+    await page
+      .locator('[data-testid="ReleaseList"]')
       .getByText("Album 1", { exact: true })
-      .first();
-    await expect(releaseLink).toBeVisible();
-    await releaseLink.click();
+      .first()
+      .click();
 
     await expect(
-      page
-        .locator('[data-testid="ReleaseWithTracklistHeader"]')
-        .getByText("Album 1")
-    ).toBeVisible();
+      page.locator('[data-testid="ReleaseWithTracklistHeader"]')
+    ).toContainText("Album 1");
 
     const tracklist = page.locator('[data-testid="Tracklist"]');
 
     await expect(tracklist).toBeVisible();
 
     await Promise.all(
-      Array.from({ length: 5 }, async (_, i) => {
-        await expect(tracklist.getByText(`Track ${pad(i + 1)}`)).toBeVisible();
-      })
+      Array.from({ length: 5 }, (_, i) =>
+        expect(tracklist).toContainText(`Track ${pad(i + 1)}`)
+      )
     );
   });
 });

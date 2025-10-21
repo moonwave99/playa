@@ -36,7 +36,7 @@ test.describe("Import", () => {
     await page.getByLabel("Go to the Home page").click();
     await expect(page.getByText("Latest Releases")).toBeVisible();
     const breadcrumbs = page.locator('[data-testid="breadcrumbs"]');
-    await expect(breadcrumbs.getByText("Home")).toBeVisible();
+    await expect(breadcrumbs).toContainText("Home");
 
     await clickMenuItemById(electronApp, "importFolder");
 
@@ -60,20 +60,14 @@ test.describe("Import", () => {
     await expect(artistsList.getByText("Artist 1")).toBeVisible();
 
     await artistsList.getByText("Artist 1").click();
-    await expect(
-      page.locator('[data-testid="ArtistPageHeader"]').getByText("Artist 1")
-    ).toBeVisible();
-    await expect(
-      page.locator('[data-testid="ArtistPageHeader"]').getByText("3 Releases")
-    ).toBeVisible();
+    const artistHeader = page.locator('[data-testid="ArtistPageHeader"]');
+    await expect(artistHeader).toContainText("Artist 1");
+    await expect(artistHeader).toContainText("3 releases");
 
     const releaseList = page.locator('[data-testid="ReleaseList"]');
-    await expect(releaseList).toBeVisible();
     await Promise.all(
       Array.from({ length: 3 }, (_, i) =>
-        expect(
-          releaseList.getByText(`Album ${i + 1}`, { exact: true }).first()
-        ).toBeInViewport()
+        expect(releaseList).toContainText(`Album ${i + 1}`)
       )
     );
   });

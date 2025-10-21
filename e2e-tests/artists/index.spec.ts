@@ -13,9 +13,9 @@ test.describe("Artists Page", () => {
     await page.getByLabel("Go to the Artists page").click();
     await page.getByRole("button", { name: "Show latest Artists" }).click();
 
-    await expect(
-      page.locator('[data-testid="breadcrumbs"]').getByText("Artists")
-    ).toBeVisible();
+    await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
+      "Artists"
+    );
   });
 
   test("toggle Artists View mode", async () => {
@@ -24,9 +24,9 @@ test.describe("Artists Page", () => {
     await page.getByRole("button", { name: "Toggle Menu" }).click();
     await page.getByLabel("Go to the Artists page").click();
 
-    await expect(
-      page.locator('[data-testid="breadcrumbs"]').getByText("Artists")
-    ).toBeVisible();
+    await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
+      "Artists"
+    );
 
     await page.getByRole("button", { name: "Show Artist List" }).click();
     await expect(page.getByTestId("AlphabeticalList")).toBeInViewport();

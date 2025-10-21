@@ -12,9 +12,9 @@ test.describe("Edit Artist", () => {
     await page.getByRole("button", { name: "Toggle Menu" }).click();
     await page.getByLabel("Go to the Artists page").click();
 
-    await expect(
-      page.locator('[data-testid="breadcrumbs"]').getByText("Artists")
-    ).toBeVisible();
+    await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
+      "Artists"
+    );
 
     await page.getByRole("button", { name: "Show latest Artists" }).click();
 
@@ -27,18 +27,15 @@ test.describe("Edit Artist", () => {
 
     await clickMenuItemById(electronApp, "editArtist");
 
-    await expect(
-      page.locator(".ReactModalPortal").getByText("Edit Artist").first()
-    ).toBeVisible();
+    const modal = page.locator(".ReactModalPortal");
+    await expect(modal).toContainText("Edit Artist");
 
     await page.getByPlaceholder("Enter Artist Name").fill("New Artist Name");
     await page.keyboard.press("Enter");
 
     await expect(page.locator(".ReactModalPortal")).not.toBeVisible();
     await expect(
-      page
-        .locator('[data-testid="ArtistPageHeader"]')
-        .getByText("New Artist Name")
-    ).toBeInViewport();
+      page.locator('[data-testid="ArtistPageHeader"]')
+    ).toContainText("New Artist Name");
   });
 });
