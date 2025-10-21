@@ -8,7 +8,7 @@ import type {
   HasId,
 } from "@/types/types";
 import { buildMenu, getDeleteEntry, getCoverEntityEntry } from "./menu";
-import { getReleaseTitle, normalizeArtistDisplayName } from "@/lib/utils";
+import { getReleaseFullTitle } from "@/lib/utils";
 import {
   searchReleaseOnDiscogs,
   searchReleaseOnRYM,
@@ -56,7 +56,7 @@ export const releaseMenu =
   ) => {
     if (selection.length === 1) {
       const release = selection[0];
-      const title = `${normalizeArtistDisplayName(release.artist.name)} - ${getReleaseTitle(release)}`;
+      const title = getReleaseFullTitle(release);
       buildMenu([
         {
           label: `Playback Release`,

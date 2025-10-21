@@ -87,17 +87,20 @@ export function getCoverEntityEntry({
 }
 
 type GetDeleteEntryParams = {
+  id?: string;
   title: string;
   deleteFn: () => Promise<unknown>;
   queryKeys: QueryKey;
 };
 
 export function getDeleteEntry({
+  id,
   title,
   deleteFn,
   queryKeys,
 }: GetDeleteEntryParams) {
   return {
+    id,
     label: `Remove '${title}' from Library`,
     click: async () => {
       const cancel = dialog.showMessageBoxSync(null, {
@@ -153,8 +156,8 @@ function refreshMenu(menu: Menu, stateManager: StateManager) {
       return;
     }
     item.enabled = selectedReleases.length === 1;
-    if (item.id === "addReleasesToCollection") {
-      item.enabled = true;
+    if (["addReleasesToCollection", "deleteReleases"].includes(item.id)) {
+      item.enabled = selectedReleases.length > 0;
     }
   });
 
@@ -374,6 +377,15 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
           accelerator: "Cmd+Shift+G",
           visible: false,
           click: controllers.release.unGroupSelectedRelease,
+        },
+        {
+          id: "deleteReleases",
+          label: "Delete Selected Release",
+          accelerator: "Cmd+Backspace",
+          click: () =>
+            controllers.release.deleteReleases(
+              stateManager.getSelectedReleases().map(({ id }) => id)
+            ),
         },
         {
           id: "addReleasesToCollection",

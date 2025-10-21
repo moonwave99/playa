@@ -41,6 +41,10 @@ export function getReleaseTitle({
   return match ? match[1] : title;
 }
 
+export function getReleaseFullTitle(release: ReleaseWithArtistAndSubReleases) {
+  return `${normalizeArtistDisplayName(release.artist.name)} - ${getReleaseTitle(release)}`;
+}
+
 export function getReleaseArtist({
   artist,
   additionalArtists,

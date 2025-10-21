@@ -7,17 +7,21 @@ import { setupElectron } from "../electron";
 import { cleanup } from "../../src/test/seed";
 import { createAlbum } from "../../src/test/tracks";
 import { getE2ETmpPath } from "../../src/test/utils";
-import { pad } from "../../src/lib/utils";
 
 const getElectronApp = setupElectron();
 
 test.beforeAll(async ({}, { testId }) => {
   await cleanup({ id: testId, preserveSettings: true });
-  await createAlbum({
-    libraryPath: path.join(getE2ETmpPath(testId), "Library"),
-    artist: "Artist 1",
-    album: "Album 1",
-  });
+
+  await Promise.all(
+    Array.from({ length: 3 }, (_, i) =>
+      createAlbum({
+        libraryPath: path.join(getE2ETmpPath(testId), "Library"),
+        artist: "Artist 1",
+        album: `Album ${i + 1}`,
+      })
+    )
+  );
 });
 
 test.afterAll(async ({}, { testId }) => {
@@ -25,7 +29,7 @@ test.afterAll(async ({}, { testId }) => {
 });
 
 test.describe("Import", () => {
-  test("import a folder into library", async () => {
+  test("import multiple folders into library", async () => {
     const electronApp = getElectronApp();
     const page = await electronApp.firstWindow();
     await page.getByRole("button", { name: "Toggle Menu" }).click();
@@ -60,31 +64,17 @@ test.describe("Import", () => {
       page.locator('[data-testid="ArtistPageHeader"]').getByText("Artist 1")
     ).toBeVisible();
     await expect(
-      page.locator('[data-testid="ArtistPageHeader"]').getByText("1 Releases")
+      page.locator('[data-testid="ArtistPageHeader"]').getByText("3 Releases")
     ).toBeVisible();
 
     const releaseList = page.locator('[data-testid="ReleaseList"]');
     await expect(releaseList).toBeVisible();
-    const releaseLink = releaseList
-      .getByText("Album 1", { exact: true })
-      .first();
-    await expect(releaseLink).toBeVisible();
-    await releaseLink.click();
-
-    await expect(
-      page
-        .locator('[data-testid="ReleaseWithTracklistHeader"]')
-        .getByText("Album 1")
-    ).toBeVisible();
-
-    const tracklist = page.locator('[data-testid="Tracklist"]');
-
-    await expect(tracklist).toBeVisible();
-
     await Promise.all(
-      Array.from({ length: 5 }, async (_, i) => {
-        await expect(tracklist.getByText(`Track ${pad(i + 1)}`)).toBeVisible();
-      })
+      Array.from({ length: 3 }, (_, i) =>
+        expect(
+          releaseList.getByText(`Album ${i + 1}`, { exact: true }).first()
+        ).toBeInViewport()
+      )
     );
   });
 });
