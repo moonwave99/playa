@@ -18,7 +18,6 @@ TBD
 - [ ] import in non-smart mode;
 - [ ] edit in non-smart mode;
 - [ ] lightbox view;
-- [ ] additional Artists in Release;
 
 ## License
 
