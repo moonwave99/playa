@@ -1,22 +1,31 @@
-import { normalizeTitle } from './utils';
-import type { HasId, Entities } from '@/types/types';
-import { deburr, mapValues } from 'lodash';
+import { normalizeTitle } from "./utils";
+import type { HasId, Entities, HasEntityType } from "@/types/types";
+import { deburr, mapValues } from "lodash";
 
 export function getURL(url: string, params: Record<string, string>) {
   return `${url}?${new URLSearchParams(mapValues(params, deburr))}`;
 }
 
-export function getDiscogsURL(q: string, type: 'artist' | 'master') {
-  return getURL('https://www.discogs.com/search', { type, q: normalizeTitle(q) });
+export function getDiscogsURL(q: string, type: "artist" | "master") {
+  return getURL("https://www.discogs.com/search", {
+    type,
+    q: normalizeTitle(q),
+  });
 }
 
 const RYMMap = {
-  artist: 'a',
-  release: 'l'
+  artist: "a",
+  release: "l",
 };
 
-export function getRYMURL(searchterm: string, type: 'artist' | 'release' = 'release') {
-  return getURL('https://rateyourmusic.com/search', { searchtype: RYMMap[type], searchterm: normalizeTitle(searchterm) });
+export function getRYMURL(
+  searchterm: string,
+  type: "artist" | "release" = "release"
+) {
+  return getURL("https://rateyourmusic.com/search", {
+    searchtype: RYMMap[type],
+    searchterm: normalizeTitle(searchterm),
+  });
 }
 
 export function getCover(hash: string): string {
@@ -39,7 +48,14 @@ export function getReleaseLink({ id }: HasId) {
   return `/releases/${id}`;
 }
 
-export function getRandomLink(stats: Partial<Record<Entities, number>>, entity: Entities): string {
+export function getEntityLink({ id, entityType }: HasId & HasEntityType) {
+  return `/${entityType.toLowerCase()}s/${id}`;
+}
+
+export function getRandomLink(
+  stats: Partial<Record<Entities, number>>,
+  entity: Entities
+): string {
   const count = stats[entity];
   const randomId = Math.round(Math.random() * count);
   return `/${entity}s/${randomId}`;

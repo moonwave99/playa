@@ -3,6 +3,7 @@ import { Controllers, send, openModal } from "@/main/controllers/init";
 import Prisma, { ReleaseType } from "@prisma/client-generated";
 import type { ICommonTagsResult } from "music-metadata/lib/type";
 
+import { EntityType } from "@prisma/client-generated";
 export { EntityType } from "@prisma/client-generated";
 
 type Artist = Prisma.Artist & {
@@ -62,6 +63,7 @@ export type SearchableEntities =
   | "group";
 export type Stats = Record<SearchableEntities, number>;
 export type HasId = { id: number };
+export type HasEntityType = { entityType: EntityType };
 export type HasTitle = { title: string };
 
 export type CollectionCreate = { title: string; releases?: number[] };

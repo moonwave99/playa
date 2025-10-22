@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { getReleaseContextMenuParams } from "@/lib/utils";
@@ -6,16 +7,17 @@ import {
   HasId,
   ReleaseWithArtistAndSubReleases,
   Release,
+  HasEntityType,
 } from "@/types/types";
 import api from "../api";
 import useStore from "../store";
-import { withPrevent } from "../hooks/useKeyboardManager";
+import { useKeyManager, withPrevent } from "../hooks/useKeyboardManager";
 import { releaseColumnsConfig } from "../hooks/useResponsiveColumns";
 import useReleases from "../query/useReleases";
 import useArtists from "../query/useArtists";
 import useGroups from "../query/useGroups";
 import useCollections from "../query/useCollections";
-import { getReleaseLink } from "@/lib/links";
+import { getEntityLink } from "@/lib/links";
 
 import ErrorView from "../components/ErrorView";
 import List from "../components/List";
@@ -35,28 +37,64 @@ import formStyles from "../forms.module.css";
 const pageSize = 5;
 
 export default function HomePage() {
-  const collectionData = useCollections({ pageSize });
   const artistData = useArtists({ pageSize });
+  const collectionData = useCollections({ pageSize });
   const groupData = useGroups({ pageSize });
+
+  const dataMap = {
+    artist: artistData.artists,
+    collection: collectionData.collections,
+    group: groupData.groups,
+  };
+
+  const { currentSelection, onReleaseDown, select } = useNavigateHomepage({
+    dataMap,
+  });
+
+  const { section, index } = currentSelection;
 
   return (
     <div className={styles.page} data-testid="HomePage">
-      <LatestReleasesView />
+      <LatestReleasesView
+        onDown={onReleaseDown}
+        onReleaseSelect={() => select({ section: null, index: -1 })}
+      />
       <div className={homepageStyles.wrapper}>
         <LatestEntriesView
           entity="artist"
           {...artistData}
           entries={artistData.artists}
+          selectedIndex={section === "artist" ? index : -1}
+          onEntryClick={(index) =>
+            select({
+              index,
+              section: "artist",
+            })
+          }
         />
         <LatestEntriesView
           entity="collection"
           {...collectionData}
           entries={collectionData.collections}
+          selectedIndex={section === "collection" ? index : -1}
+          onEntryClick={(index) =>
+            select({
+              index,
+              section: "collection",
+            })
+          }
         />
         <LatestEntriesView
           entity="group"
-          {...groupData}
+          {...collectionData}
           entries={groupData.groups}
+          selectedIndex={section === "group" ? index : -1}
+          onEntryClick={(index) =>
+            select({
+              index,
+              section: "group",
+            })
+          }
         />
       </div>
       <StatsView />
@@ -66,9 +104,15 @@ export default function HomePage() {
 
 type LatestReleasesViewProps = {
   count?: number;
+  onDown: () => void;
+  onReleaseSelect: () => void;
 };
 
-function LatestReleasesView({ count = 5 }: LatestReleasesViewProps) {
+function LatestReleasesView({
+  count = 5,
+  onDown,
+  onReleaseSelect,
+}: LatestReleasesViewProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { setModalContents } = useStore();
@@ -90,7 +134,7 @@ function LatestReleasesView({ count = 5 }: LatestReleasesViewProps) {
       api.system.playback({ release_id: release.id });
       return;
     }
-    navigate(getReleaseLink(release));
+    navigate(getEntityLink(release));
   }
 
   const keyHandlers = {
@@ -103,6 +147,7 @@ function LatestReleasesView({ count = 5 }: LatestReleasesViewProps) {
         },
       });
     }),
+    ArrowDown: withPrevent(onDown),
   };
 
   return (
@@ -133,6 +178,7 @@ function LatestReleasesView({ count = 5 }: LatestReleasesViewProps) {
           keyHandlers={keyHandlers}
           paddingEnd={0}
           testId="LatestReleases"
+          onSelect={onReleaseSelect}
           render={({ item, selection, ...rest }) => (
             <ReleaseView
               {...rest}
@@ -156,16 +202,20 @@ function LatestReleasesView({ count = 5 }: LatestReleasesViewProps) {
 
 type LatestEntriesViewProps<T extends Item> = {
   entity: "artist" | "collection" | "group";
+  selectedIndex: number;
   isPending: boolean;
   error: Error;
   entries: T[];
+  onEntryClick: (index: number) => void;
 };
 
 function LatestEntriesView<T extends Item>({
+  entity,
+  selectedIndex = -1,
   isPending,
   error,
-  entity,
   entries,
+  onEntryClick,
 }: LatestEntriesViewProps<T>) {
   const { t } = useTranslation();
 
@@ -202,13 +252,141 @@ function LatestEntriesView<T extends Item>({
         </div>
       ) : (
         <ul className={homepageStyles.entityList}>
-          {entries.map((x) => (
-            <li key={x.id}>
-              <ListCard item={x} />
+          {entries.map((x, index) => (
+            <li key={x.id} data-id={`item-${entity}-${index}`}>
+              <ListCard
+                hasFocus={selectedIndex === index}
+                selected={selectedIndex === index}
+                item={x}
+                onClick={() => onEntryClick(index)}
+              />
             </li>
           ))}
         </ul>
       )}
     </section>
   );
+}
+
+type Selection = {
+  section: "artist" | "collection" | "group";
+  index: number;
+};
+
+type UseNavigateHomepageParams = {
+  context?: string;
+  dataMap: Record<Selection["section"], (HasId & HasEntityType)[]>;
+};
+
+type UseNavigateHomepage = {
+  onReleaseDown: () => void;
+  currentSelection: Selection;
+  select: (selection: Selection) => void;
+};
+
+const horizontalSections = ["artist", "collection", "group"] as const;
+
+function useNavigateHomepage({
+  context = "home",
+  dataMap,
+}: UseNavigateHomepageParams): UseNavigateHomepage {
+  const navigate = useNavigate();
+  const [currentSelection, setCurrentSelection] = useState<Selection>({
+    section: null,
+    index: -1,
+  });
+
+  useEffect(() => {
+    document
+      .querySelector(
+        `[data-id="item-${currentSelection.section}-${currentSelection.index}"]`
+      )
+      ?.scrollIntoView({
+        block: "nearest",
+      });
+  }, [currentSelection]);
+
+  const { section, index } = currentSelection;
+
+  const { setContext } = useKeyManager({
+    context,
+    handlers: {
+      ArrowUp: withPrevent(() => {
+        if (index === 0) {
+          setContext("list");
+          setCurrentSelection({
+            section: null,
+            index: -1,
+          });
+          return;
+        }
+        setCurrentSelection((prev) => ({ ...prev, index: prev.index - 1 }));
+      }),
+      ArrowDown: withPrevent(() =>
+        setCurrentSelection((prev) => ({
+          ...prev,
+          index: Math.min(prev.index + 1, dataMap[section]?.length - 1),
+        }))
+      ),
+      ArrowRight: () =>
+        setCurrentSelection((prev) => {
+          if (!prev.section) {
+            return prev;
+          }
+          const sectionIndex = horizontalSections.indexOf(prev.section);
+          if (sectionIndex === horizontalSections.length - 1) {
+            return prev;
+          }
+          return {
+            index: 0,
+            section: horizontalSections[sectionIndex + 1],
+          };
+        }),
+      ArrowLeft: () =>
+        setCurrentSelection((prev) => {
+          if (!prev.section) {
+            return prev;
+          }
+          const sectionIndex = horizontalSections.indexOf(prev.section);
+          if (sectionIndex === 0) {
+            return prev;
+          }
+          return {
+            index: 0,
+            section: horizontalSections[sectionIndex - 1],
+          };
+        }),
+      Enter: () => {
+        navigate(
+          getEntityLink(
+            dataMap[currentSelection.section][currentSelection.index]
+          )
+        );
+      },
+    },
+  });
+
+  useEffect(() => {
+    setContext("list");
+    return () => setContext("list");
+  }, []);
+
+  function onReleaseDown() {
+    setContext(context);
+    setCurrentSelection({
+      section: horizontalSections[0],
+      index: 0,
+    });
+  }
+
+  function select(selection: Selection) {
+    setContext(selection.section !== null ? context : "list");
+    setCurrentSelection(selection);
+  }
+
+  return {
+    onReleaseDown,
+    currentSelection,
+    select,
+  };
 }

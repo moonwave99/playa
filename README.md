@@ -20,8 +20,6 @@ TBD
 - [ ] lightbox view;
 - [ ] additional Artists in Release;
 - [ ] delete Artist;
-- [ ] delete Collection;
-- [ ] delete Group;
 
 ## License
 
