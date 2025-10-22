@@ -9,6 +9,7 @@ import {
   searchArtists,
   addRelatedArtist,
   removeRelatedArtist,
+  deleteArtist as _deleteArtist,
 } from "../db/artist";
 import prisma from "../db/prisma";
 import { getEntityPath } from "../utils";
@@ -17,6 +18,7 @@ type ArtistControllerParams = {
   withPath: (key: string, folderPath: string) => string;
   send: (channel: string, ...args: unknown[]) => void;
   showErrorBox: (title: string, content: string) => void;
+  openConfirmDialog: (message: string, detail: string) => boolean;
   skipMove?: boolean;
 };
 
@@ -29,6 +31,7 @@ export function artistController({
   withPath,
   send,
   showErrorBox,
+  openConfirmDialog,
   skipMove = false,
 }: ArtistControllerParams) {
   async function editArtist(infos: EditArtistParams) {
@@ -82,10 +85,33 @@ export function artistController({
 
     send("notify", {
       type: "success",
-      message: `Artist renamed`,
+      message: "Artist renamed",
     });
 
     return updatedArtist;
+  }
+
+  async function deleteArtist(id: number) {
+    const confirm = openConfirmDialog(
+      "Delete Artist",
+      "Are you sure you want to remove the selected Artist and all their Releases from your Library?"
+    );
+    if (!confirm) {
+      return;
+    }
+
+    await _deleteArtist(id);
+
+    send("mutate", [
+      ["releases", "latest"],
+      ["artists", "latest"],
+      ["artists", id],
+    ]);
+
+    send("notify", {
+      type: "success",
+      message: "Artist deleted",
+    });
   }
 
   return {
@@ -98,6 +124,7 @@ export function artistController({
     searchArtists,
     addRelatedArtist,
     removeRelatedArtist,
+    deleteArtist,
   };
 }
 
@@ -111,4 +138,5 @@ export const actions: (keyof ReturnType<typeof artistController>)[] = [
   "searchArtists",
   "addRelatedArtist",
   "removeRelatedArtist",
+  "deleteArtist",
 ];

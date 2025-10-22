@@ -19,7 +19,6 @@ TBD
 - [ ] edit in non-smart mode;
 - [ ] lightbox view;
 - [ ] additional Artists in Release;
-- [ ] delete Artist;
 
 ## License
 

@@ -48,6 +48,10 @@ export const artistMenu =
         label: "Edit Artist",
         click: () => openModal("editArtist", { artist }),
       },
+      {
+        label: "Delete Artist",
+        click: () => controllers.artist.deleteArtist(artist.id),
+      },
       { type: "separator" },
       {
         label: `Add Artist to Group`,

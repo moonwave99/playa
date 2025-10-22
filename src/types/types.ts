@@ -1,15 +1,15 @@
-import { Controllers, send, openModal } from "@/main/controllers/init";
 // eslint-disable-next-line import/no-named-as-default
-import Prisma, { ReleaseType } from "@prisma/client-generated";
+import Prisma, { ReleaseType, EntityType } from "@prisma/client-generated";
 import type { ICommonTagsResult } from "music-metadata/lib/type";
+import { Controllers, send, openModal } from "@/main/controllers/init";
 
-import { EntityType } from "@prisma/client-generated";
 export { EntityType } from "@prisma/client-generated";
 
 type Artist = Prisma.Artist & {
   entityType: "Artist";
   coverRelease?: ReleaseWithArtistAndSubReleases;
 };
+
 type Release = Prisma.Release & {
   entityType: "Release";
 };
@@ -18,13 +18,16 @@ type Collection = Prisma.Collection & {
   entityType: "Collection";
   coverRelease?: ReleaseWithArtistAndSubReleases;
 };
+
 type Group = Prisma.Group & {
   entityType: "Group";
   coverArtist?: ArtistWithReleases;
 };
+
 type Track = Prisma.Track & {
   entityType: "Track";
 };
+
 type Settings = Prisma.Settings;
 
 export type {

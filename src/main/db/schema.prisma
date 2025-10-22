@@ -45,7 +45,7 @@ model Release {
   discNumber        Int?         @default(1)
   hideOnHomepage    Boolean?     @default(false)
   artist_id         Int
-  artist            Artist       @relation(fields: [artist_id], references: [id])
+  artist            Artist       @relation(fields: [artist_id], references: [id], onDelete: Cascade)
   additionalArtists Artist[]     @relation("AppearsInRelease")
   tracks            Track[]
   collections       Collection[] @relation("CollectionToRelease")

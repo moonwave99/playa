@@ -17,6 +17,7 @@ const defaultParams = {
   withPath,
   send: vi.fn(),
   showErrorBox: vi.fn(),
+  openConfirmDialog: vi.fn(),
 };
 
 describe("artist - getArtist function", () => {
@@ -133,9 +134,9 @@ describe("artist - editArtist function", () => {
     const send = vi.fn();
 
     const { editArtist } = artistController({
+      ...defaultParams,
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
       send,
-      showErrorBox: vi.fn(),
     });
 
     await prisma.artist.create({ data: artist });
@@ -175,9 +176,9 @@ describe("artist - editArtist function", () => {
 
     const send = vi.fn();
     const { editArtist } = artistController({
+      ...defaultParams,
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
       send,
-      showErrorBox: vi.fn(),
     });
 
     await prisma.artist.create({ data: artist });
@@ -310,5 +311,49 @@ describe("artist - searchArtists function", () => {
     });
 
     expect(results).toMatchObject(artists.slice(1));
+  });
+});
+
+describe("artist - deleteArtist function", () => {
+  it("does nothing if the cancel button is pressed", async () => {
+    await prisma.artist.create({ data: getFakeArtist(1) });
+    const send = vi.fn();
+    const { deleteArtist } = artistController({
+      ...defaultParams,
+      send,
+      openConfirmDialog: () => false,
+    });
+
+    await deleteArtist(1);
+
+    const artist = await prisma.artist.findFirst({ where: { id: 1 } });
+
+    expect(artist).not.toBeNull();
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("removes the selected artist", async () => {
+    await prisma.artist.create({ data: getFakeArtist(1) });
+    await prisma.release.createMany({ data: getFakeReleasesForArtist(1) });
+
+    const send = vi.fn();
+    const { deleteArtist } = artistController({
+      ...defaultParams,
+      send,
+      openConfirmDialog: () => true,
+    });
+
+    await deleteArtist(1);
+
+    const artist = await prisma.artist.findFirst({ where: { id: 1 } });
+    const releases = await prisma.release.findMany({ where: { artist_id: 1 } });
+
+    expect(artist).toBeNull();
+    expect(releases).toEqual([]);
+    expect(send).toHaveBeenCalledWith("mutate", [
+      ["releases", "latest"],
+      ["artists", "latest"],
+      ["artists", 1],
+    ]);
   });
 });

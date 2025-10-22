@@ -300,3 +300,7 @@ export async function removeRelatedArtist(first_id: number, second_id: number) {
   });
   return true;
 }
+
+export async function deleteArtist(id: number) {
+  await prisma.artist.delete({ where: { id } });
+}

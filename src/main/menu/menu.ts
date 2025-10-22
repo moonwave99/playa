@@ -267,6 +267,14 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
               artist: await stateManager.getCurrentEntity(),
             }),
         },
+        {
+          id: "deleteArtist",
+          label: "Delete Artist",
+          click: async () =>
+            controllers.artist.deleteArtist(
+              (await stateManager.getCurrentEntity()).id
+            ),
+        },
         { type: "separator" },
         {
           label: "Search Artist on Discogs",

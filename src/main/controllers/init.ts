@@ -134,6 +134,7 @@ export async function init(mainWindow: BrowserWindow) {
       withPath,
       send,
       showErrorBox,
+      openConfirmDialog,
       skipMove: IS_E2E_TEST,
     }),
     release: releaseController({
