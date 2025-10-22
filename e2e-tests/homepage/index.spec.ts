@@ -9,8 +9,8 @@ test.describe("Homepage", () => {
     await page.getByRole("button", { name: "Toggle Menu" }).click();
     await page.getByLabel("Go to the Home page").click();
     await expect(page.getByText("Latest Releases")).toBeVisible();
-    await expect(
-      page.locator('[data-testid="breadcrumbs"]').getByText("Home")
-    ).toBeVisible();
+    await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
+      "Home"
+    );
   });
 });

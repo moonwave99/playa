@@ -11,6 +11,7 @@ TBD
 - [ ] artist sidebar;
 - [ ] smart import vs interactive import;
 - [ ] entity tags;
+- [ ] onboarding;
 
 ## E2E specs
 

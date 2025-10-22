@@ -14,7 +14,7 @@ import {
 
 type GroupControllerParams = {
   send: (channel: string, ...args: unknown[]) => void;
-  openConfirmDialog: (message: string, detail: string) => number;
+  openConfirmDialog: (message: string, detail: string) => boolean;
 };
 
 export function groupController({
@@ -22,12 +22,12 @@ export function groupController({
   openConfirmDialog,
 }: GroupControllerParams) {
   async function removeArtistsFromGroup(id: number, artist_ids: number[]) {
-    const cancel = openConfirmDialog(
+    const confirm = openConfirmDialog(
       `Are you sure to remove ${artist_ids.length} entries from this Group?`,
       ""
     );
 
-    if (cancel) {
+    if (!confirm) {
       return;
     }
 

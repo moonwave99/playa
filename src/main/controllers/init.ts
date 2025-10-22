@@ -5,10 +5,26 @@ import {
   type OpenDialogSyncOptions,
   dialog,
   app,
+  protocol,
+  net,
 } from "electron";
 import path from "path";
 import { homedir } from "os";
 import { version as appVersion } from "../../../package.json";
+
+import { systemController } from "./system";
+import { artistController } from "./artist";
+import { releaseController } from "./release";
+import { collectionController } from "./collection";
+import { groupController } from "./group";
+import { searchResultController } from "./searchResult";
+import { statsController } from "./stats";
+import { dialogController } from "./dialog";
+import { importFoldersController } from "./importFolders";
+import { importExportController } from "./importExport";
+import { stateController } from "./state";
+import { settingsController } from "./settings";
+
 import { StateManager } from "../stateManager";
 import {
   initMenu,
@@ -18,20 +34,12 @@ import {
   groupMenu,
   searchResultMenu,
 } from "../menu/menu";
-import { systemController } from "./system";
-import { artistController } from "./artist";
-import { releaseController } from "./release";
-import { collectionController } from "./collection";
-import { groupController } from "./group";
-import { searchResultController } from "./searchResult";
-import { statsController } from "./stats";
-import { importFoldersController } from "./importFolders";
-import { importExportController } from "./importExport";
-import { stateController } from "./state";
+
 import { Modals } from "@/renderer/Modal";
 import { getE2ETmpPath, IS_E2E_TEST } from "@/test/utils";
-import { settingsController } from "./settings";
+import { log } from "../logger";
 import { Settings } from "@/types/types";
+import { getCoverPlaceholder } from "../cover-placeholder";
 
 export type Controllers = {
   system: ReturnType<typeof systemController>;
@@ -59,10 +67,8 @@ export function openModal(name: Modals, params?: unknown) {
 
 export async function init(mainWindow: BrowserWindow) {
   const settings = settingsController();
-
-  await settings.init();
-
-  const { getSetting } = settings;
+  const { init: initSettings, getSetting } = settings;
+  await initSettings();
 
   const desktopPath = path.resolve(homedir(), "Desktop");
   const userDataPath = app.getPath("userData");
@@ -99,15 +105,18 @@ export async function init(mainWindow: BrowserWindow) {
 
   function openConfirmDialog(message: string, detail: string) {
     if (IS_E2E_TEST) {
-      return 0;
+      return true;
     }
-    return dialog.showMessageBoxSync(null, {
+
+    const clickedButton = dialog.showMessageBoxSync(null, {
       message,
       detail,
       type: "warning",
       buttons: ["OK", "Cancel"],
       defaultId: 1,
     });
+
+    return clickedButton === 0;
   }
 
   function showErrorBox(title: string, content: string) {
@@ -139,6 +148,11 @@ export async function init(mainWindow: BrowserWindow) {
     collection: collectionController({ send, openConfirmDialog }),
     group: groupController({ send, openConfirmDialog }),
     searchResult: searchResultController(),
+    dialogController: dialogController({
+      openConfirmDialog,
+      openFolderDialog,
+      openFileDialog,
+    }),
     stats: statsController(),
     state: stateController({ send, stateManager }),
     settings,
@@ -198,6 +212,18 @@ export async function init(mainWindow: BrowserWindow) {
       mainWindow.webContents.navigationHistory.canGoForward()
     ) {
       mainWindow.webContents.send("swipe", 1);
+    }
+  });
+
+  protocol.handle("playa-cover", async ({ url }) => {
+    const COVERS_PATH = getSetting("COVERS_PATH") as string;
+    const { hostname } = new URL(url);
+    try {
+      return await net.fetch(`file://${path.join(COVERS_PATH, hostname)}`);
+    } catch (error) {
+      log("covers", "cover not found:", url);
+      log("covers", error);
+      return getCoverPlaceholder(url);
     }
   });
 }

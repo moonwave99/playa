@@ -22,7 +22,12 @@ export default function ImportDataView({
   });
 
   async function onImportClick() {
-    if (!window.confirm(t("modals.ImportDataView.confirm"))) {
+    if (
+      !(await api.dialog.openConfirmDialog(
+        t("modals.ImportDataView.title"),
+        t("modals.ImportDataView.confirm")
+      ))
+    ) {
       return;
     }
     await api.importExport.importDataFromDialog();

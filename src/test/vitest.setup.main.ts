@@ -31,6 +31,9 @@ vi.mock("electron", () => {
       relaunch: vi.fn(),
       exit: vi.fn(),
     },
+    protocol: {
+      handle: vi.fn(),
+    },
     Menu: {
       setApplicationMenu: vi.fn(),
       getApplicationMenu: vi.fn(() => ({

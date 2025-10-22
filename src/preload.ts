@@ -1,5 +1,4 @@
 import { contextBridge, ipcRenderer as ipc } from "electron";
-import type { OpenDialogSyncOptions } from "electron";
 import {
   getHandlersFromActions,
   getEventHandlersFromActions,
@@ -19,6 +18,10 @@ import {
   systemController,
   actions as systemActions,
 } from "./main/controllers/system";
+import {
+  dialogController,
+  actions as dialogActions,
+} from "./main/controllers/dialog";
 import {
   actions as artistActions,
   artistController,
@@ -77,6 +80,8 @@ const api = {
     ),
   group:
     getHandlersFromActions<ReturnType<typeof groupController>>(groupActions),
+  dialog:
+    getHandlersFromActions<ReturnType<typeof dialogController>>(dialogActions),
   stats:
     getHandlersFromActions<ReturnType<typeof statsController>>(statsActions),
   state:
@@ -114,10 +119,6 @@ const api = {
       ipc.invoke("menu:searchResult", result),
     refresh: () => ipc.invoke("menu:refresh"),
     click: (id: string) => ipc.invoke("menu:click", id),
-  },
-  dialog: {
-    open: async (options: Partial<OpenDialogSyncOptions>) =>
-      ipc.invoke("dialog:open", options),
   },
 };
 

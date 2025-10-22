@@ -25,9 +25,9 @@ export function settingsController() {
   async function init() {
     try {
       settings = await getSettings();
-    } catch (error) {
-      log("settings:init", "no settings found", error);
-      await createSettings(DEFAULT_SETTINGS);
+    } catch {
+      log("settings:init", "no settings found");
+      settings = await createSettings(DEFAULT_SETTINGS);
     }
   }
 

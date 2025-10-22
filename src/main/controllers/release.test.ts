@@ -28,7 +28,7 @@ const defaultParams = {
   send: vi.fn(),
   stateManager: {} as StateManager,
   showErrorBox: vi.fn(),
-  openConfirmDialog: vi.fn(),
+  openConfirmDialog: () => true,
 };
 
 describe("hideRelease function", () => {
@@ -828,7 +828,7 @@ describe("deleteReleases function", () => {
     const { deleteReleases } = releaseController({
       ...defaultParams,
       send,
-      openConfirmDialog: () => 1,
+      openConfirmDialog: () => false,
     });
 
     await deleteReleases([4, 5]);

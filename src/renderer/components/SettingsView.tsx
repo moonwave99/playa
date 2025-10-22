@@ -100,7 +100,10 @@ export default function SettingsView({ onSave, onCancel }: SettingsViewProps) {
     key: string,
     options: Partial<OpenDialogSyncOptions>
   ) {
-    const path = await api.dialog.open(options);
+    const path = await api.dialog.openFolderDialog(
+      options.defaultPath,
+      options.properties
+    );
     if (!path) {
       return;
     }

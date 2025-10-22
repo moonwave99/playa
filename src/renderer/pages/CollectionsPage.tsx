@@ -58,6 +58,7 @@ export default function LatestCollections() {
           onBackspace={onDelete}
           onUnmount={storeScrollInfo}
           scrollInfo={scrollInfo}
+          testId="CollectionsList"
           render={({ item, ...rest }) => (
             <ListCard
               showMultipleCovers

@@ -54,14 +54,14 @@ export default function useCollections(
   }
 
   const deleteCollections = useMutation({
-    mutationFn: (ids: number[]) => {
-      if (
-        !window.confirm(
-          t("confirm.deleteCollections", {
-            count: ids.length,
-          })
-        )
-      ) {
+    mutationFn: async (ids: number[]) => {
+      const confirm = await api.dialog.openConfirmDialog(
+        t("confirm.deleteCollections.title"),
+        t("confirm.deleteCollections.message", {
+          count: ids.length,
+        })
+      );
+      if (!confirm) {
         return;
       }
       return api.collection.deleteCollections(ids);

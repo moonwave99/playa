@@ -14,7 +14,7 @@ afterEach(clearPrisma);
 
 const defaultParams = {
   send: vi.fn(),
-  openConfirmDialog: vi.fn(),
+  openConfirmDialog: () => true,
 };
 
 describe("getAllCollections function", () => {
@@ -279,7 +279,7 @@ describe("removeReleasesFromCollection function", () => {
 
     const { removeReleasesFromCollection } = collectionController({
       ...defaultParams,
-      openConfirmDialog: () => 1,
+      openConfirmDialog: () => false,
     });
     await removeReleasesFromCollection(1, [2]);
 

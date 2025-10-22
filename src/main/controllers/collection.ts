@@ -14,7 +14,7 @@ import {
 
 type CollectionControllerParams = {
   send: (channel: string, ...args: unknown[]) => void;
-  openConfirmDialog: (message: string, detail: string) => number;
+  openConfirmDialog: (message: string, detail: string) => boolean;
 };
 
 export function collectionController({
@@ -25,12 +25,12 @@ export function collectionController({
     id: number,
     release_ids: number[]
   ) {
-    const cancel = openConfirmDialog(
+    const confirm = openConfirmDialog(
       `Are you sure to remove ${release_ids.length} entries from this Collection?`,
       ""
     );
 
-    if (cancel) {
+    if (!confirm) {
       return;
     }
 

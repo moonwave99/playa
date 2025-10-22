@@ -48,14 +48,14 @@ export default function useGroups(
   }
 
   const deleteGroups = useMutation({
-    mutationFn: (ids: number[]) => {
-      if (
-        !window.confirm(
-          t("confirm.deleteGroups", {
-            count: ids.length,
-          })
-        )
-      ) {
+    mutationFn: async (ids: number[]) => {
+      const confirm = await api.dialog.openConfirmDialog(
+        t("confirm.deleteGroups.title"),
+        t("confirm.deleteGroups.message", {
+          count: ids.length,
+        })
+      );
+      if (!confirm) {
         return;
       }
       return api.group.deleteGroups(ids);

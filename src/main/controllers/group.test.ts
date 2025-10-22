@@ -8,7 +8,7 @@ afterEach(clearPrisma);
 
 const defaultParams = {
   send: vi.fn(),
-  openConfirmDialog: vi.fn(),
+  openConfirmDialog: () => true,
 };
 
 describe("getGroups function", () => {
@@ -194,7 +194,7 @@ describe("removeArtistsFromGroup function", async () => {
 
     const { removeArtistsFromGroup } = groupController({
       ...defaultParams,
-      openConfirmDialog: () => 1,
+      openConfirmDialog: () => false,
     });
     await removeArtistsFromGroup(1, [2]);
 

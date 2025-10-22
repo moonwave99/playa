@@ -47,15 +47,16 @@ export default function useGroup(id: number): UseGroup {
 
   const removeArtistsFromGroup = useMutation({
     mutationFn: async (artists: HasId[]) => {
-      if (
-        !window.confirm(
-          t("confirm.removeArtistsFromGroup", {
-            count: artists.length,
-          })
-        )
-      ) {
+      const confirm = await api.dialog.openConfirmDialog(
+        t("confirm.removeArtistsFromGroup.title"),
+        t("confirm.removeArtistsFromGroup.message", {
+          count: artists.length,
+        })
+      );
+      if (!confirm) {
         return;
       }
+
       const ids = artists.map(({ id }) => id);
       return api.group.updateGroup(id, {
         title: group.title,

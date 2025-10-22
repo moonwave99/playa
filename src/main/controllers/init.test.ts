@@ -1,5 +1,3 @@
-import prisma from "../db/prisma";
-import { clearPrisma } from "@/test/prisma-utils";
 import type { BrowserWindow } from "electron";
 import { ipcMain } from "electron";
 import { init } from "./init";
@@ -14,9 +12,7 @@ import { actions as systemActions } from "./system";
 import { actions as searchResultActions } from "./searchResult";
 import { actions as importExportActions } from "./importExport";
 import { actions as importFoldersActions } from "./importFolders";
-import { getFakeSettings } from "@/test/seed";
-
-afterEach(clearPrisma);
+import { actions as dialogActions } from "./dialog";
 
 function getMainWindow() {
   const onSwipe = vi.fn();
@@ -37,7 +33,6 @@ function getMainWindow() {
 
 describe("init function", () => {
   it("should setup the window swipe listener", async () => {
-    await prisma.settings.create({ data: getFakeSettings() });
     const { mainWindow, onSwipe } = getMainWindow();
     await init(mainWindow);
 
@@ -52,7 +47,6 @@ describe("init function", () => {
   });
 
   it("should setup the ipc listeners", async () => {
-    await prisma.settings.create({ data: getFakeSettings() });
     const { mainWindow } = getMainWindow();
     const ipcHandleSpy = vi.spyOn(ipcMain, "handle");
 
@@ -70,6 +64,7 @@ describe("init function", () => {
       ...searchResultActions,
       ...importExportActions,
       ...importFoldersActions,
+      ...dialogActions,
       "menu:refresh",
       "menu:release",
       "menu:artist",

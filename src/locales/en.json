@@ -368,8 +368,17 @@
     }
   },
   "confirm": {
-    "deleteCollections": "Are you sure you want to remove {{count}} Collections from your Library?",
-    "deleteGroups": "Are you sure you want to remove {{count}} Groups from your Library?",
-    "removeArtistsFromGroup": "Are you sure you want to remove {{count}} Artists from this Group?"
+    "deleteCollections": {
+      "title": "Delete Collections",
+      "message": "Are you sure you want to remove {{count}} Collections from your Library?"
+    },
+    "deleteGroups": {
+      "title": "Delete Groups",
+      "message": "Are you sure you want to remove {{count}} Groups from your Library?"
+    },
+    "removeArtistsFromGroup": {
+      "title": "Remove Artists from Group",
+      "message": "Are you sure you want to remove {{count}} Artists from this Group?"
+    }
   }
 }

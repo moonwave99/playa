@@ -12,20 +12,21 @@ test.describe("Collection", () => {
     await page.getByRole("button", { name: "Toggle Menu" }).click();
     await page.getByLabel("Go to the Collections page").click();
 
-    await expect(
-      page.locator('[data-testid="breadcrumbs"]').getByText("Collections")
-    ).toBeVisible();
+    await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
+      "Collections"
+    );
 
     await expect(page.locator('[data-testid="CollectionsPage"]')).toBeVisible();
     await page.keyboard.press("Enter");
 
     await expect(page.locator('[data-testid="CollectionPage"]')).toBeVisible();
-    await expect(page.locator('[data-testid="ReleaseList"]')).toBeVisible();
+    const releaseList = page.locator('[data-testid="ReleaseList"]');
+    await expect(releaseList).toBeVisible();
+
     await clickMenuItemById(electronApp, "editCollection");
 
     const modal = page.locator(".ReactModalPortal");
-
-    await expect(modal.getByText("Edit Collection").first()).toBeVisible();
+    await expect(modal).toContainText("Edit Collection");
 
     await page.getByPlaceholder("Search for Entity").fill("Rel");
     await modal.getByText("Release 1-4").click();
@@ -34,8 +35,6 @@ test.describe("Collection", () => {
 
     await expect(modal).not.toBeVisible();
 
-    await expect(
-      page.locator('[data-testid="ReleaseList"]').getByText("Release 1-4")
-    ).toBeVisible();
+    await expect(releaseList).toContainText("Release 1-4");
   });
 });

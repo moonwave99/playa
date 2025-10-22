@@ -35,7 +35,7 @@ type ReleaseControllerParams = {
   getSetting: GetSetting;
   send: (channel: string, ...args: unknown[]) => void;
   showErrorBox: (title: string, content: string) => void;
-  openConfirmDialog: (message: string, detail: string) => number;
+  openConfirmDialog: (message: string, detail: string) => boolean;
   stateManager: StateManager;
   skipMove?: boolean;
 };
@@ -273,12 +273,12 @@ export function releaseController({
   }
 
   async function deleteReleases(release_ids: number[]) {
-    const cancel = openConfirmDialog(
+    const confirm = openConfirmDialog(
       `Are you sure to delete ${release_ids.length} Releases from library?`,
       "This action is not reversible!"
     );
 
-    if (cancel) {
+    if (!confirm) {
       return;
     }
 

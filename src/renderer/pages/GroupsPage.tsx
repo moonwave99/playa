@@ -58,6 +58,7 @@ export default function LatestGroups() {
           onBackspace={onDelete}
           onUnmount={storeScrollInfo}
           scrollInfo={scrollInfo}
+          testId="GroupsList"
           render={({ item, ...rest }) => (
             <ListCard
               showMultipleCovers
