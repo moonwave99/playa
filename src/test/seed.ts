@@ -59,7 +59,7 @@ export function getFakeReleasesForArtist(artist_id: number, length = 5) {
     entityType: "Release" as EntityType,
     id: (artist_id - 1) * length + i + 1,
     title: `Release ${artist_id}-${i + 1}`,
-    normalizedTitle: `Release ${i + 1}`,
+    normalizedTitle: `Release ${artist_id}-${i + 1}`,
     type: "Album" as ReleaseType,
     year: 2000,
     path: `Release ${i + 1}`,
