@@ -12,39 +12,33 @@ test.describe("Releases", () => {
     await page.getByRole("button", { name: "Toggle Menu" }).click();
     await page.getByLabel("Go to the Releases page").click();
 
+    await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
+      "Releases"
+    );
+
+    const releaseList = page.locator('[data-testid="ReleaseList"]');
+
+    await releaseList.getByAltText("Cover of Artist 2 - Release 2-5").click();
+
     await expect(
-      page.locator('[data-testid="breadcrumbs"]').getByText("Releases")
-    ).toBeVisible();
+      releaseList.locator('[data-hasfocus="true"]', { hasText: "Release 2-5" })
+    ).toHaveCount(1);
 
-    await page
-      .locator('[data-testid="ReleasesPage"]')
-      .getByAltText("Cover of Artist 2 - Release 2-5")
-      .click();
-
-    await expect(
-      page
-        .locator('[data-testid="ReleasesPage"]')
-        .locator('[data-hasfocus="true"]', { hasText: "Release 2-5" })
-    ).toBeVisible();
-
-    await page
-      .locator('[data-testid="ReleasesPage"]')
+    await releaseList
       .getByAltText("Cover of Artist 3 - Release 3-5")
       .click({ modifiers: ["Meta"] });
 
     await expect(
-      page
-        .locator('[data-testid="ReleasesPage"]')
-        .locator('[data-hasfocus="true"]', { hasText: "Release 3-5" })
-    ).toBeVisible();
+      releaseList.locator('[data-hasfocus="true"]', { hasText: "Release 3-5" })
+    ).toHaveCount(1);
 
     await clickMenuItemById(electronApp, "deleteReleases");
 
     await expect(
-      page.locator('[data-testid="ReleasesPage"]').getByText("Release 2-5")
+      releaseList.filter({ hasText: "Release 2-5" })
     ).not.toBeVisible();
     await expect(
-      page.locator('[data-testid="ReleasesPage"]').getByText("Release 3-5")
+      releaseList.filter({ hasText: "Release 3-5" })
     ).not.toBeVisible();
   });
 });

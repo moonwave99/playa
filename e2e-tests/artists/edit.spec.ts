@@ -33,7 +33,7 @@ test.describe("Edit Artist", () => {
     await page.getByPlaceholder("Enter Artist Name").fill("New Artist Name");
     await page.keyboard.press("Enter");
 
-    await expect(page.locator(".ReactModalPortal")).not.toBeVisible();
+    await expect(modal).not.toBeVisible();
     await expect(
       page.locator('[data-testid="ArtistPageHeader"]')
     ).toContainText("New Artist Name");

@@ -22,7 +22,7 @@ test.describe("Releases", () => {
       page
         .locator('[data-testid="ReleasesPage"]')
         .locator('[data-hasfocus="true"]', { hasText: "Release 2-5" })
-    ).toBeVisible();
+    ).toHaveCount(1);
 
     await page.keyboard.press("ArrowRight");
 
@@ -30,6 +30,6 @@ test.describe("Releases", () => {
       page
         .locator('[data-testid="ReleasesPage"]')
         .locator('[data-hasfocus="true"]', { hasText: "Release 3-5" })
-    ).toBeVisible();
+    ).toHaveCount(1);
   });
 });

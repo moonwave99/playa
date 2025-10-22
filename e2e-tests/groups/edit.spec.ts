@@ -12,9 +12,8 @@ test.describe("Edit Group", () => {
     await page.getByRole("button", { name: "Toggle Menu" }).click();
     await page.getByLabel("Go to the Groups page").click();
 
-    await expect(
-      page.locator('[data-testid="breadcrumbs"]').getByText("Groups")
-    ).toBeVisible();
+    const breadcrumbs = page.locator('[data-testid="breadcrumbs"]');
+    await expect(breadcrumbs).toContainText("Groups");
 
     await expect(page.locator('[data-testid="GroupsPage"]')).toBeVisible();
     await page.keyboard.press("Enter");
@@ -22,18 +21,16 @@ test.describe("Edit Group", () => {
     await expect(page.locator('[data-testid="GroupPage"]')).toBeVisible();
     await clickMenuItemById(electronApp, "editGroup");
 
-    await expect(
-      page.locator(".ReactModalPortal").getByText("Edit Group").first()
-    ).toBeVisible();
+    const modal = page.locator(".ReactModalPortal");
+
+    await expect(modal).toContainText("Edit Group");
 
     await page
-      .getByPlaceholder("Enter the group title")
+      .getByPlaceholder("Enter the Group title")
       .fill("New Group Title");
     await page.keyboard.press("Enter");
 
-    await expect(page.locator(".ReactModalPortal")).not.toBeVisible();
-    await expect(
-      page.locator('[data-testid="breadcrumbs"]').getByText("New Group Title")
-    ).toBeInViewport();
+    await expect(modal).not.toBeVisible();
+    await expect(breadcrumbs).toContainText("New Group Title");
   });
 });

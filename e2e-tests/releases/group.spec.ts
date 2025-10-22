@@ -19,7 +19,12 @@ test.describe("Releases", () => {
 
     await page.keyboard.press("Enter");
 
-    expect(page.locator('[data-testid="ReleaseList"] article')).toHaveCount(5);
+    await expect(
+      page
+        .locator('[data-testid="ReleaseList"]')
+        .getByRole("listitem")
+        .filter({ has: page.locator("article") })
+    ).toHaveCount(5);
 
     await page
       .locator('[data-testid="ReleaseList"]')
@@ -27,20 +32,29 @@ test.describe("Releases", () => {
       .click({ modifiers: ["Meta"] });
 
     await clickMenuItemById(electronApp, "groupReleases");
+    const modal = page.locator(".ReactModalPortal");
+    await expect(modal).toContainText("Group Releases");
     await expect(page.getByText("Group Releases").first()).toBeInViewport();
 
     await page.getByLabel("Main Release Title").fill("Grouped Release");
 
     await page.keyboard.press("Enter");
+    await expect(modal).not.toBeVisible();
+
+    const release = page
+      .locator('[data-testid="ReleaseList"]')
+      .getByRole("listitem")
+      .filter({ hasText: "Grouped Release" });
+
+    await expect(release).toBeVisible();
+    await expect(release).toContainText("(2 discs)");
 
     await expect(
-      page.locator('[data-testid="ReleaseList"]').getByText("Grouped Release")
-    ).toBeInViewport();
-    await expect(
-      page.locator('[data-testid="ReleaseList"]').getByText("(2 discs)")
-    ).toBeInViewport();
-
-    expect(page.locator('[data-testid="ReleaseList"] article')).toHaveCount(4);
+      page
+        .locator('[data-testid="ReleaseList"]')
+        .getByRole("listitem")
+        .filter({ has: page.locator("article") })
+    ).toHaveCount(4);
 
     await page
       .locator('[data-testid="ReleaseList"]')
@@ -53,6 +67,11 @@ test.describe("Releases", () => {
 
     await page.waitForTimeout(100);
 
-    expect(page.locator('[data-testid="ReleaseList"] article')).toHaveCount(5);
+    await expect(
+      page
+        .locator('[data-testid="ReleaseList"]')
+        .getByRole("listitem")
+        .filter({ has: page.locator("article") })
+    ).toHaveCount(5);
   });
 });

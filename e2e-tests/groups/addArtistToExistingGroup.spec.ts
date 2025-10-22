@@ -12,9 +12,9 @@ test.describe("Group", () => {
     await page.getByRole("button", { name: "Toggle Menu" }).click();
     await page.getByLabel("Go to the Groups page").click();
 
-    await expect(
-      page.locator('[data-testid="breadcrumbs"]').getByText("Groups")
-    ).toBeVisible();
+    await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
+      "Groups"
+    );
 
     await expect(page.locator('[data-testid="GroupsPage"]')).toBeVisible();
     await page.keyboard.press("Enter");
@@ -25,7 +25,7 @@ test.describe("Group", () => {
 
     const modal = page.locator(".ReactModalPortal");
 
-    await expect(modal.getByText("Edit Group").first()).toBeVisible();
+    await expect(modal).toContainText("Edit Group");
 
     await page.getByPlaceholder("Search for Entity").fill("Art");
     await modal.getByText("Artist 4").click();
@@ -34,8 +34,8 @@ test.describe("Group", () => {
 
     await expect(modal).not.toBeVisible();
 
-    await expect(
-      page.locator('[data-testid="ArtistList"]').getByText("Artist 4")
-    ).toBeVisible();
+    await expect(page.locator('[data-testid="ArtistList"]')).toContainText(
+      "Artist 4"
+    );
   });
 });

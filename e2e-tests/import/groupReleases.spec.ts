@@ -26,9 +26,7 @@ test.beforeAll(async ({}, { testId }) => {
   });
 });
 
-test.afterAll(async ({}, { testId }) => {
-  await remove(getE2ETmpPath(testId));
-});
+test.afterAll(async ({}, { testId }) => remove(getE2ETmpPath(testId)));
 
 test.describe("Import", () => {
   test("import multiple folders into library and group them", async () => {
@@ -44,15 +42,13 @@ test.describe("Import", () => {
 
     await page.getByRole("button", { name: "Close" }).click();
 
+    const latestReleases = page.locator('[data-testid="LatestReleases"]');
+
     await expect(
-      page
-        .locator('[data-testid="LatestReleases"]')
-        .getByText("Album 1 CD1", { exact: true })
+      latestReleases.getByRole("listitem").filter({ hasText: "Album 1 CD1" })
     ).toBeVisible();
     await expect(
-      page
-        .locator('[data-testid="LatestReleases"]')
-        .getByText("Album 1 CD2", { exact: true })
+      latestReleases.getByRole("listitem").filter({ hasText: "Album 1 CD2" })
     ).toBeVisible();
 
     await expect(
@@ -60,18 +56,20 @@ test.describe("Import", () => {
     ).toBeVisible();
 
     await clickMenuItemById(electronApp, "navigate-artists");
-    await expect(breadcrumbs.getByText("Artists")).toBeVisible();
+    await expect(breadcrumbs).toContainText("Artists");
 
     const artistsList = page.locator('[data-testid="LatestArtistsView"]');
 
-    await expect(artistsList.getByText("Artist 1")).toBeVisible();
-
-    await artistsList.getByText("Artist 1").click();
+    await artistsList
+      .getByRole("link")
+      .filter({ hasText: "Artist 1" })
+      .first()
+      .click();
 
     const artistHeader = page.locator('[data-testid="ArtistPageHeader"]');
 
-    await expect(artistHeader.getByText("Artist 1")).toBeVisible();
-    await expect(artistHeader.getByText("2 Releases")).toBeVisible();
+    await expect(artistHeader).toContainText("Artist 1");
+    await expect(artistHeader).toContainText("2 Releases");
 
     const releaseList = page.locator('[data-testid="ReleaseList"]');
     await expect(releaseList).toBeVisible();
@@ -87,7 +85,7 @@ test.describe("Import", () => {
     await page.getByRole("button", { name: "Fill Progressively" }).click();
     await page.getByRole("button", { name: "Group Releases" }).click();
 
-    await expect(artistHeader.getByText("1 Releases")).toBeVisible();
+    await expect(artistHeader).toContainText("1 Releases");
     const groupedRelease = releaseList
       .getByRole("listitem")
       .filter({ hasText: "Album 1" });
@@ -122,6 +120,6 @@ test.describe("Import", () => {
       releaseList.getByRole("listitem").filter({ hasText: "Album 1 CD2" })
     ).toBeVisible();
 
-    await expect(artistHeader.getByText("2 Releases")).toBeVisible();
+    await expect(artistHeader).toContainText("2 Releases");
   });
 });

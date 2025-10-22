@@ -95,6 +95,7 @@ export default function ReleasesPage() {
           }
           scrollInfo={scrollInfo}
           keyHandlers={keyHandlers}
+          testId="ReleaseList"
           render={({ item, selection, ...rest }) => (
             <ReleaseView
               {...rest}

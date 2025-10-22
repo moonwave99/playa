@@ -23,5 +23,19 @@ test.describe("Delete Group", () => {
     await expect(page.locator('[data-testid="GroupsList"]')).not.toContainText(
       "Group 1"
     );
+
+    await page.getByRole("button", { name: "Open Search" }).click();
+    await page.getByPlaceholder("Enter search term").fill("Artist 1");
+    await page
+      .locator('[data-testid="SearchResultsView"]')
+      .getByRole("link")
+      .filter({
+        hasText: "Artist 1",
+      })
+      .first()
+      .click();
+
+    const header = page.locator('[data-testid="ArtistPageHeader"]');
+    await expect(header).not.toContainText("Group 1");
   });
 });

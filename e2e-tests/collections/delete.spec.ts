@@ -23,5 +23,18 @@ test.describe("Delete Collection", () => {
     await expect(
       page.locator('[data-testid="CollectionsList"]')
     ).not.toContainText("Collection 1");
+
+    await page.getByRole("button", { name: "Open Search" }).click();
+    await page.getByPlaceholder("Enter search term").fill("Release 1-1");
+    await page
+      .locator('[data-testid="SearchResultsView"]')
+      .getByRole("link")
+      .filter({
+        hasText: "Release 1-1",
+      })
+      .click();
+
+    const header = page.locator('[data-testid="ReleaseWithTracklistHeader"]');
+    await expect(header).not.toContainText("Collection 1");
   });
 });

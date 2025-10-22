@@ -127,7 +127,7 @@ function SearchResultsView({
   }
 
   return (
-    <div className={styles.searchResultsView}>
+    <div className={styles.searchResultsView} data-testid="SearchResultsView">
       {Object.entries(groupedResults).map(([type, entries], index, groups) => (
         <section key={type}>
           <h3>

@@ -12,27 +12,29 @@ test.describe("Edit Release", () => {
     await page.getByRole("button", { name: "Toggle Menu" }).click();
     await page.getByLabel("Go to the Releases page").click();
 
-    await expect(
-      page.locator('[data-testid="breadcrumbs"]').getByText("Releases")
-    ).toBeVisible();
+    await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
+      "Releases"
+    );
 
     await clickMenuItemById(electronApp, "editRelease");
-    await expect(page.getByText("Edit Release").first()).toBeInViewport();
-
-    await expect(
-      page.locator(".ReactModalPortal").getByText("Release 1-5")
-    ).toBeInViewport();
+    const modal = page.locator(".ReactModalPortal");
+    await expect(modal).toContainText("Edit Release");
+    await expect(modal).toContainText("Release 1-5");
 
     await page.getByPlaceholder("Enter title").fill("New Release Title");
     await page.getByPlaceholder("Enter year").fill("2999");
     await page.getByLabel("Release type").selectOption("Compilation");
 
     await page.keyboard.press("Enter");
+    await expect(modal).not.toBeVisible();
 
-    await expect(page.locator(".ReactModalPortal")).not.toBeVisible();
+    const release = page
+      .locator('[data-testid="ReleaseList"]')
+      .getByRole("listitem")
+      .filter({ hasText: "New Release Title" });
 
-    await expect(page.getByText("New Release Title").first()).toBeVisible();
-    await expect(page.getByText("2999").first()).toBeVisible();
-    await expect(page.getByText("Compilation").first()).toBeVisible();
+    await expect(release).toBeVisible();
+    await expect(release).toContainText("2999");
+    await expect(release).toContainText("Compilation");
   });
 });

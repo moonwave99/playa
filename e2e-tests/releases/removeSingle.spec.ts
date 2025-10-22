@@ -11,26 +11,24 @@ test.describe("Releases", () => {
 
     await page.getByRole("button", { name: "Toggle Menu" }).click();
     await page.getByLabel("Go to the Releases page").click();
+    await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
+      "Releases"
+    );
 
-    await expect(
-      page.locator('[data-testid="breadcrumbs"]').getByText("Releases")
-    ).toBeVisible();
+    const releaseList = page.locator('[data-testid="ReleaseList"]');
 
-    await page
-      .locator('[data-testid="ReleasesPage"]')
-      .getByAltText("Cover of Artist 2 - Release 2-5")
-      .click();
+    await releaseList.getByAltText("Cover of Artist 2 - Release 2-5").click();
 
     await expect(
       page
         .locator('[data-testid="ReleasesPage"]')
         .locator('[data-hasfocus="true"]', { hasText: "Release 2-5" })
-    ).toBeVisible();
+    ).toHaveCount(1);
 
     await clickMenuItemById(electronApp, "deleteReleases");
 
     await expect(
-      page.locator('[data-testid="ReleasesPage"]').getByText("Release 2-5")
+      releaseList.filter({ hasText: "Release 2-5" })
     ).not.toBeVisible();
   });
 });

@@ -24,9 +24,7 @@ test.describe("Containing Collections", () => {
 
     await clickMenuItemById(electronApp, "addReleasesToCollection");
     const modal = page.locator(".ReactModalPortal");
-    await expect(
-      modal.getByText("Add Releases to Collection").first()
-    ).toBeVisible();
+    await expect(modal).toContainText("Add Releases to Collection");
 
     await page.getByLabel("Add to Collection").fill("Collection 1");
     await page.waitForTimeout(100);
@@ -35,12 +33,9 @@ test.describe("Containing Collections", () => {
     await page.keyboard.press("Enter");
     await page.keyboard.press("Escape");
 
-    await expect(page.getByText("Appears in")).toBeVisible();
-    await expect(
-      page
-        .locator('[data-testid="ReleaseWithTracklistHeader"]')
-        .getByText("Collection 1")
-    ).toBeVisible();
+    const header = page.locator('[data-testid="ReleaseWithTracklistHeader"]');
+    await expect(header).toContainText("Collection 1");
+    await expect(header).toContainText("Appears in");
   });
 
   test("add the current Release to a new Collection", async () => {
@@ -60,9 +55,7 @@ test.describe("Containing Collections", () => {
 
     await clickMenuItemById(electronApp, "addReleasesToCollection");
     const modal = page.locator(".ReactModalPortal");
-    await expect(
-      modal.getByText("Add Releases to Collection").first()
-    ).toBeVisible();
+    await expect(modal).toContainText("Add Releases to Collection");
 
     await page.getByLabel("Add to Collection").fill("New Collection");
     await page.waitForTimeout(100);
@@ -71,12 +64,9 @@ test.describe("Containing Collections", () => {
     await page.keyboard.press("Enter");
     await page.keyboard.press("Escape");
 
-    await expect(page.getByText("Appears in")).toBeVisible();
-    await expect(
-      page
-        .locator('[data-testid="ReleaseWithTracklistHeader"]')
-        .getByText("New Collection")
-    ).toBeVisible();
+    const header = page.locator('[data-testid="ReleaseWithTracklistHeader"]');
+    await expect(header).toContainText("New Collection");
+    await expect(header).toContainText("Appears in");
   });
 
   test("removes the current Release from a Collection", async () => {
@@ -104,23 +94,16 @@ test.describe("Containing Collections", () => {
       .getByLabel("Remove Release 2-5 from Collection 1")
       .click();
 
-    await expect(
-      page
-        .locator('[data-testid="ReleaseWithTracklistHeader"]')
-        .getByText("Collection 1")
-    ).not.toBeVisible();
+    const header = page.locator('[data-testid="ReleaseWithTracklistHeader"]');
+
+    await expect(header).not.toContainText("Collection 1");
 
     await page
       .locator('[data-testid="ReleaseWithTracklistHeader"]')
       .getByLabel("Remove Release 2-5 from New Collection")
       .click();
 
-    await expect(
-      page
-        .locator('[data-testid="ReleaseWithTracklistHeader"]')
-        .getByText("New Collection")
-    ).not.toBeVisible();
-
-    await expect(page.getByText("Appears in")).not.toBeVisible();
+    await expect(header).not.toContainText("New Collection");
+    await expect(header).not.toContainText("Appears in");
   });
 });

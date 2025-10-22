@@ -20,9 +20,7 @@ test.beforeAll(async ({}, { testId }) => {
   });
 });
 
-test.afterAll(async ({}, { testId }) => {
-  await remove(getE2ETmpPath(testId));
-});
+test.afterAll(async ({}, { testId }) => remove(getE2ETmpPath(testId)));
 
 test.describe("Import", () => {
   test("import a folder into library", async () => {
@@ -41,7 +39,8 @@ test.describe("Import", () => {
     await expect(
       page
         .locator('[data-testid="LatestReleases"]')
-        .getByText("Album 1", { exact: true })
+        .getByRole("listitem")
+        .filter({ hasText: "Album 1" })
     ).toBeVisible();
 
     await expect(page.locator('[data-testid="LatestArtists"]')).toContainText(

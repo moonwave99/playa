@@ -24,9 +24,7 @@ test.beforeAll(async ({}, { testId }) => {
   );
 });
 
-test.afterAll(async ({}, { testId }) => {
-  await remove(getE2ETmpPath(testId));
-});
+test.afterAll(async ({}, { testId }) => remove(getE2ETmpPath(testId)));
 
 test.describe("Import", () => {
   test("import multiple folders into library", async () => {
@@ -48,18 +46,16 @@ test.describe("Import", () => {
         .getByText("Album 1", { exact: true })
     ).toBeVisible();
 
-    await expect(
-      page.locator('[data-testid="LatestArtists"]').getByText("Artist 1")
-    ).toBeVisible();
+    await expect(page.locator('[data-testid="LatestArtists"]')).toContainText(
+      "Artist 1"
+    );
 
     await clickMenuItemById(electronApp, "navigate-artists");
     await expect(breadcrumbs.getByText("Artists")).toBeVisible();
 
     const artistsList = page.locator('[data-testid="LatestArtistsView"]');
-
-    await expect(artistsList.getByText("Artist 1")).toBeVisible();
-
     await artistsList.getByText("Artist 1").click();
+
     const artistHeader = page.locator('[data-testid="ArtistPageHeader"]');
     await expect(artistHeader).toContainText("Artist 1");
     await expect(artistHeader).toContainText("3 Releases");
