@@ -147,7 +147,7 @@ export default function ReleaseList({
       onEnter={onEnter}
       onBackspace={onDelete}
       onSelectionChange={(selection) =>
-        api.state.selectReleases(selection.map((index) => releases[index]))
+        api.state.setSelection(selection.map((index) => releases[index].id))
       }
       {...getListConfig(releaseListViewMode)}
       onUnmount={storeScrollInfo}

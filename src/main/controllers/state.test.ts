@@ -1,7 +1,6 @@
 import { clearPrisma } from "@/test/prisma-utils";
 import { stateController } from "./state";
 import { StateManager } from "../stateManager";
-import { ReleaseWithArtistAndSubReleases } from "@/types/types";
 
 afterEach(clearPrisma);
 
@@ -25,19 +24,16 @@ describe("stateController - setInputFocused function", () => {
   });
 });
 
-describe("stateController - selectReleases function", () => {
+describe("stateController - setSelection function", () => {
   it("sets the current release selection", async () => {
     const stateManager = new StateManager();
-    const { selectReleases } = stateController({
+    const { setSelection } = stateController({
       ...defaultParams,
       stateManager,
     });
-    expect(stateManager.getSelectedReleases()).toEqual([]);
-    selectReleases([{ id: 1 }, { id: 2 }] as ReleaseWithArtistAndSubReleases[]);
-    expect(stateManager.getSelectedReleases()).toMatchObject([
-      { id: 1 },
-      { id: 2 },
-    ]);
+    expect(stateManager.getSelection()).toEqual([]);
+    setSelection([1, 2]);
+    expect(stateManager.getSelection()).toEqual([1, 2]);
   });
 });
 

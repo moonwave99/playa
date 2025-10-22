@@ -1,4 +1,3 @@
-import { ReleaseWithArtistAndSubReleases } from "@/types/types";
 import type { StateManager } from "../stateManager";
 
 type StateControllerParams = {
@@ -10,8 +9,7 @@ export function stateController({ stateManager, send }: StateControllerParams) {
   return {
     setInputFocused: (inputFocused: boolean) =>
       stateManager.setInputFocused(inputFocused),
-    selectReleases: (selection: ReleaseWithArtistAndSubReleases[]) =>
-      stateManager.setSelectedReleases(selection),
+    setSelection: (selection: number[]) => stateManager.setSelection(selection),
     navigate: (path: string) => stateManager.setPath(path),
     clearSelection: () => send("clearSelection"),
   };
@@ -19,7 +17,7 @@ export function stateController({ stateManager, send }: StateControllerParams) {
 
 export const actions: (keyof ReturnType<typeof stateController>)[] = [
   "setInputFocused",
-  "selectReleases",
+  "setSelection",
   "navigate",
   "clearSelection",
 ];

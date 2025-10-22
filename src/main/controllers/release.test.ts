@@ -5,11 +5,7 @@ import path from "path";
 import fsExtra, { pathExists } from "fs-extra";
 import { releaseController } from "./release";
 import { testFs } from "@moonwave99/test-fs";
-import {
-  ReleaseType,
-  ReleaseWithArtist,
-  ReleaseWithArtistAndSubReleases,
-} from "@/types/types";
+import { ReleaseType, ReleaseWithArtist } from "@/types/types";
 import { StateManager } from "../stateManager";
 import {
   getFakeArtist,
@@ -685,7 +681,7 @@ describe("unGroupSelectedRelease function", () => {
       ...defaultParams,
       send,
       stateManager: {
-        getSelectedReleases: () => [],
+        getSelection: () => [],
       } as StateManager,
     });
     await unGroupSelectedRelease();
@@ -709,8 +705,7 @@ describe("unGroupSelectedRelease function", () => {
       ...defaultParams,
       send,
       stateManager: {
-        getSelectedReleases: () =>
-          [updatedRelease] as ReleaseWithArtistAndSubReleases[],
+        getSelection: () => [updatedRelease.id],
       } as StateManager,
     });
     await unGroupSelectedRelease();

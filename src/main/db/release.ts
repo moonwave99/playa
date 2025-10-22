@@ -6,13 +6,49 @@ import type {
   TrackInfo,
   PaginationParams,
   Release,
-  WithSubReleases,
 } from "@/types/types";
 import { normalizeDiacritics } from "@/lib/utils";
 
 export async function getRelease(id: number) {
   return prisma.release.findFirst({
     where: { id },
+    include: {
+      artist: true,
+      additionalArtists: true,
+      subReleases: {
+        include: {
+          artist: true,
+          tracks: {
+            orderBy: {
+              position: "asc",
+            },
+          },
+        },
+        orderBy: {
+          discNumber: "asc",
+        },
+      },
+      mainRelease: true,
+      tracks: { orderBy: { position: "asc" } },
+      collections: {
+        select: {
+          id: true,
+          title: true,
+          entityType: true,
+        },
+        orderBy: { title: "asc" },
+      },
+    },
+  });
+}
+
+export async function getSelectedReleases(selection: number[]) {
+  return prisma.release.findMany({
+    where: {
+      id: {
+        in: selection,
+      },
+    },
     include: {
       artist: true,
       additionalArtists: true,
@@ -167,7 +203,9 @@ export async function groupReleases({
   };
 }
 
-export async function unGroupRelease(release: Release & WithSubReleases) {
+export async function unGroupRelease(
+  release: Release & { subReleases: Release[] }
+) {
   await prisma.$transaction([
     prisma.release.update({
       where: {

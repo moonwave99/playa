@@ -1,5 +1,4 @@
 import { matchPath } from "react-router";
-import type { ReleaseWithArtistAndSubReleases } from "@/types/types";
 import { getArtist } from "./db/artist";
 import { getRelease } from "./db/release";
 import { getCollection } from "./db/collection";
@@ -14,7 +13,7 @@ const getEntityMap = {
 };
 
 export type State = {
-  selectedReleases: ReleaseWithArtistAndSubReleases[];
+  selection: number[];
   isInputFocused: boolean;
   isImporting: boolean;
   path: string;
@@ -25,7 +24,7 @@ export class StateManager {
   private handler: (state: State) => void;
   constructor() {
     this.state = {
-      selectedReleases: [],
+      selection: [],
       isInputFocused: false,
       isImporting: false,
       path: "",
@@ -38,20 +37,20 @@ export class StateManager {
     this.state.path = path;
     this.onUpdate();
   }
-  getSelectedReleases(): ReleaseWithArtistAndSubReleases[] {
-    return this.state.selectedReleases;
+  getSelection() {
+    return this.state.selection;
   }
-  isInputFocused(): boolean {
+  isInputFocused() {
     return this.state.isInputFocused;
   }
-  isImporting(): boolean {
+  isImporting() {
     return this.state.isImporting;
   }
   onStateChange(handler: (state: State) => void) {
     this.handler = handler;
   }
-  setSelectedReleases(selectedReleases: ReleaseWithArtistAndSubReleases[]) {
-    this.state.selectedReleases = selectedReleases;
+  setSelection(selection: number[]) {
+    this.state.selection = selection;
     this.onUpdate();
   }
   setInputFocused(isInputFocused: boolean) {

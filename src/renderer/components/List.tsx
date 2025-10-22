@@ -120,12 +120,9 @@ export default function List<T>({
   const scrollRef = useRef<HTMLDivElement>(null);
   const firstRender = useRef(true);
 
-  const [currentIndex, setCurrentIndex] = useState(() => {
-    if (initialSelection.length) {
-      return initialSelection[0];
-    }
-    return -1;
-  });
+  const [currentIndex, setCurrentIndex] = useState(
+    initialSelection.length ? initialSelection[0] : -1
+  );
 
   const [selection, setSelection] = useState<number[]>(initialSelection);
 
@@ -142,7 +139,7 @@ export default function List<T>({
 
   useApiEvents({
     onClearSelection: () => {
-      setCurrentIndex(selection[0]);
+      setCurrentIndex(selection[0] ? selection[0] : -1);
       setSelection([]);
     },
   });
@@ -162,6 +159,9 @@ export default function List<T>({
   useEffect(() => {
     if (firstRender.current) {
       firstRender.current = false;
+      return;
+    }
+    if (currentIndex < 0) {
       return;
     }
     if (onSelect) {

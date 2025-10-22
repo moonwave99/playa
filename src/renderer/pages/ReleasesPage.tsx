@@ -91,7 +91,7 @@ export default function ReleasesPage() {
           isFetchingNextPage={isFetchingNextPage}
           onEnter={onEnter}
           onSelectionChange={(selection) =>
-            api.state.selectReleases(selection.map((index) => releases[index]))
+            api.state.setSelection(selection.map((index) => releases[index].id))
           }
           scrollInfo={scrollInfo}
           keyHandlers={keyHandlers}

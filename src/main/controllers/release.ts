@@ -10,6 +10,7 @@ import { didReleaseInfoChange, mapSeries } from "@/lib/utils";
 import {
   getRelease,
   getReleases,
+  getSelectedReleases,
   getLatestAdditions,
   updateReleases,
   unGroupRelease,
@@ -259,10 +260,11 @@ export function releaseController({
   }
 
   async function unGroupSelectedRelease() {
-    const release = stateManager.getSelectedReleases()[0];
-    if (!release) {
+    const releases = await getSelectedReleases(stateManager.getSelection());
+    if (!releases.at(0)) {
       return;
     }
+    const release = releases.at(0) as Release & { subReleases: Release[] };
     await unGroupRelease(release);
     send("mutate", [
       ["releases", "latest"],

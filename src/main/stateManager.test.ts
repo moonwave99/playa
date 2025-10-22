@@ -1,6 +1,5 @@
 import prisma from "./db/prisma";
 import { clearPrisma } from "@/test/prisma-utils";
-import { ReleaseWithArtistAndSubReleases } from "@/types/types";
 import { StateManager } from "./stateManager";
 import {
   getFakeArtist,
@@ -15,7 +14,7 @@ describe("StateManager - constructor", () => {
   it("should initialize a new StateManager", () => {
     const state = new StateManager();
     expect(state.getState()).toEqual({
-      selectedReleases: [],
+      selection: [],
       isInputFocused: false,
       isImporting: false,
       path: "",
@@ -29,19 +28,16 @@ describe("StateManager - constructor", () => {
   });
 });
 
-describe("StateManager - setSelectedReleases / getSelectedReleases", () => {
+describe("StateManager - setSelection / getSelection", () => {
   it("should set and get the corresponding value", () => {
     const onChange = vi.fn();
     const state = new StateManager();
     state.onStateChange(onChange);
-    state.setSelectedReleases([
-      { id: 1 },
-      { id: 2 },
-    ] as ReleaseWithArtistAndSubReleases[]);
-    expect(state.getSelectedReleases()).toMatchObject([{ id: 1 }, { id: 2 }]);
+    state.setSelection([1, 2]);
+    expect(state.getSelection()).toEqual([1, 2]);
     expect(onChange).toHaveBeenCalledWith(
       expect.objectContaining({
-        selectedReleases: [{ id: 1 }, { id: 2 }],
+        selection: [1, 2],
       })
     );
   });

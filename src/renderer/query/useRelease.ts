@@ -49,10 +49,10 @@ export default function useRelease({
   });
 
   useEffect(() => {
-    if (!selectOnLoad) {
+    if (!selectOnLoad || !release) {
       return;
     }
-    api.state.selectReleases([release]);
+    api.state.setSelection([release.id]);
   }, [release, selectOnLoad]);
 
   useEffect(() => {
