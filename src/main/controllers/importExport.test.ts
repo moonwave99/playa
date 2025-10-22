@@ -6,6 +6,7 @@ import { importExportController } from "./importExport";
 import { Open } from "unzipper";
 import path from "node:path";
 import { readJSON } from "fs-extra";
+import { capitalize } from "lodash";
 
 afterEach(clearPrisma);
 
@@ -189,7 +190,7 @@ describe("importDataFromDialog function", () => {
 
     [
       ...entities.flatMap((x) =>
-        ["Clearing", "Importing"].map((y) => `${y} ${x}`)
+        ["Clearing", "Importing"].map((y) => `${y} ${capitalize(x)}`)
       ),
       "Importing additional relationships",
     ].forEach((x) => {

@@ -62,7 +62,7 @@ test.describe("Import", () => {
     await artistsList.getByText("Artist 1").click();
     const artistHeader = page.locator('[data-testid="ArtistPageHeader"]');
     await expect(artistHeader).toContainText("Artist 1");
-    await expect(artistHeader).toContainText("3 releases");
+    await expect(artistHeader).toContainText("3 Releases");
 
     const releaseList = page.locator('[data-testid="ReleaseList"]');
     await Promise.all(

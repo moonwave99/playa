@@ -49,14 +49,14 @@ export default function SearchView({ onClose }: SearchViewProps) {
     <div className={styles.view}>
       <label>
         <MdOutlineSearch
-          aria-label={t("components.SearchView.fields.search.label")}
+          aria-label={t("modals.SearchView.fields.search.label")}
         />
         <input
           autoFocus
           ref={inputRef}
           className={styles.input}
           type="search"
-          placeholder={t("components.SearchView.fields.search.placeholder")}
+          placeholder={t("modals.SearchView.fields.search.placeholder")}
           {...inputHandlers}
         />
       </label>
@@ -232,7 +232,7 @@ function SearchResultView({
             {getTitle()}
           </Link>
           <span className={styles.type}>
-            {t("components.SearchView.results.trackBy")}
+            {t("modals.SearchView.results.trackBy")}
             {item.links.artist ? (
               <Link
                 to={item.links.artist}

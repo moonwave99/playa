@@ -129,32 +129,32 @@ export async function importData({
   try {
     log("importExport:importData", "Resetting database...");
 
-    onProgress("Clearing groups");
+    onProgress("Clearing Groups");
     await prisma.group.deleteMany();
-    onProgress("Clearing groups", true);
+    onProgress("Clearing Groups", true);
 
-    onProgress("Clearing collections");
+    onProgress("Clearing Collections");
     await prisma.collection.deleteMany();
-    onProgress("Clearing collections", true);
+    onProgress("Clearing Collections", true);
 
-    onProgress("Clearing tracks");
+    onProgress("Clearing Tracks");
     await prisma.track.deleteMany();
-    onProgress("Clearing tracks", true);
+    onProgress("Clearing Tracks", true);
 
-    onProgress("Clearing releases");
+    onProgress("Clearing Releases");
     await prisma.release.deleteMany();
-    onProgress("Clearing releases", true);
+    onProgress("Clearing Releases", true);
 
-    onProgress("Clearing artists");
+    onProgress("Clearing Artists");
     await prisma.artist.deleteMany();
-    onProgress("Clearing artists", true);
+    onProgress("Clearing Artists", true);
 
-    onProgress("Clearing settings");
+    onProgress("Clearing Settings");
     await prisma.settings.deleteMany();
-    onProgress("Clearing settings", true);
+    onProgress("Clearing Settings", true);
 
     log("importExport:importData", "Importing artists...");
-    onProgress("Importing artists");
+    onProgress("Importing Artists");
     await prisma.artist.createMany({
       data: artists.map(
         ({
@@ -167,10 +167,10 @@ export async function importData({
         }: any) => x
       ),
     });
-    onProgress("Importing artists", true);
+    onProgress("Importing Artists", true);
 
-    log("importExport:importData", "Importing releases...");
-    onProgress("Importing releases");
+    log("importExport:importData", "Importing Releases...");
+    onProgress("Importing Releases");
     await prisma.release.createMany({
       data: releases.map(
         ({
@@ -204,27 +204,27 @@ export async function importData({
         })
       )
     );
-    onProgress("Importing releases", true);
+    onProgress("Importing Releases", true);
 
-    log("importExport:importData", "Importing tracks...");
-    onProgress("Importing tracks");
+    log("importExport:importData", "Importing Tracks...");
+    onProgress("Importing Tracks");
     await prisma.track.createMany({ data: tracks });
-    onProgress("Importing tracks", true);
+    onProgress("Importing Tracks", true);
 
-    log("importExport:importData", "Importing collections...");
-    onProgress("Importing collections");
+    log("importExport:importData", "Importing Collections...");
+    onProgress("Importing Collections");
     await prisma.collection.createMany({ data: collections });
-    onProgress("Importing collections", true);
+    onProgress("Importing Collections", true);
 
-    log("importExport:importData", "Importing groups...");
-    onProgress("Importing groups");
+    log("importExport:importData", "Importing Groups...");
+    onProgress("Importing Groups");
     await prisma.group.createMany({ data: groups });
-    onProgress("Importing groups", true);
+    onProgress("Importing Groups", true);
 
-    log("importExport:importData", "Importing settings...");
-    onProgress("Importing settings");
+    log("importExport:importData", "Importing Settings...");
+    onProgress("Importing Settings");
     await prisma.settings.createMany({ data: settings });
-    onProgress("Importing settings", true);
+    onProgress("Importing Settings", true);
 
     log("importExport:importData", "Importing additional relationships...");
     onProgress("Importing additional relationships");

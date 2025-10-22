@@ -5,6 +5,24 @@ import { getFakeSettings } from "../../test/seed";
 
 afterEach(clearPrisma);
 
+describe("settingsController - init function", () => {
+  it("returns stores the default Settings if no settings are found", async () => {
+    const { init, getSettings } = settingsController();
+
+    await init();
+
+    expect(await getSettings()).toMatchObject({
+      PLAYER_PATH: "",
+      TAGGER_PATH: "",
+      DISCOGS_KEY: "",
+      DISCOGS_SECRET: "",
+      LIBRARY_PATH: "",
+      COVERS_PATH: "",
+      USE_SMART_IMPORT: false,
+    });
+  });
+});
+
 describe("settingsController - getSetting function", () => {
   it("returns the value of the given key", async () => {
     const data = getFakeSettings();

@@ -11,7 +11,16 @@ TBD
 - [ ] artist sidebar;
 - [ ] smart import vs interactive import;
 - [ ] entity tags;
-- [ ] e2e for critical path (music import / library manipulation);
+
+## E2E specs
+
+- [ ] import in non-smart mode;
+- [ ] edit in non-smart mode;
+- [ ] lightbox view;
+- [ ] additional Artists in Release;
+- [ ] delete Artist;
+- [ ] delete Collection;
+- [ ] delete Group;
 
 ## License
 

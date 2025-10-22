@@ -213,7 +213,7 @@
         "title": "Release Info"
       },
       "tracklistView": {
-        "title": "Tracklist ({{total}} tracks)"
+        "title": "Tracklist ({{total}} Tracks)"
       },
       "errors": {
         "import": "Error importing Release"
@@ -317,6 +317,17 @@
         "add": "Add",
         "cancel": "Cancel"
       }
+    },
+    "SearchView": {
+      "fields": {
+        "search": {
+          "label": "Search",
+          "placeholder": "Enter search term"
+        }
+      },
+      "results": {
+        "trackBy": "Track by"
+      }
     }
   },
   "components": {
@@ -340,16 +351,9 @@
     "ReleaseView": {
       "link": "See {{title}} Tracks"
     },
-    "SearchView": {
-      "fields": {
-        "search": {
-          "label": "Search",
-          "placeholder": "Enter search term"
-        }
-      },
-      "results": {
-        "trackBy": "Track by"
-      }
+    "ListCard": {
+      "releaseCount": "{{count}} Releases",
+      "trackCount": "{{count}} Tracks"
     }
   },
   "entityList": {

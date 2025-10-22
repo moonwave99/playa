@@ -22,6 +22,7 @@ type SettingsViewProps = {
 type Field = {
   key: keyof Settings;
   type: "string" | "checkbox" | "path";
+  required?: boolean;
   options?: {
     title?: string;
     defaultPath: string;
@@ -109,7 +110,7 @@ export default function SettingsView({ onSave, onCancel }: SettingsViewProps) {
     }));
   }
 
-  function renderField({ key, type, options }: Field) {
+  function renderField({ key, type, required, options }: Field) {
     const className = formStyles[type === "checkbox" ? "checkbox" : "input"];
     return (
       <label key={key} className={formStyles.label}>
@@ -121,7 +122,7 @@ export default function SettingsView({ onSave, onCancel }: SettingsViewProps) {
           onClick={type === "path" ? () => openFile(key, options) : null}
           name={key}
           className={className}
-          required={type !== "checkbox"}
+          required={required}
           placeholder={t(`modals.SettingsView.fields.${key}.placeholder`)}
           value={(copy[key] as string) || ""}
           checked={!!copy[key]}

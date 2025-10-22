@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import type { MouseEvent } from "react";
+import { useState, useEffect, type MouseEvent } from "react";
+import { useTranslation } from "react-i18next";
 import useDominantColor from "../hooks/useDominantColor";
 import useHover from "../hooks/useHover";
 import {
@@ -78,6 +78,7 @@ export default function ListCard({
   onLinkClick,
   testId,
 }: ListCardProps) {
+  const { t } = useTranslation();
   const [loadCount, setLoadCount] = useState(0);
   const coverRelease = getCoverRelease(item);
 
@@ -160,7 +161,9 @@ export default function ListCard({
                 {normalizeArtistDisplayName(item.name)}
               </Link>
             )}
-            <div className={styles.info}>{releaseCount} releases</div>
+            <div className={styles.info}>
+              {t("components.ListCard.releaseCount", { count: releaseCount })}
+            </div>
           </header>
           {isSingle && (
             <div className={styles.listInfo}>
@@ -402,6 +405,7 @@ function ReleaseInfo({
   useDarkText,
   onLinkClick,
 }: ReleaseInfoProps) {
+  const { t } = useTranslation();
   const { id, type, year } = release;
   const { duration, trackCount } = getReleaseDuration(release);
   return (
@@ -410,7 +414,9 @@ function ReleaseInfo({
         {type}, {year} {getDiscInfo(release)}
         {isSingle && (
           <>
-            <span className={styles.trackCount}>{trackCount} tracks</span>
+            <span className={styles.trackCount}>
+              {t("components.ListCard.trackCount", { count: trackCount })}
+            </span>
             <span
               className={cx(styles.releaseDuration, {
                 [styles.releaseDurationBlock]: !isInline && isSingle,

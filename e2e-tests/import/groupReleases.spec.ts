@@ -101,7 +101,7 @@ test.describe("Import", () => {
 
     await expect(releaseHeader).toContainText("Album 1");
     await expect(releaseHeader).toContainText("2 discs");
-    await expect(releaseHeader).toContainText("10 tracks");
+    await expect(releaseHeader).toContainText("10 Tracks");
 
     const tracklist = page.locator('[data-testid="Tracklist"]');
 
