@@ -57,7 +57,7 @@ export default function ReleaseLightbox({
   });
 
   return (
-    <div className={styles.view}>
+    <div className={styles.view} data-testid="ReleaseLightbox">
       {context?.length > 1 && (
         <button
           className={cx(styles.button, styles.prev)}

@@ -33,6 +33,7 @@ import { getRelease, getSelectedReleases } from "../db/release";
 import { getSelectedArtist, getSelectedArtists } from "../db/artist";
 import { getCollection } from "../db/collection";
 import { getGroup } from "../db/group";
+import { isPage } from "@/renderer/routes";
 
 export { releaseMenu, artistMenu, collectionMenu, groupMenu, searchResultMenu };
 
@@ -173,6 +174,12 @@ async function refreshMenu(menu: Menu, stateManager: StateManager) {
     if (["addReleasesToCollection", "deleteReleases"].includes(item.id)) {
       item.enabled = selectedReleasesIds.length > 0;
     }
+
+    if (item.id === "showReleaseInLightbox") {
+      item.enabled =
+        selectedReleasesIds.length === 1 &&
+        !isPage("release", stateManager.getState().path);
+    }
   });
 
   const groupReleasesEntry = menu.getMenuItemById("groupReleases");
@@ -238,6 +245,23 @@ type InitMenuParams = {
 
 export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
   const menu = Menu.getApplicationMenu();
+
+  async function getReleaseContext() {
+    if (stateManager.getSelection("collection").length) {
+      return (
+        await getCollection(stateManager.getSelection("collection").at(0))
+      ).releases;
+    }
+
+    if (stateManager.getSelection("artist").length) {
+      return (await getSelectedArtist(stateManager.getSelection("artist")))
+        .releases;
+    }
+
+    return (await getSelectedReleases(stateManager.getSelection("release"))).at(
+      0
+    );
+  }
 
   menu.append(
     new MenuItem({
@@ -330,6 +354,20 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
       id: "release",
       label: "Release",
       submenu: [
+        {
+          id: "showReleaseInLightbox",
+          label: "Show Release in Lightbox",
+          accelerator: "Space",
+          click: async () => {
+            const release = await getRelease(
+              stateManager.getSelection("release").at(0)
+            );
+            openModal("lightbox", {
+              release,
+              context: await getReleaseContext(),
+            });
+          },
+        },
         {
           label: "Open Release in Tagger",
           accelerator: "Shift+T",
