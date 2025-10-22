@@ -53,7 +53,7 @@ export default function ArtistEditor({
       </label>
       {!results?.length ? (
         <p className={styles.Placeholder}>
-          {query && t("components.ArtistEditor.lookup.label", { query })}
+          {query && t("components.ArtistEditor.noResults", { query })}
         </p>
       ) : (
         results && <ArtistList artists={results} type="add" onClick={onAdd} />

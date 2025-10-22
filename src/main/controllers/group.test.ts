@@ -125,6 +125,74 @@ describe("updateGroup function", () => {
   });
 });
 
+describe("addArtistsToGroup function", () => {
+  it("does nothing if no group is found", async () => {
+    const artists = getFakeArtists({ length: 5 });
+    await prisma.artist.createMany({ data: artists });
+    const send = vi.fn();
+    const { addArtistsToGroup } = groupController({ ...defaultParams, send });
+    const result = await addArtistsToGroup(1, artists);
+    expect(result).toBe(null);
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("adds the passed artists to the group", async () => {
+    const group = getFakeGroups({ length: 1 }).at(0);
+    const artists = getFakeArtists({ length: 2 });
+    await prisma.artist.createMany({ data: artists });
+    await prisma.group.create({
+      data: group,
+    });
+
+    const send = vi.fn();
+    const { addArtistsToGroup } = groupController({ ...defaultParams, send });
+    await addArtistsToGroup(1, artists);
+
+    const updatedGroup = await prisma.group.findFirst({
+      where: { id: 1 },
+      include: { artists: true },
+    });
+
+    expect(updatedGroup).toMatchObject({
+      artists: [{ id: 1 }, { id: 2 }],
+    });
+
+    expect(send).toHaveBeenCalledWith("notify", {
+      type: "success",
+      message: "Artists added to Group",
+    });
+  });
+});
+
+describe("addArtistsToNewGroup function", () => {
+  it("adds the passed artists to a  new group", async () => {
+    const artists = getFakeArtists({ length: 2 });
+    await prisma.artist.createMany({ data: artists });
+
+    const send = vi.fn();
+    const { addArtistsToNewGroup } = groupController({
+      ...defaultParams,
+      send,
+    });
+    await addArtistsToNewGroup("New Group", artists);
+
+    const updatedGroup = await prisma.group.findFirst({
+      where: { id: 1 },
+      include: { artists: true },
+    });
+
+    expect(updatedGroup).toMatchObject({
+      title: "New Group",
+      artists: [{ id: 1 }, { id: 2 }],
+    });
+
+    expect(send).toHaveBeenCalledWith("notify", {
+      type: "success",
+      message: "Artists added to Group",
+    });
+  });
+});
+
 describe("deleteGroup function", () => {
   it("deletes a group by the given id", async () => {
     const group = getFakeGroups({ length: 1 }).at(0);

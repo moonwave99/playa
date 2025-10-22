@@ -1,19 +1,8 @@
 import { matchPath } from "react-router";
-import { getArtist } from "./db/artist";
-import { getRelease } from "./db/release";
-import { getCollection } from "./db/collection";
-import { getGroup } from "./db/group";
-import { isPage, getRouteMatch } from "@/renderer/routes";
-
-const getEntityMap = {
-  artist: getArtist,
-  release: getRelease,
-  collection: getCollection,
-  group: getGroup,
-};
+import { SelectableEntities } from "@/types/types";
 
 export type State = {
-  selection: number[];
+  selection: Record<SelectableEntities, number[]>;
   isInputFocused: boolean;
   isImporting: boolean;
   path: string;
@@ -24,7 +13,12 @@ export class StateManager {
   private handler: (state: State) => void;
   constructor() {
     this.state = {
-      selection: [],
+      selection: {
+        artist: [],
+        release: [],
+        collection: [],
+        group: [],
+      },
       isInputFocused: false,
       isImporting: false,
       path: "",
@@ -37,8 +31,8 @@ export class StateManager {
     this.state.path = path;
     this.onUpdate();
   }
-  getSelection() {
-    return this.state.selection;
+  getSelection(entity: SelectableEntities) {
+    return this.state.selection[entity];
   }
   isInputFocused() {
     return this.state.isInputFocused;
@@ -49,8 +43,8 @@ export class StateManager {
   onStateChange(handler: (state: State) => void) {
     this.handler = handler;
   }
-  setSelection(selection: number[]) {
-    this.state.selection = selection;
+  setSelection(entity: SelectableEntities, selection: number[]) {
+    this.state.selection[entity] = selection;
     this.onUpdate();
   }
   setInputFocused(isInputFocused: boolean) {
@@ -63,18 +57,6 @@ export class StateManager {
   }
   getRouteMatch(pattern: string) {
     return matchPath(pattern, this.state.path);
-  }
-  isPage(page: string) {
-    return isPage(page, this.state.path);
-  }
-  async getCurrentEntity() {
-    const match = getRouteMatch(this.state.path);
-    if (!match || !match.params.id) {
-      return null;
-    }
-    return getEntityMap[match.route.id as keyof typeof getEntityMap](
-      +match.params.id
-    );
   }
   private onUpdate() {
     if (!this.handler) {

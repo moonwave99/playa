@@ -25,6 +25,10 @@ const defaultParams = {
   getSetting,
   send: vi.fn(),
   stateManager: {
+    getSelection: (_: string) => {
+      void _;
+      return [] as number[];
+    },
     setImporting: (_: boolean) => {
       void _;
     },
@@ -317,8 +321,7 @@ describe("importFolderFromDialog function", () => {
       openFolderDialog: vi.fn(),
       send,
       stateManager: {
-        getCurrentEntity: () => null as unknown,
-        isPage: () => false,
+        getSelection: () => [] as number[],
       } as unknown as StateManager,
     });
 
@@ -335,8 +338,7 @@ describe("importFolderFromDialog function", () => {
       openFolderDialog: () =>
         Array.from({ length: 20 }, (_, i) => `folder-${i}`),
       stateManager: {
-        getCurrentEntity: () => null as unknown,
-        isPage: () => false,
+        getSelection: () => [] as number[],
       } as unknown as StateManager,
       showErrorBox,
       send,
@@ -355,7 +357,6 @@ describe("importFolderFromDialog function", () => {
   it("shows an error box if the selected folder is outside the library path", async (context) => {
     const directory = await testFs({}, context.task.id);
     const LIBRARY_PATH = path.join(directory, "LIBRARY_PATH");
-    const artist = getFakeArtist(1);
 
     const showErrorBox = vi.fn();
     const send = vi.fn();
@@ -368,8 +369,7 @@ describe("importFolderFromDialog function", () => {
       showErrorBox,
       send,
       stateManager: {
-        getCurrentEntity: () => artist,
-        isPage: () => true,
+        getSelection: () => [] as number[],
       } as unknown as StateManager,
     });
 
@@ -403,6 +403,7 @@ describe("importFolderFromDialog function", () => {
     const LIBRARY_PATH = path.join(directory, "LIBRARY_PATH");
 
     const artist = getFakeArtist(1);
+    await prisma.artist.create({ data: artist });
     const send = vi.fn();
     const openModal = vi.fn();
 
@@ -414,8 +415,7 @@ describe("importFolderFromDialog function", () => {
       getSetting: (key: string) =>
         key === "LIBRARY_PATH" ? LIBRARY_PATH : key,
       stateManager: {
-        getCurrentEntity: () => artist,
-        isPage: () => true,
+        getSelection: () => [1],
       } as unknown as StateManager,
     });
 
@@ -448,6 +448,7 @@ describe("importFolderFromDialog function", () => {
       );
       const LIBRARY_PATH = path.join(directory, "LIBRARY_PATH");
       const artist = getFakeArtist(1);
+      await prisma.artist.create({ data: artist });
 
       const showErrorBox = vi.fn();
       const send = vi.fn();
@@ -464,8 +465,7 @@ describe("importFolderFromDialog function", () => {
         send,
         openModal,
         stateManager: {
-          getCurrentEntity: () => artist,
-          isPage: () => true,
+          getSelection: () => [1],
         } as unknown as StateManager,
       });
 
@@ -475,8 +475,9 @@ describe("importFolderFromDialog function", () => {
         data: [
           {
             artist: {
-              id: null,
-              name: "Artist 1",
+              ...artist,
+              coverReleaseId: null,
+              updatedAt: null,
             },
             path: "2000 - Release 1",
             completePath: path.join(artist.path, "[Album]", "2000 - Release 1"),
@@ -537,6 +538,7 @@ describe("importFolderFromDialog function", () => {
       );
       const LIBRARY_PATH = path.join(directory, "LIBRARY_PATH");
       const artist = getFakeArtist(1);
+      await prisma.artist.create({ data: artist });
 
       const showErrorBox = vi.fn();
       const send = vi.fn();
@@ -552,8 +554,7 @@ describe("importFolderFromDialog function", () => {
         showErrorBox,
         send,
         stateManager: {
-          getCurrentEntity: () => artist,
-          isPage: () => true,
+          getSelection: () => [1],
         } as unknown as StateManager,
       });
 

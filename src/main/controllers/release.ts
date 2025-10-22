@@ -260,7 +260,9 @@ export function releaseController({
   }
 
   async function unGroupSelectedRelease() {
-    const releases = await getSelectedReleases(stateManager.getSelection());
+    const releases = await getSelectedReleases(
+      stateManager.getSelection("release")
+    );
     if (!releases.at(0)) {
       return;
     }

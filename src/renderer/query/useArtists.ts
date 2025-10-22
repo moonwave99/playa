@@ -34,7 +34,12 @@ export default function useArtists(
         take: pageSize,
         skip: context.pageParam,
       }),
-    getNextPageParam: (lastGroup) => lastGroup.pagination.skip + pageSize,
+    getNextPageParam: ({ pagination }) => {
+      if (pagination.take + pagination.skip > pagination.total) {
+        return;
+      }
+      return pagination.skip + pageSize;
+    },
     initialPageParam: 0,
   });
 

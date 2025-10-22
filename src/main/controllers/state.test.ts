@@ -31,9 +31,9 @@ describe("stateController - setSelection function", () => {
       ...defaultParams,
       stateManager,
     });
-    expect(stateManager.getSelection()).toEqual([]);
-    setSelection([1, 2]);
-    expect(stateManager.getSelection()).toEqual([1, 2]);
+    expect(stateManager.getSelection("artist")).toEqual([]);
+    setSelection("artist", [1, 2]);
+    expect(stateManager.getSelection("artist")).toEqual([1, 2]);
   });
 });
 

@@ -150,7 +150,7 @@ export const releaseMenu =
           queryKeys: [
             ["releases", "latest"],
             ["releases", release.id],
-            context.entityType
+            context?.entityType
               ? [`${context.entityType}s`, (context as unknown as HasId)?.id]
               : null,
           ],

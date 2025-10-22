@@ -27,7 +27,7 @@ test.describe("Containing Groups", () => {
 
     await expect(page.locator('[data-testid="ArtistPage"]')).toBeVisible();
 
-    await clickMenuItemById(electronApp, "addArtistToGroup");
+    await clickMenuItemById(electronApp, "addArtistsToGroup");
     const modal = page.locator(".ReactModalPortal");
     await expect(modal).toContainText("Add Artists to Group");
 
@@ -66,7 +66,7 @@ test.describe("Containing Groups", () => {
 
     await expect(page.locator('[data-testid="ArtistPage"]')).toBeVisible();
 
-    await clickMenuItemById(electronApp, "addArtistToGroup");
+    await clickMenuItemById(electronApp, "addArtistsToGroup");
     const modal = page.locator(".ReactModalPortal");
     await expect(modal.getByText("Add Artists to Group").first()).toBeVisible();
 

@@ -14,7 +14,7 @@ import {
 import { globby } from "globby";
 import { searchCover } from "../covers";
 import { addTracksToRelease } from "../db/release";
-import { searchArtistByName } from "../db/artist";
+import { getArtist, searchArtistByName } from "../db/artist";
 import { hashArtistName, hashRelease } from "../hash";
 import { log } from "../logger";
 import {
@@ -243,9 +243,10 @@ export function importFoldersController({
 
   async function importFolderFromDialog() {
     let path = "";
-    if (stateManager.isPage("artist")) {
-      const artist = (await stateManager.getCurrentEntity()) as Artist;
-      path = artist?.path;
+    const artistSelection = stateManager.getSelection("artist");
+    if (artistSelection.length === 1) {
+      const artist = (await getArtist(artistSelection.at(0))) as Artist;
+      path = artist?.path || "";
     }
 
     const folders = openFolderDialog(withPath("LIBRARY_PATH", path), [

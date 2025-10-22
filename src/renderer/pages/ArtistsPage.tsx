@@ -4,6 +4,7 @@ import { compactColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
 import useArtists from "@/renderer/query/useArtists";
 import useAlphabeticalArtists from "@/renderer/query/useAlphabeticalArtists";
 import { useApiEvents } from "@/renderer/hooks/useApiEvents";
+import { useSelect } from "@/renderer/hooks/useSelect";
 import api from "@/renderer/api";
 import useStore from "@/renderer/store";
 import useRestoreListPosition from "@/renderer/hooks/useRestoreListPosition";
@@ -72,6 +73,8 @@ function LatestArtistsView() {
     key: ["latestArtists"],
   });
 
+  const { select } = useSelect("artist");
+
   if (isPending) {
     return <Loading />;
   }
@@ -100,6 +103,9 @@ function LatestArtistsView() {
       onUnmount={storeScrollInfo}
       scrollInfo={scrollInfo}
       testId="LatestArtistsView"
+      onSelectionChange={(selection) =>
+        select(selection.map((index) => artists[index].id))
+      }
       render={({ item, ...rest }) => (
         <ListCard
           showMultipleCovers

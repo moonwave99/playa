@@ -28,11 +28,3 @@ export function useApiEvents(params: Partial<typeof api.events>) {
     };
   }, []);
 }
-
-export function useClearSelectionOnLeave() {
-  useEffect(() => {
-    return () => {
-      api.state.setSelection([]);
-    };
-  }, []);
-}

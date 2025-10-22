@@ -10,7 +10,7 @@ import type {
   ReleaseWithArtistAndTracks,
 } from "@/types/types";
 import type { QueryKey } from "@tanstack/react-query";
-import { getArtistLink, getRandomLink } from "@/lib/links";
+import { getRandomLink } from "@/lib/links";
 import { getStats } from "../db/stats";
 import {
   searchReleaseOnDiscogs,
@@ -30,6 +30,9 @@ import { searchResultMenu } from "./searchResult";
 import type { StateManager } from "../stateManager";
 import { send, openModal } from "../controllers/init";
 import { getRelease, getSelectedReleases } from "../db/release";
+import { getSelectedArtist, getSelectedArtists } from "../db/artist";
+import { getCollection } from "../db/collection";
+import { getGroup } from "../db/group";
 
 export { releaseMenu, artistMenu, collectionMenu, groupMenu, searchResultMenu };
 
@@ -124,7 +127,7 @@ export function getDeleteEntry({
 }
 
 async function refreshMenu(menu: Menu, stateManager: StateManager) {
-  const { isInputFocused, selection, isImporting } = stateManager.getState();
+  const { isInputFocused, isImporting } = stateManager.getState();
 
   ["navigate", "library"].forEach((id) => {
     menu
@@ -133,50 +136,59 @@ async function refreshMenu(menu: Menu, stateManager: StateManager) {
   });
 
   ["collection" as const, "group" as const].forEach((entity) => {
-    const enabled = stateManager.isPage(entity);
+    const enabled = !!stateManager.getSelection(entity).length;
     menu.getMenuItemById(entity).submenu.items.forEach((item) => {
       item.enabled = enabled;
     });
   });
 
   menu.getMenuItemById("artist").submenu.items.forEach((item) => {
-    const enabled = stateManager.isPage("artist");
     if (isInputFocused) {
       item.enabled = false;
       return;
     }
-    if (item.id === "refresh-releases") {
-      item.enabled = enabled && !isImporting;
+
+    if (stateManager.getSelection("artist").length > 1) {
+      item.enabled = ["addArtistsToGroup"].includes(item.id);
       return;
     }
-    item.enabled = enabled;
+
+    if (stateManager.getSelection("artist").length === 1) {
+      item.enabled = item.id === "refresh-releases" ? !isImporting : true;
+      return;
+    }
+
+    item.enabled = false;
   });
+
+  const selectedReleasesIds = stateManager.getSelection("release");
 
   menu.getMenuItemById("release").submenu.items.forEach((item) => {
     if (isInputFocused) {
       item.enabled = false;
       return;
     }
-    item.enabled = selection.length === 1;
+
+    item.enabled = selectedReleasesIds.length === 1;
     if (["addReleasesToCollection", "deleteReleases"].includes(item.id)) {
-      item.enabled = selection.length > 0;
+      item.enabled = selectedReleasesIds.length > 0;
     }
   });
 
   const groupReleasesEntry = menu.getMenuItemById("groupReleases");
   const unGroupReleasesEntry = menu.getMenuItemById("unGroupRelease");
 
-  const selectedReleases = await getSelectedReleases(selection);
+  const selectedReleases = await getSelectedReleases(selectedReleasesIds);
 
   const isSomeReleaseMain = selectedReleases.some((x) => x?.subReleases.length);
 
   if (isSomeReleaseMain) {
-    if (selection.length > 1) {
+    if (selectedReleasesIds.length > 1) {
       groupReleasesEntry.visible = true;
       groupReleasesEntry.enabled = false;
       unGroupReleasesEntry.visible = false;
       unGroupReleasesEntry.enabled = false;
-    } else if (selection.length === 1) {
+    } else if (selectedReleasesIds.length === 1) {
       groupReleasesEntry.visible = false;
       groupReleasesEntry.enabled = false;
       unGroupReleasesEntry.visible = true;
@@ -187,7 +199,7 @@ async function refreshMenu(menu: Menu, stateManager: StateManager) {
   unGroupReleasesEntry.visible = false;
   unGroupReleasesEntry.enabled = false;
   groupReleasesEntry.visible = true;
-  groupReleasesEntry.enabled = selection.length > 1;
+  groupReleasesEntry.enabled = selectedReleasesIds.length > 1;
 }
 
 type MenuEntry = {
@@ -238,9 +250,7 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
           click: async () =>
             controllers.system.revealEntityInFinder(
               "Artist",
-              (
-                (await stateManager.getCurrentEntity()) as ArtistWithReleasesFull
-              ).id
+              stateManager.getSelection("artist").at(0)
             ),
         },
         {
@@ -249,7 +259,9 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
           id: "refresh-releases",
           click: async () =>
             controllers.importFolders.refreshArtistReleases(
-              (await stateManager.getCurrentEntity()) as ArtistWithReleasesFull
+              (await getSelectedArtist(
+                stateManager.getSelection("artist")
+              )) as ArtistWithReleasesFull
             ),
         },
         {
@@ -257,9 +269,8 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
           accelerator: "Cmd+Shift+C",
           click: async () =>
             controllers.release.importMissingCovers(
-              (
-                (await stateManager.getCurrentEntity()) as ArtistWithReleasesFull
-              ).releases
+              (await getSelectedArtist(stateManager.getSelection("artist")))
+                .releases
             ),
         },
         {
@@ -268,7 +279,9 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
           accelerator: "Shift+E",
           click: async () =>
             openModal("editArtist", {
-              artist: await stateManager.getCurrentEntity(),
+              artist: await getSelectedArtist(
+                stateManager.getSelection("artist")
+              ),
             }),
         },
         {
@@ -276,7 +289,7 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
           label: "Delete Artist",
           click: async () =>
             controllers.artist.deleteArtist(
-              (await stateManager.getCurrentEntity()).id
+              stateManager.getSelection("artist").at(0)
             ),
         },
         { type: "separator" },
@@ -285,7 +298,7 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
           accelerator: "Cmd+Shift+D",
           click: async () =>
             searchArtistOnDiscogs(
-              (await stateManager.getCurrentEntity()) as ArtistWithReleasesFull
+              await getSelectedArtist(stateManager.getSelection("artist"))
             ),
         },
         {
@@ -293,17 +306,19 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
           accelerator: "Shift+R",
           click: async () =>
             searchArtistOnRYM(
-              (await stateManager.getCurrentEntity()) as ArtistWithReleasesFull
+              await getSelectedArtist(stateManager.getSelection("artist"))
             ),
         },
         { type: "separator" },
         {
-          label: "Add Artist to Group",
-          id: "addArtistToGroup",
+          label: "Add Artist(s) to Group",
+          id: "addArtistsToGroup",
           accelerator: "Shift+A",
           click: async () =>
             openModal("addArtistsToGroup", {
-              artists: [await stateManager.getCurrentEntity()],
+              artists: await getSelectedArtists(
+                stateManager.getSelection("artist")
+              ),
             }),
         },
       ],
@@ -316,25 +331,12 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
       label: "Release",
       submenu: [
         {
-          label: "Go to Artist page",
-          accelerator: "Shift+A",
-          click: async () =>
-            send(
-              "navigate",
-              getArtistLink(
-                (
-                  (await getRelease(
-                    stateManager.getSelection().at(0)
-                  )) as ReleaseWithArtist
-                ).artist
-              )
-            ),
-        },
-        {
           label: "Open Release in Tagger",
           accelerator: "Shift+T",
           click: () =>
-            controllers.system.openTagger(stateManager.getSelection().at(0)),
+            controllers.system.openTagger(
+              stateManager.getSelection("release").at(0)
+            ),
         },
         {
           label: "Reveal Release in Finder",
@@ -342,7 +344,7 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
           click: () =>
             controllers.system.revealEntityInFinder(
               "Release",
-              stateManager.getSelection().at(0)
+              stateManager.getSelection("release").at(0)
             ),
         },
         {
@@ -350,7 +352,7 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
           accelerator: "Cmd+Shift+R",
           click: () =>
             controllers.importFolders.refreshReleaseContents(
-              stateManager.getSelection().at(0)
+              stateManager.getSelection("release").at(0)
             ),
         },
         {
@@ -359,7 +361,7 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
           click: async () =>
             controllers.release.importCovers(
               (await getSelectedReleases(
-                stateManager.getSelection()
+                stateManager.getSelection("release")
               )) as ReleaseWithArtistAndTracks[]
             ),
         },
@@ -370,7 +372,7 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
           click: async () =>
             searchReleaseOnDiscogs(
               (await getRelease(
-                stateManager.getSelection().at(0)
+                stateManager.getSelection("release").at(0)
               )) as ReleaseWithArtist
             ),
         },
@@ -380,7 +382,7 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
           click: async () =>
             searchReleaseOnRYM(
               (await getRelease(
-                stateManager.getSelection().at(0)
+                stateManager.getSelection("release").at(0)
               )) as ReleaseWithArtist
             ),
         },
@@ -391,7 +393,7 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
           click: async () =>
             openModal("editRelease", {
               release: (
-                await getSelectedReleases(stateManager.getSelection())
+                await getSelectedReleases(stateManager.getSelection("release"))
               ).at(0),
             }),
         },
@@ -401,7 +403,9 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
           accelerator: "Cmd+G",
           click: async () =>
             openModal("groupReleases", {
-              releases: await getSelectedReleases(stateManager.getSelection()),
+              releases: await getSelectedReleases(
+                stateManager.getSelection("release")
+              ),
             }),
         },
         {
@@ -416,7 +420,9 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
           label: "Delete Selected Release",
           accelerator: "Cmd+Backspace",
           click: () =>
-            controllers.release.deleteReleases(stateManager.getSelection()),
+            controllers.release.deleteReleases(
+              stateManager.getSelection("release")
+            ),
         },
         {
           id: "addReleasesToCollection",
@@ -424,7 +430,9 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
           accelerator: "a",
           click: async () =>
             openModal("addReleasesToCollection", {
-              releases: await getSelectedReleases(stateManager.getSelection()),
+              releases: await getSelectedReleases(
+                stateManager.getSelection("release")
+              ),
             }),
         },
       ],
@@ -442,7 +450,9 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
           accelerator: "Shift+E",
           click: async () =>
             openModal("editCollection", {
-              collection: await stateManager.getCurrentEntity(),
+              collection: await getCollection(
+                stateManager.getSelection("collection").at(0)
+              ),
             }),
         },
       ],
@@ -460,7 +470,7 @@ export function initMenu({ controllers, stateManager, send }: InitMenuParams) {
           accelerator: "Shift+E",
           click: async () =>
             openModal("editGroup", {
-              group: await stateManager.getCurrentEntity(),
+              group: await getGroup(stateManager.getSelection("group").at(0)),
             }),
         },
       ],

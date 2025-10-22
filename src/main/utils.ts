@@ -8,6 +8,7 @@ import type {
   ReleaseWithArtist,
   TrackInfo,
   TrackWithRelease,
+  Notification,
 } from "@/types/types";
 import { globby } from "globby";
 import { VARIOUS_ARTISTS_NAME, VARIOUS_ARTISTS_FOLDER } from "@/lib/utils";
@@ -164,5 +165,58 @@ function parseTitle(title: string): Pick<Release, "year" | "title"> {
   return {
     year: Number(match[1]),
     title: match[2],
+  };
+}
+
+export function withNotification(
+  send: (channel: string, ...args: unknown[]) => void
+) {
+  return (
+    fn: (...args: unknown[]) => unknown,
+    notification:
+      | Notification
+      | ((result: ReturnType<typeof fn>) => Notification)
+  ) => {
+    return async (
+      ...params: Parameters<typeof fn>
+    ): Promise<ReturnType<typeof fn>> => {
+      const result = (await fn(...params)) as ReturnType<typeof fn>;
+      if (result) {
+        send(
+          "notify",
+          typeof notification === "function"
+            ? notification(result)
+            : notification
+        );
+      }
+      return result;
+    };
+  };
+}
+
+export function withConfirmDialog(
+  openConfirmDialog: (message: string, detail: string) => boolean
+) {
+  return (
+    fn: (...args: unknown[]) => unknown,
+    dialogOptions:
+      | { message: string; detail: string }
+      | ((...args: Parameters<typeof fn>) => {
+          message: string;
+          detail: string;
+        })
+  ) => {
+    return async (
+      ...params: Parameters<typeof fn>
+    ): Promise<ReturnType<typeof fn>> => {
+      const { message, detail } =
+        typeof dialogOptions === "function"
+          ? dialogOptions(...params)
+          : dialogOptions;
+      if (!openConfirmDialog(message, detail)) {
+        return;
+      }
+      return fn(...params);
+    };
   };
 }

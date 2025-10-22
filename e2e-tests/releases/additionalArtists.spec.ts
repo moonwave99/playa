@@ -29,36 +29,26 @@ test.describe("Releases", () => {
     await modal.getByLabel("Add Artist 2 to related Artists").click();
     await modal.getByLabel("Lookup Artists").fill("Artist 3");
     await modal.getByLabel("Add Artist 3 to related Artists").click();
-
+    await page.keyboard.press("Escape");
     await page.keyboard.press("Escape");
     await expect(modal).not.toBeVisible();
 
-    await expect(
-      page.locator('[data-testid="ReleaseWithTracklistHeader"]')
-    ).toContainText("Artist 1");
-    await expect(
-      page.locator('[data-testid="ReleaseWithTracklistHeader"]')
-    ).toContainText("Artist 2");
-    await expect(
-      page.locator('[data-testid="ReleaseWithTracklistHeader"]')
-    ).toContainText("Artist 3");
+    const header = page.locator('[data-testid="ReleaseWithTracklistHeader"]');
+
+    await expect(header).toContainText("Artist 1");
+    await expect(header).toContainText("Artist 2");
+    await expect(header).toContainText("Artist 3");
 
     await clickMenuItemById(electronApp, "editRelease");
-    await expect(modal).toContainText("Edit Release");
 
+    await expect(modal).toContainText("Edit Release");
     await modal.getByLabel("Remove Artist 2 from related Artists").click();
 
     await page.keyboard.press("Escape");
     await expect(modal).not.toBeVisible();
 
-    await expect(
-      page.locator('[data-testid="ReleaseWithTracklistHeader"]')
-    ).toContainText("Artist 1");
-    await expect(
-      page.locator('[data-testid="ReleaseWithTracklistHeader"]')
-    ).not.toContainText("Artist 2");
-    await expect(
-      page.locator('[data-testid="ReleaseWithTracklistHeader"]')
-    ).toContainText("Artist 3");
+    await expect(header).toContainText("Artist 1");
+    await expect(header).not.toContainText("Artist 2");
+    await expect(header).toContainText("Artist 3");
   });
 });

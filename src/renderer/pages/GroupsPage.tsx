@@ -6,6 +6,7 @@ import { getGroupLink } from "@/lib/links";
 import { estimateListCardSize } from "@/lib/utils";
 import useGroups from "@/renderer/query/useGroups";
 import useRestoreListPosition from "@/renderer/hooks/useRestoreListPosition";
+import { useSelect } from "../hooks/useSelect";
 import { GroupWithArtists } from "@/types/types";
 import Loading from "@/renderer/components/Loading";
 import ErrorView from "@/renderer/components/ErrorView";
@@ -22,6 +23,8 @@ export default function LatestGroups() {
   const { scrollInfo, storeScrollInfo } = useRestoreListPosition({
     key: ["latestGroups"],
   });
+
+  const { select } = useSelect("group");
 
   if (isPending) {
     return <Loading />;
@@ -55,6 +58,9 @@ export default function LatestGroups() {
           columnsConfig={compactColumnsConfig}
           estimateSize={estimateListCardSize}
           onEnter={(group: GroupWithArtists) => navigate(getGroupLink(group))}
+          onSelectionChange={(selection) =>
+            select(selection.map((index) => groups[index].id))
+          }
           onBackspace={onDelete}
           onUnmount={storeScrollInfo}
           scrollInfo={scrollInfo}

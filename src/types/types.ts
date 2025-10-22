@@ -64,6 +64,7 @@ export type SearchableEntities =
   | "artist"
   | "track"
   | "group";
+export type SelectableEntities = "collection" | "release" | "artist" | "group";
 export type Stats = Record<SearchableEntities, number>;
 export type HasId = { id: number };
 export type HasEntityType = { entityType: EntityType };

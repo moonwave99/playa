@@ -7,6 +7,7 @@ import ErrorView from "../components/ErrorView";
 import Loading from "@/renderer/components/Loading";
 
 import styles from "./Page.module.css";
+import { useSelect } from "../hooks/useSelect";
 
 export default function ReleasePage() {
   const { id } = useParams();
@@ -24,6 +25,8 @@ export default function ReleasePage() {
       a: gotoArtistPage,
     },
   });
+
+  useSelect("release", [+id]);
 
   if (isPending) {
     return <Loading />;

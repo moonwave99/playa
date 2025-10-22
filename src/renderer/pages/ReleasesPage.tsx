@@ -12,7 +12,7 @@ import useRestoreListPosition from "@/renderer/hooks/useRestoreListPosition";
 import { releaseColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
 import { withPrevent } from "@/renderer/hooks/useKeyboardManager";
 import useReleases from "@/renderer/query/useReleases";
-import { useClearSelectionOnLeave } from "@/renderer/hooks/useApiEvents";
+import { useSelect } from "@/renderer/hooks/useSelect";
 import { getReleaseLink } from "@/lib/links";
 import { getReleaseContextMenuParams } from "@/lib/utils";
 import Loading from "@/renderer/components/Loading";
@@ -35,7 +35,7 @@ export default function ReleasesPage() {
     fetchNextPage,
   } = useReleases();
 
-  useClearSelectionOnLeave();
+  const { select } = useSelect("release");
 
   const { scrollInfo, storeScrollInfo } = useRestoreListPosition({
     key: ["latestReleases"],
@@ -91,7 +91,7 @@ export default function ReleasesPage() {
           isFetchingNextPage={isFetchingNextPage}
           onEnter={onEnter}
           onSelectionChange={(selection) =>
-            api.state.setSelection(selection.map((index) => releases[index].id))
+            select(selection.map((index) => releases[index].id))
           }
           scrollInfo={scrollInfo}
           keyHandlers={keyHandlers}

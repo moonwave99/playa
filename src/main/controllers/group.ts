@@ -4,13 +4,15 @@ import {
   getGroups,
   createGroup,
   updateGroup as _updateGroup,
-  addArtistsToGroup,
-  addArtistsToNewGroup,
+  addArtistsToGroup as _addArtistsToGroup,
+  addArtistsToNewGroup as _addArtistsToNewGroup,
   removeArtistsFromGroup as _removeArtistsFromGroup,
   deleteGroup,
   deleteGroups,
   setGroupCoverArtist,
 } from "../db/group";
+
+import { withConfirmDialog, withNotification } from "../utils";
 
 type GroupControllerParams = {
   send: (channel: string, ...args: unknown[]) => void;
@@ -21,29 +23,28 @@ export function groupController({
   send,
   openConfirmDialog,
 }: GroupControllerParams) {
-  async function removeArtistsFromGroup(id: number, artist_ids: number[]) {
-    const confirm = openConfirmDialog(
-      `Are you sure to remove ${artist_ids.length} entries from this Group?`,
-      ""
-    );
+  const removeArtistsFromGroup = withConfirmDialog(openConfirmDialog)(
+    _removeArtistsFromGroup,
+    (_, artist_ids: number[]) => ({
+      message: "Update Group",
+      detail: `Are you sure to want to remove ${artist_ids.length} entries from this Group?`,
+    })
+  ) as typeof _removeArtistsFromGroup;
 
-    if (!confirm) {
-      return;
-    }
+  const updateGroup = withNotification(send)(_updateGroup, {
+    type: "success",
+    message: "Group updated",
+  }) as typeof _updateGroup;
 
-    return await _removeArtistsFromGroup(id, artist_ids);
-  }
+  const addArtistsToGroup = withNotification(send)(_addArtistsToGroup, {
+    type: "success",
+    message: "Artists added to Group",
+  }) as typeof _addArtistsToGroup;
 
-  async function updateGroup(...params: Parameters<typeof _updateGroup>) {
-    const updatedGroup = await _updateGroup(...params);
-    if (updatedGroup) {
-      send("notify", {
-        type: "success",
-        message: "Group updated",
-      });
-    }
-    return updatedGroup;
-  }
+  const addArtistsToNewGroup = withNotification(send)(_addArtistsToNewGroup, {
+    type: "success",
+    message: "Artists added to Group",
+  }) as typeof _addArtistsToNewGroup;
 
   return {
     getGroup,

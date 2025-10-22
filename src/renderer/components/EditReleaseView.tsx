@@ -74,7 +74,7 @@ export default function EditReleasesView({
       ["artists", release.artist_id],
     ]);
 
-    api.state.setSelection([]);
+    api.state.setSelection("release", []);
     onSave();
   }
 

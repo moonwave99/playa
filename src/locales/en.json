@@ -346,7 +346,7 @@
         "label": "Lookup Artists",
         "placeholder": "Search related Artist"
       },
-      "noResults": "No results for \"{query}\""
+      "noResults": "No results for \"{{query}}\""
     },
     "ReleaseView": {
       "link": "See {{title}} Tracks"

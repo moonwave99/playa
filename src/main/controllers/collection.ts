@@ -12,6 +12,8 @@ import {
   setCollectionCoverRelease,
 } from "../db/collection";
 
+import { withConfirmDialog, withNotification } from "../utils";
+
 type CollectionControllerParams = {
   send: (channel: string, ...args: unknown[]) => void;
   openConfirmDialog: (message: string, detail: string) => boolean;
@@ -21,34 +23,18 @@ export function collectionController({
   send,
   openConfirmDialog,
 }: CollectionControllerParams) {
-  async function removeReleasesFromCollection(
-    id: number,
-    release_ids: number[]
-  ) {
-    const confirm = openConfirmDialog(
-      `Are you sure to remove ${release_ids.length} entries from this Collection?`,
-      ""
-    );
+  const removeReleasesFromCollection = withConfirmDialog(openConfirmDialog)(
+    _removeReleasesFromCollection,
+    (_, artist_ids: number[]) => ({
+      message: "Update Collection",
+      detail: `Are you sure you want to remove ${artist_ids.length} entries from this Group?`,
+    })
+  ) as typeof _removeReleasesFromCollection;
 
-    if (!confirm) {
-      return;
-    }
-
-    return await _removeReleasesFromCollection(id, release_ids);
-  }
-
-  async function updateCollection(
-    ...params: Parameters<typeof _updateCollection>
-  ) {
-    const updatedCollection = await _updateCollection(...params);
-    if (updatedCollection) {
-      send("notify", {
-        type: "success",
-        message: "Collection updated",
-      });
-    }
-    return updatedCollection;
-  }
+  const updateCollection = withNotification(send)(_updateCollection, {
+    type: "success",
+    message: "Collection updated",
+  }) as typeof _updateCollection;
 
   return {
     getCollections,

@@ -30,6 +30,7 @@ import useRestoreListPosition from "../hooks/useRestoreListPosition";
 type ReleaseListProps = {
   releases: ReleaseWithArtistAndTracksAndSubreleases[];
   onDelete?: (releases: ReleaseWithArtist[], event: KeyboardEvent) => void;
+  onSelect?: (selection: number[]) => void;
   onContextMenu?: (
     selection: ReleaseWithArtistAndTracksAndSubreleases[],
     target_id: number
@@ -41,6 +42,7 @@ type ReleaseListProps = {
 
 export default function ReleaseList({
   releases,
+  onSelect,
   onDelete,
   onContextMenu,
   className,
@@ -147,7 +149,7 @@ export default function ReleaseList({
       onEnter={onEnter}
       onBackspace={onDelete}
       onSelectionChange={(selection) =>
-        api.state.setSelection(selection.map((index) => releases[index].id))
+        onSelect(selection.map((index) => releases[index].id))
       }
       {...getListConfig(releaseListViewMode)}
       onUnmount={storeScrollInfo}

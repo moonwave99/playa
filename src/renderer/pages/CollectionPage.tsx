@@ -6,7 +6,7 @@ import type {
 } from "@/types/types";
 import { getReleaseContextMenuParams } from "@/lib/utils";
 import useCollection from "@/renderer/query/useCollection";
-import { useClearSelectionOnLeave } from "@/renderer/hooks/useApiEvents";
+import { useSelect } from "@/renderer/hooks/useSelect";
 import ReleaseList from "@/renderer/components/ReleaseList";
 import Loading from "@/renderer/components/Loading";
 import ErrorView from "../components/ErrorView";
@@ -25,7 +25,8 @@ export default function CollectionPage() {
     setCollectionCover,
   } = useCollection(+id);
 
-  useClearSelectionOnLeave();
+  const { select } = useSelect("release");
+  useSelect("collection", [+id]);
 
   if (isPending) {
     return <Loading />;
@@ -73,6 +74,7 @@ export default function CollectionPage() {
           context={["collection"]}
           releases={collection.releases}
           onDelete={removeReleasesFromCollection}
+          onSelect={select}
           onContextMenu={onContextMenu}
           className={styles.list}
           keyHandlers={keyHandlers}

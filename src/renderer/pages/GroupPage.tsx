@@ -4,7 +4,7 @@ import api from "@/renderer/api";
 import type { ArtistWithReleasesAndAppearances } from "@/types/types";
 import useGroup from "../query/useGroup";
 import { compactColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
-import { useClearSelectionOnLeave } from "@/renderer/hooks/useApiEvents";
+import { useSelect } from "@/renderer/hooks/useSelect";
 import { getArtistLink } from "@/lib/links";
 import { estimateListCardSize } from "@/lib/utils";
 import List from "@/renderer/components/List";
@@ -20,7 +20,8 @@ export default function GroupPage() {
   const { id } = useParams();
   const { group, isPending, error, removeArtistsFromGroup } = useGroup(+id);
 
-  useClearSelectionOnLeave();
+  const { select } = useSelect("artist");
+  useSelect("group", [+id]);
 
   if (isPending) {
     return <Loading />;
@@ -62,6 +63,9 @@ export default function GroupPage() {
           estimateSize={estimateListCardSize}
           onEnter={(artist: ArtistWithReleasesAndAppearances) =>
             navigate(getArtistLink(artist))
+          }
+          onSelectionChange={(selection) =>
+            select(selection.map((index) => group.artists[index].id))
           }
           onBackspace={onDelete}
           testId="ArtistList"

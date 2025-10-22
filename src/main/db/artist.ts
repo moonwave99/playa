@@ -119,6 +119,17 @@ export async function getArtist(id: number) {
   };
 }
 
+export async function getSelectedArtist(selection: number[]) {
+  if (!selection.length) {
+    return null;
+  }
+  return getArtist(selection.at(0));
+}
+
+export async function getSelectedArtists(selection: number[]) {
+  return Promise.all(selection.map(getArtist));
+}
+
 export async function getLatestArtists({
   take = 50,
   skip = 0,

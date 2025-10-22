@@ -6,6 +6,7 @@ import { getCollectionLink } from "@/lib/links";
 import { estimateListCardSize } from "@/lib/utils";
 import useCollections from "@/renderer/query/useCollections";
 import useRestoreListPosition from "@/renderer/hooks/useRestoreListPosition";
+import { useSelect } from "../hooks/useSelect";
 import { CollectionWithReleases } from "@/types/types";
 import Loading from "@/renderer/components/Loading";
 import ErrorView from "@/renderer/components/ErrorView";
@@ -22,6 +23,8 @@ export default function LatestCollections() {
   const { scrollInfo, storeScrollInfo } = useRestoreListPosition({
     key: ["latestCollections"],
   });
+
+  const { select } = useSelect("collection");
 
   if (isPending) {
     return <Loading />;
@@ -54,6 +57,9 @@ export default function LatestCollections() {
           estimateSize={estimateListCardSize}
           onEnter={(collection: CollectionWithReleases) =>
             navigate(getCollectionLink(collection))
+          }
+          onSelectionChange={(selection) =>
+            select(selection.map((index) => collections[index].id))
           }
           onBackspace={onDelete}
           onUnmount={storeScrollInfo}

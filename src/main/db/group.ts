@@ -144,6 +144,12 @@ export async function updateGroup(id: number, { title, artists }: GroupUpdate) {
 }
 
 export async function addArtistsToGroup(id: number, artists: HasId[]) {
+  const group = await prisma.group.findFirst({
+    where: { id },
+  });
+  if (!group) {
+    return null;
+  }
   return prisma.group.update({
     where: {
       id,
