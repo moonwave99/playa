@@ -26,14 +26,13 @@ import { stateController } from "./state";
 import { settingsController } from "./settings";
 
 import { StateManager } from "../stateManager";
-import {
-  initMenu,
-  releaseMenu,
-  artistMenu,
-  collectionMenu,
-  groupMenu,
-  searchResultMenu,
-} from "../menu/menu";
+
+import { initMenu } from "../menu/menu";
+import { releaseMenu } from "../menu/context/release";
+import { artistMenu } from "../menu/context/artist";
+import { collectionMenu } from "../menu/context/collection";
+import { groupMenu } from "../menu/context/group";
+import { searchResultMenu } from "../menu/context/searchResult";
 
 import { Modals } from "@/renderer/Modal";
 import { getE2ETmpPath, IS_E2E_TEST } from "@/test/utils";
@@ -180,10 +179,9 @@ export async function init(mainWindow: BrowserWindow) {
   const { refreshMenu, clickEntry } = initMenu({
     controllers,
     stateManager,
-    send,
   });
 
-  stateManager.onStateChange(() => refreshMenu(stateManager));
+  stateManager.onStateChange(refreshMenu);
 
   [
     ...Object.values(controllers),
@@ -193,7 +191,7 @@ export async function init(mainWindow: BrowserWindow) {
       "menu:collection": collectionMenu({ controllers, send, openModal }),
       "menu:group": groupMenu({ controllers, send, openModal }),
       "menu:searchResult": searchResultMenu({ controllers, send, openModal }),
-      "menu:refresh": () => refreshMenu(stateManager),
+      "menu:refresh": () => refreshMenu(),
       "menu:click": clickEntry,
     },
   ].forEach(registerHandlers);

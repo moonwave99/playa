@@ -4,6 +4,8 @@ import {
   getArtist,
   getAllArtists,
   getLatestArtists,
+  getSelectedArtist,
+  getSelectedArtists,
   updateArtist,
   setArtistCoverRelease,
   searchArtists,
@@ -117,6 +119,8 @@ export function artistController({
   return {
     getArtist,
     getAllArtists,
+    getSelectedArtist,
+    getSelectedArtists,
     getLatestArtists,
     updateArtist,
     editArtist,

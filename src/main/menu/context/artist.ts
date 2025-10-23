@@ -5,7 +5,7 @@ import type {
   GroupWithArtists,
   MenuParams,
 } from "@/types/types";
-import { buildMenu, getCoverEntityEntry } from "./menu";
+import { buildMenu, getCoverEntityEntry } from "../menu";
 import { searchArtistOnRYM, searchArtistOnDiscogs } from "@/lib/external_links";
 
 function getRemoveFromGroupEntry(

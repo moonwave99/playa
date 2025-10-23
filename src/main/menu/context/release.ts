@@ -7,7 +7,7 @@ import type {
   WithReleases,
   HasId,
 } from "@/types/types";
-import { buildMenu, getDeleteEntry, getCoverEntityEntry } from "./menu";
+import { buildMenu, getDeleteEntry, getCoverEntityEntry } from "../menu";
 import { getReleaseFullTitle } from "@/lib/utils";
 import {
   searchReleaseOnDiscogs,

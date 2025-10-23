@@ -1,5 +1,5 @@
 import type { GroupWithArtists, MenuParams } from "@/types/types";
-import { buildMenu, getDeleteEntry } from "./menu";
+import { buildMenu, getDeleteEntry } from "../menu";
 
 export const groupMenu =
   ({ controllers, openModal }: MenuParams) =>

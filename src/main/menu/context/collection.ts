@@ -1,5 +1,5 @@
 import type { CollectionWithReleases, MenuParams } from "@/types/types";
-import { buildMenu, getDeleteEntry } from "./menu";
+import { buildMenu, getDeleteEntry } from "../menu";
 
 export const collectionMenu =
   ({ controllers, openModal }: MenuParams) =>

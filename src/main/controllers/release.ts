@@ -350,6 +350,7 @@ export function releaseController({
   return {
     getRelease,
     getReleases,
+    getSelectedReleases,
     getLatestAdditions,
     groupReleases,
     unGroupRelease,
