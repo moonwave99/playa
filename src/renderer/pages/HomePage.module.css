@@ -24,6 +24,10 @@
     flex-direction: column;
     gap: 2rem;
   }
+  .entityListSection,
+  .entityListSectionLoader {
+    min-height: auto;
+  }
 }
 
 .latestReleases,

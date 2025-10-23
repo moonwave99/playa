@@ -17,10 +17,10 @@ export class StateManager {
   constructor() {
     this.state = {
       selection: {
-        artist: [],
-        release: [],
-        collection: [],
-        group: [],
+        artist: [] as number[],
+        release: [] as number[],
+        collection: [] as number[],
+        group: [] as number[],
       },
       isInputFocused: false,
       isImporting: false,
@@ -43,16 +43,39 @@ export class StateManager {
   isImporting() {
     return this.state.isImporting;
   }
-  onStateChange(handler: (state: State) => void) {
-    this.handler = handler;
+  reset() {
+    this.state = {
+      selection: {
+        artist: [] as number[],
+        release: [] as number[],
+        collection: [] as number[],
+        group: [] as number[],
+      },
+      isInputFocused: false,
+      isImporting: false,
+      path: "",
+    };
+    this.onUpdate();
   }
   setSelection(
     entity: SelectableEntities,
-    selection: SelectionSetter | number[]
+    selection: SelectionSetter | number[],
+    options?: {
+      clearOther: boolean;
+    }
   ) {
+    if (options?.clearOther) {
+      this.state.selection = {
+        artist: [] as number[],
+        release: [] as number[],
+        collection: [] as number[],
+        group: [] as number[],
+      };
+    }
     this.state.selection[entity] = Array.isArray(selection)
       ? selection
       : selection(this.state.selection[entity]);
+
     this.onUpdate();
   }
   setInputFocused(isInputFocused: boolean) {
@@ -62,6 +85,9 @@ export class StateManager {
   setImporting(isImporting: boolean) {
     this.state.isImporting = isImporting;
     this.onUpdate();
+  }
+  onStateChange(handler: (state: State) => void) {
+    this.handler = handler;
   }
   getRouteMatch(pattern: string) {
     return matchPath(pattern, this.state.path);

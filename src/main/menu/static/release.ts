@@ -29,9 +29,7 @@ export function getReleaseMenu({ controllers, stateManager }: GetMenuParams) {
         .releases;
     }
 
-    return (await getSelectedReleases(stateManager.getSelection("release"))).at(
-      0
-    );
+    return await getSelectedReleases(stateManager.getSelection("release"));
   }
 
   function getDeleteContext() {

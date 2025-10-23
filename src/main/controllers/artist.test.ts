@@ -322,10 +322,14 @@ describe("artist - deleteArtist function", () => {
   it("does nothing if the cancel button is pressed", async () => {
     await prisma.artist.create({ data: getFakeArtist(1) });
     const send = vi.fn();
+    const stateManager = {
+      setSelection: vi.fn(),
+    } as unknown as StateManager;
     const { deleteArtist } = artistController({
       ...defaultParams,
       send,
       openConfirmDialog: () => false,
+      stateManager,
     });
 
     await deleteArtist(1);
@@ -334,6 +338,7 @@ describe("artist - deleteArtist function", () => {
 
     expect(artist).not.toBeNull();
     expect(send).not.toHaveBeenCalled();
+    expect(stateManager.setSelection).not.toHaveBeenCalled();
   });
 
   it("removes the selected artist", async () => {
@@ -341,10 +346,14 @@ describe("artist - deleteArtist function", () => {
     await prisma.release.createMany({ data: getFakeReleasesForArtist(1) });
 
     const send = vi.fn();
+    const stateManager = {
+      setSelection: vi.fn(),
+    } as unknown as StateManager;
     const { deleteArtist } = artistController({
       ...defaultParams,
       send,
       openConfirmDialog: () => true,
+      stateManager,
     });
 
     await deleteArtist(1);
@@ -359,5 +368,82 @@ describe("artist - deleteArtist function", () => {
       ["artists", "latest"],
       ["artists", 1],
     ]);
+    expect(stateManager.setSelection).toHaveBeenCalled();
+  });
+});
+
+describe("artist - deleteArtists function", () => {
+  it("does nothing if the cancel button is pressed", async () => {
+    await prisma.artist.createMany({ data: getFakeArtists({ length: 3 }) });
+    const send = vi.fn();
+    const stateManager = {
+      setSelection: vi.fn(),
+    } as unknown as StateManager;
+    const { deleteArtists } = artistController({
+      ...defaultParams,
+      send,
+      openConfirmDialog: () => false,
+      stateManager,
+    });
+
+    await deleteArtists([1, 2]);
+
+    await Promise.all(
+      [1, 2, 3].map(async (id) => {
+        expect(await prisma.artist.findFirst({ where: { id } })).not.toBeNull();
+      })
+    );
+
+    expect(send).not.toHaveBeenCalled();
+    expect(stateManager.setSelection).not.toHaveBeenCalled();
+  });
+
+  it("removes the selected artists", async () => {
+    await prisma.artist.createMany({ data: getFakeArtists({ length: 3 }) });
+    await prisma.release.createMany({
+      data: [1, 2, 3].flatMap((id) => getFakeReleasesForArtist(id)),
+    });
+
+    const send = vi.fn();
+    const stateManager = {
+      setSelection: vi.fn(),
+    } as unknown as StateManager;
+    const { deleteArtists } = artistController({
+      ...defaultParams,
+      send,
+      openConfirmDialog: () => true,
+      stateManager,
+    });
+
+    await deleteArtists([1, 2]);
+
+    await Promise.all(
+      [1, 2].map(async (id) => {
+        const artist = await prisma.artist.findFirst({ where: { id } });
+        const releases = await prisma.release.findMany({
+          where: { artist_id: id },
+        });
+
+        expect(artist).toBeNull();
+        expect(releases).toEqual([]);
+      })
+    );
+
+    const artist = await prisma.artist.findFirst({ where: { id: 3 } });
+    const releases = await prisma.release.findMany({
+      where: { artist_id: 3 },
+    });
+
+    expect(artist).not.toBeNull();
+    expect(releases.length).not.toBe(0);
+
+    expect(send).toHaveBeenCalledWith("mutate", [
+      ["releases", "latest"],
+      ["artists", "latest"],
+      ["artists", 1],
+      ["artists", 2],
+    ]);
+
+    expect(stateManager.setSelection).toHaveBeenCalled();
   });
 });

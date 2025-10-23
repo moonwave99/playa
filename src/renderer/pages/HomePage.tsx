@@ -6,17 +6,19 @@ import {
   ReleaseWithArtistAndTracksAndSubreleases,
   HasId,
   ReleaseWithArtistAndSubReleases,
-  Release,
   HasEntityType,
+  Release,
 } from "@/types/types";
 import api from "../api";
 import useStore from "../store";
+import { useSelect, type UseSelect } from "../hooks/useSelect";
 import { useKeyManager, withPrevent } from "../hooks/useKeyboardManager";
 import { releaseColumnsConfig } from "../hooks/useResponsiveColumns";
 import useReleases from "../query/useReleases";
 import useArtists from "../query/useArtists";
 import useGroups from "../query/useGroups";
 import useCollections from "../query/useCollections";
+
 import { getEntityLink } from "@/lib/links";
 
 import ErrorView from "../components/ErrorView";
@@ -40,6 +42,7 @@ export default function HomePage() {
   const artistData = useArtists({ pageSize });
   const collectionData = useCollections({ pageSize });
   const groupData = useGroups({ pageSize });
+  const { select: selectRelease } = useSelect("release");
 
   const dataMap = {
     artist: artistData.artists,
@@ -57,7 +60,10 @@ export default function HomePage() {
     <div className={styles.page} data-testid="HomePage">
       <LatestReleasesView
         onDown={onReleaseDown}
-        onReleaseSelect={() => select({ section: null, index: -1 })}
+        onReleaseSelect={(release) => {
+          select({ section: null, index: -1 });
+          selectRelease([release.id]);
+        }}
       />
       <div className={homepageStyles.wrapper}>
         <LatestEntriesView
@@ -105,7 +111,7 @@ export default function HomePage() {
 type LatestReleasesViewProps = {
   count?: number;
   onDown: () => void;
-  onReleaseSelect: () => void;
+  onReleaseSelect: (item: HasId) => void;
 };
 
 function LatestReleasesView({
@@ -138,6 +144,7 @@ function LatestReleasesView({
   }
 
   const keyHandlers = {
+    ArrowDown: withPrevent(onDown),
     " ": withPrevent((_event: KeyboardEvent, selection: Release[]) => {
       setModalContents({
         name: "lightbox",
@@ -147,7 +154,6 @@ function LatestReleasesView({
         },
       });
     }),
-    ArrowDown: withPrevent(onDown),
   };
 
   return (
@@ -171,6 +177,7 @@ function LatestReleasesView({
       ) : (
         <List
           shouldPreventSpace
+          disableMultipleSelection
           items={releases}
           className={homepageStyles.releaseList}
           columnsConfig={releaseColumnsConfig}
@@ -227,6 +234,18 @@ function LatestEntriesView<T extends Item>({
     return <ErrorView error={error} />;
   }
 
+  function onContextMenu(item: T) {
+    if (item.entityType === "Artist") {
+      api.menu.artist(item);
+    }
+    if (item.entityType === "Collection") {
+      api.menu.collection(item);
+    }
+    if (item.entityType === "Group") {
+      api.menu.group(item);
+    }
+  }
+
   const formattedEntity = `${capitalize(entity)}s`;
 
   return (
@@ -255,6 +274,7 @@ function LatestEntriesView<T extends Item>({
           {entries.map((x, index) => (
             <li key={x.id} data-id={`item-${entity}-${index}`}>
               <ListCard
+                onContextMenu={() => onContextMenu(x)}
                 hasFocus={selectedIndex === index}
                 selected={selectedIndex === index}
                 item={x}
@@ -371,6 +391,16 @@ function useNavigateHomepage({
     return () => setContext("list");
   }, []);
 
+  const { select: selectArtist } = useSelect("artist");
+  const { select: selectCollection } = useSelect("collection");
+  const { select: selectGroup } = useSelect("group");
+
+  const selectMap: Record<Selection["section"], UseSelect["select"]> = {
+    artist: selectArtist,
+    collection: selectCollection,
+    group: selectGroup,
+  };
+
   function onReleaseDown() {
     setContext(context);
     setCurrentSelection({
@@ -382,6 +412,14 @@ function useNavigateHomepage({
   function select(selection: Selection) {
     setContext(selection.section !== null ? context : "list");
     setCurrentSelection(selection);
+    if (selection.section) {
+      selectMap[selection.section](
+        [dataMap[selection.section][selection.index].id],
+        {
+          clearOther: true,
+        }
+      );
+    }
   }
 
   return {

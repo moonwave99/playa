@@ -217,6 +217,10 @@ export async function init(mainWindow: BrowserWindow) {
     }
   });
 
+  mainWindow.webContents.on("did-finish-load", () => {
+    stateManager.reset();
+  });
+
   protocol.handle("playa-cover", async ({ url }) => {
     const COVERS_PATH = getSetting("COVERS_PATH") as string;
     const { hostname } = new URL(url);

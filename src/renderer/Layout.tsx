@@ -160,8 +160,6 @@ function useLayout(): UseLayout {
   }, [location]);
 
   useEffect(() => {
-    api.state.setInputFocused(false);
-    api.menu.refresh();
     api.settings.getSettings().then(setSettings);
     setContext("list");
   }, []);

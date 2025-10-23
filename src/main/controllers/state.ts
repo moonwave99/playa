@@ -1,4 +1,3 @@
-import { SelectableEntities } from "@/types/types";
 import type { StateManager } from "../stateManager";
 
 type StateControllerParams = {
@@ -10,8 +9,8 @@ export function stateController({ stateManager, send }: StateControllerParams) {
   return {
     setInputFocused: (inputFocused: boolean) =>
       stateManager.setInputFocused(inputFocused),
-    setSelection: (entity: SelectableEntities, selection: number[]) =>
-      stateManager.setSelection(entity, selection),
+    setSelection: (...params: Parameters<typeof stateManager.setSelection>) =>
+      stateManager.setSelection(...params),
     navigate: (path: string) => stateManager.setPath(path),
     clearSelection: () => send("clearSelection"),
   };

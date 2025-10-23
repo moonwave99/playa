@@ -24,6 +24,9 @@ function getMainWindow() {
         onSwipe(event, direction);
       }
     },
+    webContents: {
+      on: vi.fn(),
+    },
   } as unknown as BrowserWindow & {
     dispatchEvent: (event: Event, direction: string) => void;
   };
