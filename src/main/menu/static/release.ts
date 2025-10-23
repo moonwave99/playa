@@ -1,5 +1,9 @@
 import { MenuItem } from "electron";
-import { ReleaseWithArtistAndTracks, ReleaseWithArtist } from "@/types/types";
+import {
+  ReleaseWithArtistAndTracks,
+  ReleaseWithArtist,
+  SelectableEntities,
+} from "@/types/types";
 import { openModal } from "@/main/controllers/init";
 import {
   searchReleaseOnDiscogs,
@@ -28,6 +32,20 @@ export function getReleaseMenu({ controllers, stateManager }: GetMenuParams) {
     return (await getSelectedReleases(stateManager.getSelection("release"))).at(
       0
     );
+  }
+
+  function getDeleteContext() {
+    for (const entityType of ["Artist", "Collection"] as const) {
+      if (stateManager.isPage(entityType.toLowerCase())) {
+        return {
+          entityType,
+          id: stateManager
+            .getSelection(entityType.toLowerCase() as SelectableEntities)
+            .at(0),
+        };
+      }
+    }
+    return null;
   }
 
   const menu = new MenuItem({
@@ -137,9 +155,10 @@ export function getReleaseMenu({ controllers, stateManager }: GetMenuParams) {
         id: "deleteReleases",
         label: "Delete selected Releases",
         accelerator: "Backspace",
-        click: () =>
+        click: async () =>
           controllers.release.deleteReleases(
-            stateManager.getSelection("release")
+            stateManager.getSelection("release"),
+            getDeleteContext()
           ),
       },
       {
