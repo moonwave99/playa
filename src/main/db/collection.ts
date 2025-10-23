@@ -208,12 +208,12 @@ export async function removeReleasesFromCollection(
   return result;
 }
 
-export async function deleteCollections(ids: number[]) {
-  return prisma.collection.deleteMany({ where: { id: { in: ids } } });
-}
-
 export async function deleteCollection(id: number) {
   return prisma.collection.delete({ where: { id } });
+}
+
+export async function deleteCollections(ids: number[]) {
+  return prisma.collection.deleteMany({ where: { id: { in: ids } } });
 }
 
 export async function setCollectionCoverRelease(

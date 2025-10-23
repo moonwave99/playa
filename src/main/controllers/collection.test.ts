@@ -9,12 +9,17 @@ import {
   getFakeReleasesForArtist,
   getFakeArtist,
 } from "../../test/seed";
+import { type StateManager } from "../stateManager";
+import { CollectionWithReleases } from "@/types/types";
 
 afterEach(clearPrisma);
 
 const defaultParams = {
   send: vi.fn(),
   openConfirmDialog: () => true,
+  stateManager: {
+    setSelection: vi.fn(),
+  } as unknown as StateManager,
 };
 
 describe("getAllCollections function", () => {
@@ -304,7 +309,10 @@ describe("removeReleasesFromCollection function", () => {
     });
     const { removeReleasesFromCollection } =
       collectionController(defaultParams);
-    const updatedCollection = await removeReleasesFromCollection(1, [2, 4]);
+    const updatedCollection = (await removeReleasesFromCollection(
+      1,
+      [2, 4]
+    )) as CollectionWithReleases;
     expect(updatedCollection.releases).toMatchObject([
       { id: 1 },
       { id: 3 },
@@ -326,7 +334,9 @@ describe("removeReleasesFromCollection function", () => {
     });
     const { removeReleasesFromCollection } =
       collectionController(defaultParams);
-    const updatedCollection = await removeReleasesFromCollection(1, [2]);
+    const updatedCollection = (await removeReleasesFromCollection(1, [
+      2,
+    ])) as CollectionWithReleases;
     expect(updatedCollection.coverReleaseId).toBe(null);
   });
 });

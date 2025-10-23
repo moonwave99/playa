@@ -1,11 +1,10 @@
-import { Menu, MenuItem, dialog } from "electron";
+import { Menu, MenuItem } from "electron";
 import type { MenuItemConstructorOptions } from "electron";
 import type {
   ArtistWithReleases,
   Context,
   GroupWithArtists,
 } from "@/types/types";
-import type { QueryKey } from "@tanstack/react-query";
 
 import type { Controllers } from "../controllers/init";
 
@@ -25,23 +24,53 @@ export function buildMenu(params: (MenuItemConstructorOptions | MenuItem)[]) {
   return true;
 }
 
+export type GetMenuParams = {
+  controllers: Controllers;
+  stateManager: StateManager;
+  openConfirmDialog: (message: string, detail: string) => boolean;
+};
+
+export function initMenu({
+  controllers,
+  stateManager,
+  openConfirmDialog,
+}: GetMenuParams) {
+  const mainMenu = Menu.getApplicationMenu();
+
+  const menuGetters = {
+    getArtistMenu,
+    getReleaseMenu,
+    getCollectionMenu,
+    getGroupMenu,
+    getNavigateMenu,
+    getLibraryMenu,
+  };
+
+  const refreshHandlers: (() => void)[] = [];
+
+  Object.values(menuGetters).forEach((getMenu) => {
+    const { menu, refresh } = getMenu({
+      controllers,
+      stateManager,
+      openConfirmDialog,
+    });
+    mainMenu.append(menu);
+    refreshHandlers.push(refresh);
+  });
+
+  Menu.setApplicationMenu(mainMenu);
+
+  return {
+    refreshMenu: () => refreshHandlers.forEach((fn) => fn()),
+    clickEntry: (id: string) => mainMenu.getMenuItemById(id)?.click(),
+  };
+}
+
 type GetCoverEntityEntry = {
   selection_id: number;
   context: Context;
   controllers: Controllers;
 };
-
-function shouldDisplayCoverEntityEntry(context: Context) {
-  if (!context || !context.entityType) {
-    return false;
-  }
-  if (context.entityType === "Group") {
-    return (context as GroupWithArtists)?.artists.length > 1;
-  }
-  if (context.entityType === "Artist") {
-    return (context as ArtistWithReleases)?.releases.length > 1;
-  }
-}
 
 export function getCoverEntityEntry({
   selection_id,
@@ -75,69 +104,14 @@ export function getCoverEntityEntry({
   };
 }
 
-type GetDeleteEntryParams = {
-  id?: string;
-  title: string;
-  deleteFn: () => Promise<unknown>;
-  queryKeys: QueryKey;
-};
-
-export function getDeleteEntry({
-  id,
-  title,
-  deleteFn,
-  queryKeys,
-}: GetDeleteEntryParams) {
-  return {
-    id,
-    label: `Remove '${title}' from Library`,
-    click: async () => {
-      const cancel = dialog.showMessageBoxSync(null, {
-        message: `Are you sure to delete ${title}?`,
-        detail: "This action is not reversible!",
-        type: "warning",
-        buttons: ["OK", "Cancel"],
-        defaultId: 1,
-      });
-      if (cancel) {
-        return;
-      }
-      await deleteFn();
-      send("mutate", queryKeys);
-      send("clearSelection");
-    },
-  };
-}
-
-type InitMenuParams = {
-  controllers: Controllers;
-  stateManager: StateManager;
-};
-
-export function initMenu({ controllers, stateManager }: InitMenuParams) {
-  const mainMenu = Menu.getApplicationMenu();
-
-  const menus = {
-    getArtistMenu,
-    getReleaseMenu,
-    getCollectionMenu,
-    getGroupMenu,
-    getNavigateMenu,
-    getLibraryMenu,
-  };
-
-  const refreshHandlers: (() => void)[] = [];
-
-  Object.values(menus).forEach((getMenu) => {
-    const { menu, refresh } = getMenu({ controllers, stateManager });
-    mainMenu.append(menu);
-    refreshHandlers.push(refresh);
-  });
-
-  Menu.setApplicationMenu(mainMenu);
-
-  return {
-    refreshMenu: () => refreshHandlers.forEach((fn) => fn()),
-    clickEntry: (id: string) => mainMenu.getMenuItemById(id)?.click(),
-  };
+function shouldDisplayCoverEntityEntry(context: Context) {
+  if (!context || !context.entityType) {
+    return false;
+  }
+  if (context.entityType === "Group") {
+    return (context as GroupWithArtists)?.artists.length > 1;
+  }
+  if (context.entityType === "Artist") {
+    return (context as ArtistWithReleases)?.releases.length > 1;
+  }
 }

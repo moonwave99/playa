@@ -10,6 +10,7 @@ import {
   getFakeReleasesForArtist,
 } from "@/test/seed";
 import { withPath } from "@/test/utils";
+import { type StateManager } from "../stateManager";
 
 afterEach(clearPrisma);
 
@@ -18,6 +19,9 @@ const defaultParams = {
   send: vi.fn(),
   showErrorBox: vi.fn(),
   openConfirmDialog: vi.fn(),
+  stateManager: {
+    setSelection: vi.fn(),
+  } as unknown as StateManager,
 };
 
 describe("artist - getArtist function", () => {

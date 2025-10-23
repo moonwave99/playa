@@ -50,6 +50,7 @@ export type Controllers = {
   stats: ReturnType<typeof statsController>;
   state: ReturnType<typeof stateController>;
   settings: ReturnType<typeof settingsController>;
+  dialog: ReturnType<typeof dialogController>;
   importFolders: ReturnType<typeof importFoldersController>;
   importExport: ReturnType<typeof importExportController>;
 };
@@ -134,6 +135,7 @@ export async function init(mainWindow: BrowserWindow) {
       send,
       showErrorBox,
       openConfirmDialog,
+      stateManager,
       skipMove: IS_E2E_TEST,
     }),
     release: releaseController({
@@ -145,10 +147,10 @@ export async function init(mainWindow: BrowserWindow) {
       openConfirmDialog,
       skipMove: IS_E2E_TEST,
     }),
-    collection: collectionController({ send, openConfirmDialog }),
-    group: groupController({ send, openConfirmDialog }),
+    collection: collectionController({ send, openConfirmDialog, stateManager }),
+    group: groupController({ send, openConfirmDialog, stateManager }),
     searchResult: searchResultController(),
-    dialogController: dialogController({
+    dialog: dialogController({
       openConfirmDialog,
       openFolderDialog,
       openFileDialog,
@@ -179,6 +181,7 @@ export async function init(mainWindow: BrowserWindow) {
   const { refreshMenu, clickEntry } = initMenu({
     controllers,
     stateManager,
+    openConfirmDialog,
   });
 
   stateManager.onStateChange(refreshMenu);

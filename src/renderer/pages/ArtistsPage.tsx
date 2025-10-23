@@ -90,7 +90,6 @@ function LatestArtistsView() {
   ) : (
     <List
       shouldPreventSpace
-      disableMultipleSelection
       items={artists}
       className={styles.list}
       estimateSize={estimateListCardSize}

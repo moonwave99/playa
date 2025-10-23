@@ -18,7 +18,7 @@ import styles from "./Page.module.css";
 export default function LatestCollections() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { isPending, error, collections, deleteCollections } = useCollections();
+  const { isPending, error, collections } = useCollections();
 
   const { scrollInfo, storeScrollInfo } = useRestoreListPosition({
     key: ["latestCollections"],
@@ -34,13 +34,6 @@ export default function LatestCollections() {
     return <ErrorView error={error} />;
   }
 
-  function onDelete(selection: CollectionWithReleases[], event: KeyboardEvent) {
-    if (!event.metaKey) {
-      return;
-    }
-    deleteCollections(selection.map(({ id }) => id));
-  }
-
   return (
     <div className={styles.page} data-testid="CollectionsPage">
       {!collections?.length ? (
@@ -50,7 +43,6 @@ export default function LatestCollections() {
       ) : (
         <List
           shouldPreventSpace
-          disableMultipleSelection
           items={collections}
           className={styles.list}
           columnsConfig={compactColumnsConfig}
@@ -61,7 +53,6 @@ export default function LatestCollections() {
           onSelectionChange={(selection) =>
             select(selection.map((index) => collections[index].id))
           }
-          onBackspace={onDelete}
           onUnmount={storeScrollInfo}
           scrollInfo={scrollInfo}
           testId="CollectionsList"

@@ -1,15 +1,14 @@
 import type { GroupWithArtists, MenuParams } from "@/types/types";
-import { buildMenu, getDeleteEntry } from "../menu";
+import { buildMenu } from "../menu";
 
 export const groupMenu =
   ({ controllers, openModal }: MenuParams) =>
   (group: GroupWithArtists) => {
     buildMenu([
-      getDeleteEntry({
-        title: group.title,
-        deleteFn: () => controllers.group.deleteGroup(group.id),
-        queryKeys: [["groups"], ["groups", group.id]],
-      }),
+      {
+        label: "Delete Group",
+        click: () => controllers.group.deleteGroup(group.id),
+      },
       { type: "separator" },
       {
         label: "Edit Group",

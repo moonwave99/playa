@@ -12,6 +12,7 @@ import type {
 } from "@/types/types";
 import { globby } from "globby";
 import { VARIOUS_ARTISTS_NAME, VARIOUS_ARTISTS_FOLDER } from "@/lib/utils";
+import { QueryKey } from "@tanstack/react-query";
 
 export function stripPath(completePath: string, startPath: string) {
   const stripped = completePath.replace(new RegExp(`^${startPath}`), "");
@@ -173,7 +174,7 @@ export function withNotification(
 ) {
   return (
     fn: (...args: unknown[]) => unknown,
-    notification:
+    getNotification:
       | Notification
       | ((result: ReturnType<typeof fn>) => Notification)
   ) => {
@@ -184,9 +185,9 @@ export function withNotification(
       if (result) {
         send(
           "notify",
-          typeof notification === "function"
-            ? notification(result)
-            : notification
+          typeof getNotification === "function"
+            ? getNotification(result)
+            : getNotification
         );
       }
       return result;
@@ -199,7 +200,7 @@ export function withConfirmDialog(
 ) {
   return (
     fn: (...args: unknown[]) => unknown,
-    dialogOptions:
+    getDialogOptions:
       | { message: string; detail: string }
       | ((...args: Parameters<typeof fn>) => {
           message: string;
@@ -210,13 +211,38 @@ export function withConfirmDialog(
       ...params: Parameters<typeof fn>
     ): Promise<ReturnType<typeof fn>> => {
       const { message, detail } =
-        typeof dialogOptions === "function"
-          ? dialogOptions(...params)
-          : dialogOptions;
+        typeof getDialogOptions === "function"
+          ? getDialogOptions(...params)
+          : getDialogOptions;
       if (!openConfirmDialog(message, detail)) {
-        return;
+        return false;
       }
       return fn(...params);
+    };
+  };
+}
+
+export function withMutate(
+  send: (channel: string, ...args: unknown[]) => void
+) {
+  return (
+    fn: (...args: unknown[]) => unknown,
+    getQueryKey: ({
+      params,
+      result,
+    }: {
+      params: Parameters<typeof fn>;
+      result: ReturnType<typeof fn>;
+    }) => QueryKey
+  ) => {
+    return async (
+      ...params: Parameters<typeof fn>
+    ): Promise<ReturnType<typeof fn>> => {
+      const result = (await fn(...params)) as ReturnType<typeof fn>;
+      if (result) {
+        send("mutate", getQueryKey({ params, result }));
+      }
+      return result;
     };
   };
 }

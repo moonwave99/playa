@@ -1,12 +1,7 @@
 import prisma from "./prisma";
 import sha1 from "sha1";
 
-import type {
-  HasId,
-  TrackInfo,
-  PaginationParams,
-  Release,
-} from "@/types/types";
+import type { TrackInfo, PaginationParams, Release } from "@/types/types";
 import { normalizeDiacritics } from "@/lib/utils";
 
 export async function getRelease(id: number) {
@@ -79,24 +74,10 @@ export async function getSelectedReleases(selection: number[]) {
   });
 }
 
-export async function deleteRelease(id: number) {
-  const release = await prisma.release.findFirst({
-    where: { id },
-    include: {
-      subReleases: true,
-    },
+export async function deleteReleases(ids: number[]) {
+  return prisma.release.deleteMany({
+    where: { id: { in: ids } },
   });
-  if (!release) {
-    return;
-  }
-  await prisma.release.deleteMany({
-    where: {
-      id: {
-        in: [id, ...release.subReleases.map(({ id }: HasId) => id)],
-      },
-    },
-  });
-  return release;
 }
 
 export async function addTracksToRelease(id: number, trackInfo: TrackInfo[]) {

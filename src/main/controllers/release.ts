@@ -5,6 +5,7 @@ import {
   ReleaseWithArtist,
   Release,
   Track,
+  HasEntityTypeAndId,
 } from "@/types/types";
 import { didReleaseInfoChange, mapSeries } from "@/lib/utils";
 import {
@@ -14,7 +15,7 @@ import {
   getLatestAdditions,
   updateReleases,
   unGroupRelease,
-  deleteRelease,
+  deleteReleases as _deleteReleases,
   addTracksToRelease,
   toggleHomepageVisibility,
   addAdditionalArtist as _addAdditionalArtist,
@@ -24,7 +25,7 @@ import {
   type GroupReleaseParams,
 } from "../db/release";
 import { getArtist } from "../db/artist";
-import { getEntityPath } from "../utils";
+import { getEntityPath, withConfirmDialog } from "../utils";
 import { hashRelease } from "../hash";
 import { searchCover, getImageFromURL } from "../covers";
 import { log } from "../logger";
@@ -276,39 +277,51 @@ export function releaseController({
     send("notify", { type: "success", message: "releases unGrouped" });
   }
 
-  async function deleteReleases(release_ids: number[]) {
-    const confirm = openConfirmDialog(
-      `Are you sure to delete ${release_ids.length} Releases from library?`,
-      "This action is not reversible!"
-    );
+  async function deleteReleases(
+    release_ids: number[],
+    context?: HasEntityTypeAndId
+  ) {
+    const confirm = await withConfirmDialog(openConfirmDialog)(
+      _deleteReleases,
+      {
+        message: `Are you sure to delete ${release_ids.length} Releases from library?`,
+        detail: "This action is not reversible!",
+      }
+    )(release_ids);
 
     if (!confirm) {
-      return;
+      return false;
     }
 
-    await Promise.all(release_ids.map(deleteRelease));
-    send("mutate", [
-      ["releases", "latest"],
-      ...release_ids.map((id) => ["releases", id]),
-    ]);
+    send(
+      "mutate",
+      [
+        ["releases", "latest"],
+        ...release_ids.map((id) => ["releases", id]),
+        context ? [`${context.entityType.toLowerCase()}s`, context.id] : null,
+      ].filter((x) => !!x)
+    );
+
     send("clearSelection");
+
     send("notify", {
       type: "success",
       message: `${release_ids.length} releases deleted`,
     });
   }
 
-  async function addAdditionalArtist({
-    release_id,
-    artist_id,
-  }: AdditionalArtistParams) {
-    const result = await _addAdditionalArtist({ release_id, artist_id });
-    send("mutate", [
-      ["releases", release_id],
-      ["artists", result.artist.id],
-      ["artists", artist_id],
-    ]);
-    return result;
+  async function addAdditionalArtist(
+    ...params: Parameters<typeof _addAdditionalArtist>
+  ) {
+    const updatedRelease = await _addAdditionalArtist(...params);
+    if (updatedRelease) {
+      send("mutate", [
+        ["releases", params[0].release_id],
+        ["artists", updatedRelease.artist.id],
+        ["artists", params[0].artist_id],
+      ]);
+    }
+    return updatedRelease;
   }
 
   async function removeAdditionalArtist({
@@ -355,7 +368,6 @@ export function releaseController({
     groupReleases,
     unGroupRelease,
     editRelease,
-    deleteRelease,
     deleteReleases,
     addTracksToRelease,
     downloadCover,
@@ -377,7 +389,6 @@ export const actions: (keyof ReturnType<typeof releaseController>)[] = [
   "groupReleases",
   "unGroupRelease",
   "editRelease",
-  "deleteRelease",
   "deleteReleases",
   "addTracksToRelease",
   "downloadCover",

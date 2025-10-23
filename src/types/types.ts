@@ -68,6 +68,7 @@ export type SelectableEntities = "collection" | "release" | "artist" | "group";
 export type Stats = Record<SearchableEntities, number>;
 export type HasId = { id: number };
 export type HasEntityType = { entityType: EntityType };
+export type HasEntityTypeAndId = HasId & HasEntityType;
 export type HasTitle = { title: string };
 
 export type CollectionCreate = { title: string; releases?: number[] };

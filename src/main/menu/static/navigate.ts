@@ -1,13 +1,9 @@
 import { MenuItem } from "electron";
 import { send, openModal } from "@/main/controllers/init";
-import { type StateManager } from "@/main/stateManager";
 import { navigateMenu } from "../navigate";
+import { type GetMenuParams } from "../menu";
 
-type GetNavigateMenuParams = {
-  stateManager: StateManager;
-};
-
-export function getNavigateMenu({ stateManager }: GetNavigateMenuParams) {
+export function getNavigateMenu({ stateManager }: GetMenuParams) {
   const menu = new MenuItem({
     id: "navigate",
     label: "Navigate",

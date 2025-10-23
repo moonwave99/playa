@@ -5,10 +5,8 @@ import type {
   MenuParams,
   Collection,
   WithReleases,
-  HasId,
 } from "@/types/types";
-import { buildMenu, getDeleteEntry, getCoverEntityEntry } from "../menu";
-import { getReleaseFullTitle } from "@/lib/utils";
+import { buildMenu, getCoverEntityEntry } from "../menu";
 import {
   searchReleaseOnDiscogs,
   searchReleaseOnRYM,
@@ -56,7 +54,6 @@ export const releaseMenu =
   ) => {
     if (selection.length === 1) {
       const release = selection[0];
-      const title = getReleaseFullTitle(release);
       buildMenu([
         {
           label: `Playback Release`,
@@ -144,17 +141,10 @@ export const releaseMenu =
           click: () => searchReleaseOnDiscogs(release),
         },
         { type: "separator" },
-        getDeleteEntry({
-          title,
-          deleteFn: () => controllers.release.deleteRelease(release.id),
-          queryKeys: [
-            ["releases", "latest"],
-            ["releases", release.id],
-            context?.entityType
-              ? [`${context.entityType}s`, (context as unknown as HasId)?.id]
-              : null,
-          ],
-        }),
+        {
+          label: `Delete Release`,
+          click: () => controllers.release.deleteReleases([release.id]),
+        },
       ]);
       return true;
     }

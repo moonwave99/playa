@@ -11,7 +11,6 @@ import type {
 type UseReleaseParams = {
   id: number;
   refreshOnLoad?: boolean;
-  selectOnLoad?: boolean;
 };
 
 type UseRelease = {
@@ -28,7 +27,6 @@ type UseRelease = {
 export default function useRelease({
   id,
   refreshOnLoad,
-  selectOnLoad,
 }: UseReleaseParams): UseRelease {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -47,13 +45,6 @@ export default function useRelease({
         id
       ) as unknown as Promise<ReleaseWithArtistAndTracksAndSubreleasesAndCollections>,
   });
-
-  useEffect(() => {
-    if (!selectOnLoad || !release) {
-      return;
-    }
-    api.state.setSelection([release.id]);
-  }, [release, selectOnLoad]);
 
   useEffect(() => {
     if (

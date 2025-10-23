@@ -3,12 +3,17 @@ import { clearPrisma } from "../../test/prisma-utils";
 import { getFakeGroups, getFakeArtists } from "../../test/seed";
 import { groupController } from "./group";
 import { sortBy } from "@/lib/utils";
+import { type StateManager } from "../stateManager";
+import { GroupWithArtists } from "@/types/types";
 
 afterEach(clearPrisma);
 
 const defaultParams = {
   send: vi.fn(),
   openConfirmDialog: () => true,
+  stateManager: {
+    setSelection: vi.fn(),
+  } as unknown as StateManager,
 };
 
 describe("getGroups function", () => {
@@ -281,7 +286,10 @@ describe("removeArtistsFromGroup function", async () => {
       data: getFakeGroups({ length: 1, artists }).at(0),
     });
     const { removeArtistsFromGroup } = groupController(defaultParams);
-    const updatedGroup = await removeArtistsFromGroup(1, [2, 3]);
+    const updatedGroup = (await removeArtistsFromGroup(
+      1,
+      [2, 3]
+    )) as GroupWithArtists;
     expect(updatedGroup.artists).toMatchObject([{ id: 1 }]);
   });
 
@@ -292,7 +300,9 @@ describe("removeArtistsFromGroup function", async () => {
       data: getFakeGroups({ length: 1, artists }),
     });
     const { removeArtistsFromGroup } = groupController(defaultParams);
-    const updatedGroup = await removeArtistsFromGroup(1, [1]);
+    const updatedGroup = (await removeArtistsFromGroup(1, [
+      1,
+    ])) as GroupWithArtists;
     expect(updatedGroup.coverArtistId).toBe(null);
   });
 });

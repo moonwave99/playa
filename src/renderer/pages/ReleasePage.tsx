@@ -15,7 +15,6 @@ export default function ReleasePage() {
   const { isPending, error, release, selectedTrackId, gotoArtistPage } =
     useRelease({
       id: +id,
-      selectOnLoad: true,
       refreshOnLoad: true,
     });
 

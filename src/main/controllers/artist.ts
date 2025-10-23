@@ -12,15 +12,19 @@ import {
   addRelatedArtist,
   removeRelatedArtist,
   deleteArtist as _deleteArtist,
+  deleteArtists as _deleteArtists,
 } from "../db/artist";
 import prisma from "../db/prisma";
-import { getEntityPath } from "../utils";
+import { getEntityPath, withConfirmDialog } from "../utils";
+import { StateManager } from "../stateManager";
+import { difference } from "lodash";
 
 type ArtistControllerParams = {
   withPath: (key: string, folderPath: string) => string;
   send: (channel: string, ...args: unknown[]) => void;
   showErrorBox: (title: string, content: string) => void;
   openConfirmDialog: (message: string, detail: string) => boolean;
+  stateManager: StateManager;
   skipMove?: boolean;
 };
 
@@ -34,6 +38,7 @@ export function artistController({
   send,
   showErrorBox,
   openConfirmDialog,
+  stateManager,
   skipMove = false,
 }: ArtistControllerParams) {
   async function editArtist(infos: EditArtistParams) {
@@ -94,15 +99,15 @@ export function artistController({
   }
 
   async function deleteArtist(id: number) {
-    const confirm = openConfirmDialog(
-      "Delete Artist",
-      "Are you sure you want to remove the selected Artist and all their Releases from your Library?"
-    );
-    if (!confirm) {
-      return;
-    }
+    const confirm = await withConfirmDialog(openConfirmDialog)(_deleteArtist, {
+      message: "Delete Artist",
+      detail:
+        "Are you sure you want to remove the selected Artist and all their Releases from your Library?",
+    })(id);
 
-    await _deleteArtist(id);
+    if (!confirm) {
+      return false;
+    }
 
     send("mutate", [
       ["releases", "latest"],
@@ -114,6 +119,36 @@ export function artistController({
       type: "success",
       message: "Artist deleted",
     });
+
+    stateManager.setSelection("artist", (currentSelection) =>
+      difference(currentSelection, [id])
+    );
+  }
+
+  async function deleteArtists(artist_ids: number[]) {
+    const confirm = await withConfirmDialog(openConfirmDialog)(_deleteArtists, {
+      message: "Delete Artists",
+      detail: `Are you sure you want to remove ${artist_ids.length} Artist and all their Releases from your Library?`,
+    })(artist_ids);
+
+    if (!confirm) {
+      return false;
+    }
+
+    send("mutate", [
+      ["releases", "latest"],
+      ["artists", "latest"],
+      ...artist_ids.map((id) => ["artists", id]),
+    ]);
+
+    send("notify", {
+      type: "success",
+      message: "Artists deleted",
+    });
+
+    stateManager.setSelection("artist", (currentSelection) =>
+      difference(currentSelection, artist_ids)
+    );
   }
 
   return {
@@ -129,6 +164,7 @@ export function artistController({
     addRelatedArtist,
     removeRelatedArtist,
     deleteArtist,
+    deleteArtists,
   };
 }
 

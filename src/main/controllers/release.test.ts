@@ -681,8 +681,8 @@ describe("unGroupSelectedRelease function", () => {
       ...defaultParams,
       send,
       stateManager: {
-        getSelection: () => [],
-      } as StateManager,
+        getSelection: () => [] as number[],
+      } as unknown as StateManager,
     });
     await unGroupSelectedRelease();
     expect(send).not.toHaveBeenCalled();
@@ -706,7 +706,7 @@ describe("unGroupSelectedRelease function", () => {
       send,
       stateManager: {
         getSelection: () => [updatedRelease.id],
-      } as StateManager,
+      } as unknown as StateManager,
     });
     await unGroupSelectedRelease();
     send("mutate", [
@@ -781,39 +781,6 @@ describe("removeAdditionalArtist function", () => {
       ["artists", artists[0].id],
       ["artists", artists[1].id],
     ]);
-  });
-});
-
-describe("deleteRelease function", () => {
-  it("does nothing if no release is found", async () => {
-    const { deleteRelease } = releaseController(defaultParams);
-    const result = await deleteRelease(1);
-    expect(result).toBeFalsy();
-  });
-
-  it("deletes the passed release from library", async () => {
-    const releases = getFakeReleasesForArtist(1);
-    const artist = getFakeArtist(1);
-    await prisma.artist.create({ data: artist });
-    await prisma.release.createMany({ data: releases });
-
-    const { deleteRelease, groupReleases } = releaseController(defaultParams);
-
-    await groupReleases({
-      mainRelease: {
-        id: 1,
-        title: "main release title",
-      },
-      discInfo: [
-        { id: 1, title: "disc 1", number: 1 },
-        { id: 2, title: "disc 2", number: 2 },
-      ],
-    });
-
-    await deleteRelease(1);
-
-    const updatedReleases = await prisma.release.findMany();
-    expect(updatedReleases).toMatchObject(releases.slice(2));
   });
 });
 

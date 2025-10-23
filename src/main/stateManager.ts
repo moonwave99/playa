@@ -1,5 +1,6 @@
 import { matchPath } from "react-router";
 import { SelectableEntities } from "@/types/types";
+import { isPage } from "@/renderer/routes";
 
 export type State = {
   selection: Record<SelectableEntities, number[]>;
@@ -7,6 +8,8 @@ export type State = {
   isImporting: boolean;
   path: string;
 };
+
+type SelectionSetter = (currentSelection: number[]) => number[];
 
 export class StateManager {
   private state: State;
@@ -43,8 +46,13 @@ export class StateManager {
   onStateChange(handler: (state: State) => void) {
     this.handler = handler;
   }
-  setSelection(entity: SelectableEntities, selection: number[]) {
-    this.state.selection[entity] = selection;
+  setSelection(
+    entity: SelectableEntities,
+    selection: SelectionSetter | number[]
+  ) {
+    this.state.selection[entity] = Array.isArray(selection)
+      ? selection
+      : selection(this.state.selection[entity]);
     this.onUpdate();
   }
   setInputFocused(isInputFocused: boolean) {
@@ -57,6 +65,9 @@ export class StateManager {
   }
   getRouteMatch(pattern: string) {
     return matchPath(pattern, this.state.path);
+  }
+  isPage(page: string) {
+    return isPage(page, this.state.path);
   }
   private onUpdate() {
     if (!this.handler) {

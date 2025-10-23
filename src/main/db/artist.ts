@@ -313,5 +313,9 @@ export async function removeRelatedArtist(first_id: number, second_id: number) {
 }
 
 export async function deleteArtist(id: number) {
-  await prisma.artist.delete({ where: { id } });
+  return prisma.artist.delete({ where: { id } });
+}
+
+export async function deleteArtists(ids: number[]) {
+  return prisma.artist.deleteMany({ where: { id: { in: ids } } });
 }

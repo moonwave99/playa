@@ -50,7 +50,7 @@ model Release {
   tracks            Track[]
   collections       Collection[] @relation("CollectionToRelease")
   mainReleaseId     Int?
-  mainRelease       Release?     @relation("ReleaseGroup", fields: [mainReleaseId], references: [id])
+  mainRelease       Release?     @relation("ReleaseGroup", fields: [mainReleaseId], references: [id], onDelete: Cascade)
   subReleases       Release[]    @relation("ReleaseGroup")
   coverCollections  Collection[] @relation("CollectionCover")
   coverArtist       Artist?      @relation("ArtistCover")

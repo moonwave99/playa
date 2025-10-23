@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { setupElectron } from "../electron";
+import { clickMenuItemById } from "electron-playwright-helpers";
 
 const getElectronApp = setupElectron();
 
@@ -16,9 +17,7 @@ test.describe("Delete Group", () => {
     );
 
     await expect(page.locator('[data-testid="GroupsPage"]')).toBeVisible();
-    await page.keyboard.down("Meta");
-    await page.keyboard.press("Backspace");
-    await page.keyboard.up("Meta");
+    await clickMenuItemById(electronApp, "deleteGroups");
 
     await expect(page.locator('[data-testid="GroupsList"]')).not.toContainText(
       "Group 1"

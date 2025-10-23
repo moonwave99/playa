@@ -18,7 +18,7 @@ import styles from "./Page.module.css";
 export default function LatestGroups() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { isPending, error, groups, deleteGroups } = useGroups();
+  const { isPending, error, groups } = useGroups();
 
   const { scrollInfo, storeScrollInfo } = useRestoreListPosition({
     key: ["latestGroups"],
@@ -34,13 +34,6 @@ export default function LatestGroups() {
     return <ErrorView error={error} />;
   }
 
-  function onDelete(selection: GroupWithArtists[], event: KeyboardEvent) {
-    if (!event.metaKey) {
-      return;
-    }
-    deleteGroups(selection.map(({ id }) => id));
-  }
-
   return (
     <div className={styles.page} data-testid="GroupsPage">
       {!groups?.length ? (
@@ -52,7 +45,6 @@ export default function LatestGroups() {
       ) : (
         <List
           shouldPreventSpace
-          disableMultipleSelection
           items={groups}
           className={styles.list}
           columnsConfig={compactColumnsConfig}
@@ -61,7 +53,6 @@ export default function LatestGroups() {
           onSelectionChange={(selection) =>
             select(selection.map((index) => groups[index].id))
           }
-          onBackspace={onDelete}
           onUnmount={storeScrollInfo}
           scrollInfo={scrollInfo}
           testId="GroupsList"

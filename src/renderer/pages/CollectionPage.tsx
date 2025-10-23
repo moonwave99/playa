@@ -17,13 +17,8 @@ import { useTranslation } from "react-i18next";
 export default function CollectionPage() {
   const { t } = useTranslation();
   const { id } = useParams();
-  const {
-    collection,
-    isPending,
-    error,
-    removeReleasesFromCollection,
-    setCollectionCover,
-  } = useCollection(+id);
+  const { collection, isPending, error, setCollectionCover } =
+    useCollection(+id);
 
   const { select } = useSelect("release");
   useSelect("collection", [+id]);
@@ -73,7 +68,6 @@ export default function CollectionPage() {
         <ReleaseList
           context={["collection"]}
           releases={collection.releases}
-          onDelete={removeReleasesFromCollection}
           onSelect={select}
           onContextMenu={onContextMenu}
           className={styles.list}

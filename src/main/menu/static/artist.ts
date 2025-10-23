@@ -1,19 +1,13 @@
 import { MenuItem } from "electron";
 import { ArtistWithReleasesFull } from "@/types/types";
-import { openModal, type Controllers } from "@/main/controllers/init";
-import { type StateManager } from "@/main/stateManager";
+import { openModal } from "@/main/controllers/init";
 import { searchArtistOnDiscogs, searchArtistOnRYM } from "@/lib/external_links";
+import { type GetMenuParams } from "../menu";
 
-type GetArtistMenuParams = {
-  controllers: Controllers;
-  stateManager: StateManager;
-};
+export function getArtistMenu({ controllers, stateManager }: GetMenuParams) {
+  const { getSelectedArtist, getSelectedArtists, deleteArtists } =
+    controllers.artist;
 
-export function getArtistMenu({
-  controllers,
-  stateManager,
-}: GetArtistMenuParams) {
-  const { getSelectedArtist, getSelectedArtists } = controllers.artist;
   const menu = new MenuItem({
     id: "artist",
     label: "Artist",
@@ -59,12 +53,10 @@ export function getArtistMenu({
           }),
       },
       {
-        id: "deleteArtist",
-        label: "Delete Artist",
-        click: async () =>
-          controllers.artist.deleteArtist(
-            stateManager.getSelection("artist").at(0)
-          ),
+        id: "deleteArtists",
+        accelerator: "Backspace",
+        label: "Delete Artist(s)",
+        click: async () => deleteArtists(stateManager.getSelection("artist")),
       },
       { type: "separator" },
       {
@@ -100,19 +92,23 @@ export function getArtistMenu({
 
   function refresh() {
     const { isInputFocused, isImporting } = stateManager.getState();
+    const selectionLength = stateManager.getSelection("artist").length;
+
     menu.submenu.items.forEach((item) => {
       if (isInputFocused) {
         item.enabled = false;
         return;
       }
 
-      if (stateManager.getSelection("artist").length > 1) {
-        item.enabled = ["addArtistsToGroup"].includes(item.id);
+      if (selectionLength > 1) {
+        item.enabled = ["addArtistsToGroup", "deleteArtists"].includes(item.id);
         return;
       }
 
-      if (stateManager.getSelection("artist").length === 1) {
-        item.enabled = item.id === "refresh-releases" ? !isImporting : true;
+      if (selectionLength === 1) {
+        item.enabled = ["refresh-releases"].includes(item.id)
+          ? !isImporting
+          : true;
         return;
       }
 

@@ -1,8 +1,8 @@
 import { MenuItem } from "electron";
-import { send, openModal, type Controllers } from "@/main/controllers/init";
-import { type StateManager } from "@/main/stateManager";
-import { Entities } from "@/types/types";
+import { send, openModal } from "@/main/controllers/init";
+import { type Entities } from "@/types/types";
 import { getRandomLink } from "@/lib/links";
+import { type GetMenuParams } from "../menu";
 
 const randomMenu: (Pick<MenuItem, "label" | "accelerator"> & {
   entity: Entities;
@@ -29,15 +29,7 @@ const randomMenu: (Pick<MenuItem, "label" | "accelerator"> & {
   },
 ];
 
-type GetLibraryMenuParams = {
-  controllers: Controllers;
-  stateManager: StateManager;
-};
-
-export function getLibraryMenu({
-  controllers,
-  stateManager,
-}: GetLibraryMenuParams) {
+export function getLibraryMenu({ controllers, stateManager }: GetMenuParams) {
   const menu = new MenuItem({
     id: "library",
     label: "Library",

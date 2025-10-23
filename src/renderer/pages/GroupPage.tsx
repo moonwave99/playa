@@ -18,7 +18,7 @@ export default function GroupPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { id } = useParams();
-  const { group, isPending, error, removeArtistsFromGroup } = useGroup(+id);
+  const { group, isPending, error } = useGroup(+id);
 
   const { select } = useSelect("artist");
   useSelect("group", [+id]);
@@ -33,16 +33,6 @@ export default function GroupPage() {
 
   if (!group) {
     return <Navigate replace to="/groups" />;
-  }
-
-  function onDelete(
-    selection: ArtistWithReleasesAndAppearances[],
-    event: KeyboardEvent
-  ) {
-    if (!event.metaKey) {
-      return;
-    }
-    removeArtistsFromGroup(selection);
   }
 
   return (
@@ -67,7 +57,6 @@ export default function GroupPage() {
           onSelectionChange={(selection) =>
             select(selection.map((index) => group.artists[index].id))
           }
-          onBackspace={onDelete}
           testId="ArtistList"
           render={({ item, ...rest }) => (
             <ListCard

@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { setupElectron } from "../electron";
+import { clickMenuItemById } from "electron-playwright-helpers";
 
 const getElectronApp = setupElectron();
 
@@ -16,9 +17,8 @@ test.describe("Delete Collection", () => {
     );
 
     await expect(page.locator('[data-testid="CollectionsPage"]')).toBeVisible();
-    await page.keyboard.down("Meta");
-    await page.keyboard.press("Backspace");
-    await page.keyboard.up("Meta");
+
+    await clickMenuItemById(electronApp, "deleteCollections");
 
     await expect(
       page.locator('[data-testid="CollectionsList"]')

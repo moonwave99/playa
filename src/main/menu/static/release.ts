@@ -1,22 +1,13 @@
 import { MenuItem } from "electron";
 import { ReleaseWithArtistAndTracks, ReleaseWithArtist } from "@/types/types";
-import { openModal, type Controllers } from "@/main/controllers/init";
-import { type StateManager } from "@/main/stateManager";
+import { openModal } from "@/main/controllers/init";
 import {
   searchReleaseOnDiscogs,
   searchReleaseOnRYM,
 } from "@/lib/external_links";
-import { isPage } from "@/renderer/routes";
+import { type GetMenuParams } from "../menu";
 
-type GetReleaseMenuParams = {
-  controllers: Controllers;
-  stateManager: StateManager;
-};
-
-export function getReleaseMenu({
-  controllers,
-  stateManager,
-}: GetReleaseMenuParams) {
+export function getReleaseMenu({ controllers, stateManager }: GetMenuParams) {
   const { getRelease, getSelectedReleases, unGroupSelectedRelease } =
     controllers.release;
   const { getCollection } = controllers.collection;
@@ -126,7 +117,7 @@ export function getReleaseMenu({
       },
       {
         id: "groupReleases",
-        label: `Group Selected Releases`,
+        label: `Group selected Releases`,
         accelerator: "Cmd+G",
         click: async () =>
           openModal("groupReleases", {
@@ -137,15 +128,15 @@ export function getReleaseMenu({
       },
       {
         id: "unGroupRelease",
-        label: `Ungroup Selected Release`,
+        label: `Ungroup selected Release`,
         accelerator: "Cmd+Shift+G",
         visible: false,
         click: unGroupSelectedRelease,
       },
       {
         id: "deleteReleases",
-        label: "Delete Selected Release",
-        accelerator: "Cmd+Backspace",
+        label: "Delete selected Releases",
+        accelerator: "Backspace",
         click: () =>
           controllers.release.deleteReleases(
             stateManager.getSelection("release")
@@ -153,7 +144,7 @@ export function getReleaseMenu({
       },
       {
         id: "addReleasesToCollection",
-        label: `Add Selected Releases to Collection`,
+        label: `Add selected Releases to Collection`,
         accelerator: "a",
         click: async () =>
           openModal("addReleasesToCollection", {
@@ -166,6 +157,8 @@ export function getReleaseMenu({
   });
 
   async function refresh() {
+    const isSingleReleasePage = stateManager.isPage("release");
+    const isSingleCollectionePage = stateManager.isPage("collection");
     const { isInputFocused } = stateManager.getState();
 
     const selectedReleasesIds = stateManager.getSelection("release");
@@ -182,9 +175,14 @@ export function getReleaseMenu({
       }
 
       if (item.id === "showReleaseInLightbox") {
+        item.enabled = selectedReleasesIds.length === 1 && !isSingleReleasePage;
+      }
+
+      if (item.id === "deleteReleases") {
         item.enabled =
-          selectedReleasesIds.length === 1 &&
-          !isPage("release", stateManager.getState().path);
+          !!selectedReleasesIds.length &&
+          !isSingleReleasePage &&
+          !isSingleCollectionePage;
       }
     });
 

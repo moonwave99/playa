@@ -19,8 +19,7 @@ export default function ArtistPage() {
   const { id } = useParams();
   const { setUseDarkText } = useStore();
 
-  const { isPending, error, artist, deleteReleases, setArtistCover } =
-    useArtist(+id);
+  const { isPending, error, artist, setArtistCover } = useArtist(+id);
 
   const { select } = useSelect("release");
   useSelect("artist", [+id]);
@@ -45,13 +44,6 @@ export default function ArtistPage() {
         context: artist,
       })
     );
-  }
-
-  function onDelete(selection: ReleaseWithArtist[], event: KeyboardEvent) {
-    if (!event.metaKey) {
-      return;
-    }
-    deleteReleases(selection.map(({ id }) => id));
   }
 
   const keyHandlers = {
@@ -84,7 +76,6 @@ export default function ArtistPage() {
         <ReleaseList
           releases={artist.releases}
           onContextMenu={onContextMenu}
-          onDelete={onDelete}
           onSelect={select}
           className={styles.hasHeaderWithCover}
           keyHandlers={keyHandlers}
