@@ -23,10 +23,10 @@
   @media screen and (max-width: 950px) {
     flex-direction: column;
     gap: 2rem;
-  }
-  .entityListSection,
-  .entityListSectionLoader {
-    min-height: auto;
+    .entityListSection,
+    .entityListSectionLoader {
+      min-height: auto;
+    }
   }
 }
 
