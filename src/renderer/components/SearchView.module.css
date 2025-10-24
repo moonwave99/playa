@@ -20,8 +20,12 @@
   align-items: center;
   padding: 0 0.5rem;
   color: var(--primary-color);
+  font-size: 1.2rem;
   &:focus {
     outline-color: var(--accent-color);
+  }
+  &::placeholder {
+    font-size: 0.9rem;
   }
 }
 
