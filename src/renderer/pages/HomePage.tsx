@@ -39,6 +39,7 @@ import formStyles from "../forms.module.css";
 const pageSize = 5;
 
 export default function HomePage() {
+  const releasesData = useReleases({ pageSize });
   const artistData = useArtists({ pageSize });
   const collectionData = useCollections({ pageSize });
   const groupData = useGroups({ pageSize });
@@ -52,6 +53,8 @@ export default function HomePage() {
 
   const { currentSelection, onReleaseDown, select } = useNavigateHomepage({
     dataMap,
+    onListsUp: () =>
+      selectRelease([releasesData.releases.at(0).id], { clearOther: true }),
   });
 
   const { section, index } = currentSelection;
@@ -59,10 +62,11 @@ export default function HomePage() {
   return (
     <div className={styles.page} data-testid="HomePage">
       <LatestReleasesView
+        {...releasesData}
         onDown={onReleaseDown}
         onReleaseSelect={(release) => {
           select({ section: null, index: -1 });
-          selectRelease([release.id]);
+          selectRelease([release.id], { clearOther: true });
         }}
       />
       <div className={homepageStyles.wrapper}>
@@ -110,19 +114,23 @@ export default function HomePage() {
 
 type LatestReleasesViewProps = {
   count?: number;
+  isPending: boolean;
+  error: Error;
+  releases: ReleaseWithArtistAndSubReleases[];
   onDown: () => void;
   onReleaseSelect: (item: HasId) => void;
 };
 
 function LatestReleasesView({
-  count = 5,
+  releases,
+  isPending,
+  error,
   onDown,
   onReleaseSelect,
 }: LatestReleasesViewProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { setModalContents } = useStore();
-  const { isPending, error, releases } = useReleases({ pageSize: count });
 
   if (isPending) {
     return <Loading className={homepageStyles.latestReleasesLoader} />;
@@ -295,6 +303,7 @@ type Selection = {
 
 type UseNavigateHomepageParams = {
   context?: string;
+  onListsUp: () => void;
   dataMap: Record<Selection["section"], (HasId & HasEntityType)[]>;
 };
 
@@ -308,6 +317,7 @@ const horizontalSections = ["artist", "collection", "group"] as const;
 
 function useNavigateHomepage({
   context = "home",
+  onListsUp,
   dataMap,
 }: UseNavigateHomepageParams): UseNavigateHomepage {
   const navigate = useNavigate();
@@ -338,6 +348,7 @@ function useNavigateHomepage({
             section: null,
             index: -1,
           });
+          onListsUp();
           return;
         }
         setCurrentSelection((prev) => ({ ...prev, index: prev.index - 1 }));
@@ -387,6 +398,16 @@ function useNavigateHomepage({
   });
 
   useEffect(() => {
+    if (!currentSelection.section) {
+      return;
+    }
+    const { section, index } = currentSelection;
+    selectMap[section]([dataMap[section][index].id], {
+      clearOther: true,
+    });
+  }, [currentSelection]);
+
+  useEffect(() => {
     setContext("list");
     return () => setContext("list");
   }, []);
@@ -412,14 +433,6 @@ function useNavigateHomepage({
   function select(selection: Selection) {
     setContext(selection.section !== null ? context : "list");
     setCurrentSelection(selection);
-    if (selection.section) {
-      selectMap[selection.section](
-        [dataMap[selection.section][selection.index].id],
-        {
-          clearOther: true,
-        }
-      );
-    }
   }
 
   return {

@@ -72,15 +72,16 @@ export function getCollectionMenu({
   });
 
   function refresh() {
+    const isSinglePage = stateManager.isPage("collection");
     refreshMenuEntries({
       menu,
       entries: menuTemplate,
-      isSinglePage: stateManager.isPage("collection"),
+      isSinglePage,
       selectionLength: stateManager.getSelection("collection").length,
       ...stateManager.getState(),
     });
     menu.submenu.getMenuItemById("removeReleasesFromCollection").enabled =
-      !!stateManager.getSelection("release").length;
+      isSinglePage && !!stateManager.getSelection("release").length;
   }
 
   return { menu, refresh };

@@ -63,15 +63,16 @@ export function getGroupMenu({ controllers, stateManager }: GetMenuParams) {
   });
 
   function refresh() {
+    const isSinglePage = stateManager.isPage("group");
     refreshMenuEntries({
       menu,
       entries: menuTemplate,
-      isSinglePage: stateManager.isPage("group"),
+      isSinglePage,
       selectionLength: stateManager.getSelection("group").length,
       ...stateManager.getState(),
     });
     menu.submenu.getMenuItemById("removeArtistsFromGroup").enabled =
-      !!stateManager.getSelection("artist").length;
+      isSinglePage && !!stateManager.getSelection("artist").length;
   }
 
   return { menu, refresh };

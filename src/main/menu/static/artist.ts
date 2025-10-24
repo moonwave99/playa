@@ -117,11 +117,12 @@ export function getArtistMenu({ controllers, stateManager }: GetMenuParams) {
   });
 
   function refresh() {
+    const isSinglePage = stateManager.isPage("artist");
     refreshMenuEntries({
       menu,
       entries: menuTemplate,
       selectionLength: stateManager.getSelection("artist").length,
-      isSinglePage: stateManager.isPage("artist"),
+      isSinglePage,
       ...stateManager.getState(),
     });
 

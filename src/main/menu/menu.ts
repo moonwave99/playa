@@ -166,6 +166,10 @@ export function refreshMenuEntries({
       }
       if (hideOnSinglePage) {
         item.visible = !isSinglePage;
+        item.enabled =
+          !isSinglePage &&
+          (allowMultiple ? selectionLength > 0 : selectionLength === 1);
+        return;
       }
       item.enabled = allowMultiple
         ? selectionLength > 0
