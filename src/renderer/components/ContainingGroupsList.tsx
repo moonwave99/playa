@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import useArtist from "../query/useArtist";
 import EntityList, { type EntityListProps } from "./EntityList";
 import styles from "./EntityList.module.css";
@@ -15,6 +16,7 @@ export default function ContainingGroupsList({
   prependSeparator,
   ...rest
 }: ContainingGroupsListProps) {
+  const { t } = useTranslation();
   const { artist, removeFromGroup } = useArtist(id);
 
   if (!artist?.groups.length) {
@@ -28,7 +30,7 @@ export default function ContainingGroupsList({
         i18nkey="entityList.actions.delete.containingGroups"
         context={artist}
         items={artist.groups}
-        label="Appears in"
+        label={t("components.ContainingGroupsList.label")}
         onDelete={removeFromGroup}
         {...rest}
       />

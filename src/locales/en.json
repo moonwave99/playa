@@ -354,6 +354,15 @@
     "ListCard": {
       "releaseCount": "{{count}} Releases",
       "trackCount": "{{count}} Tracks"
+    },
+    "RelatedArtistsList": {
+      "label": "Related Artists"
+    },
+    "ContainingCollectionsList": {
+      "label": "Appears in"
+    },
+    "ContainingGroupsList": {
+      "label": "Appears in"
     }
   },
   "entityList": {
@@ -361,7 +370,7 @@
       "delete": {
         "default": "Remove {{item}} from {{context}}",
         "relatedArtists": "Disconnect {{item}} from {{context}}",
-        "additionalArtists": "Remove {{item}} from the additional artists of {{context}}",
+        "additionalArtists": "Remove {{item}} from the additional Artists of {{context}}",
         "containingGroups": "Remove {{context}} from {{item}}",
         "containingCollections": "Remove {{context}} from {{item}}"
       }

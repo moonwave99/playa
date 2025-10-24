@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import useRelease from "../query/useRelease";
 import EntityList, { type EntityListProps } from "./EntityList";
 import styles from "./EntityList.module.css";
@@ -17,6 +18,7 @@ export default function ContainingCollectionsList({
   onLinkClick,
   ...rest
 }: ContainingCollectionsListProps) {
+  const { t } = useTranslation();
   const { release, removeFromCollection } = useRelease({ id });
 
   if (!release?.collections.length) {
@@ -30,7 +32,7 @@ export default function ContainingCollectionsList({
         i18nkey="entityList.actions.delete.containingCollections"
         context={release}
         items={release.collections}
-        label="Appears in"
+        label={t("components.ContainingCollectionsList.label")}
         onDelete={removeFromCollection}
         onLinkClick={onLinkClick}
         {...rest}

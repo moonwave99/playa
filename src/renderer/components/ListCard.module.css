@@ -144,11 +144,16 @@
   font-weight: 300;
   user-select: none;
   display: flex;
-  gap: 0.5rem;
+  gap: 1rem;
   flex-wrap: wrap;
-  flex-direction: column;
+  align-items: center;
   &.isInline {
     flex-wrap: nowrap;
+  }
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+    align-items: start;
+    gap: 0.5rem;
   }
 }
 
@@ -304,7 +309,7 @@
 }
 
 .entityList {
-  font-size: 0.7rem;
+  /* font-size: 0.7rem; */
   ul {
     gap: 0.5rem;
     li:not(:last-child)::after {
