@@ -49,8 +49,12 @@ export default function HomePage() {
 
   const { currentSelection, onReleaseDown, select } = useNavigateHomepage({
     dataMap,
-    onListsUp: () =>
-      selectRelease([releasesData.releases.at(0).id], { clearOther: true }),
+    onListsUp: () => {
+      selectRelease([releasesData.releases.at(0).id], { clearOther: true });
+      document
+        .getElementById("LatestReleasesView")
+        .scrollIntoView({ block: "nearest" });
+    },
   });
 
   const { section, index } = currentSelection;
@@ -136,7 +140,10 @@ function LatestReleasesView({
   }
 
   return (
-    <section className={cx(styles.section, homepageStyles.latestReleases)}>
+    <section
+      className={cx(styles.section, homepageStyles.latestReleases)}
+      id="LatestReleasesView"
+    >
       <header className={homepageStyles.header}>
         <h1>
           <Icon isFor="release" />
