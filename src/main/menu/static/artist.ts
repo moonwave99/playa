@@ -17,6 +17,7 @@ export function getArtistMenu({ controllers, stateManager }: GetMenuParams) {
     {
       id: "gotoArtistPage",
       hideOnSinglePage: true,
+      disableOnNavOpen: true,
       label: "Go to Artist",
       accelerator: "Enter",
       click: () =>

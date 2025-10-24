@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import type { MouseEvent, ReactNode } from "react";
-import { NavLink, Routes, Route } from "react-router";
+import { NavLink, Routes, Route, useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { navigateMenu } from "@/main/menu/navigate";
 import { ReleaseListViewMode } from "@/types/types";
@@ -48,6 +48,7 @@ type NavProps = {
 };
 
 export default function Nav({ isDetailPage }: NavProps) {
+  const navigate = useNavigate();
   const [isNavOpen, setNavOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(-1);
   const ref = useClickOutside(() => setNavOpen(false));
@@ -60,12 +61,14 @@ export default function Nav({ isDetailPage }: NavProps) {
       ArrowDown: () =>
         setCurrentIndex((prev) => Math.min(prev + 1, navMap.length - 1)),
       ArrowUp: () => setCurrentIndex((prev) => Math.max(0, prev - 1)),
+      Enter: () => navigate(navMap[currentIndex].link),
     },
   });
 
   useEffect(() => {
     setContext(isNavOpen ? "nav" : "list");
     setCurrentIndex(isNavOpen ? 0 : -1);
+    api.state.setNavOpen(isNavOpen);
   }, [isNavOpen]);
 
   useEffect(() => {

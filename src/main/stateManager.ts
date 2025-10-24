@@ -6,6 +6,7 @@ export type State = {
   selection: Record<SelectableEntities, number[]>;
   isInputFocused: boolean;
   isImporting: boolean;
+  isNavOpen: boolean;
   path: string;
 };
 
@@ -24,6 +25,7 @@ export class StateManager {
         track: [] as number[],
       },
       isInputFocused: false,
+      isNavOpen: false,
       isImporting: false,
       path: "",
     };
@@ -41,6 +43,9 @@ export class StateManager {
   isInputFocused() {
     return this.state.isInputFocused;
   }
+  isNavOpen() {
+    return this.state.isNavOpen;
+  }
   isImporting() {
     return this.state.isImporting;
   }
@@ -55,6 +60,7 @@ export class StateManager {
       },
       isInputFocused: false,
       isImporting: false,
+      isNavOpen: false,
       path: "",
     };
     this.onUpdate();
@@ -83,6 +89,10 @@ export class StateManager {
   }
   setInputFocused(isInputFocused: boolean) {
     this.state.isInputFocused = isInputFocused;
+    this.onUpdate();
+  }
+  setNavOpen(isNavOpen: boolean) {
+    this.state.isNavOpen = isNavOpen;
     this.onUpdate();
   }
   setImporting(isImporting: boolean) {

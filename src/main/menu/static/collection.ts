@@ -18,6 +18,7 @@ export function getCollectionMenu({
     {
       id: "gotoCollectionPage",
       hideOnSinglePage: true,
+      disableOnNavOpen: true,
       label: "Go to Collection",
       accelerator: "Enter",
       click: () =>

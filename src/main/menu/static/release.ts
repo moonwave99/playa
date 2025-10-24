@@ -51,6 +51,7 @@ export function getReleaseMenu({ controllers, stateManager }: GetMenuParams) {
     {
       id: "gotoReleasePage",
       hideOnSinglePage: true,
+      disableOnNavOpen: true,
       label: "Go to Release",
       accelerator: "Enter",
       click: () =>

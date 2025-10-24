@@ -12,6 +12,7 @@ describe("StateManager - constructor", () => {
         track: [],
       },
       isInputFocused: false,
+      isNavOpen: false,
       isImporting: false,
       path: "",
     });
@@ -103,6 +104,7 @@ describe("StateManager - reset", () => {
         track: [],
       },
       isInputFocused: false,
+      isNavOpen: false,
       isImporting: false,
       path: "",
     });
@@ -119,6 +121,21 @@ describe("StateManager - setInputFocused / isInputFocused", () => {
     expect(onChange).toHaveBeenCalledWith(
       expect.objectContaining({
         isInputFocused: true,
+      })
+    );
+  });
+});
+
+describe("StateManager - setNavOpen / isNavOpen", () => {
+  it("should set and get the corresponding value", () => {
+    const onChange = vi.fn();
+    const state = new StateManager();
+    state.onStateChange(onChange);
+    state.setNavOpen(true);
+    expect(state.isNavOpen()).toBe(true);
+    expect(onChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        isNavOpen: true,
       })
     );
   });

@@ -14,6 +14,7 @@ export function getGroupMenu({ controllers, stateManager }: GetMenuParams) {
     {
       id: "gotoGroupPage",
       hideOnSinglePage: true,
+      disableOnNavOpen: true,
       label: "Go to Group",
       accelerator: "Enter",
       click: () =>

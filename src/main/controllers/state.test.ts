@@ -24,6 +24,21 @@ describe("stateController - setInputFocused function", () => {
   });
 });
 
+describe("stateController - setNavOpen function", () => {
+  it("sets the nav open status", async () => {
+    const stateManager = new StateManager();
+    const { setNavOpen } = stateController({
+      ...defaultParams,
+      stateManager,
+    });
+    expect(stateManager.isNavOpen()).toBe(false);
+    setNavOpen(true);
+    expect(stateManager.isNavOpen()).toBe(true);
+    setNavOpen(false);
+    expect(stateManager.isNavOpen()).toBe(false);
+  });
+});
+
 describe("stateController - setSelection function", () => {
   it("sets the current release selection", async () => {
     const stateManager = new StateManager();

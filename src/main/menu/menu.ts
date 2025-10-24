@@ -121,12 +121,14 @@ type MenuTemplateEntry = MenuItemConstructorOptions & {
   showOnSinglePage?: boolean;
   hideOnSinglePage?: boolean;
   disableOnImport?: boolean;
+  disableOnNavOpen?: boolean;
 };
 
 type RefreshMenuEntriesParams = {
   menu: MenuItem;
   selectionLength: number;
   isInputFocused: boolean;
+  isNavOpen: boolean;
   isImporting: boolean;
   isSinglePage: boolean;
   isSomeReleaseMain?: boolean;
@@ -138,6 +140,7 @@ export function refreshMenuEntries({
   selectionLength,
   isInputFocused,
   isImporting,
+  isNavOpen,
   isSinglePage,
   entries,
 }: RefreshMenuEntriesParams) {
@@ -148,11 +151,16 @@ export function refreshMenuEntries({
       showOnSinglePage,
       hideOnSinglePage,
       disableOnImport,
+      disableOnNavOpen,
     }) => {
       const item = menu.submenu.getMenuItemById(id);
       if (isInputFocused) {
         item.enabled = false;
         item.visible = !showOnSinglePage || !isSinglePage;
+        return;
+      }
+      if (disableOnNavOpen && isNavOpen) {
+        item.enabled = false;
         return;
       }
       if (disableOnImport && isImporting) {
