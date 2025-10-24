@@ -122,7 +122,12 @@ describe("addReleasesToCollection function", () => {
     await prisma.release.createMany({ data: releases });
     await prisma.collection.create({ data: collection });
 
-    const { addReleasesToCollection } = collectionController(defaultParams);
+    const send = vi.fn();
+
+    const { addReleasesToCollection } = collectionController({
+      ...defaultParams,
+      send,
+    });
     await addReleasesToCollection(1, releases);
     const updatedCollection = await prisma.collection.findFirst({
       where: { id: 1 },
@@ -136,6 +141,11 @@ describe("addReleasesToCollection function", () => {
       { id: 4 },
       { id: 5 },
     ]);
+
+    expect(send).toHaveBeenCalledWith("notify", {
+      type: "success",
+      message: "Releases added to Collection",
+    });
   });
 });
 

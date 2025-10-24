@@ -4,7 +4,7 @@ import {
   getAllCollections,
   getCollection,
   createCollection,
-  updateCollection as _updateCollection,
+  updateCollection,
   addReleasesToCollection,
   addReleasesToNewCollection,
   removeReleasesFromCollection as _removeReleasesFromCollection,
@@ -116,20 +116,21 @@ export function collectionController({
     return confirm;
   }
 
-  const updateCollection = withNotification(send)(_updateCollection, {
-    type: "success",
-    message: "Collection updated",
-  }) as typeof _updateCollection;
-
   return {
     getCollections,
     getAllCollections,
     getCollection,
     createCollection,
-    updateCollection,
+    updateCollection: withNotification(send)(updateCollection, {
+      type: "success",
+      message: "Collection updated",
+    }) as typeof updateCollection,
     deleteCollection,
     deleteCollections,
-    addReleasesToCollection,
+    addReleasesToCollection: withNotification(send)(addReleasesToCollection, {
+      type: "success",
+      message: "Releases added to Collection",
+    }) as typeof addReleasesToCollection,
     addReleasesToNewCollection,
     removeReleasesFromCollection,
     setCollectionCoverRelease,
