@@ -192,6 +192,24 @@ describe("createCollection function", () => {
 });
 
 describe("deleteCollection function", () => {
+  it("does nothing if the dialog is dismissed", async () => {
+    const collection = getFakeCollections({ length: 1 }).at(0);
+    await prisma.collection.create({ data: collection });
+
+    const send = vi.fn();
+
+    const { deleteCollection } = collectionController({
+      ...defaultParams,
+      send,
+      openConfirmDialog: () => false,
+    });
+    await deleteCollection(1);
+    const result = await prisma.collection.findFirst({ where: { id: 1 } });
+
+    expect(result).not.toBe(null);
+    expect(send).not.toHaveBeenCalled();
+  });
+
   it("deletes a collection by the given id", async () => {
     const collection = getFakeCollections({ length: 1 }).at(0);
     await prisma.collection.create({ data: collection });
@@ -205,15 +223,49 @@ describe("deleteCollection function", () => {
 });
 
 describe("deleteCollections function", () => {
+  it("does nothing if the dialog is dismissed", async () => {
+    const collections = getFakeCollections({ length: 3 });
+    await prisma.collection.createMany({ data: collections });
+
+    const send = vi.fn();
+
+    const { deleteCollections } = collectionController({
+      ...defaultParams,
+      send,
+      openConfirmDialog: () => false,
+    });
+    await deleteCollections([2, 3]);
+    const result = await prisma.collection.findMany();
+
+    expect(result).toMatchObject(collections);
+    expect(send).not.toHaveBeenCalled();
+  });
+
   it("deletes all collections by the given ids", async () => {
     const collections = getFakeCollections({ length: 3 });
     await prisma.collection.createMany({ data: collections });
 
-    const { deleteCollections } = collectionController(defaultParams);
+    const send = vi.fn();
+
+    const { deleteCollections } = collectionController({
+      ...defaultParams,
+      send,
+    });
     await deleteCollections([2, 3]);
     const result = await prisma.collection.findMany();
 
     expect(result).toMatchObject(collections.slice(0, 1));
+
+    expect(send).toHaveBeenCalledWith("mutate", [
+      ["collections", "latest"],
+      ["collections", 2],
+      ["collections", 3],
+    ]);
+
+    expect(send).toHaveBeenCalledWith("notify", {
+      type: "success",
+      message: "2 Collection deleted from Library",
+    });
   });
 });
 

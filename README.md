@@ -12,7 +12,10 @@ TBD
 - [ ] smart import vs interactive import;
 - [ ] entity tags;
 - [ ] onboarding;
+- [ ] advanced search;
 - [ ] include trackArtist in search;
+- [ ] make V/A configurable;
+- [ ] virtualize all lists;
 
 ## E2E specs
 

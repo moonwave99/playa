@@ -199,28 +199,95 @@ describe("addArtistsToNewGroup function", () => {
 });
 
 describe("deleteGroup function", () => {
+  it("does nothing if the dialog is dismissed", async () => {
+    const group = getFakeGroups({ length: 1 }).at(0);
+    await prisma.group.create({ data: group });
+
+    const send = vi.fn();
+
+    const { deleteGroup } = groupController({
+      ...defaultParams,
+      send,
+      openConfirmDialog: () => false,
+    });
+    await deleteGroup(1);
+    const result = await prisma.group.findFirst({ where: { id: 1 } });
+
+    expect(result).not.toBe(null);
+    expect(send).not.toHaveBeenCalled();
+  });
+
   it("deletes a group by the given id", async () => {
     const group = getFakeGroups({ length: 1 }).at(0);
     await prisma.group.create({ data: group });
 
-    const { deleteGroup } = groupController(defaultParams);
+    const send = vi.fn();
+
+    const { deleteGroup } = groupController({
+      ...defaultParams,
+      send,
+    });
     await deleteGroup(1);
     const result = await prisma.group.findFirst({ where: { id: 1 } });
 
     expect(result).toBe(null);
+
+    expect(send).toHaveBeenCalledWith("mutate", [
+      ["group", "latest"],
+      ["group", 1],
+    ]);
+
+    expect(send).toHaveBeenCalledWith("notify", {
+      type: "success",
+      message: "Group deleted from Library",
+    });
   });
 });
 
 describe("deleteGroups function", () => {
+  it("does nothing if the dialog is dismissed", async () => {
+    const groups = getFakeGroups({ length: 3 });
+    await prisma.group.createMany({ data: groups });
+
+    const send = vi.fn();
+
+    const { deleteGroups } = groupController({
+      ...defaultParams,
+      send,
+      openConfirmDialog: () => false,
+    });
+    await deleteGroups([1, 2]);
+    const result = await prisma.group.findMany();
+
+    expect(result).toMatchObject(groups);
+    expect(send).not.toHaveBeenCalled();
+  });
+
   it("deletes all groups by the given ids", async () => {
     const groups = getFakeGroups({ length: 3 });
     await prisma.group.createMany({ data: groups });
 
-    const { deleteGroups } = groupController(defaultParams);
+    const send = vi.fn();
+
+    const { deleteGroups } = groupController({
+      ...defaultParams,
+      send,
+    });
     await deleteGroups([2, 3]);
     const result = await prisma.group.findMany();
 
     expect(result).toMatchObject(groups.slice(0, 1));
+
+    expect(send).toHaveBeenCalledWith("mutate", [
+      ["groups", "latest"],
+      ["groups", 2],
+      ["groups", 3],
+    ]);
+
+    expect(send).toHaveBeenCalledWith("notify", {
+      type: "success",
+      message: "2 Groups deleted from Library",
+    });
   });
 });
 
