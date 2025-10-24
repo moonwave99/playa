@@ -26,10 +26,10 @@ export function getArtistMenu({ controllers, stateManager }: GetMenuParams) {
       label: "Reveal Artist in Finder",
       accelerator: "Cmd+Shift+F",
       click: async () =>
-        controllers.system.revealEntityInFinder(
-          "Artist",
-          stateManager.getSelection("artist").at(0)
-        ),
+        controllers.system.revealEntityInFinder({
+          entityType: "Artist",
+          id: stateManager.getSelection("artist").at(0),
+        }),
     },
     {
       id: "refreshArtistReleases",

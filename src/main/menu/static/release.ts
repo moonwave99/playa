@@ -98,10 +98,10 @@ export function getReleaseMenu({ controllers, stateManager }: GetMenuParams) {
       label: "Reveal Release in Finder",
       accelerator: "Shift+F",
       click: () =>
-        controllers.system.revealEntityInFinder(
-          "Release",
-          stateManager.getSelection("release").at(0)
-        ),
+        controllers.system.revealEntityInFinder({
+          entityType: "Release",
+          id: stateManager.getSelection("release").at(0),
+        }),
     },
     {
       id: "refreshFolderContents",

@@ -65,8 +65,7 @@ export const releaseMenu =
         },
         {
           label: `Reveal Release in Finder`,
-          click: () =>
-            controllers.system.revealEntityInFinder("Release", release.id),
+          click: () => controllers.system.revealEntityInFinder(release),
         },
         {
           label: `Search Release Cover`,

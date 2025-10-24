@@ -4,7 +4,11 @@ import { shell, type IpcMainEvent } from "electron";
 import { run } from "../run";
 import { getEntityPath } from "../utils";
 import { getRelease } from "../db/release";
-import { ReleaseWithArtistAndSubReleases, Track } from "@/types/types";
+import {
+  HasEntityTypeAndId,
+  ReleaseWithArtistAndSubReleases,
+  Track,
+} from "@/types/types";
 import type { GetSetting } from "./settings";
 
 type SystemControllerParams = {
@@ -104,17 +108,14 @@ export function systemController({
     return true;
   }
 
-  async function revealEntityInFinder(
-    entity: "Release" | "Artist" | "Track",
-    id: number
-  ) {
+  async function revealEntityInFinder({ entityType, id }: HasEntityTypeAndId) {
     let result;
-    if (entity === "Release") {
+    if (entityType === "Release") {
       result = await prisma.release.findFirst({
         where: { id },
         include: { artist: true },
       });
-    } else if (entity === "Artist") {
+    } else if (entityType === "Artist") {
       result = await prisma.artist.findFirst({ where: { id } });
     } else {
       result = await prisma.track.findFirst({

@@ -60,6 +60,9 @@
 
   &:hover {
     background-color: var(--search-results-background-color-light);
+    .contextMenuButton {
+      visibility: visible;
+    }
   }
 
   &.isDraggable {
@@ -75,7 +78,24 @@
 
     &:hover {
       background-color: var(--accent-color-light);
+      .contextMenuButton {
+        color: var(--primary-color);
+      }
     }
+  }
+
+  .contextMenuButton {
+    visibility: hidden;
+    margin-left: auto;
+    appearance: none;
+    border: none;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    font-size: 1.1rem;
   }
 }
 

@@ -24,6 +24,7 @@ import { importFoldersController } from "./importFolders";
 import { importExportController } from "./importExport";
 import { stateController } from "./state";
 import { settingsController } from "./settings";
+import { trackController } from "./track";
 
 import { StateManager } from "../stateManager";
 
@@ -32,6 +33,7 @@ import { releaseMenu } from "../menu/context/release";
 import { artistMenu } from "../menu/context/artist";
 import { collectionMenu } from "../menu/context/collection";
 import { groupMenu } from "../menu/context/group";
+import { trackMenu } from "../menu/context/track";
 import { searchResultMenu } from "../menu/context/searchResult";
 
 import { Modals } from "@/renderer/Modal";
@@ -46,6 +48,7 @@ export type Controllers = {
   artist: ReturnType<typeof artistController>;
   collection: ReturnType<typeof collectionController>;
   group: ReturnType<typeof groupController>;
+  track: ReturnType<typeof trackController>;
   searchResult: ReturnType<typeof searchResultController>;
   stats: ReturnType<typeof statsController>;
   state: ReturnType<typeof stateController>;
@@ -149,6 +152,7 @@ export async function init(mainWindow: BrowserWindow) {
     }),
     collection: collectionController({ send, openConfirmDialog, stateManager }),
     group: groupController({ send, openConfirmDialog, stateManager }),
+    track: trackController(),
     searchResult: searchResultController(),
     dialog: dialogController({
       openConfirmDialog,
@@ -193,6 +197,7 @@ export async function init(mainWindow: BrowserWindow) {
       "menu:artist": artistMenu({ controllers, send, openModal }),
       "menu:collection": collectionMenu({ controllers, send, openModal }),
       "menu:group": groupMenu({ controllers, send, openModal }),
+      "menu:track": trackMenu({ controllers, send, openModal }),
       "menu:searchResult": searchResultMenu({ controllers, send, openModal }),
       "menu:refresh": () => refreshMenu(),
       "menu:click": clickEntry,

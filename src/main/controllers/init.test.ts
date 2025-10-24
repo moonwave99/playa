@@ -3,8 +3,9 @@ import { ipcMain } from "electron";
 import { init } from "./init";
 import { actions as artistActions } from "./artist";
 import { actions as releaseActions } from "./release";
-import { actions as groupActions } from "./group";
 import { actions as collectionActions } from "./collection";
+import { actions as groupActions } from "./group";
+import { actions as trackActions } from "./track";
 import { actions as statsActions } from "./stats";
 import { actions as stateActions } from "./state";
 import { actions as settingsActions } from "./settings";
@@ -58,8 +59,9 @@ describe("init function", () => {
     [
       ...artistActions,
       ...releaseActions,
-      ...groupActions,
       ...collectionActions,
+      ...groupActions,
+      ...trackActions,
       ...statsActions,
       ...stateActions,
       ...settingsActions,

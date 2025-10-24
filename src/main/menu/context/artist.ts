@@ -29,12 +29,12 @@ function getRemoveFromGroupEntry(
 export const artistMenu =
   ({ controllers, send, openModal }: MenuParams) =>
   async (artist: ArtistWithReleases, context?: GroupWithArtists) => {
-    const { id, name, releases } = artist;
+    const { name, releases } = artist;
 
     buildMenu([
       {
         label: `Reveal '${name}' in Finder`,
-        click: () => controllers.system.revealEntityInFinder("Artist", id),
+        click: () => controllers.system.revealEntityInFinder(artist),
       },
       {
         label: `Import '${name}' Covers`,

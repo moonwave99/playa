@@ -13,6 +13,7 @@ import Cover from "./Cover";
 import List from "./List";
 
 import { MdOutlineSearch } from "react-icons/md";
+import { BsThreeDots } from "react-icons/bs";
 import cx from "clsx";
 import styles from "./SearchView.module.css";
 
@@ -270,6 +271,13 @@ function SearchResultView({
     >
       {renderCover()}
       <div className={styles.description}>{renderContent()}</div>
+      <button
+        type="button"
+        className={styles.contextMenuButton}
+        onClick={onContextMenu}
+      >
+        <BsThreeDots />
+      </button>
     </article>
   );
 }
