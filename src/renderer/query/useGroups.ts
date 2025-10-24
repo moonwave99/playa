@@ -37,8 +37,7 @@ export default function useGroups(
     data: groups,
   } = useQuery({
     queryKey: ["groups", "latest"],
-    queryFn: () =>
-      api.group.getGroups({ take: pageSize }) as Promise<GroupWithArtists[]>,
+    queryFn: () => api.group.getGroups({ take: pageSize }),
   });
 
   function onSuccess() {

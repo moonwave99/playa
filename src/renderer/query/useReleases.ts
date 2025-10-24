@@ -34,7 +34,7 @@ export default function useReleases(
     hasNextPage,
     fetchNextPage,
   } = useInfiniteQuery({
-    queryKey: ["releases", "latest", pageSize],
+    queryKey: ["releases", "latest", { pageSize }],
     queryFn: ({ pageParam }) =>
       api.release.getReleases({
         take: pageSize,

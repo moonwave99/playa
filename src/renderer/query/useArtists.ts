@@ -28,7 +28,7 @@ export default function useArtists(
     hasNextPage,
     fetchNextPage,
   } = useInfiniteQuery({
-    queryKey: ["artists", "latest", pageSize],
+    queryKey: ["artists", "latest", { pageSize }],
     queryFn: (context) =>
       api.artist.getLatestArtists({
         take: pageSize,
