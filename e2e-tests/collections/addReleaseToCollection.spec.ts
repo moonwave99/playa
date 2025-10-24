@@ -23,7 +23,7 @@ test.describe("Collection", () => {
     const releaseList = page.locator('[data-testid="ReleaseList"]');
     await expect(releaseList).toBeVisible();
 
-    await clickMenuItemById(electronApp, "editCollection");
+    await clickMenuItemById(electronApp, "editCurrentCollection");
 
     const modal = page.locator(".ReactModalPortal");
     await expect(modal).toContainText("Edit Collection");

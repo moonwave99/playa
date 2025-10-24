@@ -19,7 +19,7 @@ test.describe("Edit Group", () => {
     await page.keyboard.press("Enter");
 
     await expect(page.locator('[data-testid="GroupPage"]')).toBeVisible();
-    await clickMenuItemById(electronApp, "editGroup");
+    await clickMenuItemById(electronApp, "editCurrentGroup");
 
     const modal = page.locator(".ReactModalPortal");
 

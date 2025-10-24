@@ -16,7 +16,7 @@ test.describe("Edit Release", () => {
       "Releases"
     );
 
-    await clickMenuItemById(electronApp, "editRelease");
+    await clickMenuItemById(electronApp, "editSelectedRelease");
     const modal = page.locator(".ReactModalPortal");
     await expect(modal).toContainText("Edit Release");
     await expect(modal).toContainText("Release 1-5");

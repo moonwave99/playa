@@ -1,54 +1,77 @@
 import { MenuItem } from "electron";
 import { openModal } from "@/main/controllers/init";
-import { type GetMenuParams } from "../menu";
+import { refreshMenuEntries, type GetMenuParams } from "../menu";
 
 export function getGroupMenu({ controllers, stateManager }: GetMenuParams) {
   const { getGroup, deleteGroups, removeArtistsFromGroup } = controllers.group;
+  const menuTemplate = [
+    {
+      id: "editSelectedGroup",
+      hideOnSinglePage: true,
+      label: "Edit selected Group",
+      accelerator: "Cmd+Shift+E",
+      click: async () =>
+        openModal("editGroup", {
+          group: await getGroup(stateManager.getSelection("group").at(0)),
+        }),
+    },
+    {
+      id: "editCurrentGroup",
+      showOnSinglePage: true,
+      label: "Edit current Group",
+      accelerator: "Cmd+Shift+E",
+      click: async () =>
+        openModal("editGroup", {
+          group: await getGroup(stateManager.getSelection("group").at(0)),
+        }),
+    },
+    {
+      id: "deleteSelectedGroups",
+      hideOnSinglePage: true,
+      allowMultiple: true,
+      label: "Delete selected Groups",
+      accelerator: "Backspace",
+      click: () => deleteGroups(stateManager.getSelection("group")),
+    },
+    {
+      id: "deleteCurrentGroup",
+      showOnSinglePage: true,
+      label: "Delete current Group",
+      accelerator: "Cmd+Backspace",
+      click: () => deleteGroups(stateManager.getSelection("group")),
+    },
+    {
+      type: "separator" as const,
+    },
+    {
+      id: "removeArtistsFromGroup",
+      showOnSinglePage: true,
+      label: "Remove selected Artists from Group",
+      accelerator: "Backspace",
+      click: () =>
+        removeArtistsFromGroup(
+          stateManager.getSelection("group").at(0),
+          stateManager.getSelection("artist")
+        ),
+    },
+  ];
+
   const menu = new MenuItem({
     id: "group",
     label: "Group",
-    submenu: [
-      {
-        id: "editGroup",
-        label: "Edit Group",
-        accelerator: "Shift+E",
-        click: async () =>
-          openModal("editGroup", {
-            group: await getGroup(stateManager.getSelection("group").at(0)),
-          }),
-      },
-      {
-        id: "deleteGroups",
-        label: "Delete Group(s)",
-        accelerator: "Cmd+Backspace",
-        click: () => deleteGroups(stateManager.getSelection("group")),
-      },
-      {
-        type: "separator",
-      },
-      {
-        id: "removeArtistsFromGroup",
-        label: "Remove selected Artists from Group",
-        accelerator: "Backspace",
-        click: () =>
-          removeArtistsFromGroup(
-            stateManager.getSelection("group").at(0),
-            stateManager.getSelection("artist")
-          ),
-      },
-    ],
+    submenu: menuTemplate,
   });
 
   function refresh() {
-    const isSingleGroupPage = stateManager.isPage("group");
-    const enabled = !!stateManager.getSelection("group").length;
-    menu.submenu.items.forEach((item) => {
-      item.enabled = enabled;
-      if (item.id === "removeArtistsFromGroup") {
-        item.enabled =
-          isSingleGroupPage && !!stateManager.getSelection("artist").length;
-      }
+    refreshMenuEntries({
+      menu,
+      entries: menuTemplate,
+      isSinglePage: stateManager.isPage("group"),
+      selectionLength: stateManager.getSelection("group").length,
+      ...stateManager.getState(),
     });
+    menu.submenu.getMenuItemById("removeArtistsFromGroup").enabled =
+      !!stateManager.getSelection("artist").length;
   }
 
   return { menu, refresh };

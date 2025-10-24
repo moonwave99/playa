@@ -21,7 +21,7 @@ test.describe("Group", () => {
 
     await expect(page.locator('[data-testid="GroupPage"]')).toBeVisible();
     await expect(page.locator('[data-testid="ArtistList"]')).toBeVisible();
-    await clickMenuItemById(electronApp, "editGroup");
+    await clickMenuItemById(electronApp, "editCurrentGroup");
 
     const modal = page.locator(".ReactModalPortal");
 

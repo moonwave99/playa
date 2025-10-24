@@ -18,7 +18,7 @@ test.describe("Delete Collection", () => {
 
     await expect(page.locator('[data-testid="CollectionsPage"]')).toBeVisible();
 
-    await clickMenuItemById(electronApp, "deleteCollections");
+    await clickMenuItemById(electronApp, "deleteSelectedCollections");
 
     await expect(
       page.locator('[data-testid="CollectionsList"]')

@@ -17,7 +17,7 @@ test.describe("Delete Group", () => {
     );
 
     await expect(page.locator('[data-testid="GroupsPage"]')).toBeVisible();
-    await clickMenuItemById(electronApp, "deleteGroups");
+    await clickMenuItemById(electronApp, "deleteSelectedGroups");
 
     await expect(page.locator('[data-testid="GroupsList"]')).not.toContainText(
       "Group 1"

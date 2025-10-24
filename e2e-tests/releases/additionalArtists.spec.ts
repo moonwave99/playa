@@ -21,7 +21,7 @@ test.describe("Releases", () => {
       .filter({ hasText: "Release 1-5" })
       .click();
 
-    await clickMenuItemById(electronApp, "editRelease");
+    await clickMenuItemById(electronApp, "editSelectedRelease");
     const modal = page.locator(".ReactModalPortal");
     await expect(modal).toContainText("Edit Release");
 
@@ -39,7 +39,7 @@ test.describe("Releases", () => {
     await expect(header).toContainText("Artist 2");
     await expect(header).toContainText("Artist 3");
 
-    await clickMenuItemById(electronApp, "editRelease");
+    await clickMenuItemById(electronApp, "editCurrentRelease");
 
     await expect(modal).toContainText("Edit Release");
     await modal.getByLabel("Remove Artist 2 from related Artists").click();

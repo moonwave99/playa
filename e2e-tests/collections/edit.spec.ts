@@ -19,7 +19,7 @@ test.describe("Edit Collection", () => {
     await page.keyboard.press("Enter");
 
     await expect(page.locator('[data-testid="CollectionPage"]')).toBeVisible();
-    await clickMenuItemById(electronApp, "editCollection");
+    await clickMenuItemById(electronApp, "editCurrentCollection");
 
     const modal = page.locator(".ReactModalPortal");
     await expect(modal).toContainText("Edit Collection");

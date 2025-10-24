@@ -25,7 +25,7 @@ test.describe("Edit Artist", () => {
 
     await expect(page.locator('[data-testid="ArtistPage"]')).toBeVisible();
 
-    await clickMenuItemById(electronApp, "editArtist");
+    await clickMenuItemById(electronApp, "editSelectedArtist");
 
     const modal = page.locator(".ReactModalPortal");
     await expect(modal).toContainText("Edit Artist");

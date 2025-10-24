@@ -115,3 +115,61 @@ function shouldDisplayCoverEntityEntry(context: Context) {
     return (context as ArtistWithReleases)?.releases.length > 1;
   }
 }
+
+type MenuTemplateEntry = MenuItemConstructorOptions & {
+  allowMultiple?: boolean;
+  showOnSinglePage?: boolean;
+  hideOnSinglePage?: boolean;
+  disableOnImport?: boolean;
+};
+
+type RefreshMenuEntriesParams = {
+  menu: MenuItem;
+  selectionLength: number;
+  isInputFocused: boolean;
+  isImporting: boolean;
+  isSinglePage: boolean;
+  isSomeReleaseMain?: boolean;
+  entries: MenuTemplateEntry[];
+};
+
+export function refreshMenuEntries({
+  menu,
+  selectionLength,
+  isInputFocused,
+  isImporting,
+  isSinglePage,
+  entries,
+}: RefreshMenuEntriesParams) {
+  entries.forEach(
+    ({
+      id,
+      allowMultiple,
+      showOnSinglePage,
+      hideOnSinglePage,
+      disableOnImport,
+    }) => {
+      const item = menu.submenu.getMenuItemById(id);
+      if (isInputFocused) {
+        item.enabled = false;
+        item.visible = !showOnSinglePage || !isSinglePage;
+        return;
+      }
+      if (disableOnImport && isImporting) {
+        item.enabled = false;
+        return;
+      }
+      if (showOnSinglePage) {
+        item.enabled = isSinglePage;
+        item.visible = isSinglePage;
+        return;
+      }
+      if (hideOnSinglePage) {
+        item.visible = !isSinglePage;
+      }
+      item.enabled = allowMultiple
+        ? selectionLength > 0
+        : selectionLength === 1;
+    }
+  );
+}
