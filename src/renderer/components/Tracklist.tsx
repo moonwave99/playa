@@ -101,7 +101,7 @@ export default function Tracklist({
           : []
       }
       onSelectionChange={(selection) =>
-        select(selection.map((index) => allTracks[index].id))
+        select(selection.map((index) => allTracks[index]?.id))
       }
       className={cx(styles.tracklist, styles.isNavigable, {
         [styles.isFlipped]: isFlipped,
