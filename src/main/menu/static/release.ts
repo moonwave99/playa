@@ -4,12 +4,13 @@ import {
   ReleaseWithArtist,
   SelectableEntities,
 } from "@/types/types";
-import { openModal } from "@/main/controllers/init";
+import { send, openModal } from "@/main/controllers/init";
 import {
   searchReleaseOnDiscogs,
   searchReleaseOnRYM,
 } from "@/lib/external_links";
 import { refreshMenuEntries, type GetMenuParams } from "../menu";
+import { getReleaseLink } from "@/lib/links";
 
 export function getReleaseMenu({ controllers, stateManager }: GetMenuParams) {
   const { getRelease, getSelectedReleases, unGroupSelectedRelease } =
@@ -47,6 +48,27 @@ export function getReleaseMenu({ controllers, stateManager }: GetMenuParams) {
   }
 
   const menuTemplate = [
+    {
+      id: "gotoReleasePage",
+      hideOnSinglePage: true,
+      label: "Go to Release",
+      accelerator: "Enter",
+      click: () =>
+        send(
+          "navigate",
+          getReleaseLink({ id: stateManager.getSelection("release").at(0) })
+        ),
+    },
+    {
+      id: "playbackCurrentRelease",
+      label: "Playback Release",
+      accelerator: "Cmd+Enter",
+      click: () =>
+        controllers.system.playback({
+          release_id: stateManager.getSelection("release").at(0),
+          track_id: stateManager.getSelection("track").at(0),
+        }),
+    },
     {
       id: "showReleaseInLightbox",
       hideOnSinglePage: true,
@@ -191,10 +213,23 @@ export function getReleaseMenu({ controllers, stateManager }: GetMenuParams) {
         ),
     },
     {
-      id: "addReleasesToCollection",
+      id: "addCurrentReleaseToCollection",
+      showOnSinglePage: true,
+      label: `Add current Release to Collection`,
+      accelerator: "Cmd+Shift+A",
+      click: async () =>
+        openModal("addReleasesToCollection", {
+          releases: await getSelectedReleases(
+            stateManager.getSelection("release")
+          ),
+        }),
+    },
+    {
+      id: "addSelectedReleasesToCollection",
+      hideOnSinglePage: true,
       allowMultiple: true,
       label: `Add selected Releases to Collection`,
-      accelerator: "a",
+      accelerator: "Shift+A",
       click: async () =>
         openModal("addReleasesToCollection", {
           releases: await getSelectedReleases(

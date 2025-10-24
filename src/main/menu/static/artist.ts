@@ -1,14 +1,26 @@
 import { MenuItem } from "electron";
 import { ArtistWithReleasesFull } from "@/types/types";
-import { openModal } from "@/main/controllers/init";
+import { send, openModal } from "@/main/controllers/init";
 import { searchArtistOnDiscogs, searchArtistOnRYM } from "@/lib/external_links";
 import { refreshMenuEntries, type GetMenuParams } from "../menu";
+import { getArtistLink } from "@/lib/links";
 
 export function getArtistMenu({ controllers, stateManager }: GetMenuParams) {
   const { getSelectedArtist, getSelectedArtists, deleteArtists } =
     controllers.artist;
 
   const menuTemplate = [
+    {
+      id: "gotoArtistPage",
+      hideOnSinglePage: true,
+      label: "Go to Artist",
+      accelerator: "Enter",
+      click: () =>
+        send(
+          "navigate",
+          getArtistLink({ id: stateManager.getSelection("artist").at(0) })
+        ),
+    },
     {
       id: "revealArtistInFinder",
       label: "Reveal Artist in Finder",
@@ -23,7 +35,6 @@ export function getArtistMenu({ controllers, stateManager }: GetMenuParams) {
       id: "refreshArtistReleases",
       disableOnImport: true,
       label: "Refresh all Releases content",
-      accelerator: "Cmd+Shift+A",
       click: async () =>
         controllers.importFolders.refreshArtistReleases(
           (await getSelectedArtist(
@@ -97,7 +108,20 @@ export function getArtistMenu({ controllers, stateManager }: GetMenuParams) {
     },
     { type: "separator" as const },
     {
-      id: "addArtistsToGroup",
+      id: "addCurrentArtistToGroup",
+      showOnSinglePage: true,
+      label: "Add current Artist to Group",
+      accelerator: "Cmd+Shift+A",
+      click: async () =>
+        openModal("addArtistsToGroup", {
+          artists: await getSelectedArtists(
+            stateManager.getSelection("artist")
+          ),
+        }),
+    },
+    {
+      id: "addSelectedArtistsToGroup",
+      hideOnSinglePage: true,
       allowMultiple: true,
       label: "Add Artists to Group",
       accelerator: "Shift+A",

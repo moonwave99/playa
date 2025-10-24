@@ -9,6 +9,7 @@ describe("StateManager - constructor", () => {
         release: [],
         collection: [],
         group: [],
+        track: [],
       },
       isInputFocused: false,
       isImporting: false,
@@ -37,6 +38,7 @@ describe("StateManager - setSelection / getSelection", () => {
           release: [],
           collection: [],
           group: [],
+          track: [],
         },
       })
     );
@@ -55,6 +57,7 @@ describe("StateManager - setSelection / getSelection", () => {
           release: [],
           collection: [],
           group: [],
+          track: [],
         },
       })
     );
@@ -74,6 +77,7 @@ describe("StateManager - setSelection / getSelection", () => {
       release: [1],
       collection: [],
       group: [],
+      track: [],
     });
   });
 });
@@ -96,6 +100,7 @@ describe("StateManager - reset", () => {
         release: [],
         collection: [],
         group: [],
+        track: [],
       },
       isInputFocused: false,
       isImporting: false,

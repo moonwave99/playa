@@ -18,11 +18,11 @@ test.describe("Containing Collections", () => {
     await page.waitForTimeout(100);
 
     await page.keyboard.press("ArrowRight");
-    await page.keyboard.press("Enter");
+    await clickMenuItemById(electronApp, "gotoReleasePage");
 
     await expect(page.locator('[data-testid="ReleasePage"]')).toBeVisible();
 
-    await clickMenuItemById(electronApp, "addReleasesToCollection");
+    await clickMenuItemById(electronApp, "addCurrentReleaseToCollection");
     const modal = page.locator(".ReactModalPortal");
     await expect(modal).toContainText("Add Releases to Collection");
 
@@ -49,11 +49,11 @@ test.describe("Containing Collections", () => {
     await page.waitForTimeout(100);
 
     await page.keyboard.press("ArrowRight");
-    await page.keyboard.press("Enter");
+    await clickMenuItemById(electronApp, "gotoReleasePage");
 
     await expect(page.locator('[data-testid="ReleasePage"]')).toBeVisible();
 
-    await clickMenuItemById(electronApp, "addReleasesToCollection");
+    await clickMenuItemById(electronApp, "addCurrentReleaseToCollection");
     const modal = page.locator(".ReactModalPortal");
     await expect(modal).toContainText("Add Releases to Collection");
 
@@ -80,7 +80,7 @@ test.describe("Containing Collections", () => {
     await page.waitForTimeout(100);
 
     await page.keyboard.press("ArrowRight");
-    await page.keyboard.press("Enter");
+    await clickMenuItemById(electronApp, "gotoReleasePage");
 
     await expect(page.locator('[data-testid="ReleasePage"]')).toBeVisible();
 

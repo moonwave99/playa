@@ -1,6 +1,7 @@
 import { MenuItem } from "electron";
-import { openModal } from "@/main/controllers/init";
+import { send, openModal } from "@/main/controllers/init";
 import { refreshMenuEntries, type GetMenuParams } from "../menu";
+import { getCollectionLink } from "@/lib/links";
 
 export function getCollectionMenu({
   controllers,
@@ -10,6 +11,19 @@ export function getCollectionMenu({
     controllers.collection;
 
   const menuTemplate = [
+    {
+      id: "gotoCollectionPage",
+      hideOnSinglePage: true,
+      label: "Go to Collection",
+      accelerator: "Enter",
+      click: () =>
+        send(
+          "navigate",
+          getCollectionLink({
+            id: stateManager.getSelection("collection").at(0),
+          })
+        ),
+    },
     {
       id: "editSelectedCollection",
       hideOnSinglePage: true,

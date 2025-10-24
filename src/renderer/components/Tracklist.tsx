@@ -1,14 +1,13 @@
-import { Fragment } from "react";
-import type { MouseEvent } from "react";
-import api from "../api";
+import { Fragment, type MouseEvent } from "react";
+import { useSelect } from "../hooks/useSelect";
 import type {
   Track,
   ReleaseWithArtistAndTracksAndSubreleases,
 } from "@/types/types";
 import { formatDuration, withStopPropagation } from "@/lib/utils";
 import List from "./List";
-import cx from "clsx";
 
+import cx from "clsx";
 import styles from "./Tracklist.module.css";
 
 type TracklistProps = {
@@ -30,6 +29,8 @@ export default function Tracklist({
   onDoubleClick,
   onContextMenu,
 }: TracklistProps) {
+  const { select } = useSelect("track", [selectedTrackId]);
+
   const allTracks = [
     ...(release.tracks || []),
     ...release.subReleases.flatMap((x) => x.tracks || []),
@@ -93,17 +94,14 @@ export default function Tracklist({
     <List
       disableMultipleSelection
       context={context}
-      onEnter={(item) =>
-        api.system.playback({
-          release_id: release.id,
-          track_id: item.id,
-        })
-      }
       items={allTracks}
       initialSelection={
         selectedTrackId
           ? [allTracks.findIndex((x) => x.id === selectedTrackId)]
           : []
+      }
+      onSelectionChange={(selection) =>
+        select(selection.map((index) => allTracks[index].id))
       }
       className={cx(styles.tracklist, styles.isNavigable, {
         [styles.isFlipped]: isFlipped,

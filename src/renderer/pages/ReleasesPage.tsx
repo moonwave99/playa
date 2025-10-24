@@ -1,9 +1,7 @@
-import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import type {
   HasId,
   Release,
-  ReleaseWithArtistAndSubReleases,
   ReleaseWithArtistAndTracksAndSubreleases,
 } from "@/types/types";
 import api from "@/renderer/api";
@@ -13,7 +11,6 @@ import { releaseColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
 import { withPrevent } from "@/renderer/hooks/useKeyboardManager";
 import useReleases from "@/renderer/query/useReleases";
 import { useSelect } from "@/renderer/hooks/useSelect";
-import { getReleaseLink } from "@/lib/links";
 import { getReleaseContextMenuParams } from "@/lib/utils";
 import Loading from "@/renderer/components/Loading";
 import ErrorView from "@/renderer/components/ErrorView";
@@ -24,7 +21,6 @@ import styles from "./Page.module.css";
 
 export default function ReleasesPage() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const { setModalContents } = useStore();
   const {
     releases,
@@ -49,19 +45,8 @@ export default function ReleasesPage() {
     return <ErrorView error={error} />;
   }
 
-  function onEnter(
-    release: ReleaseWithArtistAndSubReleases,
-    event: KeyboardEvent
-  ) {
-    if (event.metaKey) {
-      api.system.playback({ release_id: release.id });
-      return;
-    }
-    navigate(getReleaseLink(release));
-  }
-
   const keyHandlers = {
-    " ": withPrevent((_event: KeyboardEvent, selection: Release[]) => {
+    " ": withPrevent((_: KeyboardEvent, selection: Release[]) => {
       setModalContents({
         name: "lightbox",
         params: {
@@ -89,7 +74,6 @@ export default function ReleasesPage() {
           fetchNextPage={fetchNextPage}
           hasNextPage={hasNextPage}
           isFetchingNextPage={isFetchingNextPage}
-          onEnter={onEnter}
           onSelectionChange={(selection) =>
             select(selection.map((index) => releases[index].id))
           }

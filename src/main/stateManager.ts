@@ -21,6 +21,7 @@ export class StateManager {
         release: [] as number[],
         collection: [] as number[],
         group: [] as number[],
+        track: [] as number[],
       },
       isInputFocused: false,
       isImporting: false,
@@ -50,6 +51,7 @@ export class StateManager {
         release: [] as number[],
         collection: [] as number[],
         group: [] as number[],
+        track: [] as number[],
       },
       isInputFocused: false,
       isImporting: false,
@@ -70,6 +72,7 @@ export class StateManager {
         release: [] as number[],
         collection: [] as number[],
         group: [] as number[],
+        track: [] as number[],
       };
     }
     this.state.selection[entity] = Array.isArray(selection)

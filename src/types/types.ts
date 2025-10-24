@@ -55,16 +55,21 @@ export type Entities =
   | "collection"
   | "release"
   | "artist"
-  | "searchResult"
   | "track"
-  | "group";
+  | "group"
+  | "searchResult";
 export type SearchableEntities =
   | "collection"
   | "release"
   | "artist"
   | "track"
   | "group";
-export type SelectableEntities = "collection" | "release" | "artist" | "group";
+export type SelectableEntities =
+  | "collection"
+  | "release"
+  | "artist"
+  | "group"
+  | "track";
 export type Stats = Record<SearchableEntities, number>;
 export type HasId = { id: number };
 export type HasEntityType = { entityType: EntityType };

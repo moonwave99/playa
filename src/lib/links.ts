@@ -33,19 +33,19 @@ export function getCover(hash: string): string {
 }
 
 export function getCollectionLink({ id }: HasId) {
-  return `/collections/${id}`;
+  return getEntityLink({ id, entityType: "Collection" });
 }
 
 export function getGroupLink({ id }: HasId) {
-  return `/groups/${id}`;
+  return getEntityLink({ id, entityType: "Group" });
 }
 
 export function getArtistLink({ id }: HasId) {
-  return `/artists/${id}`;
+  return getEntityLink({ id, entityType: "Artist" });
 }
 
 export function getReleaseLink({ id }: HasId) {
-  return `/releases/${id}`;
+  return getEntityLink({ id, entityType: "Release" });
 }
 
 export function getEntityLink({ id, entityType }: HasId & HasEntityType) {

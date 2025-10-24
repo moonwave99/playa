@@ -1,10 +1,22 @@
 import { MenuItem } from "electron";
-import { openModal } from "@/main/controllers/init";
+import { send, openModal } from "@/main/controllers/init";
 import { refreshMenuEntries, type GetMenuParams } from "../menu";
+import { getGroupLink } from "@/lib/links";
 
 export function getGroupMenu({ controllers, stateManager }: GetMenuParams) {
   const { getGroup, deleteGroups, removeArtistsFromGroup } = controllers.group;
   const menuTemplate = [
+    {
+      id: "gotoGroupPage",
+      hideOnSinglePage: true,
+      label: "Go to Group",
+      accelerator: "Enter",
+      click: () =>
+        send(
+          "navigate",
+          getGroupLink({ id: stateManager.getSelection("group").at(0) })
+        ),
+    },
     {
       id: "editSelectedGroup",
       hideOnSinglePage: true,

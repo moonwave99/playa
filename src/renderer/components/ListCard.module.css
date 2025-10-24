@@ -112,8 +112,12 @@
   border-bottom: 0.5px solid var(--neutral-border-color);
   background-color: transparent;
 
-  .content {
+  &:not(.hideCover) .content {
     margin-top: 2.5rem;
+  }
+
+  .content {
+    margin-top: 1rem;
   }
 
   .title {

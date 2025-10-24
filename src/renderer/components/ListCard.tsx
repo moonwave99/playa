@@ -291,7 +291,6 @@ export default function ListCard({
         [styles.hasFocus]: selected && hasFocus,
         [styles.useDarkText]: useDarkText,
         [styles.isHover]: isHover,
-
         [styles.hideCover]: hideCover,
         [styles.fromCache]: fromCache,
         className,

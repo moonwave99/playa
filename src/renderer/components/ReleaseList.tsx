@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router";
 import type {
   Release,
   ReleaseWithArtist,
@@ -14,7 +13,6 @@ import { useApiEvents } from "../hooks/useApiEvents";
 import { withoutShift, withPrevent } from "../hooks/useKeyboardManager";
 import useStore from "../store";
 import api from "../api";
-import { getReleaseLink } from "@/lib/links";
 import {
   estimateListCardSize,
   getReleaseWithTracklistHeight,
@@ -49,8 +47,6 @@ export default function ReleaseList({
   keyHandlers = {},
   context,
 }: ReleaseListProps) {
-  const navigate = useNavigate();
-
   const { releaseListViewMode, toggleViewMode, setModalContents } = useStore();
 
   useApiEvents({
@@ -60,17 +56,6 @@ export default function ReleaseList({
   const { scrollInfo, storeScrollInfo } = useRestoreListPosition({
     key: context,
   });
-
-  function onEnter(
-    release: ReleaseWithArtistAndTracksAndSubreleases,
-    event: KeyboardEvent
-  ) {
-    if (event.metaKey) {
-      api.system.playback({ release_id: release.id });
-      return;
-    }
-    navigate(getReleaseLink(release));
-  }
 
   function _onContextMenu(selection: number[], index: number) {
     onContextMenu(
@@ -146,7 +131,6 @@ export default function ReleaseList({
       key={`${releaseListViewMode}-${getTotalTracks(releases)}`}
       items={releases}
       className={cx(styles.list, styles[releaseListViewMode], className)}
-      onEnter={onEnter}
       onBackspace={onDelete}
       onSelectionChange={(selection) =>
         onSelect(selection.map((index) => releases[index].id))

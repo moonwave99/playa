@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { getReleaseContextMenuParams } from "@/lib/utils";
 import {
@@ -18,8 +17,6 @@ import useReleases from "../query/useReleases";
 import useArtists from "../query/useArtists";
 import useGroups from "../query/useGroups";
 import useCollections from "../query/useCollections";
-
-import { getEntityLink } from "@/lib/links";
 
 import ErrorView from "../components/ErrorView";
 import List from "../components/List";
@@ -129,7 +126,6 @@ function LatestReleasesView({
   onReleaseSelect,
 }: LatestReleasesViewProps) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const { setModalContents } = useStore();
 
   if (isPending) {
@@ -138,17 +134,6 @@ function LatestReleasesView({
 
   if (error) {
     return <ErrorView error={error} />;
-  }
-
-  function onEnter(
-    release: ReleaseWithArtistAndSubReleases,
-    event: KeyboardEvent
-  ) {
-    if (event.metaKey) {
-      api.system.playback({ release_id: release.id });
-      return;
-    }
-    navigate(getEntityLink(release));
   }
 
   const keyHandlers = {
@@ -189,7 +174,6 @@ function LatestReleasesView({
           items={releases}
           className={homepageStyles.releaseList}
           columnsConfig={releaseColumnsConfig}
-          onEnter={onEnter}
           keyHandlers={keyHandlers}
           paddingEnd={0}
           testId="LatestReleases"
@@ -320,7 +304,6 @@ function useNavigateHomepage({
   onListsUp,
   dataMap,
 }: UseNavigateHomepageParams): UseNavigateHomepage {
-  const navigate = useNavigate();
   const [currentSelection, setCurrentSelection] = useState<Selection>({
     section: null,
     index: -1,
@@ -387,13 +370,6 @@ function useNavigateHomepage({
             section: horizontalSections[sectionIndex - 1],
           };
         }),
-      Enter: () => {
-        navigate(
-          getEntityLink(
-            dataMap[currentSelection.section][currentSelection.index]
-          )
-        );
-      },
     },
   });
 

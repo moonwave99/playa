@@ -1,11 +1,9 @@
-import { useParams, Navigate, useNavigate } from "react-router";
+import { useParams, Navigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import api from "@/renderer/api";
-import type { ArtistWithReleasesAndAppearances } from "@/types/types";
 import useGroup from "../query/useGroup";
 import { compactColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
 import { useSelect } from "@/renderer/hooks/useSelect";
-import { getArtistLink } from "@/lib/links";
 import { estimateListCardSize } from "@/lib/utils";
 import List from "@/renderer/components/List";
 import ListCard from "@/renderer/components/ListCard";
@@ -16,7 +14,6 @@ import styles from "./Page.module.css";
 
 export default function GroupPage() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const { id } = useParams();
   const { group, isPending, error } = useGroup(+id);
 
@@ -51,9 +48,6 @@ export default function GroupPage() {
           className={styles.list}
           columnsConfig={compactColumnsConfig}
           estimateSize={estimateListCardSize}
-          onEnter={(artist: ArtistWithReleasesAndAppearances) =>
-            navigate(getArtistLink(artist))
-          }
           onSelectionChange={(selection) =>
             select(selection.map((index) => group.artists[index].id))
           }
