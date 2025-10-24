@@ -6,7 +6,7 @@ import * as Plot from "@observablehq/plot";
 import styles from "./ImportActivityView.module.css";
 import type { Release } from "@/types/types";
 
-const defaultFrom = "2025-01-01";
+const defaultFrom = `${new Date().getFullYear()}-01-01`;
 
 function getPlotConfig(
   latestAdditions: Record<string, Pick<Release, "id" | "createdAt">[]>,
