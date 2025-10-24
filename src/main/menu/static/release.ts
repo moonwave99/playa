@@ -112,17 +112,6 @@ export function getReleaseMenu({ controllers, stateManager }: GetMenuParams) {
           stateManager.getSelection("release").at(0)
         ),
     },
-    {
-      id: "searchReleaseCover",
-      label: "Search Release Cover",
-      accelerator: "Shift+C",
-      click: async () =>
-        controllers.release.importCovers(
-          (await getSelectedReleases(
-            stateManager.getSelection("release")
-          )) as ReleaseWithArtistAndTracks[]
-        ),
-    },
     { type: "separator" as const },
     {
       id: "searchReleaseOnDiscogs",
@@ -236,6 +225,29 @@ export function getReleaseMenu({ controllers, stateManager }: GetMenuParams) {
             stateManager.getSelection("release")
           ),
         }),
+    },
+    { type: "separator" as const },
+    {
+      id: "searchReleaseCover",
+      label: "Search Release Cover",
+      accelerator: "Shift+C",
+      click: async () =>
+        controllers.release.importCovers(
+          (await getSelectedReleases(
+            stateManager.getSelection("release")
+          )) as ReleaseWithArtistAndTracks[]
+        ),
+    },
+    {
+      id: "deleteReleaseCover",
+      label: "Delete cover from selected Release",
+      accelerator: "D",
+      click: async () =>
+        controllers.release.deleteCover(
+          (await getSelectedReleases(stateManager.getSelection("release"))).at(
+            0
+          )
+        ),
     },
   ];
 

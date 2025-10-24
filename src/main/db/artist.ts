@@ -203,10 +203,14 @@ export async function setArtistCoverRelease(
   artist_id: number,
   release_id: number
 ) {
-  return await prisma.artist.update({
-    where: { id: artist_id },
-    data: { coverReleaseId: release_id },
-  });
+  try {
+    return await prisma.artist.update({
+      where: { id: artist_id },
+      data: { coverReleaseId: release_id },
+    });
+  } catch {
+    return false;
+  }
 }
 
 export type SearchArtistsParams = {

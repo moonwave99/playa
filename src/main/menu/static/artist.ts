@@ -6,8 +6,12 @@ import { refreshMenuEntries, type GetMenuParams } from "../menu";
 import { getArtistLink } from "@/lib/links";
 
 export function getArtistMenu({ controllers, stateManager }: GetMenuParams) {
-  const { getSelectedArtist, getSelectedArtists, deleteArtists } =
-    controllers.artist;
+  const {
+    getSelectedArtist,
+    getSelectedArtists,
+    deleteArtists,
+    setArtistCoverRelease,
+  } = controllers.artist;
 
   const menuTemplate = [
     {
@@ -50,6 +54,17 @@ export function getArtistMenu({ controllers, stateManager }: GetMenuParams) {
         controllers.release.importMissingCovers(
           (await getSelectedArtist(stateManager.getSelection("artist")))
             .releases
+        ),
+    },
+    {
+      id: "setSelectedReleaseAsArtistCover",
+      showOnSinglePage: true,
+      label: "Set selected Release as Artist Cover",
+      accelerator: "C",
+      click: async () =>
+        setArtistCoverRelease(
+          stateManager.getSelection("artist").at(0),
+          stateManager.getSelection("release").at(0)
         ),
     },
     {
@@ -150,15 +165,12 @@ export function getArtistMenu({ controllers, stateManager }: GetMenuParams) {
       ...stateManager.getState(),
     });
 
-    const isSingleGroupPage = stateManager.isPage("group");
-
-    const deleteSelectedArtistEntry = menu.submenu.getMenuItemById(
-      "deleteSelectedArtists"
-    );
-
-    if (isSingleGroupPage) {
-      deleteSelectedArtistEntry.enabled = false;
+    if (stateManager.isPage("group")) {
+      menu.submenu.getMenuItemById("deleteSelectedArtists").enabled = false;
     }
+
+    menu.submenu.getMenuItemById("setSelectedReleaseAsArtistCover").enabled =
+      isSinglePage && stateManager.getSelection("release").length === 1;
   }
 
   return {

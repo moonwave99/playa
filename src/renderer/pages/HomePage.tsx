@@ -6,10 +6,8 @@ import {
   HasId,
   ReleaseWithArtistAndSubReleases,
   HasEntityType,
-  Release,
 } from "@/types/types";
 import api from "../api";
-import useStore from "../store";
 import { useSelect, type UseSelect } from "../hooks/useSelect";
 import { useKeyManager, withPrevent } from "../hooks/useKeyboardManager";
 import { releaseColumnsConfig } from "../hooks/useResponsiveColumns";
@@ -32,6 +30,7 @@ import cx from "clsx";
 import styles from "./Page.module.css";
 import homepageStyles from "./HomePage.module.css";
 import formStyles from "../forms.module.css";
+import { useReleaseLightbox } from "../hooks/useReleaseLightbox";
 
 const pageSize = 5;
 
@@ -126,7 +125,7 @@ function LatestReleasesView({
   onReleaseSelect,
 }: LatestReleasesViewProps) {
   const { t } = useTranslation();
-  const { setModalContents } = useStore();
+  const openLightbox = useReleaseLightbox({ context: releases });
 
   if (isPending) {
     return <Loading className={homepageStyles.latestReleasesLoader} />;
@@ -135,19 +134,6 @@ function LatestReleasesView({
   if (error) {
     return <ErrorView error={error} />;
   }
-
-  const keyHandlers = {
-    ArrowDown: withPrevent(onDown),
-    " ": withPrevent((_event: KeyboardEvent, selection: Release[]) => {
-      setModalContents({
-        name: "lightbox",
-        params: {
-          release: selection[0],
-          context: releases,
-        },
-      });
-    }),
-  };
 
   return (
     <section className={cx(styles.section, homepageStyles.latestReleases)}>
@@ -174,7 +160,10 @@ function LatestReleasesView({
           items={releases}
           className={homepageStyles.releaseList}
           columnsConfig={releaseColumnsConfig}
-          keyHandlers={keyHandlers}
+          keyHandlers={{
+            ArrowDown: withPrevent(onDown),
+            " ": openLightbox,
+          }}
           paddingEnd={0}
           testId="LatestReleases"
           onSelect={onReleaseSelect}

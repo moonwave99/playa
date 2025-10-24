@@ -7,7 +7,7 @@ import {
   getSelectedArtist,
   getSelectedArtists,
   updateArtist,
-  setArtistCoverRelease,
+  setArtistCoverRelease as _setArtistCoverRelease,
   searchArtists,
   addRelatedArtist,
   removeRelatedArtist,
@@ -149,6 +149,17 @@ export function artistController({
     stateManager.setSelection("artist", (currentSelection) =>
       difference(currentSelection, artist_ids)
     );
+  }
+
+  async function setArtistCoverRelease(artist_id: number, release_id: number) {
+    const result = await _setArtistCoverRelease(artist_id, release_id);
+    if (!result) {
+      return;
+    }
+    send("mutate", [
+      ["artists", "latest"],
+      ["artists", artist_id],
+    ]);
   }
 
   return {

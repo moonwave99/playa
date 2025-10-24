@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import type { ReleaseWithArtist } from "@/types/types";
 import useArtist from "@/renderer/query/useArtist";
 import api from "@/renderer/api";
-import { withoutShift } from "@/renderer/hooks/useKeyboardManager";
 import { useSelect } from "@/renderer/hooks/useSelect";
 import { getReleaseContextMenuParams } from "@/lib/utils";
 import useStore from "@/renderer/store";
@@ -19,7 +18,7 @@ export default function ArtistPage() {
   const { id } = useParams();
   const { setUseDarkText } = useStore();
 
-  const { isPending, error, artist, setArtistCover } = useArtist(+id);
+  const { isPending, error, artist } = useArtist(+id);
 
   const { select } = useSelect("release");
   useSelect("artist", [+id]);
@@ -46,13 +45,6 @@ export default function ArtistPage() {
     );
   }
 
-  const keyHandlers = {
-    c: withoutShift(
-      (_event: KeyboardEvent, selection: ReleaseWithArtist[]) =>
-        selection.length && setArtistCover(selection[0].id)
-    ),
-  };
-
   return (
     <div
       className={styles.page}
@@ -78,7 +70,6 @@ export default function ArtistPage() {
           onContextMenu={onContextMenu}
           onSelect={select}
           className={styles.hasHeaderWithCover}
-          keyHandlers={keyHandlers}
           context={["artists", id]}
         />
       )}

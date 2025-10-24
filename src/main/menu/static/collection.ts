@@ -7,8 +7,12 @@ export function getCollectionMenu({
   controllers,
   stateManager,
 }: GetMenuParams) {
-  const { getCollection, deleteCollections, removeReleasesFromCollection } =
-    controllers.collection;
+  const {
+    getCollection,
+    deleteCollections,
+    removeReleasesFromCollection,
+    setCollectionCoverRelease,
+  } = controllers.collection;
 
   const menuTemplate = [
     {
@@ -67,6 +71,17 @@ export function getCollectionMenu({
       type: "separator" as const,
     },
     {
+      id: "setSelectedReleaseAsCollectionCover",
+      showOnSinglePage: true,
+      label: "Set selected Release as Collection Cover",
+      accelerator: "C",
+      click: async () =>
+        setCollectionCoverRelease(
+          stateManager.getSelection("collection").at(0),
+          stateManager.getSelection("release").at(0)
+        ),
+    },
+    {
       id: "removeReleasesFromCollection",
       showOnSinglePage: true,
       label: "Remove selected Releases from Collection",
@@ -94,8 +109,14 @@ export function getCollectionMenu({
       selectionLength: stateManager.getSelection("collection").length,
       ...stateManager.getState(),
     });
+
     menu.submenu.getMenuItemById("removeReleasesFromCollection").enabled =
       isSinglePage && !!stateManager.getSelection("release").length;
+
+    menu.submenu.getMenuItemById(
+      "setSelectedReleaseAsCollectionCover"
+    ).enabled =
+      isSinglePage && stateManager.getSelection("release").length === 1;
   }
 
   return { menu, refresh };

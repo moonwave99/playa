@@ -5,7 +5,6 @@ import {
   ReleaseWithArtist,
   ReleaseWithArtistAndSubReleases,
   ArtistWithReleases,
-  Release,
   HasId,
   ImportData,
 } from "@/types/types";
@@ -224,7 +223,7 @@ export default function Modal({ setContext }: ModalProps) {
       return (
         <ReleaseLightbox
           onClose={closeModal}
-          id={(params.release as Release).id}
+          id={(params.release as HasId).id}
           context={params.context as ReleaseWithArtist[]}
         />
       );

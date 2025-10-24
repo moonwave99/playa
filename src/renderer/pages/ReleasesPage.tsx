@@ -1,14 +1,11 @@
 import { useTranslation } from "react-i18next";
 import type {
   HasId,
-  Release,
   ReleaseWithArtistAndTracksAndSubreleases,
 } from "@/types/types";
 import api from "@/renderer/api";
-import useStore from "@/renderer/store";
 import useRestoreListPosition from "@/renderer/hooks/useRestoreListPosition";
 import { releaseColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
-import { withPrevent } from "@/renderer/hooks/useKeyboardManager";
 import useReleases from "@/renderer/query/useReleases";
 import { useSelect } from "@/renderer/hooks/useSelect";
 import { getReleaseContextMenuParams } from "@/lib/utils";
@@ -18,10 +15,11 @@ import List from "@/renderer/components/List";
 import ReleaseView from "@/renderer/components/ReleaseView";
 
 import styles from "./Page.module.css";
+import { useReleaseLightbox } from "../hooks/useReleaseLightbox";
 
 export default function ReleasesPage() {
   const { t } = useTranslation();
-  const { setModalContents } = useStore();
+
   const {
     releases,
     error,
@@ -30,6 +28,8 @@ export default function ReleasesPage() {
     hasNextPage,
     fetchNextPage,
   } = useReleases();
+
+  const openLightbox = useReleaseLightbox({ context: releases });
 
   const { select } = useSelect("release");
 
@@ -44,18 +44,6 @@ export default function ReleasesPage() {
   if (error) {
     return <ErrorView error={error} />;
   }
-
-  const keyHandlers = {
-    " ": withPrevent((_: KeyboardEvent, selection: Release[]) => {
-      setModalContents({
-        name: "lightbox",
-        params: {
-          release: selection[0],
-          context: releases,
-        },
-      });
-    }),
-  };
 
   return (
     <div className={styles.page} data-testid="ReleasesPage">
@@ -78,7 +66,9 @@ export default function ReleasesPage() {
             select(selection.map((index) => releases[index].id))
           }
           scrollInfo={scrollInfo}
-          keyHandlers={keyHandlers}
+          keyHandlers={{
+            " ": openLightbox,
+          }}
           testId="ReleaseList"
           render={({ item, selection, ...rest }) => (
             <ReleaseView

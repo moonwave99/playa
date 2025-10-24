@@ -4,7 +4,12 @@ import { refreshMenuEntries, type GetMenuParams } from "../menu";
 import { getGroupLink } from "@/lib/links";
 
 export function getGroupMenu({ controllers, stateManager }: GetMenuParams) {
-  const { getGroup, deleteGroups, removeArtistsFromGroup } = controllers.group;
+  const {
+    getGroup,
+    deleteGroups,
+    removeArtistsFromGroup,
+    setGroupCoverArtist,
+  } = controllers.group;
   const menuTemplate = [
     {
       id: "gotoGroupPage",
@@ -56,6 +61,17 @@ export function getGroupMenu({ controllers, stateManager }: GetMenuParams) {
       type: "separator" as const,
     },
     {
+      id: "setSelectedArtistAsGroupCover",
+      showOnSinglePage: true,
+      label: "Set selected Artist as Group Cover",
+      accelerator: "C",
+      click: async () =>
+        setGroupCoverArtist(
+          stateManager.getSelection("group").at(0),
+          stateManager.getSelection("artist").at(0)
+        ),
+    },
+    {
       id: "removeArtistsFromGroup",
       showOnSinglePage: true,
       label: "Remove selected Artists from Group",
@@ -83,8 +99,12 @@ export function getGroupMenu({ controllers, stateManager }: GetMenuParams) {
       selectionLength: stateManager.getSelection("group").length,
       ...stateManager.getState(),
     });
+
     menu.submenu.getMenuItemById("removeArtistsFromGroup").enabled =
       isSinglePage && !!stateManager.getSelection("artist").length;
+
+    menu.submenu.getMenuItemById("setSelectedArtistAsGroupCover").enabled =
+      isSinglePage && stateManager.getSelection("artist").length === 1;
   }
 
   return { menu, refresh };

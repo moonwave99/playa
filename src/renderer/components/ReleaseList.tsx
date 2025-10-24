@@ -1,5 +1,4 @@
 import type {
-  Release,
   ReleaseWithArtist,
   ReleaseWithArtistAndTracksAndSubreleases,
   ReleaseListViewMode,
@@ -10,9 +9,7 @@ import {
   compactColumnsConfig,
 } from "../hooks/useResponsiveColumns";
 import { useApiEvents } from "../hooks/useApiEvents";
-import { withoutShift, withPrevent } from "../hooks/useKeyboardManager";
 import useStore from "../store";
-import api from "../api";
 import {
   estimateListCardSize,
   getReleaseWithTracklistHeight,
@@ -24,6 +21,7 @@ import ListCard from "./ListCard";
 import cx from "clsx";
 import styles from "./ReleaseList.module.css";
 import useRestoreListPosition from "../hooks/useRestoreListPosition";
+import { useReleaseLightbox } from "../hooks/useReleaseLightbox";
 
 type ReleaseListProps = {
   releases: ReleaseWithArtistAndTracksAndSubreleases[];
@@ -47,7 +45,8 @@ export default function ReleaseList({
   keyHandlers = {},
   context,
 }: ReleaseListProps) {
-  const { releaseListViewMode, toggleViewMode, setModalContents } = useStore();
+  const { releaseListViewMode, toggleViewMode } = useStore();
+  const openLightbox = useReleaseLightbox({ context: releases });
 
   useApiEvents({
     onToggleViewMode: () => toggleViewMode("releaseList"),
@@ -141,18 +140,7 @@ export default function ReleaseList({
       testId="ReleaseList"
       keyHandlers={{
         ...keyHandlers,
-        " ": withPrevent((_event: KeyboardEvent, selection: Release[]) => {
-          setModalContents({
-            name: "lightbox",
-            params: {
-              release: selection[0],
-              context: releases,
-            },
-          });
-        }),
-        d: withoutShift((_event: KeyboardEvent, selection: Release[]) =>
-          api.release.deleteCover(selection[0])
-        ),
+        " ": openLightbox,
       }}
     />
   );

@@ -206,13 +206,28 @@ describe("artist - editArtist function", () => {
 });
 
 describe("artist - setArtistCoverRelease function", () => {
+  it("does nothing if no artist is found", async () => {
+    const send = vi.fn();
+    const { setArtistCoverRelease } = artistController({
+      ...defaultParams,
+      send,
+    });
+
+    await setArtistCoverRelease(1, 1);
+    expect(send).not.toHaveBeenCalled();
+  });
+
   it("sets the artist cover release", async () => {
     const artist = getFakeArtist();
     const release = getFakeReleasesForArtist(artist.id).at(0);
     await prisma.artist.create({ data: artist });
     await prisma.release.create({ data: release });
 
-    const { setArtistCoverRelease } = artistController(defaultParams);
+    const send = vi.fn();
+    const { setArtistCoverRelease } = artistController({
+      ...defaultParams,
+      send,
+    });
 
     await setArtistCoverRelease(artist.id, release.id);
     const updatedArtist = await prisma.artist.findFirst({
@@ -220,6 +235,10 @@ describe("artist - setArtistCoverRelease function", () => {
     });
 
     expect(updatedArtist.coverReleaseId).toBe(release.id);
+    expect(send).toHaveBeenCalledWith("mutate", [
+      ["artists", "latest"],
+      ["artists", 1],
+    ]);
   });
 });
 

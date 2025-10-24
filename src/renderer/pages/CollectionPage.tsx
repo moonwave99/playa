@@ -1,9 +1,6 @@
 import { useParams, Navigate } from "react-router";
 import api from "../api";
-import type {
-  ReleaseWithArtist,
-  ReleaseWithArtistAndTracksAndSubreleases,
-} from "@/types/types";
+import type { ReleaseWithArtistAndTracksAndSubreleases } from "@/types/types";
 import { getReleaseContextMenuParams } from "@/lib/utils";
 import useCollection from "@/renderer/query/useCollection";
 import { useSelect } from "@/renderer/hooks/useSelect";
@@ -11,14 +8,12 @@ import ReleaseList from "@/renderer/components/ReleaseList";
 import Loading from "@/renderer/components/Loading";
 import ErrorView from "../components/ErrorView";
 import styles from "./Page.module.css";
-import { withoutShift } from "../hooks/useKeyboardManager";
 import { useTranslation } from "react-i18next";
 
 export default function CollectionPage() {
   const { t } = useTranslation();
   const { id } = useParams();
-  const { collection, isPending, error, setCollectionCover } =
-    useCollection(+id);
+  const { collection, isPending, error } = useCollection(+id);
 
   const { select } = useSelect("release");
   useSelect("collection", [+id]);
@@ -48,13 +43,6 @@ export default function CollectionPage() {
     );
   }
 
-  const keyHandlers = {
-    c: withoutShift(
-      (_event: KeyboardEvent, selection: ReleaseWithArtist[]) =>
-        selection.length && setCollectionCover(selection[0].id)
-    ),
-  };
-
   return (
     <div className={styles.page} data-testid="CollectionPage">
       {!collection?.releases.length ? (
@@ -71,7 +59,6 @@ export default function CollectionPage() {
           onSelect={select}
           onContextMenu={onContextMenu}
           className={styles.list}
-          keyHandlers={keyHandlers}
         />
       )}
     </div>
