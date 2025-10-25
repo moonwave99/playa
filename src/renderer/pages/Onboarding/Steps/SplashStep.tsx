@@ -1,4 +1,5 @@
-import { useTranslation, Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
+import { useFocus } from "@/renderer/hooks/useFocus";
 import { AnimatedLayout } from "../AnimatedLayout";
 import { type StepProps } from "../Onboarding";
 
@@ -9,6 +10,7 @@ import formStyles from "../../../forms.module.css";
 
 export default function SplashStep({ onCancel, onNextStep }: StepProps) {
   const { t } = useTranslation();
+  const { ref } = useFocus(true);
 
   return (
     <AnimatedLayout>
@@ -24,6 +26,7 @@ export default function SplashStep({ onCancel, onNextStep }: StepProps) {
         <button
           className={cx(formStyles.button, formStyles.primary, styles.button)}
           onClick={onNextStep}
+          ref={ref}
         >
           {t("pages.Onboarding.actions.start")}
         </button>
@@ -34,14 +37,6 @@ export default function SplashStep({ onCancel, onNextStep }: StepProps) {
           {t("pages.Onboarding.actions.cancel")}
         </button>
       </div>
-      <footer className={styles.footer}>
-        <Trans
-          i18nKey="pages.Onboarding.steps.splash.copyright"
-          components={{
-            a: <a />,
-          }}
-        />
-      </footer>
     </AnimatedLayout>
   );
 }

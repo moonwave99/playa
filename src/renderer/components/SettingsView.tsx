@@ -45,14 +45,6 @@ const fieldsMap: Field[] = [
     },
   },
   {
-    key: "COVERS_PATH",
-    type: "path",
-    options: {
-      defaultPath: "~/Documents",
-      properties: ["openDirectory" as const],
-    },
-  },
-  {
     key: "PLAYER_PATH",
     type: "path",
     options: {

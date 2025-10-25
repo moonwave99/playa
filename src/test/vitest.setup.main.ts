@@ -27,7 +27,7 @@ vi.mock("electron", () => {
       showOpenDialogSync: vi.fn((...args) => [args[1].defaultPath]),
     },
     app: {
-      getPath: vi.fn(),
+      getPath: () => "",
       relaunch: vi.fn(),
       exit: vi.fn(),
     },

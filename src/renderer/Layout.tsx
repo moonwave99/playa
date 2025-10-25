@@ -60,32 +60,34 @@ export default function Layout({ initialSettings }: LayoutProps) {
     initialSettings,
   });
 
-  if (initialSettings.SHOW_ONBOARDING_ON_STARTUP && showOnboarding) {
-    return <Onboarding />;
-  }
-
   return (
-    <div
-      className={cx(styles.view, {
-        [styles.isDetailPage]: isDetailPage,
-      })}
-    >
-      <Nav isDetailPage={isDetailPage} />
-      <div className={styles.page}>
-        <main className={styles.main}>
-          <Routes>
-            {routes.map(({ path, id }) => (
-              <Route
-                path={path}
-                element={routesMap[id as keyof typeof routesMap]}
-              />
-            ))}
-          </Routes>
-        </main>
-      </div>
+    <>
+      {initialSettings.SHOW_ONBOARDING_ON_STARTUP && showOnboarding ? (
+        <Onboarding />
+      ) : (
+        <div
+          className={cx(styles.view, {
+            [styles.isDetailPage]: isDetailPage,
+          })}
+        >
+          <Nav isDetailPage={isDetailPage} />
+          <div className={styles.page}>
+            <main className={styles.main}>
+              <Routes>
+                {routes.map(({ path, id }) => (
+                  <Route
+                    path={path}
+                    element={routesMap[id as keyof typeof routesMap]}
+                  />
+                ))}
+              </Routes>
+            </main>
+          </div>
+        </div>
+      )}
       <Modal setContext={setContext} />
       <ToastContainer />
-    </div>
+    </>
   );
 }
 

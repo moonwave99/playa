@@ -8,12 +8,9 @@ TBD
 
 ## Roadmap
 
-- [ ] artist sidebar;
 - [ ] smart import vs interactive import;
 - [ ] entity tags;
-- [ ] onboarding;
 - [ ] advanced search;
-- [ ] include trackArtist in search;
 - [ ] make V/A configurable;
 - [ ] virtualize all lists;
 
@@ -21,7 +18,6 @@ TBD
 
 - [ ] import in non-smart mode;
 - [ ] edit in non-smart mode;
-- [ ] lightbox view;
 
 ## License
 

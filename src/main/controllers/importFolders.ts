@@ -176,6 +176,7 @@ export function importFoldersController({
         artist = await prisma.artist.create({
           data: {
             name: data.artist.name,
+            normalizedName: normalizeDiacritics(data.artist.name),
             hash: hashArtistName(data.artist.name),
           },
         });

@@ -1,13 +1,16 @@
 .view {
-  --max-logo-width: 300px;
+  --max-logo-width: 25vh;
   --max-description-width: 400px;
+  --button-width: 15rem;
+  --folder-set-width: 25rem;
+  --text-input-width: 28rem;
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 1rem;
   padding: 2rem;
-  gap: 2rem;
   text-align: center;
   user-select: none;
 }
@@ -58,11 +61,12 @@
 .button {
   height: 3rem;
   line-height: 3rem;
-  width: 15rem;
+  width: var(--button-width);
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.1rem;
   font-weight: bold;
+  gap: 0.5rem;
 }
 
 .footer {
@@ -70,25 +74,104 @@
   font-size: 0.8rem;
 }
 
-.folderWrapper {
+.group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  /* margin-bottom: 2rem; */
+}
+
+.folderPicker {
+  width: var(--button-width);
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
-  width: 75%;
 
   input {
     flex: 1;
     height: 3rem;
   }
+
   .fileButton {
-    gap: 0.5rem;
     transition: width 0.2s ease-in-out;
-    &.isFolderSet {
+  }
+
+  &.isFolderSet {
+    width: var(--folder-set-width);
+    .fileButton {
       width: 3rem;
       span {
         display: none;
       }
+    }
+  }
+}
+
+.releasesList {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+  li {
+    width: 10rem;
+  }
+}
+
+.stepIndicator {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  li {
+    height: 100%;
+    display: flex;
+    align-items: center;
+
+    button {
+      display: flex;
+      align-items: center;
+      appearance: none;
+      background-color: transparent;
+      border: none;
+      font-size: 1.2rem;
+      color: var(--secondary-color);
+
+      &.current {
+        font-size: 1.8rem;
+        color: var(--accent-color);
+      }
+
+      &[disabled] {
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+.textInput {
+  width: var(--text-input-width);
+  input {
+    height: 3rem;
+    line-height: 3rem;
+  }
+}
+
+.info {
+  width: var(--text-input-width);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 3rem;
+  font-size: 0.8rem;
+  padding: 0 1rem;
+  border-radius: 0.5rem;
+  transition: opacity 0.2s ease-in-out;
+  &:is(a) {
+    background-color: var(--background-color-light);
+    &:hover {
+      opacity: 0.8;
     }
   }
 }

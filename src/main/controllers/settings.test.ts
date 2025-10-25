@@ -21,7 +21,7 @@ describe("settingsController - init function", () => {
       DISCOGS_KEY: "",
       DISCOGS_SECRET: "",
       LIBRARY_PATH: "",
-      COVERS_PATH: "",
+      COVERS_PATH: "assets/covers",
       USE_SMART_IMPORT: false,
     });
   });

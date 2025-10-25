@@ -1,3 +1,6 @@
+import path from "node:path";
+import { ensureDir } from "fs-extra";
+import { app } from "electron";
 import type { Settings } from "@/types/types";
 import {
   getSettings,
@@ -23,7 +26,16 @@ export function settingsController({ send }: SettingsControllerParams) {
       settings = await getSettings();
     } catch {
       log("settings:init", "no settings found");
-      settings = await createSettings(DEFAULT_SETTINGS);
+      const COVERS_PATH = path.join(
+        app.getPath("userData"),
+        "assets",
+        "covers"
+      );
+      await ensureDir(COVERS_PATH);
+      settings = await createSettings({
+        ...DEFAULT_SETTINGS,
+        COVERS_PATH,
+      });
     }
   }
 

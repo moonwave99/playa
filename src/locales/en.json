@@ -74,31 +74,74 @@
         "cancel": "Skip onboarding",
         "start": "Start onboarding",
         "nextStep": "Next step",
-        "skipStep": "Skip this step"
+        "skipStep": "Skip this step",
+        "import": "Import a Folder",
+        "importAnother": "Import More",
+        "finish": "Done"
+      },
+      "folders": {
+        "library": {
+          "label": "Locate your Library",
+          "placeholder": "Choose a Folder"
+        },
+        "player": {
+          "label": "Locate your Player",
+          "placeholder": "Choose a Folder"
+        },
+        "tagger": {
+          "label": "Locate your Tagger",
+          "placeholder": "Choose a Folder"
+        }
       },
       "steps": {
         "splash": {
           "title": "Welcome to Playa",
           "subtitle": "The Music Manager that thinks in Albums.",
-          "description": "Choose your optimal Settings and locate your Music Library before starting using Playa.",
-          "copyright": "© 2025 Diego Caponera"
+          "description": "Choose your optimal Settings and locate your Music Library before starting using Playa."
         },
         "setupLibrary": {
           "title": "Setup your Library",
-          "subtitle": "Playa needs to know where you store your music.",
-          "chooseFolder": {
-            "label": "Locate your Library",
-            "placeholder": "Choose a Folder"
+          "subtitle": "Playa needs to know where your music is stored."
+        },
+        "setupApps": {
+          "title": "Configure linked Applications",
+          "subtitle": "Playa plays and tags your Music through your favorite apps."
+        },
+        "discogs": {
+          "title": "Share your Discogs API keys",
+          "subtitle": "Playa downloads Cover Art from Discogs.",
+          "where": {
+            "link": "https://www.discogs.com/settings/developers",
+            "text": "You can set up your Discogs Credentials here"
           },
-          "actions": {
-            "chooseFolder": "Choose a Folder"
+          "info": "No time for this now? You can still import artwork manually.",
+          "apiKey": {
+            "label": "API Key",
+            "placeholder": "Enter your Discogs API Key"
+          },
+          "apiSecret": {
+            "label": "API Secret",
+            "placeholder": "Enter your Discogs API Secret"
           }
         },
         "importMusic": {
           "title": "Import some Music",
-          "subtitle": "Playa is waiting for your first picks."
+          "subtitle": "Playa is waiting for your first Albums."
+        },
+        "final": {
+          "title": "We are done here!",
+          "subtitle": "Everything is setup. Have fun managing your Music collection!"
         }
-      }
+      },
+      "gotoStep": {
+        "0": "Go to initial step",
+        "1": "Go to Setup Library step",
+        "2": "Go to Configure Apps step",
+        "3": "Go to Discogs Keys step",
+        "4": "Go to Import Music step",
+        "5": "Go to goodbye step"
+      },
+      "copyright": "© 2025 Diego Caponera"
     }
   },
   "modals": {
@@ -305,7 +348,7 @@
       "title": "Settings",
       "discogs": {
         "link": "https://www.discogs.com/settings/developers",
-        "info": "You can set up your Discogs Credentials from here"
+        "info": "You can set up your Discogs Credentials here"
       },
       "fields": {
         "USE_SMART_IMPORT": {

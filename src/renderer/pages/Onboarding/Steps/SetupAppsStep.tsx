@@ -1,26 +1,27 @@
-import { useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { useFocus } from "@/renderer/hooks/useFocus";
+import useStore from "@/renderer/store";
 import { AnimatedLayout } from "../AnimatedLayout";
 import { type StepProps } from "../Onboarding";
 import api from "@/renderer/api";
 import FolderPicker from "../FolderPicker";
-import useStore from "@/renderer/store";
 
 import cx from "clsx";
 import styles from "../Onboarding.module.css";
 import formStyles from "../../../forms.module.css";
 
 const chooseFolderOptions = {
-  defaultPath: "~/Documents",
-  properties: ["openDirectory" as const],
+  defaultPath: "/Applications",
+  properties: ["openFile" as const],
+  filters: [{ name: "Applications", extensions: [".app"] }],
 };
 
-export default function SetupLibraryStep({ onCancel, onNextStep }: StepProps) {
+export default function SetupApps({ onCancel, onNextStep }: StepProps) {
   const { t } = useTranslation();
-  const nextStepButtonRef = useRef(null);
   const { settings } = useStore();
+  const { ref, focus } = useFocus(true);
 
-  async function selectFolder() {
+  async function selectFolder(app: "PLAYER_PATH" | "TAGGER_PATH") {
     const folder = await api.dialog.openFolderDialog(
       chooseFolderOptions.defaultPath,
       chooseFolderOptions.properties
@@ -30,33 +31,34 @@ export default function SetupLibraryStep({ onCancel, onNextStep }: StepProps) {
     }
     await api.settings.updateSettings({
       ...settings,
-      LIBRARY_PATH: folder.at(0),
+      [app]: folder.at(0),
     });
-    setTimeout(() => nextStepButtonRef.current.focus(), 100);
+    setTimeout(focus, 100);
   }
-
-  const isFolderSet = !!settings.LIBRARY_PATH;
 
   return (
     <AnimatedLayout>
       <header className={styles.header}>
-        <h1>{t("pages.Onboarding.steps.setupLibrary.title")}</h1>
-        <p>{t("pages.Onboarding.steps.setupLibrary.subtitle")}</p>
+        <h1>{t("pages.Onboarding.steps.setupApps.title")}</h1>
+        <p>{t("pages.Onboarding.steps.setupApps.subtitle")}</p>
       </header>
       <div className={styles.group}>
         <FolderPicker
-          folderType="library"
-          folder={settings.LIBRARY_PATH}
-          onClick={selectFolder}
-          autoFocus
+          folderType="player"
+          folder={settings.PLAYER_PATH}
+          onClick={() => selectFolder("PLAYER_PATH")}
+        />
+        <FolderPicker
+          folderType="tagger"
+          folder={settings.TAGGER_PATH}
+          onClick={() => selectFolder("TAGGER_PATH")}
         />
       </div>
       <div className={styles.actions}>
         <button
           className={cx(formStyles.button, formStyles.primary, styles.button)}
           onClick={onNextStep}
-          disabled={!isFolderSet}
-          ref={nextStepButtonRef}
+          ref={ref}
         >
           {t("pages.Onboarding.actions.nextStep")}
         </button>
