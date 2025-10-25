@@ -18,8 +18,8 @@ import {
   getReleaseArtist,
   sortByQueryPosition,
   normalizeArtistDisplayName,
-  VARIOUS_ARTISTS_NAME,
 } from "@/lib/utils";
+import { getTrackIdsFeaturingArtist } from "./track";
 
 type GetSearchResultParams = {
   query: string;
@@ -113,8 +113,9 @@ const getters: Getters = {
         subReleases: true,
       },
     }) as Promise<ReleaseWithArtist[]>,
-  track: (query: string, take: number) =>
-    prisma.track.findMany({
+  track: async (query: string, take: number) => {
+    const featuringTracks = await getTrackIdsFeaturingArtist(query);
+    return prisma.track.findMany({
       take,
       where: {
         OR: [
@@ -124,20 +125,9 @@ const getters: Getters = {
             },
           },
           {
-            AND: [
-              {
-                trackArtist: {
-                  contains: query,
-                },
-              },
-              {
-                release: {
-                  artist: {
-                    name: VARIOUS_ARTISTS_NAME,
-                  },
-                },
-              },
-            ],
+            id: {
+              in: featuringTracks,
+            },
           },
         ],
       },
@@ -150,7 +140,8 @@ const getters: Getters = {
           },
         },
       },
-    }) as Promise<TrackWithRelease[]>,
+    }) as Promise<TrackWithRelease[]>;
+  },
   collection: (query: string, take: number) =>
     prisma.collection.findMany({
       take,

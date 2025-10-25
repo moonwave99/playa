@@ -94,6 +94,7 @@ export async function addTracksToRelease(id: number, trackInfo: TrackInfo[]) {
         data: {
           ...track,
           normalizedTitle: normalizeDiacritics(track.title),
+          normalizedTrackArtist: normalizeDiacritics(track.trackArtist),
           hash: sha1(`${id}-${track.path}`).slice(0, 16),
           releaseId: id,
         },

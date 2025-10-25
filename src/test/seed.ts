@@ -85,8 +85,9 @@ export function getFakeTracksForRelease(releaseId: number, length = 5) {
     entityType: "Track" as EntityType,
     id: (releaseId - 1) * length + i + 1,
     title: `Track ${i + 1}`,
-    trackArtist: "Track Artist",
     normalizedTitle: `Track ${i + 1}`,
+    trackArtist: "Track Artist",
+    normalizedTrackArtist: "Track Artist",
     path: `0${i + 1} - Track ${i + 1}.mp3`,
     hash: sha1(
       `${releaseId * length + i + 1}-0${i + 1} - Track ${i + 1}.mp3`

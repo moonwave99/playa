@@ -59,19 +59,20 @@ model Release {
 }
 
 model Track {
-  id              Int        @id @default(autoincrement())
-  entityType      EntityType @default(Track)
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
-  title           String
-  normalizedTitle String     @default("")
-  trackArtist     String?    @default("")
-  hash            String     @unique
-  path            String
-  duration        Int
-  releaseId       Int
-  position        Int
-  release         Release    @relation(fields: [releaseId], references: [id], onDelete: Cascade)
+  id                    Int        @id @default(autoincrement())
+  entityType            EntityType @default(Track)
+  createdAt             DateTime   @default(now())
+  updatedAt             DateTime   @updatedAt
+  title                 String
+  normalizedTitle       String     @default("")
+  trackArtist           String?    @default("")
+  normalizedTrackArtist String?    @default("")
+  hash                  String     @unique
+  path                  String
+  duration              Int
+  releaseId             Int
+  position              Int
+  release               Release    @relation(fields: [releaseId], references: [id], onDelete: Cascade)
 
   @@index([hash])
 }
