@@ -103,6 +103,7 @@
     "image-downloader": "^4.3.0",
     "jdenticon": "^3.3.0",
     "lodash": "^4.17.21",
+    "motion": "^12.23.24",
     "music-metadata": "^11.0.2",
     "picocolors": "^1.1.1",
     "prisma": "^6.5.0",

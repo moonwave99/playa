@@ -68,6 +68,26 @@
         "dateInputLabel": "From",
         "plotAxisLabel": "Daily added releases"
       }
+    },
+    "Onboarding": {
+      "actions": {
+        "cancel": "Skip onboarding",
+        "start": "Start onboarding",
+        "nextStep": "Next step",
+        "skipStep": "Skip this step"
+      },
+      "steps": {
+        "splash": {
+          "title": "Welcome to Playa",
+          "subtitle": "The Music Manager that thinks in Albums",
+          "description": "Choose your optimal Settings and locate your Music Library before starting using Playa.",
+          "copyright": "© 2025 Diego Caponera"
+        },
+        "setupLibrary": {
+          "title": "Setup your Library",
+          "subtitle": "Playa needs to know where you store your music."
+        }
+      }
     }
   },
   "modals": {

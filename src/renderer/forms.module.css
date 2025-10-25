@@ -94,9 +94,10 @@
   border: 1px solid var(--tertiary-color);
   background-color: var(--button-background-color);
   padding: 0 1rem;
+  transition: opacity 0.2s ease-in-out;
 
   &:hover {
-    opacity: 0.9;
+    opacity: 0.85;
   }
 
   &:focus {

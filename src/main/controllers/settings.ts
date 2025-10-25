@@ -5,17 +5,9 @@ import {
   updateSettings as _updateSettings,
 } from "../db/settings";
 
-import { log } from "../logger";
+import { DEFAULT_SETTINGS } from "@/constants";
 
-const DEFAULT_SETTINGS = {
-  PLAYER_PATH: "",
-  TAGGER_PATH: "",
-  DISCOGS_KEY: "",
-  DISCOGS_SECRET: "",
-  LIBRARY_PATH: "",
-  COVERS_PATH: "",
-  USE_SMART_IMPORT: false,
-};
+import { log } from "../logger";
 
 export type GetSetting = (key: keyof Omit<Settings, "id">) => unknown;
 
@@ -38,6 +30,7 @@ export function settingsController() {
   async function updateSettings(newSettings: Omit<Settings, "id">) {
     await _updateSettings(newSettings);
     settings = newSettings;
+    return settings;
   }
 
   return {

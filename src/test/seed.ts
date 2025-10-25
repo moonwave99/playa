@@ -156,6 +156,7 @@ export function getFakeSettings() {
     LIBRARY_PATH: "LIBRARY_PATH",
     COVERS_PATH: "COVERS_PATH",
     USE_SMART_IMPORT: false,
+    SHOW_ONBOARDING_ON_STARTUP: false,
   };
 }
 
@@ -197,12 +198,14 @@ type CleanupParams = {
   id: string;
   prisma?: PrismaClient;
   preserveSettings?: boolean;
+  enableOnboarding?: boolean;
 };
 
 export async function cleanup({
   id,
   prisma,
   preserveSettings = false,
+  enableOnboarding = false,
 }: CleanupParams) {
   if (!prisma) {
     prisma = new PrismaClient({
@@ -220,6 +223,15 @@ export async function cleanup({
   await prisma.artist.deleteMany({});
   if (!preserveSettings) {
     await prisma.settings.deleteMany({});
+    return;
+  }
+  if (enableOnboarding) {
+    await prisma.settings.update({
+      where: { id: 1 },
+      data: {
+        SHOW_ONBOARDING_ON_STARTUP: true,
+      },
+    });
   }
 }
 

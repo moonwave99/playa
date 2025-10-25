@@ -36,6 +36,8 @@ import GroupPage from "./pages/GroupPage";
 
 import cx from "clsx";
 import styles from "./Layout.module.css";
+import { Settings } from "@/types/types";
+import Onboarding from "./pages/Onboarding/Onboarding";
 
 const routesMap = {
   home: <HomePage />,
@@ -49,8 +51,18 @@ const routesMap = {
   group: <GroupPage />,
 };
 
-export default function Layout() {
-  const { setContext, isDetailPage } = useLayout();
+type LayoutProps = {
+  initialSettings: Settings;
+};
+
+export default function Layout({ initialSettings }: LayoutProps) {
+  const { setContext, isDetailPage, showOnboarding } = useLayout({
+    initialSettings,
+  });
+
+  if (initialSettings.SHOW_ONBOARDING_ON_STARTUP && showOnboarding) {
+    return <Onboarding />;
+  }
 
   return (
     <div
@@ -77,18 +89,29 @@ export default function Layout() {
   );
 }
 
+type UseLayoutParams = {
+  initialSettings: Settings;
+};
+
 type UseLayout = {
   setContext: (context: string) => void;
   isDetailPage: boolean;
+  showOnboarding: boolean;
 };
 
-function useLayout(): UseLayout {
+function useLayout({ initialSettings }: UseLayoutParams): UseLayout {
   const firstRender = useRef(true);
   const navigate = useNavigate();
   const location = useLocation();
   const refetch = useRefetch();
-  const { path, setPath, setSettings, setModalContents, modalContents } =
-    useStore();
+  const {
+    path,
+    setPath,
+    settings,
+    setSettings,
+    setModalContents,
+    modalContents,
+  } = useStore();
 
   useApiEvents({
     onMutate: refetch,
@@ -160,9 +183,9 @@ function useLayout(): UseLayout {
   }, [location]);
 
   useEffect(() => {
-    api.settings.getSettings().then(setSettings);
+    setSettings(initialSettings);
     setContext("list");
-  }, []);
+  }, [initialSettings]);
 
   const isDetailPage = !!(
     matchPath("/releases/:id", location.pathname) ||
@@ -171,6 +194,7 @@ function useLayout(): UseLayout {
 
   return {
     setContext,
+    showOnboarding: settings?.SHOW_ONBOARDING_ON_STARTUP,
     isDetailPage,
   };
 }
