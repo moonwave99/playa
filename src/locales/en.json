@@ -79,13 +79,24 @@
       "steps": {
         "splash": {
           "title": "Welcome to Playa",
-          "subtitle": "The Music Manager that thinks in Albums",
+          "subtitle": "The Music Manager that thinks in Albums.",
           "description": "Choose your optimal Settings and locate your Music Library before starting using Playa.",
           "copyright": "© 2025 Diego Caponera"
         },
         "setupLibrary": {
           "title": "Setup your Library",
-          "subtitle": "Playa needs to know where you store your music."
+          "subtitle": "Playa needs to know where you store your music.",
+          "chooseFolder": {
+            "label": "Locate your Library",
+            "placeholder": "Choose a Folder"
+          },
+          "actions": {
+            "chooseFolder": "Choose a Folder"
+          }
+        },
+        "importMusic": {
+          "title": "Import some Music",
+          "subtitle": "Playa is waiting for your first picks."
         }
       }
     }

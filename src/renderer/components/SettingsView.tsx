@@ -141,7 +141,7 @@ export default function SettingsView({ onSave, onCancel }: SettingsViewProps) {
         />
         {type === "path" ? (
           <button
-            className={cx(buttonStyles.button, styles.fileButton)}
+            className={cx(buttonStyles.button, formStyles.fileButton)}
             type="button"
             onClick={() => openFile(key, options)}
             aria-label={t(`modals.SettingsView.fields.${key}.label`)}

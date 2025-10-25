@@ -12,6 +12,7 @@ import type {
   GroupWithArtists,
   Notification,
   WithReleases,
+  Settings,
 } from "./types/types";
 import type { Modals } from "./renderer/Modal";
 import {
@@ -143,6 +144,7 @@ function getEvents() {
     onExportProgress: (step: string, completed: boolean) =>
       noOp(step, completed),
     onExportError: (message: string) => noOp(message),
+    onSettingsUpdate: (settings: Settings) => noOp(settings),
     onOpenModal: ({
       name,
       params,

@@ -5,6 +5,7 @@ import api from "@/renderer/api";
 
 import SplashStep from "./Steps/SplashStep";
 import SetupLibraryStep from "./Steps/SetupLibraryStep";
+import ImportMusicStep from "./Steps/ImportMusicStep";
 
 import styles from "./Onboarding.module.css";
 
@@ -12,6 +13,7 @@ export type StepProps = {
   onCancel: () => void;
   onNextStep: () => void;
   onSkipStep?: () => void;
+  isOptional?: boolean;
 };
 
 export default function Onboarding() {
@@ -35,6 +37,7 @@ export default function Onboarding() {
   const steps = [
     <SplashStep onCancel={onCancel} onNextStep={onNextStep} />,
     <SetupLibraryStep onCancel={onCancel} onNextStep={onNextStep} />,
+    <ImportMusicStep onCancel={onCancel} onNextStep={onNextStep} />,
   ];
 
   return (

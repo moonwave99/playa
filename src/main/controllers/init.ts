@@ -69,7 +69,7 @@ export function openModal(name: Modals, params?: unknown) {
 }
 
 export async function init(mainWindow: BrowserWindow) {
-  const settings = settingsController();
+  const settings = settingsController({ send });
   const { init: initSettings, getSetting } = settings;
   await initSettings();
 

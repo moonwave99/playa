@@ -11,7 +11,11 @@ import { log } from "../logger";
 
 export type GetSetting = (key: keyof Omit<Settings, "id">) => unknown;
 
-export function settingsController() {
+type SettingsControllerParams = {
+  send: (channel: string, ...args: unknown[]) => void;
+};
+
+export function settingsController({ send }: SettingsControllerParams) {
   let settings: Omit<Settings, "id"> = null;
 
   async function init() {
@@ -30,6 +34,7 @@ export function settingsController() {
   async function updateSettings(newSettings: Omit<Settings, "id">) {
     await _updateSettings(newSettings);
     settings = newSettings;
+    send("settingsUpdate", settings);
     return settings;
   }
 

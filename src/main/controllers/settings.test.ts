@@ -5,9 +5,13 @@ import { getFakeSettings } from "../../test/seed";
 
 afterEach(clearPrisma);
 
+const defaultParams = {
+  send: vi.fn(),
+};
+
 describe("settingsController - init function", () => {
   it("returns stores the default Settings if no settings are found", async () => {
-    const { init, getSettings } = settingsController();
+    const { init, getSettings } = settingsController(defaultParams);
 
     await init();
 
@@ -28,7 +32,7 @@ describe("settingsController - getSetting function", () => {
     const data = getFakeSettings();
     await prisma.settings.create({ data });
 
-    const { init, getSetting } = settingsController();
+    const { init, getSetting } = settingsController(defaultParams);
     await init();
 
     expect(getSetting("PLAYER_PATH")).toBe("PLAYER_PATH");
@@ -40,7 +44,7 @@ describe("settingsController - getSettings function", () => {
     const data = getFakeSettings();
     await prisma.settings.create({ data });
 
-    const { getSettings } = settingsController();
+    const { getSettings } = settingsController(defaultParams);
 
     expect(await getSettings()).toMatchObject(data);
   });
@@ -50,7 +54,7 @@ describe("settingsController - createSettings function", () => {
   it("creates new Settings", async () => {
     const data = getFakeSettings();
 
-    const { getSettings, createSettings } = settingsController();
+    const { getSettings, createSettings } = settingsController(defaultParams);
     await createSettings(data);
 
     expect(await getSettings()).toMatchObject(data);
@@ -62,8 +66,10 @@ describe("settingsController - updateSettings function", () => {
     const data = getFakeSettings();
     await prisma.settings.create({ data });
 
+    const send = vi.fn();
+
     const { getSettings, getSetting, updateSettings, init } =
-      settingsController();
+      settingsController({ send });
     await init();
 
     expect(getSetting("PLAYER_PATH")).toBe("PLAYER_PATH");
@@ -79,6 +85,12 @@ describe("settingsController - updateSettings function", () => {
     expect(getSetting("USE_SMART_IMPORT")).toBe(true);
 
     expect(await getSettings()).toMatchObject({
+      ...data,
+      PLAYER_PATH: "/new/path",
+      USE_SMART_IMPORT: true,
+    });
+
+    expect(send).toHaveBeenCalledWith("settingsUpdate", {
       ...data,
       PLAYER_PATH: "/new/path",
       USE_SMART_IMPORT: true,

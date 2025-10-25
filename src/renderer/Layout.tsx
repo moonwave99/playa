@@ -133,6 +133,7 @@ function useLayout({ initialSettings }: UseLayoutParams): UseLayout {
       navigate(path);
       setContext("list");
     },
+    onSettingsUpdate: setSettings,
   });
 
   const { setContext, currentContext } = useKeyManager({

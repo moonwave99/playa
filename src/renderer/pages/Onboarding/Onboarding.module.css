@@ -9,6 +9,7 @@
   padding: 2rem;
   gap: 2rem;
   text-align: center;
+  user-select: none;
 }
 
 .stepWrapper {
@@ -67,4 +68,27 @@
 .footer {
   color: var(--secondary-color);
   font-size: 0.8rem;
+}
+
+.folderWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  width: 75%;
+
+  input {
+    flex: 1;
+    height: 3rem;
+  }
+  .fileButton {
+    gap: 0.5rem;
+    transition: width 0.2s ease-in-out;
+    &.isFolderSet {
+      width: 3rem;
+      span {
+        display: none;
+      }
+    }
+  }
 }
