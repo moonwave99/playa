@@ -21,8 +21,10 @@ import {
   HOMEPAGE_RELEASES_PAGESIZE,
   HOMEPAGE_ENTRIES_PAGESIZE,
 } from "@/constants";
+import useResponsiveColumns from "@/renderer/hooks/useResponsiveColumns";
 
 const pageSize = HOMEPAGE_ENTRIES_PAGESIZE;
+const sectionColumnsConfig = [{ count: 3, width: 950 }];
 
 export default function HomePage() {
   const releasesData = useReleases({ pageSize: HOMEPAGE_RELEASES_PAGESIZE });
@@ -118,6 +120,10 @@ function useNavigateHomepage({
     index: -1,
   });
 
+  const { columns } = useResponsiveColumns({
+    config: sectionColumnsConfig,
+  });
+
   useEffect(() => {
     document
       .querySelector(
@@ -135,17 +141,6 @@ function useNavigateHomepage({
   const openLightbox = useReleaseLightbox({
     context: dataMap.release as unknown as Release[],
   });
-
-  function isFirstPopulatedSection() {
-    const horizontalSections = sections.slice(1);
-    const firstPopulatedIndex = horizontalSections.findIndex(
-      (x) => !!dataMap[x].length
-    );
-    const currentSectionIndex = horizontalSections.findIndex(
-      (x) => x === section
-    );
-    return firstPopulatedIndex === currentSectionIndex;
-  }
 
   function getNextPopulatedSection() {
     const currentIndex = sections.indexOf(section);
@@ -191,7 +186,7 @@ function useNavigateHomepage({
           }));
           return;
         }
-        if (isFirstPopulatedSection()) {
+        if (columns > 1 && index == 0) {
           setCurrentSelection({ section: "release", index: 0 });
           return;
         }
@@ -227,19 +222,19 @@ function useNavigateHomepage({
         setCurrentSelection({ section: next, index: 0 });
       }),
       ArrowRight: withPrevent(() => {
-        if (section === "release") {
-          if (index < dataMap.release.length - 1) {
-            setCurrentSelection((prev) => ({
-              ...prev,
-              index: prev.index + 1,
-            }));
-            return;
-          }
+        if (section !== "release") {
           const next = getNextPopulatedSection();
           if (!next) {
             return;
           }
           setCurrentSelection({ section: next, index: 0 });
+          return;
+        }
+        if (index < dataMap.release.length - 1) {
+          setCurrentSelection((prev) => ({
+            ...prev,
+            index: prev.index + 1,
+          }));
           return;
         }
         const next = getNextPopulatedSection();
