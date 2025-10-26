@@ -2,12 +2,16 @@ import type {
   ReleaseWithArtist,
   ReleaseWithArtistAndTracksAndSubreleases,
   ReleaseListViewMode,
+  HasId,
 } from "@/types/types";
 import type { ScrollToOptions } from "@tanstack/react-virtual";
+import useRestoreListPosition from "../hooks/useRestoreListPosition";
+import { useReleaseLightbox } from "../hooks/useReleaseLightbox";
 import {
   releaseColumnsConfig,
   compactColumnsConfig,
 } from "../hooks/useResponsiveColumns";
+import { withPrevent } from "../hooks/useKeyboardManager";
 import { useApiEvents } from "../hooks/useApiEvents";
 import useStore from "../store";
 import {
@@ -20,8 +24,6 @@ import List, { type RenderParams, type ListKeyHandler } from "./List";
 import ListCard from "./ListCard";
 import cx from "clsx";
 import styles from "./ReleaseList.module.css";
-import useRestoreListPosition from "../hooks/useRestoreListPosition";
-import { useReleaseLightbox } from "../hooks/useReleaseLightbox";
 
 type ReleaseListProps = {
   releases: ReleaseWithArtistAndTracksAndSubreleases[];
@@ -140,7 +142,7 @@ export default function ReleaseList({
       testId="ReleaseList"
       keyHandlers={{
         ...keyHandlers,
-        " ": openLightbox,
+        " ": withPrevent((_, selection: HasId[]) => openLightbox(selection)),
       }}
     />
   );

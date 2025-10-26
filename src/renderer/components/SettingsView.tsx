@@ -96,12 +96,12 @@ export default function SettingsView({ onSave, onCancel }: SettingsViewProps) {
       ...options,
       key,
     });
-    if (!path) {
+    if (!path.length) {
       return;
     }
     setCopy((prev) => ({
       ...prev,
-      [key]: path,
+      [key]: path.at(0),
     }));
   }
 

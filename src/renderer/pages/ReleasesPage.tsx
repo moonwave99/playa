@@ -4,6 +4,8 @@ import type {
   ReleaseWithArtistAndTracksAndSubreleases,
 } from "@/types/types";
 import api from "@/renderer/api";
+import { useReleaseLightbox } from "@/renderer/hooks/useReleaseLightbox";
+import { withPrevent } from "@/renderer/hooks/useKeyboardManager";
 import useRestoreListPosition from "@/renderer/hooks/useRestoreListPosition";
 import { releaseColumnsConfig } from "@/renderer/hooks/useResponsiveColumns";
 import useReleases from "@/renderer/query/useReleases";
@@ -15,7 +17,6 @@ import List from "@/renderer/components/List";
 import ReleaseView from "@/renderer/components/ReleaseView";
 
 import styles from "./Page.module.css";
-import { useReleaseLightbox } from "../hooks/useReleaseLightbox";
 
 export default function ReleasesPage() {
   const { t } = useTranslation();
@@ -67,7 +68,9 @@ export default function ReleasesPage() {
           }
           scrollInfo={scrollInfo}
           keyHandlers={{
-            " ": openLightbox,
+            " ": withPrevent((_, selection: HasId[]) =>
+              openLightbox(selection)
+            ),
           }}
           testId="ReleaseList"
           render={({ item, selection, ...rest }) => (

@@ -225,6 +225,7 @@ export function importFoldersController({
 
       send("mutate", [
         ["releases", "latest"],
+        ["artists", "latest"],
         ["artists", artist.id],
       ]);
 

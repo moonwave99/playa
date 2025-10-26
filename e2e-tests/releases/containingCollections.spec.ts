@@ -41,9 +41,13 @@ test.describe("Containing Collections", () => {
     await clickMenuItemById("gotoHomePage");
 
     await expect(page.locator('[data-testid="HomePage"]')).toBeVisible();
-    await page.waitForTimeout(100);
 
-    await page.keyboard.press("ArrowRight");
+    await page
+      .locator('[data-testid="LatestReleases"]')
+      .getByRole("listitem")
+      .first()
+      .click();
+
     await clickMenuItemById("gotoReleasePage");
 
     await expect(page.locator('[data-testid="ReleasePage"]')).toBeVisible();
@@ -53,7 +57,7 @@ test.describe("Containing Collections", () => {
     await expect(modal).toContainText("Add Releases to Collection");
 
     await page.getByLabel("Add to Collection").fill("New Collection");
-    await page.waitForTimeout(100);
+    await page.waitForTimeout(500);
 
     await page.keyboard.press("Enter");
     await page.keyboard.press("Enter");
@@ -68,35 +72,32 @@ test.describe("Containing Collections", () => {
     const { page, clickMenuItemById } = await getElectronApp();
 
     await clickMenuItemById("gotoHomePage");
-
     await expect(page.locator('[data-testid="HomePage"]')).toBeVisible();
-    await page.waitForTimeout(100);
 
-    await page.keyboard.press("ArrowRight");
+    await page
+      .locator('[data-testid="LatestReleases"]')
+      .getByRole("listitem")
+      .first()
+      .click();
+
     await clickMenuItemById("gotoReleasePage");
 
     await expect(page.locator('[data-testid="ReleasePage"]')).toBeVisible();
 
-    await page
-      .locator('[data-testid="ReleaseWithTracklistHeader"]')
-      .getByText("Collection 1")
-      .hover();
-
-    await page
-      .locator('[data-testid="ReleaseWithTracklistHeader"]')
-      .getByLabel("Remove Release 2-5 from Collection 1")
-      .click();
-
     const header = page.locator('[data-testid="ReleaseWithTracklistHeader"]');
 
+    await header.getByText("Collection 1").hover();
+    await header.getByLabel("Remove Release 1-5 from Collection 1").click();
     await expect(header).not.toContainText("Collection 1");
 
-    await page
-      .locator('[data-testid="ReleaseWithTracklistHeader"]')
-      .getByLabel("Remove Release 2-5 from New Collection")
-      .click();
+    await header.getByText("Collection 2").hover();
+    await header.getByLabel("Remove Release 1-5 from Collection 2").click();
+    await expect(header).not.toContainText("Collection 2");
 
+    await header.getByText("New Collection").hover();
+    await header.getByLabel("Remove Release 1-5 from New Collection").click();
     await expect(header).not.toContainText("New Collection");
+
     await expect(header).not.toContainText("Appears in");
   });
 });

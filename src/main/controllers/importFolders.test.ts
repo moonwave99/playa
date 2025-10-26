@@ -656,6 +656,7 @@ describe("importFromInteractiveData function", () => {
 
     expect(send).toHaveBeenCalledWith("mutate", [
       ["releases", "latest"],
+      ["artists", "latest"],
       ["artists", 1],
     ]);
 
@@ -734,6 +735,7 @@ describe("importFromInteractiveData function", () => {
 
     expect(send).toHaveBeenCalledWith("mutate", [
       ["releases", "latest"],
+      ["artists", "latest"],
       ["artists", 1],
     ]);
 

@@ -1,6 +1,5 @@
 import { Release, HasId } from "@/types/types";
 import useStore from "../store";
-import { withPrevent } from "./useKeyboardManager";
 
 type UseReleaseLightboxParams = {
   context: Release[];
@@ -8,7 +7,7 @@ type UseReleaseLightboxParams = {
 
 export function useReleaseLightbox({ context }: UseReleaseLightboxParams) {
   const { setModalContents } = useStore();
-  return withPrevent((_event: KeyboardEvent, selection: HasId[]) => {
+  return (selection: HasId[]) => {
     setModalContents({
       name: "lightbox",
       params: {
@@ -16,5 +15,5 @@ export function useReleaseLightbox({ context }: UseReleaseLightboxParams) {
         context,
       },
     });
-  });
+  };
 }

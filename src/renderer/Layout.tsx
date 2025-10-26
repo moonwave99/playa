@@ -24,7 +24,7 @@ import ToastView from "./components/ToastView";
 
 import { routes } from "./routes";
 
-import HomePage from "./pages/HomePage";
+import HomePage from "./pages/HomePage/HomePage";
 import ReleasesPage from "./pages/ReleasesPage";
 import ReleasePage from "./pages/ReleasePage";
 import ArtistsPage from "./pages/ArtistsPage";
