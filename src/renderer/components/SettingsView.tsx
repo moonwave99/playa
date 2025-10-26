@@ -92,16 +92,16 @@ export default function SettingsView({ onSave, onCancel }: SettingsViewProps) {
     key: string,
     options: Omit<OpenFolderDialogParams, "key">
   ) {
-    const path = await api.dialog.openFolderDialog({
+    const folder = await api.dialog.openFolderDialog({
       ...options,
       key,
     });
-    if (!path.length) {
+    if (!folder.length) {
       return;
     }
     setCopy((prev) => ({
       ...prev,
-      [key]: path.at(0),
+      [key]: folder.at(0),
     }));
   }
 
