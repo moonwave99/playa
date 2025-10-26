@@ -568,6 +568,57 @@ describe("importFolderFromDialog function", () => {
       );
       expect(send).not.toHaveBeenCalled();
     });
+
+    it("shows an error box when importing a single, already imported folder", async (context) => {
+      const directory = await testFs(
+        {
+          "/LIBRARY_PATH/A/Artist 1": {
+            "[Album]": {
+              "2000 - Release 1": {
+                "01 - Track 1.mp3": "",
+                "02 - Track 2.mp3": "",
+              },
+            },
+          },
+        },
+        context.task.id
+      );
+      const LIBRARY_PATH = path.join(directory, "LIBRARY_PATH");
+
+      await prisma.artist.create({ data: getFakeArtist(1) });
+      await prisma.release.create({
+        data: {
+          ...getFakeReleasesForArtist(1).at(0),
+          path: "2000 - Release 1",
+          completePath: "A/Artist 1/[Album]/2000 - Release 1",
+        },
+      });
+
+      const showErrorBox = vi.fn();
+      const send = vi.fn();
+
+      const { importFolderFromDialog } = importFoldersController({
+        ...defaultParams,
+        getSetting: (key: string) =>
+          key === "LIBRARY_PATH" ? LIBRARY_PATH : false,
+        openFolderDialog: ({ defaultPath }) => [
+          path.join(directory, defaultPath, "[Album]", "2000 - Release 1"),
+        ],
+        showErrorBox,
+        send,
+        stateManager: {
+          getSelection: () => [1],
+        } as unknown as StateManager,
+      });
+
+      await importFolderFromDialog();
+
+      expect(showErrorBox).toHaveBeenCalledWith(
+        "Error importing Folders",
+        "Folder already imported"
+      );
+      expect(send).not.toHaveBeenCalled();
+    });
   });
 });
 

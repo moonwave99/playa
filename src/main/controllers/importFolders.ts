@@ -287,6 +287,11 @@ export function importFoldersController({
       )
     );
 
+    if (existingMap.length === 1 && !!existingMap[0]) {
+      showErrorBox("Error importing Folders", "Folder already imported");
+      return;
+    }
+
     const foldersToImport = folders.filter((_, index) => !existingMap[index]);
 
     if (!USE_SMART_IMPORT) {
