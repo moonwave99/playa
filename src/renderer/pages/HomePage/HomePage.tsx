@@ -125,13 +125,13 @@ function useNavigateHomepage({
   });
 
   useEffect(() => {
-    document
-      .querySelector(
-        `[data-id="item-${currentSelection.section}-${currentSelection.index}"]`
-      )
-      ?.scrollIntoView({
-        block: "nearest",
-      });
+    const selector =
+      currentSelection.section === "release"
+        ? "#LatestReleases"
+        : `[data-id="item-${currentSelection.section}-${currentSelection.index}"]`;
+    document.querySelector(selector)?.scrollIntoView({
+      block: "nearest",
+    });
   }, [currentSelection]);
 
   const { section, index } = currentSelection;

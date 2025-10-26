@@ -40,7 +40,11 @@ export default function LatestReleasesView({
   }
 
   return (
-    <section className={styles.view} data-testid="LatestReleases">
+    <section
+      className={styles.view}
+      data-testid="LatestReleases"
+      id="LatestReleases"
+    >
       <header className={styles.header}>
         <h1>
           <Icon isFor="release" />
