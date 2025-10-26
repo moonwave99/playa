@@ -21,8 +21,9 @@
   justify-content: center;
   align-items: center;
   color: var(--secondary-color);
-  font-size: 1.2rem;
   user-select: none;
+  background-color: var(--background-color-light);
+  border-radius: 0.5rem;
 }
 
 .header {

@@ -19,6 +19,12 @@ TBD
 - [ ] import in non-smart mode;
 - [ ] edit in non-smart mode;
 
+## Tasks
+
+- [ ] rearrange app menu;
+- [ ] add playback and context icons on releases;
+- [ ] add double click handlers;
+
 ## License
 
 The contents of the Playa software are covered under the MIT license.

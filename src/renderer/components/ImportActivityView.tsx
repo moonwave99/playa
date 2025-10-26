@@ -45,7 +45,7 @@ export default function ImportActivityView() {
     if (!latestAdditions) {
       return;
     }
-    const plotAxisLabel = t("pages.HomePage.importActivity.plotAxisLabel");
+    const plotAxisLabel = t("components.ImportActivityView.plotAxisLabel");
     const barChart = Plot.plot(getPlotConfig(latestAdditions, plotAxisLabel));
     ref.current.append(barChart);
     return () => barChart.remove();
@@ -64,10 +64,10 @@ export default function ImportActivityView() {
     <section className={styles.view}>
       <header className={styles.header}>
         <h2 className={styles.title}>
-          {t("pages.HomePage.importActivity.title")}
+          {t("components.ImportActivityView.title")}
         </h2>
         <label>
-          {t("pages.HomePage.importActivity.dateInputLabel")}
+          {t("components.ImportActivityView.dateInputLabel")}
           <input
             type="date"
             value={from}

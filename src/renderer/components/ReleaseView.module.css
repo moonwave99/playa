@@ -26,10 +26,6 @@
   }
 }
 
-.view > * {
-  margin: 0;
-}
-
 .coverWrapper {
   flex: 1;
 }

@@ -24,6 +24,7 @@ import ImportFoldersView from "./components/ImportFoldersView";
 import AddReleasesToCollectionView from "./components/AddReleasesToCollectionView";
 import AddArtistsToGroupView from "./components/AddArtistsToGroupView";
 import InteractiveImportView from "./components/InteractiveImportView";
+import StatsView from "./components/StatsView";
 
 function getModalOverrides(name: Modals) {
   if (name === "lightbox") {
@@ -58,6 +59,11 @@ function getModalOverrides(name: Modals) {
     };
   }
   if (name === "importFolders") {
+    return {
+      width: "min(80vw, 1000px)",
+    };
+  }
+  if (name === "stats") {
     return {
       width: "min(80vw, 1000px)",
     };
@@ -108,6 +114,7 @@ export type Modals =
   | "addArtistsToGroup"
   | "interactiveImport"
   | "search"
+  | "stats"
   | "lightbox";
 
 export default function Modal({ setContext }: ModalProps) {
@@ -218,6 +225,9 @@ export default function Modal({ setContext }: ModalProps) {
     }
     if (name === "search") {
       return <SearchView onClose={closeModal} />;
+    }
+    if (name === "stats") {
+      return <StatsView onClose={closeModal} />;
     }
     if (name === "lightbox") {
       return (

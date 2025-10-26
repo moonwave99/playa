@@ -314,6 +314,28 @@ describe("refreshEntityRelease function", () => {
 });
 
 describe("importFolderFromDialog function", () => {
+  it("shows an error box is no Library path is set", async () => {
+    const send = vi.fn();
+    const showErrorBox = vi.fn();
+    const { importFolderFromDialog } = importFoldersController({
+      ...defaultParams,
+      showErrorBox,
+      openFolderDialog: vi.fn(),
+      send,
+      getSetting: () => "",
+      stateManager: {
+        getSelection: () => [] as number[],
+      } as unknown as StateManager,
+    });
+
+    await importFolderFromDialog();
+    expect(send).not.toHaveBeenCalled();
+    expect(showErrorBox).toHaveBeenCalledWith(
+      "Error importing folders",
+      "You have to set your Library path in the Settings"
+    );
+  });
+
   it("does nothing if no folder is picked", async () => {
     const send = vi.fn();
     const { importFolderFromDialog } = importFoldersController({

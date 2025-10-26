@@ -70,6 +70,11 @@ export function getLibraryMenu({ controllers, stateManager }: GetMenuParams) {
       accelerator: "Cmd+F",
       click: () => send("toggleSearch"),
     },
+    {
+      id: "showLibraryStats",
+      label: "Show Library Stats",
+      click: () => openModal("stats"),
+    },
     { type: "separator" as const },
     {
       id: "exportDataToArchive",

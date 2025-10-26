@@ -59,15 +59,7 @@
   "pages": {
     "HomePage": {
       "latest": "Latest {{entity}}",
-      "seeAll": "See All",
-      "stats": {
-        "title": "Your Library Stats"
-      },
-      "importActivity": {
-        "title": "Your Import Activity",
-        "dateInputLabel": "From",
-        "plotAxisLabel": "Daily added releases"
-      }
+      "seeAll": "See All"
     },
     "Onboarding": {
       "actions": {
@@ -149,6 +141,12 @@
     }
   },
   "modals": {
+    "StatsView": {
+      "title": "Your Library Stats",
+      "actions": {
+        "close": "Close"
+      }
+    },
     "ReleaseLightbox": {
       "actions": {
         "prev": "See prev Release",
@@ -409,6 +407,11 @@
     }
   },
   "components": {
+    "ImportActivityView": {
+      "title": "Your Import Activity",
+      "dateInputLabel": "From",
+      "plotAxisLabel": "Daily added releases"
+    },
     "Cover": {
       "altText": "Cover of {{title}}"
     },

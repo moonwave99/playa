@@ -242,6 +242,16 @@ export function importFoldersController({
   }
 
   async function importFolderFromDialog() {
+    const LIBRARY_PATH = getSetting("LIBRARY_PATH") as string;
+
+    if (!LIBRARY_PATH) {
+      showErrorBox(
+        "Error importing folders",
+        "You have to set your Library path in the Settings"
+      );
+      return;
+    }
+
     let path = "";
     const artistSelection = stateManager.getSelection("artist");
     if (artistSelection.length === 1) {
@@ -268,7 +278,6 @@ export function importFoldersController({
     }
 
     const USE_SMART_IMPORT = getSetting("USE_SMART_IMPORT");
-    const LIBRARY_PATH = getSetting("LIBRARY_PATH") as string;
 
     if (folders.some((folder) => !folder.startsWith(LIBRARY_PATH))) {
       showErrorBox(

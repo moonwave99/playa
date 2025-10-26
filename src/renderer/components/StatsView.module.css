@@ -2,7 +2,6 @@
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  padding: 1rem;
   h2 {
     user-select: none;
   }
@@ -11,10 +10,6 @@
     flex-direction: column;
     gap: 1rem;
   }
-}
-
-.view > * {
-  margin: 0;
 }
 
 .stats {

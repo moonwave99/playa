@@ -5,6 +5,7 @@ import {
   useKeyManager,
   withPrevent,
 } from "@/renderer/hooks/useKeyboardManager";
+import { useReleaseLightbox } from "@/renderer/hooks/useReleaseLightbox";
 import useReleases from "@/renderer/query/useReleases";
 import useArtists from "@/renderer/query/useArtists";
 import useGroups from "@/renderer/query/useGroups";
@@ -12,7 +13,6 @@ import useCollections from "@/renderer/query/useCollections";
 
 import LatestReleasesView from "./LatestReleasesView";
 import LatestEntriesView from "./LatestEntriesView";
-import StatsView from "@/renderer/components/StatsView";
 
 import styles from "../Page.module.css";
 import homepageStyles from "./HomePage.module.css";
@@ -21,7 +21,6 @@ import {
   HOMEPAGE_RELEASES_PAGESIZE,
   HOMEPAGE_ENTRIES_PAGESIZE,
 } from "@/constants";
-import { useReleaseLightbox } from "@/renderer/hooks/useReleaseLightbox";
 
 const pageSize = HOMEPAGE_ENTRIES_PAGESIZE;
 
@@ -91,7 +90,6 @@ export default function HomePage() {
           }
         />
       </div>
-      <StatsView />
     </div>
   );
 }

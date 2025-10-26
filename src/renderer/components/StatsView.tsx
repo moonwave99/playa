@@ -3,8 +3,11 @@ import useStats from "../query/useStats";
 import Loading from "./Loading";
 import ErrorView from "./ErrorView";
 import ImportActivityView from "./ImportActivityView";
-import styles from "./StatsView.module.css";
 import type { Stats } from "@/types/types";
+
+import cx from "clsx";
+import styles from "./StatsView.module.css";
+import formStyles from "../forms.module.css";
 
 const sortedStats: (keyof Stats)[] = [
   "release",
@@ -14,7 +17,11 @@ const sortedStats: (keyof Stats)[] = [
   "group",
 ];
 
-export default function StatsView() {
+type StatsViewProps = {
+  onClose: () => void;
+};
+
+export default function StatsView({ onClose }: StatsViewProps) {
   const { t } = useTranslation();
   const { isPending, error, stats } = useStats();
 
@@ -29,7 +36,7 @@ export default function StatsView() {
   return (
     <div className={styles.view}>
       <section>
-        <h2 className={styles.title}>{t("pages.HomePage.stats.title")}</h2>
+        <h2 className={styles.title}>{t("modals.StatsView.title")}</h2>
         <ul className={styles.stats}>
           {sortedStats.map((key) => (
             <li key={key}>
@@ -42,6 +49,15 @@ export default function StatsView() {
         </ul>
       </section>
       <ImportActivityView />
+      <div className={formStyles.actions}>
+        <button
+          type="button"
+          className={cx(formStyles.button, formStyles.primary)}
+          onClick={onClose}
+        >
+          {t("modals.StatsView.actions.close")}
+        </button>
+      </div>
     </div>
   );
 }
