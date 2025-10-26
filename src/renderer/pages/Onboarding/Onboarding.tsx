@@ -23,9 +23,9 @@ export type StepProps = {
 
 const stepsMap = {
   splash: SplashStep,
+  setupLibrary: SetupLibraryStep,
   setupApps: SetupAppsStep,
   discogs: DiscogsStep,
-  setupLibrary: SetupLibraryStep,
   importMusic: ImportMusicStep,
   final: FinalStep,
 };

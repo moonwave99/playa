@@ -28,7 +28,7 @@ test.describe("Onboarding Complete", () => {
   }) => {
     const { page, clickMenuItemById } = await getElectronApp("Onboarding");
 
-    // First step
+    // first step
     await expect(
       page.getByRole("heading").filter({ hasText: "Welcome to Playa" })
     ).toBeVisible();
@@ -39,6 +39,18 @@ test.describe("Onboarding Complete", () => {
       .click();
 
     // second step
+    await page
+      .getByRole("button")
+      .filter({ hasText: "Locate your Library" })
+      .click();
+
+    await expect(
+      page.getByPlaceholder("Choose a location for your Library")
+    ).toBeVisible();
+
+    await page.getByRole("button").filter({ hasText: "Next step" }).click();
+
+    // third step
     await expect(
       page.getByRole("heading").filter({ hasText: "Select Applications" })
     ).toBeVisible();
@@ -63,7 +75,7 @@ test.describe("Onboarding Complete", () => {
 
     await page.getByRole("button").filter({ hasText: "Next step" }).click();
 
-    // third step
+    // fourth step
     await expect(
       page
         .getByRole("heading")
@@ -76,18 +88,6 @@ test.describe("Onboarding Complete", () => {
     await page
       .getByPlaceholder("Enter your Discogs API Secret")
       .fill("DISCOGS_API_SECRET");
-
-    await page.getByRole("button").filter({ hasText: "Next step" }).click();
-
-    // fourth step
-    await page
-      .getByRole("button")
-      .filter({ hasText: "Locate your Library" })
-      .click();
-
-    await expect(
-      page.getByPlaceholder("Choose a location for your Library")
-    ).toBeVisible();
 
     await page.getByRole("button").filter({ hasText: "Next step" }).click();
 
