@@ -78,20 +78,20 @@
         "import": "Import a Folder",
         "importAnother": "Import More",
         "finish": "Complete Onboarding",
-        "viewLibrary": "View Library"
+        "gotoLibrary": "Go to Library"
       },
       "folders": {
         "library": {
           "label": "Locate your Library",
-          "placeholder": "Choose a Folder"
+          "placeholder": "Choose a location for your Library"
         },
         "player": {
           "label": "Locate your Player",
-          "placeholder": "Choose a Folder"
+          "placeholder": "Choose a location for your Player"
         },
         "tagger": {
           "label": "Locate your Tagger",
-          "placeholder": "Choose a Folder"
+          "placeholder": "Choose a location for your Tagger"
         }
       },
       "steps": {
@@ -368,11 +368,11 @@
         },
         "PLAYER_PATH": {
           "label": "Player Path",
-          "placeholder": "Insert the location of the Player App"
+          "placeholder": "Insert the location of your Player App"
         },
         "TAGGER_PATH": {
           "label": "Tagger Path",
-          "placeholder": "Insert the location of the Tagger App"
+          "placeholder": "Insert the location of your Tagger App"
         },
         "DISCOGS_KEY": {
           "label": "Discogs Key",

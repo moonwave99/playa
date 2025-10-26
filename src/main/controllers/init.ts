@@ -34,7 +34,7 @@ import { trackMenu } from "../menu/context/track";
 import { searchResultMenu } from "../menu/context/searchResult";
 
 import { Modals } from "@/renderer/Modal";
-import { getE2ETmpPath, IS_E2E_TEST } from "@/test/utils";
+import { getE2EFolderPath, IS_E2E_TEST } from "@/test/utils";
 import {
   OpenFileDialogParams,
   OpenFolderDialogParams,
@@ -80,15 +80,20 @@ export async function init(mainWindow: BrowserWindow) {
   }
 
   function openFolderDialog({
+    key,
     defaultPath,
     properties = [],
   }: OpenFolderDialogParams) {
     if (IS_E2E_TEST) {
-      return [path.join(getE2ETmpPath(process.env.testId), "Library")];
+      return getE2EFolderPath({
+        key,
+        testId: process.env.testId,
+        testTitle: process.env.testTitle,
+      });
     }
     const folders = dialog.showOpenDialogSync(mainWindow, {
-      properties,
       defaultPath,
+      properties,
     });
     return folders;
   }

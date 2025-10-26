@@ -48,7 +48,7 @@ export default function ImportMusicStep({ onNextStep }: StepProps) {
       </header>
 
       {!!releases.length && (
-        <ul className={styles.releasesList}>
+        <ul className={styles.releasesList} data-testid="ReleaseList">
           {releases.map((release) => (
             <li key={release.id}>
               <ReleaseView onClick={() => {}} release={release} />

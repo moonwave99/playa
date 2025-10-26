@@ -48,7 +48,7 @@ const fieldsMap: Field[] = [
     key: "PLAYER_PATH",
     type: "path",
     options: {
-      title: "Insert the location of the Player App",
+      title: "Insert the location your Player App",
       defaultPath: "/Applications",
       filters: [{ name: "Applications", extensions: [".app"] }],
     },
@@ -57,7 +57,7 @@ const fieldsMap: Field[] = [
     key: "TAGGER_PATH",
     type: "path",
     options: {
-      title: "Insert the location of the Tagger App",
+      title: "Insert the location of your Tagger App",
       defaultPath: "/Applications",
       filters: [{ name: "Applications", extensions: [".app"] }],
     },

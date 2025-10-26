@@ -41,7 +41,7 @@ export default function Onboarding() {
       <AnimatePresence mode="wait" initial={true}>
         {steps[currentStep]}
       </AnimatePresence>
-      <ol className={styles.stepIndicator}>
+      <ol className={styles.stepIndicator} data-testid="StepIndicator">
         {Array.from({ length: steps.length }, (_, step) => (
           <li key={step}>
             <button

@@ -37,7 +37,7 @@ export function setupElectron(): SetupElectron {
       env: {
         ...process.env,
         testId,
-        testName: `${titlePath.at(1)}`,
+        testTitle: `${titlePath.at(1)}`,
       },
     });
 

@@ -253,8 +253,8 @@ export async function seed(id?: string) {
       ...(id && id !== "test"
         ? {
             USE_SMART_IMPORT: true,
-            LIBRARY_PATH: path.join(getE2ETmpPath(id), "Library"),
-            COVERS_PATH: path.join(getE2ETmpPath(id), "Covers"),
+            LIBRARY_PATH: path.join(getE2ETmpPath(id), "LIBRARY_PATH"),
+            COVERS_PATH: path.join(getE2ETmpPath(id), "COVERS_PATH"),
           }
         : {}),
     },

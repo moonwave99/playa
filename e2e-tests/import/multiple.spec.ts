@@ -15,7 +15,7 @@ test.beforeAll(async ({}, { testId }) => {
   await Promise.all(
     Array.from({ length: 3 }, (_, i) =>
       createAlbum({
-        libraryPath: path.join(getE2ETmpPath(testId), "Library"),
+        libraryPath: path.join(getE2ETmpPath(testId), "LIBRARY_PATH"),
         artist: "Artist 1",
         album: `Album ${i + 1}`,
       })

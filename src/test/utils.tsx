@@ -50,4 +50,32 @@ export function getE2ETmpPath(id: string) {
   return path.join(process.cwd(), "e2e-tests", "_tmp", id);
 }
 
+type getE2EFolderPathParams = {
+  key: string;
+  testId: string;
+  testTitle: string;
+};
+
+export function getE2EFolderPath({
+  key,
+  testId,
+  testTitle,
+}: getE2EFolderPathParams) {
+  if (key !== "importFolderPath") {
+    return [path.join(getE2ETmpPath(testId), key)];
+  }
+  return testTitle !== "Onboarding Complete"
+    ? [path.join(getE2ETmpPath(testId), "LIBRARY_PATH")]
+    : [
+        path.join(
+          getE2ETmpPath(testId),
+          "LIBRARY_PATH",
+          "A",
+          "Artist 1",
+          "[Album]",
+          "1999 - Album 1"
+        ),
+      ];
+}
+
 export const IS_E2E_TEST = process.env.npm_lifecycle_event === "test:e2e";

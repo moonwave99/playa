@@ -13,7 +13,7 @@ const getElectronApp = setupElectron();
 test.beforeAll(async ({}, { testId }) => {
   await cleanup({ id: testId, preserveSettings: true });
   await createAlbum({
-    libraryPath: path.join(getE2ETmpPath(testId), "Library"),
+    libraryPath: path.join(getE2ETmpPath(testId), "LIBRARY_PATH"),
     artist: "Artist 1",
     album: "Album 1",
   });

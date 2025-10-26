@@ -21,7 +21,7 @@ export default function FinalStep({ onNextStep }: StepProps) {
           onClick={onNextStep}
           autoFocus
         >
-          {t("pages.Onboarding.actions.viewLibrary")}
+          {t("pages.Onboarding.actions.gotoLibrary")}
         </button>
       </div>
     </AnimatedLayout>
