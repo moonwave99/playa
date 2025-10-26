@@ -29,7 +29,9 @@ test.describe("Import", () => {
   test("import multiple folders into library", async () => {
     const { page, clickMenuItemById } = await getElectronApp();
     await clickMenuItemById("gotoHomePage");
-    await expect(page.getByText("Latest Releases")).toBeVisible();
+    await expect(
+      page.getByRole("heading").filter({ hasText: "Latest Releases" })
+    ).toBeVisible();
 
     await clickMenuItemById("importFolder");
 

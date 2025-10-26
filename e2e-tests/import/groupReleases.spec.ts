@@ -32,7 +32,10 @@ test.describe("Import", () => {
   test("import multiple folders into library and group them", async () => {
     const { page, clickMenuItemById } = await getElectronApp();
     await clickMenuItemById("gotoHomePage");
-    await expect(page.getByText("Latest Releases")).toBeVisible();
+    await expect(
+      page.getByRole("heading").filter({ hasText: "Latest Releases" })
+    ).toBeVisible();
+
     const breadcrumbs = page.locator('[data-testid="breadcrumbs"]');
     await expect(breadcrumbs.getByText("Home")).toBeVisible();
 
