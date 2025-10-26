@@ -9,6 +9,8 @@ export function stateController({ stateManager, send }: StateControllerParams) {
   return {
     setInputFocused: (inputFocused: boolean) =>
       stateManager.setInputFocused(inputFocused),
+    setOnboarding: (isOnboarding: boolean) =>
+      stateManager.setOnboarding(isOnboarding),
     setNavOpen: (isNavOpen: boolean) => stateManager.setNavOpen(isNavOpen),
     setSelection: (...params: Parameters<typeof stateManager.setSelection>) =>
       stateManager.setSelection(...params),
@@ -19,6 +21,7 @@ export function stateController({ stateManager, send }: StateControllerParams) {
 
 export const actions: (keyof ReturnType<typeof stateController>)[] = [
   "setInputFocused",
+  "setOnboarding",
   "setNavOpen",
   "setSelection",
   "navigate",

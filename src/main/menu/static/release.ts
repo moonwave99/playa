@@ -49,6 +49,13 @@ export function getReleaseMenu({ controllers, stateManager }: GetMenuParams) {
 
   const menuTemplate = [
     {
+      id: "gotoReleasesPage",
+      label: "Go to Releases",
+      accelerator: "Cmd+2",
+      isNavigationEntry: true,
+      click: () => send("navigate", "/releases"),
+    },
+    {
       id: "gotoReleasePage",
       hideOnSinglePage: true,
       disableOnNavOpen: true,

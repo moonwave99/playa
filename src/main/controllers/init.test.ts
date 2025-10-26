@@ -36,6 +36,12 @@ function getMainWindow() {
 }
 
 describe("init function", () => {
+  it("should initialize the settings", async () => {
+    const { mainWindow } = getMainWindow();
+    const { getSetting } = await init(mainWindow);
+    expect(getSetting("SHOW_ONBOARDING_ON_STARTUP")).toBe(true);
+  });
+
   it("should setup the window swipe listener", async () => {
     const { mainWindow, onSwipe } = getMainWindow();
     await init(mainWindow);
@@ -70,7 +76,6 @@ describe("init function", () => {
       ...importExportActions,
       ...importFoldersActions,
       ...dialogActions,
-      "menu:refresh",
       "menu:release",
       "menu:artist",
       "menu:collection",

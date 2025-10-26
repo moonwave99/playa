@@ -7,6 +7,7 @@ export type State = {
   isInputFocused: boolean;
   isImporting: boolean;
   isNavOpen: boolean;
+  isOnboarding: boolean;
   path: string;
 };
 
@@ -27,6 +28,7 @@ export class StateManager {
       isInputFocused: false,
       isNavOpen: false,
       isImporting: false,
+      isOnboarding: false,
       path: "",
     };
   }
@@ -49,6 +51,9 @@ export class StateManager {
   isImporting() {
     return this.state.isImporting;
   }
+  isOnboarding() {
+    return this.state.isOnboarding;
+  }
   reset() {
     this.state = {
       selection: {
@@ -61,6 +66,7 @@ export class StateManager {
       isInputFocused: false,
       isImporting: false,
       isNavOpen: false,
+      isOnboarding: false,
       path: "",
     };
     this.onUpdate();
@@ -97,6 +103,10 @@ export class StateManager {
   }
   setImporting(isImporting: boolean) {
     this.state.isImporting = isImporting;
+    this.onUpdate();
+  }
+  setOnboarding(isOnboarding: boolean) {
+    this.state.isOnboarding = isOnboarding;
     this.onUpdate();
   }
   onStateChange(handler: (state: State) => void) {

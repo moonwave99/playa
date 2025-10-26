@@ -18,6 +18,12 @@ TBD
 
 - [ ] import in non-smart mode;
 - [ ] edit in non-smart mode;
+- [ ] onboarding;
+
+## Onboarding
+
+- [ ] fix covers bug on first attempt;
+- [ ] disable menus while onboarding;
 
 ## License
 

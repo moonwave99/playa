@@ -1,16 +1,13 @@
 import { expect, test } from "@playwright/test";
-import { clickMenuItemById } from "electron-playwright-helpers";
 import { setupElectron } from "../electron";
 
 const getElectronApp = setupElectron();
 
 test.describe("Releases", () => {
   test("group Releases", async () => {
-    const electronApp = getElectronApp();
-    const page = await electronApp.firstWindow();
+    const { page, clickMenuItemById } = await getElectronApp();
 
-    await page.getByRole("button", { name: "Toggle Menu" }).click();
-    await page.getByLabel("Go to the Artists page").click();
+    await clickMenuItemById("gotoArtistsPage");
     await page.getByRole("button", { name: "Show latest Artists" }).click();
 
     await expect(
@@ -31,7 +28,7 @@ test.describe("Releases", () => {
       .getByAltText("Cover of Artist 10 - Release 10-2")
       .click({ modifiers: ["Meta"] });
 
-    await clickMenuItemById(electronApp, "groupReleases");
+    await clickMenuItemById("groupReleases");
     const modal = page.locator(".ReactModalPortal");
     await expect(modal).toContainText("Group Releases");
     await expect(page.getByText("Group Releases").first()).toBeInViewport();
@@ -63,7 +60,7 @@ test.describe("Releases", () => {
 
     await page.waitForTimeout(100);
 
-    await clickMenuItemById(electronApp, "unGroupRelease");
+    await clickMenuItemById("unGroupRelease");
 
     await page.waitForTimeout(100);
 

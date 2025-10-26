@@ -7,7 +7,7 @@ const getElectronApp = setupElectron();
 
 test.describe("Search", () => {
   test("search by given query", async () => {
-    const page = await getElectronApp().firstWindow();
+    const { page } = await getElectronApp();
     await page.getByRole("button", { name: "Open Search" }).click();
     const input = page.getByPlaceholder("Enter search term");
     expect(input).toBeFocused();
@@ -36,7 +36,7 @@ test.describe("Search", () => {
   });
 
   test("navigate the search results", async () => {
-    const page = await getElectronApp().firstWindow();
+    const { page } = await getElectronApp();
     await page.getByRole("button", { name: "Open Search" }).click();
     const input = page.getByPlaceholder("Enter search term");
     expect(input).toBeFocused();

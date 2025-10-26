@@ -1,7 +1,16 @@
 /* eslint-disable no-empty-pattern */
-import { findLatestBuild, parseElectronApp } from "electron-playwright-helpers";
-import { _electron as electron, ElectronApplication } from "playwright";
-import { test } from "playwright/test";
+import {
+  findLatestBuild,
+  parseElectronApp,
+  clickMenuItemById,
+} from "electron-playwright-helpers";
+
+import {
+  _electron as electron,
+  ElectronApplication,
+  type Page,
+} from "playwright";
+import { expect, test } from "playwright/test";
 import { seed, removeDb } from "../src/test/seed";
 
 const latestBuild = findLatestBuild();
@@ -9,7 +18,13 @@ const appInfo = parseElectronApp(latestBuild);
 
 process.env.CI = "e2e";
 
-export function setupElectron() {
+type SetupElectron = (section?: "App" | "Onboarding") => Promise<{
+  electronApp: ElectronApplication;
+  page: Page;
+  clickMenuItemById: (id: string) => Promise<unknown>;
+}>;
+
+export function setupElectron(): SetupElectron {
   let electronApp: ElectronApplication;
 
   test.beforeAll(async ({}, { testId }) => {
@@ -41,5 +56,13 @@ export function setupElectron() {
     await removeDb(testId);
   });
 
-  return () => electronApp;
+  return async (section = "App") => {
+    const page = await electronApp.firstWindow();
+    await expect(page.locator(`[data-testid="${section}"]`)).toBeVisible();
+    return {
+      electronApp,
+      page,
+      clickMenuItemById: (id: string) => clickMenuItemById(electronApp, id),
+    };
+  };
 }

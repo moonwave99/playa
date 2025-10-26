@@ -1,22 +1,19 @@
 import { expect, test } from "@playwright/test";
-import { clickMenuItemById } from "electron-playwright-helpers";
 import { setupElectron } from "../electron";
 
 const getElectronApp = setupElectron();
 
 test.describe("Edit Release", () => {
   test("edit the selected Release", async () => {
-    const electronApp = getElectronApp();
-    const page = await electronApp.firstWindow();
+    const { page, clickMenuItemById } = await getElectronApp();
 
-    await page.getByRole("button", { name: "Toggle Menu" }).click();
-    await page.getByLabel("Go to the Releases page").click();
+    await clickMenuItemById("gotoReleasesPage");
 
     await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
       "Releases"
     );
 
-    await clickMenuItemById(electronApp, "editSelectedRelease");
+    await clickMenuItemById("editSelectedRelease");
     const modal = page.locator(".ReactModalPortal");
     await expect(modal).toContainText("Edit Release");
     await expect(modal).toContainText("Release 1-5");

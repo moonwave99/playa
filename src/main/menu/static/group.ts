@@ -12,6 +12,13 @@ export function getGroupMenu({ controllers, stateManager }: GetMenuParams) {
   } = controllers.group;
   const menuTemplate = [
     {
+      id: "gotoGroupsPage",
+      label: "Go to Groups",
+      accelerator: "Cmd+5",
+      isNavigationEntry: true,
+      click: () => send("navigate", "/groups"),
+    },
+    {
       id: "gotoGroupPage",
       hideOnSinglePage: true,
       disableOnNavOpen: true,

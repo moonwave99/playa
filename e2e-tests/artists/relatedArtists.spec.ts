@@ -1,5 +1,4 @@
 import { expect, test } from "@playwright/test";
-import { clickMenuItemById } from "electron-playwright-helpers";
 import { setupElectron } from "../electron";
 
 test.describe.configure({ mode: "serial" });
@@ -8,11 +7,9 @@ const getElectronApp = setupElectron();
 
 test.describe("Related Artists", () => {
   test("add a related Artist to current Artist", async () => {
-    const electronApp = getElectronApp();
-    const page = await electronApp.firstWindow();
+    const { page, clickMenuItemById } = await getElectronApp();
 
-    await page.getByRole("button", { name: "Toggle Menu" }).click();
-    await page.getByLabel("Go to the Artists page").click();
+    await clickMenuItemById("gotoArtistsPage");
 
     await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
       "Artists"
@@ -27,7 +24,7 @@ test.describe("Related Artists", () => {
 
     await expect(page.locator('[data-testid="ArtistPage"]')).toBeVisible();
 
-    await clickMenuItemById(electronApp, "editSelectedArtist");
+    await clickMenuItemById("editSelectedArtist");
     const modal = page.locator(".ReactModalPortal");
     await expect(modal).toContainText("Edit Artist");
 
@@ -44,11 +41,9 @@ test.describe("Related Artists", () => {
   });
 
   test("remove a related Artist from current Artist", async () => {
-    const electronApp = getElectronApp();
-    const page = await electronApp.firstWindow();
+    const { page, clickMenuItemById } = await getElectronApp();
 
-    await page.getByRole("button", { name: "Toggle Menu" }).click();
-    await page.getByLabel("Go to the Artists page").click();
+    await clickMenuItemById("gotoArtistsPage");
 
     await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
       "Artists"

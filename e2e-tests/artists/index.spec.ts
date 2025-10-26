@@ -7,10 +7,9 @@ const getElectronApp = setupElectron();
 
 test.describe("Artists Page", () => {
   test("navigate to the Artists page", async () => {
-    const page = await getElectronApp().firstWindow();
+    const { page, clickMenuItemById } = await getElectronApp();
 
-    await page.getByRole("button", { name: "Toggle Menu" }).click();
-    await page.getByLabel("Go to the Artists page").click();
+    await clickMenuItemById("gotoArtistsPage");
     await page.getByRole("button", { name: "Show latest Artists" }).click();
 
     await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
@@ -19,11 +18,9 @@ test.describe("Artists Page", () => {
   });
 
   test("toggle Artists View mode", async () => {
-    const page = await getElectronApp().firstWindow();
+    const { page, clickMenuItemById } = await getElectronApp();
 
-    await page.getByRole("button", { name: "Toggle Menu" }).click();
-    await page.getByLabel("Go to the Artists page").click();
-
+    await clickMenuItemById("gotoArtistsPage");
     await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
       "Artists"
     );

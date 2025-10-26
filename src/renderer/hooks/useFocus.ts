@@ -9,7 +9,7 @@ export function useFocus(focusOnMount = false) {
     if (!focusOnMount) {
       return;
     }
-    setTimeout(focus, 10);
+    focus();
   }, [focusOnMount]);
 
   return {

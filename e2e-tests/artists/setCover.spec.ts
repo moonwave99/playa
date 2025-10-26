@@ -1,6 +1,5 @@
 import { expect, test } from "@playwright/test";
 import { setupElectron } from "../electron";
-import { clickMenuItemById } from "electron-playwright-helpers";
 
 test.describe.configure({ mode: "serial" });
 
@@ -8,11 +7,9 @@ const getElectronApp = setupElectron();
 
 test.describe("Artist Cover", () => {
   test("set the Artist Cover release", async () => {
-    const electronAp = getElectronApp();
-    const page = await electronAp.firstWindow();
+    const { page, clickMenuItemById } = await getElectronApp();
 
-    await page.getByRole("button", { name: "Toggle Menu" }).click();
-    await page.getByLabel("Go to the Artists page").click();
+    await clickMenuItemById("gotoArtistsPage");
     await page.getByRole("button", { name: "Show latest Artists" }).click();
 
     await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
@@ -38,7 +35,7 @@ test.describe("Artist Cover", () => {
       releaseList.locator('[data-hasfocus="true"]', { hasText: "Release 10-2" })
     ).toHaveCount(1);
 
-    await clickMenuItemById(electronAp, "setSelectedReleaseAsArtistCover");
+    await clickMenuItemById("setSelectedReleaseAsArtistCover");
 
     await expect(
       page

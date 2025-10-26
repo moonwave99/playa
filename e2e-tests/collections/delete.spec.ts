@@ -1,16 +1,13 @@
 import { expect, test } from "@playwright/test";
 import { setupElectron } from "../electron";
-import { clickMenuItemById } from "electron-playwright-helpers";
 
 const getElectronApp = setupElectron();
 
 test.describe("Delete Collection", () => {
   test("delete the selected Collection", async () => {
-    const electronApp = getElectronApp();
-    const page = await electronApp.firstWindow();
+    const { page, clickMenuItemById } = await getElectronApp();
 
-    await page.getByRole("button", { name: "Toggle Menu" }).click();
-    await page.getByLabel("Go to the Collections page").click();
+    await clickMenuItemById("gotoCollectionsPage");
 
     await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
       "Collections"
@@ -18,7 +15,7 @@ test.describe("Delete Collection", () => {
 
     await expect(page.locator('[data-testid="CollectionsPage"]')).toBeVisible();
 
-    await clickMenuItemById(electronApp, "deleteSelectedCollections");
+    await clickMenuItemById("deleteSelectedCollections");
 
     await expect(
       page.locator('[data-testid="CollectionsList"]')

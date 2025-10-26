@@ -5,10 +5,9 @@ const getElectronApp = setupElectron();
 
 test.describe("Releases", () => {
   test("navigate to the Releases list", async () => {
-    const page = await getElectronApp().firstWindow();
+    const { page, clickMenuItemById } = await getElectronApp();
 
-    await page.getByRole("button", { name: "Toggle Menu" }).click();
-    await page.getByLabel("Go to the Releases page").click();
+    await clickMenuItemById("gotoReleasesPage");
 
     const breadcrumbs = page.locator('[data-testid="breadcrumbs"]');
     await expect(breadcrumbs).toContainText("Releases");

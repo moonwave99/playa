@@ -33,7 +33,7 @@ export default function SetupApps({ onCancel, onNextStep }: StepProps) {
       ...settings,
       [app]: folder.at(0),
     });
-    setTimeout(focus, 100);
+    focus();
   }
 
   return (
@@ -59,12 +59,14 @@ export default function SetupApps({ onCancel, onNextStep }: StepProps) {
           className={cx(formStyles.button, formStyles.primary, styles.button)}
           onClick={onNextStep}
           ref={ref}
+          tabIndex={1}
         >
           {t("pages.Onboarding.actions.nextStep")}
         </button>
         <button
           className={cx(formStyles.button, styles.button)}
           onClick={onCancel}
+          tabIndex={1}
         >
           {t("pages.Onboarding.actions.cancel")}
         </button>

@@ -1,5 +1,5 @@
-import { useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { useFocus } from "@/renderer/hooks/useFocus";
 import { AnimatedLayout } from "../AnimatedLayout";
 import { type StepProps } from "../Onboarding";
 import api from "@/renderer/api";
@@ -17,8 +17,9 @@ const chooseFolderOptions = {
 
 export default function SetupLibraryStep({ onCancel, onNextStep }: StepProps) {
   const { t } = useTranslation();
-  const nextStepButtonRef = useRef(null);
   const { settings } = useStore();
+  const isFolderSet = !!settings.LIBRARY_PATH;
+  const { ref } = useFocus(isFolderSet);
 
   async function selectFolder() {
     const folder = await api.dialog.openFolderDialog(
@@ -32,10 +33,8 @@ export default function SetupLibraryStep({ onCancel, onNextStep }: StepProps) {
       ...settings,
       LIBRARY_PATH: folder.at(0),
     });
-    setTimeout(() => nextStepButtonRef.current.focus(), 100);
+    focus();
   }
-
-  const isFolderSet = !!settings.LIBRARY_PATH;
 
   return (
     <AnimatedLayout>
@@ -48,7 +47,7 @@ export default function SetupLibraryStep({ onCancel, onNextStep }: StepProps) {
           folderType="library"
           folder={settings.LIBRARY_PATH}
           onClick={selectFolder}
-          autoFocus
+          autoFocus={!isFolderSet}
         />
       </div>
       <div className={styles.actions}>
@@ -56,7 +55,7 @@ export default function SetupLibraryStep({ onCancel, onNextStep }: StepProps) {
           className={cx(formStyles.button, formStyles.primary, styles.button)}
           onClick={onNextStep}
           disabled={!isFolderSet}
-          ref={nextStepButtonRef}
+          ref={ref}
         >
           {t("pages.Onboarding.actions.nextStep")}
         </button>

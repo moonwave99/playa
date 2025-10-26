@@ -1,6 +1,7 @@
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useFocus } from "@/renderer/hooks/useFocus";
 import useReleases from "@/renderer/query/useReleases";
+import { useFocus } from "@/renderer/hooks/useFocus";
 import { AnimatedLayout } from "../AnimatedLayout";
 import { type StepProps } from "../Onboarding";
 import api from "@/renderer/api";
@@ -13,10 +14,19 @@ import cx from "clsx";
 import styles from "../Onboarding.module.css";
 import formStyles from "../../../forms.module.css";
 
-export default function ImportMusicStep({ onCancel, onNextStep }: StepProps) {
+const MAX_RELEASES_COUNT = 3;
+
+export default function ImportMusicStep({ onNextStep }: StepProps) {
   const { t } = useTranslation();
-  const { ref } = useFocus(true);
   const { releases, isPending, error } = useReleases();
+  const { ref, focus } = useFocus();
+
+  useEffect(() => {
+    if (releases.length < MAX_RELEASES_COUNT) {
+      return;
+    }
+    focus();
+  }, [releases.length]);
 
   async function selectFolder() {
     api.importFolders.importFolderFromDialog();
@@ -47,13 +57,13 @@ export default function ImportMusicStep({ onCancel, onNextStep }: StepProps) {
         </ul>
       )}
 
-      {releases.length < 3 && (
+      {releases.length < MAX_RELEASES_COUNT && (
         <div className={styles.group}>
           <button
             className={cx(formStyles.button, formStyles.primary, styles.button)}
             type="button"
             onClick={selectFolder}
-            ref={ref}
+            autoFocus
           >
             <MdOutlineDriveFolderUpload />
             <span>
@@ -67,16 +77,11 @@ export default function ImportMusicStep({ onCancel, onNextStep }: StepProps) {
 
       <div className={styles.actions}>
         <button
+          ref={ref}
           className={cx(formStyles.button, formStyles.primary, styles.button)}
           onClick={onNextStep}
         >
-          {t("pages.Onboarding.actions.nextStep")}
-        </button>
-        <button
-          className={cx(formStyles.button, styles.button)}
-          onClick={onCancel}
-        >
-          {t("pages.Onboarding.actions.cancel")}
+          {t("pages.Onboarding.actions.finish")}
         </button>
       </div>
     </AnimatedLayout>

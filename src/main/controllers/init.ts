@@ -5,8 +5,6 @@ import {
   type OpenDialogSyncOptions,
   dialog,
   app,
-  protocol,
-  net,
 } from "electron";
 import path from "path";
 import { homedir } from "os";
@@ -38,9 +36,7 @@ import { searchResultMenu } from "../menu/context/searchResult";
 
 import { Modals } from "@/renderer/Modal";
 import { getE2ETmpPath, IS_E2E_TEST } from "@/test/utils";
-import { log } from "../logger";
 import { Settings } from "@/types/types";
-import { getCoverPlaceholder } from "../cover-placeholder";
 
 export type Controllers = {
   system: ReturnType<typeof systemController>;
@@ -199,7 +195,6 @@ export async function init(mainWindow: BrowserWindow) {
       "menu:group": groupMenu({ controllers, send, openModal }),
       "menu:track": trackMenu({ controllers, send, openModal }),
       "menu:searchResult": searchResultMenu({ controllers, send, openModal }),
-      "menu:refresh": () => refreshMenu(),
       "menu:click": clickEntry,
     },
   ].forEach(registerHandlers);
@@ -226,17 +221,9 @@ export async function init(mainWindow: BrowserWindow) {
     stateManager.reset();
   });
 
-  protocol.handle("playa-cover", async ({ url }) => {
-    const COVERS_PATH = getSetting("COVERS_PATH") as string;
-    const { hostname } = new URL(url);
-    try {
-      return await net.fetch(`file://${path.join(COVERS_PATH, hostname)}`);
-    } catch (error) {
-      log("covers", "cover not found:", url);
-      log("covers", error);
-      return getCoverPlaceholder(url);
-    }
-  });
+  return {
+    getSetting,
+  };
 }
 
 function registerHandlers(

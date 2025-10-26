@@ -118,7 +118,6 @@ const api = {
     group: (group: GroupWithArtists) => ipc.invoke("menu:group", group),
     searchResult: (result: SearchResult) =>
       ipc.invoke("menu:searchResult", result),
-    refresh: () => ipc.invoke("menu:refresh"),
     click: (id: string) => ipc.invoke("menu:click", id),
   },
 };

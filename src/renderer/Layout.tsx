@@ -69,6 +69,7 @@ export default function Layout({ initialSettings }: LayoutProps) {
           className={cx(styles.view, {
             [styles.isDetailPage]: isDetailPage,
           })}
+          data-testid="App"
         >
           <Nav isDetailPage={isDetailPage} />
           <div className={styles.page}>

@@ -8,10 +8,9 @@ import type {
 
 import type { Controllers } from "../controllers/init";
 
-import type { StateManager } from "../stateManager";
+import type { State, StateManager } from "../stateManager";
 import { send } from "../controllers/init";
 
-import { getNavigateMenu } from "./static/navigate";
 import { getLibraryMenu } from "./static/library";
 import { getGroupMenu } from "./static/group";
 import { getCollectionMenu } from "./static/collection";
@@ -38,11 +37,10 @@ export function initMenu({
   const mainMenu = Menu.getApplicationMenu();
 
   const menuGetters = {
-    getArtistMenu,
     getReleaseMenu,
+    getArtistMenu,
     getCollectionMenu,
     getGroupMenu,
-    getNavigateMenu,
     getLibraryMenu,
   };
 
@@ -122,14 +120,15 @@ type MenuTemplateEntry = MenuItemConstructorOptions & {
   hideOnSinglePage?: boolean;
   disableOnImport?: boolean;
   disableOnNavOpen?: boolean;
+  isNavigationEntry?: boolean;
 };
 
-type RefreshMenuEntriesParams = {
+type RefreshMenuEntriesParams = Pick<
+  State,
+  "isInputFocused" | "isNavOpen" | "isImporting" | "isOnboarding"
+> & {
   menu: MenuItem;
   selectionLength: number;
-  isInputFocused: boolean;
-  isNavOpen: boolean;
-  isImporting: boolean;
   isSinglePage: boolean;
   isSomeReleaseMain?: boolean;
   entries: MenuTemplateEntry[];
@@ -140,6 +139,7 @@ export function refreshMenuEntries({
   selectionLength,
   isInputFocused,
   isImporting,
+  isOnboarding,
   isNavOpen,
   isSinglePage,
   entries,
@@ -152,8 +152,14 @@ export function refreshMenuEntries({
       hideOnSinglePage,
       disableOnImport,
       disableOnNavOpen,
+      isNavigationEntry,
     }) => {
       const item = menu.submenu.getMenuItemById(id);
+      if (isOnboarding) {
+        item.enabled = false;
+        return;
+      }
+
       if (isInputFocused) {
         item.enabled = false;
         item.visible = !showOnSinglePage || !isSinglePage;
@@ -177,6 +183,10 @@ export function refreshMenuEntries({
         item.enabled =
           !isSinglePage &&
           (allowMultiple ? selectionLength > 0 : selectionLength === 1);
+        return;
+      }
+      if (isNavigationEntry) {
+        item.enabled = true;
         return;
       }
       item.enabled = allowMultiple

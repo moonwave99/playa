@@ -1,6 +1,5 @@
 import { expect, test } from "@playwright/test";
 import { setupElectron } from "../electron";
-import { clickMenuItemById } from "electron-playwright-helpers";
 
 test.describe.configure({ mode: "serial" });
 
@@ -8,11 +7,9 @@ const getElectronApp = setupElectron();
 
 test.describe("Collection Cover", () => {
   test("set the Collection Cover release", async () => {
-    const electronAp = getElectronApp();
-    const page = await electronAp.firstWindow();
+    const { page, clickMenuItemById } = await getElectronApp();
 
-    await page.getByRole("button", { name: "Toggle Menu" }).click();
-    await page.getByLabel("Go to the Collections page").click();
+    await clickMenuItemById("gotoCollectionsPage");
 
     await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
       "Collections"
@@ -36,7 +33,7 @@ test.describe("Collection Cover", () => {
       })
     ).toHaveCount(1);
 
-    await clickMenuItemById(electronAp, "setSelectedReleaseAsCollectionCover");
+    await clickMenuItemById("setSelectedReleaseAsCollectionCover");
 
     await page.goBack();
 

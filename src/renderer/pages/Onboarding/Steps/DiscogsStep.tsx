@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import useStore from "@/renderer/store";
 import api from "@/renderer/api";
@@ -11,6 +12,7 @@ import styles from "../Onboarding.module.css";
 import formStyles from "../../../forms.module.css";
 
 export default function DiscogsStep({ onCancel, onNextStep }: StepProps) {
+  const secretInputRef = useRef(null);
   const { t } = useTranslation();
   const { ref, focus } = useFocus(true);
   const { settings } = useStore();
@@ -23,7 +25,6 @@ export default function DiscogsStep({ onCancel, onNextStep }: StepProps) {
       ...settings,
       [field]: value,
     });
-    setTimeout(focus, 100);
   }
 
   return (
@@ -57,6 +58,9 @@ export default function DiscogsStep({ onCancel, onNextStep }: StepProps) {
             onInput={(event) =>
               onInput("DISCOGS_KEY", (event.target as HTMLInputElement).value)
             }
+            onPaste={() =>
+              setTimeout(() => secretInputRef.current.focus(), 100)
+            }
           />
         </label>
         <label
@@ -68,6 +72,7 @@ export default function DiscogsStep({ onCancel, onNextStep }: StepProps) {
         >
           {t("pages.Onboarding.steps.discogs.apiSecret.label")}
           <input
+            ref={secretInputRef}
             className={formStyles.input}
             value={settings.DISCOGS_SECRET}
             placeholder={t(
@@ -79,6 +84,7 @@ export default function DiscogsStep({ onCancel, onNextStep }: StepProps) {
                 (event.target as HTMLInputElement).value
               )
             }
+            onPaste={() => setTimeout(focus, 100)}
           />
         </label>
         <p className={styles.info}>

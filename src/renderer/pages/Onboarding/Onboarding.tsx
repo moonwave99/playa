@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { AnimatePresence } from "motion/react";
 import useStore from "@/renderer/store";
@@ -34,9 +34,45 @@ export type Steps = keyof typeof stepsMap;
 
 export default function Onboarding() {
   const { t } = useTranslation();
+  const { steps, currentStep, setCurrentStep } = useOnboarding();
+
+  return (
+    <div className={styles.view} data-testid="Onboarding">
+      <AnimatePresence mode="wait" initial={true}>
+        {steps[currentStep]}
+      </AnimatePresence>
+      <ol className={styles.stepIndicator}>
+        {Array.from({ length: steps.length }, (_, step) => (
+          <li key={step}>
+            <button
+              className={cx({ [styles.current]: step === currentStep })}
+              onClick={() => setCurrentStep(step)}
+              aria-label={t(`pages.Onboarding.gotoStep.${step}`)}
+              disabled={step >= currentStep}
+            >
+              {step === currentStep ? <GoDotFill /> : <GoDot />}
+            </button>
+          </li>
+        ))}
+      </ol>
+      <footer className={styles.footer}>
+        <a href={t("pages.Onboarding.copyright.link")} target="_blank">
+          {t("pages.Onboarding.copyright.text")}
+        </a>
+      </footer>
+    </div>
+  );
+}
+
+function useOnboarding() {
   const [currentStep, setCurrentStep] = useState(0);
 
   const { setSettings, settings } = useStore();
+
+  useEffect(() => {
+    api.state.setOnboarding(true);
+    return () => api.state.setOnboarding(false);
+  }, []);
 
   function onCancel() {
     api.settings
@@ -59,28 +95,9 @@ export default function Onboarding() {
     <Component onNextStep={onNextStep} onCancel={onCancel} />
   ));
 
-  return (
-    <div className={styles.view}>
-      <AnimatePresence mode="wait" initial={true}>
-        {steps[currentStep]}
-      </AnimatePresence>
-      <ol className={styles.stepIndicator}>
-        {Array.from({ length: steps.length }, (_, step) => (
-          <li key={step}>
-            <button
-              className={cx({ [styles.current]: step === currentStep })}
-              onClick={() => setCurrentStep(step)}
-              aria-label={t(`pages.Onboarding.gotoStep.${step}`)}
-              disabled={step >= currentStep}
-            >
-              {step === currentStep ? <GoDotFill /> : <GoDot />}
-            </button>
-          </li>
-        ))}
-      </ol>
-      <footer className={styles.footer}>
-        {t("pages.Onboarding.copyright")}
-      </footer>
-    </div>
-  );
+  return {
+    steps,
+    currentStep,
+    setCurrentStep,
+  };
 }

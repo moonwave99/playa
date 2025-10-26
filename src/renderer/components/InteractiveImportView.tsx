@@ -239,6 +239,7 @@ function FolderView({
         <button
           className={cx(formStyles.button, formStyles.primary)}
           disabled={isImporting}
+          autoFocus
         >
           {isImporting ? (
             <Loading size="small" />

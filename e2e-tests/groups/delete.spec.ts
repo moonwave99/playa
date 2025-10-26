@@ -1,23 +1,20 @@
 import { expect, test } from "@playwright/test";
 import { setupElectron } from "../electron";
-import { clickMenuItemById } from "electron-playwright-helpers";
 
 const getElectronApp = setupElectron();
 
 test.describe("Delete Group", () => {
   test("delete the selected Group", async () => {
-    const electronApp = getElectronApp();
-    const page = await electronApp.firstWindow();
+    const { page, clickMenuItemById } = await getElectronApp();
 
-    await page.getByRole("button", { name: "Toggle Menu" }).click();
-    await page.getByLabel("Go to the Groups page").click();
+    await clickMenuItemById("gotoGroupsPage");
 
     await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
       "Groups"
     );
 
     await expect(page.locator('[data-testid="GroupsPage"]')).toBeVisible();
-    await clickMenuItemById(electronApp, "deleteSelectedGroups");
+    await clickMenuItemById("deleteSelectedGroups");
 
     await expect(page.locator('[data-testid="GroupsList"]')).not.toContainText(
       "Group 1"

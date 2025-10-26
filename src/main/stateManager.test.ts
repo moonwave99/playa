@@ -14,6 +14,7 @@ describe("StateManager - constructor", () => {
       isInputFocused: false,
       isNavOpen: false,
       isImporting: false,
+      isOnboarding: false,
       path: "",
     });
   });
@@ -106,6 +107,7 @@ describe("StateManager - reset", () => {
       isInputFocused: false,
       isNavOpen: false,
       isImporting: false,
+      isOnboarding: false,
       path: "",
     });
   });
@@ -151,6 +153,21 @@ describe("StateManager - setImporting / isImporting", () => {
     expect(onChange).toHaveBeenCalledWith(
       expect.objectContaining({
         isImporting: true,
+      })
+    );
+  });
+});
+
+describe("StateManager - setOnboarding / isOnboarding", () => {
+  it("should set and get the corresponding value", () => {
+    const onChange = vi.fn();
+    const state = new StateManager();
+    state.onStateChange(onChange);
+    state.setOnboarding(true);
+    expect(state.isOnboarding()).toBe(true);
+    expect(onChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        isOnboarding: true,
       })
     );
   });

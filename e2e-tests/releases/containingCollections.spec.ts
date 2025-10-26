@@ -1,5 +1,4 @@
 import { expect, test } from "@playwright/test";
-import { clickMenuItemById } from "electron-playwright-helpers";
 import { setupElectron } from "../electron";
 
 test.describe.configure({ mode: "serial" });
@@ -8,21 +7,19 @@ const getElectronApp = setupElectron();
 
 test.describe("Containing Collections", () => {
   test("add the current Release to an existing Collection", async () => {
-    const electronApp = getElectronApp();
-    const page = await electronApp.firstWindow();
+    const { page, clickMenuItemById } = await getElectronApp();
 
-    await page.getByRole("button", { name: "Toggle Menu" }).click();
-    await page.getByLabel("Go to the Home page").click();
+    await clickMenuItemById("gotoHomePage");
 
     await expect(page.locator('[data-testid="HomePage"]')).toBeVisible();
     await page.waitForTimeout(100);
 
     await page.keyboard.press("ArrowRight");
-    await clickMenuItemById(electronApp, "gotoReleasePage");
+    await clickMenuItemById("gotoReleasePage");
 
     await expect(page.locator('[data-testid="ReleasePage"]')).toBeVisible();
 
-    await clickMenuItemById(electronApp, "addCurrentReleaseToCollection");
+    await clickMenuItemById("addCurrentReleaseToCollection");
     const modal = page.locator(".ReactModalPortal");
     await expect(modal).toContainText("Add Releases to Collection");
 
@@ -39,21 +36,19 @@ test.describe("Containing Collections", () => {
   });
 
   test("add the current Release to a new Collection", async () => {
-    const electronApp = getElectronApp();
-    const page = await electronApp.firstWindow();
+    const { page, clickMenuItemById } = await getElectronApp();
 
-    await page.getByRole("button", { name: "Toggle Menu" }).click();
-    await page.getByLabel("Go to the Home page").click();
+    await clickMenuItemById("gotoHomePage");
 
     await expect(page.locator('[data-testid="HomePage"]')).toBeVisible();
     await page.waitForTimeout(100);
 
     await page.keyboard.press("ArrowRight");
-    await clickMenuItemById(electronApp, "gotoReleasePage");
+    await clickMenuItemById("gotoReleasePage");
 
     await expect(page.locator('[data-testid="ReleasePage"]')).toBeVisible();
 
-    await clickMenuItemById(electronApp, "addCurrentReleaseToCollection");
+    await clickMenuItemById("addCurrentReleaseToCollection");
     const modal = page.locator(".ReactModalPortal");
     await expect(modal).toContainText("Add Releases to Collection");
 
@@ -70,17 +65,15 @@ test.describe("Containing Collections", () => {
   });
 
   test("removes the current Release from a Collection", async () => {
-    const electronApp = getElectronApp();
-    const page = await electronApp.firstWindow();
+    const { page, clickMenuItemById } = await getElectronApp();
 
-    await page.getByRole("button", { name: "Toggle Menu" }).click();
-    await page.getByLabel("Go to the Home page").click();
+    await clickMenuItemById("gotoHomePage");
 
     await expect(page.locator('[data-testid="HomePage"]')).toBeVisible();
     await page.waitForTimeout(100);
 
     await page.keyboard.press("ArrowRight");
-    await clickMenuItemById(electronApp, "gotoReleasePage");
+    await clickMenuItemById("gotoReleasePage");
 
     await expect(page.locator('[data-testid="ReleasePage"]')).toBeVisible();
 

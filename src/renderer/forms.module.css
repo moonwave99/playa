@@ -100,15 +100,16 @@
     opacity: 0.85;
   }
 
-  &:focus {
-    outline-color: var(--accent-color);
-  }
-
   &[type="submit"],
   &.primary {
     background-color: var(--accent-color);
     color: var(--primary-color);
     border: none;
+  }
+
+  &:focus {
+    outline-color: var(--accent-color);
+    border: 1px solid var(--primary-color);
   }
 
   &[disabled] {

@@ -1,7 +1,9 @@
-import { app, BrowserWindow, shell, screen } from "electron";
+import { app, BrowserWindow, shell, screen, protocol, net } from "electron";
 import path from "node:path";
 import started from "electron-squirrel-startup";
 import { init } from "./controllers/init";
+import { log } from "./logger";
+import { getCoverPlaceholder } from "./cover-placeholder";
 
 if (started) {
   app.quit();
@@ -13,7 +15,7 @@ async function createWindow() {
     height,
     width,
     minWidth: 450,
-    minHeight: 600,
+    minHeight: 640,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       nodeIntegration: true,
@@ -35,7 +37,19 @@ async function createWindow() {
     return { action: "deny" };
   });
 
-  await init(mainWindow);
+  const { getSetting } = await init(mainWindow);
+
+  protocol.handle("playa-cover", async ({ url }) => {
+    const COVERS_PATH = getSetting("COVERS_PATH") as string;
+    const { hostname } = new URL(url);
+    try {
+      return await net.fetch(`file://${path.join(COVERS_PATH, hostname)}`);
+    } catch (error) {
+      log("covers", "cover not found:", url);
+      log("covers", error);
+      return getCoverPlaceholder(url);
+    }
+  });
 }
 
 app.on("ready", createWindow);

@@ -45,6 +45,7 @@
   text-wrap: balance;
   line-height: 1.616rem;
   font-size: 1rem;
+  color: var(--secondary-color);
 }
 
 .logo {
@@ -72,6 +73,9 @@
 .footer {
   color: var(--secondary-color);
   font-size: 0.8rem;
+  a {
+    text-decoration: underline;
+  }
 }
 
 .group {
@@ -79,7 +83,6 @@
   flex-direction: column;
   align-items: center;
   gap: 1rem;
-  /* margin-bottom: 2rem; */
 }
 
 .folderPicker {
@@ -144,6 +147,10 @@
 
       &[disabled] {
         cursor: not-allowed;
+      }
+
+      &:not([disabled]):hover {
+        opacity: 0.5;
       }
     }
   }

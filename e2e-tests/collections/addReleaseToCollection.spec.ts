@@ -1,16 +1,13 @@
 import { expect, test } from "@playwright/test";
-import { clickMenuItemById } from "electron-playwright-helpers";
 import { setupElectron } from "../electron";
 
 const getElectronApp = setupElectron();
 
 test.describe("Collection", () => {
   test("add a Release to the selected Collection", async () => {
-    const electronApp = getElectronApp();
-    const page = await electronApp.firstWindow();
+    const { page, clickMenuItemById } = await getElectronApp();
 
-    await page.getByRole("button", { name: "Toggle Menu" }).click();
-    await page.getByLabel("Go to the Collections page").click();
+    await clickMenuItemById("gotoCollectionsPage");
 
     await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
       "Collections"
@@ -23,7 +20,7 @@ test.describe("Collection", () => {
     const releaseList = page.locator('[data-testid="ReleaseList"]');
     await expect(releaseList).toBeVisible();
 
-    await clickMenuItemById(electronApp, "editCurrentCollection");
+    await clickMenuItemById("editCurrentCollection");
 
     const modal = page.locator(".ReactModalPortal");
     await expect(modal).toContainText("Edit Collection");

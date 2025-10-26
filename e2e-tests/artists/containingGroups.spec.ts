@@ -1,5 +1,4 @@
 import { expect, test } from "@playwright/test";
-import { clickMenuItemById } from "electron-playwright-helpers";
 import { setupElectron } from "../electron";
 
 test.describe.configure({ mode: "serial" });
@@ -8,11 +7,9 @@ const getElectronApp = setupElectron();
 
 test.describe("Containing Groups", () => {
   test("add the current Artist to an existing Group", async () => {
-    const electronApp = getElectronApp();
-    const page = await electronApp.firstWindow();
+    const { page, clickMenuItemById } = await getElectronApp();
 
-    await page.getByRole("button", { name: "Toggle Menu" }).click();
-    await page.getByLabel("Go to the Artists page").click();
+    await clickMenuItemById("gotoArtistsPage");
 
     await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
       "Artists"
@@ -27,7 +24,7 @@ test.describe("Containing Groups", () => {
 
     await expect(page.locator('[data-testid="ArtistPage"]')).toBeVisible();
 
-    await clickMenuItemById(electronApp, "addCurrentArtistToGroup");
+    await clickMenuItemById("addCurrentArtistToGroup");
     const modal = page.locator(".ReactModalPortal");
     await expect(modal).toContainText("Add Artists to Group");
 
@@ -47,11 +44,9 @@ test.describe("Containing Groups", () => {
   });
 
   test("add the current Artist to a new Group", async () => {
-    const electronApp = getElectronApp();
-    const page = await electronApp.firstWindow();
+    const { page, clickMenuItemById } = await getElectronApp();
 
-    await page.getByRole("button", { name: "Toggle Menu" }).click();
-    await page.getByLabel("Go to the Artists page").click();
+    await clickMenuItemById("gotoArtistsPage");
 
     await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
       "Artists"
@@ -66,7 +61,7 @@ test.describe("Containing Groups", () => {
 
     await expect(page.locator('[data-testid="ArtistPage"]')).toBeVisible();
 
-    await clickMenuItemById(electronApp, "addCurrentArtistToGroup");
+    await clickMenuItemById("addCurrentArtistToGroup");
     const modal = page.locator(".ReactModalPortal");
     await expect(modal.getByText("Add Artists to Group").first()).toBeVisible();
 
@@ -86,11 +81,9 @@ test.describe("Containing Groups", () => {
   });
 
   test("removes the current Artist from a Group", async () => {
-    const electronApp = getElectronApp();
-    const page = await electronApp.firstWindow();
+    const { page, clickMenuItemById } = await getElectronApp();
 
-    await page.getByRole("button", { name: "Toggle Menu" }).click();
-    await page.getByLabel("Go to the Artists page").click();
+    await clickMenuItemById("gotoArtistsPage");
 
     await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
       "Artists"

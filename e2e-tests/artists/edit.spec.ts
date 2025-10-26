@@ -1,16 +1,13 @@
 import { expect, test } from "@playwright/test";
-import { clickMenuItemById } from "electron-playwright-helpers";
 import { setupElectron } from "../electron";
 
 const getElectronApp = setupElectron();
 
 test.describe("Edit Artist", () => {
   test("edit the selected Artist", async () => {
-    const electronApp = getElectronApp();
-    const page = await electronApp.firstWindow();
+    const { page, clickMenuItemById } = await getElectronApp();
 
-    await page.getByRole("button", { name: "Toggle Menu" }).click();
-    await page.getByLabel("Go to the Artists page").click();
+    await clickMenuItemById("gotoArtistsPage");
 
     await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
       "Artists"
@@ -25,7 +22,7 @@ test.describe("Edit Artist", () => {
 
     await expect(page.locator('[data-testid="ArtistPage"]')).toBeVisible();
 
-    await clickMenuItemById(electronApp, "editSelectedArtist");
+    await clickMenuItemById("editSelectedArtist");
 
     const modal = page.locator(".ReactModalPortal");
     await expect(modal).toContainText("Edit Artist");

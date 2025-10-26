@@ -15,6 +15,13 @@ export function getArtistMenu({ controllers, stateManager }: GetMenuParams) {
 
   const menuTemplate = [
     {
+      id: "gotoArtistsPage",
+      label: "Go to Artists",
+      accelerator: "Cmd+3",
+      isNavigationEntry: true,
+      click: () => send("navigate", "/artists"),
+    },
+    {
       id: "gotoArtistPage",
       hideOnSinglePage: true,
       disableOnNavOpen: true,

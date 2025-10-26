@@ -77,7 +77,8 @@
         "skipStep": "Skip this step",
         "import": "Import a Folder",
         "importAnother": "Import More",
-        "finish": "Done"
+        "finish": "Complete Onboarding",
+        "viewLibrary": "View Library"
       },
       "folders": {
         "library": {
@@ -97,14 +98,14 @@
         "splash": {
           "title": "Welcome to Playa",
           "subtitle": "The Music Manager that thinks in Albums.",
-          "description": "Choose your optimal Settings and locate your Music Library before starting using Playa."
+          "description": "Let's go through a quick setup for an optimal experience."
         },
         "setupLibrary": {
           "title": "Setup your Library",
           "subtitle": "Playa needs to know where your music is stored."
         },
         "setupApps": {
-          "title": "Configure linked Applications",
+          "title": "Select Applications",
           "subtitle": "Playa plays and tags your Music through your favorite apps."
         },
         "discogs": {
@@ -114,7 +115,7 @@
             "link": "https://www.discogs.com/settings/developers",
             "text": "You can set up your Discogs Credentials here"
           },
-          "info": "No time for this now? You can still import artwork manually.",
+          "info": "No time for this now? You can import artwork manually at any time.",
           "apiKey": {
             "label": "API Key",
             "placeholder": "Enter your Discogs API Key"
@@ -141,7 +142,10 @@
         "4": "Go to Import Music step",
         "5": "Go to goodbye step"
       },
-      "copyright": "© 2025 Diego Caponera"
+      "copyright": {
+        "text": "Playa - © 2025 Diego Caponera",
+        "link": "https://moonwave99.github.io/playa"
+      }
     }
   },
   "modals": {

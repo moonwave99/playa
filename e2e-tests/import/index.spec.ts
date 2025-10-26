@@ -2,7 +2,6 @@
 import path from "node:path";
 import { remove } from "fs-extra";
 import { expect, test } from "@playwright/test";
-import { clickMenuItemById } from "electron-playwright-helpers";
 import { setupElectron } from "../electron";
 import { cleanup } from "../../src/test/seed";
 import { createAlbum } from "../../src/test/tracks";
@@ -24,15 +23,14 @@ test.afterAll(async ({}, { testId }) => remove(getE2ETmpPath(testId)));
 
 test.describe("Import", () => {
   test("import a folder into library", async () => {
-    const electronApp = getElectronApp();
-    const page = await electronApp.firstWindow();
-    await page.getByRole("button", { name: "Toggle Menu" }).click();
-    await page.getByLabel("Go to the Home page").click();
+    const { page, clickMenuItemById } = await getElectronApp();
+    await clickMenuItemById("gotoHomePage");
+
     await expect(page.getByText("Latest Releases")).toBeVisible();
     const breadcrumbs = page.locator('[data-testid="breadcrumbs"]');
     await expect(breadcrumbs).toContainText("Home");
 
-    await clickMenuItemById(electronApp, "importFolder");
+    await clickMenuItemById("importFolder");
 
     await page.getByRole("button", { name: "Close" }).click();
 
@@ -47,7 +45,7 @@ test.describe("Import", () => {
       "Artist 1"
     );
 
-    await clickMenuItemById(electronApp, "navigate-artists");
+    await clickMenuItemById("gotoArtistsPage");
     await expect(breadcrumbs.getByText("Artists")).toBeVisible();
 
     const artistsList = page.locator('[data-testid="LatestArtistsView"]');

@@ -1,16 +1,13 @@
 import { expect, test } from "@playwright/test";
 import { setupElectron } from "../electron";
-import { clickMenuItemById } from "electron-playwright-helpers";
 
 const getElectronApp = setupElectron();
 
 test.describe("Releases", () => {
   test("add additional Artists to a Release", async () => {
-    const electronApp = getElectronApp();
-    const page = await electronApp.firstWindow();
+    const { page, clickMenuItemById } = await getElectronApp();
 
-    await page.getByRole("button", { name: "Toggle Menu" }).click();
-    await page.getByLabel("Go to the Releases page").click();
+    await clickMenuItemById("gotoReleasesPage");
 
     const breadcrumbs = page.locator('[data-testid="breadcrumbs"]');
     await expect(breadcrumbs).toContainText("Releases");
@@ -21,7 +18,7 @@ test.describe("Releases", () => {
       .filter({ hasText: "Release 1-5" })
       .click();
 
-    await clickMenuItemById(electronApp, "editSelectedRelease");
+    await clickMenuItemById("editSelectedRelease");
     const modal = page.locator(".ReactModalPortal");
     await expect(modal).toContainText("Edit Release");
 
@@ -39,7 +36,7 @@ test.describe("Releases", () => {
     await expect(header).toContainText("Artist 2");
     await expect(header).toContainText("Artist 3");
 
-    await clickMenuItemById(electronApp, "editCurrentRelease");
+    await clickMenuItemById("editCurrentRelease");
 
     await expect(modal).toContainText("Edit Release");
     await modal.getByLabel("Remove Artist 2 from related Artists").click();

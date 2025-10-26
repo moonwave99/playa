@@ -24,6 +24,21 @@ describe("stateController - setInputFocused function", () => {
   });
 });
 
+describe("stateController - setOnboarding function", () => {
+  it("sets the onboarding status", async () => {
+    const stateManager = new StateManager();
+    const { setOnboarding } = stateController({
+      ...defaultParams,
+      stateManager,
+    });
+    expect(stateManager.isOnboarding()).toBe(false);
+    setOnboarding(true);
+    expect(stateManager.isOnboarding()).toBe(true);
+    setOnboarding(false);
+    expect(stateManager.isOnboarding()).toBe(false);
+  });
+});
+
 describe("stateController - setNavOpen function", () => {
   it("sets the nav open status", async () => {
     const stateManager = new StateManager();

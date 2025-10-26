@@ -27,12 +27,14 @@ export default function SplashStep({ onCancel, onNextStep }: StepProps) {
           className={cx(formStyles.button, formStyles.primary, styles.button)}
           onClick={onNextStep}
           ref={ref}
+          tabIndex={1}
         >
           {t("pages.Onboarding.actions.start")}
         </button>
         <button
           className={cx(formStyles.button, styles.button)}
           onClick={onCancel}
+          tabIndex={1}
         >
           {t("pages.Onboarding.actions.cancel")}
         </button>

@@ -1,14 +1,14 @@
-import { useState, useEffect } from "react";
-import type { MouseEvent, ReactNode } from "react";
+import { useState, useEffect, type MouseEvent, ReactNode } from "react";
 import { NavLink, Routes, Route, useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
-import { navigateMenu } from "@/main/menu/navigate";
 import { ReleaseListViewMode } from "@/types/types";
+import { type Modals } from "../Modal";
 import { useKeyManager } from "../hooks/useKeyboardManager";
 import useClickOutside from "../hooks/useClickOutside";
 import useOnLocationChange from "../hooks/useOnLocationChange";
 import useStore from "../store";
 import api from "../api";
+import { capitalize } from "lodash";
 
 import Breadcrumbs from "./Breadcrumbs";
 import { IoMenu } from "react-icons/io5";
@@ -24,7 +24,6 @@ import { Icon, type SupportedIcons } from "../icons";
 import cx from "clsx";
 import styles from "./Nav.module.css";
 import buttonStyles from "../buttons.module.css";
-import { Modals } from "../Modal";
 
 const navMap: {
   type: "link" | "modal";
@@ -33,7 +32,20 @@ const navMap: {
   accelerator: string;
   section: SupportedIcons;
 }[] = [
-  ...navigateMenu.map((x) => ({ ...x, type: "link" as const })),
+  {
+    type: "link",
+    label: "Home",
+    accelerator: "Cmd+1",
+    link: "/",
+    section: "home",
+  },
+  ...["release", "artist", "collection", "group"].map((section, index) => ({
+    type: "link" as const,
+    accelerator: `Cmd+${index + 2}`,
+    link: `/${section}s`,
+    section: section as SupportedIcons,
+    label: `${capitalize(section)}s`,
+  })),
   {
     type: "modal",
     link: "settings",

@@ -16,6 +16,13 @@ export function getCollectionMenu({
 
   const menuTemplate = [
     {
+      id: "gotoCollectionsPage",
+      label: "Go to Collections",
+      accelerator: "Cmd+4",
+      isNavigationEntry: true,
+      click: () => send("navigate", "/collections"),
+    },
+    {
       id: "gotoCollectionPage",
       hideOnSinglePage: true,
       disableOnNavOpen: true,

@@ -1,16 +1,13 @@
 import { expect, test } from "@playwright/test";
-import { clickMenuItemById } from "electron-playwright-helpers";
 import { setupElectron } from "../electron";
 
 const getElectronApp = setupElectron();
 
 test.describe("Edit Group", () => {
   test("edit the selected Group", async () => {
-    const electronApp = getElectronApp();
-    const page = await electronApp.firstWindow();
+    const { page, clickMenuItemById } = await getElectronApp();
 
-    await page.getByRole("button", { name: "Toggle Menu" }).click();
-    await page.getByLabel("Go to the Groups page").click();
+    await clickMenuItemById("gotoGroupsPage");
 
     const breadcrumbs = page.locator('[data-testid="breadcrumbs"]');
     await expect(breadcrumbs).toContainText("Groups");
@@ -19,7 +16,7 @@ test.describe("Edit Group", () => {
     await page.keyboard.press("Enter");
 
     await expect(page.locator('[data-testid="GroupPage"]')).toBeVisible();
-    await clickMenuItemById(electronApp, "editCurrentGroup");
+    await clickMenuItemById("editCurrentGroup");
 
     const modal = page.locator(".ReactModalPortal");
 
