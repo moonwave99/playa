@@ -71,7 +71,10 @@ function useOnboarding() {
 
   useEffect(() => {
     api.state.setOnboarding(true);
-    return () => api.state.setOnboarding(false);
+    return () => {
+      api.state.setOnboarding(false);
+      api.settings.dismissOnboarding();
+    };
   }, []);
 
   function onCancel() {

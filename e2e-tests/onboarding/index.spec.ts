@@ -6,7 +6,11 @@ import { cleanup } from "../../src/test/seed";
 const getElectronApp = setupElectron();
 
 test.beforeAll(async ({}, { testId }) => {
-  await cleanup({ id: testId, preserveSettings: true, enableOnboarding: true });
+  await cleanup({
+    id: testId,
+    preserveSettings: true,
+    enableOnboarding: true,
+  });
 });
 
 test.describe("Onboarding", () => {

@@ -1,7 +1,7 @@
 import path from "node:path";
 import { ensureDir } from "fs-extra";
 import { app } from "electron";
-import type { Settings } from "@/types/types";
+import type { Send, Settings } from "@/types/types";
 import {
   getSettings,
   createSettings,
@@ -15,7 +15,7 @@ import { log } from "../logger";
 export type GetSetting = (key: keyof Omit<Settings, "id">) => unknown;
 
 type SettingsControllerParams = {
-  send: (channel: string, ...args: unknown[]) => void;
+  send: Send;
 };
 
 export function settingsController({ send }: SettingsControllerParams) {
@@ -36,6 +36,7 @@ export function settingsController({ send }: SettingsControllerParams) {
         ...DEFAULT_SETTINGS,
         COVERS_PATH,
       });
+      log("settings:init", "settings created", settings);
     }
   }
 
@@ -50,12 +51,17 @@ export function settingsController({ send }: SettingsControllerParams) {
     return settings;
   }
 
+  async function dismissOnboarding() {
+    return updateSettings({ ...settings, SHOW_ONBOARDING_ON_STARTUP: false });
+  }
+
   return {
     init,
     getSetting,
     getSettings,
     createSettings,
     updateSettings,
+    dismissOnboarding,
   };
 }
 
@@ -63,4 +69,5 @@ export const actions: (keyof ReturnType<typeof settingsController>)[] = [
   "getSettings",
   "createSettings",
   "updateSettings",
+  "dismissOnboarding",
 ];
