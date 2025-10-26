@@ -1,15 +1,13 @@
-import { type OpenDialogSyncOptions } from "electron";
+import {
+  OpenConfirmDialog,
+  OpenFileDialog,
+  OpenFolderDialog,
+} from "@/types/types";
 
 type DialogControllerParams = {
-  openConfirmDialog: (message: string, detail: string) => boolean;
-  openFolderDialog: (
-    defaultPath: string,
-    properties: OpenDialogSyncOptions["properties"]
-  ) => string[];
-  openFileDialog: (
-    defaultPath: string,
-    filters: OpenDialogSyncOptions["filters"]
-  ) => string;
+  openConfirmDialog: OpenConfirmDialog;
+  openFolderDialog: OpenFolderDialog;
+  openFileDialog: OpenFileDialog;
 };
 
 export function dialogController({

@@ -22,12 +22,13 @@ type SetupElectron = (section?: "App" | "Onboarding") => Promise<{
   electronApp: ElectronApplication;
   page: Page;
   clickMenuItemById: (id: string) => Promise<unknown>;
+  wait: (interval?: number) => Promise<void>;
 }>;
 
 export function setupElectron(): SetupElectron {
   let electronApp: ElectronApplication;
 
-  test.beforeAll(async ({}, { testId }) => {
+  test.beforeAll(async ({}, { testId, titlePath }) => {
     await seed(testId);
 
     electronApp = await electron.launch({
@@ -36,6 +37,7 @@ export function setupElectron(): SetupElectron {
       env: {
         ...process.env,
         testId,
+        testName: `${titlePath.at(1)}`,
       },
     });
 
@@ -63,6 +65,7 @@ export function setupElectron(): SetupElectron {
       electronApp,
       page,
       clickMenuItemById: (id: string) => clickMenuItemById(electronApp, id),
+      wait: (time = 10000) => page.waitForTimeout(time),
     };
   };
 }

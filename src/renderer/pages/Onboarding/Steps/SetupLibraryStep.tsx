@@ -22,10 +22,10 @@ export default function SetupLibraryStep({ onCancel, onNextStep }: StepProps) {
   const { ref } = useFocus(isFolderSet);
 
   async function selectFolder() {
-    const folder = await api.dialog.openFolderDialog(
-      chooseFolderOptions.defaultPath,
-      chooseFolderOptions.properties
-    );
+    const folder = await api.dialog.openFolderDialog({
+      ...chooseFolderOptions,
+      key: "LIBRARY_PATH",
+    });
     if (!folder.length) {
       return;
     }

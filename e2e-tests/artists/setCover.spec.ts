@@ -7,7 +7,7 @@ const getElectronApp = setupElectron();
 
 test.describe("Artist Cover", () => {
   test("set the Artist Cover release", async () => {
-    const { page, clickMenuItemById } = await getElectronApp();
+    const { page, clickMenuItemById, wait } = await getElectronApp();
 
     await clickMenuItemById("gotoArtistsPage");
     await page.getByRole("button", { name: "Show latest Artists" }).click();
@@ -34,6 +34,7 @@ test.describe("Artist Cover", () => {
     await expect(
       releaseList.locator('[data-hasfocus="true"]', { hasText: "Release 10-2" })
     ).toHaveCount(1);
+    await wait(100);
 
     await clickMenuItemById("setSelectedReleaseAsArtistCover");
 

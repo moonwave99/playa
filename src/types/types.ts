@@ -1,7 +1,9 @@
 // eslint-disable-next-line import/no-named-as-default
 import Prisma, { ReleaseType, EntityType } from "@prisma/client-generated";
 import type { ICommonTagsResult } from "music-metadata/lib/type";
-import { Controllers, send, openModal } from "@/main/controllers/init";
+import { Controllers } from "@/main/controllers/init";
+import { type OpenDialogSyncOptions } from "electron";
+import { Modals } from "@/renderer/Modal";
 
 export { EntityType } from "@prisma/client-generated";
 
@@ -241,12 +243,6 @@ export type EditReleaseParam = Pick<
 > &
   NewReleaseInfo;
 
-export type MenuParams = {
-  controllers: Controllers;
-  send: typeof send;
-  openModal: typeof openModal;
-};
-
 export type Context = {
   id?: number;
   entityType: "Artist" | "Collection" | "Group" | null;
@@ -273,4 +269,42 @@ export type ImportData = {
   type: ReleaseType;
   discNumber?: number;
   tracks: TrackInfo[];
+};
+
+export type OpenConfirmDialog = (message: string, detail: string) => boolean;
+
+export type OpenFolderDialogParams = {
+  key: string;
+  defaultPath: string;
+  properties?: OpenDialogSyncOptions["properties"];
+};
+
+export type OpenFolderDialog = ({
+  key,
+  defaultPath,
+  properties,
+}: OpenFolderDialogParams) => string[];
+
+export type OpenFileDialogParams = {
+  key: string;
+  defaultPath: string;
+  filters?: OpenDialogSyncOptions["filters"];
+};
+
+export type OpenFileDialog = ({
+  key,
+  defaultPath,
+  filters,
+}: OpenFileDialogParams) => string;
+
+export type OpenModal = (name: Modals, params?: unknown) => void;
+
+export type Send = (channel: string, ...args: unknown[]) => void;
+
+export type ShowErrorBox = (title: string, content: string) => void;
+
+export type MenuParams = {
+  controllers: Controllers;
+  openModal: OpenModal;
+  send: Send;
 };

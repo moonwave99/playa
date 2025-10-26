@@ -1,5 +1,5 @@
 import { existsSync, move } from "fs-extra";
-import { Artist } from "@/types/types";
+import { Artist, Send, OpenConfirmDialog, ShowErrorBox } from "@/types/types";
 import {
   getArtist,
   getAllArtists,
@@ -21,9 +21,9 @@ import { difference } from "lodash";
 
 type ArtistControllerParams = {
   withPath: (key: string, folderPath: string) => string;
-  send: (channel: string, ...args: unknown[]) => void;
-  showErrorBox: (title: string, content: string) => void;
-  openConfirmDialog: (message: string, detail: string) => boolean;
+  send: Send;
+  showErrorBox: ShowErrorBox;
+  openConfirmDialog: OpenConfirmDialog;
   stateManager: StateManager;
   skipMove?: boolean;
 };

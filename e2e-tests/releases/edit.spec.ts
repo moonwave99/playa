@@ -5,13 +5,17 @@ const getElectronApp = setupElectron();
 
 test.describe("Edit Release", () => {
   test("edit the selected Release", async () => {
-    const { page, clickMenuItemById } = await getElectronApp();
+    const { page, clickMenuItemById, wait } = await getElectronApp();
 
     await clickMenuItemById("gotoReleasesPage");
 
     await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
       "Releases"
     );
+
+    const releaseList = page.locator('[data-testid="ReleaseList"]');
+    await expect(releaseList.locator('[data-hasfocus="true"]')).toHaveCount(1);
+    await wait(100);
 
     await clickMenuItemById("editSelectedRelease");
     const modal = page.locator(".ReactModalPortal");

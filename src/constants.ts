@@ -11,3 +11,8 @@ export const DEFAULT_SETTINGS: Settings = {
   USE_SMART_IMPORT: false,
   SHOW_ONBOARDING_ON_STARTUP: true,
 };
+
+export const MAX_IMPORT_FOLDERS = 10;
+
+export const ON_IMPORT_DONE_DELAY = 5000;
+export const ON_EXPORT_DONE_DELAY = 3000;

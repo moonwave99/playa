@@ -2,7 +2,6 @@ import {
   BrowserWindow,
   ipcMain as ipc,
   type IpcMainEvent,
-  type OpenDialogSyncOptions,
   dialog,
   app,
 } from "electron";
@@ -36,7 +35,11 @@ import { searchResultMenu } from "../menu/context/searchResult";
 
 import { Modals } from "@/renderer/Modal";
 import { getE2ETmpPath, IS_E2E_TEST } from "@/test/utils";
-import { Settings } from "@/types/types";
+import {
+  OpenFileDialogParams,
+  OpenFolderDialogParams,
+  Settings,
+} from "@/types/types";
 
 export type Controllers = {
   system: ReturnType<typeof systemController>;
@@ -76,10 +79,10 @@ export async function init(mainWindow: BrowserWindow) {
     return path.join(getSetting(key) as string, folderPath);
   }
 
-  function openFolderDialog(
-    defaultPath: string,
-    properties: OpenDialogSyncOptions["properties"]
-  ) {
+  function openFolderDialog({
+    defaultPath,
+    properties = [],
+  }: OpenFolderDialogParams) {
     if (IS_E2E_TEST) {
       return [path.join(getE2ETmpPath(process.env.testId), "Library")];
     }
@@ -90,10 +93,7 @@ export async function init(mainWindow: BrowserWindow) {
     return folders;
   }
 
-  function openFileDialog(
-    defaultPath: string,
-    filters: OpenDialogSyncOptions["filters"] = []
-  ) {
+  function openFileDialog({ defaultPath, filters = [] }: OpenFileDialogParams) {
     const folders = dialog.showOpenDialogSync(mainWindow, {
       properties: ["openFile"],
       filters,
@@ -159,12 +159,12 @@ export async function init(mainWindow: BrowserWindow) {
     state: stateController({ send, stateManager }),
     settings,
     importFolders: importFoldersController({
+      openFolderDialog,
       withPath,
       getSetting,
       send,
       openModal,
       stateManager,
-      openFolderDialog,
       showErrorBox,
     }),
     importExport: importExportController({

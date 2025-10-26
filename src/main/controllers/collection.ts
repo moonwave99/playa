@@ -14,10 +14,11 @@ import {
 } from "../db/collection";
 import { type StateManager } from "../stateManager";
 import { withConfirmDialog, withNotification } from "../utils";
+import { OpenConfirmDialog, Send } from "@/types/types";
 
 type CollectionControllerParams = {
-  send: (channel: string, ...args: unknown[]) => void;
-  openConfirmDialog: (message: string, detail: string) => boolean;
+  send: Send;
+  openConfirmDialog: OpenConfirmDialog;
   stateManager: StateManager;
 };
 

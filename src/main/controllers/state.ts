@@ -1,8 +1,9 @@
+import { Send } from "@/types/types";
 import type { StateManager } from "../stateManager";
 
 type StateControllerParams = {
   stateManager: StateManager;
-  send: (channel: string, ...args: unknown[]) => void;
+  send: Send;
 };
 
 export function stateController({ stateManager, send }: StateControllerParams) {

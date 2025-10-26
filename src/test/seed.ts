@@ -6,6 +6,7 @@ import { hashArtistName, hashRelease } from "../main/hash";
 import type { Release, HasId, EntityType, ReleaseType } from "@/types/types";
 import { pad } from "@/lib/utils";
 import { getE2ETmpPath } from "./utils";
+import { DEFAULT_SETTINGS } from "@/constants";
 
 export function getFakeArtist(id = 1) {
   const artist = getFakeArtists({ length: 1 }).at(0);
@@ -228,9 +229,7 @@ export async function cleanup({
   if (enableOnboarding) {
     await prisma.settings.update({
       where: { id: 1 },
-      data: {
-        SHOW_ONBOARDING_ON_STARTUP: true,
-      },
+      data: DEFAULT_SETTINGS,
     });
   }
 }

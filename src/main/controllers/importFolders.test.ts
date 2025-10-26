@@ -409,7 +409,9 @@ describe("importFolderFromDialog function", () => {
 
     const { importFolderFromDialog } = importFoldersController({
       ...defaultParams,
-      openFolderDialog: (folder: string) => [path.join(directory, folder)],
+      openFolderDialog: ({ defaultPath }) => [
+        path.join(directory, defaultPath),
+      ],
       send,
       openModal,
       getSetting: (key: string) =>
@@ -458,8 +460,8 @@ describe("importFolderFromDialog function", () => {
         ...defaultParams,
         getSetting: (key: string) =>
           key === "LIBRARY_PATH" ? LIBRARY_PATH : false,
-        openFolderDialog: (folder: string) => [
-          path.join(directory, folder, "[Album]", "2000 - Release 1"),
+        openFolderDialog: ({ defaultPath }) => [
+          path.join(directory, defaultPath, "[Album]", "2000 - Release 1"),
         ],
         showErrorBox,
         send,
@@ -547,9 +549,9 @@ describe("importFolderFromDialog function", () => {
         ...defaultParams,
         getSetting: (key: string) =>
           key === "LIBRARY_PATH" ? LIBRARY_PATH : false,
-        openFolderDialog: (folder: string) => [
-          path.join(directory, folder, "[Album]", "2000 - Release 1"),
-          path.join(directory, folder, "[Album]", "2000 - Release 2"),
+        openFolderDialog: ({ defaultPath }) => [
+          path.join(directory, defaultPath, "[Album]", "2000 - Release 1"),
+          path.join(directory, defaultPath, "[Album]", "2000 - Release 2"),
         ],
         showErrorBox,
         send,

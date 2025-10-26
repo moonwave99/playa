@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import type { OpenDialogSyncOptions } from "electron";
-import type { Settings } from "@/types/types";
+import type { OpenFolderDialogParams, Settings } from "@/types/types";
 import api from "../api";
 import useStore from "../store";
 import { isEmpty } from "@/lib/utils";
@@ -90,12 +90,12 @@ export default function SettingsView({ onSave, onCancel }: SettingsViewProps) {
 
   async function openFile(
     key: string,
-    options: Partial<OpenDialogSyncOptions>
+    options: Omit<OpenFolderDialogParams, "key">
   ) {
-    const path = await api.dialog.openFolderDialog(
-      options.defaultPath,
-      options.properties
-    );
+    const path = await api.dialog.openFolderDialog({
+      ...options,
+      key,
+    });
     if (!path) {
       return;
     }

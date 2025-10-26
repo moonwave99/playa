@@ -5,6 +5,7 @@ import useStore from "../store";
 import cx from "clsx";
 import styles from "./ExportDataView.module.css";
 import formStyles from "../forms.module.css";
+import { ON_EXPORT_DONE_DELAY } from "@/constants";
 
 type ExportDataViewProps = {
   onDone: () => void;
@@ -36,8 +37,6 @@ export default function ExportDataView({ onDone }: ExportDataViewProps) {
   );
 }
 
-const ON_DONE_DELAY = 3000;
-
 function useExportData(onDone: () => void) {
   const [isDone, setDone] = useState(false);
   const { setModalFixed } = useStore();
@@ -49,7 +48,7 @@ function useExportData(onDone: () => void) {
       }
       setDone(true);
       setModalFixed(false);
-      setTimeout(onDone, ON_DONE_DELAY);
+      setTimeout(onDone, ON_EXPORT_DONE_DELAY);
     },
   });
 

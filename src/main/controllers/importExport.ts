@@ -1,31 +1,29 @@
-import { app, type OpenDialogSyncOptions } from "electron";
+import { app } from "electron";
 import { importData, exportData } from "../db/importExport";
-import type { send, openModal } from "./init";
 import { wait } from "@/lib/utils";
+import {
+  OpenFileDialog,
+  OpenFolderDialog,
+  Send,
+  OpenModal,
+} from "@/types/types";
+import { ON_IMPORT_DONE_DELAY } from "@/constants";
 
 type ImportExportControllerParams = {
-  openFolderDialog: (
-    defaultPath: string,
-    properties: OpenDialogSyncOptions["properties"]
-  ) => string[];
-  openFileDialog: (
-    defaultPath: string,
-    filters: OpenDialogSyncOptions["filters"]
-  ) => string;
+  openFolderDialog: OpenFolderDialog;
+  openFileDialog: OpenFileDialog;
+  send: Send;
+  openModal: OpenModal;
   desktopPath: string;
   userDataPath: string;
   appVersion: string;
-  send: typeof send;
-  openModal: typeof openModal;
 };
-
-const ON_DONE_DELAY = 5000;
 
 function getDelay() {
   if (process.env.NODE_ENV === "test") {
     return 0;
   }
-  return ON_DONE_DELAY;
+  return ON_IMPORT_DONE_DELAY;
 }
 
 export function importExportController({
@@ -38,12 +36,17 @@ export function importExportController({
   openModal,
 }: ImportExportControllerParams) {
   async function importDataFromDialog() {
-    const file = openFileDialog(desktopPath, [
-      {
-        name: "Zip Files",
-        extensions: ["zip"],
-      },
-    ]);
+    const file = openFileDialog({
+      key: "importZipArchive",
+      defaultPath: desktopPath,
+      filters: [
+        {
+          name: "Zip Files",
+          extensions: ["zip"],
+        },
+      ],
+    });
+
     if (!file) {
       return;
     }
@@ -65,10 +68,11 @@ export function importExportController({
   }
 
   async function exportDataFromDialog() {
-    const outputPath = openFolderDialog(desktopPath, [
-      "openDirectory",
-      "createDirectory",
-    ])[0];
+    const outputPath = openFolderDialog({
+      key: "outputExport",
+      defaultPath: desktopPath,
+      properties: ["openDirectory", "createDirectory"],
+    })[0];
     if (!outputPath) {
       return;
     }

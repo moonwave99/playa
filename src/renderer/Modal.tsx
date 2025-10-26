@@ -132,6 +132,8 @@ export default function Modal({ setContext }: ModalProps) {
     }
     const { name, params } = modalContents;
 
+    console.log(params);
+
     if (name === "settings") {
       return <SettingsView onSave={closeModal} onCancel={closeModal} />;
     }

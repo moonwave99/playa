@@ -1,4 +1,3 @@
-import { OpenDialogSyncOptions } from "electron";
 import prisma from "../db/prisma";
 import path from "node:path";
 import { StateManager } from "../stateManager";
@@ -10,6 +9,10 @@ import {
   Artist,
   ImportData,
   ArtistWithReleasesFull,
+  Send,
+  OpenFolderDialog,
+  OpenModal,
+  ShowErrorBox,
 } from "@/types/types";
 import { globby } from "globby";
 import { searchCover } from "../covers";
@@ -25,25 +28,20 @@ import {
   parsePath,
   stripPath,
 } from "../utils";
-import type { send, openModal } from "./init";
 import type { GetSetting } from "./settings";
+import { MAX_IMPORT_FOLDERS } from "@/constants";
 
 type ImportFoldersControllerParams = {
   withPath: (key: string, folderPath: string) => string;
   getSetting: GetSetting;
-  send: typeof send;
-  openModal: typeof openModal;
+  send: Send;
+  openModal: OpenModal;
   stateManager: StateManager;
-  openFolderDialog: (
-    defaultPath: string,
-    properties: OpenDialogSyncOptions["properties"]
-  ) => string[];
-  showErrorBox: (title: string, content: string) => void;
+  openFolderDialog: OpenFolderDialog;
+  showErrorBox: ShowErrorBox;
 };
 
 type ProgressCallback = (folder: string, completed?: boolean) => void;
-
-const MAX_IMPORT_FOLDERS = 10;
 
 export function importFoldersController({
   withPath,
@@ -250,10 +248,11 @@ export function importFoldersController({
       path = artist?.path || "";
     }
 
-    const folders = openFolderDialog(withPath("LIBRARY_PATH", path), [
-      "openDirectory",
-      "multiSelections",
-    ]);
+    const folders = openFolderDialog({
+      key: "importFolderPath",
+      defaultPath: withPath("LIBRARY_PATH", path),
+      properties: ["openDirectory", "multiSelections"],
+    });
 
     if (!folders) {
       return;

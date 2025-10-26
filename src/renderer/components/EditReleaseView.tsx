@@ -17,17 +17,17 @@ import { MdInfoOutline } from "react-icons/md";
 import styles from "./EditReleaseView.module.css";
 import formStyles from "../forms.module.css";
 
-type EditReleasesViewProps = {
+type EditReleaseViewProps = {
   release: ReleaseWithArtistAndSubReleases;
   onSave: () => void;
   onCancel: () => void;
 };
 
-export default function EditReleasesView({
+export default function EditReleaseView({
   release,
   onSave,
   onCancel,
-}: EditReleasesViewProps) {
+}: EditReleaseViewProps) {
   const { t } = useTranslation();
   const { settings } = useStore();
   const refetch = useRefetch();

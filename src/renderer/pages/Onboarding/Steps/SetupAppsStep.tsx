@@ -22,10 +22,10 @@ export default function SetupApps({ onCancel, onNextStep }: StepProps) {
   const { ref, focus } = useFocus(true);
 
   async function selectFolder(app: "PLAYER_PATH" | "TAGGER_PATH") {
-    const folder = await api.dialog.openFolderDialog(
-      chooseFolderOptions.defaultPath,
-      chooseFolderOptions.properties
-    );
+    const folder = await api.dialog.openFolderDialog({
+      ...chooseFolderOptions,
+      key: app,
+    });
     if (!folder.length) {
       return;
     }

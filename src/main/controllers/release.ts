@@ -6,6 +6,9 @@ import {
   Release,
   Track,
   HasEntityTypeAndId,
+  ShowErrorBox,
+  OpenConfirmDialog,
+  Send,
 } from "@/types/types";
 import { didReleaseInfoChange, mapSeries } from "@/lib/utils";
 import {
@@ -35,9 +38,9 @@ import type { GetSetting } from "./settings";
 type ReleaseControllerParams = {
   withPath: (key: string, folderPath: string) => string;
   getSetting: GetSetting;
-  send: (channel: string, ...args: unknown[]) => void;
-  showErrorBox: (title: string, content: string) => void;
-  openConfirmDialog: (message: string, detail: string) => boolean;
+  send: Send;
+  showErrorBox: ShowErrorBox;
+  openConfirmDialog: OpenConfirmDialog;
   stateManager: StateManager;
   skipMove?: boolean;
 };
