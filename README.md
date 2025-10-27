@@ -23,7 +23,6 @@ TBD
 
 - [ ] rearrange app menu;
 - [ ] add playback and context icons on releases;
-- [ ] add double click handlers;
 
 ## License
 

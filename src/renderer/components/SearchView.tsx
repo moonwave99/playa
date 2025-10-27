@@ -127,6 +127,20 @@ function SearchResultsView({
     onLinkClick();
   }
 
+  function onDoubleClick(item: SearchResult) {
+    if (item.type === "release") {
+      api.system.playback({ release_id: item.id });
+      return;
+    }
+    if (item.type === "track") {
+      api.system.playback({
+        release_id: item.coverRelease.id,
+        track_id: item.id,
+      });
+      return;
+    }
+  }
+
   return (
     <div className={styles.searchResultsView} data-testid="SearchResultsView">
       {Object.entries(groupedResults).map(([type, entries], index, groups) => (
@@ -166,6 +180,7 @@ function SearchResultsView({
                   setContext(`modal:search:results(${index})`);
                   onClick(event);
                 }}
+                onDoubleClick={() => onDoubleClick(item)}
                 onContextMenu={() => api.menu.searchResult(item)}
                 onLinkClick={onLinkClick}
               />
@@ -184,6 +199,7 @@ type SearchResultViewProps = {
   selected: boolean;
   item: SearchResult;
   onClick: (event: MouseEvent) => void;
+  onDoubleClick: () => void;
   onLinkClick: () => void;
   onContextMenu?: () => void;
 };
@@ -195,6 +211,7 @@ function SearchResultView({
   selected,
   onContextMenu,
   onClick,
+  onDoubleClick,
   onLinkClick,
 }: SearchResultViewProps) {
   const { t } = useTranslation();
@@ -218,6 +235,7 @@ function SearchResultView({
           {...(type === "release"
             ? (item as SearchResult & { hash: string })
             : coverRelease)}
+          onDoubleClick={onDoubleClick}
           className={styles.coverWrapper}
         />
       );
