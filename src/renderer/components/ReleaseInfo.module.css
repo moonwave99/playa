@@ -10,6 +10,9 @@
   &.isInline {
     flex-wrap: nowrap;
   }
+  &.useDarkText {
+    color: black;
+  }
   @media screen and (max-width: 768px) {
     flex-direction: column;
     align-items: start;

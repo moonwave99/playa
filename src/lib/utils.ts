@@ -13,6 +13,7 @@ import type {
   ArtistWithReleases,
   GroupWithArtists,
   WithAdditionalArtists,
+  ColorInfo,
 } from "@/types/types";
 import { getCover } from "./links";
 
@@ -359,3 +360,13 @@ export function groupItemsByLetter(items: (Artist | Release)[]) {
 }
 
 export const pad = (n = 1) => (n < 10 ? `0${n}` : `${n}`);
+
+export function getColorInfo(release: Release): ColorInfo {
+  if (!release?.colorInfo) {
+    return {
+      color: null,
+      darkText: false,
+    };
+  }
+  return release.colorInfo as ColorInfo;
+}

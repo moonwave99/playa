@@ -1,15 +1,14 @@
-import { useState, useEffect, type MouseEvent } from "react";
+import { useState, type MouseEvent } from "react";
 import { useTranslation } from "react-i18next";
-import useDominantColor from "../hooks/useDominantColor";
 import useHover from "../hooks/useHover";
 import {
   getReleaseTitle,
   getCoverRelease,
   withStopPropagation,
   normalizeArtistDisplayName,
+  getColorInfo,
 } from "@/lib/utils";
 import {
-  getCover,
   getArtistLink,
   getReleaseLink,
   getCollectionLink,
@@ -65,30 +64,18 @@ export default function ListCard({
   onClick,
   onCoverClick,
   onContextMenu,
-  onColorChange,
   showMultipleCovers,
   onCoverDoubleClick,
   onLinkClick,
   testId,
 }: ListCardProps) {
   const { t } = useTranslation();
-  const [loadCount, setLoadCount] = useState(0);
+  const [loaded, setLoaded] = useState(false);
   const coverRelease = getCoverRelease(item);
 
-  const { color, useDarkText, loaded, fromCache } = useDominantColor(
-    coverRelease ? getCover(coverRelease.hash) : null,
-    loadCount
-  );
-
-  useEffect(() => {
-    if (!onColorChange) {
-      return;
-    }
-    onColorChange(useDarkText);
-    return () => onColorChange(false);
-  }, [useDarkText]);
-
   const { onMouseEnter, onMouseLeave, isHover } = useHover();
+
+  const { darkText, color } = getColorInfo(coverRelease);
 
   function getContent() {
     if (item.entityType === "Release") {
@@ -98,7 +85,7 @@ export default function ListCard({
             textOnly
             context={item}
             itemClassName={styles.artist}
-            useDarkText={useDarkText}
+            useDarkText={darkText}
             canDeleteFirstEntry={false}
             items={[item.artist, ...item.additionalArtists]}
             onLinkClick={onLinkClick}
@@ -115,6 +102,7 @@ export default function ListCard({
 
           <ReleaseInfo
             release={item as ReleaseWithArtistAndTracksAndSubreleases}
+            useDarkText={darkText}
             isInline
           />
         </>
@@ -170,11 +158,11 @@ export default function ListCard({
   }
 
   function onLoad() {
-    setLoadCount((prev) => prev + 1);
+    setLoaded(true);
   }
 
   function onError() {
-    setLoadCount((prev) => prev + 1);
+    setLoaded(true);
   }
 
   function shouldDisplayMultipleCovers() {
@@ -249,9 +237,8 @@ export default function ListCard({
         [styles.isArtist]: item.entityType === "Artist",
         [styles.selected]: selected,
         [styles.hasFocus]: selected && hasFocus,
-        [styles.useDarkText]: useDarkText,
+        [styles.useDarkText]: darkText,
         [styles.isHover]: isHover,
-        [styles.fromCache]: fromCache,
         [styles.hasMultipleCovers]: willDisplayMultipleCovers,
         className,
       })}

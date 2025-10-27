@@ -30,7 +30,7 @@ import {
 import { getArtist } from "../db/artist";
 import { getEntityPath, withConfirmDialog } from "../utils";
 import { hashRelease } from "../hash";
-import { searchCover, getImageFromURL } from "../covers";
+import { searchCover, getImageFromURL, updateCoverInfo } from "../covers";
 import { log } from "../logger";
 import { type StateManager } from "../stateManager";
 import type { GetSetting } from "./settings";
@@ -200,19 +200,21 @@ export function releaseController({
       return false;
     }
 
-    const { hash } = release;
-
     const COVERS_PATH = getSetting("COVERS_PATH") as string;
 
-    const success = await getImageFromURL({
+    const imagePath = await getImageFromURL({
       outputPath: COVERS_PATH,
-      hash,
+      hash: release.hash,
       url,
     });
-    if (success) {
+
+    if (imagePath) {
+      await updateCoverInfo(id, imagePath);
+      send("mutate", [["releases", id]]);
       send("coverUpdate", [release]);
     }
-    return success;
+
+    return !!imagePath;
   }
 
   const THROTTLE_INTERVAL = 500;
@@ -224,7 +226,7 @@ export function releaseController({
     const DISCOGS_KEY = getSetting("DISCOGS_KEY") as string;
     const DISCOGS_SECRET = getSetting("DISCOGS_SECRET") as string;
 
-    return await mapSeries(
+    await mapSeries(
       releases,
       async (release: ReleaseWithArtist & { tracks?: Track[] }) => {
         const pic = await searchCover(
@@ -242,6 +244,7 @@ export function releaseController({
         if (!pic) {
           return null;
         }
+        send("mutate", [["releases", release.id]]);
         send("coverUpdate", [release]);
         return pic;
       },
@@ -259,6 +262,13 @@ export function releaseController({
   async function deleteCover(release: Pick<Release, "id" | "hash">) {
     const cover = withPath("COVERS_PATH", `${release.hash}-cover.jpg`);
     await unlink(cover);
+    await prisma.release.update({
+      where: { id: release.id },
+      data: {
+        colorInfo: null,
+      },
+    });
+    send("mutate", [["releases", release.id]]);
     send("coverUpdate", [release]);
     return true;
   }

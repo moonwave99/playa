@@ -26,17 +26,19 @@ export function settingsController({ send }: SettingsControllerParams) {
       settings = await getSettings();
     } catch {
       log("settings:init", "no settings found");
-      const COVERS_PATH = path.join(
-        app.getPath("userData"),
-        "assets",
-        "covers"
-      );
-      await ensureDir(COVERS_PATH);
-      settings = await createSettings({
-        ...DEFAULT_SETTINGS,
-        COVERS_PATH,
-      });
+      settings = await createSettings(DEFAULT_SETTINGS);
       log("settings:init", "settings created", settings);
+    } finally {
+      if (!settings.COVERS_PATH || settings.COVERS_PATH === "COVERS_PATH") {
+        const COVERS_PATH = path.join(
+          app.getPath("userData"),
+          "assets",
+          "covers"
+        );
+        await ensureDir(COVERS_PATH);
+        await updateSettings({ ...settings, COVERS_PATH });
+      }
+      log("settings:init", "settings loaded", settings);
     }
   }
 

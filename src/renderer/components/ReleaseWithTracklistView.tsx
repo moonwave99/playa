@@ -11,8 +11,6 @@ import styles from "./ReleaseWithTracklistView.module.css";
 type ReleaseWithTracklistViewProps = {
   selected?: boolean;
   hasFocus?: boolean;
-  isSingle?: boolean;
-  hideCover?: boolean;
   hideSidebarInLightbox?: boolean;
   className?: string;
   release: ReleaseWithArtistAndTracksAndSubreleases;
@@ -29,8 +27,6 @@ type ReleaseWithTracklistViewProps = {
 export default function ReleaseWithTracklistView({
   selected,
   hasFocus,
-  isSingle = false,
-  hideCover = false,
   hideSidebarInLightbox = false,
   className = "",
   release,
@@ -41,7 +37,7 @@ export default function ReleaseWithTracklistView({
   onLinkClick,
 }: ReleaseWithTracklistViewProps) {
   const { id } = release;
-  const { setUseDarkText, setModalContents } = useStore();
+  const { setModalContents } = useStore();
 
   function onDiscContextMenu(id: number) {
     const foundRelease = [release, ...release.subReleases].find(
@@ -70,14 +66,11 @@ export default function ReleaseWithTracklistView({
             params: { release, hideSidebar: hideSidebarInLightbox },
           })
         }
-        onColorChange={isSingle ? setUseDarkText : null}
         testId="ReleaseWithTracklistHeader"
       />
       <Tracklist
-        isFlipped={hideCover && isSingle}
         release={release}
         selectedTrackId={selectedTrackId}
-        isNavigable={isSingle}
         context={context}
         onContextMenu={onDiscContextMenu}
         onDoubleClick={(track_id) =>

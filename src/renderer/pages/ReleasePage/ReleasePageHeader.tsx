@@ -1,5 +1,10 @@
+import { useEffect } from "react";
 import { ReleaseWithArtistAndTracksAndSubreleasesAndCollections } from "@/types/types";
-import { getReleaseFullTitle, getReleaseTitle } from "@/lib/utils";
+import {
+  getColorInfo,
+  getReleaseFullTitle,
+  getReleaseTitle,
+} from "@/lib/utils";
 import useStore from "@/renderer/store";
 import api from "@/renderer/api";
 
@@ -17,12 +22,23 @@ type ReleasePageHeaderProps = {
 };
 
 export default function ReleasePageHeader({ release }: ReleasePageHeaderProps) {
-  const { setModalContents } = useStore();
+  const { setModalContents, setUseDarkText } = useStore();
+
+  const { darkText, color } = getColorInfo(release);
+
+  useEffect(() => {
+    setUseDarkText(darkText);
+    return () => setUseDarkText(false);
+  }, [darkText]);
+
   return (
     <header
-      className={cx(styles.view)}
+      className={cx(styles.view, {
+        [styles.useDarkText]: darkText,
+      })}
       data-testid="ReleasePageHeader"
       onContextMenu={() => api.menu.release([release])}
+      style={{ backgroundColor: color || null }}
     >
       <Cover
         {...release}
@@ -52,8 +68,9 @@ export default function ReleasePageHeader({ release }: ReleasePageHeaderProps) {
         />
         <h1 className={styles.title}>{getReleaseTitle(release)}</h1>
         <div className={styles.infoWrapper}>
-          <ReleaseInfo release={release} isSingle />
+          <ReleaseInfo release={release} isSingle useDarkText={darkText} />
           <ContainingCollectionsList
+            useDarkText={darkText}
             id={release.id}
             className={styles.entityList}
             itemClassName={styles.entityListEntry}

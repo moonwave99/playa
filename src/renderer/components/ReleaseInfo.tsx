@@ -8,18 +8,25 @@ type ReleaseInfoProps = {
   release: ReleaseWithArtistAndTracksAndSubreleases;
   isSingle?: boolean;
   isInline?: boolean;
+  useDarkText?: boolean;
 };
 
 export default function ReleaseInfo({
   release,
   isSingle = false,
   isInline = true,
+  useDarkText = false,
 }: ReleaseInfoProps) {
   const { t } = useTranslation();
   const { type, year } = release;
   const { duration, trackCount } = getReleaseDuration(release);
   return (
-    <div className={cx(styles.view, { [styles.isInline]: isInline })}>
+    <div
+      className={cx(styles.view, {
+        [styles.isInline]: isInline,
+        [styles.useDarkText]: useDarkText,
+      })}
+    >
       <span>
         {type}, {year} {getDiscInfo(release)}
         {isSingle && (

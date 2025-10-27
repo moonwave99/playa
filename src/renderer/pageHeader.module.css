@@ -3,6 +3,14 @@
   align-items: center;
   gap: 1rem;
   border-bottom: 0.5px solid var(--neutral-border-color);
+
+  &.useDarkText {
+    .artist,
+    .title,
+    .releaseCount {
+      color: black;
+    }
+  }
 }
 
 .content {

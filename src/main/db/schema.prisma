@@ -39,6 +39,7 @@ model Release {
   hash              String       @unique
   path              String       @default("")
   completePath      String       @default("")
+  colorInfo         Json?        @default("null")
   type              ReleaseType  @default(Album)
   year              Int?
   discTitle         String?

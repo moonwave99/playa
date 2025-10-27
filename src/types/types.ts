@@ -308,3 +308,5 @@ export type MenuParams = {
   openModal: OpenModal;
   send: Send;
 };
+
+export type ColorInfo = { color: string; darkText: boolean };

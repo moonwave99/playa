@@ -23,8 +23,8 @@ TBD
 
 - [ ] rearrange app menu;
 - [ ] add context icons on releases;
-- [ ] refactor header color management;
-- [ ] refactor ListCard component;
+- [ ] display multiple covers on homepage lists;
+- [ ] display playback button in multiple covers component;
 
 ## License
 

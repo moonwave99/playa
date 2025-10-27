@@ -8,6 +8,7 @@ import { outputFile } from "fs-extra";
 beforeEach(() => {
   mockReset(searchCover);
   mockReset(getImageFromURL);
+  mockReset(updateCoverInfo);
 });
 
 export const getImageFromURL = vi.fn(
@@ -27,3 +28,5 @@ export const searchCover = vi.fn(async ({ release }: { release: Release }) => {
   }
   return `${release.hash}-cover.jpg`;
 });
+
+export const updateCoverInfo = vi.fn(async () => true);

@@ -1,8 +1,10 @@
-import { ArtistWithReleasesFull } from "@/types/types";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { ArtistWithReleasesFull } from "@/types/types";
 import useStore from "@/renderer/store";
 import api from "@/renderer/api";
 import {
+  getColorInfo,
   getCoverRelease,
   getReleaseFullTitle,
   normalizeArtistDisplayName,
@@ -21,16 +23,26 @@ type ArtistPageHeaderProps = {
 
 export default function ArtistPageHeader({ artist }: ArtistPageHeaderProps) {
   const { t } = useTranslation();
-  const { setModalContents } = useStore();
+  const { setModalContents, setUseDarkText } = useStore();
   const coverRelease = getCoverRelease(artist);
   const { id, name, releases, appearsIn } = artist;
   const releaseCount = releases.length + appearsIn.length;
 
+  const { darkText, color } = getColorInfo(coverRelease);
+
+  useEffect(() => {
+    setUseDarkText(darkText);
+    return () => setUseDarkText(false);
+  }, [darkText]);
+
   return (
     <header
-      className={cx(styles.view)}
+      className={cx(styles.view, {
+        [styles.useDarkText]: darkText,
+      })}
       data-testid="ArtistPageHeader"
       onContextMenu={() => api.menu.artist(artist)}
+      style={{ backgroundColor: color || null }}
     >
       <Cover
         {...coverRelease}
@@ -53,11 +65,13 @@ export default function ArtistPageHeader({ artist }: ArtistPageHeaderProps) {
             id={id}
             className={styles.entityList}
             itemClassName={styles.entityListEntry}
+            useDarkText={darkText}
           />
           <ContainingGroupsList
             id={id}
             className={styles.entityList}
             itemClassName={styles.entityListEntry}
+            useDarkText={darkText}
           />
         </div>
       </div>

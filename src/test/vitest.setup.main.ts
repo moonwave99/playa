@@ -41,6 +41,9 @@ vi.mock("electron", () => {
       })),
     },
     MenuItem: vi.fn(),
+    BrowserWindow: {
+      getAllWindows: () => [] as unknown,
+    },
     ipcMain: {
       handle: vi.fn(),
       on: vi.fn(),

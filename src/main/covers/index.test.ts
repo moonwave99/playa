@@ -1,6 +1,12 @@
+import prisma from "../db/prisma";
 import { getFakeArtist, getFakeReleasesForArtist } from "@/test/seed";
 import path from "node:path";
-import { searchCover, normalizeTitle, normalizeArtist } from ".";
+import {
+  searchCover,
+  normalizeTitle,
+  normalizeArtist,
+  updateCoverInfo,
+} from ".";
 
 const spyFetch = vi.spyOn(globalThis, "fetch");
 
@@ -19,6 +25,22 @@ vi.mock("image-downloader", () => ({
         return dest;
       }
       throw new Error();
+    },
+  },
+}));
+
+vi.mock("node-vibrant/node", () => ({
+  Vibrant: {
+    from: (imagePath: string) => {
+      return {
+        getPalette: () => {
+          return {
+            Vibrant: {
+              hex: imagePath.includes("dark") ? "#000000" : "#FFFFFF",
+            },
+          };
+        },
+      };
     },
   },
 }));
@@ -91,5 +113,21 @@ describe("normalizeArtist function", () => {
   });
   it("replaces the various artist name", () => {
     expect(normalizeArtist("_VV_AA_")).toBe("Various");
+  });
+});
+
+describe("updateCoverInfo function", () => {
+  it("updates the cover info for a dark image", async () => {
+    await prisma.release.create({ data: getFakeReleasesForArtist(1).at(0) });
+    await updateCoverInfo(1, "/path/to/dark-image.jpg");
+    const release = await prisma.release.findFirst({ where: { id: 1 } });
+    expect(release.colorInfo).toEqual({ color: "#000000", darkText: false });
+  });
+
+  it("updates the cover info for a dark image", async () => {
+    await prisma.release.create({ data: getFakeReleasesForArtist(1).at(0) });
+    await updateCoverInfo(1, "/path/to/light-image.jpg");
+    const release = await prisma.release.findFirst({ where: { id: 1 } });
+    expect(release.colorInfo).toEqual({ color: "#FFFFFF", darkText: true });
   });
 });
