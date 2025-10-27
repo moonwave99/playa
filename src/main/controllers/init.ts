@@ -133,7 +133,7 @@ export async function init(mainWindow: BrowserWindow) {
   const stateManager = new StateManager();
 
   const controllers = {
-    system: systemController({ withPath, getSetting }),
+    system: systemController({ withPath, getSetting, showErrorBox }),
     artist: artistController({
       withPath,
       send,

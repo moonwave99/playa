@@ -7,6 +7,7 @@ import { getRelease } from "../db/release";
 import {
   HasEntityTypeAndId,
   ReleaseWithArtistAndSubReleases,
+  ShowErrorBox,
   Track,
 } from "@/types/types";
 import type { GetSetting } from "./settings";
@@ -14,6 +15,7 @@ import type { GetSetting } from "./settings";
 type SystemControllerParams = {
   getSetting: GetSetting;
   withPath: (key: string, folderPath: string) => string;
+  showErrorBox: ShowErrorBox;
 };
 
 type PlaybackParams = {
@@ -28,6 +30,7 @@ type TrackWithCompleteRelease = Track & {
 export function systemController({
   getSetting,
   withPath,
+  showErrorBox,
 }: SystemControllerParams) {
   function getPaths(
     entity: ReleaseWithArtistAndSubReleases | TrackWithCompleteRelease
@@ -50,7 +53,13 @@ export function systemController({
 
   async function playback({ release_id, track_id }: PlaybackParams) {
     const PLAYER_PATH = getSetting("PLAYER_PATH") as string;
-
+    if (!PLAYER_PATH) {
+      showErrorBox(
+        "Application Error",
+        "You should set the Player path in settings"
+      );
+      return;
+    }
     if (track_id) {
       const track = await prisma.track.findFirst({
         where: { id: track_id },
@@ -87,6 +96,16 @@ export function systemController({
   }
 
   async function openTagger(release_id: number) {
+    const TAGGER_PATH = getSetting("TAGGER_PATH") as string;
+
+    if (!TAGGER_PATH) {
+      showErrorBox(
+        "Application Error",
+        "You should set the Tagger path in settings"
+      );
+      return;
+    }
+
     const release = await prisma.release.findFirst({
       where: { id: release_id },
       include: {
@@ -96,7 +115,7 @@ export function systemController({
     if (!release) {
       return;
     }
-    const TAGGER_PATH = getSetting("TAGGER_PATH") as string;
+
     await run("open", [
       "-a",
       TAGGER_PATH,
