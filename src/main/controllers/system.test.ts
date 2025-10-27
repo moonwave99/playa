@@ -1,5 +1,7 @@
 import prisma from "../db/prisma";
+import path from "node:path";
 import { clearPrisma } from "@/test/prisma-utils";
+import { testFs } from "@moonwave99/test-fs";
 import { getSetting, withPath } from "@/test/utils";
 import {
   getFakeArtist,
@@ -224,12 +226,25 @@ describe("system - startDrag, function", () => {
     expect(spy).not.toHaveBeenCalled();
   });
 
-  it("should pass the dragged folder to the drag event", async () => {
+  it("should pass the dragged folder to the drag event", async (context) => {
+    const directory = await testFs(
+      {
+        "/LIBRARY_PATH/A/Artist 1": {
+          "[Album]": {
+            "2000 - Release 1": {},
+          },
+        },
+      },
+      context.task.id
+    );
     const release = getFakeReleasesForArtist(1).at(0);
     await prisma.artist.create({ data: getFakeArtist(1) });
     await prisma.release.create({ data: release });
 
-    const { startDrag } = systemController(defaultParams);
+    const { startDrag } = systemController({
+      ...defaultParams,
+      withPath: (key, filePath) => path.join(directory, key, filePath),
+    });
     const event = {
       sender: {
         startDrag: vi.fn(),
@@ -239,7 +254,10 @@ describe("system - startDrag, function", () => {
     await startDrag(1, event);
     expect(spy).toHaveBeenCalledWith(
       expect.objectContaining({
-        file: "LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1",
+        file: path.join(
+          directory,
+          "LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1"
+        ),
       })
     );
   });

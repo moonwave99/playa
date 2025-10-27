@@ -6,14 +6,16 @@ import { SearchableEntities, SearchResult } from "@/types/types";
 import api from "../api";
 import useSearchInput from "../hooks/useSearchInput";
 import useSearch from "../query/useSearch";
+
 import ErrorView from "./ErrorView";
 import Loading from "./Loading";
 import Link from "./Link";
 import Cover from "./Cover";
+import ContextMenuButton from "./Buttons/ContextMenuButton";
 import List from "./List";
 
 import { MdOutlineSearch } from "react-icons/md";
-import { BsThreeDots } from "react-icons/bs";
+
 import cx from "clsx";
 import styles from "./SearchView.module.css";
 
@@ -300,13 +302,10 @@ function SearchResultView({
     >
       {renderCover()}
       <div className={styles.description}>{renderContent()}</div>
-      <button
-        type="button"
+      <ContextMenuButton
         className={styles.contextMenuButton}
         onClick={onContextMenu}
-      >
-        <BsThreeDots />
-      </button>
+      />
     </article>
   );
 }

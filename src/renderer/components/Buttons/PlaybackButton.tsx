@@ -7,7 +7,11 @@ type PlaybackButtonProps = ButtonHTMLAttributes<HTMLButtonElement>;
 
 export default function PlaybackButton(props: PlaybackButtonProps) {
   return (
-    <button {...props} className={cx(styles.button, props.className)}>
+    <button
+      {...props}
+      type="button"
+      className={cx(styles.button, props.className)}
+    >
       <IoPlay />
     </button>
   );

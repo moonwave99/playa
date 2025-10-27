@@ -1,7 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-
-const HOVER_DELAY = 500;
-const HOVER_TIMEOUT = 200;
+import { HOVER_DELAY, HOVER_TIMEOUT } from "@/constants";
 
 type UseHoverProps = {
   delay?: number;
@@ -15,7 +13,10 @@ type UseHover = {
 };
 
 export default function useHover(params?: UseHoverProps): UseHover {
-  const { delay, timeout } = params || { delay: HOVER_DELAY, timeout: HOVER_TIMEOUT };
+  const { delay, timeout } = params || {
+    delay: HOVER_DELAY,
+    timeout: HOVER_TIMEOUT,
+  };
   const enterTimer = useRef(null);
   const exitTimer = useRef(null);
   const [isHover, setHover] = useState(false);
@@ -29,21 +30,17 @@ export default function useHover(params?: UseHoverProps): UseHover {
 
   function onMouseEnter() {
     clearTimeout(exitTimer.current);
-    enterTimer.current = setTimeout(() => {
-      setHover(true);
-    }, delay);
+    enterTimer.current = setTimeout(() => setHover(true), delay);
   }
 
   function onMouseLeave() {
     clearTimeout(enterTimer.current);
-    exitTimer.current = setTimeout(() => {
-      setHover(false);
-    }, timeout);
+    exitTimer.current = setTimeout(() => setHover(false), timeout);
   }
 
   return {
     isHover,
     onMouseEnter,
     onMouseLeave,
-  }
+  };
 }

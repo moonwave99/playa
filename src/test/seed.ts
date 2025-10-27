@@ -227,9 +227,10 @@ export async function cleanup({
     return;
   }
   if (enableOnboarding) {
-    await prisma.settings.update({
-      where: { id: 1 },
-      data: DEFAULT_SETTINGS,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id, ...data } = DEFAULT_SETTINGS;
+    await prisma.settings.updateMany({
+      data,
     });
   }
 }
@@ -304,10 +305,28 @@ export async function seed(id?: string) {
   });
 
   await prisma.artist.update({
+    where: { id: 2 },
+    data: {
+      relatedArtists: {
+        connect: [{ id: 1 }],
+      },
+    },
+  });
+
+  await prisma.artist.update({
     where: { id: 3 },
     data: {
       relatedArtists: {
         connect: [{ id: 4 }],
+      },
+    },
+  });
+
+  await prisma.artist.update({
+    where: { id: 4 },
+    data: {
+      relatedArtists: {
+        connect: [{ id: 3 }],
       },
     },
   });

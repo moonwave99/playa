@@ -20,8 +20,9 @@ export type MultipleCoversProps = {
   isHover: boolean;
   onLoad: () => void;
   onError: () => void;
-  onCoverDoubleClick?: (release_id: number) => void;
   onMouseEnter: () => void;
+  onCoverDoubleClick?: (release_id: number) => void;
+  onPlaybackClick?: (release_id: number) => void;
 };
 
 export default function MultipleCovers({
@@ -32,6 +33,7 @@ export default function MultipleCovers({
   onError,
   onCoverDoubleClick,
   onMouseEnter,
+  onPlaybackClick,
 }: MultipleCoversProps) {
   const { coverRelease, otherReleases } = getCovers(item, count);
 
@@ -48,6 +50,7 @@ export default function MultipleCovers({
             className={styles.cover}
             title={`${release.artist.name} - ${getReleaseTitle(release)}`}
             onDoubleClick={() => onCoverDoubleClick(release.id)}
+            onPlaybackClick={() => onPlaybackClick(release.id)}
           />
         ))}
         <Cover
@@ -59,6 +62,7 @@ export default function MultipleCovers({
           onLoad={onLoad}
           onError={onError}
           onDoubleClick={() => onCoverDoubleClick(coverRelease.id)}
+          onPlaybackClick={() => onPlaybackClick(coverRelease.id)}
         />
       </>
     </div>

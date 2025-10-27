@@ -17,14 +17,14 @@ model Artist {
   normalizedName          String     @default("")
   hash                    String     @unique
   path                    String     @default("")
-  releases                Release[]
   coverReleaseId          Int?       @unique
   coverRelease            Release?   @relation("ArtistCover", fields: [coverReleaseId], references: [id])
+  coverGroups             Group[]    @relation("GroupCover")
+  releases                Release[]
+  appearsIn               Release[]  @relation("AppearsInRelease")
+  groups                  Group[]    @relation("GroupToArtist")
   relatedArtists          Artist[]   @relation("RelatedArtists")
   symmetricRelatedArtists Artist[]   @relation("RelatedArtists")
-  groups                  Group[]    @relation("GroupToArtist")
-  coverGroups             Group[]    @relation("GroupCover")
-  appearsIn               Release[]  @relation("AppearsInRelease")
 
   @@index([hash])
 }
@@ -39,22 +39,22 @@ model Release {
   hash              String       @unique
   path              String       @default("")
   completePath      String       @default("")
-  colorInfo         Json?        @default("null")
+  colorInfo         Json?
   type              ReleaseType  @default(Album)
   year              Int?
   discTitle         String?
   discNumber        Int?         @default(1)
   hideOnHomepage    Boolean?     @default(false)
   artist_id         Int
-  artist            Artist       @relation(fields: [artist_id], references: [id], onDelete: Cascade)
-  additionalArtists Artist[]     @relation("AppearsInRelease")
-  tracks            Track[]
-  collections       Collection[] @relation("CollectionToRelease")
   mainReleaseId     Int?
+  coverArtist       Artist?      @relation("ArtistCover")
+  coverCollections  Collection[] @relation("CollectionCover")
   mainRelease       Release?     @relation("ReleaseGroup", fields: [mainReleaseId], references: [id], onDelete: Cascade)
   subReleases       Release[]    @relation("ReleaseGroup")
-  coverCollections  Collection[] @relation("CollectionCover")
-  coverArtist       Artist?      @relation("ArtistCover")
+  artist            Artist       @relation(fields: [artist_id], references: [id], onDelete: Cascade)
+  tracks            Track[]
+  additionalArtists Artist[]     @relation("AppearsInRelease")
+  collections       Collection[] @relation("CollectionToRelease")
 
   @@index([hash])
 }
@@ -66,13 +66,13 @@ model Track {
   updatedAt             DateTime   @updatedAt
   title                 String
   normalizedTitle       String     @default("")
-  trackArtist           String?    @default("")
-  normalizedTrackArtist String?    @default("")
   hash                  String     @unique
   path                  String
   duration              Int
   releaseId             Int
   position              Int
+  trackArtist           String?    @default("")
+  normalizedTrackArtist String?    @default("")
   release               Release    @relation(fields: [releaseId], references: [id], onDelete: Cascade)
 
   @@index([hash])
@@ -84,9 +84,9 @@ model Collection {
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
   title          String
-  releases       Release[]  @relation("CollectionToRelease")
   coverReleaseId Int?
   coverRelease   Release?   @relation("CollectionCover", fields: [coverReleaseId], references: [id])
+  releases       Release[]  @relation("CollectionToRelease")
 }
 
 model Group {
@@ -96,13 +96,13 @@ model Group {
   updatedAt     DateTime   @updatedAt
   title         String
   description   String?
-  artists       Artist[]   @relation("GroupToArtist")
   coverArtistId Int?
   coverArtist   Artist?    @relation("GroupCover", fields: [coverArtistId], references: [id])
+  artists       Artist[]   @relation("GroupToArtist")
 }
 
 model Settings {
-  id                         Int     @id @default(1)
+  id                         Int     @id @default(autoincrement())
   SHOW_ONBOARDING_ON_STARTUP Boolean @default(true)
   USE_SMART_IMPORT           Boolean @default(false)
   PLAYER_PATH                String  @default("")

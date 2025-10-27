@@ -97,15 +97,6 @@
   .contextMenuButton {
     visibility: hidden;
     margin-left: auto;
-    appearance: none;
-    border: none;
-    background: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 2rem;
-    height: 2rem;
-    font-size: 1.1rem;
   }
 }
 

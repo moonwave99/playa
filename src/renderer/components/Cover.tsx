@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import type { Release } from "@/types/types";
 import { getCover } from "@/lib/links";
 import api from "../api";
-import PlaybackButton from "./PlaybackButton";
+import PlaybackButton from "./Buttons/PlaybackButton";
 
 import cx from "clsx";
 import styles from "./Cover.module.css";

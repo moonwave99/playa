@@ -160,19 +160,17 @@ export function systemController({
     if (!existsSync(file)) {
       return;
     }
-
     try {
-      const icon =
-        process.env.NODE_ENV === "TEST"
-          ? path.resolve("folder.png")
-          : path.join(process.resourcesPath, "folder.png");
+      const icon = ["test", "development"].includes(process.env.NODE_ENV)
+        ? path.resolve("folder.png")
+        : path.join(process.resourcesPath, "folder.png");
 
       event.sender.startDrag({
         file,
         icon,
       });
     } catch (error) {
-      log("system:drag", error);
+      console.log("system:drag", error);
     }
   }
 

@@ -75,6 +75,7 @@ export default function LatestEntriesView<T extends Item>({
           {entries.map((x, index) => (
             <li key={x.id} data-id={`item-${entity}-${index}`}>
               <ListCard
+                showMultipleCovers
                 onContextMenu={() => onContextMenu(x)}
                 hasFocus={selectedIndex === index}
                 selected={selectedIndex === index}

@@ -22,9 +22,8 @@ TBD
 ## Tasks
 
 - [ ] rearrange app menu;
-- [ ] add context icons on releases;
-- [ ] display multiple covers on homepage lists;
-- [ ] display playback button in multiple covers component;
+- [ ] display multiple covers for multiple discs releases;
+- [ ] display multiple covers in search results;
 
 ## License
 

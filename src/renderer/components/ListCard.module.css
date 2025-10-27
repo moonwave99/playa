@@ -8,13 +8,7 @@
   overflow: hidden;
   border-radius: 0.25rem;
   background-color: var(--default-listcard-background-color);
-
-  &.fromCache {
-    transition: box-shadow 0.1s ease-in-out;
-    .cover img {
-      transition: opacity 0.1s ease-in-out;
-    }
-  }
+  padding-right: 0.5rem;
 
   &.isHover.hasMultipleCovers {
     overflow-x: auto;
@@ -24,6 +18,15 @@
       transition-delay: 0s;
     }
   }
+
+  &:hover .contextMenu {
+    visibility: visible;
+  }
+}
+
+.contextMenu {
+  margin-left: auto;
+  visibility: hidden;
 }
 
 .header {

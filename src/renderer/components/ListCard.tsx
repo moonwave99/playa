@@ -32,6 +32,7 @@ import MultipleCovers, { type MultipleCoversProps } from "./MultipleCovers";
 
 import cx from "clsx";
 import styles from "./ListCard.module.css";
+import ContextMenuButton from "./Buttons/ContextMenuButton";
 
 export type Item =
   | CollectionWithReleases
@@ -178,11 +179,11 @@ export default function ListCard({
     return item.releases.length > 1;
   }
 
-  function getOnPlaybackClick() {
+  function getOnPlaybackClick(id: number) {
     if (item.entityType !== "Release") {
       return null;
     }
-    return () => api.system.playback({ release_id: item.id });
+    return () => api.system.playback({ release_id: id });
   }
 
   const willDisplayMultipleCovers = shouldDisplayMultipleCovers();
@@ -197,6 +198,7 @@ export default function ListCard({
           onCoverDoubleClick={onCoverDoubleClick}
           onMouseEnter={onMouseEnter}
           isHover={isHover}
+          onPlaybackClick={getOnPlaybackClick}
         />
       );
     }
@@ -212,7 +214,7 @@ export default function ListCard({
           )}`}
           onLoad={onLoad}
           onError={onError}
-          onPlaybackClick={getOnPlaybackClick()}
+          onPlaybackClick={getOnPlaybackClick(item.id)}
         />
       );
     }
@@ -249,6 +251,10 @@ export default function ListCard({
     >
       {renderCover()}
       <div className={styles.content}>{getContent()}</div>
+      <ContextMenuButton
+        onClick={onContextMenu}
+        className={styles.contextMenu}
+      />
     </div>
   );
 }
