@@ -19,6 +19,7 @@ const config: ForgeConfig = {
       "./node_modules/.prisma",
       "./node_modules/@prisma/client",
       "./src/main/db/data.db",
+      "./folder.png",
     ],
   },
   rebuildConfig: {},
