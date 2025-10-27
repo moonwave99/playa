@@ -53,6 +53,9 @@ export default function EntityList({
   textOnly,
 }: EntityListProps) {
   const { t } = useTranslation();
+
+  console.log(items.map(getTitle));
+
   function showDeleteButton(index: number) {
     if (!onDelete) {
       return false;

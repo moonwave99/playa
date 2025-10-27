@@ -50,7 +50,7 @@
   overflow-x: auto;
   height: var(--latest-releases-height);
 
-  li {
+  > li {
     width: 15rem;
   }
 }
