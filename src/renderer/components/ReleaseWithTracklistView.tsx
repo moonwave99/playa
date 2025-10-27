@@ -11,7 +11,6 @@ import styles from "./ReleaseWithTracklistView.module.css";
 type ReleaseWithTracklistViewProps = {
   selected?: boolean;
   hasFocus?: boolean;
-  hideSidebarInLightbox?: boolean;
   className?: string;
   release: ReleaseWithArtistAndTracksAndSubreleases;
   selectedTrackId?: number;
@@ -27,7 +26,6 @@ type ReleaseWithTracklistViewProps = {
 export default function ReleaseWithTracklistView({
   selected,
   hasFocus,
-  hideSidebarInLightbox = false,
   className = "",
   release,
   selectedTrackId,
@@ -63,7 +61,7 @@ export default function ReleaseWithTracklistView({
         onCoverClick={() =>
           setModalContents({
             name: "lightbox",
-            params: { release, hideSidebar: hideSidebarInLightbox },
+            params: { release },
           })
         }
         testId="ReleaseWithTracklistHeader"
