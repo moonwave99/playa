@@ -235,6 +235,7 @@ export default function Modal({ setContext }: ModalProps) {
           onClose={closeModal}
           id={(params.release as HasId).id}
           context={params.context as ReleaseWithArtist[]}
+          hideSidebar={!!params.hideSidebar}
         />
       );
     }

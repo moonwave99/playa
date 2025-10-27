@@ -107,6 +107,7 @@ export default function ListCard({
             context={item}
             className={isSingle ? styles.singleArtistList : null}
             itemClassName={isSingle ? styles.singleArtist : styles.artist}
+            linkClassName={isSingle ? styles.link : null}
             useDarkText={useDarkText}
             canDeleteFirstEntry={false}
             items={[item.artist, ...item.additionalArtists]}

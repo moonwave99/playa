@@ -57,4 +57,7 @@
 .info {
   flex: 1;
   width: 400px;
+  &.hideSidebar {
+    display: none;
+  }
 }

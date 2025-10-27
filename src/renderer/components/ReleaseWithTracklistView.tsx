@@ -13,6 +13,7 @@ type ReleaseWithTracklistViewProps = {
   hasFocus?: boolean;
   isSingle?: boolean;
   hideCover?: boolean;
+  hideSidebarInLightbox?: boolean;
   className?: string;
   release: ReleaseWithArtistAndTracksAndSubreleases;
   selectedTrackId?: number;
@@ -30,6 +31,7 @@ export default function ReleaseWithTracklistView({
   hasFocus,
   isSingle = false,
   hideCover = false,
+  hideSidebarInLightbox = false,
   className = "",
   release,
   selectedTrackId,
@@ -65,7 +67,10 @@ export default function ReleaseWithTracklistView({
         isSingle={isSingle}
         onLinkClick={onLinkClick}
         onCoverClick={() =>
-          setModalContents({ name: "lightbox", params: { release } })
+          setModalContents({
+            name: "lightbox",
+            params: { release, hideSidebar: hideSidebarInLightbox },
+          })
         }
         onColorChange={isSingle ? setUseDarkText : null}
         testId="ReleaseWithTracklistHeader"

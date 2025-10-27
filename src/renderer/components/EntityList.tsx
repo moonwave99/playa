@@ -24,6 +24,7 @@ export type EntityListProps = {
   useDarkText?: boolean;
   className?: string;
   itemClassName?: string;
+  linkClassName?: string;
   canDeleteFirstEntry?: boolean;
   onDelete?: (id: number) => void;
   onLinkClick?: () => void;
@@ -44,6 +45,7 @@ export default function EntityList({
   useDarkText,
   className,
   itemClassName,
+  linkClassName,
   canDeleteFirstEntry = true,
   onDelete,
   onLinkClick,
@@ -77,7 +79,7 @@ export default function EntityList({
             })}
           >
             <Link
-              className={styles.link}
+              className={cx(styles.link, linkClassName)}
               title={`[${item.id}]`}
               to={getEntityLink(item)}
               onClick={onLinkClick}

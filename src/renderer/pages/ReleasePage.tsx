@@ -53,6 +53,7 @@ export default function ReleasePage() {
         isSingle
         release={release}
         selectedTrackId={selectedTrackId}
+        hideSidebarInLightbox
       />
     </div>
   );

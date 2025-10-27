@@ -109,6 +109,11 @@
 
 .singleArtist {
   font-size: 1.2rem;
+
+  .link {
+    font-weight: normal;
+  }
+
   &:hover {
     text-decoration: underline;
   }
@@ -126,7 +131,7 @@
   background-color: transparent;
 
   &:not(.hideCover) .content {
-    margin-top: 2.5rem;
+    margin-top: 2rem;
   }
 
   .content {

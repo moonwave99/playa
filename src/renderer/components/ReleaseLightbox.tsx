@@ -14,12 +14,14 @@ type ReleaseLightboxProps = {
   id: number;
   context?: ReleaseWithArtist[];
   onClose: () => void;
+  hideSidebar?: boolean;
 };
 
 export default function ReleaseLightbox({
   id,
   context,
   onClose,
+  hideSidebar = false,
 }: ReleaseLightboxProps) {
   const { t } = useTranslation();
   const [currentId, setCurrentId] = useState(id);
@@ -46,11 +48,11 @@ export default function ReleaseLightbox({
     context: "modal",
     handlers: {
       " ": withPrevent(onClose),
+      ArrowDown: () => setContext("modal:list"),
       ...(context?.length > 1
         ? {
             ArrowRight: showNextRelease,
             ArrowLeft: showPrevRelease,
-            ArrowDown: () => setContext("modal:list"),
           }
         : {}),
     },
@@ -72,7 +74,7 @@ export default function ReleaseLightbox({
           <>
             <Cover {...release} className={styles.cover} />
             <ReleaseWithTracklistView
-              className={styles.info}
+              className={cx(styles.info, { [styles.hideSidebar]: hideSidebar })}
               isSingle
               hideCover
               release={release}
