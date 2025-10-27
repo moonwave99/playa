@@ -133,7 +133,7 @@ export const releaseMenu =
           : { type: "separator" },
         { type: "separator" },
         {
-          label: `Search Release on RYM`,
+          label: `Search Release on RateYourMusic`,
           click: () => searchReleaseOnRYM(release),
         },
         {

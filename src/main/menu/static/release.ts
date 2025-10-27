@@ -135,7 +135,7 @@ export function getReleaseMenu({ controllers, stateManager }: GetMenuParams) {
     },
     {
       id: "searchReleaseOnRym",
-      label: "Search Release on RYM",
+      label: "Search Release on RateYourMusic",
       accelerator: "Shift+R",
       click: async () =>
         searchReleaseOnRYM(
