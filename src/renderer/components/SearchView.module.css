@@ -67,6 +67,12 @@
     .contextMenuButton {
       visibility: visible;
     }
+    .coverWrapper {
+      .playbackButton {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
   }
 
   &.isDraggable {
@@ -184,30 +190,6 @@
 
   &:hover {
     text-decoration: underline;
-  }
-}
-
-.dragHandle {
-  margin-left: auto;
-  flex-shrink: 0;
-}
-
-.showAll {
-  display: flex;
-  align-items: center;
-  justify-content: end;
-  color: var(--secondary-color);
-  background-color: var(--background-color);
-  font-size: 0.7rem;
-  height: 2rem;
-  padding: 0 1rem;
-  border-radius: 0.25rem;
-  appearance: none;
-  border: none;
-  height: 1.2rem;
-
-  &:hover {
-    opacity: 0.8;
   }
 }
 
