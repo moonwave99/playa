@@ -15,11 +15,14 @@ test.describe("Delete Collection", () => {
 
     await expect(page.locator('[data-testid="CollectionsPage"]')).toBeVisible();
 
+    const collectionsList = page.locator('[data-testid="CollectionsList"]');
+
+    await expect(collectionsList.locator('[data-hasfocus="true"]')).toHaveCount(
+      1
+    );
     await clickMenuItemById("deleteSelectedCollections");
 
-    await expect(
-      page.locator('[data-testid="CollectionsList"]')
-    ).not.toContainText("Collection 1");
+    await expect(collectionsList).not.toContainText("Collection 1");
 
     await page.getByRole("button", { name: "Open Search" }).click();
     await page.getByPlaceholder("Enter search term").fill("Release 1-1");

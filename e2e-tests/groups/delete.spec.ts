@@ -14,11 +14,12 @@ test.describe("Delete Group", () => {
     );
 
     await expect(page.locator('[data-testid="GroupsPage"]')).toBeVisible();
+    const groupsList = page.locator('[data-testid="GroupsList"]');
+
+    await expect(groupsList.locator('[data-hasfocus="true"]')).toHaveCount(1);
     await clickMenuItemById("deleteSelectedGroups");
 
-    await expect(page.locator('[data-testid="GroupsList"]')).not.toContainText(
-      "Group 1"
-    );
+    await expect(groupsList).not.toContainText("Group 1");
 
     await page.getByRole("button", { name: "Open Search" }).click();
     await page.getByPlaceholder("Enter search term").fill("Artist 1");
