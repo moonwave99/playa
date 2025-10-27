@@ -4,8 +4,8 @@
   flex: 1;
 }
 
-.page > * {
-  margin: 0;
+.singlePage {
+  gap: 0.25rem;
 }
 
 .header {

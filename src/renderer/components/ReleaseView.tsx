@@ -63,6 +63,7 @@ export default function ReleaseView({
           i18nkey="entityList.actions.delete.additionalArtists"
           textOnly
           className={styles.artists}
+          linkClassName={styles.artistsLink}
           canDeleteFirstEntry={false}
           items={[artist, ...additionalArtists]}
         />

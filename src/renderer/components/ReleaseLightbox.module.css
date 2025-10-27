@@ -1,16 +1,20 @@
 .view {
+  --sidebar-width: 400px;
+  --lightbox-size: 90vw;
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
+  width: var(--lightbox-size);
 }
 
 .cover {
-  height: var(--cover-lightbox-size);
-  width: var(--cover-lightbox-size);
+  width: calc(var(--lightbox-size) - var(--sidebar-width));
+  height: calc(var(--lightbox-size) - var(--sidebar-width));
   aspect-ratio: 1;
   border-radius: 0;
+  max-width: 100%;
 }
 
 .button {
@@ -51,13 +55,28 @@
   background-color: var(--default-cover-background-color);
   overflow: hidden;
   border-radius: 0.5rem;
-  height: var(--cover-lightbox-size);
 }
 
-.info {
+.sidebar {
   flex: 1;
-  width: 400px;
-  &.hideSidebar {
-    display: none;
+  width: var(--sidebar-width);
+}
+
+.header {
+  padding: 2rem 1rem 1rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  .title {
+    font-size: 1.2rem;
+    letter-spacing: -0.035rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .artist {
+    font-size: 1.2rem;
+    font-weight: 400;
+    letter-spacing: -0.035rem;
   }
 }

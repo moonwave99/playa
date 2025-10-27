@@ -30,7 +30,7 @@ test.describe("Releases", () => {
     await page.keyboard.press("Escape");
     await expect(modal).not.toBeVisible();
 
-    const header = page.locator('[data-testid="ReleaseWithTracklistHeader"]');
+    const header = page.locator('[data-testid="ReleasePageHeader"]');
 
     await expect(header).toContainText("Artist 1");
     await expect(header).toContainText("Artist 2");

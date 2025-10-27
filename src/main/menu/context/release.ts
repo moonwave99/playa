@@ -10,6 +10,7 @@ import { buildMenu, getCoverEntityEntry } from "../menu";
 import {
   searchReleaseOnDiscogs,
   searchReleaseOnRYM,
+  searchReleaseOnYouTube,
 } from "@/lib/external_links";
 
 function getRemoveFromCollectionEntry(
@@ -138,6 +139,10 @@ export const releaseMenu =
         {
           label: `Search Release on Discogs`,
           click: () => searchReleaseOnDiscogs(release),
+        },
+        {
+          label: `Search Release on YouTube`,
+          click: () => searchReleaseOnYouTube(release),
         },
         { type: "separator" },
         {

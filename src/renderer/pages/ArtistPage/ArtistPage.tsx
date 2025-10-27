@@ -5,18 +5,18 @@ import useArtist from "@/renderer/query/useArtist";
 import api from "@/renderer/api";
 import { useSelect } from "@/renderer/hooks/useSelect";
 import { getReleaseContextMenuParams } from "@/lib/utils";
-import useStore from "@/renderer/store";
+
+import ArtistPageHeader from "./ArtistPageHeader";
 import ReleaseList from "@/renderer/components/ReleaseList";
-import ListCard from "@/renderer/components/ListCard";
 import Loading from "@/renderer/components/Loading";
 import ErrorView from "@/renderer/components/ErrorView";
 
-import styles from "./Page.module.css";
+import cx from "clsx";
+import styles from "../Page.module.css";
 
 export default function ArtistPage() {
   const { t } = useTranslation();
   const { id } = useParams();
-  const { setUseDarkText } = useStore();
 
   const { isPending, error, artist } = useArtist(+id);
 
@@ -47,16 +47,11 @@ export default function ArtistPage() {
 
   return (
     <div
-      className={styles.page}
+      className={cx(styles.page, styles.singlePage)}
       onContextMenu={() => api.menu.artist(artist)}
       data-testid="ArtistPage"
     >
-      <ListCard
-        isSingle
-        item={artist}
-        onColorChange={setUseDarkText}
-        testId="ArtistPageHeader"
-      />
+      <ArtistPageHeader artist={artist} />
       {!artist?.releases.length ? (
         <div className={styles.placeholder}>
           {t("placeholders.emptyListForContainer", {

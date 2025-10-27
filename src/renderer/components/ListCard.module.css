@@ -16,51 +16,13 @@
     }
   }
 
-  &.hideCover {
-    padding: 1rem 1rem;
-    border-bottom: none;
-  }
-
-  &:has(.multipleCovers.isHover) {
+  &.isHover.hasMultipleCovers {
     overflow-x: auto;
 
     .content {
       transform: translateY(calc(var(--release-group-height) * -1));
       transition-delay: 0s;
     }
-  }
-
-  &.canDrop {
-    background-color: var(--accent-color-light);
-    position: relative;
-
-    &::after {
-      content: " ";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 100%;
-      background-repeat: no-repeat;
-      background-image: linear-gradient(
-        90deg,
-        transparent 0%,
-        var(--droppable-glow-color) 50%,
-        transparent 100%
-      );
-      transform: translateX(-100%);
-      animation-name: canDrop;
-      animation-direction: normal;
-      animation-duration: 1.5s;
-      animation-timing-function: ease-in-out;
-      animation-iteration-count: infinite;
-    }
-  }
-}
-
-@keyframes canDrop {
-  100% {
-    transform: translateX(100%);
   }
 }
 
@@ -97,6 +59,7 @@
   letter-spacing: -0.025rem;
   color: var(--primary-color);
   text-wrap: balance;
+  font-weight: normal;
 
   &:hover {
     text-decoration: underline;
@@ -122,30 +85,6 @@
 .isArtist {
   .content {
     gap: 0.75rem;
-  }
-}
-
-.isSingle {
-  border-radius: 0;
-  border-bottom: 0.5px solid var(--neutral-border-color);
-  background-color: transparent;
-
-  &:not(.hideCover) .content {
-    margin-top: 2rem;
-  }
-
-  .content {
-    margin-top: 1rem;
-  }
-
-  .title {
-    font-size: 1.2rem;
-  }
-
-  .cover,
-  .ghost {
-    width: var(--release-tracklist-single-cover-size);
-    height: var(--release-tracklist-single-cover-size);
   }
 }
 
@@ -199,124 +138,6 @@
 
 .releaseDurationBlock {
   width: 8rem;
-}
-
-.multipleCovers {
-  height: var(--release-group-height);
-  position: relative;
-
-  .cover:not(:first-of-type) {
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
-
-  .cover:nth-child(1) {
-    scale: 1;
-    transition: scale 0.2s ease-in-out;
-  }
-
-  .cover:nth-child(2) {
-    transition:
-      transform 0.2s ease-in-out,
-      scale 0.2s ease-in-out;
-  }
-
-  .cover:nth-child(3) {
-    transition:
-      transform 0.3s ease-in-out,
-      scale 0.2s ease-in-out;
-  }
-
-  .cover:nth-child(4) {
-    transition:
-      transform 0.4s ease-in-out,
-      scale 0.2s ease-in-out;
-  }
-
-  .cover:nth-child(5) {
-    transition:
-      transform 0.5s ease-in-out,
-      scale 0.2s ease-in-out;
-  }
-
-  .cover:nth-child(6) {
-    transition:
-      transform 0.6s ease-in-out,
-      scale 0.2s ease-in-out;
-  }
-
-  .cover:nth-child(7) {
-    transition:
-      transform 0.7s ease-in-out,
-      scale 0.2s ease-in-out;
-  }
-
-  .cover:nth-child(8) {
-    transition:
-      transform 0.8s ease-in-out,
-      scale 0.2s ease-in-out;
-  }
-
-  &.isHover {
-    .cover {
-      scale: 0.9;
-      border-radius: 0.15rem;
-
-      &:hover {
-        opacity: 0.9;
-      }
-    }
-
-    .cover:nth-child(2) {
-      transform: translateX(
-        calc(var(--release-group-height) + var(--multiple-covers-gap))
-      );
-      scale: 0.9;
-    }
-
-    .cover:nth-child(3) {
-      transform: translateX(
-        calc(2 * (var(--release-group-height) + var(--multiple-covers-gap)))
-      );
-      scale: 0.9;
-    }
-
-    .cover:nth-child(4) {
-      transform: translateX(
-        calc(3 * (var(--release-group-height) + var(--multiple-covers-gap)))
-      );
-      scale: 0.9;
-    }
-
-    .cover:nth-child(5) {
-      transform: translateX(
-        calc(4 * (var(--release-group-height) + var(--multiple-covers-gap)))
-      );
-      scale: 0.9;
-    }
-
-    .cover:nth-child(6) {
-      transform: translateX(
-        calc(5 * (var(--release-group-height) + var(--multiple-covers-gap)))
-      );
-      scale: 0.9;
-    }
-
-    .cover:nth-child(7) {
-      transform: translateX(
-        calc(6 * (var(--release-group-height) + var(--multiple-covers-gap)))
-      );
-      scale: 0.9;
-    }
-
-    .cover:nth-child(8) {
-      transform: translateX(
-        calc(7 * (var(--release-group-height) + var(--multiple-covers-gap)))
-      );
-      scale: 0.9;
-    }
-  }
 }
 
 .entityList {

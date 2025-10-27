@@ -43,8 +43,11 @@
 
 .artists {
   overflow: hidden;
-  a:hover {
-    text-decoration: underline;
+  .artistsLink {
+    font-weight: bold;
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }
 

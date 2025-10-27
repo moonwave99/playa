@@ -3,12 +3,10 @@ import { useTranslation } from "react-i18next";
 import useDominantColor from "../hooks/useDominantColor";
 import useHover from "../hooks/useHover";
 import {
-  getDiscInfo,
   getReleaseTitle,
   getCoverRelease,
   withStopPropagation,
   normalizeArtistDisplayName,
-  getReleaseDuration,
 } from "@/lib/utils";
 import {
   getCover,
@@ -27,12 +25,11 @@ import type {
 
 import api from "../api";
 
+import ReleaseInfo from "./ReleaseInfo";
 import EntityList from "./EntityList";
 import Cover from "./Cover";
 import Link from "./Link";
-import RelatedArtistsList from "./RelatedArtistsList";
-import ContainingCollectionsList from "./ContainingCollectionsList";
-import ContainingGroupsList from "./ContainingGroupsList";
+import MultipleCovers, { type MultipleCoversProps } from "./MultipleCovers";
 
 import cx from "clsx";
 import styles from "./ListCard.module.css";
@@ -49,8 +46,6 @@ type ListCardProps = {
   className?: string;
   selected?: boolean;
   hasFocus?: boolean;
-  isSingle?: boolean;
-  hideCover?: boolean;
   onClick?: (event: MouseEvent) => void;
   onCoverClick?: () => void;
   onDoubleClick?: () => void;
@@ -67,8 +62,6 @@ export default function ListCard({
   className = "",
   selected,
   hasFocus,
-  isSingle,
-  hideCover,
   onClick,
   onCoverClick,
   onContextMenu,
@@ -84,8 +77,7 @@ export default function ListCard({
 
   const { color, useDarkText, loaded, fromCache } = useDominantColor(
     coverRelease ? getCover(coverRelease.hash) : null,
-    loadCount,
-    hideCover
+    loadCount
   );
 
   useEffect(() => {
@@ -105,89 +97,46 @@ export default function ListCard({
           <EntityList
             textOnly
             context={item}
-            className={isSingle ? styles.singleArtistList : null}
-            itemClassName={isSingle ? styles.singleArtist : styles.artist}
-            linkClassName={isSingle ? styles.link : null}
+            itemClassName={styles.artist}
             useDarkText={useDarkText}
             canDeleteFirstEntry={false}
             items={[item.artist, ...item.additionalArtists]}
             onLinkClick={onLinkClick}
-            onDelete={
-              !isSingle
-                ? null
-                : (artist_id) =>
-                    api.release.removeAdditionalArtist({
-                      release_id: item.id,
-                      artist_id,
-                    })
-            }
           />
-          {isSingle ? (
-            <span className={styles.title} title={`[${item.id}]`}>
-              {getReleaseTitle(item)}
-            </span>
-          ) : (
-            <Link
-              className={styles.title}
-              to={getReleaseLink(item)}
-              title={`[${item.id}]`}
-              onClick={onLinkClick}
-            >
-              {getReleaseTitle(item)}
-            </Link>
-          )}
+
+          <Link
+            className={styles.title}
+            to={getReleaseLink(item)}
+            title={`[${item.id}]`}
+            onClick={onLinkClick}
+          >
+            {getReleaseTitle(item)}
+          </Link>
+
           <ReleaseInfo
             release={item as ReleaseWithArtistAndTracksAndSubreleases}
-            isSingle={isSingle}
-            isInline={!hideCover}
-            useDarkText={useDarkText}
-            onLinkClick={onLinkClick}
+            isInline
           />
         </>
       );
     }
 
     if (item.entityType === "Artist") {
-      const releaseCount = isSingle
-        ? item.releases.length
-        : item.releases.length + item.appearsIn.length;
+      const releaseCount = item.releases.length + item.appearsIn.length;
       return (
-        <>
-          <header className={styles.header}>
-            {isSingle ? (
-              <span className={styles.title} title={`[${item.id}]`}>
-                {normalizeArtistDisplayName(item.name)}
-              </span>
-            ) : (
-              <Link
-                className={styles.title}
-                to={getArtistLink(item)}
-                title={`[${item.id}]`}
-              >
-                {normalizeArtistDisplayName(item.name)}
-              </Link>
-            )}
-            <div className={styles.info}>
-              {t("components.ListCard.releaseCount", { count: releaseCount })}
-            </div>
-          </header>
-          {isSingle && (
-            <div className={styles.listInfo}>
-              <RelatedArtistsList
-                useDarkText={useDarkText}
-                id={item.id}
-                className={styles.entityList}
-                itemClassName={styles.entityListEntry}
-              />
-              <ContainingGroupsList
-                useDarkText={useDarkText}
-                id={item.id}
-                className={styles.entityList}
-                itemClassName={styles.entityListEntry}
-              />
-            </div>
-          )}
-        </>
+        <header className={styles.header}>
+          <Link
+            className={styles.title}
+            to={getArtistLink(item)}
+            title={`[${item.id}]`}
+          >
+            {normalizeArtistDisplayName(item.name)}
+          </Link>
+
+          <div className={styles.info}>
+            {t("components.ListCard.releaseCount", { count: releaseCount })}
+          </div>
+        </header>
       );
     }
 
@@ -248,12 +197,10 @@ export default function ListCard({
     return () => api.system.playback({ release_id: item.id });
   }
 
-  function renderCover() {
-    if (hideCover) {
-      return null;
-    }
+  const willDisplayMultipleCovers = shouldDisplayMultipleCovers();
 
-    if (shouldDisplayMultipleCovers()) {
+  function renderCover() {
+    if (willDisplayMultipleCovers) {
       return (
         <MultipleCovers
           item={item as MultipleCoversProps["item"]}
@@ -289,7 +236,7 @@ export default function ListCard({
     if (!onContextMenu) {
       return null;
     }
-    return isSingle ? onContextMenu : withStopPropagation(onContextMenu);
+    return withStopPropagation(onContextMenu);
   }
 
   return (
@@ -300,13 +247,12 @@ export default function ListCard({
       className={cx(styles.listCard, {
         [styles.loaded]: loaded,
         [styles.isArtist]: item.entityType === "Artist",
-        [styles.isSingle]: isSingle,
         [styles.selected]: selected,
         [styles.hasFocus]: selected && hasFocus,
         [styles.useDarkText]: useDarkText,
         [styles.isHover]: isHover,
-        [styles.hideCover]: hideCover,
         [styles.fromCache]: fromCache,
+        [styles.hasMultipleCovers]: willDisplayMultipleCovers,
         className,
       })}
       onClick={onClick}
@@ -316,139 +262,6 @@ export default function ListCard({
     >
       {renderCover()}
       <div className={styles.content}>{getContent()}</div>
-    </div>
-  );
-}
-
-type MultipleCoversProps = {
-  item:
-    | CollectionWithReleases
-    | ArtistWithReleasesAndAppearances
-    | GroupWithArtists;
-  count?: number;
-  isHover: boolean;
-  onLoad: () => void;
-  onError: () => void;
-  onCoverDoubleClick?: (release_id: number) => void;
-  onMouseEnter: () => void;
-};
-
-function MultipleCovers({
-  item,
-  count = 5,
-  isHover,
-  onLoad,
-  onError,
-  onCoverDoubleClick,
-  onMouseEnter,
-}: MultipleCoversProps) {
-  const { coverRelease, otherReleases } = getCovers(item, count);
-
-  return (
-    <div
-      onMouseEnter={onMouseEnter}
-      className={cx(styles.multipleCovers, { [styles.isHover]: isHover })}
-    >
-      <>
-        {otherReleases.map((release) => (
-          <Cover
-            key={release.id}
-            {...release}
-            className={styles.cover}
-            title={`${release.artist.name} - ${getReleaseTitle(release)}`}
-            onDoubleClick={() => onCoverDoubleClick(release.id)}
-          />
-        ))}
-        <Cover
-          {...coverRelease}
-          className={styles.cover}
-          title={`${coverRelease.artist.name} - ${getReleaseTitle(
-            coverRelease
-          )}`}
-          onLoad={onLoad}
-          onError={onError}
-          onDoubleClick={() => onCoverDoubleClick(coverRelease.id)}
-        />
-      </>
-    </div>
-  );
-}
-
-type GetCovers = {
-  coverRelease: ReleaseWithArtistAndSubReleases;
-  otherReleases: ReleaseWithArtistAndSubReleases[];
-};
-
-function getCovers(item: MultipleCoversProps["item"], count = 5): GetCovers {
-  const coverRelease = getCoverRelease(item);
-
-  let otherReleases: ReleaseWithArtistAndSubReleases[];
-
-  if (item.entityType === "Group") {
-    otherReleases = item.artists.map(getCoverRelease);
-  } else if (item.entityType === "Artist") {
-    otherReleases = [
-      ...item.releases,
-      ...item.appearsIn,
-    ] as ReleaseWithArtistAndSubReleases[];
-  } else {
-    otherReleases = item.releases;
-  }
-
-  return {
-    coverRelease,
-    otherReleases: otherReleases
-      .filter((x) => x.id !== coverRelease.id)
-      .slice(0, count - 1),
-  };
-}
-
-type ReleaseInfoProps = {
-  release: ReleaseWithArtistAndTracksAndSubreleases;
-  isSingle: boolean;
-  isInline: boolean;
-  useDarkText: boolean;
-  onLinkClick?: () => void;
-};
-
-function ReleaseInfo({
-  release,
-  isSingle,
-  isInline = true,
-  useDarkText,
-  onLinkClick,
-}: ReleaseInfoProps) {
-  const { t } = useTranslation();
-  const { id, type, year } = release;
-  const { duration, trackCount } = getReleaseDuration(release);
-  return (
-    <div className={cx(styles.info, { [styles.isInline]: isInline })}>
-      <span>
-        {type}, {year} {getDiscInfo(release)}
-        {isSingle && (
-          <>
-            <span className={styles.trackCount}>
-              {t("components.ListCard.trackCount", { count: trackCount })}
-            </span>
-            <span
-              className={cx(styles.releaseDuration, {
-                [styles.releaseDurationBlock]: !isInline && isSingle,
-              })}
-            >
-              {duration}
-            </span>
-          </>
-        )}
-      </span>
-      {isSingle && (
-        <ContainingCollectionsList
-          className={styles.entityList}
-          itemClassName={styles.entityListEntry}
-          useDarkText={useDarkText}
-          onLinkClick={onLinkClick}
-          id={id}
-        />
-      )}
     </div>
   );
 }

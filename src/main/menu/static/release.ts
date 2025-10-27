@@ -8,6 +8,7 @@ import { send, openModal } from "@/main/controllers/init";
 import {
   searchReleaseOnDiscogs,
   searchReleaseOnRYM,
+  searchReleaseOnYouTube,
 } from "@/lib/external_links";
 import { refreshMenuEntries, type GetMenuParams } from "../menu";
 import { getReleaseLink } from "@/lib/links";
@@ -138,6 +139,17 @@ export function getReleaseMenu({ controllers, stateManager }: GetMenuParams) {
       accelerator: "Shift+R",
       click: async () =>
         searchReleaseOnRYM(
+          (await getRelease(
+            stateManager.getSelection("release").at(0)
+          )) as ReleaseWithArtist
+        ),
+    },
+    {
+      id: "searchReleaseOnYouTube",
+      label: "Search Release on YouTube",
+      accelerator: "Shift+Y",
+      click: async () =>
+        searchReleaseOnYouTube(
           (await getRelease(
             stateManager.getSelection("release").at(0)
           )) as ReleaseWithArtist

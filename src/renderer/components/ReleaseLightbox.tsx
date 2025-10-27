@@ -3,8 +3,13 @@ import { useTranslation } from "react-i18next";
 import { ReleaseWithArtist } from "@/types/types";
 import { useKeyManager, withPrevent } from "../hooks/useKeyboardManager";
 import useRelease from "../query/useRelease";
-import ReleaseWithTracklistView from "./ReleaseWithTracklistView";
+import { getReleaseTitle } from "@/lib/utils";
+import api from "../api";
+
 import Cover from "./Cover";
+import Tracklist from "./Tracklist";
+import ReleaseInfo from "./ReleaseInfo";
+import EntityList from "./EntityList";
 
 import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
 import cx from "clsx";
@@ -73,14 +78,33 @@ export default function ReleaseLightbox({
         {isPending ? null : (
           <>
             <Cover {...release} className={styles.cover} />
-            <ReleaseWithTracklistView
-              className={cx(styles.info, { [styles.hideSidebar]: hideSidebar })}
-              isSingle
-              hideCover
-              release={release}
-              onLinkClick={onClose}
-              context="modal:list"
-            />
+            {!hideSidebar && (
+              <div className={styles.sidebar}>
+                <header className={styles.header}>
+                  <EntityList
+                    linkClassName={styles.artist}
+                    textOnly
+                    context={release}
+                    canDeleteFirstEntry={false}
+                    items={[release.artist, ...release.additionalArtists]}
+                  />
+                  <h2 className={styles.title}>{getReleaseTitle(release)}</h2>
+                  <ReleaseInfo release={release} isSingle />
+                </header>
+                <Tracklist
+                  isFlipped
+                  release={release}
+                  isNavigable
+                  context="modal:list"
+                  onDoubleClick={(track_id) =>
+                    api.system.playback({
+                      release_id: release.id,
+                      track_id,
+                    })
+                  }
+                />
+              </div>
+            )}
           </>
         )}
       </div>

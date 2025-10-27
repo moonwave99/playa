@@ -60,11 +60,9 @@ export default function ReleaseWithTracklistView({
       }
     >
       <ListCard
-        hideCover={hideCover}
         item={release}
         selected={selected}
         hasFocus={hasFocus}
-        isSingle={isSingle}
         onLinkClick={onLinkClick}
         onCoverClick={() =>
           setModalContents({

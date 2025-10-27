@@ -30,7 +30,7 @@ test.describe("Containing Collections", () => {
     await page.keyboard.press("Enter");
     await page.keyboard.press("Escape");
 
-    const header = page.locator('[data-testid="ReleaseWithTracklistHeader"]');
+    const header = page.locator('[data-testid="ReleasePageHeader"]');
     await expect(header).toContainText("Collection 1");
     await expect(header).toContainText("Appears in");
   });
@@ -63,7 +63,7 @@ test.describe("Containing Collections", () => {
     await page.keyboard.press("Enter");
     await page.keyboard.press("Escape");
 
-    const header = page.locator('[data-testid="ReleaseWithTracklistHeader"]');
+    const header = page.locator('[data-testid="ReleasePageHeader"]');
     await expect(header).toContainText("New Collection");
     await expect(header).toContainText("Appears in");
   });
@@ -84,7 +84,7 @@ test.describe("Containing Collections", () => {
 
     await expect(page.locator('[data-testid="ReleasePage"]')).toBeVisible();
 
-    const header = page.locator('[data-testid="ReleaseWithTracklistHeader"]');
+    const header = page.locator('[data-testid="ReleasePageHeader"]');
 
     await header.getByLabel("Remove Release 1-5 from Collection 1").click();
     await expect(header).not.toContainText("Collection 1");

@@ -1,7 +1,7 @@
 import { shell } from "electron";
 import { Artist, ReleaseWithArtist } from "@/types/types";
 import { normalizeArtistName } from "./utils";
-import { getDiscogsURL, getRYMURL } from "./links";
+import { getDiscogsURL, getRYMURL, getYoutubeURL } from "./links";
 
 export function searchReleaseOnDiscogs({ artist, title }: ReleaseWithArtist) {
   shell.openExternal(
@@ -21,4 +21,10 @@ export function searchReleaseOnRYM({ artist, title }: ReleaseWithArtist) {
 
 export function searchArtistOnRYM(artist: Artist) {
   shell.openExternal(getRYMURL(artist.name, "artist"));
+}
+
+export function searchReleaseOnYouTube({ artist, title }: ReleaseWithArtist) {
+  shell.openExternal(
+    getYoutubeURL(`${normalizeArtistName(artist.name)} ${title}`)
+  );
 }

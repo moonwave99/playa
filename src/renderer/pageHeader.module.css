@@ -1,0 +1,74 @@
+.view {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-bottom: 0.5px solid var(--neutral-border-color);
+}
+
+.content {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.cover {
+  width: var(--release-tracklist-single-cover-size);
+  height: var(--release-tracklist-single-cover-size);
+  border-right: 1px solid var(--neutral-border-color);
+}
+
+.artist {
+  font-size: 1.2rem;
+  font-weight: 300;
+}
+
+.releaseCount {
+  font-size: 0.8rem;
+  font-weight: 300;
+  color: var(--secondary-color);
+}
+
+.title {
+  font-size: 1.2rem;
+  color: var(--primary-color);
+  font-weight: bold;
+  letter-spacing: -0.035rem;
+  text-wrap: balance;
+
+  &:is(a):hover {
+    text-decoration: underline;
+  }
+}
+
+.entityListEntry {
+  background-color: var(--accent-color);
+  height: 1.5rem;
+  padding-left: 0.35rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: -0.035rem;
+}
+
+.infoWrapper {
+  line-height: 1rem;
+  font-size: 0.8rem;
+  font-weight: 300;
+  user-select: none;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+
+  margin-top: 0.5rem;
+  margin-bottom: -3rem;
+
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+    align-items: start;
+    gap: 0.5rem;
+  }
+}

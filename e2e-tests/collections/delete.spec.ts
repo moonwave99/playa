@@ -31,7 +31,7 @@ test.describe("Delete Collection", () => {
       })
       .click();
 
-    const header = page.locator('[data-testid="ReleaseWithTracklistHeader"]');
+    const header = page.locator('[data-testid="ReleasePageHeader"]');
     await expect(header).not.toContainText("Collection 1");
   });
 });

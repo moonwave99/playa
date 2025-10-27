@@ -6,6 +6,12 @@ export function getURL(url: string, params: Record<string, string>) {
   return `${url}?${new URLSearchParams(mapValues(params, deburr))}`;
 }
 
+export function getYoutubeURL(q: string) {
+  return getURL("https://www.youtube.com/results", {
+    search_query: normalizeTitle(q),
+  });
+}
+
 export function getDiscogsURL(q: string, type: "artist" | "master") {
   return getURL("https://www.discogs.com/search", {
     type,
@@ -32,6 +38,10 @@ export function getCover(hash: string): string {
   return `playa-cover://${hash}-cover.jpg`;
 }
 
+export function getEntityLink({ id, entityType }: HasEntityTypeAndId) {
+  return `/${entityType.toLowerCase()}s/${id}`;
+}
+
 export function getCollectionLink({ id }: HasId) {
   return getEntityLink({ id, entityType: "Collection" });
 }
@@ -46,10 +56,6 @@ export function getArtistLink({ id }: HasId) {
 
 export function getReleaseLink({ id }: HasId) {
   return getEntityLink({ id, entityType: "Release" });
-}
-
-export function getEntityLink({ id, entityType }: HasEntityTypeAndId) {
-  return `/${entityType.toLowerCase()}s/${id}`;
 }
 
 export function getRandomLink(

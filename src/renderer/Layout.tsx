@@ -26,9 +26,9 @@ import { routes } from "./routes";
 
 import HomePage from "./pages/HomePage/HomePage";
 import ReleasesPage from "./pages/ReleasesPage";
-import ReleasePage from "./pages/ReleasePage";
+import ReleasePage from "./pages/ReleasePage/ReleasePage";
 import ArtistsPage from "./pages/ArtistsPage";
-import ArtistPage from "./pages/ArtistPage";
+import ArtistPage from "./pages/ArtistPage/ArtistPage";
 import CollectionsPage from "./pages/CollectionsPage";
 import CollectionPage from "./pages/CollectionPage";
 import GroupsPage from "./pages/GroupsPage";

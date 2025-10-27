@@ -6,6 +6,13 @@
     "collections": "Collections",
     "tracks": "Tracks"
   },
+  "common": {
+    "count": {
+      "artist": "{{count}} Artists",
+      "release": "{{count}} Releases",
+      "track": "{{count}} Tracks"
+    }
+  },
   "breadcrumbs": {
     "home": "Home",
     "releases": "Releases",

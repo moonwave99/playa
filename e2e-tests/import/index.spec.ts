@@ -66,7 +66,7 @@ test.describe("Import", () => {
       .click();
 
     await expect(
-      page.locator('[data-testid="ReleaseWithTracklistHeader"]')
+      page.locator('[data-testid="ReleasePageHeader"]')
     ).toContainText("Album 1");
 
     const tracklist = page.locator('[data-testid="Tracklist"]');

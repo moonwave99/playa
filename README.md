@@ -22,7 +22,9 @@ TBD
 ## Tasks
 
 - [ ] rearrange app menu;
-- [ ] add playback and context icons on releases;
+- [ ] add context icons on releases;
+- [ ] refactor header color management;
+- [ ] refactor ListCard component;
 
 ## License
 

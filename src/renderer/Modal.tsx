@@ -29,8 +29,7 @@ import StatsView from "./components/StatsView";
 function getModalOverrides(name: Modals) {
   if (name === "lightbox") {
     return {
-      width: "calc(400px + var(--cover-lightbox-size))",
-      height: "var(--cover-lightbox-size)",
+      width: "auto",
       overflow: "visible",
       border: "none",
       background: "transparent",

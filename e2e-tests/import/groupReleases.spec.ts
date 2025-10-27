@@ -94,9 +94,7 @@ test.describe("Import", () => {
 
     await groupedRelease.getByText("Album 1").first().click();
 
-    const releaseHeader = page.locator(
-      '[data-testid="ReleaseWithTracklistHeader"]'
-    );
+    const releaseHeader = page.locator('[data-testid="ReleasePageHeader"]');
 
     await expect(releaseHeader).toContainText("Album 1");
     await expect(releaseHeader).toContainText("2 discs");
