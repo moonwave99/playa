@@ -1,9 +1,10 @@
+import path from "node:path";
 import type { ReactNode } from "react";
 import { MemoryRouter } from "react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { I18nextProvider } from "react-i18next";
-import path from "path";
 import i18n from "@/renderer/i18n";
+import type { Settings } from "@/types/types";
 
 export function withI18n(children: ReactNode) {
   return <I18nextProvider i18n={i18n}>{children}</I18nextProvider>;
@@ -22,25 +23,27 @@ export function withRouter(children: ReactNode) {
 }
 
 const settings = {
+  LIBRARY_PATH: "LIBRARY_PATH",
+  COVERS_PATH: "COVERS_PATH",
   PLAYER_PATH: "PLAYER_PATH",
   TAGGER_PATH: "TAGGER_PATH",
   DISCOGS_KEY: "DISCOGS_KEY",
   DISCOGS_SECRET: "DISCOGS_SECRET",
-  LIBRARY_PATH: "LIBRARY_PATH",
-  COVERS_PATH: "COVERS_PATH",
+  USE_SMART_IMPORT: false,
+  SHOW_ONBOARDING_ON_STARTUP: true,
 } as const;
 
-export function getSetting(key: keyof typeof settings) {
+export function getSetting(key: keyof Omit<Settings, "id">) {
   return settings[key];
 }
 
 export function withPath(key: keyof typeof settings, folderPath: string) {
-  return path.join(getSetting(key), folderPath);
+  return path.join(getSetting(key) as string, folderPath);
 }
 
-export function withoutDates<T>(
-  x: T & { createdAt: string | Date; updatedAt: string | Date }
-): Omit<T, "createdAt" | "updatedAt"> {
+export function withoutDates<
+  T extends { createdAt: string | Date; updatedAt: string | Date },
+>(x: T): Omit<T, "createdAt" | "updatedAt"> {
   // eslint-disable-next-line  @typescript-eslint/no-unused-vars
   const { createdAt, updatedAt, ...rest } = x;
   return rest;

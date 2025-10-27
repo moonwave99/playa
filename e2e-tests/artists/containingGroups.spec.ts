@@ -100,10 +100,8 @@ test.describe("Containing Groups", () => {
 
     const header = page.locator('[data-testid="ArtistPageHeader"]');
 
-    await header.getByText("Group 1").hover();
     await header.getByLabel("Remove Artist 10 from Group 1").click();
 
-    await header.getByText("New Group").hover();
     await header.getByLabel("Remove Artist 10 from New Group").click();
 
     await expect(header).not.toContainText("Group 1");

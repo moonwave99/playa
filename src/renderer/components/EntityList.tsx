@@ -2,10 +2,11 @@ import { useTranslation } from "react-i18next";
 import Link from "./Link";
 import { Artist, Collection, Group, HasId, Release } from "@/types/types";
 import { normalizeArtistDisplayName } from "@/lib/utils";
-import { MdRemoveCircle } from "react-icons/md";
+import { getEntityLink } from "@/lib/links";
+
+import { TiDelete } from "react-icons/ti";
 import cx from "clsx";
 import styles from "./EntityList.module.css";
-import buttonStyles from "../buttons.module.css";
 
 type Item = HasId &
   (
@@ -27,6 +28,7 @@ export type EntityListProps = {
   onDelete?: (id: number) => void;
   onLinkClick?: () => void;
   i18nkey?: string;
+  textOnly?: boolean;
 };
 
 function getTitle(item: ContextItem) {
@@ -46,6 +48,7 @@ export default function EntityList({
   onDelete,
   onLinkClick,
   i18nkey = "entityList.actions.delete.default",
+  textOnly,
 }: EntityListProps) {
   const { t } = useTranslation();
   function showDeleteButton(index: number) {
@@ -67,29 +70,30 @@ export default function EntityList({
       {label}
       <ul>
         {items.map((item, index) => (
-          <li key={item.id}>
+          <li
+            key={item.id}
+            className={cx(styles.item, itemClassName, {
+              [styles.textOnly]: textOnly,
+            })}
+          >
             <Link
-              className={cx(itemClassName || styles.link)}
+              className={styles.link}
               title={`[${item.id}]`}
-              to={`/${item.entityType.toLowerCase()}s/${item.id}`}
+              to={getEntityLink(item)}
               onClick={onLinkClick}
             >
               {getTitle(item)}
             </Link>
             {showDeleteButton(index) && (
               <button
-                className={cx(
-                  buttonStyles.CornerActionButton,
-                  buttonStyles.mini,
-                  styles.CornerActionButton
-                )}
+                className={cx(styles.removeButton)}
                 onClick={() => onDelete(item.id)}
                 aria-label={t(i18nkey, {
                   item: getTitle(item),
                   context: getTitle(context),
                 })}
               >
-                <MdRemoveCircle />
+                <TiDelete />
               </button>
             )}
           </li>

@@ -2,18 +2,18 @@
 import { PrismaClient } from "@prisma/client-generated";
 import path from "node:path";
 
+import { IS_E2E_TEST } from "@/test/utils";
+
 function getUrl() {
-  const { NODE_ENV, npm_lifecycle_event } = process.env;
+  const { NODE_ENV, testId } = process.env;
   if (NODE_ENV === "test") {
     return "";
   }
   if (NODE_ENV === "development") {
     return "file:data.db";
   }
-  if (npm_lifecycle_event === "test:e2e") {
-    const dbName = process.env.testId
-      ? `data-${process.env.testId}.db`
-      : "data.db";
+  if (IS_E2E_TEST) {
+    const dbName = testId ? `data-${testId}.db` : "data.db";
     return `file:${path.join(
       process.cwd(),
       `out/Playa-darwin-arm64/Playa.app/Contents/Resources/${dbName}`

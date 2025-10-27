@@ -86,15 +86,12 @@ test.describe("Containing Collections", () => {
 
     const header = page.locator('[data-testid="ReleaseWithTracklistHeader"]');
 
-    await header.getByText("Collection 1").hover();
     await header.getByLabel("Remove Release 1-5 from Collection 1").click();
     await expect(header).not.toContainText("Collection 1");
 
-    await header.getByText("Collection 2").hover();
     await header.getByLabel("Remove Release 1-5 from Collection 2").click();
     await expect(header).not.toContainText("Collection 2");
 
-    await header.getByText("New Collection").hover();
     await header.getByLabel("Remove Release 1-5 from New Collection").click();
     await expect(header).not.toContainText("New Collection");
 

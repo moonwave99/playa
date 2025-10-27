@@ -57,15 +57,10 @@ export default function ReleaseView({
         <EntityList
           context={release}
           i18nkey="entityList.actions.delete.additionalArtists"
+          textOnly
           className={styles.artists}
           canDeleteFirstEntry={false}
           items={[artist, ...additionalArtists]}
-          onDelete={(artist_id) =>
-            api.release.removeAdditionalArtist({
-              release_id: id,
-              artist_id,
-            })
-          }
         />
         <Link
           className={styles.title}

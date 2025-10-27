@@ -103,17 +103,22 @@ export default function ListCard({
       return (
         <>
           <EntityList
+            textOnly
             context={item}
-            itemClassName={styles.artist}
+            className={isSingle ? styles.singleArtistList : null}
+            itemClassName={isSingle ? styles.singleArtist : styles.artist}
             useDarkText={useDarkText}
             canDeleteFirstEntry={false}
             items={[item.artist, ...item.additionalArtists]}
             onLinkClick={onLinkClick}
-            onDelete={(artist_id) =>
-              api.release.removeAdditionalArtist({
-                release_id: item.id,
-                artist_id,
-              })
+            onDelete={
+              !isSingle
+                ? null
+                : (artist_id) =>
+                    api.release.removeAdditionalArtist({
+                      release_id: item.id,
+                      artist_id,
+                    })
             }
           />
           {isSingle ? (

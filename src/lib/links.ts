@@ -1,5 +1,5 @@
 import { normalizeTitle } from "./utils";
-import type { HasId, Entities, HasEntityType } from "@/types/types";
+import type { HasId, Entities, HasEntityTypeAndId } from "@/types/types";
 import { deburr, mapValues } from "lodash";
 
 export function getURL(url: string, params: Record<string, string>) {
@@ -48,7 +48,7 @@ export function getReleaseLink({ id }: HasId) {
   return getEntityLink({ id, entityType: "Release" });
 }
 
-export function getEntityLink({ id, entityType }: HasId & HasEntityType) {
+export function getEntityLink({ id, entityType }: HasEntityTypeAndId) {
   return `/${entityType.toLowerCase()}s/${id}`;
 }
 

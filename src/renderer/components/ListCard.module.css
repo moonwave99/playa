@@ -2,13 +2,15 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  transition: background-color 0.3s ease-in-out;
+  transition:
+    background-color 0.3s ease-in-out,
+    box-shadow 0.1s ease-in-out;
   overflow: hidden;
   border-radius: 0.25rem;
   background-color: var(--default-listcard-background-color);
 
   &.fromCache {
-    transition: none;
+    transition: box-shadow 0.1s ease-in-out;
     .cover img {
       transition: opacity 0.1s ease-in-out;
     }
@@ -101,6 +103,17 @@
   }
 }
 
+.singleArtistList {
+  height: 1.2rem;
+}
+
+.singleArtist {
+  font-size: 1.2rem;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 .isArtist {
   .content {
     gap: 0.75rem;
@@ -122,13 +135,6 @@
 
   .title {
     font-size: 1.2rem;
-  }
-
-  .artist {
-    font-size: 1.2rem;
-    &:hover {
-      text-decoration: underline;
-    }
   }
 
   .cover,
@@ -309,7 +315,6 @@
 }
 
 .entityList {
-  /* font-size: 0.7rem; */
   ul {
     gap: 0.5rem;
     li:not(:last-child)::after {
@@ -320,14 +325,12 @@
 
 .entityListEntry {
   background-color: var(--accent-color);
-  padding: 0.25rem 0.35rem;
+  height: 1.5rem;
+  padding-left: 0.25rem;
   border-radius: 0.25rem;
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: -0.035rem;
-  &:hover {
-    text-decoration: underline;
-  }
 }
 
 .listInfo {
