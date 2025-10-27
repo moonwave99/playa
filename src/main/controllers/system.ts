@@ -10,7 +10,9 @@ import {
   ShowErrorBox,
   Track,
 } from "@/types/types";
+import { log } from "../logger";
 import type { GetSetting } from "./settings";
+import { existsSync } from "fs";
 
 type SystemControllerParams = {
   getSetting: GetSetting;
@@ -154,11 +156,24 @@ export function systemController({
     if (!release) {
       return;
     }
+    const file = withPath("LIBRARY_PATH", getEntityPath(release));
+    if (!existsSync(file)) {
+      return;
+    }
 
-    event.sender.startDrag({
-      file: withPath("LIBRARY_PATH", getEntityPath(release)),
-      icon: path.resolve("folder.png"),
-    });
+    try {
+      const icon =
+        process.env.NODE_ENV === "TEST"
+          ? path.resolve("folder.png")
+          : path.join(process.resourcesPath, "folder.png");
+
+      event.sender.startDrag({
+        file,
+        icon,
+      });
+    } catch (error) {
+      log("system:drag", error);
+    }
   }
 
   return {
