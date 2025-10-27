@@ -210,3 +210,11 @@
     opacity: 0.8;
   }
 }
+
+.playbackButton {
+  --padding: 1rem;
+  bottom: var(--padding);
+  right: var(--padding);
+  width: calc(var(--search-results-size) - 2 * var(--padding));
+  height: calc(var(--search-results-size) - 2 * var(--padding));
+}

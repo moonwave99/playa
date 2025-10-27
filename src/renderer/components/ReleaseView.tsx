@@ -30,6 +30,7 @@ export default function ReleaseView({
   const { t } = useTranslation();
   const { artist, year, type, id, additionalArtists } = release;
   const releaseTitle = getReleaseTitle(release);
+
   return (
     <article
       data-selected={selected}
@@ -47,12 +48,15 @@ export default function ReleaseView({
         </span>
         <span>{year}</span>
       </p>
+
       <Cover
         {...release}
         className={styles.coverWrapper}
         title={`${artist.name} - ${releaseTitle}`}
         onDoubleClick={() => api.system.playback({ release_id: id })}
+        onPlaybackClick={() => api.system.playback({ release_id: id })}
       />
+
       <div className={styles.footer}>
         <EntityList
           context={release}

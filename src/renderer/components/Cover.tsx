@@ -3,12 +3,17 @@ import { useTranslation } from "react-i18next";
 import type { Release } from "@/types/types";
 import { getCover } from "@/lib/links";
 import api from "../api";
+import PlaybackButton from "./PlaybackButton";
+
 import cx from "clsx";
 import styles from "./Cover.module.css";
+
+import { EMPTY_IMG } from "@/constants";
 
 type CoverProps = Pick<Release, "id" | "title" | "hash"> & {
   path?: string;
   className?: string;
+  playButtonClassName?: string;
   droppable?: boolean;
   dragOutside?: boolean;
   onContextMenu?: () => void;
@@ -16,6 +21,7 @@ type CoverProps = Pick<Release, "id" | "title" | "hash"> & {
   onDoubleClick?: () => void;
   onLoad?: () => void;
   onError?: () => void;
+  onPlaybackClick?: () => void;
 };
 
 async function getDropURL(event: DragEvent): Promise<string | null> {
@@ -31,20 +37,19 @@ async function getDropURL(event: DragEvent): Promise<string | null> {
   });
 }
 
-const emptyImg =
-  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
-
 export default function Cover({
   id,
   title,
   hash,
   path,
   className,
+  playButtonClassName,
   onContextMenu,
   onClick,
   onDoubleClick,
   onLoad,
   onError,
+  onPlaybackClick,
   droppable = true,
   dragOutside = true,
 }: CoverProps) {
@@ -65,7 +70,7 @@ export default function Cover({
     setError(false);
   }
 
-  const src = !error ? getCover(hash) : emptyImg;
+  const src = !error ? getCover(hash) : EMPTY_IMG;
 
   return (
     <div
@@ -74,10 +79,10 @@ export default function Cover({
       className={cx(styles.coverWrapper, className)}
       title={`${title} [${id}]`}
       onContextMenu={onContextMenu}
-      onDoubleClick={onDoubleClick}
-      onClick={onClick}
     >
       <img
+        onDoubleClick={onDoubleClick}
+        onClick={onClick}
         data-id={id}
         className={cx(styles.cover, { [styles.loaded]: loaded })}
         src={src}
@@ -90,7 +95,7 @@ export default function Cover({
           }
         }}
         onLoad={(event) => {
-          if ((event.target as HTMLImageElement).src === emptyImg) {
+          if ((event.target as HTMLImageElement).src === EMPTY_IMG) {
             return;
           }
           setLoaded(true);
@@ -111,6 +116,12 @@ export default function Cover({
             : null
         }
       />
+      {onPlaybackClick && (
+        <PlaybackButton
+          className={cx(styles.playbackButton, playButtonClassName)}
+          onClick={onPlaybackClick}
+        />
+      )}
     </div>
   );
 }

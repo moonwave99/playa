@@ -241,6 +241,13 @@ export default function ListCard({
     return item.releases.length > 1;
   }
 
+  function getOnPlaybackClick() {
+    if (item.entityType !== "Release") {
+      return null;
+    }
+    return () => api.system.playback({ release_id: item.id });
+  }
+
   function renderCover() {
     if (hideCover) {
       return null;
@@ -270,6 +277,7 @@ export default function ListCard({
           )}`}
           onLoad={onLoad}
           onError={onError}
+          onPlaybackClick={getOnPlaybackClick()}
         />
       );
     }

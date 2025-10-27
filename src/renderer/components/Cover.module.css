@@ -7,6 +7,13 @@
   overflow: hidden;
   border-radius: 0.25rem;
   background-color: rgba(0, 0, 0, 0.2);
+  position: relative;
+  &:hover {
+    .playbackButton {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
 }
 
 .cover {
@@ -21,4 +28,16 @@
 
 .loaded {
   opacity: 1;
+}
+
+.playbackButton {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+  transform: translateY(125%);
+  opacity: 0;
+  transition:
+    transform 0.1s ease-in-out,
+    scale 0.2s ease-in-out,
+    opacity 0.2s ease-in-out;
 }

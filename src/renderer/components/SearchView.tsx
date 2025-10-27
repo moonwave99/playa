@@ -228,6 +228,13 @@ function SearchResultView({
     return links[type];
   }
 
+  function getOnPlaybackClick() {
+    if (item.type !== "release") {
+      return null;
+    }
+    return () => api.system.playback({ release_id: item.id });
+  }
+
   function renderCover() {
     if (type === "release" || coverRelease) {
       return (
@@ -237,6 +244,8 @@ function SearchResultView({
             : coverRelease)}
           onDoubleClick={onDoubleClick}
           className={styles.coverWrapper}
+          onPlaybackClick={getOnPlaybackClick()}
+          playButtonClassName={styles.playbackButton}
         />
       );
     }

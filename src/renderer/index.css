@@ -39,6 +39,7 @@
   --cover-lightbox-size: 90vh;
   --modal-border-color: #252525;
   --button-background-color: #212121;
+  --playback-button-size: 2rem;
 }
 
 * {
