@@ -92,6 +92,7 @@ export default function ReleaseLightbox({
                   <ReleaseInfo release={release} isSingle />
                 </header>
                 <Tracklist
+                  className={styles.tracklist}
                   isFlipped
                   release={release}
                   isNavigable

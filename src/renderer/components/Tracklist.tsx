@@ -11,6 +11,7 @@ import cx from "clsx";
 import styles from "./Tracklist.module.css";
 
 type TracklistProps = {
+  className?: string;
   isNavigable?: boolean;
   isFlipped?: boolean;
   selectedTrackId?: number;
@@ -21,6 +22,7 @@ type TracklistProps = {
 };
 
 export default function Tracklist({
+  className,
   isNavigable = false,
   isFlipped = false,
   release,
@@ -47,7 +49,7 @@ export default function Tracklist({
   if (!isNavigable) {
     return (
       <div
-        className={cx(styles.tracklist, {
+        className={cx(styles.tracklist, className, {
           [styles.isFlipped]: isFlipped,
         })}
         data-testid="Tracklist"
@@ -103,7 +105,7 @@ export default function Tracklist({
       onSelectionChange={(selection) =>
         select(selection.map((index) => allTracks[index]?.id))
       }
-      className={cx(styles.tracklist, styles.isNavigable, {
+      className={cx(styles.tracklist, styles.isNavigable, className, {
         [styles.isFlipped]: isFlipped,
         [styles.isInsideModal]: context === "modal:list",
       })}

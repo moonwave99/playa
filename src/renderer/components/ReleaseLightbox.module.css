@@ -1,17 +1,39 @@
 .view {
   --sidebar-width: 400px;
-  --lightbox-size: 90vw;
+  --lightbox-size: 90vmin;
   position: relative;
-  display: flex;
-  flex-direction: column;
+  display: grid;
   align-items: center;
   gap: 1rem;
-  width: var(--lightbox-size);
+  box-shadow: rgba(61, 61, 61, 0.15) 1.95px 1.95px 2.6px;
+  border: 0.5px solid var(--tertiary-color);
+  background-color: var(--default-cover-background-color);
+  border-radius: 0.5rem;
+  @media screen and (max-width: 900px) {
+    width: 90vw;
+    --cover-size: 8rem;
+    grid-template-columns: var(--cover-size) 1fr;
+    background-color: var(--background-color);
+    .sidebar,
+    .wrapper {
+      display: contents;
+    }
+    .header {
+      padding-left: 0;
+    }
+    .cover {
+      width: var(--cover-size);
+      height: var(--cover-size);
+    }
+    .tracklist {
+      grid-column: 1 / 3;
+    }
+  }
 }
 
 .cover {
-  width: calc(var(--lightbox-size) - var(--sidebar-width));
-  height: calc(var(--lightbox-size) - var(--sidebar-width));
+  height: min(var(--lightbox-size), calc(90vw - var(--sidebar-width)));
+  width: min(var(--lightbox-size), calc(90vw - var(--sidebar-width)));
   aspect-ratio: 1;
   border-radius: 0;
   max-width: 100%;
@@ -29,14 +51,18 @@
   background-color: transparent;
   font-size: 3rem;
   color: var(--primary-color);
-  transition: color 0.2s ease-in-out;
+  outline: none;
+  transition:
+    color 0.2s ease-in-out,
+    scale 0.2s ease-in-out;
 
   &:hover {
     color: var(--accent-color);
+    scale: 1.1;
   }
 
   &:focus {
-    outline-color: var(--accent-color);
+    color: var(--accent-color);
   }
 
   &.prev {

@@ -87,6 +87,9 @@ function getModalStyle(name: Modals) {
       borderRadius: ".5rem",
       padding: name === "lightbox" ? 0 : "1.5rem",
       overflow: "initial",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
       ...getModalOverrides(name),
     },
   };
