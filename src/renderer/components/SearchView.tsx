@@ -127,7 +127,7 @@ function SearchResultsView({
     onLinkClick();
   }
 
-  function onDoubleClick(item: SearchResult) {
+  function playbackItem(item: SearchResult) {
     if (item.type === "release") {
       api.system.playback({ release_id: item.id });
       return;
@@ -137,8 +137,14 @@ function SearchResultsView({
         release_id: item.coverRelease.id,
         track_id: item.id,
       });
-      return;
     }
+  }
+
+  function getOnPlaybackClick(item: SearchResult) {
+    if (item.type !== "release" && item.type !== "track") {
+      return null;
+    }
+    return () => playbackItem(item);
   }
 
   return (
@@ -180,7 +186,8 @@ function SearchResultsView({
                   setContext(`modal:search:results(${index})`);
                   onClick(event);
                 }}
-                onDoubleClick={() => onDoubleClick(item)}
+                onDoubleClick={() => playbackItem(item)}
+                onPlaybackClick={getOnPlaybackClick(item)}
                 onContextMenu={() => api.menu.searchResult(item)}
                 onLinkClick={onLinkClick}
               />
@@ -200,6 +207,7 @@ type SearchResultViewProps = {
   item: SearchResult;
   onClick: (event: MouseEvent) => void;
   onDoubleClick: () => void;
+  onPlaybackClick?: () => void;
   onLinkClick: () => void;
   onContextMenu?: () => void;
 };
@@ -212,6 +220,7 @@ function SearchResultView({
   onContextMenu,
   onClick,
   onDoubleClick,
+  onPlaybackClick,
   onLinkClick,
 }: SearchResultViewProps) {
   const { t } = useTranslation();
@@ -228,13 +237,6 @@ function SearchResultView({
     return links[type];
   }
 
-  function getOnPlaybackClick() {
-    if (item.type !== "release") {
-      return null;
-    }
-    return () => api.system.playback({ release_id: item.id });
-  }
-
   function renderCover() {
     if (type === "release" || coverRelease) {
       return (
@@ -244,7 +246,7 @@ function SearchResultView({
             : coverRelease)}
           onDoubleClick={onDoubleClick}
           className={styles.coverWrapper}
-          onPlaybackClick={getOnPlaybackClick()}
+          onPlaybackClick={onPlaybackClick}
           playButtonClassName={styles.playbackButton}
         />
       );
