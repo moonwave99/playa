@@ -211,6 +211,7 @@ export type SearchResult = {
   description: string;
   links: Partial<Record<Entities, string>>;
   coverRelease?: ReleaseWithArtist;
+  releases?: ReleaseWithArtistAndSubReleases[];
 };
 
 export type Entries<T> = {

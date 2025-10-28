@@ -13,18 +13,15 @@ TBD
 - advanced search;
 - make V/A configurable;
 - virtualize all lists;
-
-## E2E specs
-
-- import in non-smart mode;
-- edit in non-smart mode;
+- generalize lightbox;
+- filter list views;
+- design linear list modes;
+- display artist release selection in search results;
 
 ## Tasks
 
 - rearrange app menu;
 - display multiple covers for multiple discs releases;
-- display multiple covers in search results;
-- generalize lightbox;
 - entityTypes to lowercase (condolences);
 - make group and collection titles editable again;
 

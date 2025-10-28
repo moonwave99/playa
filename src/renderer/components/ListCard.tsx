@@ -1,4 +1,4 @@
-import { useState, type MouseEvent } from "react";
+import { type MouseEvent } from "react";
 import { useTranslation } from "react-i18next";
 import useHover from "../hooks/useHover";
 import {
@@ -71,7 +71,6 @@ export default function ListCard({
   testId,
 }: ListCardProps) {
   const { t } = useTranslation();
-  const [loaded, setLoaded] = useState(false);
   const coverRelease = getCoverRelease(item);
 
   const { onMouseEnter, onMouseLeave, isHover } = useHover();
@@ -158,14 +157,6 @@ export default function ListCard({
     );
   }
 
-  function onLoad() {
-    setLoaded(true);
-  }
-
-  function onError() {
-    setLoaded(true);
-  }
-
   function shouldDisplayMultipleCovers() {
     if (!showMultipleCovers || item.entityType === "Release") {
       return false;
@@ -193,8 +184,6 @@ export default function ListCard({
       return (
         <MultipleCovers
           item={item as MultipleCoversProps["item"]}
-          onLoad={onLoad}
-          onError={onError}
           onCoverDoubleClick={onCoverDoubleClick}
           onMouseEnter={onMouseEnter}
           isHover={isHover}
@@ -212,8 +201,6 @@ export default function ListCard({
           title={`${coverRelease?.artist?.name} - ${getReleaseTitle(
             coverRelease
           )}`}
-          onLoad={onLoad}
-          onError={onError}
           onPlaybackClick={getOnPlaybackClick(item.id)}
         />
       );
@@ -235,7 +222,6 @@ export default function ListCard({
       data-hasfocus={selected && hasFocus}
       onMouseLeave={onMouseLeave}
       className={cx(styles.listCard, {
-        [styles.loaded]: loaded,
         [styles.isArtist]: item.entityType === "Artist",
         [styles.selected]: selected,
         [styles.hasFocus]: selected && hasFocus,

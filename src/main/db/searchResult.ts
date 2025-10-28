@@ -85,12 +85,36 @@ const getters: Getters = {
       include: {
         coverRelease: {
           include: {
-            artist: true,
+            artist: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
           },
         },
         releases: {
           where: {
             mainRelease: null,
+          },
+          take: 10,
+          include: {
+            artist: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+            subReleases: {
+              include: {
+                artist: {
+                  select: {
+                    id: true,
+                    name: true,
+                  },
+                },
+              },
+            },
           },
         },
       },
@@ -213,6 +237,7 @@ const transformers: Transformers = {
       artist: `/artists/${id}`,
     },
     coverRelease: coverRelease || releases[0],
+    releases,
   }),
   release: ({
     id,

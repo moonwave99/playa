@@ -17,6 +17,7 @@ import type {
   Group,
   Collection,
   WithCoverRelease,
+  SearchResult,
 } from "@/types/types";
 import { getCover } from "./links";
 
@@ -264,7 +265,8 @@ type Item =
   | CollectionWithReleases
   | ArtistWithReleases
   | ReleaseWithArtistAndSubReleases
-  | GroupWithArtists;
+  | GroupWithArtists
+  | SearchResult;
 
 export function getCoverRelease(
   item: Item

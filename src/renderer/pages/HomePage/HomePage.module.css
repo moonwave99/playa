@@ -1,6 +1,7 @@
 .wrapper {
   display: flex;
   gap: 0.5rem;
+  padding-bottom: 2rem;
   @media screen and (max-width: 950px) {
     flex-direction: column;
     gap: 2rem;

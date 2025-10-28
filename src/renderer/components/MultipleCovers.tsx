@@ -4,6 +4,7 @@ import {
   ArtistWithReleasesAndAppearances,
   GroupWithArtists,
   ReleaseWithArtistAndSubReleases,
+  SearchResult,
 } from "@/types/types";
 
 import Cover from "./Cover";
@@ -15,11 +16,14 @@ export type MultipleCoversProps = {
   item:
     | CollectionWithReleases
     | ArtistWithReleasesAndAppearances
-    | GroupWithArtists;
+    | GroupWithArtists
+    | SearchResult;
   count?: number;
+  className?: string;
+  coverClassName?: string;
   isHover: boolean;
-  onLoad: () => void;
-  onError: () => void;
+  onLoad?: () => void;
+  onError?: () => void;
   onMouseEnter: () => void;
   onCoverDoubleClick?: (release_id: number) => void;
   onPlaybackClick?: (release_id: number) => void;
@@ -28,6 +32,8 @@ export type MultipleCoversProps = {
 export default function MultipleCovers({
   item,
   count = 5,
+  className,
+  coverClassName,
   isHover,
   onLoad,
   onError,
@@ -40,14 +46,16 @@ export default function MultipleCovers({
   return (
     <div
       onMouseEnter={onMouseEnter}
-      className={cx(styles.multipleCovers, { [styles.isHover]: isHover })}
+      className={cx(styles.multipleCovers, className, {
+        [styles.isHover]: isHover,
+      })}
     >
       <>
         {otherReleases.map((release) => (
           <Cover
             key={release.id}
             {...release}
-            className={styles.cover}
+            className={cx(styles.cover, coverClassName)}
             title={`${release.artist.name} - ${getReleaseTitle(release)}`}
             onDoubleClick={() => onCoverDoubleClick(release.id)}
             onPlaybackClick={() => onPlaybackClick(release.id)}
@@ -55,7 +63,7 @@ export default function MultipleCovers({
         ))}
         <Cover
           {...coverRelease}
-          className={styles.cover}
+          className={cx(styles.cover, coverClassName)}
           title={`${coverRelease.artist.name} - ${getReleaseTitle(
             coverRelease
           )}`}
@@ -78,7 +86,6 @@ function getCovers(item: MultipleCoversProps["item"], count = 5): GetCovers {
   const coverRelease = getCoverRelease(item);
 
   let otherReleases: ReleaseWithArtistAndSubReleases[];
-
   if (item.entityType === "Group") {
     otherReleases = item.artists.map(getCoverRelease);
   } else if (item.entityType === "Artist") {
