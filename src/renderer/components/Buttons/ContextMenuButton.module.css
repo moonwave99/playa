@@ -8,4 +8,12 @@
   width: 2rem;
   height: 2rem;
   font-size: 1.1rem;
+  transition:
+    scale 0.2s ease-in-out,
+    opacity 0.2s ease-in-out;
+
+  &:hover {
+    scale: 1.3;
+    opacity: 0.9;
+  }
 }

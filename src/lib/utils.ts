@@ -16,6 +16,7 @@ import type {
   ColorInfo,
   Group,
   Collection,
+  WithCoverRelease,
 } from "@/types/types";
 import { getCover } from "./links";
 
@@ -323,7 +324,7 @@ export function didReleaseInfoChange(
 
 export function withCoverRelease(
   artist: ArtistWithReleases
-): ArtistWithReleases {
+): ArtistWithReleases & WithCoverRelease {
   return {
     ...artist,
     coverRelease: artist.coverRelease || artist.releases[0],
@@ -347,12 +348,10 @@ export function normalizeDiacritics(input: string) {
 export function groupItemsByLetter(items: (Artist | Collection | Group)[]) {
   return Object.entries(
     Object.groupBy(items, (item) => {
-      let letter;
-      if (item.entityType === "Artist") {
-        letter = item.name.at(0).toLowerCase();
-      } else {
-        letter = item.title.at(0).toLowerCase();
-      }
+      const letter = (item.entityType === "Artist" ? item.name : item.title)
+        .at(0)
+        .toLowerCase();
+
       if (!letter.match(/^[A-Za-z]/)) {
         return "#";
       }

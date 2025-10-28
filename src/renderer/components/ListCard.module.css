@@ -17,6 +17,10 @@
       transform: translateY(calc(var(--release-group-height) * -1));
       transition-delay: 0s;
     }
+
+    .contextMenu {
+      opacity: 0;
+    }
   }
 
   &:hover .contextMenu {
