@@ -218,7 +218,24 @@ export type Entries<T> = {
 }[keyof T][];
 
 export type ReleaseListViewMode = "grid" | "list" | "compact";
-export type ArtistsViewMode = "latest" | "alphabetical";
+export type ArtistListViewMode = "latest" | "alphabetical";
+export type CollectionListViewMode = "latest" | "alphabetical";
+export type GroupListViewMode = "latest" | "alphabetical";
+
+export type ListViewModes =
+  | ReleaseListViewMode
+  | ArtistListViewMode
+  | CollectionListViewMode
+  | GroupListViewMode;
+
+export const listViewModesMap = {
+  release: ["grid", "list", "compact"] as ReleaseListViewMode[],
+  artist: ["latest", "alphabetical"] as ArtistListViewMode[],
+  collection: ["latest", "alphabetical"] as CollectionListViewMode[],
+  group: ["latest", "alphabetical"] as GroupListViewMode[],
+} as const;
+
+export type ListViews = keyof typeof listViewModesMap;
 
 export type NewReleaseInfo = {
   newPath: string;

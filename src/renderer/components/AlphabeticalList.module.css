@@ -1,5 +1,22 @@
 .view {
   margin-left: 2rem;
+  --column-count: 1;
+
+  &.columns-1 {
+    --column-count: 1;
+  }
+  &.columns-2 {
+    --column-count: 2;
+  }
+  &.columns-3 {
+    --column-count: 3;
+  }
+  &.columns-4 {
+    --column-count: 4;
+  }
+  &.columns-5 {
+    --column-count: 5;
+  }
 
   .list {
     padding: 1rem 0 0 1rem;
@@ -17,7 +34,7 @@
   }
   ul {
     list-style: none;
-    columns: 5;
+    columns: var(--column-count);
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;

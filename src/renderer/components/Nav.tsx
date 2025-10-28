@@ -1,7 +1,7 @@
-import { useState, useEffect, type MouseEvent, ReactNode } from "react";
+import React, { useState, useEffect, type MouseEvent, ReactNode } from "react";
 import { NavLink, Routes, Route, useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
-import { ReleaseListViewMode } from "@/types/types";
+import { listViewModesMap, ListViews } from "@/types/types";
 import { type Modals } from "../Modal";
 import { useKeyManager } from "../hooks/useKeyboardManager";
 import useClickOutside from "../hooks/useClickOutside";
@@ -17,9 +17,8 @@ import {
   MdOutlineDriveFolderUpload,
   MdEdit,
 } from "react-icons/md";
-import { IoMdTime } from "react-icons/io";
-import { BsGrid, BsGrid3X2Gap, BsListOl, BsAlphabet } from "react-icons/bs";
-import { Icon, type SupportedIcons } from "../icons";
+
+import { Icon, listActionsIconMap, type SupportedIcons } from "../icons";
 
 import cx from "clsx";
 import styles from "./Nav.module.css";
@@ -106,31 +105,42 @@ export default function Nav({ isDetailPage }: NavProps) {
           <Route path="/releases" element={<ImportActions />} />
           <Route
             path="/releases/:id"
-            element={<EditActions entity="Release" />}
+            element={<EditActions entity="release" />}
           />
-          <Route path="/artists" element={<ArtistListActions />} />
+          <Route
+            path="/artists"
+            element={<ListViewModeActions list="artist" />}
+          />
           <Route
             path="/artists/:id"
             element={
               <>
-                <ReleaseListActions />
+                <ListViewModeActions list="release" />
                 <ActionsGroup>
                   <ImportActions />
-                  <EditActions entity="Artist" />
+                  <EditActions entity="artist" />
                 </ActionsGroup>
               </>
             }
           />
           <Route
+            path="/collections"
+            element={<ListViewModeActions list="collection" />}
+          />
+          <Route
             path="/collections/:id"
             element={
               <>
-                <ReleaseListActions />
-                <EditActions entity="Collection" />
+                <ListViewModeActions list="release" />
+                <EditActions entity="collection" />
               </>
             }
           />
-          <Route path="/groups/:id" element={<EditActions entity="Group" />} />
+          <Route
+            path="/groups"
+            element={<ListViewModeActions list="group" />}
+          />
+          <Route path="/groups/:id" element={<EditActions entity="group" />} />
           <Route path="*" element={null} />
         </Routes>
         <ActionsGroup>
@@ -223,18 +233,19 @@ function ImportActions() {
 }
 
 type EditActionsProps = {
-  entity: "Artist" | "Release" | "Collection" | "Group";
+  entity: "artist" | "release" | "collection" | "group";
 };
 
 function EditActions({ entity }: EditActionsProps) {
   const { useDarkText } = useStore();
   const { t } = useTranslation();
+  const capitalEntity = capitalize(entity);
   return (
     <button
       type="button"
-      aria-label={t("nav.edit.actions.editEntity", { entity })}
-      title={t("nav.edit.actions.editEntity", { entity })}
-      onClick={() => api.menu.click(`edit${entity}`)}
+      aria-label={t("nav.edit.actions.editEntity", { entity: capitalEntity })}
+      title={t("nav.edit.actions.editEntity", { entity: capitalEntity })}
+      onClick={() => api.menu.click(`edit${capitalEntity}`)}
       className={cx(buttonStyles.button, {
         [buttonStyles.useDarkText]: useDarkText,
       })}
@@ -244,43 +255,36 @@ function EditActions({ entity }: EditActionsProps) {
   );
 }
 
-const releaseListActions: {
-  viewMode: ReleaseListViewMode;
-  key: string;
-  icon: ReactNode;
-}[] = [
-  {
-    viewMode: "grid",
-    key: "nav.release.actions.setGridViewMode",
-    icon: <BsGrid />,
-  },
-  {
-    viewMode: "list",
-    key: "nav.release.actions.setListViewMode",
-    icon: <BsListOl />,
-  },
-  {
-    viewMode: "compact",
-    key: "nav.release.actions.setCompactViewMode",
-    icon: <BsGrid3X2Gap />,
-  },
-];
+function ActionsGroup({ children }: { children: ReactNode }) {
+  return <div className={styles.ActionsGroup}>{children}</div>;
+}
 
-function ReleaseListActions() {
-  const { useDarkText, releaseListViewMode, setViewMode } = useStore();
+type ListViewModeActionsProps = {
+  list: ListViews;
+};
+
+function ListViewModeActions({ list }: ListViewModeActionsProps) {
+  const { useDarkText, isListViewMode, setListViewMode } = useStore();
   const { t } = useTranslation();
+
+  const actions = listViewModesMap[list].map((viewMode) => ({
+    viewMode,
+    key: `nav.lists.${list}.viewModes.${viewMode}`,
+    icon: listActionsIconMap[viewMode],
+  }));
+
   return (
     <ActionsGroup>
-      {releaseListActions.map(({ viewMode, key, icon }) => (
+      {actions.map(({ viewMode, key, icon }) => (
         <button
           key={viewMode}
           type="button"
           aria-label={t(key)}
           title={t(key)}
-          onClick={() => setViewMode("releaseList", viewMode)}
+          onClick={() => setListViewMode(list, viewMode)}
           className={cx(buttonStyles.button, {
             [buttonStyles.useDarkText]: useDarkText,
-            [buttonStyles.active]: releaseListViewMode === viewMode,
+            [buttonStyles.active]: isListViewMode(list, viewMode),
           })}
         >
           {icon}
@@ -288,41 +292,4 @@ function ReleaseListActions() {
       ))}
     </ActionsGroup>
   );
-}
-
-function ArtistListActions() {
-  const { useDarkText, artistsViewMode, setViewMode } = useStore();
-  const { t } = useTranslation();
-  return (
-    <ActionsGroup>
-      <button
-        type="button"
-        aria-label={t("nav.artist.actions.showLatestArtists")}
-        title={t("nav.artist.actions.showLatestArtists")}
-        onClick={() => setViewMode("artists", "latest")}
-        className={cx(buttonStyles.button, {
-          [buttonStyles.useDarkText]: useDarkText,
-          [buttonStyles.active]: artistsViewMode === "latest",
-        })}
-      >
-        <IoMdTime />
-      </button>
-      <button
-        type="button"
-        aria-label={t("nav.artist.actions.showArtistsList")}
-        title={t("nav.artist.actions.showArtistsList")}
-        onClick={() => setViewMode("artists", "alphabetical")}
-        className={cx(buttonStyles.button, {
-          [buttonStyles.useDarkText]: useDarkText,
-          [buttonStyles.active]: artistsViewMode === "alphabetical",
-        })}
-      >
-        <BsAlphabet />
-      </button>
-    </ActionsGroup>
-  );
-}
-
-function ActionsGroup({ children }: { children: ReactNode }) {
-  return <div className={styles.ActionsGroup}>{children}</div>;
 }

@@ -1,5 +1,5 @@
-import { capitalize, deburr, uniqBy } from "lodash";
 import type { MouseEvent } from "react";
+import { capitalize, deburr, uniqBy } from "lodash";
 import type {
   ReleaseType,
   Release,
@@ -14,6 +14,8 @@ import type {
   GroupWithArtists,
   WithAdditionalArtists,
   ColorInfo,
+  Group,
+  Collection,
 } from "@/types/types";
 import { getCover } from "./links";
 
@@ -342,7 +344,7 @@ export function normalizeDiacritics(input: string) {
   );
 }
 
-export function groupItemsByLetter(items: (Artist | Release)[]) {
+export function groupItemsByLetter(items: (Artist | Collection | Group)[]) {
   return Object.entries(
     Object.groupBy(items, (item) => {
       let letter;
@@ -369,4 +371,8 @@ export function getColorInfo(release: Release): ColorInfo {
     };
   }
   return release.colorInfo as ColorInfo;
+}
+
+export function ensurePlural(value: string) {
+  return capitalize(value.endsWith("s") ? value : `${value}s`);
 }

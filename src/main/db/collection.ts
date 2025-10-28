@@ -1,5 +1,7 @@
+import { groupItemsByLetter } from "@/lib/utils";
 import prisma from "./prisma";
 import type {
+  Collection,
   CollectionCreate,
   CollectionUpdate,
   HasId,
@@ -42,6 +44,18 @@ export async function getAllCollections() {
       },
     },
   });
+}
+
+export async function getCollectionAlphabeticalList() {
+  const collections = await prisma.collection.findMany({
+    orderBy: { title: "asc" },
+    select: {
+      id: true,
+      entityType: true,
+      title: true,
+    },
+  });
+  return groupItemsByLetter(collections as Collection[]);
 }
 
 type SortParams = {
@@ -121,7 +135,8 @@ export async function updateCollection(
   const connect = releases.map((id) => ({ id }));
   const disconnect = collection.releases.filter(({ id }: HasId) =>
     releases.every((x) => x != id)
-  );
+  ) as HasId[];
+
   return prisma.collection.update({
     where: {
       id,

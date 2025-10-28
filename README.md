@@ -8,22 +8,26 @@ TBD
 
 ## Roadmap
 
-- [ ] smart import vs interactive import;
-- [ ] entity tags;
-- [ ] advanced search;
-- [ ] make V/A configurable;
-- [ ] virtualize all lists;
+- smart import vs interactive import;
+- entity tags;
+- advanced search;
+- make V/A configurable;
+- virtualize all lists;
 
 ## E2E specs
 
-- [ ] import in non-smart mode;
-- [ ] edit in non-smart mode;
+- import in non-smart mode;
+- edit in non-smart mode;
 
 ## Tasks
 
-- [ ] rearrange app menu;
-- [ ] display multiple covers for multiple discs releases;
-- [ ] display multiple covers in search results;
+- rearrange app menu;
+- display multiple covers for multiple discs releases;
+- display multiple covers in search results;
+- generalize lightbox;
+- toggle view on collections and groups;
+- entityTypes to lowercase (condolences);
+- add error boundaries;
 
 ## License
 

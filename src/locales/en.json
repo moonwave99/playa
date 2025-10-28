@@ -30,17 +30,31 @@
         "openSearch": "Open Search"
       }
     },
-    "release": {
-      "actions": {
-        "setGridViewMode": "Show Grid View",
-        "setListViewMode": "Show List View",
-        "setCompactViewMode": "Show Compact View"
-      }
-    },
-    "artist": {
-      "actions": {
-        "showLatestArtists": "Show latest Artists",
-        "showArtistsList": "Show Artist List"
+    "lists": {
+      "release": {
+        "viewModes": {
+          "grid": "Show Grid View",
+          "list": "Show List View",
+          "compact": "Show Compact View"
+        }
+      },
+      "artist": {
+        "viewModes": {
+          "latest": "Show latest Artists",
+          "alphabetical": "Show Artist List"
+        }
+      },
+      "collection": {
+        "viewModes": {
+          "latest": "Show latest Collections",
+          "alphabetical": "Show Collection List"
+        }
+      },
+      "group": {
+        "viewModes": {
+          "latest": "Show latest Groups",
+          "alphabetical": "Show Group List"
+        }
       }
     },
     "import": {

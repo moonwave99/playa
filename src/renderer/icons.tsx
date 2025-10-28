@@ -1,9 +1,26 @@
+import { type ReactNode } from "react";
+import { ListViewModes } from "@/types/types";
+
 import { IoSettingsOutline } from "react-icons/io5";
 import { GoHomeFill } from "react-icons/go";
 import { TbBoxMultiple } from "react-icons/tb";
 import { PiVinylRecord, PiUserBold, PiUsersBold } from "react-icons/pi";
+import { BsGrid, BsListOl, BsGrid3X2Gap, BsAlphabet } from "react-icons/bs";
+import { IoMdTime } from "react-icons/io";
 
-const iconMap = [
+export type SupportedIcons =
+  | "home"
+  | "artist"
+  | "artists"
+  | "release"
+  | "releases"
+  | "collection"
+  | "collections"
+  | "group"
+  | "groups"
+  | "settings";
+
+const iconMap: { icon: ReactNode; keys: SupportedIcons[] }[] = [
   {
     icon: <GoHomeFill />,
     keys: ["home"],
@@ -30,21 +47,13 @@ const iconMap = [
   },
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const supportedIcons = {
-  home: "home",
-  artist: "artist",
-  artists: "artists",
-  release: "release",
-  releases: "releases",
-  collection: "collection",
-  collections: "collections",
-  group: "group",
-  groups: "groups",
-  settings: "settings",
+export const listActionsIconMap: Record<ListViewModes, ReactNode> = {
+  grid: <BsGrid />,
+  list: <BsListOl />,
+  compact: <BsGrid3X2Gap />,
+  latest: <IoMdTime />,
+  alphabetical: <BsAlphabet />,
 };
-
-export type SupportedIcons = keyof typeof supportedIcons;
 
 type IconProps = {
   isFor: SupportedIcons;

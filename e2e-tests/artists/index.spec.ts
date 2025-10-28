@@ -10,8 +10,6 @@ test.describe("Artists Page", () => {
     const { page, clickMenuItemById } = await getElectronApp();
 
     await clickMenuItemById("gotoArtistsPage");
-    await page.getByRole("button", { name: "Show latest Artists" }).click();
-
     await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
       "Artists"
     );
@@ -21,11 +19,12 @@ test.describe("Artists Page", () => {
     const { page, clickMenuItemById } = await getElectronApp();
 
     await clickMenuItemById("gotoArtistsPage");
-    await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
-      "Artists"
-    );
+    await expect(page.getByTestId("LatestArtistsView")).toBeInViewport();
 
     await page.getByRole("button", { name: "Show Artist List" }).click();
     await expect(page.getByTestId("AlphabeticalList")).toBeInViewport();
+
+    await page.getByRole("button", { name: "Show Latest Artists" }).click();
+    await expect(page.getByTestId("LatestArtistsView")).toBeInViewport();
   });
 });

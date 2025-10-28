@@ -170,7 +170,7 @@ export function systemController({
         icon,
       });
     } catch (error) {
-      console.log("system:drag", error);
+      log("system:drag", error);
     }
   }
 

@@ -1,5 +1,7 @@
+import { groupItemsByLetter } from "@/lib/utils";
 import prisma from "./prisma";
 import type {
+  Group,
   GroupCreate,
   GroupUpdate,
   HasId,
@@ -72,6 +74,18 @@ export async function getAllGroups() {
       },
     },
   });
+}
+
+export async function getGroupAlphabeticalList() {
+  const groups = await prisma.group.findMany({
+    orderBy: { title: "asc" },
+    select: {
+      id: true,
+      entityType: true,
+      title: true,
+    },
+  });
+  return groupItemsByLetter(groups as Group[]);
 }
 
 export async function getGroup(id: number) {

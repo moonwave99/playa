@@ -2,6 +2,7 @@ import { difference } from "lodash";
 import {
   getGroup,
   getAllGroups,
+  getGroupAlphabeticalList,
   getGroups,
   createGroup,
   updateGroup as _updateGroup,
@@ -125,6 +126,7 @@ export function groupController({
   return {
     getGroup,
     getAllGroups,
+    getGroupAlphabeticalList,
     getGroups,
     createGroup,
     updateGroup,
@@ -140,6 +142,7 @@ export function groupController({
 export const actions: (keyof ReturnType<typeof groupController>)[] = [
   "getGroup",
   "getAllGroups",
+  "getGroupAlphabeticalList",
   "getGroups",
   "createGroup",
   "updateGroup",

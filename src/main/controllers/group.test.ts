@@ -44,6 +44,19 @@ describe("getAllGroups function", () => {
   });
 });
 
+describe("getGroupAlphabeticalList function", () => {
+  it("returns all the artists grouped by letter", async () => {
+    const groups = getFakeGroups({ length: 5 });
+    await prisma.group.createMany({ data: groups });
+    const { getGroupAlphabeticalList } = groupController(defaultParams);
+    const result = await getGroupAlphabeticalList();
+    expect(result).toMatchObject([
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      ["g", groups.map(({ coverArtistId, ...x }) => x)],
+    ]);
+  });
+});
+
 describe("getGroup function", () => {
   it("returns null if no group is found", async () => {
     const { getGroup } = groupController(defaultParams);

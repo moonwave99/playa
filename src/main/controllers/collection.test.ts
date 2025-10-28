@@ -32,6 +32,17 @@ describe("getAllCollections function", () => {
   });
 });
 
+describe("getCollectionAlphabeticalList function", () => {
+  it("returns all the artists grouped by letter", async () => {
+    const collections = getFakeCollections({ length: 5 });
+    await prisma.collection.createMany({ data: collections });
+    const { getCollectionAlphabeticalList } =
+      collectionController(defaultParams);
+    const result = await getCollectionAlphabeticalList();
+    expect(result).toMatchObject([["c", collections]]);
+  });
+});
+
 describe("getCollection function", () => {
   it("returns the collection by given id", async () => {
     const collection = getFakeCollection();

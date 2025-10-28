@@ -59,10 +59,10 @@ export function getLibraryMenu({ controllers, stateManager }: GetMenuParams) {
     })),
     { type: "separator" as const },
     {
-      id: "toggleViewMode",
-      label: "Toggle View Mode",
+      id: "onToggleListViewMode",
+      label: "Toggle List View Mode",
       accelerator: "Cmd+Shift+T",
-      click: () => send("toggleViewMode"),
+      click: () => send("toggleListViewMode"),
     },
     {
       id: "searchLibrary",

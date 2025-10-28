@@ -41,12 +41,12 @@ describe("artist - getArtist function", () => {
   });
 });
 
-describe("artist - getAllArtists function", () => {
-  it("returns all the artists", async () => {
+describe("artist - getArtistAlphabeticalList function", () => {
+  it("returns all the artists grouped by letter", async () => {
     const artists = getFakeArtists({ length: 5 });
     await prisma.artist.createMany({ data: artists });
-    const { getAllArtists } = artistController(defaultParams);
-    const result = await getAllArtists();
+    const { getArtistAlphabeticalList } = artistController(defaultParams);
+    const result = await getArtistAlphabeticalList();
     expect(result).toMatchObject([
       [
         "a",

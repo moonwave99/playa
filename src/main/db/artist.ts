@@ -173,7 +173,7 @@ export async function getLatestArtists({
   };
 }
 
-export async function getAllArtists() {
+export async function getArtistAlphabeticalList() {
   const artists = await prisma.artist.findMany({
     orderBy: { name: "asc" },
     select: {

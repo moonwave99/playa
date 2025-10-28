@@ -47,11 +47,11 @@ export default function ReleaseList({
   keyHandlers = {},
   context,
 }: ReleaseListProps) {
-  const { releaseListViewMode, toggleViewMode } = useStore();
+  const { getListViewMode, toggleListViewMode } = useStore();
   const openLightbox = useReleaseLightbox({ context: releases });
 
   useApiEvents({
-    onToggleViewMode: () => toggleViewMode("releaseList"),
+    onToggleListViewMode: () => toggleListViewMode("release"),
   });
 
   const { scrollInfo, storeScrollInfo } = useRestoreListPosition({
@@ -126,17 +126,19 @@ export default function ReleaseList({
     }
   }
 
+  const viewMode = getListViewMode("release");
+
   return (
     <List
       shouldPreventSpace
-      key={`${releaseListViewMode}-${getTotalTracks(releases)}`}
+      key={`${viewMode}-${getTotalTracks(releases)}`}
       items={releases}
-      className={cx(styles.list, styles[releaseListViewMode], className)}
+      className={cx(styles.list, styles[viewMode], className)}
       onBackspace={onDelete}
       onSelectionChange={(selection) =>
         onSelect(selection.map((index) => releases[index].id))
       }
-      {...getListConfig(releaseListViewMode)}
+      {...getListConfig(viewMode)}
       onUnmount={storeScrollInfo}
       scrollInfo={scrollInfo}
       testId="ReleaseList"

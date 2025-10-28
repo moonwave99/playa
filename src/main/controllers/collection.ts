@@ -2,6 +2,7 @@ import { difference } from "lodash";
 import {
   getCollections,
   getAllCollections,
+  getCollectionAlphabeticalList,
   getCollection,
   createCollection,
   updateCollection,
@@ -120,6 +121,7 @@ export function collectionController({
   return {
     getCollections,
     getAllCollections,
+    getCollectionAlphabeticalList,
     getCollection,
     createCollection,
     updateCollection: withNotification(send)(updateCollection, {
@@ -141,6 +143,7 @@ export function collectionController({
 export const actions: (keyof ReturnType<typeof collectionController>)[] = [
   "getCollections",
   "getAllCollections",
+  "getCollectionAlphabeticalList",
   "getCollection",
   "createCollection",
   "updateCollection",

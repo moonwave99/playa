@@ -152,7 +152,7 @@ function getEvents() {
       params: Record<string, unknown>;
     }) => noOp(name, params),
     onClearSelection: () => {},
-    onToggleViewMode: () => {},
+    onToggleListViewMode: () => {},
     onToggleSearch: () => {},
     onOpenSettings: () => {},
     onOpenImportData: () => {},

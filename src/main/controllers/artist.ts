@@ -2,7 +2,7 @@ import { existsSync, move } from "fs-extra";
 import { Artist, Send, OpenConfirmDialog, ShowErrorBox } from "@/types/types";
 import {
   getArtist,
-  getAllArtists,
+  getArtistAlphabeticalList,
   getLatestArtists,
   getSelectedArtist,
   getSelectedArtists,
@@ -164,7 +164,7 @@ export function artistController({
 
   return {
     getArtist,
-    getAllArtists,
+    getArtistAlphabeticalList,
     getSelectedArtist,
     getSelectedArtists,
     getLatestArtists,
@@ -181,7 +181,7 @@ export function artistController({
 
 export const actions: (keyof ReturnType<typeof artistController>)[] = [
   "getArtist",
-  "getAllArtists",
+  "getArtistAlphabeticalList",
   "getLatestArtists",
   "updateArtist",
   "editArtist",
