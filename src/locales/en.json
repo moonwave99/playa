@@ -87,6 +87,10 @@
     "noResults": "No results for \"{{value}}\""
   },
   "pages": {
+    "ErrorPage": {
+      "title": "Something went wrong",
+      "description": "Please restart the application."
+    },
     "HomePage": {
       "latest": "Latest {{entity}}",
       "seeAll": "See All"
