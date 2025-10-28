@@ -11,6 +11,7 @@ test.describe("Releases", () => {
 
     const breadcrumbs = page.locator('[data-testid="breadcrumbs"]');
     await expect(breadcrumbs).toContainText("Releases");
+    await expect(page.getByRole("heading").first()).toHaveText("Releases");
 
     await page
       .locator('[data-testid="ReleasesPage"]')

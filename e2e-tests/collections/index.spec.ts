@@ -13,6 +13,7 @@ test.describe("Collections Page", () => {
     await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
       "Collections"
     );
+    await expect(page.getByRole("heading").first()).toHaveText("Collections");
   });
 
   test("toggle Collections View mode", async () => {

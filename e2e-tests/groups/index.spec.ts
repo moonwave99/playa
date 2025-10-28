@@ -13,6 +13,7 @@ test.describe("Groups Page", () => {
     await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
       "Groups"
     );
+    await expect(page.getByRole("heading").first()).toHaveText("Groups");
   });
 
   test("toggle Groups View mode", async () => {

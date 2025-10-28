@@ -12,10 +12,10 @@ test.describe("Edit Collection", () => {
     const breadcrumbs = page.locator('[data-testid="breadcrumbs"]');
     await expect(breadcrumbs).toContainText("Collections");
 
-    await expect(page.locator('[data-testid="CollectionsPage"]')).toBeVisible();
+    await expect(page.getByRole("heading").first()).toHaveText("Collections");
     await page.keyboard.press("Enter");
 
-    await expect(page.locator('[data-testid="CollectionPage"]')).toBeVisible();
+    await expect(page.getByRole("heading").first()).toHaveText("Collection 1");
     await clickMenuItemById("editCurrentCollection");
 
     const modal = page.locator(".ReactModalPortal");
@@ -27,6 +27,8 @@ test.describe("Edit Collection", () => {
     await page.keyboard.press("Enter");
 
     await expect(modal).not.toBeVisible();
-    await expect(breadcrumbs).toContainText("New Collection Title");
+    await expect(page.getByRole("heading").first()).toHaveText(
+      "New Collection Title"
+    );
   });
 });

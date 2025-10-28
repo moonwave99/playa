@@ -22,7 +22,7 @@ type SetupElectron = (section?: "App" | "Onboarding") => Promise<{
   electronApp: ElectronApplication;
   page: Page;
   clickMenuItemById: (id: string) => Promise<unknown>;
-  wait: (interval?: number) => Promise<void>;
+  wait: (interval?: string | number) => Promise<void>;
 }>;
 
 export function setupElectron(): SetupElectron {
@@ -65,7 +65,21 @@ export function setupElectron(): SetupElectron {
       electronApp,
       page,
       clickMenuItemById: (id: string) => clickMenuItemById(electronApp, id),
-      wait: (time = 10000) => page.waitForTimeout(time),
+      wait: (value?: string | number) =>
+        page.waitForTimeout(getTimeInterval(value)),
     };
   };
+}
+
+function getTimeInterval(value: string | number | undefined) {
+  if (typeof value === "number") {
+    return value;
+  }
+  if (value === "a moment") {
+    return 1000;
+  }
+  if (value === "a lot") {
+    return 20000;
+  }
+  return 10000;
 }

@@ -46,10 +46,10 @@ export default function LatestReleasesView({
       id="LatestReleases"
     >
       <header className={styles.header}>
-        <h1>
+        <h2>
           <Icon isFor="release" />
           {t("pages.HomePage.latest", { entity: "Releases " })}
-        </h1>
+        </h2>
         <Link
           className={cx(formStyles.button, formStyles.primary)}
           to="/releases"

@@ -12,10 +12,10 @@ test.describe("Edit Group", () => {
     const breadcrumbs = page.locator('[data-testid="breadcrumbs"]');
     await expect(breadcrumbs).toContainText("Groups");
 
-    await expect(page.locator('[data-testid="GroupsPage"]')).toBeVisible();
+    await expect(page.getByRole("heading").first()).toHaveText("Groups");
     await page.keyboard.press("Enter");
 
-    await expect(page.locator('[data-testid="GroupPage"]')).toBeVisible();
+    await expect(page.getByRole("heading").first()).toHaveText("Group 1");
     await clickMenuItemById("editCurrentGroup");
 
     const modal = page.locator(".ReactModalPortal");
@@ -28,6 +28,8 @@ test.describe("Edit Group", () => {
     await page.keyboard.press("Enter");
 
     await expect(modal).not.toBeVisible();
-    await expect(breadcrumbs).toContainText("New Group Title");
+    await expect(page.getByRole("heading").first()).toHaveText(
+      "New Group Title"
+    );
   });
 });

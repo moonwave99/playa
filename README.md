@@ -25,9 +25,9 @@ TBD
 - display multiple covers for multiple discs releases;
 - display multiple covers in search results;
 - generalize lightbox;
-- toggle view on collections and groups;
 - entityTypes to lowercase (condolences);
 - add error boundaries;
+- make group and collection titles editable again;
 
 ## License
 

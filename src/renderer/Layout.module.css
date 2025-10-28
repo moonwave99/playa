@@ -1,7 +1,7 @@
 .view {
   flex: 1;
   display: flex;
-  &.isDetailPage .main {
+  &.isFullHeaderPage .main {
     height: 100vh;
   }
 }
@@ -19,6 +19,6 @@
   padding-top: var(--header-height);
 }
 
-.isDetailPage > div {
+.isFullHeaderPage > div {
   padding-top: 0;
 }

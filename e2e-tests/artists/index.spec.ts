@@ -13,6 +13,8 @@ test.describe("Artists Page", () => {
     await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
       "Artists"
     );
+
+    await expect(page.getByRole("heading").first()).toHaveText("Artists");
   });
 
   test("toggle Artists View mode", async () => {

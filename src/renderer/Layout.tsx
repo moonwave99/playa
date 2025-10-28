@@ -18,7 +18,7 @@ import useRefetch from "./hooks/useRefetch";
 import useStore from "./store";
 import { refreshCovers } from "@/lib/utils";
 
-import Nav from "./components/Nav";
+import Nav from "./components/Nav/Nav";
 import Modal from "./Modal";
 import ToastView from "./components/ToastView";
 
@@ -56,7 +56,7 @@ type LayoutProps = {
 };
 
 export default function Layout({ initialSettings }: LayoutProps) {
-  const { setContext, isDetailPage, showOnboarding } = useLayout({
+  const { setContext, isFullHeaderPage, showOnboarding } = useLayout({
     initialSettings,
   });
 
@@ -67,11 +67,11 @@ export default function Layout({ initialSettings }: LayoutProps) {
       ) : (
         <div
           className={cx(styles.view, {
-            [styles.isDetailPage]: isDetailPage,
+            [styles.isFullHeaderPage]: isFullHeaderPage,
           })}
           data-testid="App"
         >
-          <Nav isDetailPage={isDetailPage} />
+          <Nav isFullHeaderPage={isFullHeaderPage} />
           <div className={styles.page}>
             <main className={styles.main}>
               <Routes>
@@ -98,7 +98,7 @@ type UseLayoutParams = {
 
 type UseLayout = {
   setContext: (context: string) => void;
-  isDetailPage: boolean;
+  isFullHeaderPage: boolean;
   showOnboarding: boolean;
 };
 
@@ -191,7 +191,7 @@ function useLayout({ initialSettings }: UseLayoutParams): UseLayout {
     setContext("list");
   }, [initialSettings]);
 
-  const isDetailPage = !!(
+  const isFullHeaderPage = !!(
     matchPath("/releases/:id", location.pathname) ||
     matchPath("/artists/:id", location.pathname)
   );
@@ -199,6 +199,6 @@ function useLayout({ initialSettings }: UseLayoutParams): UseLayout {
   return {
     setContext,
     showOnboarding: settings?.SHOW_ONBOARDING_ON_STARTUP,
-    isDetailPage,
+    isFullHeaderPage,
   };
 }

@@ -1,16 +1,14 @@
 import { useLocation, matchRoutes, type Params } from "react-router";
 import { useTranslation } from "react-i18next";
-import Link from "./Link";
-import { routes, type Route } from "../routes";
+import Link from "../Link";
+import { routes, type Route } from "@/renderer/routes";
+import { Icon, SupportedIcons } from "@/renderer/icons";
+import { getReleaseTitle } from "@/lib/utils";
+import useArtist from "@/renderer/query/useArtist";
+import useRelease from "@/renderer/query/useRelease";
+
 import cx from "clsx";
 import styles from "./Breadcrumbs.module.css";
-import { Icon, SupportedIcons } from "../icons";
-import { getReleaseTitle } from "@/lib/utils";
-import api from "../api";
-import useArtist from "../query/useArtist";
-import useCollection from "../query/useCollection";
-import useGroup from "../query/useGroup";
-import useRelease from "../query/useRelease";
 
 type RouteWithParams = Route & { params: Params };
 
@@ -21,9 +19,9 @@ const breadcrumbsMap = {
   artists: BaseBreadcrumb,
   artist: ArtistBreadcrumb,
   collections: BaseBreadcrumb,
-  collection: CollectionBreadcrumb,
   groups: BaseBreadcrumb,
-  group: GroupBreadcrumb,
+  collection: BaseBreadcrumb,
+  group: BaseBreadcrumb,
 };
 
 function getBreadCrumbs(location: ReturnType<typeof useLocation>) {
@@ -50,19 +48,19 @@ function getBreadCrumbs(location: ReturnType<typeof useLocation>) {
 }
 
 type BreadCrumbsProps = {
-  isDetailPage: boolean;
   useDarkText: boolean;
+  isFullHeaderPage: boolean;
 };
 
 export default function BreadCrumbs({
-  isDetailPage,
   useDarkText,
+  isFullHeaderPage,
 }: BreadCrumbsProps) {
-  const location = useLocation();
-  const breadcrumbs = getBreadCrumbs(location)
-    .map(renderEntry)
-    .filter((x) => !!x);
   const { t } = useTranslation();
+  const location = useLocation();
+  const breadcrumbs = getBreadCrumbs(location);
+  const isDetailPage = !!breadcrumbs.at(-1).params.id;
+  const breadCrumbElements = breadcrumbs.map(renderEntry).filter((x) => !!x);
 
   function renderEntry(
     { path, id, params }: RouteWithParams,
@@ -95,18 +93,18 @@ export default function BreadCrumbs({
     <ul
       className={cx(styles.view, {
         [styles.useDarkText]: useDarkText,
-        [styles.isDetailPage]: isDetailPage,
+        [styles.isFullHeaderPage]: isFullHeaderPage,
       })}
       data-testid="breadcrumbs"
       role="navigation"
       aria-label="Breadcrumbs"
     >
-      {breadcrumbs.map((entry, index) => (
+      {breadCrumbElements.map((entry, index) => (
         <li key={index}>
           <span
             className={cx(styles.breadCrumb, {
               [styles.useDarkText]: useDarkText,
-              [styles.isDetailPage]: isDetailPage,
+              [styles.isFullHeaderPage]: isFullHeaderPage,
             })}
           >
             {entry}
@@ -150,39 +148,4 @@ function ArtistBreadcrumb({ id, className }: BreadcrumbProps) {
     return null;
   }
   return <span className={className}>{artist.name}</span>;
-}
-
-function GroupBreadcrumb({ id, className }: BreadcrumbProps) {
-  const { t } = useTranslation();
-  const { group, isPending } = useGroup(id);
-  if (isPending || !group) {
-    return null;
-  }
-  return (
-    <span className={className} onContextMenu={() => api.menu.group(group)}>
-      {t("breadcrumbs.group", {
-        title: group.title,
-        count: group.artists.length,
-      })}
-    </span>
-  );
-}
-
-function CollectionBreadcrumb({ id, className }: BreadcrumbProps) {
-  const { t } = useTranslation();
-  const { collection, isPending } = useCollection(id);
-  if (isPending || !collection) {
-    return null;
-  }
-  return (
-    <span
-      className={className}
-      onContextMenu={() => api.menu.collection(collection)}
-    >
-      {t("breadcrumbs.collection", {
-        title: collection.title,
-        count: collection.releases.length,
-      })}
-    </span>
-  );
 }

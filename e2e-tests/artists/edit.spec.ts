@@ -20,7 +20,7 @@ test.describe("Edit Artist", () => {
       .getByText("Artist 10")
       .click();
 
-    await expect(page.locator('[data-testid="ArtistPage"]')).toBeVisible();
+    await expect(page.getByRole("heading").first()).toHaveText("Artist 10");
 
     await clickMenuItemById("editSelectedArtist");
 
@@ -31,8 +31,9 @@ test.describe("Edit Artist", () => {
     await page.keyboard.press("Enter");
 
     await expect(modal).not.toBeVisible();
-    await expect(
-      page.locator('[data-testid="ArtistPageHeader"]')
-    ).toContainText("New Artist Name");
+
+    await expect(page.getByRole("heading").first()).toHaveText(
+      "New Artist Name"
+    );
   });
 });

@@ -24,14 +24,23 @@
     "collection": "{{title}} ({{count}} releases)"
   },
   "nav": {
+    "titles": {
+      "home": "Playa",
+      "releases": "Releases",
+      "artists": "Artists",
+      "collections": "Collections",
+      "groups": "Groups"
+    },
     "common": {
       "actions": {
+        "gotoPage": "Go to the {{page}} page",
         "toggleMenu": "Toggle Menu",
         "openSearch": "Open Search"
       }
     },
     "lists": {
       "release": {
+        "title": "Releases",
         "viewModes": {
           "grid": "Show Grid View",
           "list": "Show List View",

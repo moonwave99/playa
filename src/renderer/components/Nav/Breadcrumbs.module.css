@@ -3,7 +3,7 @@
   display: flex;
   font-size: 0.8rem;
   line-height: 1rem;
-  &.isDetailPage {
+  &.isFullHeaderPage {
     li:not(:last-of-type):after {
       font-size: 0.8rem;
     }
@@ -43,7 +43,7 @@
   border: none;
   padding: 0 0.5rem;
 
-  &.isDetailPage {
+  &.isFullHeaderPage {
     padding: 0;
     background-color: transparent;
   }
@@ -74,15 +74,5 @@
     display: flex;
     align-items: center;
     gap: 0.25rem;
-    @media (max-width: 768px) {
-      display: inline-block;
-      max-width: 15rem;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      overflow: hidden;
-      span:last-of-type {
-        display: none;
-      }
-    }
   }
 }
