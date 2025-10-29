@@ -39,6 +39,9 @@
 
 .listWrapper {
   overflow-x: auto;
+  ::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .list {

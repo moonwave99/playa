@@ -48,6 +48,9 @@
 .listWrapper {
   height: calc(100vh - 10.5rem - var(--header-height));
   overflow: auto;
+  ::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .listItem {

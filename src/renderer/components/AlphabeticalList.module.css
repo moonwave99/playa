@@ -23,6 +23,9 @@
     height: calc(100vh - var(--header-height));
     overflow: auto;
     max-width: 100vw;
+    ::-webkit-scrollbar {
+      display: none;
+    }
   }
 
   h3 {

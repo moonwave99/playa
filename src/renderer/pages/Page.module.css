@@ -49,6 +49,9 @@
   overflow: auto;
   max-width: 100vw;
   padding: 1rem 0 0 1rem;
+  ::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .entry {
