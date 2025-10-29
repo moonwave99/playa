@@ -17,6 +17,7 @@ TBD
 - filter list views;
 - design linear list modes;
 - display artist release selection in search results;
+- add history nav buttons;
 
 ## Tasks
 
@@ -24,6 +25,8 @@ TBD
 - display multiple covers for multiple discs releases;
 - entityTypes to lowercase (condolences);
 - make group and collection titles editable again;
+- fix responsive title headers;
+- fix tag colors in single page headers;
 
 ## License
 

@@ -70,12 +70,6 @@
     .contextMenuButton {
       visibility: visible;
     }
-    .coverWrapper {
-      .playbackButton {
-        transform: translateY(0);
-        opacity: 1;
-      }
-    }
   }
 
   &.isDraggable {
