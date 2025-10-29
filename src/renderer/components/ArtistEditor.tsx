@@ -70,19 +70,17 @@ type ArtistListProps = {
 
 function ArtistList({ artists, type, onClick }: ArtistListProps) {
   return (
-    <div className={styles.ArtistListWrapper}>
-      <ul className={styles.ArtistList}>
-        {artists.map((artist: Artist) => (
-          <li key={artist.id}>
-            <ArtistCard
-              type={type}
-              artist={artist}
-              onClick={() => onClick(artist.id)}
-            />
-          </li>
-        ))}
-      </ul>
-    </div>
+    <ul className={styles.ArtistList}>
+      {artists.map((artist: Artist) => (
+        <li key={artist.id}>
+          <ArtistCard
+            type={type}
+            artist={artist}
+            onClick={() => onClick(artist.id)}
+          />
+        </li>
+      ))}
+    </ul>
   );
 }
 
