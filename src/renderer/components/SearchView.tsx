@@ -2,7 +2,12 @@ import { useState, type MouseEvent } from "react";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useDebounce } from "use-debounce";
-import { SearchableEntities, SearchResult } from "@/types/types";
+import {
+  ArtistWithReleasesAndAppearances,
+  SearchableEntities,
+  SearchResult,
+} from "@/types/types";
+import { getCovers } from "@/lib/utils";
 import api from "../api";
 import useSearchInput from "../hooks/useSearchInput";
 import useSearch from "../query/useSearch";
@@ -11,6 +16,7 @@ import ErrorView from "./ErrorView";
 import Loading from "./Loading";
 import Link from "./Link";
 import Cover from "./Cover";
+import SlidingCardsView from "./SlidingCardsView";
 import ContextMenuButton from "./Buttons/ContextMenuButton";
 import List from "./List";
 
@@ -246,10 +252,10 @@ function SearchResultView({
           {...(type === "release"
             ? (item as SearchResult & { hash: string })
             : coverRelease)}
-          onDoubleClick={onDoubleClick}
           className={styles.coverWrapper}
-          onPlaybackClick={onPlaybackClick}
           playButtonClassName={styles.playbackButton}
+          onDoubleClick={onDoubleClick}
+          onPlaybackClick={onPlaybackClick}
         />
       );
     }
@@ -300,12 +306,51 @@ function SearchResultView({
       })}
       onContextMenu={onContextMenu}
     >
-      {renderCover()}
-      <div className={styles.description}>{renderContent()}</div>
-      <ContextMenuButton
-        className={styles.contextMenuButton}
-        onClick={onContextMenu}
-      />
+      {item.type === "artist" ? (
+        <SlidingCardsView
+          className={styles.slidingCards}
+          contentClassName={styles.slidingCardsContent}
+          coverSize={64}
+          coverGap={4}
+          contentElement={
+            <>
+              <div className={styles.description}>{renderContent()}</div>
+              <ContextMenuButton
+                onClick={onContextMenu}
+                className={styles.contextMenuButton}
+              />
+            </>
+          }
+        >
+          {[
+            ...getCovers({
+              ...item,
+              entityType: "Artist",
+            } as unknown as ArtistWithReleasesAndAppearances).otherReleases,
+            coverRelease,
+          ].map((release) => (
+            <Cover
+              key={release.id}
+              {...release}
+              className={styles.coverWrapper}
+              playButtonClassName={styles.playbackButton}
+              title={`${release.artist.name} - ${release.title}}`}
+              onPlaybackClick={() =>
+                api.system.playback({ release_id: release.id })
+              }
+            />
+          ))}
+        </SlidingCardsView>
+      ) : (
+        <>
+          {renderCover()}
+          <div className={styles.description}>{renderContent()}</div>
+          <ContextMenuButton
+            className={styles.contextMenuButton}
+            onClick={onContextMenu}
+          />
+        </>
+      )}
     </article>
   );
 }

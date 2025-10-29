@@ -1,0 +1,22 @@
+.view {
+  --wrapper-padding: 0rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow-x: auto;
+  position: relative;
+  padding-left: var(--wrapper-padding);
+
+  &.withPadding {
+    --wrapper-padding: 0.5rem;
+  }
+  .itemWrapper {
+    position: absolute;
+    top: var(--wrapper-padding);
+    left: var(--wrapper-padding);
+    overflow: hidden;
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}

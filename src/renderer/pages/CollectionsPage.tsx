@@ -71,7 +71,6 @@ function LatestCollectionsView() {
       testId="CollectionsList"
       render={({ item, ...rest }) => (
         <ListCard
-          showMultipleCovers
           item={item}
           onContextMenu={() => api.menu.collection(item)}
           onCoverDoubleClick={(release_id) =>

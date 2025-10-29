@@ -18,6 +18,7 @@ import type {
   Collection,
   WithCoverRelease,
   SearchResult,
+  ArtistWithReleasesAndAppearances,
 } from "@/types/types";
 import { getCover } from "./links";
 
@@ -376,4 +377,40 @@ export function getColorInfo(release: Release): ColorInfo {
 
 export function ensurePlural(value: string) {
   return capitalize(value.endsWith("s") ? value : `${value}s`);
+}
+
+type GetCoversItem =
+  | CollectionWithReleases
+  | ArtistWithReleasesAndAppearances
+  | GroupWithArtists
+  | ReleaseWithArtistAndSubReleases;
+
+type GetCovers = {
+  coverRelease: ReleaseWithArtistAndSubReleases;
+  otherReleases: ReleaseWithArtistAndSubReleases[];
+};
+
+export function getCovers(item: GetCoversItem, count = Infinity): GetCovers {
+  const coverRelease = getCoverRelease(item);
+
+  let otherReleases: ReleaseWithArtistAndSubReleases[];
+  if (item.entityType === "Group") {
+    otherReleases = item.artists.map(getCoverRelease);
+  } else if (item.entityType === "Artist") {
+    otherReleases = [
+      ...item.releases,
+      ...(item.appearsIn || []),
+    ] as ReleaseWithArtistAndSubReleases[];
+  } else if (item.entityType === "Collection") {
+    otherReleases = item.releases;
+  } else {
+    otherReleases = [];
+  }
+
+  return {
+    coverRelease,
+    otherReleases: otherReleases
+      .filter((x) => x.id !== coverRelease.id)
+      .slice(0, count - 1),
+  };
 }

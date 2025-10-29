@@ -71,7 +71,6 @@ function LatestGroupsView() {
       testId="GroupsList"
       render={({ item, ...rest }) => (
         <ListCard
-          showMultipleCovers
           item={item}
           onContextMenu={() => api.menu.group(item)}
           onCoverDoubleClick={(release_id) =>

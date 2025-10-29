@@ -80,7 +80,6 @@ function LatestArtistsView() {
       }
       render={({ item, ...rest }) => (
         <ListCard
-          showMultipleCovers
           item={item}
           onContextMenu={() => api.menu.artist(item)}
           onCoverDoubleClick={(release_id) =>

@@ -103,7 +103,18 @@
   }
 }
 
+.slidingCards {
+  flex: 1;
+}
+
+.slidingCardsContent {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
 .description {
+  flex: 1;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
@@ -117,6 +128,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+  user-select: none;
 }
 
 .title:hover {

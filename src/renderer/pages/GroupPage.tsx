@@ -54,7 +54,6 @@ export default function GroupPage() {
           testId="ArtistList"
           render={({ item, ...rest }) => (
             <ListCard
-              showMultipleCovers
               item={item}
               onContextMenu={() => api.menu.artist(item, group)}
               onCoverDoubleClick={(release_id) =>

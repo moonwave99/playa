@@ -9,23 +9,25 @@
   border-radius: 0.25rem;
   background-color: var(--default-listcard-background-color);
   padding-right: 0.5rem;
-
-  &.isHover.hasMultipleCovers {
-    overflow-x: auto;
-
-    .content {
-      transform: translateY(calc(var(--release-group-height) * -1));
-      transition-delay: 0s;
-    }
-
+  &:hover {
     .contextMenu {
-      opacity: 0;
+      visibility: visible;
+    }
+    .cover,
+    .ghost {
+      border-radius: 0.25rem;
     }
   }
+}
 
-  &:hover .contextMenu {
-    visibility: visible;
-  }
+.slidingCards {
+  flex: 1;
+}
+
+.slidingCardsContent {
+  flex: 1;
+  display: flex;
+  align-items: center;
 }
 
 .contextMenu {

@@ -1,12 +1,13 @@
 import { type MouseEvent } from "react";
 import { useTranslation } from "react-i18next";
-import useHover from "../hooks/useHover";
+
 import {
   getReleaseTitle,
   getCoverRelease,
   withStopPropagation,
   normalizeArtistDisplayName,
   getColorInfo,
+  getCovers,
 } from "@/lib/utils";
 import {
   getArtistLink,
@@ -24,11 +25,11 @@ import type {
 
 import api from "../api";
 
+import SlidingCardsView from "./SlidingCardsView";
 import ReleaseInfo from "./ReleaseInfo";
 import EntityList from "./EntityList";
 import Cover from "./Cover";
 import Link from "./Link";
-import MultipleCovers, { type MultipleCoversProps } from "./MultipleCovers";
 
 import cx from "clsx";
 import styles from "./ListCard.module.css";
@@ -37,9 +38,9 @@ import ContextMenuButton from "./Buttons/ContextMenuButton";
 export type Item =
   | CollectionWithReleases
   | ArtistWithReleasesAndAppearances
+  | GroupWithArtists
   | ReleaseWithArtistAndSubReleases
-  | ReleaseWithArtistAndTracksAndSubreleases
-  | GroupWithArtists;
+  | ReleaseWithArtistAndTracksAndSubreleases;
 
 type ListCardProps = {
   item: Item;
@@ -51,9 +52,9 @@ type ListCardProps = {
   onDoubleClick?: () => void;
   onContextMenu?: () => void;
   onColorChange?: (useDarkText: boolean) => void;
-  showMultipleCovers?: boolean;
   onCoverDoubleClick?: (release_id: number) => void;
   onLinkClick?: () => void;
+  maxCoversCount?: number;
   testId?: string;
 };
 
@@ -65,15 +66,13 @@ export default function ListCard({
   onClick,
   onCoverClick,
   onContextMenu,
-  showMultipleCovers,
   onCoverDoubleClick,
   onLinkClick,
+  maxCoversCount = 10,
   testId,
 }: ListCardProps) {
   const { t } = useTranslation();
   const coverRelease = getCoverRelease(item);
-
-  const { onMouseEnter, onMouseLeave, isHover } = useHover();
 
   const { darkText, color } = getColorInfo(coverRelease);
 
@@ -157,58 +156,6 @@ export default function ListCard({
     );
   }
 
-  function shouldDisplayMultipleCovers() {
-    if (!showMultipleCovers || item.entityType === "Release") {
-      return false;
-    }
-    if (item.entityType === "Group") {
-      return item.artists.length > 1;
-    }
-    if (item.entityType === "Artist") {
-      return item.releases.length + item.appearsIn.length > 1;
-    }
-    return item.releases.length > 1;
-  }
-
-  function getOnPlaybackClick(id: number) {
-    if (item.entityType !== "Release") {
-      return null;
-    }
-    return () => api.system.playback({ release_id: id });
-  }
-
-  const willDisplayMultipleCovers = shouldDisplayMultipleCovers();
-
-  function renderCover() {
-    if (willDisplayMultipleCovers) {
-      return (
-        <MultipleCovers
-          item={item as MultipleCoversProps["item"]}
-          onCoverDoubleClick={onCoverDoubleClick}
-          onMouseEnter={onMouseEnter}
-          isHover={isHover}
-          onPlaybackClick={getOnPlaybackClick}
-        />
-      );
-    }
-
-    if (coverRelease) {
-      return (
-        <Cover
-          {...coverRelease}
-          onClick={onCoverClick}
-          className={styles.cover}
-          title={`${coverRelease?.artist?.name} - ${getReleaseTitle(
-            coverRelease
-          )}`}
-          onPlaybackClick={getOnPlaybackClick(item.id)}
-        />
-      );
-    }
-
-    return <div className={styles.ghost} />;
-  }
-
   function getContextMenu() {
     if (!onContextMenu) {
       return null;
@@ -216,18 +163,18 @@ export default function ListCard({
     return withStopPropagation(onContextMenu);
   }
 
+  const { otherReleases } = getCovers(item, maxCoversCount);
+
   return (
     <div
       data-selected={selected}
       data-hasfocus={selected && hasFocus}
-      onMouseLeave={onMouseLeave}
       className={cx(styles.listCard, {
         [styles.isArtist]: item.entityType === "Artist",
         [styles.selected]: selected,
         [styles.hasFocus]: selected && hasFocus,
         [styles.useDarkText]: darkText,
-        [styles.isHover]: isHover,
-        [styles.hasMultipleCovers]: willDisplayMultipleCovers,
+        [styles.hasMultipleCovers]: otherReleases.length,
         className,
       })}
       onClick={onClick}
@@ -235,12 +182,35 @@ export default function ListCard({
       style={{ background: color || null }}
       data-testid={testId}
     >
-      {renderCover()}
-      <div className={styles.content}>{getContent()}</div>
-      <ContextMenuButton
-        onClick={onContextMenu}
-        className={styles.contextMenu}
-      />
+      <SlidingCardsView
+        className={styles.slidingCards}
+        contentClassName={styles.slidingCardsContent}
+        coverSize={96}
+        coverGap={8}
+        contentElement={
+          <>
+            <div className={styles.content}>{getContent()}</div>
+            <ContextMenuButton
+              onClick={onContextMenu}
+              className={styles.contextMenu}
+            />
+          </>
+        }
+      >
+        {[...otherReleases, coverRelease].map((release) => (
+          <Cover
+            key={release.id}
+            {...release}
+            className={styles.cover}
+            title={`${release.artist.name} - ${getReleaseTitle(release)}`}
+            onClick={onCoverClick}
+            onDoubleClick={() => onCoverDoubleClick(release.id)}
+            onPlaybackClick={() =>
+              api.system.playback({ release_id: release.id })
+            }
+          />
+        ))}
+      </SlidingCardsView>
     </div>
   );
 }
