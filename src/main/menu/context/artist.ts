@@ -57,10 +57,10 @@ export const artistMenu =
         label: `Add Artist to Group`,
         click: () => openModal("addArtistsToGroup", { artists: [artist] }),
       },
-      context?.entityType === "Group"
+      context?.entityType === "group"
         ? getRemoveFromGroupEntry(artist, context, { controllers, send })
         : { type: "separator" },
-      context?.entityType === "Group"
+      context?.entityType === "group"
         ? getCoverEntityEntry({ selection_id: artist.id, context, controllers })
         : { type: "separator" },
       { type: "separator" },

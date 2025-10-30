@@ -1,9 +1,5 @@
 import { MenuItem } from "electron";
-import {
-  ReleaseWithArtistAndTracks,
-  ReleaseWithArtist,
-  SelectableEntities,
-} from "@/types/types";
+import { ReleaseWithArtistAndTracks, ReleaseWithArtist } from "@/types/types";
 import { send, openModal } from "@/main/controllers/init";
 import {
   searchReleaseOnDiscogs,
@@ -35,13 +31,11 @@ export function getReleaseMenu({ controllers, stateManager }: GetMenuParams) {
   }
 
   function getDeleteContext() {
-    for (const entityType of ["Artist", "Collection"] as const) {
-      if (stateManager.isPage(entityType.toLowerCase())) {
+    for (const entityType of ["artist", "collection"] as const) {
+      if (stateManager.isPage(entityType)) {
         return {
           entityType,
-          id: stateManager
-            .getSelection(entityType.toLowerCase() as SelectableEntities)
-            .at(0),
+          id: stateManager.getSelection(entityType).at(0),
         };
       }
     }
@@ -108,7 +102,7 @@ export function getReleaseMenu({ controllers, stateManager }: GetMenuParams) {
       accelerator: "Shift+F",
       click: () =>
         controllers.system.revealEntityInFinder({
-          entityType: "Release",
+          entityType: "release",
           id: stateManager.getSelection("release").at(0),
         }),
     },

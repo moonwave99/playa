@@ -18,7 +18,7 @@ export function getFakeArtist(id = 1) {
 
 export function getFakeArtists({ length = 10 }) {
   return Array.from({ length }, (_, i) => ({
-    entityType: "Artist" as EntityType,
+    entityType: "artist" as EntityType,
     id: i + 1,
     name: `Artist ${i + 1}`,
     normalizedName: `Artist ${i + 1}`,
@@ -30,7 +30,7 @@ export function getFakeArtists({ length = 10 }) {
 
 export function getFakeRelease(id = 1, override: Partial<Release> = {}) {
   return {
-    entityType: "Release" as EntityType,
+    entityType: "release" as EntityType,
     id,
     title: `Release ${id}`,
     normalizedTitle: `Release ${id}`,
@@ -57,7 +57,7 @@ export function getFakeRelease(id = 1, override: Partial<Release> = {}) {
 
 export function getFakeReleasesForArtist(artist_id: number, length = 5) {
   return Array.from({ length }, (_, i) => ({
-    entityType: "Release" as EntityType,
+    entityType: "release" as EntityType,
     id: (artist_id - 1) * length + i + 1,
     title: `Release ${artist_id}-${i + 1}`,
     normalizedTitle: `Release ${artist_id}-${i + 1}`,
@@ -83,7 +83,7 @@ export function getFakeReleasesForArtist(artist_id: number, length = 5) {
 
 export function getFakeTracksForRelease(releaseId: number, length = 5) {
   return Array.from({ length }, (_, i) => ({
-    entityType: "Track" as EntityType,
+    entityType: "track" as EntityType,
     id: (releaseId - 1) * length + i + 1,
     title: `Track ${i + 1}`,
     normalizedTitle: `Track ${i + 1}`,
@@ -116,7 +116,7 @@ export function getFakeCollections({
 }) {
   const connect = releases?.length ? { releases: { connect: releases } } : {};
   return Array.from({ length }, (_, i) => ({
-    entityType: "Collection" as EntityType,
+    entityType: "collection" as EntityType,
     id: i + 1,
     title: `Collection ${i + 1}`,
     ...connect,
@@ -140,7 +140,7 @@ export function getFakeGroups({
 }) {
   const connect = artists?.length ? { artists: { connect: artists } } : {};
   return Array.from({ length }, (_, i) => ({
-    entityType: "Group" as EntityType,
+    entityType: "group" as EntityType,
     id: i + 1,
     title: `Group ${i + 1}`,
     coverArtistId: artists?.at(0)?.id || null,

@@ -5,7 +5,7 @@ import useStore from "@/renderer/store";
 import api from "@/renderer/api";
 import {
   getColorInfo,
-  getCoverRelease,
+  getCovers,
   getReleaseFullTitle,
   normalizeArtistDisplayName,
 } from "@/lib/utils";
@@ -24,7 +24,7 @@ type ArtistPageHeaderProps = {
 export default function ArtistPageHeader({ artist }: ArtistPageHeaderProps) {
   const { t } = useTranslation();
   const { setModalContents, setUseDarkText } = useStore();
-  const coverRelease = getCoverRelease(artist);
+  const { coverRelease } = getCovers(artist);
   const { id, name, releases, appearsIn } = artist;
   const releaseCount = releases.length + appearsIn.length;
 

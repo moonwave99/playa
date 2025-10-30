@@ -20,7 +20,6 @@ test.describe("Delete Artist", () => {
       .click();
 
     await expect(page.locator('[data-testid="ArtistPage"]')).toBeVisible();
-
     await clickMenuItemById("deleteSelectedArtists");
 
     await expect(breadcrumbs).not.toContainText("Artists");

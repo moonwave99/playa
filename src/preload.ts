@@ -109,7 +109,7 @@ const api = {
   menu: {
     release: (
       selection: ReleaseWithArtist[],
-      context?: WithReleases & { entityType: "Artist" | "Collection" | null }
+      context?: WithReleases & { entityType: "artist" | "collection" | null }
     ) => ipc.invoke("menu:release", selection, context),
     artist: (artist: ArtistWithReleases, context?: GroupWithArtists) =>
       ipc.invoke("menu:artist", artist, context),

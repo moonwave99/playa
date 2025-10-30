@@ -8,26 +8,26 @@ import { Modals } from "@/renderer/Modal";
 export { EntityType } from "@prisma/client-generated";
 
 type Artist = Prisma.Artist & {
-  entityType: "Artist";
+  entityType: "artist";
   coverRelease?: ReleaseWithArtistAndSubReleases;
 };
 
 type Release = Prisma.Release & {
-  entityType: "Release";
+  entityType: "release";
 };
 
 type Collection = Prisma.Collection & {
-  entityType: "Collection";
+  entityType: "collection";
   coverRelease?: ReleaseWithArtistAndSubReleases;
 };
 
 type Group = Prisma.Group & {
-  entityType: "Group";
+  entityType: "group";
   coverArtist?: ArtistWithReleases;
 };
 
 type Track = Prisma.Track & {
-  entityType: "Track";
+  entityType: "track";
 };
 
 type Settings = Prisma.Settings;
@@ -53,25 +53,9 @@ export const releaseTypes: ReleaseType[] = [
   "Soundtrack",
 ];
 
-export type Entities =
-  | "collection"
-  | "release"
-  | "artist"
-  | "track"
-  | "group"
-  | "searchResult";
-export type SearchableEntities =
-  | "collection"
-  | "release"
-  | "artist"
-  | "track"
-  | "group";
-export type SelectableEntities =
-  | "collection"
-  | "release"
-  | "artist"
-  | "group"
-  | "track";
+export type Entities = EntityType | "searchResult";
+export type SearchableEntities = EntityType;
+export type SelectableEntities = EntityType;
 export type Stats = Record<SearchableEntities, number>;
 export type HasId = { id: number };
 export type HasEntityType = { entityType: EntityType };
@@ -202,7 +186,7 @@ export type PaginationParams = {
 export type SearchParams = Record<string, string>;
 
 export type SearchResult = {
-  entityType: "SearchResult";
+  entityType: "searchResult";
   id: number;
   type: SearchableEntities;
   title: string;
@@ -263,7 +247,7 @@ export type EditReleaseParam = Pick<
 
 export type Context = {
   id?: number;
-  entityType: "Artist" | "Collection" | "Group" | null;
+  entityType: "artist" | "collection" | "group" | null;
 };
 
 export type Unpacked<T> = T extends (infer U)[] ? U : T;

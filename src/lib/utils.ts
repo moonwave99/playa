@@ -19,6 +19,7 @@ import type {
   WithCoverRelease,
   SearchResult,
   ArtistWithReleasesAndAppearances,
+  EntityType,
 } from "@/types/types";
 import { getCover } from "./links";
 
@@ -272,10 +273,10 @@ type Item =
 export function getCoverRelease(
   item: Item
 ): ReleaseWithArtistAndSubReleases | null {
-  if (item.entityType === "Release") {
+  if (item.entityType === "release") {
     return item as ReleaseWithArtistAndSubReleases;
   }
-  if (item.entityType === "Group") {
+  if (item.entityType === "group") {
     const coverArtist =
       (item as GroupWithArtists).coverArtist ||
       (item as GroupWithArtists).artists[0];
@@ -351,7 +352,7 @@ export function normalizeDiacritics(input: string) {
 export function groupItemsByLetter(items: (Artist | Collection | Group)[]) {
   return Object.entries(
     Object.groupBy(items, (item) => {
-      const letter = (item.entityType === "Artist" ? item.name : item.title)
+      const letter = (item.entityType === "artist" ? item.name : item.title)
         .at(0)
         .toLowerCase();
 
@@ -394,14 +395,14 @@ export function getCovers(item: GetCoversItem, count = Infinity): GetCovers {
   const coverRelease = getCoverRelease(item);
 
   let otherReleases: ReleaseWithArtistAndSubReleases[];
-  if (item.entityType === "Group") {
+  if (item.entityType === "group") {
     otherReleases = item.artists.map(getCoverRelease);
-  } else if (item.entityType === "Artist") {
+  } else if (item.entityType === "artist") {
     otherReleases = [
       ...item.releases,
       ...(item.appearsIn || []),
     ] as ReleaseWithArtistAndSubReleases[];
-  } else if (item.entityType === "Collection") {
+  } else if (item.entityType === "collection") {
     otherReleases = item.releases;
   } else {
     otherReleases = [];
@@ -413,4 +414,20 @@ export function getCovers(item: GetCoversItem, count = Infinity): GetCovers {
       .filter((x) => x.id !== coverRelease.id)
       .slice(0, count - 1),
   };
+}
+
+type FormatEntityTypeOptions = {
+  capital?: boolean;
+  plural?: boolean;
+};
+
+export function formatEntityType(
+  entityType: EntityType,
+  { capital = true, plural = false }: FormatEntityTypeOptions = {}
+): string {
+  let output: string = entityType;
+  if (capital) {
+    output = capitalize(output);
+  }
+  return plural ? `${output}s` : output;
 }

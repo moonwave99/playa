@@ -2,7 +2,6 @@ import { Link } from "react-router";
 import { useTranslation } from "react-i18next";
 import ListCard, { type Item } from "@/renderer/components/ListCard";
 import api from "@/renderer/api";
-import { capitalize } from "lodash";
 import ErrorView from "@/renderer/components/ErrorView";
 import Loading from "@/renderer/components/Loading";
 
@@ -10,6 +9,7 @@ import { Icon } from "@/renderer/icons";
 import cx from "clsx";
 import styles from "./LatestEntriesView.module.css";
 import formStyles from "@/renderer/forms.module.css";
+import { formatEntityType } from "@/lib/utils";
 
 type LatestEntriesViewProps<T extends Item> = {
   entity: "artist" | "collection" | "group";
@@ -39,18 +39,21 @@ export default function LatestEntriesView<T extends Item>({
   }
 
   function onContextMenu(item: T) {
-    if (item.entityType === "Artist") {
+    if (item.entityType === "artist") {
       api.menu.artist(item);
     }
-    if (item.entityType === "Collection") {
+    if (item.entityType === "collection") {
       api.menu.collection(item);
     }
-    if (item.entityType === "Group") {
+    if (item.entityType === "group") {
       api.menu.group(item);
     }
   }
 
-  const formattedEntity = `${capitalize(entity)}s`;
+  const formattedEntity = formatEntityType(entity, {
+    capital: true,
+    plural: true,
+  });
 
   return (
     <section className={styles.view} data-testid={`Latest${formattedEntity}`}>

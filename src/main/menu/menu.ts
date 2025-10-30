@@ -16,6 +16,7 @@ import { getGroupMenu } from "./static/group";
 import { getCollectionMenu } from "./static/collection";
 import { getReleaseMenu } from "./static/release";
 import { getArtistMenu } from "./static/artist";
+import { capitalize } from "lodash";
 
 export function buildMenu(params: (MenuItemConstructorOptions | MenuItem)[]) {
   const menu = Menu.buildFromTemplate(params);
@@ -79,14 +80,14 @@ export function getCoverEntityEntry({
     return { type: "separator" };
   }
   return {
-    label: `Set as ${context.entityType} Cover`,
+    label: `Set as ${capitalize(context.entityType)} Cover`,
     click: async () => {
       let action, queryKey;
-      if (context.entityType === "Artist") {
+      if (context.entityType === "artist") {
         queryKey = "artists";
         action = controllers.artist.setArtistCoverRelease;
       }
-      if (context.entityType === "Group") {
+      if (context.entityType === "group") {
         queryKey = "groups";
         action = controllers.group.setGroupCoverArtist;
       } else {
@@ -106,10 +107,10 @@ function shouldDisplayCoverEntityEntry(context: Context) {
   if (!context || !context.entityType) {
     return false;
   }
-  if (context.entityType === "Group") {
+  if (context.entityType === "group") {
     return (context as GroupWithArtists)?.artists.length > 1;
   }
-  if (context.entityType === "Artist") {
+  if (context.entityType === "artist") {
     return (context as ArtistWithReleases)?.releases.length > 1;
   }
 }

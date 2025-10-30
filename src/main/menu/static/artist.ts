@@ -39,7 +39,7 @@ export function getArtistMenu({ controllers, stateManager }: GetMenuParams) {
       accelerator: "Cmd+Shift+F",
       click: async () =>
         controllers.system.revealEntityInFinder({
-          entityType: "Artist",
+          entityType: "artist",
           id: stateManager.getSelection("artist").at(0),
         }),
     },

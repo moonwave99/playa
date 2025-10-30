@@ -29,10 +29,10 @@ type GetEntityPathParam = { entityType: EntityType } & (
 );
 
 export function getEntityPath(entity: GetEntityPathParam) {
-  if (entity.entityType === "Artist") {
+  if (entity.entityType === "artist") {
     return entity.path;
   }
-  if (entity.entityType === "Release") {
+  if (entity.entityType === "release") {
     const release = entity as ReleaseWithArtist;
     if (release.completePath) {
       return release.completePath;
@@ -76,7 +76,7 @@ export async function getFolderContents(
 ): Promise<TrackInfo[]> {
   const folder = path.join(
     library_path,
-    getEntityPath({ ...release, entityType: "Release" })
+    getEntityPath({ ...release, entityType: "release" })
   );
   const contents = await crawlFolder(folder);
   return Promise.all(contents.map(getMetadata));

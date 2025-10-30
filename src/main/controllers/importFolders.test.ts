@@ -306,7 +306,7 @@ describe("refreshEntityRelease function", () => {
     const artist = await prisma.artist.findFirst({ where: { id: 1 } });
     await refreshEntityRelease({
       ...artist,
-      entityType: "Artist",
+      entityType: "artist",
       releases: [],
     });
     expect(send).toHaveBeenCalledWith("mutate", ["artists", 1]);

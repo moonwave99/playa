@@ -230,7 +230,7 @@ type Transformers = {
 
 const transformers: Transformers = {
   artist: ({ id, name, coverRelease, releases }: ArtistWithReleases) => ({
-    entityType: "SearchResult",
+    entityType: "searchResult",
     type: "artist" as const,
     id,
     title: name,
@@ -251,7 +251,7 @@ const transformers: Transformers = {
     subReleases,
     additionalArtists,
   }: ReleaseWithArtistAndSubReleases & WithAdditionalArtists) => ({
-    entityType: "SearchResult",
+    entityType: "searchResult",
     type: "release" as const,
     id,
     title: getReleaseTitle({ title, subReleases }),
@@ -269,7 +269,7 @@ const transformers: Transformers = {
     coverRelease,
     releases,
   }: CollectionWithReleases) => ({
-    entityType: "SearchResult",
+    entityType: "searchResult",
     type: "collection" as const,
     id,
     title,
@@ -280,7 +280,7 @@ const transformers: Transformers = {
     coverRelease: coverRelease || releases[0],
   }),
   group: ({ id, title, coverArtist }: GroupWithArtists) => ({
-    entityType: "SearchResult",
+    entityType: "searchResult",
     type: "group" as const,
     id,
     title,
@@ -291,7 +291,7 @@ const transformers: Transformers = {
     coverRelease: coverArtist ? getCoverRelease(coverArtist) : null,
   }),
   track: ({ id, title, trackArtist, release }: TrackWithRelease) => ({
-    entityType: "SearchResult",
+    entityType: "searchResult",
     type: "track" as const,
     id,
     title,

@@ -90,7 +90,7 @@ export function releaseController({
       const targetPath = withPath(
         "LIBRARY_PATH",
         getEntityPath({
-          entityType: "Release",
+          entityType: "release",
           year: info.newYear,
           type: info.newType,
           path: info.newPath,
@@ -120,7 +120,7 @@ export function releaseController({
         path: x.newPath,
         completePath: USE_SMART_IMPORT
           ? getEntityPath({
-              entityType: "Release",
+              entityType: "release",
               year: x.newYear,
               type: x.newType,
               path: x.newPath,
@@ -140,14 +140,14 @@ export function releaseController({
               getEntityPath({
                 ...x,
                 artist,
-                entityType: "Release",
+                entityType: "release",
               })
             );
             const newPath = withPath(
               "LIBRARY_PATH",
               getEntityPath({
                 artist,
-                entityType: "Release",
+                entityType: "release",
                 type: x.newType,
                 year: x.newYear,
                 path: x.newPath,

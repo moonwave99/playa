@@ -41,7 +41,7 @@ export function systemController({
       return [
         withPath(
           "LIBRARY_PATH",
-          getEntityPath({ ...entity, entityType: "Track" })
+          getEntityPath({ ...entity, entityType: "track" })
         ),
       ];
     }
@@ -49,7 +49,7 @@ export function systemController({
       entity,
       ...((entity as ReleaseWithArtistAndSubReleases).subReleases || []),
     ].map((x) =>
-      withPath("LIBRARY_PATH", getEntityPath({ ...x, entityType: "Release" }))
+      withPath("LIBRARY_PATH", getEntityPath({ ...x, entityType: "release" }))
     );
   }
 
@@ -123,7 +123,7 @@ export function systemController({
       TAGGER_PATH,
       withPath(
         "LIBRARY_PATH",
-        getEntityPath({ ...release, entityType: "Release" })
+        getEntityPath({ ...release, entityType: "release" })
       ),
     ]);
     return true;
@@ -131,12 +131,12 @@ export function systemController({
 
   async function revealEntityInFinder({ entityType, id }: HasEntityTypeAndId) {
     let result;
-    if (entityType === "Release") {
+    if (entityType === "release") {
       result = await prisma.release.findFirst({
         where: { id },
         include: { artist: true },
       });
-    } else if (entityType === "Artist") {
+    } else if (entityType === "artist") {
       result = await prisma.artist.findFirst({ where: { id } });
     } else {
       result = await prisma.track.findFirst({

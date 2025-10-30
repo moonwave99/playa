@@ -107,7 +107,7 @@ export async function getArtist(id: number) {
 
   return {
     ...result,
-    entityType: "Artist" as const,
+    entityType: "artist" as const,
     coverRelease: result.coverRelease as ReleaseWithArtistAndSubReleases,
     releases: sortReleasesByTypeAndYear([
       ...(releases as Release[]),

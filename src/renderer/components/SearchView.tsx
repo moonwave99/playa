@@ -325,7 +325,7 @@ function SearchResultView({
           {[
             ...getCovers({
               ...item,
-              entityType: "Artist",
+              entityType: "artist",
             } as unknown as ArtistWithReleasesAndAppearances).otherReleases,
             coverRelease,
           ].map((release) => (

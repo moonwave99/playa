@@ -8,6 +8,8 @@ import { getReleaseTitle } from "@/lib/utils";
 import styles from "./EntityCard.module.css";
 import buttonStyles from "../buttons.module.css";
 import { MdRemoveCircle } from "react-icons/md";
+import { useTranslation } from "react-i18next";
+import { capitalize } from "lodash";
 
 type EntityCardProps = {
   item: ArtistWithReleases | ReleaseWithArtist;
@@ -18,13 +20,13 @@ export default function ReleaseCard({
   item,
   onRemoveEntityClick,
 }: EntityCardProps) {
+  const { t } = useTranslation();
+  const { entityType, id } = item;
   const coverRelease =
-    item.entityType === "Artist"
-      ? item.coverRelease || item.releases.at(0)
-      : item;
+    entityType === "artist" ? item.coverRelease || item.releases.at(0) : item;
 
   const title =
-    item.entityType === "Artist" ? (
+    entityType === "artist" ? (
       item.name
     ) : (
       <>
@@ -41,13 +43,15 @@ export default function ReleaseCard({
           type="button"
           className={buttonStyles.CornerActionButton}
           onClick={onRemoveEntityClick}
-          aria-label={`Remove ${item.entityType}`}
+          aria-label={t("components.EntityCard.remove", {
+            entity: capitalize(entityType),
+          })}
         >
           <MdRemoveCircle />
         </button>
       )}
       <Cover className={styles.cover} {...coverRelease} />
-      <span className={styles.title} title={`[${item.id}]`}>
+      <span className={styles.title} title={`[${id}]`}>
         {title}
       </span>
     </article>

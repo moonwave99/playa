@@ -163,7 +163,7 @@ describe("system - openTagger function", () => {
 describe("system revealEntityInFinder function", () => {
   it("does nothing if no release is found", async () => {
     const { revealEntityInFinder } = systemController(defaultParams);
-    const result = await revealEntityInFinder({ entityType: "Release", id: 1 });
+    const result = await revealEntityInFinder({ entityType: "release", id: 1 });
     expect(result).toBeFalsy();
   });
 
@@ -175,7 +175,7 @@ describe("system revealEntityInFinder function", () => {
     const { revealEntityInFinder } = systemController(defaultParams);
     const spy = vi.spyOn(shell, "openPath");
 
-    const result = await revealEntityInFinder({ entityType: "Release", id: 1 });
+    const result = await revealEntityInFinder({ entityType: "release", id: 1 });
     expect(result).toBeTruthy();
     expect(spy).toHaveBeenCalledWith(
       "LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1"
@@ -190,7 +190,7 @@ describe("system revealEntityInFinder function", () => {
     const { revealEntityInFinder } = systemController(defaultParams);
     const spy = vi.spyOn(shell, "openPath");
 
-    const result = await revealEntityInFinder({ entityType: "Artist", id: 1 });
+    const result = await revealEntityInFinder({ entityType: "artist", id: 1 });
     expect(result).toBeTruthy();
     expect(spy).toHaveBeenCalledWith("LIBRARY_PATH/A/Artist 1");
   });
@@ -205,7 +205,7 @@ describe("system revealEntityInFinder function", () => {
     const { revealEntityInFinder } = systemController(defaultParams);
     const spy = vi.spyOn(shell, "openPath");
 
-    const result = await revealEntityInFinder({ entityType: "Track", id: 1 });
+    const result = await revealEntityInFinder({ entityType: "track", id: 1 });
     expect(result).toBeTruthy();
     expect(spy).toHaveBeenCalledWith(
       "LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1/01 - Track 1.mp3"

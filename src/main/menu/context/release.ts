@@ -51,7 +51,7 @@ export const releaseMenu =
   ({ controllers, send, openModal }: MenuParams) =>
   async (
     selection: ReleaseWithArtistAndSubReleases[],
-    context?: WithReleases & { entityType: "Artist" | "Collection" | null }
+    context?: WithReleases & { entityType: "artist" | "collection" | null }
   ) => {
     if (selection.length === 1) {
       const release = selection[0];
@@ -120,7 +120,7 @@ export const releaseMenu =
           click: () =>
             openModal("addReleasesToCollection", { releases: [release] }),
         },
-        context?.entityType === "Collection"
+        context?.entityType === "collection"
           ? getRemoveFromCollectionEntry(
               selection,
               context as CollectionWithReleases,
@@ -162,7 +162,7 @@ export const releaseMenu =
         click: () =>
           openModal("addReleasesToCollection", { releases: selection }),
       },
-      context?.entityType === "Collection"
+      context?.entityType === "collection"
         ? getRemoveFromCollectionEntry(
             selection,
             context as CollectionWithReleases,

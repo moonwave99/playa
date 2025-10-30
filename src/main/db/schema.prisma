@@ -10,7 +10,7 @@ datasource db {
 
 model Artist {
   id                      Int        @id @default(autoincrement())
-  entityType              EntityType @default(Artist)
+  entityType              EntityType @default(artist)
   createdAt               DateTime   @default(now())
   updatedAt               DateTime   @updatedAt
   name                    String
@@ -31,7 +31,7 @@ model Artist {
 
 model Release {
   id                Int          @id @default(autoincrement())
-  entityType        EntityType   @default(Release)
+  entityType        EntityType   @default(release)
   createdAt         DateTime     @default(now())
   updatedAt         DateTime     @updatedAt
   title             String
@@ -61,7 +61,7 @@ model Release {
 
 model Track {
   id                    Int        @id @default(autoincrement())
-  entityType            EntityType @default(Track)
+  entityType            EntityType @default(track)
   createdAt             DateTime   @default(now())
   updatedAt             DateTime   @updatedAt
   title                 String
@@ -80,7 +80,7 @@ model Track {
 
 model Collection {
   id             Int        @id @default(autoincrement())
-  entityType     EntityType @default(Collection)
+  entityType     EntityType @default(collection)
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
   title          String
@@ -91,7 +91,7 @@ model Collection {
 
 model Group {
   id            Int        @id @default(autoincrement())
-  entityType    EntityType @default(Group)
+  entityType    EntityType @default(group)
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
   title         String
@@ -125,9 +125,9 @@ enum ReleaseType {
 }
 
 enum EntityType {
-  Artist
-  Release
-  Track
-  Group
-  Collection
+  artist
+  release
+  track
+  group
+  collection
 }

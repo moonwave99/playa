@@ -33,7 +33,7 @@ export type EntityListProps = {
 };
 
 function getTitle(item: ContextItem) {
-  return item.entityType === "Artist"
+  return item.entityType === "artist"
     ? normalizeArtistDisplayName(item.name)
     : item.title;
 }

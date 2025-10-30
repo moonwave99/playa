@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 
 import {
   getReleaseTitle,
-  getCoverRelease,
   withStopPropagation,
   normalizeArtistDisplayName,
   getColorInfo,
@@ -72,12 +71,12 @@ export default function ListCard({
   testId,
 }: ListCardProps) {
   const { t } = useTranslation();
-  const coverRelease = getCoverRelease(item);
+  const { otherReleases, coverRelease } = getCovers(item, maxCoversCount);
 
   const { darkText, color } = getColorInfo(coverRelease);
 
   function getContent() {
-    if (item.entityType === "Release") {
+    if (item.entityType === "release") {
       return (
         <>
           <EntityList
@@ -108,7 +107,7 @@ export default function ListCard({
       );
     }
 
-    if (item.entityType === "Artist") {
+    if (item.entityType === "artist") {
       const releaseCount = item.releases.length + item.appearsIn.length;
       return (
         <header className={styles.header}>
@@ -127,7 +126,7 @@ export default function ListCard({
       );
     }
 
-    if (item.entityType === "Group") {
+    if (item.entityType === "group") {
       return (
         <>
           <Link
@@ -163,14 +162,12 @@ export default function ListCard({
     return withStopPropagation(onContextMenu);
   }
 
-  const { otherReleases } = getCovers(item, maxCoversCount);
-
   return (
     <div
       data-selected={selected}
       data-hasfocus={selected && hasFocus}
       className={cx(styles.listCard, {
-        [styles.isArtist]: item.entityType === "Artist",
+        [styles.isArtist]: item.entityType === "artist",
         [styles.selected]: selected,
         [styles.hasFocus]: selected && hasFocus,
         [styles.useDarkText]: darkText,
@@ -197,7 +194,7 @@ export default function ListCard({
           </>
         }
       >
-        {[...otherReleases, coverRelease].map((release) => (
+        {otherReleases.map((release) => (
           <Cover
             key={release.id}
             {...release}
@@ -210,6 +207,21 @@ export default function ListCard({
             }
           />
         ))}
+        {coverRelease ? (
+          <Cover
+            key={coverRelease.id}
+            {...coverRelease}
+            className={styles.cover}
+            title={`${coverRelease.artist.name} - ${getReleaseTitle(coverRelease)}`}
+            onClick={onCoverClick}
+            onDoubleClick={() => onCoverDoubleClick(coverRelease.id)}
+            onPlaybackClick={() =>
+              api.system.playback({ release_id: coverRelease.id })
+            }
+          />
+        ) : (
+          <div className={styles.ghost}></div>
+        )}
       </SlidingCardsView>
     </div>
   );

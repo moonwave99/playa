@@ -1,5 +1,10 @@
-import { normalizeTitle } from "./utils";
-import type { HasId, Entities, HasEntityTypeAndId } from "@/types/types";
+import { formatEntityType, normalizeTitle } from "./utils";
+import type {
+  HasId,
+  Entities,
+  HasEntityTypeAndId,
+  EntityType,
+} from "@/types/types";
 import { deburr, mapValues } from "lodash";
 
 export function getURL(url: string, params: Record<string, string>) {
@@ -39,23 +44,23 @@ export function getCover(hash: string): string {
 }
 
 export function getEntityLink({ id, entityType }: HasEntityTypeAndId) {
-  return `/${entityType.toLowerCase()}s/${id}`;
+  return `/${formatEntityType(entityType, { plural: true })}/${id}`;
 }
 
 export function getCollectionLink({ id }: HasId) {
-  return getEntityLink({ id, entityType: "Collection" });
+  return getEntityLink({ id, entityType: "collection" });
 }
 
 export function getGroupLink({ id }: HasId) {
-  return getEntityLink({ id, entityType: "Group" });
+  return getEntityLink({ id, entityType: "group" });
 }
 
 export function getArtistLink({ id }: HasId) {
-  return getEntityLink({ id, entityType: "Artist" });
+  return getEntityLink({ id, entityType: "artist" });
 }
 
 export function getReleaseLink({ id }: HasId) {
-  return getEntityLink({ id, entityType: "Release" });
+  return getEntityLink({ id, entityType: "release" });
 }
 
 export function getRandomLink(
@@ -64,5 +69,5 @@ export function getRandomLink(
 ): string {
   const count = stats[entity];
   const randomId = Math.round(Math.random() * count);
-  return `/${entity}s/${randomId}`;
+  return getEntityLink({ id: randomId, entityType: entity as EntityType });
 }

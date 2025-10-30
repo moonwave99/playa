@@ -32,7 +32,7 @@ export default function AlphabeticalList({
   });
 
   function renderEntry(item: Item) {
-    if (item.entityType === "Artist") {
+    if (item.entityType === "artist") {
       return <Link to={getEntityLink(item)}>{item.name}</Link>;
     }
     return <Link to={getEntityLink(item)}>{item.title}</Link>;
