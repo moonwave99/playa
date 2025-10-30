@@ -21,6 +21,8 @@ import {
 } from "@/lib/utils";
 import { getTrackIdsFeaturingArtist } from "./track";
 
+const TAKE_RELEASES = 10;
+
 type GetSearchResultParams = {
   query: string;
   take?: number;
@@ -97,7 +99,7 @@ const getters: Getters = {
           where: {
             mainRelease: null,
           },
-          take: 10,
+          take: TAKE_RELEASES,
           include: {
             artist: {
               select: {

@@ -4,12 +4,14 @@
   gap: 1rem;
   transition:
     background-color 0.3s ease-in-out,
-    box-shadow 0.1s ease-in-out;
+    box-shadow 0.1s ease-in-out,
+    opacity 0.2s ease-in-out;
   overflow: hidden;
   border-radius: 0.25rem;
   background-color: var(--default-listcard-background-color);
   padding-right: 0.5rem;
   &:hover {
+    opacity: 0.9;
     .contextMenu {
       visibility: visible;
     }

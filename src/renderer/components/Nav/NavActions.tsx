@@ -17,6 +17,7 @@ import useStore from "@/renderer/store";
 import cx from "clsx";
 import styles from "./Nav.module.css";
 import buttonStyles from "@/renderer/buttons.module.css";
+import responsiveStyles from "@/renderer/responsive.module.css";
 
 type NavActionsProps = Pick<UseNav, "toggleNav" | "openModal" | "useDarkText">;
 
@@ -74,7 +75,7 @@ export default function NavActions({
           aria-label={t("nav.common.actions.toggleMenu")}
           title={t("nav.common.actions.toggleMenu")}
           onClick={() => toggleNav()}
-          className={cx(buttonStyles.button, {
+          className={cx(buttonStyles.button, styles.button, {
             [buttonStyles.useDarkText]: useDarkText,
           })}
         >
@@ -85,7 +86,7 @@ export default function NavActions({
           aria-label={t("nav.common.actions.openSearch")}
           title={t("nav.common.actions.openSearch")}
           onClick={() => openModal("search")}
-          className={cx(buttonStyles.button, {
+          className={cx(buttonStyles.button, styles.button, {
             [buttonStyles.useDarkText]: useDarkText,
           })}
         >
@@ -105,7 +106,7 @@ function ImportActions() {
       aria-label={t("nav.import.actions.importReleases")}
       title={t("nav.import.actions.importReleases")}
       onClick={() => api.menu.click("importFolder")}
-      className={cx(buttonStyles.button, {
+      className={cx(buttonStyles.button, styles.button, {
         [buttonStyles.useDarkText]: useDarkText,
       })}
     >
@@ -128,7 +129,7 @@ function EditActions({ entity }: EditActionsProps) {
       aria-label={t("nav.edit.actions.editEntity", { entity: capitalEntity })}
       title={t("nav.edit.actions.editEntity", { entity: capitalEntity })}
       onClick={() => api.menu.click(`edit${capitalEntity}`)}
-      className={cx(buttonStyles.button, {
+      className={cx(buttonStyles.button, styles.button, {
         [buttonStyles.useDarkText]: useDarkText,
       })}
     >
@@ -137,8 +138,13 @@ function EditActions({ entity }: EditActionsProps) {
   );
 }
 
-function ActionsGroup({ children }: { children: ReactNode }) {
-  return <div className={styles.ActionsGroup}>{children}</div>;
+type ActionsGroup = {
+  children: ReactNode;
+  className?: string;
+};
+
+function ActionsGroup({ children, className }: ActionsGroup) {
+  return <div className={cx(styles.ActionsGroup, className)}>{children}</div>;
 }
 
 type ListViewModeActionsProps = {
@@ -156,7 +162,9 @@ function ListViewModeActions({ list }: ListViewModeActionsProps) {
   }));
 
   return (
-    <ActionsGroup>
+    <ActionsGroup
+      className={cx(styles.SelectGroup, responsiveStyles.hideOnMediumViewPort)}
+    >
       {actions.map(({ viewMode, key, icon }) => (
         <button
           key={viewMode}
@@ -164,9 +172,9 @@ function ListViewModeActions({ list }: ListViewModeActionsProps) {
           aria-label={t(key)}
           title={t(key)}
           onClick={() => setListViewMode(list, viewMode)}
-          className={cx(buttonStyles.button, {
+          className={cx(buttonStyles.button, styles.button, {
             [buttonStyles.useDarkText]: useDarkText,
-            [buttonStyles.active]: isListViewMode(list, viewMode),
+            [styles.active]: isListViewMode(list, viewMode),
           })}
         >
           {icon}

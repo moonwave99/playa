@@ -9,6 +9,7 @@ import useRelease from "@/renderer/query/useRelease";
 
 import cx from "clsx";
 import styles from "./Breadcrumbs.module.css";
+import responsiveStyles from "@/renderer/responsive.module.css";
 
 type RouteWithParams = Route & { params: Params };
 
@@ -125,7 +126,10 @@ function BaseBreadcrumb({ className, isFor }: BreadcrumbProps) {
   const { t } = useTranslation();
   return (
     <span className={className}>
-      <Icon isFor={isFor} /> {t(`breadcrumbs.${isFor}`)}
+      <Icon isFor={isFor} />{" "}
+      <span className={responsiveStyles.hideOnMediumViewPort}>
+        {t(`breadcrumbs.${isFor}`)}
+      </span>
     </span>
   );
 }

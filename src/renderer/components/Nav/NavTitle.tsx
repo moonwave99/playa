@@ -4,6 +4,7 @@ import styles from "./Nav.module.css";
 import api from "@/renderer/api";
 import useCollection from "@/renderer/query/useCollection";
 import useGroup from "@/renderer/query/useGroup";
+import { ReactNode } from "react";
 
 export default function NavTitle() {
   const { t } = useTranslation();
@@ -11,21 +12,31 @@ export default function NavTitle() {
     <Routes>
       <Route
         path="/"
-        element={<h1 className={styles.title}>{t("nav.titles.home")}</h1>}
+        element={<DefaultTitle>{t("nav.titles.home")}</DefaultTitle>}
       />
       {["releases", "artists", "collections", "groups"].map((entity) => (
         <Route
           key={entity}
           path={`/${entity}`}
-          element={
-            <h1 className={styles.title}>{t(`nav.titles.${entity}`)}</h1>
-          }
+          element={<DefaultTitle>{t(`nav.titles.${entity}`)}</DefaultTitle>}
         />
       ))}
       <Route path="/collections/:id" element={<CollectionTitle />} />
       <Route path="/groups/:id" element={<GroupTitle />} />
       <Route path="*" element={null} />
     </Routes>
+  );
+}
+
+type DefaultTitleProps = {
+  children: ReactNode;
+};
+
+function DefaultTitle({ children }: DefaultTitleProps) {
+  return (
+    <h1 className={styles.title}>
+      <span>{children}</span>
+    </h1>
   );
 }
 
@@ -37,7 +48,7 @@ function GroupTitle() {
   }
   return (
     <h1 className={styles.title} onContextMenu={() => api.menu.group(group)}>
-      {group.title}
+      <span>{group.title}</span>
     </h1>
   );
 }
@@ -53,7 +64,7 @@ function CollectionTitle() {
       className={styles.title}
       onContextMenu={() => api.menu.collection(collection)}
     >
-      {collection.title}
+      <span>{collection.title}</span>
     </h1>
   );
 }

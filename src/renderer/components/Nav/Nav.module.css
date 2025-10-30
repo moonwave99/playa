@@ -29,12 +29,29 @@
     display: flex;
     align-items: center;
     transform: translateX(50%);
+    max-width: 40vw;
+    > span {
+      width: 100%;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
   }
 
   .ActionsGroup {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+  }
+
+  .SelectGroup {
+    .button {
+      opacity: 0.3;
+      transition: opacity 0.2s ease-in-out;
+      &.active {
+        opacity: 1;
+      }
+    }
   }
 
   .actions {
