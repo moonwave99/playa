@@ -26,7 +26,7 @@ TBD
 - display multiple covers for multiple discs releases;
 - make group and collection titles editable again;
 - fix covers load on startup bug;
-- fix EntityList remove button color issue;
+- fix lightbox cover flicker glitch;
 
 ## License
 

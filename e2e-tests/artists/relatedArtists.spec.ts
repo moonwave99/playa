@@ -36,7 +36,7 @@ test.describe("Related Artists", () => {
 
     const artistHeader = page.locator('[data-testid="ArtistPageHeader"]');
 
-    await expect(artistHeader).toContainText("Related Artists");
+    await expect(artistHeader).toContainText("Related to");
     await expect(artistHeader).toContainText("Artist 2");
   });
 
@@ -62,7 +62,7 @@ test.describe("Related Artists", () => {
     await artistHeader.getByText("Artist 2").hover();
     await artistHeader.getByLabel("Disconnect Artist 2 from Artist 10").click();
 
-    await expect(artistHeader).not.toContainText("Related Artists");
+    await expect(artistHeader).not.toContainText("Related to");
     await expect(artistHeader).not.toContainText("Artist 2");
   });
 });

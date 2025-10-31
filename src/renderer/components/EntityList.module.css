@@ -9,6 +9,12 @@
 
   &.useDarkText {
     color: black;
+    ul .item {
+      background-color: rgba(255, 255, 255, 0.1);
+      .removeButton {
+        color: rgba(0, 0, 0, 0.5);
+      }
+    }
   }
 
   ul {
@@ -19,9 +25,10 @@
     .item {
       display: flex;
       align-items: center;
+      background-color: rgba(255, 255, 255, 0.1);
 
       .removeButton {
-        color: var(--secondary-color);
+        color: var(--primary-color);
         background-color: transparent;
         border: none;
         appearance: none;
@@ -38,11 +45,11 @@
         }
         &:hover svg {
           scale: 1.2;
-          color: var(--primary-color);
         }
       }
 
       &.textOnly {
+        background-color: transparent;
         .removeButton {
           display: none;
         }
