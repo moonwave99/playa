@@ -32,44 +32,42 @@ export class StateManager {
       path: "",
     };
   }
+  set<T extends keyof State>(key: T, value: State[T]) {
+    this.state[key] = value;
+    this.onUpdate();
+  }
+  get<T extends keyof State>(key: T): State[T] {
+    return this.state[key];
+  }
   getState(): State {
     return this.state;
   }
-  setPath(path: string) {
-    this.state.path = path;
-    this.onUpdate();
+  isInputFocused() {
+    return this.get("isInputFocused");
+  }
+  setInputFocused(isInputFocused: boolean) {
+    this.set("isInputFocused", isInputFocused);
+  }
+  isNavOpen() {
+    return this.get("isNavOpen");
+  }
+  setNavOpen(isNavOpen: boolean) {
+    this.set("isNavOpen", isNavOpen);
+  }
+  isImporting() {
+    return this.get("isImporting");
+  }
+  setImporting(isImporting: boolean) {
+    this.set("isImporting", isImporting);
+  }
+  isOnboarding() {
+    return this.get("isOnboarding");
+  }
+  setOnboarding(isOnboarding: boolean) {
+    this.set("isOnboarding", isOnboarding);
   }
   getSelection(entity: SelectableEntities) {
     return this.state.selection[entity];
-  }
-  isInputFocused() {
-    return this.state.isInputFocused;
-  }
-  isNavOpen() {
-    return this.state.isNavOpen;
-  }
-  isImporting() {
-    return this.state.isImporting;
-  }
-  isOnboarding() {
-    return this.state.isOnboarding;
-  }
-  reset() {
-    this.state = {
-      selection: {
-        artist: [] as number[],
-        release: [] as number[],
-        collection: [] as number[],
-        group: [] as number[],
-        track: [] as number[],
-      },
-      isInputFocused: false,
-      isImporting: false,
-      isNavOpen: false,
-      isOnboarding: false,
-      path: "",
-    };
-    this.onUpdate();
   }
   setSelection(
     entity: SelectableEntities,
@@ -93,21 +91,8 @@ export class StateManager {
 
     this.onUpdate();
   }
-  setInputFocused(isInputFocused: boolean) {
-    this.state.isInputFocused = isInputFocused;
-    this.onUpdate();
-  }
-  setNavOpen(isNavOpen: boolean) {
-    this.state.isNavOpen = isNavOpen;
-    this.onUpdate();
-  }
-  setImporting(isImporting: boolean) {
-    this.state.isImporting = isImporting;
-    this.onUpdate();
-  }
-  setOnboarding(isOnboarding: boolean) {
-    this.state.isOnboarding = isOnboarding;
-    this.onUpdate();
+  setPath(path: string) {
+    this.set("path", path);
   }
   onStateChange(handler: (state: State) => void) {
     this.handler = handler;
@@ -117,6 +102,23 @@ export class StateManager {
   }
   isPage(page: string) {
     return isPage(page, this.state.path);
+  }
+  reset() {
+    this.state = {
+      selection: {
+        artist: [] as number[],
+        release: [] as number[],
+        collection: [] as number[],
+        group: [] as number[],
+        track: [] as number[],
+      },
+      isInputFocused: false,
+      isImporting: false,
+      isNavOpen: false,
+      isOnboarding: false,
+      path: "",
+    };
+    this.onUpdate();
   }
   private onUpdate() {
     if (!this.handler) {
