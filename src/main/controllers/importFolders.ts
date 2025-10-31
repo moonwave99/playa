@@ -111,7 +111,7 @@ export function importFoldersController({
     entity: ArtistWithReleases | CollectionWithReleases
   ) {
     await Promise.all(entity.releases.map((x) => refreshReleaseContents(x.id)));
-    send("mutate", [`${entity.entityType.toLowerCase()}s`, entity.id]);
+    send("mutate", [`${entity.entityType}s`, entity.id]);
   }
 
   async function startInteractiveImport(folders: string[]) {

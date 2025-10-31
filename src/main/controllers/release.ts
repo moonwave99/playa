@@ -311,7 +311,7 @@ export function releaseController({
       [
         ["releases", "latest"],
         ...release_ids.map((id) => ["releases", id]),
-        context ? [`${context.entityType.toLowerCase()}s`, context.id] : null,
+        context ? [`${context.entityType}s`, context.id] : null,
       ].filter((x) => !!x)
     );
 
