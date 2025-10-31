@@ -5,7 +5,7 @@ import sha1 from "sha1";
 import { hashArtistName, hashRelease } from "../main/hash";
 import type { Release, HasId, EntityType, ReleaseType } from "@/types/types";
 import { pad } from "@/lib/utils";
-import { getE2ETmpPath } from "./utils";
+import { getE2ETmpPath, BUILD_PATH } from "./utils";
 import { DEFAULT_SETTINGS } from "@/constants";
 
 export function getFakeArtist(id = 1) {
@@ -160,11 +160,6 @@ export function getFakeSettings() {
     SHOW_ONBOARDING_ON_STARTUP: false,
   };
 }
-
-const BUILD_PATH = path.join(
-  process.cwd(),
-  "out/Playa-darwin-arm64/Playa.app/Contents/Resources"
-);
 
 function getUrl(id?: string) {
   const { NODE_ENV, npm_lifecycle_event } = process.env;

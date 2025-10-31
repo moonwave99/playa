@@ -68,8 +68,8 @@ export function initMenu({
         submenu: [
           { role: "about" },
           { type: "separator" },
-          { role: "close" },
           { role: "hide" },
+          { role: "quit" },
           { type: "separator" },
           {
             id: "openSettings",

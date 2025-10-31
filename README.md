@@ -18,11 +18,15 @@ TBD
 - design linear list modes;
 - display artist release selection in search results;
 - add history nav buttons;
+- add recent searches;
+- add rainbow mode;
 
 ## Tasks
 
 - display multiple covers for multiple discs releases;
 - make group and collection titles editable again;
+- fix covers load on startup bug;
+- fix EntityList remove button color issue;
 
 ## License
 

@@ -82,3 +82,7 @@ export function getE2EFolderPath({
 }
 
 export const IS_E2E_TEST = process.env.npm_lifecycle_event === "test:e2e";
+export const BUILD_PATH = path.join(
+  process.cwd(),
+  "out/Playa-darwin-arm64/Playa.app/Contents/Resources"
+);
