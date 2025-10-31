@@ -37,6 +37,8 @@
   --modal-border-color: #252525;
   --button-background-color: #212121;
   --playback-button-size: 2rem;
+  --single-header-secondary-color: rgba(255, 255, 255, 0.8);
+  --single-header-secondary-color-dark: rgba(0, 0, 0, 0.8);
 }
 
 * {

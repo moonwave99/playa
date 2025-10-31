@@ -36,6 +36,7 @@ vi.mock("electron", () => {
     },
     Menu: {
       setApplicationMenu: vi.fn(),
+      buildFromTemplate: vi.fn(),
       getApplicationMenu: vi.fn(() => ({
         append: vi.fn(),
       })),

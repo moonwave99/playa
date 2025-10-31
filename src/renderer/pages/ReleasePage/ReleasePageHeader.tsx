@@ -73,7 +73,9 @@ export default function ReleasePageHeader({ release }: ReleasePageHeaderProps) {
             useDarkText={darkText}
             id={release.id}
             className={styles.entityList}
-            itemClassName={styles.entityListEntry}
+            itemClassName={cx(styles.entityListEntry, {
+              [styles.useDarkText]: darkText,
+            })}
           />
         </div>
       </div>

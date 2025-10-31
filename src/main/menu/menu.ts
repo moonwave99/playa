@@ -1,4 +1,4 @@
-import { Menu, MenuItem } from "electron";
+import { Menu, MenuItem, shell } from "electron";
 import type { MenuItemConstructorOptions } from "electron";
 import type {
   ArtistWithReleases,
@@ -9,7 +9,7 @@ import type {
 import type { Controllers } from "../controllers/init";
 
 import type { State, StateManager } from "../stateManager";
-import { send } from "../controllers/init";
+import { openModal, send } from "../controllers/init";
 
 import { getLibraryMenu } from "./static/library";
 import { getGroupMenu } from "./static/group";
@@ -17,6 +17,8 @@ import { getCollectionMenu } from "./static/collection";
 import { getReleaseMenu } from "./static/release";
 import { getArtistMenu } from "./static/artist";
 import { capitalize } from "lodash";
+
+import pkg from "../../../package.json";
 
 export function buildMenu(params: (MenuItemConstructorOptions | MenuItem)[]) {
   const menu = Menu.buildFromTemplate(params);
@@ -35,29 +37,65 @@ export function initMenu({
   stateManager,
   openConfirmDialog,
 }: GetMenuParams) {
-  const mainMenu = Menu.getApplicationMenu();
-
-  const menuGetters = {
+  const { template, refreshHandlers } = [
     getReleaseMenu,
     getArtistMenu,
     getCollectionMenu,
     getGroupMenu,
     getLibraryMenu,
-  };
+  ].reduce(
+    ({ template, refreshHandlers }, getter) => {
+      const { menu, refresh } = getter({
+        controllers,
+        stateManager,
+        openConfirmDialog,
+      });
+      return {
+        template: [...template, menu],
+        refreshHandlers: [...refreshHandlers, refresh],
+      };
+    },
+    {
+      template: [] as MenuItem[],
+      refreshHandlers: [] as (() => void)[],
+    }
+  );
 
-  const refreshHandlers: (() => void)[] = [];
+  Menu.setApplicationMenu(
+    Menu.buildFromTemplate([
+      {
+        role: "appMenu",
+        submenu: [
+          { role: "about" },
+          { type: "separator" },
+          { role: "close" },
+          { role: "hide" },
+          { type: "separator" },
+          {
+            id: "openSettings",
+            label: "Settings",
+            accelerator: "Cmd+,",
+            click: () => openModal("settings"),
+          },
+        ],
+      },
+      { role: "editMenu" },
+      { role: "viewMenu" },
+      ...template,
+      { role: "windowMenu" as const },
+      {
+        role: "help" as const,
+        submenu: [
+          {
+            label: "Learn More",
+            click: () => shell.openExternal(pkg.homepage),
+          },
+        ],
+      },
+    ])
+  );
 
-  Object.values(menuGetters).forEach((getMenu) => {
-    const { menu, refresh } = getMenu({
-      controllers,
-      stateManager,
-      openConfirmDialog,
-    });
-    mainMenu.append(menu);
-    refreshHandlers.push(refresh);
-  });
-
-  Menu.setApplicationMenu(mainMenu);
+  const mainMenu = Menu.getApplicationMenu();
 
   return {
     refreshMenu: () => refreshHandlers.forEach((fn) => fn()),

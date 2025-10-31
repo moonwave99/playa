@@ -64,13 +64,17 @@ export default function ArtistPageHeader({ artist }: ArtistPageHeaderProps) {
           <RelatedArtistsList
             id={id}
             className={styles.entityList}
-            itemClassName={styles.entityListEntry}
+            itemClassName={cx(styles.entityListEntry, {
+              [styles.useDarkText]: darkText,
+            })}
             useDarkText={darkText}
           />
           <ContainingGroupsList
             id={id}
             className={styles.entityList}
-            itemClassName={styles.entityListEntry}
+            itemClassName={cx(styles.entityListEntry, {
+              [styles.useDarkText]: darkText,
+            })}
             useDarkText={darkText}
           />
         </div>

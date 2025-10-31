@@ -86,12 +86,6 @@ export function getLibraryMenu({ controllers, stateManager }: GetMenuParams) {
       label: "Import Data from Archive",
       click: () => openModal("importData"),
     },
-    {
-      id: "openSettings",
-      label: "Open Settings",
-      accelerator: "Cmd+,",
-      click: () => openModal("settings"),
-    },
   ];
 
   const menu = new MenuItem({

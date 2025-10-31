@@ -21,10 +21,8 @@ TBD
 
 ## Tasks
 
-- rearrange app menu;
 - display multiple covers for multiple discs releases;
 - make group and collection titles editable again;
-- fix tag colors in single page headers;
 
 ## License
 
