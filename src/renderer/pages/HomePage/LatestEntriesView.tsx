@@ -1,15 +1,13 @@
 import { Link } from "react-router";
 import { useTranslation } from "react-i18next";
-import ListCard, { type Item } from "@/renderer/components/ListCard";
 import api from "@/renderer/api";
+import { formatEntityType } from "@/lib/utils";
+import ListCard, { type Item } from "@/renderer/components/ListCard";
 import ErrorView from "@/renderer/components/ErrorView";
 import Loading from "@/renderer/components/Loading";
 
 import { Icon } from "@/renderer/icons";
-import cx from "clsx";
 import styles from "./LatestEntriesView.module.css";
-import formStyles from "@/renderer/forms.module.css";
-import { formatEntityType } from "@/lib/utils";
 
 type LatestEntriesViewProps<T extends Item> = {
   entity: "artist" | "collection" | "group";
@@ -60,14 +58,10 @@ export default function LatestEntriesView<T extends Item>({
       <header className={styles.header}>
         <h3>
           <Icon isFor={entity} />
-          {t("pages.HomePage.latest", { entity: formattedEntity })}
+          <Link to={`/${entity}s`}>
+            {t("pages.HomePage.latest", { entity: formattedEntity })}
+          </Link>
         </h3>
-        <Link
-          className={cx(formStyles.button, formStyles.primary)}
-          to={`/${entity}s`}
-        >
-          See All
-        </Link>
       </header>
       {!entries?.length ? (
         <div className={styles.placeholder}>

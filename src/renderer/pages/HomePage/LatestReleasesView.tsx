@@ -9,9 +9,7 @@ import ErrorView from "@/renderer/components/ErrorView";
 import Loading from "@/renderer/components/Loading";
 
 import { Icon } from "@/renderer/icons";
-import cx from "clsx";
 import styles from "./LatestReleasesView.module.css";
-import formStyles from "@/renderer/forms.module.css";
 
 type LatestReleasesViewProps = {
   count?: number;
@@ -48,14 +46,10 @@ export default function LatestReleasesView({
       <header className={styles.header}>
         <h2>
           <Icon isFor="release" />
-          {t("pages.HomePage.latest", { entity: "Releases " })}
+          <Link to="/releases">
+            {t("pages.HomePage.latest", { entity: "Releases " })}
+          </Link>
         </h2>
-        <Link
-          className={cx(formStyles.button, formStyles.primary)}
-          to="/releases"
-        >
-          {t("pages.HomePage.seeAll")}
-        </Link>
       </header>
       {!releases?.length ? (
         <div className={styles.placeholder}>

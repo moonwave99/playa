@@ -92,8 +92,7 @@
       "description": "Please restart the application."
     },
     "HomePage": {
-      "latest": "Latest {{entity}}",
-      "seeAll": "See All"
+      "latest": "Latest {{entity}}"
     },
     "Onboarding": {
       "actions": {

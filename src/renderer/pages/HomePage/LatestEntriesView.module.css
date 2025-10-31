@@ -33,14 +33,18 @@
   justify-content: start;
   gap: 0.5rem;
   user-select: none;
+  color: var(--secondary-color);
   h3 {
     display: flex;
     align-items: center;
     justify-content: start;
     gap: 0.5rem;
-  }
-  a {
-    margin-left: auto;
+    a:hover {
+      text-decoration: underline;
+    }
+    svg {
+      color: var(--primary-color);
+    }
   }
 }
 
