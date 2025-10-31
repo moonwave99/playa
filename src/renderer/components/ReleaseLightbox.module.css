@@ -49,6 +49,12 @@
   }
 }
 
+.placeholder {
+  flex: 1;
+  background-color: var(--default-cover-background-color);
+  height: var(--full-cover-size);
+}
+
 .cover {
   height: var(--full-cover-size);
   width: var(--full-cover-size);

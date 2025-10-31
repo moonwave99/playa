@@ -78,7 +78,9 @@ export default function ReleaseLightbox({
         </button>
       )}
       <div className={styles.wrapper} key={currentId}>
-        {isPending ? null : (
+        {isPending ? (
+          <div className={styles.placeholder}></div>
+        ) : (
           <>
             <Cover {...release} className={styles.cover} />
             {!hideSidebar && (
