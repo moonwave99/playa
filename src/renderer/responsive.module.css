@@ -3,3 +3,9 @@
     display: none !important;
   }
 }
+
+@media screen and (max-width: 480px) {
+  .hideOnSmallViewPort {
+    display: none !important;
+  }
+}

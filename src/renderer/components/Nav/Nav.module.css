@@ -36,6 +36,12 @@
       white-space: nowrap;
       overflow: hidden;
     }
+    @media screen and (max-width: 480px) {
+      position: static;
+      transform: none;
+      max-width: 60vw;
+      font-size: 0.9rem;
+    }
   }
 
   .ActionsGroup {

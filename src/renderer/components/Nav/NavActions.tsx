@@ -129,9 +129,14 @@ function EditActions({ entity }: EditActionsProps) {
       aria-label={t("nav.edit.actions.editEntity", { entity: capitalEntity })}
       title={t("nav.edit.actions.editEntity", { entity: capitalEntity })}
       onClick={() => api.menu.click(`edit${capitalEntity}`)}
-      className={cx(buttonStyles.button, styles.button, {
-        [buttonStyles.useDarkText]: useDarkText,
-      })}
+      className={cx(
+        buttonStyles.button,
+        styles.button,
+        responsiveStyles.hideOnSmallViewPort,
+        {
+          [buttonStyles.useDarkText]: useDarkText,
+        }
+      )}
     >
       <MdEdit />
     </button>
