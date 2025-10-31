@@ -1,10 +1,10 @@
 {
   "entities": {
-    "releases": "Releases",
-    "artists": "Artists",
-    "groups": "Groups",
-    "collections": "Collections",
-    "tracks": "Tracks"
+    "release": "Releases",
+    "artist": "Artists",
+    "group": "Groups",
+    "collection": "Collections",
+    "track": "Tracks"
   },
   "common": {
     "count": {
@@ -175,6 +175,11 @@
     }
   },
   "modals": {
+    "common": {
+      "actions": {
+        "close": "Close Modal"
+      }
+    },
     "StatsView": {
       "title": "Your Library Stats",
       "actions": {

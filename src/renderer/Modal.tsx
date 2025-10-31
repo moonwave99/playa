@@ -1,4 +1,5 @@
 import ReactModal from "react-modal";
+import { useTranslation } from "react-i18next";
 import useStore from "./store";
 import { useEffect, useState } from "react";
 import {
@@ -25,6 +26,9 @@ import AddReleasesToCollectionView from "./components/AddReleasesToCollectionVie
 import AddArtistsToGroupView from "./components/AddArtistsToGroupView";
 import InteractiveImportView from "./components/InteractiveImportView";
 import StatsView from "./components/StatsView";
+
+import { IoIosClose } from "react-icons/io";
+import buttonStyles from "./buttons.module.css";
 
 function getModalOverrides(name: Modals) {
   if (name === "lightbox") {
@@ -120,6 +124,7 @@ export type Modals =
   | "lightbox";
 
 export default function Modal({ setContext }: ModalProps) {
+  const { t } = useTranslation();
   const [isModalOpen, setModalOpen] = useState(false);
   const { modalContents, setModalContents, isModalFixed } = useStore();
 
@@ -261,6 +266,19 @@ export default function Modal({ setContext }: ModalProps) {
         clearModalContents();
       }}
     >
+      <button
+        onClick={closeModal}
+        className={buttonStyles.button}
+        aria-label={t("modals.common.actions.close")}
+        style={{
+          position: "absolute",
+          top: "0.5rem",
+          right: "0.5rem",
+          zIndex: 1,
+        }}
+      >
+        <IoIosClose />
+      </button>
       {getModalContents()}
     </ReactModal>
   );

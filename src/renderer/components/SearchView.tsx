@@ -160,7 +160,7 @@ function SearchResultsView({
       {Object.entries(groupedResults).map(([type, entries], index, groups) => (
         <section key={type}>
           <h3>
-            {t(`entities.${type}s`)}{" "}
+            {t(`entities.${type}`)}{" "}
             <span className={styles.count}>({entries.length})</span>
           </h3>
           <List

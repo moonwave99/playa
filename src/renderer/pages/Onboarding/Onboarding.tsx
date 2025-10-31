@@ -14,6 +14,7 @@ import FinalStep from "./Steps/FinalStep";
 import cx from "clsx";
 import { GoDot, GoDotFill } from "react-icons/go";
 import styles from "./Onboarding.module.css";
+import { useKeyManager, KeyManager } from "@/renderer/hooks/useKeyboardManager";
 
 export type StepProps = {
   onCancel: () => void;
@@ -34,23 +35,24 @@ export type Steps = keyof typeof stepsMap;
 
 export default function Onboarding() {
   const { t } = useTranslation();
-  const { steps, currentStep, setCurrentStep } = useOnboarding();
+  const { currentStep, currentStepIndex, setCurrentStepIndex, stepsLength } =
+    useOnboarding();
 
   return (
     <div className={styles.view} data-testid="Onboarding">
       <AnimatePresence mode="wait" initial={true}>
-        {steps[currentStep]}
+        {currentStep}
       </AnimatePresence>
       <ol className={styles.stepIndicator} data-testid="StepIndicator">
-        {Array.from({ length: steps.length }, (_, step) => (
+        {Array.from({ length: stepsLength }, (_, step) => (
           <li key={step}>
             <button
-              className={cx({ [styles.current]: step === currentStep })}
-              onClick={() => setCurrentStep(step)}
+              className={cx({ [styles.current]: step === currentStepIndex })}
+              onClick={() => setCurrentStepIndex(step)}
               aria-label={t(`pages.Onboarding.gotoStep.${step}`)}
-              disabled={step >= currentStep}
+              disabled={step >= currentStepIndex}
             >
-              {step === currentStep ? <GoDotFill /> : <GoDot />}
+              {step === currentStepIndex ? <GoDotFill /> : <GoDot />}
             </button>
           </li>
         ))}
@@ -65,17 +67,31 @@ export default function Onboarding() {
 }
 
 function useOnboarding() {
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
 
   const { setSettings, settings } = useStore();
 
   useEffect(() => {
     api.state.setOnboarding(true);
-    return () => {
-      api.state.setOnboarding(false);
-      api.settings.dismissOnboarding();
-    };
+    return () => dismiss();
   }, []);
+
+  useKeyManager({
+    context: KeyManager.global,
+    handlers: {
+      Escape: () => {
+        if (currentStepIndex > 0) {
+          return;
+        }
+        dismiss();
+      },
+    },
+  });
+
+  function dismiss() {
+    api.state.setOnboarding(false);
+    api.settings.dismissOnboarding();
+  }
 
   function onCancel() {
     api.settings
@@ -87,11 +103,11 @@ function useOnboarding() {
   }
 
   function onNextStep() {
-    if (currentStep === steps.length - 1) {
+    if (currentStepIndex === steps.length - 1) {
       onCancel();
       return;
     }
-    setCurrentStep((prev) => prev + 1);
+    setCurrentStepIndex((prev) => prev + 1);
   }
 
   const steps = Object.values(stepsMap).map((Component) => (
@@ -99,8 +115,9 @@ function useOnboarding() {
   ));
 
   return {
-    steps,
-    currentStep,
-    setCurrentStep,
+    currentStepIndex,
+    currentStep: steps[currentStepIndex],
+    setCurrentStepIndex,
+    stepsLength: steps.length,
   };
 }
