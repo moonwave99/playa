@@ -20,6 +20,8 @@ export const MAX_IMPORT_FOLDERS = 10;
 export const ON_IMPORT_DONE_DELAY = 5000;
 export const ON_EXPORT_DONE_DELAY = 3000;
 
+export const MODAL_CLOSE_TIMEOUT = 300;
+
 export const HOMEPAGE_RELEASES_PAGESIZE = 10;
 export const HOMEPAGE_ENTRIES_PAGESIZE = 5;
 

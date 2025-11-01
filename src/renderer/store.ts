@@ -52,7 +52,7 @@ type Store = {
 const useStore = create<Store>()(
   persist(
     (set, get) => ({
-      historyState: null,
+      historyState: null as HistoryState,
       listViewModes: {
         release: "grid",
         artist: "latest",
@@ -61,9 +61,9 @@ const useStore = create<Store>()(
       },
       path: "/",
       useDarkText: false,
-      modalContents: null,
+      modalContents: null as ModalContents,
       isModalFixed: false,
-      settings: null,
+      settings: null as Settings,
       setSettings: (settings) => set({ settings }),
       setUseDarkText: (useDarkText) => set({ useDarkText }),
       setHistoryState: (historyState) => set({ historyState }),

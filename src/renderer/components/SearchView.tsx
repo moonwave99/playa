@@ -28,10 +28,10 @@ import styles from "./SearchView.module.css";
 const DEBOUNCE_MS = 300;
 
 type SearchViewProps = {
-  onClose: () => void;
+  closeModal: () => void;
 };
 
-export default function SearchView({ onClose }: SearchViewProps) {
+export default function SearchView({ closeModal }: SearchViewProps) {
   const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const [debouncedQuery] = useDebounce(query, DEBOUNCE_MS, {
@@ -72,7 +72,7 @@ export default function SearchView({ onClose }: SearchViewProps) {
       <SearchResultsView
         currentContext={currentContext}
         setContext={setContext}
-        onLinkClick={onClose}
+        onLinkClick={closeModal}
         isPending={isPending}
         groupedResults={groupedResults}
         error={error}

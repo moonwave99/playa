@@ -12,7 +12,7 @@ export const groupMenu =
       { type: "separator" },
       {
         label: "Edit Group",
-        click: () => openModal("editGroup", { group }),
+        click: () => openModal("editGroup", { id: group.id }),
       },
     ]);
     return true;

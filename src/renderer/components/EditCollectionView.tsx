@@ -12,14 +12,12 @@ import formStyles from "../forms.module.css";
 
 type EditCollectionViewProps = {
   id: number;
-  onSave: () => void;
-  onCancel: () => void;
+  closeModal: () => void;
 };
 
 export default function EditCollectionView({
   id,
-  onSave,
-  onCancel,
+  closeModal,
 }: EditCollectionViewProps) {
   const { t } = useTranslation();
   const {
@@ -35,7 +33,7 @@ export default function EditCollectionView({
     event.preventDefault();
     const data = new FormData(event.target as HTMLFormElement);
     updateTitle(data.get("title") as string);
-    onSave();
+    closeModal();
   }
 
   if (isPending) {
@@ -71,7 +69,7 @@ export default function EditCollectionView({
             <button
               type="button"
               className={formStyles.button}
-              onClick={onCancel}
+              onClick={closeModal}
             >
               {t("modals.EditCollectionView.actions.cancel")}
             </button>

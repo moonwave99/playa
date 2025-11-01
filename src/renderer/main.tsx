@@ -1,5 +1,6 @@
 import { createRoot } from "react-dom/client";
 import { HashRouter as Router } from "react-router";
+import ReactModal from "react-modal";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { Settings } from "@/types/types.ts";
 import { DEFAULT_SETTINGS } from "@/constants.ts";
@@ -8,6 +9,8 @@ import api from "./api.ts";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorPage from "./pages/ErrorPage.tsx";
 import Layout from "./Layout.tsx";
+
+ReactModal.setAppElement("#root");
 
 import "./i18n.ts";
 

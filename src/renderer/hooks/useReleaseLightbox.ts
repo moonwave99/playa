@@ -11,7 +11,7 @@ export function useReleaseLightbox({ context }: UseReleaseLightboxParams) {
     setModalContents({
       name: "lightbox",
       params: {
-        release: selection[0],
+        id: selection.at(0)?.id,
         context,
       },
     });

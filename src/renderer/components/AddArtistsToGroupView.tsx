@@ -4,14 +4,12 @@ import useGroups from "../query/useGroups";
 
 type AddArtistsToGroupViewProps = {
   artists: ArtistWithReleases[];
-  onSave: () => void;
-  onCancel: () => void;
+  closeModal: () => void;
 };
 
 export default function AddArtistsToGroupView({
   artists,
-  onSave,
-  onCancel,
+  closeModal,
 }: AddArtistsToGroupViewProps) {
   const { groups, addArtistsToGroup, addArtistsToNewGroup } = useGroups();
 
@@ -21,7 +19,7 @@ export default function AddArtistsToGroupView({
     } else {
       addArtistsToGroup({ id: itemTo.id, artists });
     }
-    onSave();
+    closeModal();
   }
 
   return (
@@ -31,7 +29,7 @@ export default function AddArtistsToGroupView({
       itemsFrom={artists}
       itemsTo={groups}
       onSubmit={onSubmit}
-      onCancel={onCancel}
+      onCancel={closeModal}
       autoFocus
     />
   );

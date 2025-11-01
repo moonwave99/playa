@@ -6,18 +6,14 @@ import formStyles from "../forms.module.css";
 import { useTranslation, Trans } from "react-i18next";
 
 type ImportDataViewProps = {
-  onDone: () => void;
-  onCancel: () => void;
+  closeModal: () => void;
 };
 
-export default function ImportDataView({
-  onDone,
-  onCancel,
-}: ImportDataViewProps) {
+export default function ImportDataView({ closeModal }: ImportDataViewProps) {
   const { t } = useTranslation();
   const { isDone, steps, lastStepRef } = useImportData<HTMLLIElement>({
-    onDone,
-    onCancel,
+    onDone: closeModal,
+    onCancel: closeModal,
     closeAfter: 3000,
   });
 
@@ -95,7 +91,7 @@ export default function ImportDataView({
         <button
           type="button"
           className={formStyles.button}
-          onClick={onCancel}
+          onClick={closeModal}
           disabled={!!steps.length && !isDone}
         >
           {t("modals.ImportDataView.actions.cancel")}

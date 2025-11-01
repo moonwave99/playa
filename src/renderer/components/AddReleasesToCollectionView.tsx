@@ -4,14 +4,12 @@ import useCollections from "../query/useCollections";
 
 type AddReleasesToCollectionViewProps = {
   releases: ReleaseWithArtist[];
-  onSave: () => void;
-  onCancel: () => void;
+  closeModal: () => void;
 };
 
 export default function AddReleasesToCollectionView({
   releases,
-  onSave,
-  onCancel,
+  closeModal,
 }: AddReleasesToCollectionViewProps) {
   const { collections, addReleasesToCollection, addReleasesToNewCollection } =
     useCollections();
@@ -22,7 +20,7 @@ export default function AddReleasesToCollectionView({
     } else {
       addReleasesToCollection({ id: itemTo.id, releases });
     }
-    onSave();
+    closeModal();
   }
 
   return (
@@ -32,7 +30,7 @@ export default function AddReleasesToCollectionView({
       itemsFrom={releases}
       itemsTo={collections}
       onSubmit={onSubmit}
-      onCancel={onCancel}
+      onCancel={closeModal}
       autoFocus
     />
   );

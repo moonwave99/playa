@@ -8,7 +8,6 @@ export function getCollectionMenu({
   stateManager,
 }: GetMenuParams) {
   const {
-    getCollection,
     deleteCollections,
     removeReleasesFromCollection,
     setCollectionCoverRelease,
@@ -41,11 +40,9 @@ export function getCollectionMenu({
       hideOnSinglePage: true,
       label: "Edit selected Collection",
       accelerator: "Shift+E",
-      click: async () =>
+      click: () =>
         openModal("editCollection", {
-          collection: await getCollection(
-            stateManager.getSelection("collection").at(0)
-          ),
+          id: stateManager.getSelection("collection").at(0),
         }),
     },
     {
@@ -53,11 +50,9 @@ export function getCollectionMenu({
       showOnSinglePage: true,
       label: "Edit current Collection",
       accelerator: "Cmd+Shift+E",
-      click: async () =>
+      click: () =>
         openModal("editCollection", {
-          collection: await getCollection(
-            stateManager.getSelection("collection").at(0)
-          ),
+          id: stateManager.getSelection("collection").at(0),
         }),
     },
     {

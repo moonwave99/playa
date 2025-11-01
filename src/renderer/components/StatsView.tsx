@@ -18,10 +18,10 @@ const sortedStats: (keyof Stats)[] = [
 ];
 
 type StatsViewProps = {
-  onClose: () => void;
+  closeModal: () => void;
 };
 
-export default function StatsView({ onClose }: StatsViewProps) {
+export default function StatsView({ closeModal }: StatsViewProps) {
   const { t } = useTranslation();
   const { isPending, error, stats } = useStats();
 
@@ -53,7 +53,7 @@ export default function StatsView({ onClose }: StatsViewProps) {
         <button
           type="button"
           className={cx(formStyles.button, formStyles.primary)}
-          onClick={onClose}
+          onClick={closeModal}
         >
           {t("modals.StatsView.actions.close")}
         </button>

@@ -15,8 +15,7 @@ import formStyles from "../forms.module.css";
 import buttonStyles from "../buttons.module.css";
 
 type SettingsViewProps = {
-  onSave: () => void;
-  onCancel: () => void;
+  closeModal: () => void;
 };
 
 type Field = {
@@ -72,7 +71,7 @@ const fieldsMap: Field[] = [
   },
 ];
 
-export default function SettingsView({ onSave, onCancel }: SettingsViewProps) {
+export default function SettingsView({ closeModal }: SettingsViewProps) {
   const { t } = useTranslation();
   const { settings, setSettings } = useStore();
   const [copy, setCopy] = useState(settings);
@@ -81,7 +80,7 @@ export default function SettingsView({ onSave, onCancel }: SettingsViewProps) {
     event.preventDefault();
     await api.settings.updateSettings(copy);
     setSettings(copy);
-    onSave();
+    closeModal();
   }
 
   if (isEmpty(settings)) {
@@ -163,7 +162,7 @@ export default function SettingsView({ onSave, onCancel }: SettingsViewProps) {
           <button
             type="button"
             className={formStyles.button}
-            onClick={onCancel}
+            onClick={closeModal}
           >
             {t("modals.SettingsView.actions.cancel")}
           </button>

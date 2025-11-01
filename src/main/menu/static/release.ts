@@ -82,7 +82,7 @@ export function getReleaseMenu({ controllers, stateManager }: GetMenuParams) {
           stateManager.getSelection("release").at(0)
         );
         openModal("lightbox", {
-          release,
+          id: release.id,
           context: await getReleaseContext(),
         });
       },

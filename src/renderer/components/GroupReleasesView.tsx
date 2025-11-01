@@ -31,14 +31,12 @@ import formStyles from "../forms.module.css";
 
 type GroupReleasesViewProps = {
   releases: ReleaseWithArtist[];
-  onSave: () => void;
-  onCancel: () => void;
+  closeModal: () => void;
 };
 
 export default function GroupReleasesView({
   releases,
-  onSave,
-  onCancel,
+  closeModal,
 }: GroupReleasesViewProps) {
   const { t } = useTranslation();
   const sensors = useSensors(
@@ -69,7 +67,7 @@ export default function GroupReleasesView({
       })),
     });
 
-    onSave();
+    closeModal();
   }
 
   function handleDragEnd(event: DragEndEvent) {
@@ -172,7 +170,7 @@ export default function GroupReleasesView({
               <button
                 type="button"
                 className={formStyles.button}
-                onClick={onCancel}
+                onClick={closeModal}
               >
                 {t("modals.GroupReleasesView.actions.cancel")}
               </button>

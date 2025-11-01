@@ -12,15 +12,10 @@ import formStyles from "../forms.module.css";
 
 type EditGroupViewProps = {
   id: number;
-  onSave: () => void;
-  onCancel: () => void;
+  closeModal: () => void;
 };
 
-export default function EditGroupView({
-  id,
-  onSave,
-  onCancel,
-}: EditGroupViewProps) {
+export default function EditGroupView({ id, closeModal }: EditGroupViewProps) {
   const { t } = useTranslation();
   const {
     group,
@@ -35,7 +30,7 @@ export default function EditGroupView({
     event.preventDefault();
     const data = new FormData(event.target as HTMLFormElement);
     updateTitle(data.get("title") as string);
-    onSave();
+    closeModal();
   }
 
   if (isPending) {
@@ -69,7 +64,7 @@ export default function EditGroupView({
             <button
               type="button"
               className={formStyles.button}
-              onClick={onCancel}
+              onClick={closeModal}
             >
               {t("modals.EditGroupView.actions.cancel")}
             </button>

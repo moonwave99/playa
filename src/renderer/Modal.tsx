@@ -1,15 +1,10 @@
 import ReactModal from "react-modal";
 import { useTranslation } from "react-i18next";
 import useStore from "./store";
-import { useEffect, useState } from "react";
-import {
-  ReleaseWithArtist,
-  ReleaseWithArtistAndSubReleases,
-  ArtistWithReleases,
-  HasId,
-  ImportData,
-} from "@/types/types";
+import { useEffect, useState, type JSX } from "react";
+
 import api from "./api";
+import { MODAL_CLOSE_TIMEOUT } from "@/constants";
 
 import ReleaseLightbox from "./components/ReleaseLightbox";
 import EditArtistView from "./components/EditArtistView";
@@ -30,98 +25,9 @@ import StatsView from "./components/StatsView";
 import { IoIosClose } from "react-icons/io";
 import buttonStyles from "./buttons.module.css";
 
-function getModalOverrides(name: Modals) {
-  if (name === "lightbox") {
-    return {
-      width: "auto",
-      overflow: "visible",
-      border: "none",
-      background: "transparent",
-    };
-  }
-  if (name === "search") {
-    return {
-      width: "min(90vw, 1400px)",
-      marginTop: "0",
-    };
-  }
-  if (name === "interactiveImport") {
-    return {
-      width: "min(90vw, 1000px)",
-      padding: 0,
-    };
-  }
-  if (name === "editCollection" || name === "editGroup") {
-    return {
-      width: "min(90vw, 1000px)",
-    };
-  }
-  if (name === "importData") {
-    return {
-      width: "min(80vw, 600px)",
-    };
-  }
-  if (name === "importFolders") {
-    return {
-      width: "min(80vw, 1000px)",
-    };
-  }
-  if (name === "stats") {
-    return {
-      width: "min(80vw, 1000px)",
-    };
-  }
-  return {};
-}
-
-function getModalStyle(name: Modals) {
-  const modalStyle = {
-    overlay: {
-      background: "rgba(100,100,100, 0.1)",
-      backdropFilter: "blur(3px)",
-      zIndex: 2,
-    },
-    content: {
-      background: "black",
-      width: "max(40vw, 600px)",
-      height: "min-content",
-      maxHeight: "95vh",
-      margin: "auto",
-      borderColor: "var(--modal-border-color)",
-      borderRadius: ".5rem",
-      padding: name === "lightbox" ? 0 : "1.5rem",
-      overflow: "initial",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      ...getModalOverrides(name),
-    },
-  };
-  return modalStyle;
-}
-
-ReactModal.setAppElement("#root");
-
 type ModalProps = {
   setContext: (context: string) => void;
 };
-
-export type Modals =
-  | "settings"
-  | "importData"
-  | "exportData"
-  | "importFolders"
-  | "groupReleases"
-  | "editRelease"
-  | "editArtist"
-  | "editCollection"
-  | "editGroup"
-  | "addReleasesToCollection"
-  | "addArtistsToGroup"
-  | "interactiveImport"
-  | "search"
-  | "stats"
-  | "lightbox";
 
 export default function Modal({ setContext }: ModalProps) {
   const { t } = useTranslation();
@@ -147,107 +53,8 @@ export default function Modal({ setContext }: ModalProps) {
       return null;
     }
     const { name, params } = modalContents;
-
-    if (name === "settings") {
-      return <SettingsView onSave={closeModal} onCancel={closeModal} />;
-    }
-    if (name === "importData") {
-      return <ImportDataView onDone={closeModal} onCancel={closeModal} />;
-    }
-    if (name === "exportData") {
-      return <ExportDataView onDone={closeModal} />;
-    }
-    if (name === "importFolders") {
-      return <ImportFoldersView onDone={closeModal} />;
-    }
-    if (name === "groupReleases") {
-      return (
-        <GroupReleasesView
-          releases={params.releases as ReleaseWithArtist[]}
-          onSave={closeModal}
-          onCancel={closeModal}
-        />
-      );
-    }
-    if (name === "editRelease") {
-      return (
-        <EditReleaseView
-          release={params.release as ReleaseWithArtistAndSubReleases}
-          onSave={closeModal}
-          onCancel={closeModal}
-        />
-      );
-    }
-    if (name === "editArtist") {
-      return (
-        <EditArtistView
-          artist={params.artist as ArtistWithReleases}
-          onSave={closeModal}
-          onCancel={closeModal}
-        />
-      );
-    }
-    if (name === "editCollection") {
-      return (
-        <EditCollectionView
-          id={(params.collection as HasId).id}
-          onSave={closeModal}
-          onCancel={closeModal}
-        />
-      );
-    }
-    if (name === "editGroup") {
-      return (
-        <EditGroupView
-          id={(params.group as HasId).id}
-          onSave={closeModal}
-          onCancel={closeModal}
-        />
-      );
-    }
-    if (name === "addReleasesToCollection") {
-      return (
-        <AddReleasesToCollectionView
-          releases={params.releases as ReleaseWithArtist[]}
-          onSave={closeModal}
-          onCancel={closeModal}
-        />
-      );
-    }
-    if (name === "addArtistsToGroup") {
-      return (
-        <AddArtistsToGroupView
-          artists={params.artists as ArtistWithReleases[]}
-          onSave={closeModal}
-          onCancel={closeModal}
-        />
-      );
-    }
-    if (name === "interactiveImport") {
-      return (
-        <InteractiveImportView
-          onCancel={closeModal}
-          onDone={closeModal}
-          data={params.data as ImportData[]}
-        />
-      );
-    }
-    if (name === "search") {
-      return <SearchView onClose={closeModal} />;
-    }
-    if (name === "stats") {
-      return <StatsView onClose={closeModal} />;
-    }
-    if (name === "lightbox") {
-      return (
-        <ReleaseLightbox
-          onClose={closeModal}
-          id={(params.release as HasId).id}
-          context={params.context as ReleaseWithArtist[]}
-          hideSidebar={!!params.hideSidebar}
-        />
-      );
-    }
+    const Component = modalMap[name].component;
+    return <Component {...{ closeModal, ...params }} />;
   }
 
   return (
@@ -255,7 +62,7 @@ export default function Modal({ setContext }: ModalProps) {
       isOpen={isModalOpen}
       shouldCloseOnEsc={!isModalFixed}
       shouldCloseOnOverlayClick={!isModalFixed}
-      closeTimeoutMS={300}
+      closeTimeoutMS={MODAL_CLOSE_TIMEOUT}
       onRequestClose={closeModal}
       style={getModalStyle(modalContents?.name)}
       onAfterOpen={() => {
@@ -285,3 +92,115 @@ export default function Modal({ setContext }: ModalProps) {
     </ReactModal>
   );
 }
+
+function getModalStyle(name: Modals) {
+  return {
+    overlay: {
+      background: "rgba(100,100,100, 0.1)",
+      backdropFilter: "blur(3px)",
+      zIndex: 2,
+    },
+    content: {
+      background: "black",
+      width: "max(40vw, 600px)",
+      height: "min-content",
+      maxHeight: "95vh",
+      margin: "auto",
+      borderColor: "var(--modal-border-color)",
+      borderRadius: ".5rem",
+      padding: name === "lightbox" ? 0 : "1.5rem",
+      overflow: "initial",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      ...(modalMap[name]?.styles || {}),
+    },
+  };
+}
+
+type ModalMap<T extends { closeModal: () => void }> = Record<
+  string,
+  {
+    component: (props: T) => JSX.Element;
+    styles?: React.CSSProperties;
+  }
+>;
+
+const modalMap: ModalMap<{ closeModal: () => void }> = {
+  settings: {
+    component: SettingsView,
+  },
+  importData: {
+    component: ImportDataView,
+    styles: {
+      width: "min(80vw, 600px)",
+    },
+  },
+  exportData: {
+    component: ExportDataView,
+  },
+  importFolders: {
+    component: ImportFoldersView,
+    styles: {
+      width: "min(80vw, 1000px)",
+    },
+  },
+  groupReleases: {
+    component: GroupReleasesView,
+  },
+  editRelease: {
+    component: EditReleaseView,
+  },
+  editArtist: {
+    component: EditArtistView,
+  },
+  editCollection: {
+    component: EditCollectionView,
+    styles: {
+      width: "min(90vw, 1000px)",
+    },
+  },
+  editGroup: {
+    component: EditGroupView,
+    styles: {
+      width: "min(90vw, 1000px)",
+    },
+  },
+  addReleasesToCollection: {
+    component: AddReleasesToCollectionView,
+  },
+  addArtistsToGroup: {
+    component: AddArtistsToGroupView,
+  },
+  interactiveImport: {
+    component: InteractiveImportView,
+    styles: {
+      width: "min(90vw, 1000px)",
+      padding: 0,
+    },
+  },
+  search: {
+    component: SearchView,
+    styles: {
+      width: "min(90vw, 1400px)",
+      marginTop: "0",
+    },
+  },
+  stats: {
+    component: StatsView,
+    styles: {
+      width: "min(80vw, 1000px)",
+    },
+  },
+  lightbox: {
+    component: ReleaseLightbox,
+    styles: {
+      width: "auto",
+      overflow: "visible",
+      border: "none",
+      background: "transparent",
+    },
+  },
+};
+
+export type Modals = keyof typeof modalMap;

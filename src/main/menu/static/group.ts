@@ -4,12 +4,8 @@ import { refreshMenuEntries, type GetMenuParams } from "../menu";
 import { getGroupLink } from "@/lib/links";
 
 export function getGroupMenu({ controllers, stateManager }: GetMenuParams) {
-  const {
-    getGroup,
-    deleteGroups,
-    removeArtistsFromGroup,
-    setGroupCoverArtist,
-  } = controllers.group;
+  const { deleteGroups, removeArtistsFromGroup, setGroupCoverArtist } =
+    controllers.group;
   const menuTemplate = [
     {
       id: "gotoGroupsPage",
@@ -35,9 +31,9 @@ export function getGroupMenu({ controllers, stateManager }: GetMenuParams) {
       hideOnSinglePage: true,
       label: "Edit selected Group",
       accelerator: "Cmd+Shift+E",
-      click: async () =>
+      click: () =>
         openModal("editGroup", {
-          group: await getGroup(stateManager.getSelection("group").at(0)),
+          id: stateManager.getSelection("group").at(0),
         }),
     },
     {
@@ -45,9 +41,9 @@ export function getGroupMenu({ controllers, stateManager }: GetMenuParams) {
       showOnSinglePage: true,
       label: "Edit current Group",
       accelerator: "Cmd+Shift+E",
-      click: async () =>
+      click: () =>
         openModal("editGroup", {
-          group: await getGroup(stateManager.getSelection("group").at(0)),
+          id: stateManager.getSelection("group").at(0),
         }),
     },
     {

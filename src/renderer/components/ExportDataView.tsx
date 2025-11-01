@@ -8,12 +8,12 @@ import formStyles from "../forms.module.css";
 import { ON_EXPORT_DONE_DELAY } from "@/constants";
 
 type ExportDataViewProps = {
-  onDone: () => void;
+  closeModal: () => void;
 };
 
-export default function ExportDataView({ onDone }: ExportDataViewProps) {
+export default function ExportDataView({ closeModal }: ExportDataViewProps) {
   const { t } = useTranslation();
-  const isDone = useExportData(onDone);
+  const isDone = useExportData(closeModal);
 
   return (
     <div className={styles.view}>
@@ -27,7 +27,7 @@ export default function ExportDataView({ onDone }: ExportDataViewProps) {
         <button
           type="button"
           className={cx(formStyles.button, formStyles.primary)}
-          onClick={onDone}
+          onClick={closeModal}
           disabled={!isDone}
         >
           {t("modals.ExportDataView.actions.close")}

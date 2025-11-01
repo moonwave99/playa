@@ -19,14 +19,12 @@ import formStyles from "../forms.module.css";
 
 type EditReleaseViewProps = {
   release: ReleaseWithArtistAndSubReleases;
-  onSave: () => void;
-  onCancel: () => void;
+  closeModal: () => void;
 };
 
 export default function EditReleaseView({
   release,
-  onSave,
-  onCancel,
+  closeModal,
 }: EditReleaseViewProps) {
   const { t } = useTranslation();
   const { settings } = useStore();
@@ -75,7 +73,7 @@ export default function EditReleaseView({
     ]);
 
     api.state.setSelection("release", []);
-    onSave();
+    closeModal();
   }
 
   function updateInfo(
@@ -129,7 +127,7 @@ export default function EditReleaseView({
             <button
               type="button"
               className={formStyles.button}
-              onClick={onCancel}
+              onClick={closeModal}
             >
               {t(`modals.EditReleaseView.actions.cancel`)}
             </button>

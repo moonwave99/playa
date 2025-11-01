@@ -18,14 +18,12 @@ type NewInfo = {
 
 type EditArtistViewProps = {
   artist: ArtistWithReleases;
-  onSave: () => void;
-  onCancel: () => void;
+  closeModal: () => void;
 };
 
 export default function EditArtistView({
   artist,
-  onSave,
-  onCancel,
+  closeModal,
 }: EditArtistViewProps) {
   const { t } = useTranslation();
   const { settings } = useStore();
@@ -48,7 +46,7 @@ export default function EditArtistView({
 
     refetch([["artists"], ["artists", "latest"], ["artists", artist.id]]);
 
-    onSave();
+    closeModal();
   }
 
   function updateInfo(key: keyof NewInfo, value: string) {
@@ -116,7 +114,7 @@ export default function EditArtistView({
             <button
               type="button"
               className={formStyles.button}
-              onClick={onCancel}
+              onClick={closeModal}
             >
               {t("modals.EditArtistView.actions.cancel")}
             </button>

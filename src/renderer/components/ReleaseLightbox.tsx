@@ -18,14 +18,14 @@ import styles from "./ReleaseLightbox.module.css";
 type ReleaseLightboxProps = {
   id: number;
   context?: ReleaseWithArtist[];
-  onClose: () => void;
+  closeModal: () => void;
   hideSidebar?: boolean;
 };
 
 export default function ReleaseLightbox({
   id,
   context,
-  onClose,
+  closeModal,
   hideSidebar = false,
 }: ReleaseLightboxProps) {
   const { t } = useTranslation();
@@ -52,7 +52,7 @@ export default function ReleaseLightbox({
   const { setContext } = useKeyManager({
     context: "modal",
     handlers: {
-      " ": withPrevent(onClose),
+      " ": withPrevent(closeModal),
       ArrowDown: () => setContext("modal:list"),
       ...(context?.length > 1
         ? {

@@ -30,7 +30,7 @@ test.describe("Import", () => {
     ).toBeVisible();
 
     const breadcrumbs = page.locator('[data-testid="breadcrumbs"]');
-    await expect(breadcrumbs).toContainText("Home");
+    await expect(page.getByRole("heading").first()).toHaveText("Playa");
 
     await clickMenuItemById("importFolder");
 

@@ -16,7 +16,7 @@ export const collectionMenu =
       },
       {
         label: "Edit Collection",
-        click: () => openModal("editCollection", { collection }),
+        click: () => openModal("editCollection", { id: collection.id }),
       },
     ]);
     return true;

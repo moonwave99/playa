@@ -18,8 +18,7 @@ import formStyles from "../forms.module.css";
 
 type InteractiveImportViewProps = {
   data: ImportData[];
-  onDone: () => void;
-  onCancel: () => void;
+  closeModal: () => void;
 };
 
 type ImportStatus = {
@@ -29,8 +28,7 @@ type ImportStatus = {
 
 export default function InteractiveImportView({
   data,
-  onDone,
-  onCancel,
+  closeModal,
 }: InteractiveImportViewProps) {
   const { t } = useTranslation();
   const [index, setIndex] = useState(0);
@@ -48,7 +46,7 @@ export default function InteractiveImportView({
   function gotoNextFolder() {
     setIndex((prev) => Math.min(prev + 1, data.length - 1));
     if (index === data.length - 1) {
-      onDone();
+      closeModal();
     }
   }
 
@@ -66,7 +64,7 @@ export default function InteractiveImportView({
           isLast={index === data.length - 1}
           onImport={onImport}
           onSkip={gotoNextFolder}
-          onCancel={onCancel}
+          onCancel={closeModal}
         />
       </div>
     </div>

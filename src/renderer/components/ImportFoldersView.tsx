@@ -5,13 +5,15 @@ import styles from "../importData.module.css";
 import formStyles from "../forms.module.css";
 
 type ImportFoldersViewProps = {
-  onDone: () => void;
+  closeModal: () => void;
 };
 
-export default function ImportFoldersView({ onDone }: ImportFoldersViewProps) {
+export default function ImportFoldersView({
+  closeModal,
+}: ImportFoldersViewProps) {
   const { t } = useTranslation();
   const { steps, isDone } = useImportData({
-    onDone,
+    onDone: closeModal,
     closeAfter: 10000,
   });
 
@@ -39,7 +41,7 @@ export default function ImportFoldersView({ onDone }: ImportFoldersViewProps) {
         <button
           type="button"
           className={cx(formStyles.button, formStyles.primary)}
-          onClick={onDone}
+          onClick={closeModal}
           disabled={!isDone}
         >
           {t("modals.ImportFoldersView.actions.close")}
