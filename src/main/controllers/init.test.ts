@@ -8,7 +8,7 @@ import { actions as groupActions } from "./group";
 import { actions as trackActions } from "./track";
 import { actions as statsActions } from "./stats";
 import { actions as stateActions } from "./state";
-import { actions as settingsActions } from "./settings";
+import { actions as settingsActions, settingsController } from "./settings";
 import { actions as systemActions } from "./system";
 import { actions as searchResultActions } from "./searchResult";
 import { actions as importExportActions } from "./importExport";
@@ -38,29 +38,32 @@ function getMainWindow() {
 describe("init function", () => {
   it("should initialize the settings", async () => {
     const { mainWindow } = getMainWindow();
-    const { getSetting } = await init(mainWindow);
-    expect(getSetting("SHOW_ONBOARDING_ON_STARTUP")).toBe(true);
+    const settings = settingsController({ send: vi.fn() });
+    await settings.init();
+    await init({ mainWindow, settings });
+    expect(settings.getSetting("SHOW_ONBOARDING_ON_STARTUP")).toBe(true);
   });
 
   it("should setup the window swipe listener", async () => {
     const { mainWindow, onSwipe } = getMainWindow();
-    await init(mainWindow);
+    const settings = settingsController({ send: vi.fn() });
+    await init({ mainWindow, settings });
 
     expect(mainWindow.on).toHaveBeenCalledWith("swipe", expect.anything());
 
     ["left", "right"].forEach((direction) => {
       const event = new Event("swipe");
       mainWindow.dispatchEvent(event, direction);
-
       expect(onSwipe).toHaveBeenCalledWith(event, direction);
     });
   });
 
   it("should setup the ipc listeners", async () => {
     const { mainWindow } = getMainWindow();
+    const settings = settingsController({ send: vi.fn() });
     const ipcHandleSpy = vi.spyOn(ipcMain, "handle");
 
-    await init(mainWindow);
+    await init({ mainWindow, settings });
 
     [
       ...artistActions,

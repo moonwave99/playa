@@ -67,10 +67,13 @@ export function openModal(name: Modals, params?: unknown) {
   send("openModal", { name, params });
 }
 
-export async function init(mainWindow: BrowserWindow) {
-  const settings = settingsController({ send });
-  const { init: initSettings, getSetting } = settings;
-  await initSettings();
+type InitParams = {
+  mainWindow: BrowserWindow;
+  settings: ReturnType<typeof settingsController>;
+};
+
+export async function init({ mainWindow, settings }: InitParams) {
+  const { getSetting } = settings;
 
   const desktopPath = path.resolve(homedir(), "Desktop");
   const userDataPath = app.getPath("userData");
@@ -225,10 +228,6 @@ export async function init(mainWindow: BrowserWindow) {
   mainWindow.webContents.on("did-finish-load", () => {
     stateManager.reset();
   });
-
-  return {
-    getSetting,
-  };
 }
 
 function registerHandlers(

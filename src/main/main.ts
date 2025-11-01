@@ -1,15 +1,32 @@
 import { app, BrowserWindow, shell, screen, protocol, net } from "electron";
 import path from "node:path";
 import started from "electron-squirrel-startup";
-import { init } from "./controllers/init";
+import { init, send } from "./controllers/init";
 import { log } from "./logger";
 import { getCoverPlaceholder } from "./cover-placeholder";
+import { settingsController } from "./controllers/settings";
 
 if (started) {
   app.quit();
 }
 
 async function createWindow() {
+  const settings = settingsController({ send });
+  const { init: initSettings, getSetting } = settings;
+  await initSettings();
+
+  protocol.handle("playa-cover", async ({ url }) => {
+    const COVERS_PATH = getSetting("COVERS_PATH") as string;
+    const { hostname } = new URL(url);
+    try {
+      return await net.fetch(`file://${path.join(COVERS_PATH, hostname)}`);
+    } catch (error) {
+      log("covers", "cover not found:", url);
+      log("covers", error);
+      return getCoverPlaceholder(url);
+    }
+  });
+
   const { height, width } = screen.getPrimaryDisplay().size;
   const mainWindow = new BrowserWindow({
     height,
@@ -37,19 +54,7 @@ async function createWindow() {
     return { action: "deny" };
   });
 
-  const { getSetting } = await init(mainWindow);
-
-  protocol.handle("playa-cover", async ({ url }) => {
-    const COVERS_PATH = getSetting("COVERS_PATH") as string;
-    const { hostname } = new URL(url);
-    try {
-      return await net.fetch(`file://${path.join(COVERS_PATH, hostname)}`);
-    } catch (error) {
-      log("covers", "cover not found:", url);
-      log("covers", error);
-      return getCoverPlaceholder(url);
-    }
-  });
+  await init({ mainWindow, settings });
 }
 
 app.on("ready", createWindow);

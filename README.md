@@ -20,12 +20,14 @@ TBD
 - add history nav buttons;
 - add recent searches;
 - add rainbow mode;
+- allow artists pages without releases (for additional artists);
 
 ## Tasks
 
 - display multiple covers for multiple discs releases;
 - make group and collection titles editable again;
 - fix covers load on startup bug;
+- update selection on lightbox navigation;
 
 ## License
 
