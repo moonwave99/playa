@@ -3,12 +3,13 @@ import { History } from "./history";
 describe("History - constructor", () => {
   it("initializes a new History", () => {
     const history = new History();
-    expect(history.getState()).toMatchObject({
+    expect(history.getState()).toEqual({
       currentEntry: null,
       backEntries: [],
       forwardEntries: [],
       canGoBack: false,
       canGoForward: false,
+      direction: 0,
     });
   });
 });
@@ -39,6 +40,7 @@ describe("History - onChange", () => {
       forwardEntries: [],
       canGoBack: false,
       canGoForward: false,
+      direction: 0,
     });
   });
 });
@@ -66,6 +68,7 @@ describe("History - push", () => {
       forwardEntries: [],
       canGoBack: false,
       canGoForward: false,
+      direction: 0,
     });
 
     expect(history.getState()).toMatchObject({
@@ -79,6 +82,7 @@ describe("History - push", () => {
       forwardEntries: [],
       canGoBack: true,
       canGoForward: false,
+      direction: 0,
     });
   });
 });
@@ -140,6 +144,7 @@ describe("History - goBack", () => {
       forwardEntries: [thirdPage],
       canGoBack: true,
       canGoForward: true,
+      direction: -1,
     });
 
     expect(onChange).toHaveBeenCalledTimes(4);
@@ -202,6 +207,7 @@ describe("History - goForward", () => {
       forwardEntries: [],
       canGoBack: true,
       canGoForward: false,
+      direction: 1,
     });
 
     expect(onChange).toHaveBeenCalledTimes(5);

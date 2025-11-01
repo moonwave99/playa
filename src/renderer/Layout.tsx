@@ -130,7 +130,7 @@ function useLayout({ initialSettings }: UseLayoutParams): UseLayout {
     onHistoryChange: (historyState) => {
       setHistoryState(historyState);
       navigate(historyState.currentEntry.href, {
-        state: { historyChange: true },
+        state: { historyChange: true, direction: historyState.direction },
       });
     },
     onOpenModal: setModalContents,

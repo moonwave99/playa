@@ -1,5 +1,5 @@
 import { useState, useRef, type RefObject } from "react";
-import { useNavigationType } from "react-router";
+import { useLocation } from "react-router";
 import type { ScrollInfo } from "../components/List";
 
 type UseRestoreListPositionParams = {
@@ -19,11 +19,11 @@ const cache: Record<string, ScrollInfo> = {};
 export default function useRestoreListPosition({
   key,
 }: UseRestoreListPositionParams): UseRestoreListPosition {
-  const navigationType = useNavigationType();
   const ref = useRef(null);
+  const location = useLocation();
 
   const [scrollInfo, setScrollInfo] = useState<ScrollInfo>(
-    navigationType !== "POP" ? null : cache[key?.join("-")] || null
+    location.state?.direction !== -1 ? null : cache[key?.join("-")] || null
   );
 
   function storeScrollInfo(scrollInfo: ScrollInfo) {

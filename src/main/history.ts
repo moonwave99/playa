@@ -4,7 +4,10 @@ export type HistoryState = {
   forwardEntries: HistoryEntry[];
   canGoBack: boolean;
   canGoForward: boolean;
+  direction: HistoryDirection;
 };
+
+export type HistoryDirection = -1 | 0 | 1;
 
 export type HistoryEntry = {
   title: string;
@@ -17,9 +20,11 @@ export class History {
   private history: HistoryEntry[];
   private index: number;
   private handler: HistoryHandler;
+  private direction: HistoryDirection;
   constructor() {
     this.history = [];
     this.index = -1;
+    this.direction = 0;
   }
   getState() {
     return {
@@ -28,11 +33,13 @@ export class History {
       forwardEntries: this.getForwardEntries(),
       canGoBack: this.canGoBack(),
       canGoForward: this.canGoForward(),
+      direction: this.direction,
     };
   }
   push(entry: HistoryEntry) {
     this.history = [...this.history.slice(0, this.index + 1), entry];
     this.index = this.history.length - 1;
+    this.direction = 0;
     this.onUpdate();
   }
   goBack() {
@@ -40,6 +47,7 @@ export class History {
       return;
     }
     this.index--;
+    this.direction = -1;
     this.onUpdate();
   }
   goForward() {
@@ -47,6 +55,7 @@ export class History {
       return;
     }
     this.index++;
+    this.direction = 1;
     this.onUpdate();
   }
   onChange(handler: HistoryHandler) {
