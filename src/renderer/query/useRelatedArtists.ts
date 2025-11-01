@@ -1,9 +1,10 @@
 import { useState, type FormEvent } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useDebounce } from "use-debounce";
+import { DEBOUNCE_INTERVAL } from "@/constants";
 import useSearch from "./useSearch";
 import useArtist from "./useArtist";
-import api from '../api';
+import api from "../api";
 import { Artist, ArtistWithRelatedArtists } from "@/types/types";
 
 type UseRelatedArtists = {
@@ -14,17 +15,15 @@ type UseRelatedArtists = {
     onInput: (event: FormEvent) => void;
     onBlur: () => void;
     onFocus: () => void;
-  },
+  };
   addRelatedArtist: (id: number) => void;
   removeRelatedArtist: (id: number) => void;
 };
 
-const DEBOUNCE_MS = 300;
-
 export default function useRelatedArtists(id: number): UseRelatedArtists {
   const queryClient = useQueryClient();
-  const [query, setQuery] = useState('');
-  const [debouncedQuery] = useDebounce(query, DEBOUNCE_MS, {
+  const [query, setQuery] = useState("");
+  const [debouncedQuery] = useDebounce(query, DEBOUNCE_INTERVAL, {
     leading: false,
   });
 
@@ -32,7 +31,11 @@ export default function useRelatedArtists(id: number): UseRelatedArtists {
     query: debouncedQuery,
     queryKey: ["artists", "search", debouncedQuery],
     queryFn: (query, take) =>
-      api.artist.searchArtists({ query, take, exclude: { key: 'relatedArtists', artist_id: id } }),
+      api.artist.searchArtists({
+        query,
+        take,
+        exclude: { key: "relatedArtists", artist_id: id },
+      }),
     take: 10,
   });
 
@@ -43,17 +46,18 @@ export default function useRelatedArtists(id: number): UseRelatedArtists {
       ["releases", "latest"],
       ["artists", id],
       ["artists", "search", debouncedQuery],
-    ].forEach(queryKey => queryClient.invalidateQueries({ queryKey }));
+    ].forEach((queryKey) => queryClient.invalidateQueries({ queryKey }));
   }
 
   const addRelatedArtist = useMutation({
     mutationFn: (other_id: number) => api.artist.addRelatedArtist(id, other_id),
-    onSuccess
+    onSuccess,
   });
 
   const removeRelatedArtist = useMutation({
-    mutationFn: (other_id: number) => api.artist.removeRelatedArtist(id, other_id),
-    onSuccess
+    mutationFn: (other_id: number) =>
+      api.artist.removeRelatedArtist(id, other_id),
+    onSuccess,
   });
 
   return {
@@ -66,6 +70,6 @@ export default function useRelatedArtists(id: number): UseRelatedArtists {
     addRelatedArtist: addRelatedArtist.mutate,
     removeRelatedArtist: removeRelatedArtist.mutate,
     results,
-    artist
+    artist,
   };
 }

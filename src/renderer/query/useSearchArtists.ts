@@ -1,7 +1,8 @@
 import { useState, type FormEvent } from "react";
 import { useDebounce } from "use-debounce";
+import { DEBOUNCE_INTERVAL } from "@/constants";
 import useSearch from "./useSearch";
-import api from '../api';
+import api from "../api";
 import { Artist } from "@/types/types";
 import type { SearchArtistsParams } from "@/main/db/artist";
 
@@ -12,16 +13,16 @@ type UseSearchArtists = {
     onInput: (event: FormEvent) => void;
     onBlur: () => void;
     onFocus: () => void;
-  },
+  };
 };
 
-type UseSearchArtistsParams = Pick<SearchArtistsParams, 'exclude'>;
+type UseSearchArtistsParams = Pick<SearchArtistsParams, "exclude">;
 
-const DEBOUNCE_MS = 300;
-
-export default function useSearchArtists({ exclude }: UseSearchArtistsParams): UseSearchArtists {
-  const [query, setQuery] = useState('');
-  const [debouncedQuery] = useDebounce(query, DEBOUNCE_MS, {
+export default function useSearchArtists({
+  exclude,
+}: UseSearchArtistsParams): UseSearchArtists {
+  const [query, setQuery] = useState("");
+  const [debouncedQuery] = useDebounce(query, DEBOUNCE_INTERVAL, {
     leading: false,
   });
 

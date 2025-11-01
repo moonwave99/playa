@@ -7,6 +7,7 @@ import {
   SearchableEntities,
   SearchResult,
 } from "@/types/types";
+import { DEBOUNCE_INTERVAL } from "@/constants";
 import { getCovers } from "@/lib/utils";
 import api from "../api";
 import useSearchInput from "../hooks/useSearchInput";
@@ -25,8 +26,6 @@ import { MdOutlineSearch } from "react-icons/md";
 import cx from "clsx";
 import styles from "./SearchView.module.css";
 
-const DEBOUNCE_MS = 300;
-
 type SearchViewProps = {
   closeModal: () => void;
 };
@@ -34,7 +33,7 @@ type SearchViewProps = {
 export default function SearchView({ closeModal }: SearchViewProps) {
   const { t } = useTranslation();
   const [query, setQuery] = useState("");
-  const [debouncedQuery] = useDebounce(query, DEBOUNCE_MS, {
+  const [debouncedQuery] = useDebounce(query, DEBOUNCE_INTERVAL, {
     leading: false,
   });
 

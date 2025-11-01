@@ -1,3 +1,5 @@
+import { SearchableEntities, SearchResult } from "@/types/types";
+import { DEBOUNCE_INTERVAL } from "@/constants";
 import LookupView from "./LookupView";
 import useSearch from "../query/useSearch";
 import { useState } from "react";
@@ -5,7 +7,6 @@ import { useDebounce } from "use-debounce";
 import api from "../api";
 import ErrorView from "./ErrorView";
 import Loading from "./Loading";
-import { SearchableEntities, SearchResult } from "@/types/types";
 
 type LookupEntityViewProps = {
   type: SearchableEntities;
@@ -15,8 +16,6 @@ type LookupEntityViewProps = {
   take?: number;
 };
 
-const DEBOUNCE_MS = 300;
-
 export default function LookupReleasesView({
   className,
   filterFn = () => true,
@@ -25,7 +24,7 @@ export default function LookupReleasesView({
   type,
 }: LookupEntityViewProps) {
   const [query, setQuery] = useState("");
-  const [debouncedQuery] = useDebounce(query, DEBOUNCE_MS, {
+  const [debouncedQuery] = useDebounce(query, DEBOUNCE_INTERVAL, {
     leading: false,
   });
 

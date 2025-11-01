@@ -3,6 +3,7 @@ import {
   keepPreviousData,
   type QueryKey,
 } from "@tanstack/react-query";
+import { DEBOUNCE_INTERVAL } from "@/constants";
 
 type UseSearchParams<T> = {
   query: string;
@@ -17,8 +18,6 @@ type UseSearch<T> = {
   error: Error;
   results: T[];
 };
-
-const DEBOUNCE_MS = 300;
 
 export default function useSearch<T>({
   query,
@@ -39,7 +38,7 @@ export default function useSearch<T>({
       }
       return queryFn(query, take);
     },
-    staleTime: DEBOUNCE_MS,
+    staleTime: DEBOUNCE_INTERVAL,
     placeholderData: keepPreviousData,
   });
 
