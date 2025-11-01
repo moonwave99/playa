@@ -27,9 +27,13 @@
     "titles": {
       "home": "Playa",
       "releases": "Releases",
+      "release": "Releases | {{title}}",
       "artists": "Artists",
+      "artist": "Artists | {{name}}",
       "collections": "Collections",
-      "groups": "Groups"
+      "collection": "Collections | {{title}}",
+      "groups": "Groups",
+      "group": "Groups | {{title}}"
     },
     "common": {
       "actions": {

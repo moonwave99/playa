@@ -17,7 +17,6 @@ TBD
 - filter list views;
 - design linear list modes;
 - display artist release selection in search results;
-- add history nav buttons;
 - add recent searches;
 - add rainbow mode;
 - allow artists pages without releases (for additional artists);
@@ -26,8 +25,8 @@ TBD
 
 - display multiple covers for multiple discs releases;
 - make group and collection titles editable again;
-- fix covers load on startup bug;
 - update selection on lightbox navigation;
+- remove reload menu entries on prod;
 
 ## License
 

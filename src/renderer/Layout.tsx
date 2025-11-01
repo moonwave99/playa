@@ -139,6 +139,9 @@ function useLayout({ initialSettings }: UseLayoutParams): UseLayout {
         modalContents?.name === "search" ? null : { name: "search" }
       ),
     onNavigate: (path: string) => {
+      if (path === window.location.hash.slice(1)) {
+        return;
+      }
       navigate(path);
       setContext("list");
     },
@@ -181,7 +184,7 @@ function useLayout({ initialSettings }: UseLayoutParams): UseLayout {
 
     api.state.navigate({
       href: fullLocation,
-      title: document.title,
+      title: null,
     });
   }, [location]);
 

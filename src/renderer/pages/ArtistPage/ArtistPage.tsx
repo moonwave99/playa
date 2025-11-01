@@ -4,6 +4,7 @@ import type { ReleaseWithArtist } from "@/types/types";
 import useArtist from "@/renderer/query/useArtist";
 import api from "@/renderer/api";
 import { useSelect } from "@/renderer/hooks/useSelect";
+import useTitle from "@/renderer/hooks/useTitle";
 import { getReleaseContextMenuParams } from "@/lib/utils";
 
 import ArtistPageHeader from "./ArtistPageHeader";
@@ -22,6 +23,7 @@ export default function ArtistPage() {
 
   const { select } = useSelect("release");
   useSelect("artist", [+id]);
+  useTitle(artist && t(`nav.titles.artist`, artist));
 
   if (isPending) {
     return <Loading />;

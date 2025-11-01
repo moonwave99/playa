@@ -2,23 +2,21 @@ import { Routes, Route, useParams } from "react-router";
 import { useTranslation } from "react-i18next";
 import styles from "./Nav.module.css";
 import api from "@/renderer/api";
+import useTitle from "@/renderer/hooks/useTitle";
 import useCollection from "@/renderer/query/useCollection";
 import useGroup from "@/renderer/query/useGroup";
-import { ReactNode } from "react";
 
 export default function NavTitle() {
   const { t } = useTranslation();
+
   return (
     <Routes>
-      <Route
-        path="/"
-        element={<DefaultTitle>{t("nav.titles.home")}</DefaultTitle>}
-      />
+      <Route path="/" element={<DefaultTitle title={t("nav.titles.home")} />} />
       {["releases", "artists", "collections", "groups"].map((entity) => (
         <Route
           key={entity}
           path={`/${entity}`}
-          element={<DefaultTitle>{t(`nav.titles.${entity}`)}</DefaultTitle>}
+          element={<DefaultTitle title={t(`nav.titles.${entity}`)} />}
         />
       ))}
       <Route path="/collections/:id" element={<CollectionTitle />} />
@@ -29,23 +27,29 @@ export default function NavTitle() {
 }
 
 type DefaultTitleProps = {
-  children: ReactNode;
+  title: string;
 };
 
-function DefaultTitle({ children }: DefaultTitleProps) {
+function DefaultTitle({ title }: DefaultTitleProps) {
+  useTitle(title);
   return (
     <h1 className={styles.title}>
-      <span>{children}</span>
+      <span>{title}</span>
     </h1>
   );
 }
 
 function GroupTitle() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const { group, isPending } = useGroup(+id);
+
+  useTitle(group && t(`nav.titles.group`, group));
+
   if (isPending || !group) {
     return null;
   }
+
   return (
     <h1 className={styles.title} onContextMenu={() => api.menu.group(group)}>
       <span>{group.title}</span>
@@ -54,8 +58,12 @@ function GroupTitle() {
 }
 
 function CollectionTitle() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const { collection, isPending } = useCollection(+id);
+
+  useTitle(collection && t(`nav.titles.collection`, collection));
+
   if (isPending || !collection) {
     return null;
   }

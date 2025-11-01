@@ -1,8 +1,11 @@
 import { Navigate, useParams } from "react-router";
+import { useTranslation } from "react-i18next";
 import useRelease from "@/renderer/query/useRelease";
 import { useKeyManager } from "@/renderer/hooks/useKeyboardManager";
 import { useSelect } from "@/renderer/hooks/useSelect";
+import useTitle from "@/renderer/hooks/useTitle";
 import api from "@/renderer/api";
+import { getReleaseFullTitle } from "@/lib/utils";
 
 import ReleasePageHeader from "./ReleasePageHeader";
 import Tracklist from "@/renderer/components/Tracklist";
@@ -13,6 +16,7 @@ import cx from "clsx";
 import styles from "../Page.module.css";
 
 export default function ReleasePage() {
+  const { t } = useTranslation();
   const { id } = useParams();
 
   const { isPending, error, release, selectedTrackId, gotoArtistPage } =
@@ -29,6 +33,9 @@ export default function ReleasePage() {
   });
 
   useSelect("release", [+id]);
+  useTitle(
+    release && t(`nav.titles.release`, { title: getReleaseFullTitle(release) })
+  );
 
   if (isPending) {
     return <Loading />;
