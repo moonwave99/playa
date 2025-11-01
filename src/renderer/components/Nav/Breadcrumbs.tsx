@@ -77,6 +77,7 @@ export default function BreadCrumbs({
 
     const output = Breadcrumb ? (
       <Breadcrumb
+        showText={id !== "home"}
         id={+params.id}
         isFor={id as SupportedIcons}
         className={styles.content}
@@ -120,16 +121,23 @@ type BreadcrumbProps = {
   className?: string;
   isFor?: SupportedIcons;
   id?: number;
+  showText?: boolean;
 };
 
-function BaseBreadcrumb({ className, isFor }: BreadcrumbProps) {
+function BaseBreadcrumb({
+  className,
+  isFor,
+  showText = true,
+}: BreadcrumbProps) {
   const { t } = useTranslation();
   return (
     <span className={className}>
       <Icon isFor={isFor} />{" "}
-      <span className={responsiveStyles.hideOnMediumViewPort}>
-        {t(`breadcrumbs.${isFor}`)}
-      </span>
+      {showText && (
+        <span className={responsiveStyles.hideOnMediumViewPort}>
+          {t(`breadcrumbs.${isFor}`)}
+        </span>
+      )}
     </span>
   );
 }

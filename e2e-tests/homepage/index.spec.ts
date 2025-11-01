@@ -10,10 +10,6 @@ test.describe("Homepage", () => {
     await page.getByRole("button", { name: "Toggle Menu" }).click();
     await page.getByLabel("Go to the Home page").click();
 
-    await expect(page.locator('[data-testid="breadcrumbs"]')).toContainText(
-      "Home"
-    );
-
     await expect(page.getByRole("heading").first()).toHaveText("Playa");
 
     await expect(

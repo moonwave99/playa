@@ -21,7 +21,7 @@
       &:after {
         color: var(--secondary-color);
         content: "/";
-        font-size: 1.2rem;
+        font-size: 1rem;
         margin-left: 0.5rem;
         padding-bottom: 0.065rem;
       }
@@ -36,38 +36,25 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--breadcrumb-background-color);
-  color: var(--primary-color);
-  border-radius: 0.25rem;
+  color: var(--secondary-color);
   appearance: none;
   border: none;
-  padding: 0 0.5rem;
-
-  &.isFullHeaderPage {
-    padding: 0;
-    background-color: transparent;
-  }
 
   &.useDarkText {
-    background-color: transparent;
     color: black;
+  }
+
+  &:has(a) {
+    color: var(--primary-color);
   }
 
   a {
     display: flex;
     align-items: center;
     height: 1.5rem;
-  }
-
-  &:not(:has(a)) {
-    background-color: var(--accent-color);
     &:hover {
-      text-decoration: none;
+      text-decoration: underline;
     }
-  }
-
-  &:hover {
-    text-decoration: underline;
   }
 
   .content {
