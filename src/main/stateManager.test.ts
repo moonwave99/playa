@@ -1,7 +1,7 @@
 import { StateManager } from "./stateManager";
 
 describe("StateManager - constructor", () => {
-  it("should initialize a new StateManager", () => {
+  it("initializes a new StateManager", () => {
     const state = new StateManager();
     expect(state.getState()).toEqual({
       selection: {
@@ -15,6 +15,7 @@ describe("StateManager - constructor", () => {
       isNavOpen: false,
       isImporting: false,
       isOnboarding: false,
+      isModalOpen: false,
       path: "",
     });
   });
@@ -108,6 +109,7 @@ describe("StateManager - reset", () => {
       isNavOpen: false,
       isImporting: false,
       isOnboarding: false,
+      isModalOpen: false,
       path: "",
     });
   });
@@ -153,6 +155,21 @@ describe("StateManager - setImporting / isImporting", () => {
     expect(onChange).toHaveBeenCalledWith(
       expect.objectContaining({
         isImporting: true,
+      })
+    );
+  });
+});
+
+describe("StateManager - setModalOpen / isModalOpen", () => {
+  it("should set and get the corresponding value", () => {
+    const onChange = vi.fn();
+    const state = new StateManager();
+    state.onStateChange(onChange);
+    state.setModalOpen(true);
+    expect(state.isModalOpen()).toBe(true);
+    expect(onChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        isModalOpen: true,
       })
     );
   });

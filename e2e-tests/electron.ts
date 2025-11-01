@@ -64,7 +64,10 @@ export function setupElectron(): SetupElectron {
     return {
       electronApp,
       page,
-      clickMenuItemById: (id: string) => clickMenuItemById(electronApp, id),
+      clickMenuItemById: async (id: string) => {
+        await page.waitForTimeout(100);
+        clickMenuItemById(electronApp, id);
+      },
       wait: (value?: string | number) =>
         page.waitForTimeout(getTimeInterval(value)),
     };

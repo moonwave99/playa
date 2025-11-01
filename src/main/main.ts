@@ -6,6 +6,8 @@ import { log } from "./logger";
 import { getCoverPlaceholder } from "./cover-placeholder";
 import { settingsController } from "./controllers/settings";
 
+import { MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT } from "@/constants";
+
 if (started) {
   app.quit();
 }
@@ -31,8 +33,8 @@ async function createWindow() {
   const mainWindow = new BrowserWindow({
     height,
     width,
-    minWidth: 450,
-    minHeight: 640,
+    minWidth: MIN_WINDOW_WIDTH,
+    minHeight: MIN_WINDOW_HEIGHT,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       nodeIntegration: true,

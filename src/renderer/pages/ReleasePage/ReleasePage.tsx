@@ -39,7 +39,7 @@ export default function ReleasePage() {
   }
 
   if (!release) {
-    return <Navigate replace to="/" />;
+    return <Navigate replace to="/" state={{ isRedirect: true }} />;
   }
 
   function onContextMenu() {

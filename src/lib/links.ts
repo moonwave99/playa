@@ -44,7 +44,7 @@ export function getCover(hash: string): string {
 }
 
 export function getEntityLink({ id, entityType }: HasEntityTypeAndId) {
-  return `/${formatEntityType(entityType, { plural: true })}/${id}`;
+  return `/${formatEntityType(entityType, { capital: false, plural: true })}/${id}`;
 }
 
 export function getCollectionLink({ id }: HasId) {

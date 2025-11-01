@@ -1,22 +1,32 @@
 import { Send } from "@/types/types";
 import type { StateManager } from "../stateManager";
+import type { History, HistoryEntry } from "../history";
 
 type StateControllerParams = {
   stateManager: StateManager;
+  history: History;
   send: Send;
 };
 
-export function stateController({ stateManager, send }: StateControllerParams) {
+export function stateController({
+  stateManager,
+  history,
+  send,
+}: StateControllerParams) {
   return {
     setInputFocused: (inputFocused: boolean) =>
       stateManager.setInputFocused(inputFocused),
     setOnboarding: (isOnboarding: boolean) =>
       stateManager.setOnboarding(isOnboarding),
     setNavOpen: (isNavOpen: boolean) => stateManager.setNavOpen(isNavOpen),
+    setModalOpen: (isModalOpen: boolean) =>
+      stateManager.setModalOpen(isModalOpen),
     setSelection: (...params: Parameters<typeof stateManager.setSelection>) =>
       stateManager.setSelection(...params),
-    navigate: (path: string) => stateManager.setPath(path),
     clearSelection: () => send("clearSelection"),
+    navigate: (historyEntry: HistoryEntry) => history.push(historyEntry),
+    goBack: () => history.goBack(),
+    goForward: () => history.goForward(),
   };
 }
 
@@ -24,7 +34,10 @@ export const actions: (keyof ReturnType<typeof stateController>)[] = [
   "setInputFocused",
   "setOnboarding",
   "setNavOpen",
+  "setModalOpen",
   "setSelection",
-  "navigate",
   "clearSelection",
+  "navigate",
+  "goBack",
+  "goForward",
 ];

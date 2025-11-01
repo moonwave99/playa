@@ -44,6 +44,12 @@
     }
   }
 
+  .leftWrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
   .ActionsGroup {
     display: flex;
     align-items: center;

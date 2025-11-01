@@ -114,6 +114,7 @@ function useLayout({ initialSettings }: UseLayoutParams): UseLayout {
     setSettings,
     setModalContents,
     modalContents,
+    setHistoryState,
   } = useStore();
 
   useApiEvents({
@@ -126,7 +127,12 @@ function useLayout({ initialSettings }: UseLayoutParams): UseLayout {
         autoClose: 1500,
       }),
     onCoverUpdate: refreshCovers,
-    onSwipe: navigate,
+    onHistoryChange: (historyState) => {
+      setHistoryState(historyState);
+      navigate(historyState.currentEntry.href, {
+        state: { historyChange: true },
+      });
+    },
     onOpenModal: setModalContents,
     onToggleSearch: () =>
       setModalContents(
@@ -139,31 +145,45 @@ function useLayout({ initialSettings }: UseLayoutParams): UseLayout {
     onSettingsUpdate: setSettings,
   });
 
-  const { setContext, currentContext } = useKeyManager({
+  const { setContext } = useKeyManager({
     context: KeyManager.global,
     handlers: {
       ArrowLeft: withMeta((event: KeyboardEvent) => {
-        if (
-          currentContext.includes("modal") ||
-          currentContext.includes("input")
-        ) {
-          return;
-        }
         event.preventDefault();
-        navigate(-1);
+        api.menu.click("goBack");
       }),
       ArrowRight: withMeta((event: KeyboardEvent) => {
-        if (
-          currentContext.includes("modal") ||
-          currentContext.includes("input")
-        ) {
-          return;
-        }
         event.preventDefault();
-        navigate(1);
+        api.menu.click("goForward");
       }),
     },
   });
+
+  useEffect(() => {
+    if (firstRender.current) {
+      return;
+    }
+
+    const fullLocation =
+      location.search && !location.search.includes("new=true")
+        ? `${location.pathname}${location.search}`
+        : location.pathname;
+
+    setPath(fullLocation);
+
+    if (
+      location.state?.isRedirect ||
+      location.state?.historyChange ||
+      location.state?.firstRender
+    ) {
+      return;
+    }
+
+    api.state.navigate({
+      href: fullLocation,
+      title: document.title,
+    });
+  }, [location]);
 
   useEffect(() => {
     if (!firstRender.current) {
@@ -172,19 +192,6 @@ function useLayout({ initialSettings }: UseLayoutParams): UseLayout {
     firstRender.current = false;
     navigate(path);
   }, [path]);
-
-  useEffect(() => {
-    if (firstRender.current) {
-      return;
-    }
-    const fullLocation =
-      location.search && !location.search.includes("new=true")
-        ? `${location.pathname}${location.search}`
-        : location.pathname;
-
-    api.state.navigate(fullLocation);
-    setPath(fullLocation);
-  }, [location]);
 
   useEffect(() => {
     setSettings(initialSettings);

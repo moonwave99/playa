@@ -97,3 +97,33 @@ describe("settingsController - updateSettings function", () => {
     });
   });
 });
+
+describe("settingsController - dismissOnboarding function", () => {
+  it("saves the onboarding dismiss status in the settings", async () => {
+    const data = getFakeSettings();
+    await prisma.settings.create({
+      data: {
+        ...data,
+        SHOW_ONBOARDING_ON_STARTUP: true,
+      },
+    });
+
+    const send = vi.fn();
+
+    const { getSettings, getSetting, dismissOnboarding, init } =
+      settingsController({ send });
+    await init();
+
+    expect(getSetting("SHOW_ONBOARDING_ON_STARTUP")).toBe(true);
+
+    await dismissOnboarding();
+
+    expect(getSetting("SHOW_ONBOARDING_ON_STARTUP")).toBe(false);
+
+    expect(await getSettings()).toMatchObject({
+      ...data,
+      COVERS_PATH: "assets/covers",
+      SHOW_ONBOARDING_ON_STARTUP: false,
+    });
+  });
+});

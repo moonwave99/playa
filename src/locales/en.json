@@ -38,6 +38,12 @@
         "openSearch": "Open Search"
       }
     },
+    "history": {
+      "actions": {
+        "goBack": "Go Back",
+        "goForward": "Go Forward"
+      }
+    },
     "lists": {
       "release": {
         "title": "Releases",

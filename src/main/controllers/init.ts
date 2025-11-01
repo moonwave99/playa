@@ -24,6 +24,7 @@ import { settingsController } from "./settings";
 import { trackController } from "./track";
 
 import { StateManager } from "../stateManager";
+import { History } from "../history";
 
 import { initMenu } from "../menu/menu";
 import { releaseMenu } from "../menu/context/release";
@@ -40,6 +41,7 @@ import {
   OpenFolderDialogParams,
   Settings,
 } from "@/types/types";
+import { log } from "../logger";
 
 export type Controllers = {
   system: ReturnType<typeof systemController>;
@@ -134,6 +136,13 @@ export async function init({ mainWindow, settings }: InitParams) {
   }
 
   const stateManager = new StateManager();
+  const history = new History();
+
+  history.onChange((historyState) => {
+    log("history:change", historyState);
+    send("historyChange", historyState);
+    stateManager.setPath(historyState.currentEntry.href);
+  });
 
   const controllers = {
     system: systemController({ withPath, getSetting, showErrorBox }),
@@ -164,7 +173,7 @@ export async function init({ mainWindow, settings }: InitParams) {
       openFileDialog,
     }),
     stats: statsController(),
-    state: stateController({ send, stateManager }),
+    state: stateController({ send, stateManager, history }),
     settings,
     importFolders: importFoldersController({
       openFolderDialog,
@@ -189,6 +198,7 @@ export async function init({ mainWindow, settings }: InitParams) {
   const { refreshMenu, clickEntry } = initMenu({
     controllers,
     stateManager,
+    history,
     openConfirmDialog,
   });
 
@@ -211,17 +221,11 @@ export async function init({ mainWindow, settings }: InitParams) {
     if (stateManager.isInputFocused()) {
       return;
     }
-    if (
-      direction === "left" &&
-      mainWindow.webContents.navigationHistory.canGoBack()
-    ) {
-      mainWindow.webContents.send("swipe", -1);
+    if (direction === "left" && history.canGoBack()) {
+      history.goBack();
     }
-    if (
-      direction === "right" &&
-      mainWindow.webContents.navigationHistory.canGoForward()
-    ) {
-      mainWindow.webContents.send("swipe", 1);
+    if (direction === "right" && history.canGoForward()) {
+      history.goForward();
     }
   });
 

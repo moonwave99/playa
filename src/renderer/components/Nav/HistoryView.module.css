@@ -1,0 +1,22 @@
+.view {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  .button {
+    opacity: 1;
+    transition: opacity 0.2s ease-in-out;
+    width: 1.75rem;
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+    &[disabled] {
+      opacity: 0.3;
+      &:hover {
+        background-color: transparent;
+      }
+    }
+    &.useDarkText {
+      color: black;
+    }
+  }
+}

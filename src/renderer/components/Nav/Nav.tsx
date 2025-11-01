@@ -8,6 +8,7 @@ import Breadcrumbs from "./Breadcrumbs";
 
 import cx from "clsx";
 import styles from "./Nav.module.css";
+import HistoryView from "./HistoryView";
 import NavActions from "./NavActions";
 import NavTitle from "./NavTitle";
 
@@ -37,10 +38,13 @@ export default function Nav({ isFullHeaderPage }: NavProps) {
       ref={ref}
       data-testid="nav"
     >
-      <Breadcrumbs
-        isFullHeaderPage={isFullHeaderPage}
-        useDarkText={useDarkText}
-      />
+      <div className={styles.leftWrapper}>
+        <HistoryView />
+        <Breadcrumbs
+          isFullHeaderPage={isFullHeaderPage}
+          useDarkText={useDarkText}
+        />
+      </div>
       <NavTitle />
       <NavActions
         useDarkText={useDarkText}

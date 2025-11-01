@@ -8,6 +8,7 @@ export type State = {
   isImporting: boolean;
   isNavOpen: boolean;
   isOnboarding: boolean;
+  isModalOpen: boolean;
   path: string;
 };
 
@@ -29,6 +30,7 @@ export class StateManager {
       isNavOpen: false,
       isImporting: false,
       isOnboarding: false,
+      isModalOpen: false,
       path: "",
     };
   }
@@ -65,6 +67,12 @@ export class StateManager {
   }
   setOnboarding(isOnboarding: boolean) {
     this.set("isOnboarding", isOnboarding);
+  }
+  isModalOpen() {
+    return this.get("isModalOpen");
+  }
+  setModalOpen(isModalOpen: boolean) {
+    this.set("isModalOpen", isModalOpen);
   }
   getSelection(entity: SelectableEntities) {
     return this.state.selection[entity];
@@ -116,6 +124,7 @@ export class StateManager {
       isImporting: false,
       isNavOpen: false,
       isOnboarding: false,
+      isModalOpen: false,
       path: "",
     };
     this.onUpdate();

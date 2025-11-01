@@ -92,7 +92,7 @@ export default function BreadCrumbs({
 
   return (
     <ul
-      className={cx(styles.view, responsiveStyles.hideOnSmallViewPort, {
+      className={cx(styles.view, responsiveStyles.hideOnMediumViewPort, {
         [styles.useDarkText]: useDarkText,
         [styles.isFullHeaderPage]: isFullHeaderPage,
       })}

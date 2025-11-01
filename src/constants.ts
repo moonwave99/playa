@@ -1,5 +1,8 @@
 import type { Settings } from "./types/types";
 
+export const MIN_WINDOW_WIDTH = 450;
+export const MIN_WINDOW_HEIGHT = 640;
+
 export const DEFAULT_SETTINGS: Settings = {
   id: 1,
   PLAYER_PATH: "",

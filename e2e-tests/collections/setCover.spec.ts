@@ -35,7 +35,7 @@ test.describe("Collection Cover", () => {
 
     await clickMenuItemById("setSelectedReleaseAsCollectionCover");
 
-    await page.goBack();
+    await page.getByLabel("Go Back").click();
 
     await expect(
       collectionsList

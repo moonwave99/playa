@@ -41,7 +41,7 @@ test.describe("Import", () => {
 
     await clickMenuItemById("importFolder");
 
-    await page.getByRole("button", { name: "Close" }).click();
+    await page.getByRole("button", { name: "Close Modal" }).click();
 
     const latestReleases = page.locator('[data-testid="LatestReleases"]');
 
@@ -105,7 +105,7 @@ test.describe("Import", () => {
     await expect(tracklist).toContainText("Disc 1");
     await expect(tracklist).toContainText("Disc 2");
 
-    await page.goBack();
+    await page.getByLabel("Go Back").click();
 
     await groupedRelease.click();
     await page.waitForTimeout(100);

@@ -34,7 +34,7 @@ test.describe("Import", () => {
 
     await clickMenuItemById("importFolder");
 
-    await page.getByRole("button", { name: "Close" }).click();
+    await page.getByRole("button", { name: "Close Modal" }).click();
 
     await expect(
       page

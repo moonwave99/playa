@@ -27,7 +27,7 @@ export default function CollectionPage() {
   }
 
   if (!collection) {
-    return <Navigate replace to="/collections" />;
+    return <Navigate replace to="/collections" state={{ isRedirect: true }} />;
   }
 
   function onContextMenu(

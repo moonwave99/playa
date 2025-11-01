@@ -7,10 +7,11 @@ import type {
 } from "@/types/types";
 
 import type { Controllers } from "../controllers/init";
-
+import type { History } from "../history";
 import type { State, StateManager } from "../stateManager";
 import { openModal, send } from "../controllers/init";
 
+import { getHistoryMenu } from "./static/history";
 import { getLibraryMenu } from "./static/library";
 import { getGroupMenu } from "./static/group";
 import { getCollectionMenu } from "./static/collection";
@@ -29,15 +30,18 @@ export function buildMenu(params: (MenuItemConstructorOptions | MenuItem)[]) {
 export type GetMenuParams = {
   controllers: Controllers;
   stateManager: StateManager;
+  history: History;
   openConfirmDialog: (message: string, detail: string) => boolean;
 };
 
 export function initMenu({
   controllers,
   stateManager,
+  history,
   openConfirmDialog,
 }: GetMenuParams) {
   const { template, refreshHandlers } = [
+    getHistoryMenu,
     getReleaseMenu,
     getArtistMenu,
     getCollectionMenu,
@@ -48,6 +52,7 @@ export function initMenu({
       const { menu, refresh } = getter({
         controllers,
         stateManager,
+        history,
         openConfirmDialog,
       });
       return {

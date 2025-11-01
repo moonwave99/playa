@@ -32,7 +32,7 @@ test.describe("Group Cover", () => {
 
     await clickMenuItemById("setSelectedArtistAsGroupCover");
 
-    await page.goBack();
+    await page.getByLabel("Go Back").click();
 
     await expect(
       groupsList

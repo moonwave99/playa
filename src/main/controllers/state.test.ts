@@ -1,12 +1,14 @@
 import { clearPrisma } from "@/test/prisma-utils";
 import { stateController } from "./state";
 import { StateManager } from "../stateManager";
+import { History } from "../history";
 
 afterEach(clearPrisma);
 
 const defaultParams = {
   send: vi.fn(),
   stateManager: new StateManager(),
+  history: new History(),
 };
 
 describe("stateController - setInputFocused function", () => {
@@ -54,6 +56,21 @@ describe("stateController - setNavOpen function", () => {
   });
 });
 
+describe("stateController - setModalOpen function", () => {
+  it("sets the modal status", async () => {
+    const stateManager = new StateManager();
+    const { setModalOpen } = stateController({
+      ...defaultParams,
+      stateManager,
+    });
+    expect(stateManager.isModalOpen()).toBe(false);
+    setModalOpen(true);
+    expect(stateManager.isModalOpen()).toBe(true);
+    setModalOpen(false);
+    expect(stateManager.isModalOpen()).toBe(false);
+  });
+});
+
 describe("stateController - setSelection function", () => {
   it("sets the current release selection", async () => {
     const stateManager = new StateManager();
@@ -70,13 +87,85 @@ describe("stateController - setSelection function", () => {
 describe("stateController - navigate function", () => {
   it("sets the current path", async () => {
     const stateManager = new StateManager();
+    const history = new History();
     const { navigate } = stateController({
       ...defaultParams,
       stateManager,
+      history,
     });
+    history.onChange((historyState) =>
+      stateManager.setPath(historyState.currentEntry.href)
+    );
     expect(stateManager.getState().path).toBe("");
-    navigate("/homepage");
+    navigate({
+      title: "Homepage",
+      href: "/homepage",
+    });
     expect(stateManager.getState().path).toBe("/homepage");
+  });
+});
+
+describe("stateController - goBack function", () => {
+  it("goes back in the history", async () => {
+    const stateManager = new StateManager();
+    const history = new History();
+    const { goBack } = stateController({
+      ...defaultParams,
+      stateManager,
+      history,
+    });
+    history.onChange((historyState) =>
+      stateManager.setPath(historyState.currentEntry.href)
+    );
+
+    history.push({
+      title: "First Page",
+      href: "/path/to/first-page",
+    });
+    history.push({
+      title: "Second Page",
+      href: "/path/to/second-page",
+    });
+
+    expect(stateManager.get("path")).toBe("/path/to/second-page");
+
+    goBack();
+
+    expect(stateManager.get("path")).toBe("/path/to/first-page");
+  });
+});
+
+describe("stateController - goForward function", () => {
+  it("goes forward in the history", async () => {
+    const stateManager = new StateManager();
+    const history = new History();
+    const { goBack, goForward } = stateController({
+      ...defaultParams,
+      stateManager,
+      history,
+    });
+    history.onChange((historyState) =>
+      stateManager.setPath(historyState.currentEntry.href)
+    );
+
+    history.push({
+      title: "First Page",
+      href: "/path/to/first-page",
+    });
+    history.push({
+      title: "Second Page",
+      href: "/path/to/second-page",
+    });
+
+    expect(stateManager.get("path")).toBe("/path/to/second-page");
+
+    goBack();
+
+    expect(stateManager.get("path")).toBe("/path/to/first-page");
+
+    goForward();
+
+    expect(stateManager.get("path")).toBe("/path/to/second-page");
   });
 });
 

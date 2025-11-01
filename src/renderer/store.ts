@@ -11,6 +11,7 @@ import {
   Settings,
 } from "@/types/types";
 import { Modals } from "./Modal";
+import { HistoryState } from "@/main/history";
 
 export type ModalContents = { name: Modals; params?: Record<string, unknown> };
 
@@ -22,6 +23,7 @@ function getNextListViewMode<T>(entity: ListViews, current: T) {
 }
 
 type Store = {
+  historyState: HistoryState;
   listViewModes: {
     release: ReleaseListViewMode;
     artist: ArtistListViewMode;
@@ -42,6 +44,7 @@ type Store = {
   ) => (typeof listViewModesMap)[K][0];
   setUseDarkText: (useDarkText: boolean) => void;
   setPath: (path: string) => void;
+  setHistoryState: (historyState: HistoryState) => void;
   setModalContents: (modalContents: ModalContents) => void;
   setModalFixed: (isModalFixed: boolean) => void;
 };
@@ -49,6 +52,7 @@ type Store = {
 const useStore = create<Store>()(
   persist(
     (set, get) => ({
+      historyState: null,
       listViewModes: {
         release: "grid",
         artist: "latest",
@@ -57,11 +61,12 @@ const useStore = create<Store>()(
       },
       path: "/",
       useDarkText: false,
-      modalContents: null as ModalContents,
+      modalContents: null,
       isModalFixed: false,
-      settings: null as Settings,
+      settings: null,
       setSettings: (settings) => set({ settings }),
       setUseDarkText: (useDarkText) => set({ useDarkText }),
+      setHistoryState: (historyState) => set({ historyState }),
       setPath: (path) => set({ path }),
       setModalContents: (modalContents) => set({ modalContents }),
       setModalFixed: (isModalFixed) => set({ isModalFixed }),

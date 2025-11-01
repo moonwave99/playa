@@ -63,6 +63,7 @@ import {
   actions as importExportActions,
   importExportController,
 } from "./main/controllers/importExport";
+import { HistoryState } from "./main/history";
 
 const eventNames = Object.keys(getEvents()) as (keyof ReturnType<
   typeof getEvents
@@ -133,7 +134,7 @@ const noOp = (...args: unknown[]) => {
 function getEvents() {
   return {
     onNavigate: (path: string) => noOp(path),
-    onSwipe: (direction: number) => noOp(direction),
+    onHistoryChange: (historyState: HistoryState) => noOp(historyState),
     onMutate: (queryKey: QueryKey) => noOp(queryKey),
     onNotify: (notification: Notification) => noOp(notification),
     onCoverUpdate: (selection: ReleaseWithArtist[]) => noOp(selection),

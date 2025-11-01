@@ -129,7 +129,9 @@ export default function Modal({ setContext }: ModalProps) {
   const { modalContents, setModalContents, isModalFixed } = useStore();
 
   useEffect(() => {
-    setModalOpen(!!modalContents);
+    const isModalOpen = !!modalContents;
+    api.state.setModalOpen(isModalOpen);
+    setModalOpen(isModalOpen);
   }, [modalContents]);
 
   function closeModal() {

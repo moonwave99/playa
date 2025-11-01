@@ -29,7 +29,7 @@ export default function GroupPage() {
   }
 
   if (!group) {
-    return <Navigate replace to="/groups" />;
+    return <Navigate replace to="/groups" state={{ isRedirect: true }} />;
   }
 
   return (
