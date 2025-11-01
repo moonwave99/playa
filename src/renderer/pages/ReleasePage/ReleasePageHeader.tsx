@@ -45,7 +45,7 @@ export default function ReleasePageHeader({ release }: ReleasePageHeaderProps) {
         onClick={() =>
           setModalContents({
             name: "lightbox",
-            params: { release, hideSidebar: true },
+            params: { id: release.id, hideSidebar: true },
           })
         }
         className={styles.cover}

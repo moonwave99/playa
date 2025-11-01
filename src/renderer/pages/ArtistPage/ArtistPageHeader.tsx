@@ -49,7 +49,7 @@ export default function ArtistPageHeader({ artist }: ArtistPageHeaderProps) {
         onClick={() =>
           setModalContents({
             name: "lightbox",
-            params: { release: coverRelease, hideSidebar: true },
+            params: { id: coverRelease.id, hideSidebar: true },
           })
         }
         className={styles.cover}
