@@ -85,7 +85,15 @@ export function initMenu({
         ],
       },
       { role: "editMenu" },
-      { role: "viewMenu" },
+      {
+        role: "viewMenu",
+        submenu: [
+          { role: "togglefullscreen" },
+          { role: "resetZoom" },
+          { role: "zoomIn" },
+          { role: "zoomOut" },
+        ],
+      },
       ...template,
       { role: "windowMenu" as const },
       {
@@ -95,6 +103,10 @@ export function initMenu({
             label: "Learn More",
             click: () => shell.openExternal(pkg.homepage),
           },
+          { role: "toggleDevTools" },
+          process.env.NODE_ENV === "development"
+            ? { role: "reload" }
+            : { type: "separator" },
         ],
       },
     ])

@@ -25,7 +25,6 @@ TBD
 
 - display multiple covers for multiple discs releases;
 - make group and collection titles editable again;
-- remove reload menu entries on prod;
 
 ## License
 
