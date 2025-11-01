@@ -289,9 +289,11 @@ function useNavigateHomepage({
       return;
     }
     const { section, index } = currentSelection;
-    selectMap[section]([dataMap[section][index].id], {
-      clearOther: true,
-    });
+    const selectedItem = dataMap[section][index];
+    if (!selectedItem) {
+      return;
+    }
+    selectMap[section]([selectedItem.id], { clearOther: true });
   }, [currentSelection]);
 
   const { select: selectRelease } = useSelect("release");
