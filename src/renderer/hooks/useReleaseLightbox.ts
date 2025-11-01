@@ -8,6 +8,7 @@ type UseReleaseLightboxParams = {
 
 type UseReleaseLightbox = {
   openLightbox: (selection: HasId[]) => void;
+  lightBoxEntityId: number;
   ref: RefObject<{
     scrollToIndex: (index: number) => void;
   }>;
@@ -39,6 +40,7 @@ export function useReleaseLightbox({
           context,
         },
       }),
+    lightBoxEntityId,
     ref,
   };
 }

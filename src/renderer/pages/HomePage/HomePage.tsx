@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { HasEntityTypeAndId, Release } from "@/types/types";
 import { useSelect, type UseSelect } from "@/renderer/hooks/useSelect";
 import {
@@ -115,6 +115,7 @@ function useNavigateHomepage({
   context = "list",
   dataMap,
 }: UseNavigateHomepageParams): UseNavigateHomepage {
+  const latestReleaseRef = useRef(-1);
   const [currentSelection, setCurrentSelection] = useState<Selection>({
     section: null,
     index: -1,
@@ -125,22 +126,39 @@ function useNavigateHomepage({
   });
 
   useEffect(() => {
-    const selector =
-      currentSelection.section === "release"
-        ? "#LatestReleases"
-        : `[data-id="item-${currentSelection.section}-${currentSelection.index}"]`;
-    document.querySelector(selector)?.scrollIntoView({
-      block: "nearest",
-    });
+    if (currentSelection.section === "release") {
+      latestReleaseRef.current = currentSelection.index;
+      document
+        .getElementById("LatestReleases")
+        .scrollIntoView({ block: "nearest" });
+    }
+
+    document
+      .querySelector(
+        `[data-id="item-${currentSelection.section}-${currentSelection.index}"]`
+      )
+      ?.scrollIntoView({
+        block: "nearest",
+      });
   }, [currentSelection]);
 
   const { section, index } = currentSelection;
 
   const sections = Object.keys(dataMap) as unknown as (keyof typeof dataMap)[];
 
-  const { openLightbox } = useReleaseLightbox({
+  const { openLightbox, lightBoxEntityId } = useReleaseLightbox({
     context: dataMap.release as unknown as Release[],
   });
+
+  useEffect(() => {
+    if (lightBoxEntityId < 0) {
+      return;
+    }
+    setCurrentSelection({
+      section: "release",
+      index: dataMap.release.findIndex((x) => x.id === lightBoxEntityId),
+    });
+  }, [lightBoxEntityId]);
 
   function getNextPopulatedSection() {
     const currentIndex = sections.indexOf(section);
@@ -187,7 +205,10 @@ function useNavigateHomepage({
           return;
         }
         if (columns > 1 && index == 0) {
-          setCurrentSelection({ section: "release", index: 0 });
+          setCurrentSelection({
+            section: "release",
+            index: latestReleaseRef.current,
+          });
           return;
         }
         const prev = getPrevPopulatedSection();
@@ -257,7 +278,7 @@ function useNavigateHomepage({
         }
         setCurrentSelection({
           section: prev,
-          index: 0,
+          index: prev === "release" ? latestReleaseRef.current : 0,
         });
       }),
     },
