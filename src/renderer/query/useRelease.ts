@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { useNavigate, useSearchParams } from "react-router";
+import { useSearchParams } from "react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../api";
 import type {
@@ -18,7 +18,6 @@ type UseRelease = {
   error: Error;
   release: ReleaseWithArtistAndTracksAndSubreleasesAndCollections;
   selectedTrackId: number;
-  gotoArtistPage: () => void;
   removeFromCollection: (collection_id: number) => void;
   addAdditionalArtist: (artist_id: number) => void;
   removeAdditionalArtist: (artist_id: number) => void;
@@ -28,7 +27,6 @@ export default function useRelease({
   id,
   refreshOnLoad,
 }: UseReleaseParams): UseRelease {
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const firstRefresh = useRef(true);
   const [params] = useSearchParams();
@@ -58,10 +56,6 @@ export default function useRelease({
     firstRefresh.current = false;
     api.importFolders.refreshReleaseContents(release.id).then(() => refetch());
   }, [release, refreshOnLoad]);
-
-  function gotoArtistPage() {
-    navigate(`/artists/${release.artist.id}`);
-  }
 
   function onSuccess() {
     [
@@ -99,7 +93,6 @@ export default function useRelease({
     isPending,
     error,
     selectedTrackId: +params.get("track_id"),
-    gotoArtistPage,
     removeFromCollection: removeFromCollection.mutate,
     addAdditionalArtist: addAdditionalArtist.mutate,
     removeAdditionalArtist: removeAdditionalArtist.mutate,

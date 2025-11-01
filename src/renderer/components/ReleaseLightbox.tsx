@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ReleaseWithArtist } from "@/types/types";
 import { useKeyManager, withPrevent } from "../hooks/useKeyboardManager";
+import useStore from "../store";
 import useRelease from "../query/useRelease";
 import { getReleaseTitle } from "@/lib/utils";
 import api from "../api";
@@ -32,21 +33,25 @@ export default function ReleaseLightbox({
   const [currentId, setCurrentId] = useState(id);
   const { release, isPending } = useRelease({ id: currentId });
   const currentIndex = context?.findIndex((x) => x.id === currentId);
+  const { setLightBoxEntityId } = useStore();
 
   function showNextRelease() {
     if (isPending) {
       return;
     }
-    setCurrentId(context[(currentIndex + 1) % context.length].id);
+    const id = context[(currentIndex + 1) % context.length].id;
+    setCurrentId(id);
+    setLightBoxEntityId(id);
   }
 
   function showPrevRelease() {
     if (isPending) {
       return;
     }
-    setCurrentId(
-      context[currentIndex === 0 ? context.length - 1 : currentIndex - 1].id
-    );
+    const id =
+      context[currentIndex === 0 ? context.length - 1 : currentIndex - 1].id;
+    setCurrentId(id);
+    setLightBoxEntityId(id);
   }
 
   const { setContext } = useKeyManager({

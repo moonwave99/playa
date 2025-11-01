@@ -48,7 +48,7 @@ export default function ReleaseList({
   context,
 }: ReleaseListProps) {
   const { getListViewMode, toggleListViewMode } = useStore();
-  const openLightbox = useReleaseLightbox({ context: releases });
+  const { openLightbox, ref } = useReleaseLightbox({ context: releases });
 
   useApiEvents({
     onToggleListViewMode: () => toggleListViewMode("release"),
@@ -130,6 +130,7 @@ export default function ReleaseList({
 
   return (
     <List
+      ref={ref}
       shouldPreventSpace
       key={`${viewMode}-${getTotalTracks(releases)}`}
       items={releases}

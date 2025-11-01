@@ -30,7 +30,9 @@ export default function ReleasesPage() {
     fetchNextPage,
   } = useReleases();
 
-  const openLightbox = useReleaseLightbox({ context: releases });
+  const { openLightbox, ref } = useReleaseLightbox({
+    context: releases,
+  });
 
   const { select } = useSelect("release");
 
@@ -54,6 +56,7 @@ export default function ReleasesPage() {
         </div>
       ) : (
         <List
+          ref={ref}
           onUnmount={storeScrollInfo}
           shouldPreventSpace
           items={releases}

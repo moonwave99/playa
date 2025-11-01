@@ -23,6 +23,7 @@ function getNextListViewMode<T>(entity: ListViews, current: T) {
 }
 
 type Store = {
+  lightBoxEntityId: number;
   historyState: HistoryState;
   listViewModes: {
     release: ReleaseListViewMode;
@@ -36,6 +37,7 @@ type Store = {
   isModalFixed: boolean;
   settings: Settings;
   setSettings: (settings: Settings) => void;
+  setLightBoxEntityId: (lightboxEntityId: number) => void;
   toggleListViewMode: (list: ListViews) => void;
   setListViewMode: (list: ListViews, listViewMode: ListViewModes) => void;
   isListViewMode: (list: ListViews, listViewMode: ListViewModes) => boolean;
@@ -52,6 +54,7 @@ type Store = {
 const useStore = create<Store>()(
   persist(
     (set, get) => ({
+      lightBoxEntityId: -1,
       historyState: null as HistoryState,
       listViewModes: {
         release: "grid",
@@ -64,6 +67,7 @@ const useStore = create<Store>()(
       modalContents: null as ModalContents,
       isModalFixed: false,
       settings: null as Settings,
+      setLightBoxEntityId: (lightBoxEntityId) => set({ lightBoxEntityId }),
       setSettings: (settings) => set({ settings }),
       setUseDarkText: (useDarkText) => set({ useDarkText }),
       setHistoryState: (historyState) => set({ historyState }),

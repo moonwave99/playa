@@ -138,7 +138,7 @@ function useNavigateHomepage({
 
   const sections = Object.keys(dataMap) as unknown as (keyof typeof dataMap)[];
 
-  const openLightbox = useReleaseLightbox({
+  const { openLightbox } = useReleaseLightbox({
     context: dataMap.release as unknown as Release[],
   });
 

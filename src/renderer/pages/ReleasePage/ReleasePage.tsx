@@ -1,7 +1,7 @@
 import { Navigate, useParams } from "react-router";
 import { useTranslation } from "react-i18next";
 import useRelease from "@/renderer/query/useRelease";
-import { useKeyManager } from "@/renderer/hooks/useKeyboardManager";
+
 import { useSelect } from "@/renderer/hooks/useSelect";
 import useTitle from "@/renderer/hooks/useTitle";
 import api from "@/renderer/api";
@@ -19,17 +19,9 @@ export default function ReleasePage() {
   const { t } = useTranslation();
   const { id } = useParams();
 
-  const { isPending, error, release, selectedTrackId, gotoArtistPage } =
-    useRelease({
-      id: +id,
-      refreshOnLoad: true,
-    });
-
-  useKeyManager({
-    context: "list:release",
-    handlers: {
-      a: gotoArtistPage,
-    },
+  const { isPending, error, release, selectedTrackId } = useRelease({
+    id: +id,
+    refreshOnLoad: true,
   });
 
   useSelect("release", [+id]);
