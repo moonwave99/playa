@@ -1,11 +1,16 @@
 import { useEffect, useState, useRef } from "react";
 import { HasEntityTypeAndId, Release } from "@/types/types";
+import {
+  HOMEPAGE_RELEASES_PAGESIZE,
+  HOMEPAGE_ENTRIES_PAGESIZE,
+} from "@/constants";
 import { useSelect, type UseSelect } from "@/renderer/hooks/useSelect";
 import {
   useKeyManager,
   withPrevent,
 } from "@/renderer/hooks/useKeyboardManager";
 import { useReleaseLightbox } from "@/renderer/hooks/useReleaseLightbox";
+import useResponsiveColumns from "@/renderer/hooks/useResponsiveColumns";
 import useReleases from "@/renderer/query/useReleases";
 import useArtists from "@/renderer/query/useArtists";
 import useGroups from "@/renderer/query/useGroups";
@@ -16,12 +21,6 @@ import LatestEntriesView from "./LatestEntriesView";
 
 import styles from "../Page.module.css";
 import homepageStyles from "./HomePage.module.css";
-
-import {
-  HOMEPAGE_RELEASES_PAGESIZE,
-  HOMEPAGE_ENTRIES_PAGESIZE,
-} from "@/constants";
-import useResponsiveColumns from "@/renderer/hooks/useResponsiveColumns";
 
 const pageSize = HOMEPAGE_ENTRIES_PAGESIZE;
 const sectionColumnsConfig = [{ count: 3, width: 950 }];

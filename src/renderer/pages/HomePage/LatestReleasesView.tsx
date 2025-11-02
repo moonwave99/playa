@@ -45,7 +45,7 @@ export default function LatestReleasesView({
     >
       <header className={styles.header}>
         <h2>
-          <Icon isFor="release" />
+          <Icon isFor="pages.release" />
           <Link to="/releases">
             {t("pages.HomePage.latest", { entity: "Releases " })}
           </Link>

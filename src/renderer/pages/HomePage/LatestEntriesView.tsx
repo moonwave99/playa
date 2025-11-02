@@ -57,7 +57,7 @@ export default function LatestEntriesView<T extends Item>({
     <section className={styles.view} data-testid={`Latest${formattedEntity}`}>
       <header className={styles.header}>
         <h3>
-          <Icon isFor={entity} />
+          <Icon isFor={`pages.${entity}`} />
           <Link to={`/${entity}s`}>
             {t("pages.HomePage.latest", { entity: formattedEntity })}
           </Link>
