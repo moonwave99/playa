@@ -31,7 +31,10 @@ export default function ReleaseLightbox({
 }: ReleaseLightboxProps) {
   const { t } = useTranslation();
   const [currentId, setCurrentId] = useState(id);
-  const { release, isPending } = useRelease({ id: currentId });
+  const { release, isPending } = useRelease({
+    id: currentId,
+    refreshOnLoad: true,
+  });
   const currentIndex = context?.findIndex((x) => x.id === currentId);
   const { setLightBoxEntityId } = useStore();
 
