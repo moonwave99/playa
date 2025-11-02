@@ -128,7 +128,7 @@ function EditActions({ entity }: EditActionsProps) {
       type="button"
       aria-label={t("nav.edit.actions.editEntity", { entity: capitalEntity })}
       title={t("nav.edit.actions.editEntity", { entity: capitalEntity })}
-      onClick={() => api.menu.click(`edit${capitalEntity}`)}
+      onClick={() => api.menu.click(`editCurrent${capitalEntity}`)}
       className={cx(
         buttonStyles.button,
         styles.button,
