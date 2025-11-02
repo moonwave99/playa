@@ -21,6 +21,8 @@
     list-style: none;
     display: flex;
     gap: 0.25rem;
+    width: 100%;
+    overflow-x: auto;
 
     .item {
       display: flex;
