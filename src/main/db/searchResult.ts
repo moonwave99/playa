@@ -11,6 +11,7 @@ import type {
   WithAdditionalArtists,
   ReleaseWithArtist,
   Unpacked,
+  ArtistWithReleasesAndAppearances,
 } from "@/types/types";
 import {
   getCoverRelease,
@@ -55,7 +56,7 @@ export async function getSearchResults({
 type Getter<T> = (query: string, take: number) => Promise<T[]>;
 
 type Getters = {
-  artist: Getter<ArtistWithReleases>;
+  artist: Getter<ArtistWithReleasesAndAppearances>;
   release: Getter<ReleaseWithArtist>;
   track: Getter<TrackWithRelease>;
   collection: Getter<CollectionWithReleases>;
@@ -95,6 +96,9 @@ const getters: Getters = {
             },
           },
         },
+        appearsIn: {
+          include: { artist: true },
+        },
         releases: {
           where: {
             mainRelease: null,
@@ -120,7 +124,7 @@ const getters: Getters = {
           },
         },
       },
-    }) as Promise<ArtistWithReleases[]>,
+    }) as Promise<ArtistWithReleasesAndAppearances[]>,
   release: (query: string, take: number) =>
     prisma.release.findMany({
       take,
@@ -229,7 +233,13 @@ type Transformers = {
 };
 
 const transformers: Transformers = {
-  artist: ({ id, name, coverRelease, releases }: ArtistWithReleases) => ({
+  artist: ({
+    id,
+    name,
+    coverRelease,
+    releases,
+    appearsIn,
+  }: ArtistWithReleasesAndAppearances) => ({
     entityType: "searchResult",
     type: "artist" as const,
     id,
@@ -238,7 +248,7 @@ const transformers: Transformers = {
     links: {
       artist: `/artists/${id}`,
     },
-    coverRelease: coverRelease || releases[0],
+    coverRelease: coverRelease || releases[0] || appearsIn[0] || null,
     releases,
   }),
   release: ({

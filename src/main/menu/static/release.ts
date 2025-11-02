@@ -243,13 +243,13 @@ export function getReleaseMenu({ controllers, stateManager }: GetMenuParams) {
         controllers.release.importCovers(
           (await getSelectedReleases(
             stateManager.getSelection("release")
-          )) as ReleaseWithArtistAndTracks[]
+          )) as unknown as ReleaseWithArtistAndTracks[]
         ),
     },
     {
       id: "deleteReleaseCover",
       label: "Delete cover from selected Release",
-      accelerator: "D",
+      accelerator: "Alt+D",
       click: async () =>
         controllers.release.deleteCover(
           (await getSelectedReleases(stateManager.getSelection("release"))).at(

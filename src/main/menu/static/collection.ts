@@ -77,7 +77,7 @@ export function getCollectionMenu({
       id: "setSelectedReleaseAsCollectionCover",
       showOnSinglePage: true,
       label: "Set selected Release as Collection Cover",
-      accelerator: "C",
+      accelerator: "Alt+Shift+C",
       click: async () =>
         setCollectionCoverRelease(
           stateManager.getSelection("collection").at(0),

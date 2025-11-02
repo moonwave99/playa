@@ -279,17 +279,17 @@ export function getCoverRelease(
   if (item.entityType === "group") {
     const coverArtist =
       (item as GroupWithArtists).coverArtist ||
-      (item as GroupWithArtists).artists[0];
+      (item as GroupWithArtists).artists?.at(0);
     return coverArtist ? getCoverRelease(coverArtist) : null;
   }
   if (item.entityType === "artist") {
     return (item.coverRelease ||
-      item.releases[0] ||
-      item.appearsIn[0] ||
+      item.releases?.at(0) ||
+      item.appearsIn?.at(0) ||
       null) as ReleaseWithArtistAndSubReleases;
   }
   return (item.coverRelease ||
-    item.releases[0] ||
+    item.releases?.at(0) ||
     null) as ReleaseWithArtistAndSubReleases;
 }
 
@@ -403,7 +403,7 @@ export function getCovers(item: GetCoversItem, count = Infinity): GetCovers {
     otherReleases = item.artists.map(getCoverRelease);
   } else if (item.entityType === "artist") {
     otherReleases = [
-      ...item.releases,
+      ...(item.releases || []),
       ...(item.appearsIn || []),
     ] as ReleaseWithArtistAndSubReleases[];
   } else if (item.entityType === "collection") {

@@ -68,7 +68,7 @@ export function getArtistMenu({ controllers, stateManager }: GetMenuParams) {
       id: "setSelectedReleaseAsArtistCover",
       showOnSinglePage: true,
       label: "Set selected Release as Artist Cover",
-      accelerator: "C",
+      accelerator: "Alt+Shift+C",
       click: async () =>
         setArtistCoverRelease(
           stateManager.getSelection("artist").at(0),

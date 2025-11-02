@@ -405,6 +405,7 @@ export async function addNewAdditionalArtist({
     artist = await prisma.artist.create({
       data: {
         name,
+        normalizedName: normalizeDiacritics(name),
         hash: hashArtistName(name),
       },
     });

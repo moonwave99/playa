@@ -68,7 +68,7 @@ export function getGroupMenu({ controllers, stateManager }: GetMenuParams) {
       id: "setSelectedArtistAsGroupCover",
       showOnSinglePage: true,
       label: "Set selected Artist as Group Cover",
-      accelerator: "C",
+      accelerator: "Alt+Shift+C",
       click: async () =>
         setGroupCoverArtist(
           stateManager.getSelection("group").at(0),
