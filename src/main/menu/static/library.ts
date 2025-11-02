@@ -79,11 +79,13 @@ export function getLibraryMenu({ controllers, stateManager }: GetMenuParams) {
     {
       id: "exportDataToArchive",
       label: "Export Data to Archive",
+      accelerator: "Cmd+Alt+E",
       click: controllers.importExport.exportDataFromDialog,
     },
     {
       id: "importDataFromArchive",
       label: "Import Data from Archive",
+      accelerator: "Cmd+Alt+I",
       click: () => openModal("importData"),
     },
   ];

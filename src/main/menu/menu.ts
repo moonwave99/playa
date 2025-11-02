@@ -103,7 +103,7 @@ export function initMenu({
             label: "Learn More",
             click: () => shell.openExternal(pkg.homepage),
           },
-          { role: "toggleDevTools" },
+          { role: "toggleDevTools", accelerator: "F12" },
           process.env.NODE_ENV === "development"
             ? { role: "reload" }
             : { type: "separator" },
