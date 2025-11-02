@@ -130,7 +130,7 @@ function useNavigateHomepage({
       latestReleaseRef.current = currentSelection.index;
       document
         .getElementById("LatestReleases")
-        .scrollIntoView({ block: "nearest" });
+        ?.scrollIntoView({ block: "nearest" });
     }
 
     document

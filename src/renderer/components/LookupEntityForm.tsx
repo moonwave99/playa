@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { SearchableEntities, SearchResult } from "@/types/types";
+import { SearchResult } from "@/types/types";
 import { useState, FormEvent } from "react";
 import LookupEntityView, {
   type LookupEntityViewProps,
@@ -9,9 +9,8 @@ import formStyles from "../forms.module.css";
 
 type LookupEntityFormProps = Pick<
   LookupEntityViewProps,
-  "allowCustomValue" | "className" | "placeholderText"
+  "allowCustomValue" | "className" | "placeholderText" | "type"
 > & {
-  type: SearchableEntities;
   existingIds?: number[];
   onSubmit: (selectedItem: SearchResult) => void;
 };
