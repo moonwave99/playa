@@ -1,5 +1,5 @@
 import { type ButtonHTMLAttributes } from "react";
-import { IoPlay } from "react-icons/io5";
+import { Icon } from "@/renderer/icons";
 import cx from "clsx";
 import styles from "./PlaybackButton.module.css";
 
@@ -12,7 +12,7 @@ export default function PlaybackButton(props: PlaybackButtonProps) {
       type="button"
       className={cx(styles.button, props.className)}
     >
-      <IoPlay />
+      <Icon isFor="actions.play" />
     </button>
   );
 }

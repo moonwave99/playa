@@ -11,7 +11,7 @@ import api from "../api";
 import LookupView from "./LookupView";
 import ErrorView from "./ErrorView";
 import Loading from "./Loading";
-import { FaCheck } from "react-icons/fa";
+import { Icon } from "../icons";
 import cx from "clsx";
 import styles from "./InteractiveImportView.module.css";
 import formStyles from "../forms.module.css";
@@ -357,7 +357,7 @@ function FolderList({ importStatus, index }: FolderListProps) {
             )}
           >
             {folder}
-            {isDone && <FaCheck className={styles.check} />}
+            {isDone && <Icon isFor="common.checked" className={styles.check} />}
           </span>
         </li>
       ))}

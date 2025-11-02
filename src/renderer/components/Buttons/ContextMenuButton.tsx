@@ -1,6 +1,5 @@
 import { type ButtonHTMLAttributes } from "react";
-import { BsThreeDots } from "react-icons/bs";
-
+import { Icon } from "@/renderer/icons";
 import cx from "clsx";
 import styles from "./ContextMenuButton.module.css";
 
@@ -13,7 +12,7 @@ export default function ContextMenuButton(props: ContextMenuButtonProps) {
       type="button"
       className={cx(styles.button, props.className)}
     >
-      <BsThreeDots />
+      <Icon isFor="actions.contextMenu" />
     </button>
   );
 }

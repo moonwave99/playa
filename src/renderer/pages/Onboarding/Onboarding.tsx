@@ -12,7 +12,7 @@ import ImportMusicStep from "./Steps/ImportMusicStep";
 import FinalStep from "./Steps/FinalStep";
 
 import cx from "clsx";
-import { GoDot, GoDotFill } from "react-icons/go";
+import { Icon } from "@/renderer/icons";
 import styles from "./Onboarding.module.css";
 import { useKeyManager, KeyManager } from "@/renderer/hooks/useKeyboardManager";
 
@@ -52,7 +52,13 @@ export default function Onboarding() {
               aria-label={t(`pages.Onboarding.gotoStep.${step}`)}
               disabled={step >= currentStepIndex}
             >
-              {step === currentStepIndex ? <GoDotFill /> : <GoDot />}
+              <Icon
+                isFor={
+                  step === currentStepIndex
+                    ? "onboarding.currentStep"
+                    : "onboarding.step"
+                }
+              />
             </button>
           </li>
         ))}

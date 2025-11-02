@@ -21,8 +21,7 @@ import SlidingCardsView from "./SlidingCardsView";
 import ContextMenuButton from "./Buttons/ContextMenuButton";
 import List from "./List";
 
-import { MdOutlineSearch } from "react-icons/md";
-
+import { Icon } from "../icons";
 import cx from "clsx";
 import styles from "./SearchView.module.css";
 
@@ -56,7 +55,8 @@ export default function SearchView({ closeModal }: SearchViewProps) {
   return (
     <div className={styles.view}>
       <label>
-        <MdOutlineSearch
+        <Icon
+          isFor="actions.search"
           aria-label={t("modals.SearchView.fields.search.label")}
         />
         <input

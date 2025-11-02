@@ -4,7 +4,7 @@ import { Artist, Collection, Group, HasId, Release } from "@/types/types";
 import { normalizeArtistDisplayName } from "@/lib/utils";
 import { getEntityLink } from "@/lib/links";
 
-import { TiDelete } from "react-icons/ti";
+import { Icon } from "../icons";
 import cx from "clsx";
 import styles from "./EntityList.module.css";
 
@@ -96,7 +96,7 @@ export default function EntityList({
                   context: getTitle(context),
                 })}
               >
-                <TiDelete />
+                <Icon isFor="actions.delete" />
               </button>
             )}
           </li>

@@ -8,7 +8,7 @@ import {
 import { getReleaseTitle } from "@/lib/utils";
 import Cover from "./Cover";
 
-import { TiDelete } from "react-icons/ti";
+import { Icon } from "../icons";
 import styles from "./EntityCard.module.css";
 import buttonStyles from "../buttons.module.css";
 
@@ -53,7 +53,7 @@ export default function EntityCard({
             })
           }
         >
-          <TiDelete />
+          <Icon isFor="actions.delete" />
         </button>
       )}
       <Cover className={styles.cover} {...coverRelease} />

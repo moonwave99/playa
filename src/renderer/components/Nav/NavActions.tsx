@@ -1,18 +1,12 @@
-import { ListViews, listViewModesMap } from "@/types/types";
-import type { UseNav } from "./useNav";
-import api from "@/renderer/api";
-import { listActionsIconMap } from "@/renderer/icons";
-import { capitalize } from "lodash";
-import { ReactNode } from "react";
-import { useTranslation } from "react-i18next";
-import { IoMenu } from "react-icons/io5";
-import {
-  MdOutlineSearch,
-  MdOutlineDriveFolderUpload,
-  MdEdit,
-} from "react-icons/md";
+import { type ReactNode } from "react";
 import { Routes, Route } from "react-router";
+import { useTranslation } from "react-i18next";
+import { ListViews, listViewModesMap } from "@/types/types";
+import api from "@/renderer/api";
+import { Icon } from "@/renderer/icons";
+import type { UseNav } from "./useNav";
 import useStore from "@/renderer/store";
+import { capitalize } from "lodash";
 
 import cx from "clsx";
 import styles from "./Nav.module.css";
@@ -79,7 +73,7 @@ export default function NavActions({
             [buttonStyles.useDarkText]: useDarkText,
           })}
         >
-          <IoMenu />
+          <Icon isFor="actions.toggleMenu" />
         </button>
         <button
           type="button"
@@ -90,7 +84,7 @@ export default function NavActions({
             [buttonStyles.useDarkText]: useDarkText,
           })}
         >
-          <MdOutlineSearch />
+          <Icon isFor="actions.search" />
         </button>
       </ActionsGroup>
     </div>
@@ -110,7 +104,7 @@ function ImportActions() {
         [buttonStyles.useDarkText]: useDarkText,
       })}
     >
-      <MdOutlineDriveFolderUpload />
+      <Icon isFor="actions.import" />
     </button>
   );
 }
@@ -138,7 +132,7 @@ function EditActions({ entity }: EditActionsProps) {
         }
       )}
     >
-      <MdEdit />
+      <Icon isFor="actions.edit" />
     </button>
   );
 }
@@ -163,7 +157,7 @@ function ListViewModeActions({ list }: ListViewModeActionsProps) {
   const actions = listViewModesMap[list].map((viewMode) => ({
     viewMode,
     key: `nav.lists.${list}.viewModes.${viewMode}`,
-    icon: listActionsIconMap[viewMode],
+    icon: <Icon isFor={`listViewModes.${viewMode}`} />,
   }));
 
   return (

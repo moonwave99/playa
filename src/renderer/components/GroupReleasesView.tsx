@@ -23,8 +23,7 @@ import type { ReleaseWithArtist } from "@/types/types";
 import Cover from "./Cover";
 import { lowerCaseCompare } from "@/lib/utils";
 
-import { PiDotsThreeVerticalBold } from "react-icons/pi";
-import { MdInfoOutline } from "react-icons/md";
+import { Icon } from "@/renderer/icons";
 import cx from "clsx";
 import styles from "./GroupReleasesView.module.css";
 import formStyles from "../forms.module.css";
@@ -160,7 +159,7 @@ export default function GroupReleasesView({
               ))}
             </ul>
             <div className={formStyles.info}>
-              <MdInfoOutline />
+              <Icon isFor="modal.info" />
               {t("modals.GroupReleasesView.rearrangeInfo")}
             </div>
             <div className={formStyles.actions}>
@@ -200,7 +199,7 @@ function DiscView({ release, onInput }: DiscViewProps) {
   return (
     <article className={styles.release} ref={setNodeRef} style={style}>
       <div className={styles.dragHandle} {...attributes} {...listeners}>
-        <PiDotsThreeVerticalBold />
+        <Icon isFor="actions.drag" />
         <Cover
           className={styles.cover}
           droppable={false}

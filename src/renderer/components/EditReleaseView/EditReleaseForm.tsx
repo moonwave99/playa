@@ -10,7 +10,7 @@ import {
 } from "@/types/types";
 import useStore from "@/renderer/store";
 
-import { MdInfoOutline } from "react-icons/md";
+import { Icon } from "@/renderer/icons";
 import cx from "clsx";
 import styles from "./EditReleaseView.module.css";
 import formStyles from "@/renderer/forms.module.css";
@@ -98,7 +98,7 @@ export default function EditReleaseFormView({
         <div className={formStyles.actions}>
           {USE_SMART_IMPORT && (
             <div className={formStyles.info}>
-              <MdInfoOutline />
+              <Icon isFor="modal.info" />
               {t(`modals.EditReleaseView.moveInfo`)}
             </div>
           )}

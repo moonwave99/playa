@@ -5,7 +5,6 @@ import useStore from "@/renderer/store";
 import useClickOutside from "@/renderer/hooks/useClickOutside";
 import { useKeyManager } from "@/renderer/hooks/useKeyboardManager";
 import useOnLocationChange from "@/renderer/hooks/useOnLocationChange";
-import { type SupportedIcons } from "@/renderer/icons";
 import { type Modals } from "@/renderer/Modal";
 import { capitalize } from "lodash";
 
@@ -14,7 +13,7 @@ const navMap: {
   label: string;
   link: string;
   accelerator: string;
-  section: SupportedIcons;
+  section: string;
 }[] = [
   {
     type: "link",
@@ -27,7 +26,7 @@ const navMap: {
     type: "link" as const,
     accelerator: `Cmd+${index + 2}`,
     link: `/${section}s`,
-    section: section as SupportedIcons,
+    section,
     label: `${capitalize(section)}s`,
   })),
   {

@@ -42,7 +42,7 @@ export function withPath(key: keyof typeof settings, folderPath: string) {
 }
 
 export function withoutDates<
-  T extends { createdAt: string | Date; updatedAt: string | Date },
+  T extends { createdAt?: string | Date; updatedAt?: string | Date },
 >(x: T): Omit<T, "createdAt" | "updatedAt"> {
   // eslint-disable-next-line  @typescript-eslint/no-unused-vars
   const { createdAt, updatedAt, ...rest } = x;

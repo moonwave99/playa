@@ -5,7 +5,6 @@ import type {
   HasTitle,
   ReleaseWithArtistAndSubReleases,
   CollectionWithReleases,
-  ArtistWithReleases,
   TrackWithRelease,
   GroupWithArtists,
   WithAdditionalArtists,

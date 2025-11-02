@@ -8,9 +8,7 @@ import {
 } from "@headlessui/react";
 import type { HasId } from "@/types/types";
 import { lowerCaseCompare } from "@/lib/utils";
-
-import { IoMdCheckmark } from "react-icons/io";
-import { IoChevronDownOutline } from "react-icons/io5";
+import { Icon } from "../icons";
 import cx from "clsx";
 import styles from "./LookupView.module.css";
 
@@ -83,7 +81,7 @@ export default function LookupView<T extends HasId>({
           />
           {results?.length ? (
             <ComboboxButton className={styles.LookupViewButton}>
-              <IoChevronDownOutline />
+              <Icon isFor="lookup.open" />
             </ComboboxButton>
           ) : null}
         </div>
@@ -116,7 +114,9 @@ export default function LookupView<T extends HasId>({
                         })}
                       >
                         {getText(x)}
-                        {(selected || x.included) && <IoMdCheckmark />}
+                        {(selected || x.included) && (
+                          <Icon isFor="common.checked" />
+                        )}
                       </span>
                     )}
                   </ComboboxOption>

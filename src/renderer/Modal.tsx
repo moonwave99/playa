@@ -21,8 +21,8 @@ import AddReleasesToCollectionView from "./components/AddReleasesToCollectionVie
 import AddArtistsToGroupView from "./components/AddArtistsToGroupView";
 import InteractiveImportView from "./components/InteractiveImportView";
 import StatsView from "./components/StatsView";
+import { Icon } from "./icons";
 
-import { IoIosClose } from "react-icons/io";
 import buttonStyles from "./buttons.module.css";
 
 type ModalProps = {
@@ -87,7 +87,7 @@ export default function Modal({ setContext }: ModalProps) {
           zIndex: 1,
         }}
       >
-        <IoIosClose />
+        <Icon isFor="modal.close" />
       </button>
       {getModalContents()}
     </ReactModal>

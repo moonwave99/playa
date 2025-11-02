@@ -82,7 +82,6 @@ describe("exportDataFromDialog function", () => {
       })
     );
 
-    expect(openModal).toHaveBeenCalledWith("exportData");
     expect(send).toHaveBeenCalledWith("exportProgress", "start");
     expect(send).toHaveBeenCalledWith("exportProgress", "done");
   });

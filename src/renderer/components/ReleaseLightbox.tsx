@@ -12,7 +12,7 @@ import Tracklist from "./Tracklist";
 import ReleaseInfo from "./ReleaseInfo";
 import EntityList from "./EntityList";
 
-import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
+import { Icon } from "../icons";
 import cx from "clsx";
 import styles from "./ReleaseLightbox.module.css";
 
@@ -79,7 +79,7 @@ export default function ReleaseLightbox({
           aria-label={t("modals.ReleaseLightbox.actions.prev")}
           onClick={showPrevRelease}
         >
-          <IoChevronBackOutline />
+          <Icon isFor="lightbox.prev" />
         </button>
       )}
       <div className={styles.wrapper} key={currentId}>
@@ -125,7 +125,7 @@ export default function ReleaseLightbox({
           aria-label={t("modals.ReleaseLightbox.actions.next")}
           onClick={showNextRelease}
         >
-          <IoChevronForwardOutline />
+          <Icon isFor="lightbox.next" />
         </button>
       )}
     </div>

@@ -9,7 +9,7 @@ import Loading from "@/renderer/components/Loading";
 import ErrorView from "@/renderer/components/ErrorView";
 import ReleaseView from "@/renderer/components/ReleaseView";
 
-import { MdOutlineDriveFolderUpload } from "react-icons/md";
+import { Icon } from "@/renderer/icons";
 import cx from "clsx";
 import styles from "../Onboarding.module.css";
 import formStyles from "../../../forms.module.css";
@@ -65,7 +65,7 @@ export default function ImportMusicStep({ onNextStep }: StepProps) {
             onClick={selectFolder}
             autoFocus
           >
-            <MdOutlineDriveFolderUpload />
+            <Icon isFor="actions.upload" />
             <span>
               {t(
                 `pages.Onboarding.actions.${!releases.length ? "import" : "importAnother"}`

@@ -19,9 +19,7 @@
     "release": "Releases",
     "artists": "Artists",
     "groups": "Groups",
-    "collections": "Collections",
-    "group": "{{title}} ({{count}} artists)",
-    "collection": "{{title}} ({{count}} releases)"
+    "collections": "Collections"
   },
   "nav": {
     "titles": {

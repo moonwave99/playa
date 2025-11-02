@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useFocus } from "@/renderer/hooks/useFocus";
 import cx from "clsx";
-import { IoFolderOpenOutline } from "react-icons/io5";
+import { Icon } from "@/renderer/icons";
 import styles from "./Onboarding.module.css";
 import formStyles from "../../forms.module.css";
 
@@ -48,7 +48,7 @@ export default function FolderPicker({
         onClick={onClick}
         aria-label={t(`pages.Onboarding.folders.${folderType}.label`)}
       >
-        <IoFolderOpenOutline />
+        <Icon isFor="actions.pickFolder" />
         <span>{t(`pages.Onboarding.folders.${folderType}.label`)}</span>
       </button>
     </div>

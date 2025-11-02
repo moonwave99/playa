@@ -4,13 +4,13 @@ import { useTranslation } from "react-i18next";
 import { type Modals } from "@/renderer/Modal";
 import useNav from "./useNav";
 import { Icon } from "@/renderer/icons";
+import HistoryView from "./HistoryView";
+import NavActions from "./NavActions";
+import NavTitle from "./NavTitle";
 import Breadcrumbs from "./Breadcrumbs";
 
 import cx from "clsx";
 import styles from "./Nav.module.css";
-import HistoryView from "./HistoryView";
-import NavActions from "./NavActions";
-import NavTitle from "./NavTitle";
 
 type NavProps = {
   isFullHeaderPage: boolean;
@@ -59,7 +59,7 @@ export default function Nav({ isFullHeaderPage }: NavProps) {
               [styles.hasFocus]: index === currentIndex,
             })}
           >
-            <Icon isFor={section} />
+            <Icon isFor={`pages.${section}`} />
             {type === "link" ? (
               <NavLink
                 aria-label={t("nav.common.actions.gotoPage", { page: label })}

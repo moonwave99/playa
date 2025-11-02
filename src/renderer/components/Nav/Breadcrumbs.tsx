@@ -2,7 +2,7 @@ import { useLocation, matchRoutes, type Params } from "react-router";
 import { useTranslation } from "react-i18next";
 import Link from "../Link";
 import { routes, type Route } from "@/renderer/routes";
-import { Icon, SupportedIcons } from "@/renderer/icons";
+import { Icon } from "@/renderer/icons";
 import { getReleaseTitle } from "@/lib/utils";
 import useArtist from "@/renderer/query/useArtist";
 import useRelease from "@/renderer/query/useRelease";
@@ -79,8 +79,9 @@ export default function BreadCrumbs({
       <Breadcrumb
         showText={id !== "home"}
         id={+params.id}
-        isFor={id as SupportedIcons}
+        iconKey={`pages.${id}`}
         className={styles.content}
+        i18nKey={`breadcrumbs.${id}`}
       />
     ) : (
       t(`breadcrumbs.${id}`)
@@ -119,23 +120,25 @@ export default function BreadCrumbs({
 
 type BreadcrumbProps = {
   className?: string;
-  isFor?: SupportedIcons;
+  iconKey?: string;
+  i18nKey?: string;
   id?: number;
   showText?: boolean;
 };
 
 function BaseBreadcrumb({
   className,
-  isFor,
+  iconKey,
+  i18nKey,
   showText = true,
 }: BreadcrumbProps) {
   const { t } = useTranslation();
   return (
     <span className={className}>
-      <Icon isFor={isFor} />{" "}
+      <Icon isFor={iconKey} />{" "}
       {showText && (
         <span className={responsiveStyles.hideOnMediumViewPort}>
-          {t(`breadcrumbs.${isFor}`)}
+          {t(i18nKey)}
         </span>
       )}
     </span>

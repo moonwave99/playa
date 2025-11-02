@@ -7,8 +7,7 @@ import useStore from "../store";
 import { isEmpty } from "@/lib/utils";
 import Loading from "./Loading";
 
-import { MdInfoOutline } from "react-icons/md";
-import { IoFolderOpenOutline } from "react-icons/io5";
+import { Icon } from "@/renderer/icons";
 import cx from "clsx";
 import styles from "./SettingsView.module.css";
 import formStyles from "../forms.module.css";
@@ -137,7 +136,7 @@ export default function SettingsView({ closeModal }: SettingsViewProps) {
             onClick={() => openFile(key, options)}
             aria-label={t(`modals.SettingsView.fields.${key}.label`)}
           >
-            <IoFolderOpenOutline />
+            <Icon isFor="actions.pickFolder" />
           </button>
         ) : null}
       </label>
@@ -150,7 +149,7 @@ export default function SettingsView({ closeModal }: SettingsViewProps) {
       <form onSubmit={onSubmit} className={formStyles.form}>
         {fieldsMap.map(renderField)}
         <div className={formStyles.info}>
-          <MdInfoOutline />
+          <Icon isFor="modal.info" />
           <a href={t("modals.SettingsView.discogs.link")} target="_blank">
             {t("modals.SettingsView.discogs.info")}
           </a>

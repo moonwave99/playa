@@ -1,5 +1,5 @@
 import type { MouseEvent } from "react";
-import { capitalize, deburr, uniqBy } from "lodash";
+import { capitalize, deburr, uniqBy, isPlainObject } from "lodash";
 import type {
   ReleaseType,
   Release,
@@ -434,4 +434,32 @@ export function formatEntityType(
     output = capitalize(output);
   }
   return plural ? `${output}s` : output;
+}
+
+export function toDotNotation(
+  entry: Record<string, unknown>,
+  accumulator: Record<string, unknown> = {},
+  keys: string[] = []
+) {
+  return {
+    ...accumulator,
+    ...Object.entries(entry).reduce(
+      (
+        memo,
+        [key, value]: [string, Record<string, unknown>]
+      ): Record<string, unknown> => {
+        const dottedKey = [...keys, key].join(".");
+        return isPlainObject(value)
+          ? {
+              ...memo,
+              ...toDotNotation(value, accumulator, [...keys, key]),
+            }
+          : {
+              ...memo,
+              [dottedKey]: value,
+            };
+      },
+      accumulator
+    ),
+  };
 }

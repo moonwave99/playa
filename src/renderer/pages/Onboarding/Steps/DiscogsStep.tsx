@@ -6,10 +6,10 @@ import { useFocus } from "@/renderer/hooks/useFocus";
 import { AnimatedLayout } from "../AnimatedLayout";
 import { type StepProps } from "../Onboarding";
 
+import { Icon } from "@/renderer/icons";
 import cx from "clsx";
-import { MdInfoOutline } from "react-icons/md";
 import styles from "../Onboarding.module.css";
-import formStyles from "../../../forms.module.css";
+import formStyles from "@/renderer/forms.module.css";
 
 export default function DiscogsStep({ onCancel, onNextStep }: StepProps) {
   const secretInputRef = useRef(null);
@@ -39,7 +39,7 @@ export default function DiscogsStep({ onCancel, onNextStep }: StepProps) {
           target="_blank"
           className={styles.info}
         >
-          <MdInfoOutline />
+          <Icon isFor="modal.info" />
           {t("pages.Onboarding.steps.discogs.where.text")}
         </a>
 

@@ -2,8 +2,8 @@ import { useTranslation } from "react-i18next";
 import useStore from "@/renderer/store";
 import api from "@/renderer/api";
 
+import { Icon } from "@/renderer/icons";
 import cx from "clsx";
-import { GoChevronRight, GoChevronLeft } from "react-icons/go";
 import styles from "./HistoryView.module.css";
 import buttonStyles from "@/renderer/buttons.module.css";
 
@@ -21,7 +21,7 @@ export default function HistoryView() {
         aria-label={t("nav.history.actions.goBack")}
         onClick={() => api.state.goBack()}
       >
-        <GoChevronLeft />
+        <Icon isFor="history.back" />
       </button>
       <button
         className={cx(buttonStyles.button, styles.button, {
@@ -31,7 +31,7 @@ export default function HistoryView() {
         aria-label={t("nav.history.actions.goForward")}
         onClick={() => api.state.goForward()}
       >
-        <GoChevronRight />
+        <Icon isFor="history.forward" />
       </button>
     </div>
   );
