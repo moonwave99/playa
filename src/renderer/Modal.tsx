@@ -76,6 +76,7 @@ export default function Modal({ setContext }: ModalProps) {
       }}
     >
       <button
+        disabled={isModalFixed}
         onClick={closeModal}
         className={buttonStyles.button}
         aria-label={t("modals.common.actions.close")}

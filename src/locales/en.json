@@ -205,17 +205,19 @@
       }
     },
     "ExportDataView": {
-      "title": "Exporting Data to Archive",
+      "title": "Export Library Data",
+      "info": "Export your Library data to a .zip archive for a later recovery.",
       "status": {
         "done": "Done!",
-        "exporting": "Exporting..."
+        "progress": "Exporting..."
       },
       "actions": {
+        "selectFolder": "Select output Folder",
         "close": "Close"
       }
     },
     "ImportDataView": {
-      "title": "Import Data from Archive",
+      "title": "Import Library Data",
       "description": {
         "important": "Important",
         "first": "Please select an exported archive in the <code>playa-data-XXXXXX.zip</code> format.",

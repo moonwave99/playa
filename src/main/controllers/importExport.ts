@@ -33,7 +33,6 @@ export function importExportController({
   userDataPath,
   appVersion,
   send,
-  openModal,
 }: ImportExportControllerParams) {
   async function importDataFromDialog() {
     const file = openFileDialog({
@@ -76,8 +75,6 @@ export function importExportController({
     if (!outputPath) {
       return;
     }
-
-    openModal("exportData");
 
     await wait(300);
 

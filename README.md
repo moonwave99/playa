@@ -24,7 +24,6 @@ TBD
 
 - display multiple covers for multiple discs releases;
 - make group and collection titles editable again;
-- show modal on export data start;
 
 ## License
 

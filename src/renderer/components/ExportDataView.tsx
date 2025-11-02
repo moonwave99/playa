@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useApiEvents } from "../hooks/useApiEvents";
+import api from "../api";
 import useStore from "../store";
 import cx from "clsx";
 import styles from "./ExportDataView.module.css";
@@ -13,22 +14,30 @@ type ExportDataViewProps = {
 
 export default function ExportDataView({ closeModal }: ExportDataViewProps) {
   const { t } = useTranslation();
-  const isDone = useExportData(closeModal);
+  const { status, start } = useExportData(closeModal);
 
   return (
     <div className={styles.view}>
       <h2>{t("modals.ExportDataView.title")}</h2>
       <p className={styles.description}>
-        {isDone
-          ? t("modals.ExportDataView.status.done")
-          : t("modals.ExportDataView.status.exporting")}
+        {status
+          ? t(`modals.ExportDataView.status.${status}`)
+          : t("modals.ExportDataView.info")}
       </p>
       <div className={formStyles.actions}>
         <button
           type="button"
           className={cx(formStyles.button, formStyles.primary)}
+          onClick={start}
+          disabled={status === "progress"}
+        >
+          {t("modals.ExportDataView.actions.selectFolder")}
+        </button>
+        <button
+          type="button"
+          className={formStyles.button}
           onClick={closeModal}
-          disabled={!isDone}
+          disabled={status === "progress"}
         >
           {t("modals.ExportDataView.actions.close")}
         </button>
@@ -38,23 +47,21 @@ export default function ExportDataView({ closeModal }: ExportDataViewProps) {
 }
 
 function useExportData(onDone: () => void) {
-  const [isDone, setDone] = useState(false);
+  const [status, setStatus] = useState(null);
   const { setModalFixed } = useStore();
 
   useApiEvents({
     onExportProgress: (status) => {
       if (status !== "done") {
+        setModalFixed(true);
+        setStatus("progress");
         return;
       }
-      setDone(true);
+      setStatus("done");
       setModalFixed(false);
       setTimeout(onDone, ON_EXPORT_DONE_DELAY);
     },
   });
 
-  useEffect(() => {
-    setModalFixed(true);
-  }, []);
-
-  return isDone;
+  return { status, start: () => api.importExport.exportDataFromDialog() };
 }
