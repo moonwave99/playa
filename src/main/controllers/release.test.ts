@@ -721,6 +721,38 @@ describe("unGroupSelectedRelease function", () => {
   });
 });
 
+describe("addNewAdditionalArtist function", () => {
+  it("creates a new artist and adds it to the given release", async () => {
+    const release = getFakeReleasesForArtist(1).at(0);
+    await prisma.release.create({ data: release });
+
+    const send = vi.fn();
+
+    const { addNewAdditionalArtist } = releaseController({
+      ...defaultParams,
+      send,
+    });
+
+    const updatedRelease = await addNewAdditionalArtist({
+      release_id: release.id,
+      name: "New Artist",
+    });
+
+    expect(
+      (updatedRelease as ReleaseWithArtist).additionalArtists[0]
+    ).toMatchObject({
+      id: 1,
+      name: "New Artist",
+    });
+
+    expect(send).toHaveBeenCalledWith("mutate", [
+      ["releases", "latest"],
+      ["releases", release.id],
+      ["artists", 1],
+    ]);
+  });
+});
+
 describe("addAdditionalArtist function", () => {
   it("adds the given additional artist to the given release", async () => {
     const release = getFakeReleasesForArtist(1).at(0);

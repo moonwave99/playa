@@ -93,7 +93,7 @@ export const releaseMenu =
         {
           id: "editRelease",
           label: `Edit Release`,
-          click: () => openModal("editRelease", { release }),
+          click: () => openModal("editRelease", { id: release.id }),
         },
         {
           id: "editArtist",

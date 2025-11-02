@@ -9,6 +9,7 @@
   list-style: none;
   display: grid;
   row-gap: 1.5rem;
+  column-gap: 1.5rem;
   grid-template-columns: repeat(var(--columns), 1fr);
   @media screen and (max-width: 960px) {
     --columns: 6;

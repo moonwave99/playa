@@ -19,8 +19,10 @@ type UseRelease = {
   release: ReleaseWithArtistAndTracksAndSubreleasesAndCollections;
   selectedTrackId: number;
   removeFromCollection: (collection_id: number) => void;
+  addNewAdditionalArtist: (name: string) => void;
   addAdditionalArtist: (artist_id: number) => void;
   removeAdditionalArtist: (artist_id: number) => void;
+  editRelease: (...params: Parameters<typeof api.release.editRelease>) => void;
 };
 
 export default function useRelease({
@@ -59,6 +61,7 @@ export default function useRelease({
 
   function onSuccess() {
     [
+      ["releases", "latest"],
       ["releases", id],
       ["artists", release.artist.id],
       ...release.collections.map((x: HasId) => ["collections", x.id]),
@@ -76,6 +79,12 @@ export default function useRelease({
     onSuccess,
   });
 
+  const addNewAdditionalArtist = useMutation({
+    mutationFn: (name: string) =>
+      api.release.addNewAdditionalArtist({ release_id: id, name }),
+    onSuccess,
+  });
+
   const addAdditionalArtist = useMutation({
     mutationFn: (artist_id: number) =>
       api.release.addAdditionalArtist({ release_id: id, artist_id }),
@@ -88,14 +97,21 @@ export default function useRelease({
     onSuccess,
   });
 
+  const editRelease = useMutation({
+    mutationFn: api.release.editRelease,
+    onSuccess,
+  });
+
   return {
     release,
     isPending,
     error,
     selectedTrackId: +params.get("track_id"),
     removeFromCollection: removeFromCollection.mutate,
+    addNewAdditionalArtist: addNewAdditionalArtist.mutate,
     addAdditionalArtist: addAdditionalArtist.mutate,
     removeAdditionalArtist: removeAdditionalArtist.mutate,
+    editRelease: editRelease.mutate,
   };
 }
 

@@ -14,19 +14,24 @@ import { IoChevronDownOutline } from "react-icons/io5";
 import cx from "clsx";
 import styles from "./LookupView.module.css";
 
-type LookupViewProps<T extends HasId> = {
+export type LookupViewProps<T extends HasId> = {
   value?: T;
   query?: string;
   items?: T[];
   allowCustomValue?: boolean;
   className?: string;
+  isFetching?: boolean;
   autoFocus?: boolean;
   fixedList?: boolean;
+  placeholderText?: string;
+  isEntityIncluded?: (item: T) => boolean;
   onChange: (item: T) => void;
   onQueryChange?: (query: string) => void;
   getText: (item: T) => string;
   getCustomValue?: (query: string) => T;
 };
+
+const MIN_QUERY_LENGTH = 3;
 
 export default function LookupView<T extends HasId>({
   value,
@@ -34,8 +39,11 @@ export default function LookupView<T extends HasId>({
   items,
   allowCustomValue,
   className,
+  isFetching,
   autoFocus,
   fixedList,
+  placeholderText,
+  isEntityIncluded,
   onChange,
   onQueryChange,
   getText,
@@ -62,7 +70,7 @@ export default function LookupView<T extends HasId>({
         <div className={styles.LookupViewInputWrapper}>
           <ComboboxInput
             required
-            placeholder={t("lookup.placeholder")}
+            placeholder={placeholderText || t("lookup.placeholder")}
             className={styles.LookupViewInput}
             onChange={(event) => {
               if (!onQueryChange) {
@@ -79,7 +87,7 @@ export default function LookupView<T extends HasId>({
             </ComboboxButton>
           ) : null}
         </div>
-        {(fixedList || query.length >= 3) && (
+        {(fixedList || query.length >= MIN_QUERY_LENGTH) && (
           <ComboboxOptions className={styles.LookupViewOptions}>
             {displayCustomInput && (
               <ComboboxOption value={getCustomValue(query)}>
@@ -88,25 +96,31 @@ export default function LookupView<T extends HasId>({
                 </span>
               </ComboboxOption>
             )}
-            {!allowCustomValue && !results?.length && query ? (
+            {!allowCustomValue && !results?.length && query && !isFetching ? (
               <span className={styles.LookupViewOption}>
                 {t("lookup.noResults", { value: query })}
               </span>
             ) : (
-              results?.map((x) => (
-                <ComboboxOption key={x.id} value={x}>
-                  {({ selected, focus }) => (
-                    <span
-                      className={cx(styles.LookupViewOption, {
-                        [styles.focus]: focus,
-                      })}
-                    >
-                      {getText(x)}
-                      {selected && <IoMdCheckmark />}
-                    </span>
-                  )}
-                </ComboboxOption>
-              ))
+              results
+                ?.map((x) => ({
+                  ...x,
+                  included: isEntityIncluded ? isEntityIncluded(x) : false,
+                }))
+                .map((x) => (
+                  <ComboboxOption key={x.id} value={x} disabled={x.included}>
+                    {({ selected, focus }) => (
+                      <span
+                        className={cx(styles.LookupViewOption, {
+                          [styles.focus]: focus,
+                          [styles.included]: x.included,
+                        })}
+                      >
+                        {getText(x)}
+                        {(selected || x.included) && <IoMdCheckmark />}
+                      </span>
+                    )}
+                  </ComboboxOption>
+                ))
             )}
           </ComboboxOptions>
         )}

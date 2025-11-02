@@ -94,7 +94,10 @@
   "lookup": {
     "placeholder": "Search for Entity",
     "customValue": "Create \"{{value}}\"",
-    "noResults": "No results for \"{{value}}\""
+    "noResults": "No results for \"{{value}}\"",
+    "actions": {
+      "add": "Add"
+    }
   },
   "pages": {
     "ErrorPage": {
@@ -261,6 +264,18 @@
         "newType": {
           "label": "Release Type",
           "placeholder": "Enter release type"
+        }
+      },
+      "additionalArtists": {
+        "title": "Additional Artists",
+        "placeholder": "This release has no additional Artists yet.",
+        "fields": {
+          "lookup": {
+            "placeholder": "Lookup Artists"
+          }
+        },
+        "actions": {
+          "remove": "Remove {{name}} from related Artists"
         }
       },
       "actions": {

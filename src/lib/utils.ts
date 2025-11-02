@@ -265,7 +265,7 @@ export function withStopPropagation(handler: (event: MouseEvent) => void) {
 
 type Item =
   | CollectionWithReleases
-  | ArtistWithReleases
+  | ArtistWithReleasesAndAppearances
   | ReleaseWithArtistAndSubReleases
   | GroupWithArtists
   | SearchResult;
@@ -282,11 +282,15 @@ export function getCoverRelease(
       (item as GroupWithArtists).artists[0];
     return coverArtist ? getCoverRelease(coverArtist) : null;
   }
-  return (
-    (item as CollectionWithReleases).coverRelease ||
-    (item as ArtistWithReleases).releases[0] ||
-    null
-  );
+  if (item.entityType === "artist") {
+    return (item.coverRelease ||
+      item.releases[0] ||
+      item.appearsIn[0] ||
+      null) as ReleaseWithArtistAndSubReleases;
+  }
+  return (item.coverRelease ||
+    item.releases[0] ||
+    null) as ReleaseWithArtistAndSubReleases;
 }
 
 type NewReleaseInfo = {
@@ -411,7 +415,7 @@ export function getCovers(item: GetCoversItem, count = Infinity): GetCovers {
   return {
     coverRelease,
     otherReleases: otherReleases
-      .filter((x) => x.id !== coverRelease.id)
+      .filter((x) => x.id !== coverRelease?.id)
       .slice(0, count - 1),
   };
 }

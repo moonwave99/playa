@@ -3,13 +3,35 @@ import sha1 from "sha1";
 
 import type { TrackInfo, PaginationParams, Release } from "@/types/types";
 import { normalizeDiacritics } from "@/lib/utils";
+import { hashArtistName } from "../hash";
+
+export async function getReleaseTitleInfo(id: number) {
+  return prisma.release.findFirst({
+    where: { id },
+    select: {
+      title: true,
+      artist: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  });
+}
 
 export async function getRelease(id: number) {
   return prisma.release.findFirst({
     where: { id },
     include: {
       artist: true,
-      additionalArtists: true,
+      additionalArtists: {
+        include: {
+          coverRelease: true,
+          releases: {
+            take: 1,
+          },
+        },
+      },
       subReleases: {
         include: {
           artist: true,
@@ -360,6 +382,40 @@ export async function removeAdditionalArtist({
     data: {
       additionalArtists: {
         disconnect: { id: artist_id },
+      },
+    },
+    include: {
+      artist: true,
+      additionalArtists: true,
+    },
+  });
+}
+
+export type NewAdditionalArtistParams = {
+  release_id: number;
+  name: string;
+};
+
+export async function addNewAdditionalArtist({
+  release_id,
+  name,
+}: NewAdditionalArtistParams) {
+  let artist;
+  try {
+    artist = await prisma.artist.create({
+      data: {
+        name,
+        hash: hashArtistName(name),
+      },
+    });
+  } catch {
+    return false;
+  }
+  return prisma.release.update({
+    where: { id: release_id },
+    data: {
+      additionalArtists: {
+        connect: { id: artist.id },
       },
     },
     include: {

@@ -12,6 +12,7 @@ import {
 } from "@/types/types";
 import { didReleaseInfoChange, mapSeries } from "@/lib/utils";
 import {
+  getReleaseTitleInfo,
   getRelease,
   getReleases,
   getSelectedReleases,
@@ -21,6 +22,7 @@ import {
   deleteReleases as _deleteReleases,
   addTracksToRelease,
   toggleHomepageVisibility,
+  addNewAdditionalArtist as _addNewAdditionalArtist,
   addAdditionalArtist as _addAdditionalArtist,
   removeAdditionalArtist as _removeAdditionalArtist,
   groupReleases as _groupReleases,
@@ -350,6 +352,20 @@ export function releaseController({
     return result;
   }
 
+  async function addNewAdditionalArtist(
+    ...params: Parameters<typeof _addNewAdditionalArtist>
+  ) {
+    const updatedRelease = await _addNewAdditionalArtist(...params);
+    if (updatedRelease) {
+      send("mutate", [
+        ["releases", "latest"],
+        ["releases", params[0].release_id],
+        ["artists", updatedRelease.artist.id],
+      ]);
+    }
+    return updatedRelease;
+  }
+
   async function groupReleases(params: GroupReleaseParams) {
     const { updatedArtists } = await _groupReleases(params);
     send("mutate", [
@@ -374,6 +390,7 @@ export function releaseController({
   }
 
   return {
+    getReleaseTitleInfo,
     getRelease,
     getReleases,
     getSelectedReleases,
@@ -392,6 +409,7 @@ export function releaseController({
     showRelease,
     addAdditionalArtist,
     removeAdditionalArtist,
+    addNewAdditionalArtist,
   };
 }
 
@@ -413,4 +431,5 @@ export const actions: (keyof ReturnType<typeof releaseController>)[] = [
   "showRelease",
   "addAdditionalArtist",
   "removeAdditionalArtist",
+  "addNewAdditionalArtist",
 ];

@@ -23,7 +23,7 @@ type Collection = Prisma.Collection & {
 
 type Group = Prisma.Group & {
   entityType: "group";
-  coverArtist?: ArtistWithReleases;
+  coverArtist?: ArtistWithReleasesAndAppearances;
 };
 
 type Track = Prisma.Track & {
@@ -117,7 +117,7 @@ export type WithRelatedArtists = {
 };
 
 export type WithAdditionalArtists = {
-  additionalArtists: Artist[];
+  additionalArtists: ArtistWithReleases[];
 };
 
 export type WithAppearances = {

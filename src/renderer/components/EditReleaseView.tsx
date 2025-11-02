@@ -2,33 +2,127 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import useStore from "../store";
-import useRefetch from "../hooks/useRefetch";
 import api from "../api";
+import useRelease from "../query/useRelease";
 import type {
   ReleaseWithArtist,
   ReleaseWithArtistAndSubReleases,
   NewReleaseInfo,
+  EditReleaseParam,
 } from "@/types/types";
 import { releaseTypes } from "@/types/types";
 import { didReleaseInfoChange } from "@/lib/utils";
-import AdditionalArtistsEditor from "./AdditionalArtistsEditor";
+
+import EntityCardList from "./EntityCardList";
+import LookupEntityForm from "./LookupEntityForm";
+import Loading from "./Loading";
+
 import cx from "clsx";
 import { MdInfoOutline } from "react-icons/md";
 import styles from "./EditReleaseView.module.css";
 import formStyles from "../forms.module.css";
 
 type EditReleaseViewProps = {
-  release: ReleaseWithArtistAndSubReleases;
+  id: number;
   closeModal: () => void;
 };
 
 export default function EditReleaseView({
-  release,
+  id,
   closeModal,
 }: EditReleaseViewProps) {
   const { t } = useTranslation();
+  const {
+    isPending,
+    release,
+    addNewAdditionalArtist,
+    addAdditionalArtist,
+    removeAdditionalArtist,
+    editRelease,
+  } = useRelease({
+    id,
+  });
+
+  function onSubmit(infos: EditReleaseParam[]) {
+    editRelease(infos);
+    api.state.setSelection("release", []);
+    closeModal();
+  }
+
+  function onAdditionalArtistSubmit({
+    id,
+    title,
+  }: {
+    id: number;
+    title: string;
+  }) {
+    if (!id) {
+      addNewAdditionalArtist(title);
+      return;
+    }
+    addAdditionalArtist(id);
+  }
+
+  if (isPending) {
+    return <Loading />;
+  }
+
+  return (
+    <div className={styles.EditReleaseView}>
+      <h2>{t(`modals.EditReleaseView.title`)}</h2>
+      <EditReleaseFormView
+        release={release}
+        onSubmit={onSubmit}
+        onCancel={closeModal}
+      />
+      <div className={formStyles.container}>
+        <h3>{t("modals.EditReleaseView.additionalArtists.title")}</h3>
+        {release.additionalArtists.length ? (
+          <EntityCardList
+            items={release.additionalArtists}
+            getRemoveButtonLabel={({ name }) =>
+              t("modals.EditReleaseView.additionalArtists.actions.remove", {
+                name,
+              })
+            }
+            onRemoveEntityClick={({ id }) => removeAdditionalArtist(id)}
+          />
+        ) : (
+          <p className={styles.placeholder}>
+            {t("modals.EditReleaseView.additionalArtists.placeholder")}
+          </p>
+        )}
+        <LookupEntityForm
+          allowCustomValue
+          className={styles.lookupView}
+          existingIds={[
+            release.artist.id,
+            ...release.additionalArtists.map(({ id }) => id),
+          ]}
+          type="artist"
+          onSubmit={onAdditionalArtistSubmit}
+          placeholderText={t(
+            "modals.EditReleaseView.additionalArtists.fields.lookup.placeholder"
+          )}
+        />
+      </div>
+    </div>
+  );
+}
+
+type EditReleaseFormViewProps = {
+  release: ReleaseWithArtistAndSubReleases;
+  onSubmit: (infos: EditReleaseParam[]) => void;
+  onCancel: () => void;
+};
+
+function EditReleaseFormView({
+  release,
+  onSubmit,
+  onCancel,
+}: EditReleaseFormViewProps) {
+  const { t } = useTranslation();
   const { settings } = useStore();
-  const refetch = useRefetch();
   const [folderInfo, setFolderInfo] = useState(
     [release, ...release.subReleases].map((x, index) => ({
       ...x,
@@ -43,9 +137,9 @@ export default function EditReleaseView({
     }))
   );
 
-  async function onSubmit(event: FormEvent) {
+  async function _onSubmit(event: FormEvent) {
     event.preventDefault();
-    const success = await api.release.editRelease(
+    onSubmit(
       folderInfo
         .filter(
           (x) =>
@@ -62,18 +156,6 @@ export default function EditReleaseView({
           newYear: folderInfo[0].newYear,
         }))
     );
-    if (!success) {
-      return;
-    }
-
-    refetch([
-      ["releases", "latest"],
-      ["releases", release.id],
-      ["artists", release.artist_id],
-    ]);
-
-    api.state.setSelection("release", []);
-    closeModal();
   }
 
   function updateInfo(
@@ -93,49 +175,45 @@ export default function EditReleaseView({
   const { USE_SMART_IMPORT } = settings;
 
   return (
-    <div className={styles.EditReleaseView}>
-      <h2>{t(`modals.EditReleaseView.title`)}</h2>
-      <form onSubmit={onSubmit} className={formStyles.form}>
-        <div className={cx(formStyles.container, formStyles.separator)}>
-          <ul className={styles.releaseList}>
-            {folderInfo.map((release, index) => (
-              <li key={release.id}>
-                <FolderView
-                  hasFocus={index === 0}
-                  isMainRelease={index === 0}
-                  hasMultipleDiscs={folderInfo.length > 1}
-                  release={release}
-                  onInput={(key, value) => updateInfo(index, key, value)}
-                />
-              </li>
-            ))}
-          </ul>
-          <div className={formStyles.actions}>
-            {USE_SMART_IMPORT && (
-              <div className={formStyles.info}>
-                <MdInfoOutline />
-                {t(`modals.EditReleaseView.moveInfo`)}
-              </div>
-            )}
-            <button
-              type="submit"
-              className={formStyles.button}
-              disabled={!canSubmit()}
-            >
-              {t(`modals.EditReleaseView.actions.submit`)}
-            </button>
-            <button
-              type="button"
-              className={formStyles.button}
-              onClick={closeModal}
-            >
-              {t(`modals.EditReleaseView.actions.cancel`)}
-            </button>
-          </div>
+    <form onSubmit={_onSubmit} className={formStyles.form}>
+      <div className={cx(formStyles.container, formStyles.separator)}>
+        <ul className={styles.releaseList}>
+          {folderInfo.map((release, index) => (
+            <li key={release.id}>
+              <FolderView
+                hasFocus={index === 0}
+                isMainRelease={index === 0}
+                hasMultipleDiscs={folderInfo.length > 1}
+                release={release}
+                onInput={(key, value) => updateInfo(index, key, value)}
+              />
+            </li>
+          ))}
+        </ul>
+        <div className={formStyles.actions}>
+          {USE_SMART_IMPORT && (
+            <div className={formStyles.info}>
+              <MdInfoOutline />
+              {t(`modals.EditReleaseView.moveInfo`)}
+            </div>
+          )}
+          <button
+            type="submit"
+            className={formStyles.button}
+            disabled={!canSubmit()}
+          >
+            {t(`modals.EditReleaseView.actions.submit`)}
+          </button>
+          <button
+            type="button"
+            className={formStyles.button}
+            onClick={onCancel}
+          >
+            {t(`modals.EditReleaseView.actions.cancel`)}
+          </button>
         </div>
-        <AdditionalArtistsEditor releaseId={release.id} />
-      </form>
-    </div>
+      </div>
+    </form>
   );
 }
 

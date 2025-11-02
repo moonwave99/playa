@@ -28,6 +28,9 @@
     &:hover {
       background-color: var(--accent-color);
     }
+    &.disabled {
+      opacity: 0.8;
+    }
   }
 }
 

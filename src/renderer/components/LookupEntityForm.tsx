@@ -1,27 +1,37 @@
+import { useTranslation } from "react-i18next";
 import { SearchableEntities, SearchResult } from "@/types/types";
 import { useState, FormEvent } from "react";
-import LookupEntityView from "./LookupEntityView";
+import LookupEntityView, {
+  type LookupEntityViewProps,
+} from "./LookupEntityView";
 import cx from "clsx";
 import formStyles from "../forms.module.css";
 
-type LookupEntityFormProps = {
+type LookupEntityFormProps = Pick<
+  LookupEntityViewProps,
+  "allowCustomValue" | "className" | "placeholderText"
+> & {
   type: SearchableEntities;
-  className?: string;
   existingIds?: number[];
-  onSubmit: (selectedRelease: SearchResult) => void;
+  onSubmit: (selectedItem: SearchResult) => void;
 };
 
 export default function LookupEntityForm({
   type,
   existingIds = [],
-  className,
   onSubmit,
+  ...rest
 }: LookupEntityFormProps) {
-  const [selectedResult, setSelectedResult] = useState(null);
+  const { t } = useTranslation();
+  const [selectedResult, setSelectedResult] = useState<SearchResult>(null);
 
   function _onSubmit(event: FormEvent) {
     event.preventDefault();
     onSubmit(selectedResult);
+  }
+
+  function onSelect(item: SearchResult) {
+    setSelectedResult(item);
   }
 
   return (
@@ -30,12 +40,14 @@ export default function LookupEntityForm({
       className={cx(formStyles.form, formStyles.horizontal)}
     >
       <LookupEntityView
-        className={className}
         type={type}
-        onSelect={setSelectedResult}
-        filterFn={({ id }) => !existingIds.includes(id)}
+        onSelect={onSelect}
+        isEntityIncluded={({ id }) => existingIds.includes(id)}
+        {...rest}
       />
-      <button className={formStyles.button}>Add</button>
+      <button className={formStyles.button} disabled={!selectedResult}>
+        {t("lookup.actions.add")}
+      </button>
     </form>
   );
 }

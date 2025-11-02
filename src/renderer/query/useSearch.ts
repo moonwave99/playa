@@ -15,6 +15,7 @@ type UseSearchParams<T> = {
 
 type UseSearch<T> = {
   isPending: boolean;
+  isFetching: boolean;
   error: Error;
   results: T[];
 };
@@ -28,6 +29,7 @@ export default function useSearch<T>({
 }: UseSearchParams<T>): UseSearch<T> {
   const {
     isPending,
+    isFetching,
     error,
     data: results,
   } = useQuery({
@@ -45,6 +47,7 @@ export default function useSearch<T>({
   return {
     results: results || [],
     isPending,
+    isFetching,
     error,
   };
 }

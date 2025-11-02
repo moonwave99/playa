@@ -1,5 +1,5 @@
 import { MenuItem } from "electron";
-import { ReleaseWithArtistAndTracks, ReleaseWithArtist } from "@/types/types";
+import { ReleaseWithArtistAndTracks } from "@/types/types";
 import { send, openModal } from "@/main/controllers/init";
 import {
   searchReleaseOnDiscogs,
@@ -10,8 +10,12 @@ import { refreshMenuEntries, type GetMenuParams } from "../menu";
 import { getReleaseLink } from "@/lib/links";
 
 export function getReleaseMenu({ controllers, stateManager }: GetMenuParams) {
-  const { getRelease, getSelectedReleases, unGroupSelectedRelease } =
-    controllers.release;
+  const {
+    getRelease,
+    getReleaseTitleInfo,
+    getSelectedReleases,
+    unGroupSelectedRelease,
+  } = controllers.release;
   const { getCollection } = controllers.collection;
   const { getSelectedArtist } = controllers.artist;
 
@@ -122,9 +126,7 @@ export function getReleaseMenu({ controllers, stateManager }: GetMenuParams) {
       accelerator: "Shift+D",
       click: async () =>
         searchReleaseOnDiscogs(
-          (await getRelease(
-            stateManager.getSelection("release").at(0)
-          )) as ReleaseWithArtist
+          await getReleaseTitleInfo(stateManager.getSelection("release").at(0))
         ),
     },
     {
@@ -133,9 +135,7 @@ export function getReleaseMenu({ controllers, stateManager }: GetMenuParams) {
       accelerator: "Shift+R",
       click: async () =>
         searchReleaseOnRYM(
-          (await getRelease(
-            stateManager.getSelection("release").at(0)
-          )) as ReleaseWithArtist
+          await getReleaseTitleInfo(stateManager.getSelection("release").at(0))
         ),
     },
     {
@@ -144,9 +144,7 @@ export function getReleaseMenu({ controllers, stateManager }: GetMenuParams) {
       accelerator: "Shift+Y",
       click: async () =>
         searchReleaseOnYouTube(
-          (await getRelease(
-            stateManager.getSelection("release").at(0)
-          )) as ReleaseWithArtist
+          await getReleaseTitleInfo(stateManager.getSelection("release").at(0))
         ),
     },
     {
@@ -154,11 +152,9 @@ export function getReleaseMenu({ controllers, stateManager }: GetMenuParams) {
       hideOnSinglePage: true,
       label: `Edit selected Release`,
       accelerator: "Shift+E",
-      click: async () =>
+      click: () =>
         openModal("editRelease", {
-          release: (
-            await getSelectedReleases(stateManager.getSelection("release"))
-          ).at(0),
+          id: stateManager.getSelection("release").at(0),
         }),
     },
     {
@@ -168,9 +164,7 @@ export function getReleaseMenu({ controllers, stateManager }: GetMenuParams) {
       accelerator: "Cmd+Shift+E",
       click: async () =>
         openModal("editRelease", {
-          release: (
-            await getSelectedReleases(stateManager.getSelection("release"))
-          ).at(0),
+          id: stateManager.getSelection("release").at(0),
         }),
     },
     {

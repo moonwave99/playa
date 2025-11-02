@@ -7,23 +7,21 @@ import {
   matchPath,
 } from "react-router";
 import { ToastContainer, toast } from "react-toastify";
-import {
-  useKeyManager,
-  withMeta,
-  KeyManager,
-} from "./hooks/useKeyboardManager";
+import { Settings } from "@/types/types";
+import { NOTIFICATION_AUTOCLOSE_INTERVAL } from "@/constants";
+import { useKeyManager } from "./hooks/useKeyboardManager";
 import { useApiEvents } from "./hooks/useApiEvents";
-import api from "./api";
 import useRefetch from "./hooks/useRefetch";
+import api from "./api";
 import useStore from "./store";
 import { refreshCovers } from "@/lib/utils";
+import { routes } from "./routes";
 
 import Nav from "./components/Nav/Nav";
 import Modal from "./Modal";
 import ToastView from "./components/ToastView";
 
-import { routes } from "./routes";
-
+import Onboarding from "./pages/Onboarding/Onboarding";
 import HomePage from "./pages/HomePage/HomePage";
 import ReleasesPage from "./pages/ReleasesPage";
 import ReleasePage from "./pages/ReleasePage/ReleasePage";
@@ -36,8 +34,6 @@ import GroupPage from "./pages/GroupPage";
 
 import cx from "clsx";
 import styles from "./Layout.module.css";
-import { Settings } from "@/types/types";
-import Onboarding from "./pages/Onboarding/Onboarding";
 
 const routesMap = {
   home: <HomePage />,
@@ -124,7 +120,7 @@ function useLayout({ initialSettings }: UseLayoutParams): UseLayout {
         data,
         position: "bottom-right",
         closeButton: false,
-        autoClose: 1500,
+        autoClose: NOTIFICATION_AUTOCLOSE_INTERVAL,
       }),
     onCoverUpdate: refreshCovers,
     onHistoryChange: (historyState) => {
@@ -148,19 +144,7 @@ function useLayout({ initialSettings }: UseLayoutParams): UseLayout {
     onSettingsUpdate: setSettings,
   });
 
-  const { setContext } = useKeyManager({
-    context: KeyManager.global,
-    handlers: {
-      ArrowLeft: withMeta((event: KeyboardEvent) => {
-        event.preventDefault();
-        api.menu.click("goBack");
-      }),
-      ArrowRight: withMeta((event: KeyboardEvent) => {
-        event.preventDefault();
-        api.menu.click("goForward");
-      }),
-    },
-  });
+  const { setContext } = useKeyManager();
 
   useEffect(() => {
     if (firstRender.current) {

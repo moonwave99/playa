@@ -1,34 +1,33 @@
 import { SearchableEntities, SearchResult } from "@/types/types";
 import { DEBOUNCE_INTERVAL } from "@/constants";
-import LookupView from "./LookupView";
+import LookupView, { type LookupViewProps } from "./LookupView";
 import useSearch from "../query/useSearch";
 import { useState } from "react";
 import { useDebounce } from "use-debounce";
 import api from "../api";
 import ErrorView from "./ErrorView";
-import Loading from "./Loading";
 
-type LookupEntityViewProps = {
+export type LookupEntityViewProps = Pick<
+  LookupViewProps<SearchResult>,
+  "allowCustomValue" | "placeholderText" | "className" | "isEntityIncluded"
+> & {
   type: SearchableEntities;
-  className?: string;
-  filterFn?: (item: SearchResult) => boolean;
-  onSelect: (result: SearchResult) => void;
   take?: number;
+  onSelect: (result: SearchResult) => void;
 };
 
-export default function LookupReleasesView({
-  className,
-  filterFn = () => true,
+export default function LookupEntityView({
   onSelect,
   take = 10,
   type,
+  ...rest
 }: LookupEntityViewProps) {
   const [query, setQuery] = useState("");
   const [debouncedQuery] = useDebounce(query, DEBOUNCE_INTERVAL, {
     leading: false,
   });
 
-  const { isPending, error, results } = useSearch({
+  const { isFetching, error, results } = useSearch({
     take,
     query: debouncedQuery,
     queryKey: ["search", debouncedQuery],
@@ -40,22 +39,27 @@ export default function LookupReleasesView({
       }),
   });
 
-  if (isPending) {
-    return <Loading />;
-  }
-
   if (error) {
     return <ErrorView error={error} />;
   }
 
+  function getCustomValue(title: string) {
+    return {
+      id: null as number,
+      title,
+    };
+  }
+
   return (
     <LookupView
-      className={className}
-      items={results.filter(filterFn)}
+      getCustomValue={getCustomValue}
+      isFetching={isFetching}
+      items={results}
       onChange={onSelect}
       query={query}
       onQueryChange={setQuery}
-      getText={(item) => item?.title}
+      getText={(item) => (item as SearchResult)?.title}
+      {...rest}
     />
   );
 }

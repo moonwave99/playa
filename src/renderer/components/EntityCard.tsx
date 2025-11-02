@@ -1,24 +1,27 @@
+import { useTranslation } from "react-i18next";
+import { capitalize } from "lodash";
 import {
   ArtistWithReleases,
   ReleaseWithArtist,
   ReleaseWithArtistAndSubReleases,
 } from "@/types/types";
-import Cover from "./Cover";
 import { getReleaseTitle } from "@/lib/utils";
+import Cover from "./Cover";
+
+import { TiDelete } from "react-icons/ti";
 import styles from "./EntityCard.module.css";
 import buttonStyles from "../buttons.module.css";
-import { MdRemoveCircle } from "react-icons/md";
-import { useTranslation } from "react-i18next";
-import { capitalize } from "lodash";
 
 type EntityCardProps = {
   item: ArtistWithReleases | ReleaseWithArtist;
   onRemoveEntityClick?: () => void;
+  removeButtonLabel?: string;
 };
 
-export default function ReleaseCard({
+export default function EntityCard({
   item,
   onRemoveEntityClick,
+  removeButtonLabel,
 }: EntityCardProps) {
   const { t } = useTranslation();
   const { entityType, id } = item;
@@ -43,11 +46,14 @@ export default function ReleaseCard({
           type="button"
           className={buttonStyles.CornerActionButton}
           onClick={onRemoveEntityClick}
-          aria-label={t("components.EntityCard.remove", {
-            entity: capitalize(entityType),
-          })}
+          aria-label={
+            removeButtonLabel ||
+            t("components.EntityCard.actions.remove", {
+              entity: capitalize(entityType),
+            })
+          }
         >
-          <MdRemoveCircle />
+          <TiDelete />
         </button>
       )}
       <Cover className={styles.cover} {...coverRelease} />

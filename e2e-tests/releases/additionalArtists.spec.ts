@@ -22,12 +22,16 @@ test.describe("Releases", () => {
     const modal = page.locator(".ReactModalPortal");
     await expect(modal).toContainText("Edit Release");
 
-    await modal.getByLabel("Lookup Artists").fill("Artist 2");
-    await modal.getByLabel("Add Artist 2 to related Artists").click();
-    await modal.getByLabel("Lookup Artists").fill("Artist 3");
-    await modal.getByLabel("Add Artist 3 to related Artists").click();
+    await modal.getByPlaceholder("Lookup Artists").fill("Artist 2");
+    await modal.getByText("Artist 2", { exact: true }).click();
+    await page.keyboard.press("Enter");
+
+    await modal.getByPlaceholder("Lookup Artists").fill("Artist 3");
+    await modal.getByText("Artist 3", { exact: true }).click();
+    await page.keyboard.press("Enter");
     await page.keyboard.press("Escape");
     await page.keyboard.press("Escape");
+
     await expect(modal).not.toBeVisible();
 
     const header = page.locator('[data-testid="ReleasePageHeader"]');
@@ -37,8 +41,8 @@ test.describe("Releases", () => {
     await expect(header).toContainText("Artist 3");
 
     await clickMenuItemById("editCurrentRelease");
-
     await expect(modal).toContainText("Edit Release");
+
     await modal.getByLabel("Remove Artist 2 from related Artists").click();
 
     await page.keyboard.press("Escape");
