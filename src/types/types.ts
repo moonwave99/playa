@@ -113,7 +113,7 @@ export type WithGroups = {
 };
 
 export type WithRelatedArtists = {
-  relatedArtists: Artist[];
+  relatedArtists: ArtistWithReleases[];
 };
 
 export type WithAdditionalArtists = {

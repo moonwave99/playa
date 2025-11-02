@@ -30,7 +30,6 @@ test.describe("Releases", () => {
     await modal.getByText("Artist 3", { exact: true }).click();
     await page.keyboard.press("Enter");
     await page.keyboard.press("Escape");
-    await page.keyboard.press("Escape");
 
     await expect(modal).not.toBeVisible();
 

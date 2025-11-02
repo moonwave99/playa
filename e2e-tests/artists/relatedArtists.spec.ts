@@ -28,10 +28,9 @@ test.describe("Related Artists", () => {
     const modal = page.locator(".ReactModalPortal");
     await expect(modal).toContainText("Edit Artist");
 
-    await modal.getByPlaceholder("Search related Artist").fill("Artist 2");
-    await page.waitForTimeout(100);
-    await modal.getByLabel("Add Artist 2 to related Artists").click();
-
+    await modal.getByPlaceholder("Lookup Artists").fill("Artist 2");
+    await modal.getByText("Artist 2", { exact: true }).click();
+    await page.keyboard.press("Enter");
     await page.keyboard.press("Escape");
 
     const artistHeader = page.locator('[data-testid="ArtistPageHeader"]');

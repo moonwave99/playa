@@ -26,7 +26,6 @@ import {
   addAdditionalArtist as _addAdditionalArtist,
   removeAdditionalArtist as _removeAdditionalArtist,
   groupReleases as _groupReleases,
-  type AdditionalArtistParams,
   type GroupReleaseParams,
 } from "../db/release";
 import { getArtist } from "../db/artist";
@@ -339,15 +338,14 @@ export function releaseController({
     return updatedRelease;
   }
 
-  async function removeAdditionalArtist({
-    release_id,
-    artist_id,
-  }: AdditionalArtistParams) {
-    const result = await _removeAdditionalArtist({ release_id, artist_id });
+  async function removeAdditionalArtist(
+    ...params: Parameters<typeof _addAdditionalArtist>
+  ) {
+    const result = await _removeAdditionalArtist(...params);
     send("mutate", [
-      ["releases", release_id],
+      ["releases", params[0].release_id],
       ["artists", result.artist.id],
-      ["artists", artist_id],
+      ["artists", params[0].artist_id],
     ]);
     return result;
   }

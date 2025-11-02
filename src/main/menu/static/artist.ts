@@ -51,7 +51,7 @@ export function getArtistMenu({ controllers, stateManager }: GetMenuParams) {
         controllers.importFolders.refreshArtistReleases(
           (await getSelectedArtist(
             stateManager.getSelection("artist")
-          )) as ArtistWithReleasesFull
+          )) as unknown as ArtistWithReleasesFull
         ),
     },
     {
@@ -80,9 +80,9 @@ export function getArtistMenu({ controllers, stateManager }: GetMenuParams) {
       showOnSinglePage: true,
       label: "Edit current Artist",
       accelerator: "Cmd+Shift+E",
-      click: async () =>
+      click: () =>
         openModal("editArtist", {
-          artist: await getSelectedArtist(stateManager.getSelection("artist")),
+          id: stateManager.getSelection("artist").at(0),
         }),
     },
     {
@@ -90,9 +90,9 @@ export function getArtistMenu({ controllers, stateManager }: GetMenuParams) {
       hideOnSinglePage: true,
       label: "Edit selected Artist",
       accelerator: "Shift+E",
-      click: async () =>
+      click: () =>
         openModal("editArtist", {
-          artist: await getSelectedArtist(stateManager.getSelection("artist")),
+          id: stateManager.getSelection("artist").at(0),
         }),
     },
     {

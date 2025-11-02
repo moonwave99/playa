@@ -98,7 +98,7 @@ export const releaseMenu =
         {
           id: "editArtist",
           label: `Edit Artist`,
-          click: () => openModal("editArtist", { artist: release.artist }),
+          click: () => openModal("editArtist", { id: release.artist.id }),
         },
         getCoverEntityEntry({ selection_id: release.id, context, controllers }),
         release.subReleases?.length

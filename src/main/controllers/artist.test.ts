@@ -247,7 +247,9 @@ describe("artist - addRelatedArtist function", () => {
     const artists = getFakeArtists({ length: 2 });
     await prisma.artist.createMany({ data: artists });
 
-    const { addRelatedArtist } = artistController(defaultParams);
+    const send = vi.fn();
+
+    const { addRelatedArtist } = artistController({ ...defaultParams, send });
 
     await addRelatedArtist(artists[1].id, artists[0].id);
 
@@ -263,6 +265,11 @@ describe("artist - addRelatedArtist function", () => {
 
     expect(updatedArtist.relatedArtists).toMatchObject([artists[1]]);
     expect(addedArtist.relatedArtists).toMatchObject([artists[0]]);
+
+    expect(send).toHaveBeenCalledWith("mutate", [
+      ["artists", 2],
+      ["artists", 1],
+    ]);
   });
 });
 
@@ -271,8 +278,12 @@ describe("artist - removeRelatedArtist function", () => {
     const artists = getFakeArtists({ length: 3 });
     await prisma.artist.createMany({ data: artists });
 
-    const { addRelatedArtist, removeRelatedArtist } =
-      artistController(defaultParams);
+    const send = vi.fn();
+
+    const { addRelatedArtist, removeRelatedArtist } = artistController({
+      ...defaultParams,
+      send,
+    });
 
     await addRelatedArtist(artists[1].id, artists[0].id);
     await addRelatedArtist(artists[2].id, artists[0].id);
@@ -290,6 +301,11 @@ describe("artist - removeRelatedArtist function", () => {
 
     expect(updatedArtist.relatedArtists.map((x) => x.id)).toMatchObject([3]);
     expect(removedArtist.relatedArtists).toMatchObject([]);
+
+    expect(send).toHaveBeenCalledWith("mutate", [
+      ["artists", 2],
+      ["artists", 1],
+    ]);
   });
 });
 

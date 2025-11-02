@@ -8,8 +8,10 @@ type UseArtist = {
   artist: ArtistWithReleasesFull;
   deleteReleases: (release_ids: number[]) => void;
   setArtistCover: (release_id: number) => void;
+  addRelatedArtist: (artist_id: number) => void;
   removeRelatedArtist: (artist_id: number) => void;
   removeFromGroup: (group_id: number) => void;
+  editArtist: (...params: Parameters<typeof api.artist.editArtist>) => void;
 };
 
 export default function useArtist(id: number): UseArtist {
@@ -20,7 +22,8 @@ export default function useArtist(id: number): UseArtist {
     data: artist,
   } = useQuery({
     queryKey: ["artists", id],
-    queryFn: () => api.artist.getArtist(id) as Promise<ArtistWithReleasesFull>,
+    queryFn: () =>
+      api.artist.getArtist(id) as unknown as Promise<ArtistWithReleasesFull>,
   });
 
   function onSuccess() {
@@ -32,7 +35,8 @@ export default function useArtist(id: number): UseArtist {
   }
 
   const deleteReleases = useMutation({
-    mutationFn: api.release.deleteReleases,
+    mutationFn: (release_ids: number[]) =>
+      api.release.deleteReleases(release_ids, artist),
     onSuccess,
   });
 
@@ -48,9 +52,20 @@ export default function useArtist(id: number): UseArtist {
     onSuccess,
   });
 
+  const addRelatedArtist = useMutation({
+    mutationFn: (artist_id: number) =>
+      api.artist.addRelatedArtist(id, artist_id),
+    onSuccess,
+  });
+
   const removeFromGroup = useMutation({
     mutationFn: (group_id: number) =>
       api.group.removeArtistsFromGroup(group_id, [id]),
+    onSuccess,
+  });
+
+  const editArtist = useMutation({
+    mutationFn: api.artist.editArtist,
     onSuccess,
   });
 
@@ -60,7 +75,9 @@ export default function useArtist(id: number): UseArtist {
     error,
     deleteReleases: deleteReleases.mutate,
     setArtistCover: setArtistCover.mutate,
+    addRelatedArtist: addRelatedArtist.mutate,
     removeRelatedArtist: removeRelatedArtist.mutate,
     removeFromGroup: removeFromGroup.mutate,
+    editArtist: editArtist.mutate,
   };
 }

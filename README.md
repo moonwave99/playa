@@ -19,7 +19,6 @@ TBD
 - display artist release selection in search results;
 - add recent searches;
 - add rainbow mode;
-- allow artists pages without releases (for additional artists);
 
 ## Tasks
 

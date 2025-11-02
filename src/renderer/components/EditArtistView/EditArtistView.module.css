@@ -19,3 +19,13 @@
     }
   }
 }
+
+.placeholder {
+  font-size: 0.8rem;
+  color: var(--secondary-color);
+  line-height: 1.5rem;
+}
+
+.lookupView {
+  flex: 1;
+}

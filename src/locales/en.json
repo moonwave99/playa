@@ -301,8 +301,14 @@
         "cancel": "Cancel"
       },
       "relatedArtists": {
+        "title": "Related Artists",
+        "placeholder": "This Artist has no relationships yet.",
+        "fields": {
+          "lookup": {
+            "placeholder": "Lookup Artists"
+          }
+        },
         "actions": {
-          "add": "Add {{name}} to related Artists",
           "remove": "Remove {{name}} from related Artists"
         }
       }

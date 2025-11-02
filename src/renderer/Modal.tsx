@@ -7,8 +7,8 @@ import api from "./api";
 import { MODAL_CLOSE_TIMEOUT } from "@/constants";
 
 import ReleaseLightbox from "./components/ReleaseLightbox";
-import EditArtistView from "./components/EditArtistView";
-import EditReleaseView from "./components/EditReleaseView";
+import EditArtistView from "./components/EditArtistView/EditArtistView";
+import EditReleaseView from "./components/EditReleaseView/EditReleaseView";
 import EditCollectionView from "./components/EditCollectionView";
 import GroupReleasesView from "./components/GroupReleasesView";
 import SettingsView from "./components/SettingsView";

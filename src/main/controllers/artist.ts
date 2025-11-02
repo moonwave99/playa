@@ -9,8 +9,8 @@ import {
   updateArtist,
   setArtistCoverRelease as _setArtistCoverRelease,
   searchArtists,
-  addRelatedArtist,
-  removeRelatedArtist,
+  addRelatedArtist as _addRelatedArtist,
+  removeRelatedArtist as _removeRelatedArtist,
   deleteArtist as _deleteArtist,
   deleteArtists as _deleteArtists,
 } from "../db/artist";
@@ -160,6 +160,28 @@ export function artistController({
       ["artists", "latest"],
       ["artists", artist_id],
     ]);
+  }
+
+  async function addRelatedArtist(
+    ...params: Parameters<typeof _addRelatedArtist>
+  ) {
+    const result = await _addRelatedArtist(...params);
+    send("mutate", [
+      ["artists", params[0]],
+      ["artists", params[1]],
+    ]);
+    return result;
+  }
+
+  async function removeRelatedArtist(
+    ...params: Parameters<typeof _removeRelatedArtist>
+  ) {
+    const result = await _removeRelatedArtist(...params);
+    send("mutate", [
+      ["artists", params[0]],
+      ["artists", params[1]],
+    ]);
+    return result;
   }
 
   return {

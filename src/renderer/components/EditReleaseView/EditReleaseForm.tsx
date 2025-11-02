@@ -1,114 +1,19 @@
-import { useState } from "react";
-import type { FormEvent } from "react";
+import { useState, FormEvent } from "react";
 import { useTranslation } from "react-i18next";
-import useStore from "../store";
-import api from "../api";
-import useRelease from "../query/useRelease";
-import type {
-  ReleaseWithArtist,
-  ReleaseWithArtistAndSubReleases,
-  NewReleaseInfo,
-  EditReleaseParam,
-} from "@/types/types";
-import { releaseTypes } from "@/types/types";
 import { didReleaseInfoChange } from "@/lib/utils";
+import {
+  ReleaseWithArtistAndSubReleases,
+  EditReleaseParam,
+  NewReleaseInfo,
+  ReleaseWithArtist,
+  releaseTypes,
+} from "@/types/types";
+import useStore from "@/renderer/store";
 
-import EntityCardList from "./EntityCardList";
-import LookupEntityForm from "./LookupEntityForm";
-import Loading from "./Loading";
-
-import cx from "clsx";
 import { MdInfoOutline } from "react-icons/md";
+import cx from "clsx";
 import styles from "./EditReleaseView.module.css";
-import formStyles from "../forms.module.css";
-
-type EditReleaseViewProps = {
-  id: number;
-  closeModal: () => void;
-};
-
-export default function EditReleaseView({
-  id,
-  closeModal,
-}: EditReleaseViewProps) {
-  const { t } = useTranslation();
-  const {
-    isPending,
-    release,
-    addNewAdditionalArtist,
-    addAdditionalArtist,
-    removeAdditionalArtist,
-    editRelease,
-  } = useRelease({
-    id,
-  });
-
-  function onSubmit(infos: EditReleaseParam[]) {
-    editRelease(infos);
-    api.state.setSelection("release", []);
-    closeModal();
-  }
-
-  function onAdditionalArtistSubmit({
-    id,
-    title,
-  }: {
-    id: number;
-    title: string;
-  }) {
-    if (!id) {
-      addNewAdditionalArtist(title);
-      return;
-    }
-    addAdditionalArtist(id);
-  }
-
-  if (isPending) {
-    return <Loading />;
-  }
-
-  return (
-    <div className={styles.EditReleaseView}>
-      <h2>{t(`modals.EditReleaseView.title`)}</h2>
-      <EditReleaseFormView
-        release={release}
-        onSubmit={onSubmit}
-        onCancel={closeModal}
-      />
-      <div className={formStyles.container}>
-        <h3>{t("modals.EditReleaseView.additionalArtists.title")}</h3>
-        {release.additionalArtists.length ? (
-          <EntityCardList
-            items={release.additionalArtists}
-            getRemoveButtonLabel={({ name }) =>
-              t("modals.EditReleaseView.additionalArtists.actions.remove", {
-                name,
-              })
-            }
-            onRemoveEntityClick={({ id }) => removeAdditionalArtist(id)}
-          />
-        ) : (
-          <p className={styles.placeholder}>
-            {t("modals.EditReleaseView.additionalArtists.placeholder")}
-          </p>
-        )}
-        <LookupEntityForm
-          allowCustomValue
-          className={styles.lookupView}
-          existingIds={[
-            release.artist.id,
-            ...release.additionalArtists.map(({ id }) => id),
-          ]}
-          type="artist"
-          onSubmit={onAdditionalArtistSubmit}
-          placeholderText={t(
-            "modals.EditReleaseView.additionalArtists.fields.lookup.placeholder"
-          )}
-        />
-      </div>
-    </div>
-  );
-}
+import formStyles from "@/renderer/forms.module.css";
 
 type EditReleaseFormViewProps = {
   release: ReleaseWithArtistAndSubReleases;
@@ -116,7 +21,7 @@ type EditReleaseFormViewProps = {
   onCancel: () => void;
 };
 
-function EditReleaseFormView({
+export default function EditReleaseFormView({
   release,
   onSubmit,
   onCancel,

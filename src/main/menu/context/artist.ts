@@ -46,7 +46,7 @@ export const artistMenu =
       },
       {
         label: "Edit Artist",
-        click: () => openModal("editArtist", { artist }),
+        click: () => openModal("editArtist", { id: artist.id }),
       },
       {
         label: "Delete Artist",
