@@ -1,6 +1,7 @@
 import type { MouseEvent } from "react";
 import { capitalize, deburr, uniqBy, isPlainObject } from "lodash";
-import type {
+import {
+  releaseTypes,
   ReleaseType,
   Release,
   ReleaseWithArtist,
@@ -22,17 +23,6 @@ import type {
   EntityType,
 } from "@/types/types";
 import { getCover } from "./links";
-
-const releaseTypes: ReleaseType[] = [
-  "Album",
-  "Compilation",
-  "EP",
-  "Single",
-  "Bootleg",
-  "Various",
-  "Tribute",
-  "Soundtrack",
-];
 
 export const VARIOUS_ARTISTS_FOLDER = "[V:A]";
 export const VARIOUS_ARTISTS_NAME = "_VV_AA_";

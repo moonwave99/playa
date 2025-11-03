@@ -32,3 +32,5 @@ export const EMPTY_IMG =
 
 export const HOVER_DELAY = 750;
 export const HOVER_TIMEOUT = 200;
+
+export const DOWNLOAD_COVERS_THROTTLE_INTERVAL = 500;

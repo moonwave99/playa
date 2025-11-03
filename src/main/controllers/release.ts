@@ -1,5 +1,6 @@
 import { existsSync, move, unlink } from "fs-extra";
 import prisma from "../db/prisma";
+import { DOWNLOAD_COVERS_THROTTLE_INTERVAL } from "@/constants";
 import {
   EditReleaseParam,
   ReleaseWithArtist,
@@ -218,8 +219,6 @@ export function releaseController({
     return !!imagePath;
   }
 
-  const THROTTLE_INTERVAL = 500;
-
   async function importCovers(
     releases: (ReleaseWithArtist & { tracks?: Track[] })[]
   ) {
@@ -249,7 +248,7 @@ export function releaseController({
         send("coverUpdate", [release]);
         return pic;
       },
-      THROTTLE_INTERVAL
+      DOWNLOAD_COVERS_THROTTLE_INTERVAL
     );
   }
 
