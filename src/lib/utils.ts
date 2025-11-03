@@ -21,8 +21,8 @@ import {
   SearchResult,
   ArtistWithReleasesAndAppearances,
   EntityType,
+  HasId,
 } from "@/types/types";
-import { getCover } from "./links";
 
 export const VARIOUS_ARTISTS_FOLDER = "[V:A]";
 export const VARIOUS_ARTISTS_NAME = "_VV_AA_";
@@ -233,17 +233,15 @@ export function getReleaseContextMenuParams<T extends WithReleases>({
   ];
 }
 
-export function refreshCovers(releases: Release[]) {
-  releases.forEach(({ id, hash }) => {
-    const targetElements = document.querySelectorAll(`img[data-id="${id}"]`);
-    if (!targetElements.length) {
-      return;
-    }
-    targetElements.forEach((element: HTMLImageElement) => {
-      const seed = `${Math.random() * 100000}`.slice(0, 5);
-      element.src = `${getCover(hash)}?_=${seed}`;
-    });
-  });
+export function refreshCovers(releases: HasId[]) {
+  releases.forEach(({ id }) =>
+    document
+      .querySelectorAll(`img[data-id="${id}"]`)
+      .forEach((element: HTMLImageElement) => {
+        const seed = `${Math.random() * 100000}`.slice(0, 5);
+        element.src = `${element.src.split("?").at(0)}?_=${seed}`;
+      })
+  );
 }
 
 export function withStopPropagation(handler: (event: MouseEvent) => void) {
