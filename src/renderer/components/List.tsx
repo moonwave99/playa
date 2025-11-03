@@ -334,6 +334,10 @@ export default function List<T>({
 
   function onClick(index: number, event: MouseEvent) {
     if (!event.metaKey) {
+      if (!selection.length) {
+        setSelection([index]);
+        return;
+      }
       setCurrentIndex(index);
       return;
     }
