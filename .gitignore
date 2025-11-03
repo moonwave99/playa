@@ -73,9 +73,6 @@ out/
 
 # Personal scripts
 scripts/
-src/playground.ts
-src/mobile-sync.ts
-src/json-dump.ts
 
 # db dumps
 dump/
