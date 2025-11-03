@@ -33,6 +33,7 @@ export function useReleaseLightbox({
 
   return {
     openLightbox: (selection) =>
+      selection.length &&
       setModalContents({
         name: "lightbox",
         params: {
