@@ -1,12 +1,13 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useSearchParams } from "react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../api";
 import type {
-  HasId,
   ReleaseWithArtistAndTracksAndSubreleases,
   ReleaseWithArtistAndTracksAndSubreleasesAndCollections,
 } from "@/types/types";
+
+const refreshMap: Record<number, boolean> = {};
 
 type UseReleaseParams = {
   id: number;
@@ -30,7 +31,6 @@ export default function useRelease({
   refreshOnLoad,
 }: UseReleaseParams): UseRelease {
   const queryClient = useQueryClient();
-  const firstRefresh = useRef(true);
   const [params] = useSearchParams();
 
   const {
@@ -49,13 +49,13 @@ export default function useRelease({
   useEffect(() => {
     if (
       !refreshOnLoad ||
-      !firstRefresh.current ||
       !release ||
+      refreshMap[release.id] ||
       hasTracks(release)
     ) {
       return;
     }
-    firstRefresh.current = false;
+    refreshMap[release.id] = true;
     api.importFolders.refreshReleaseContents(release.id).then(() => refetch());
   }, [release, refreshOnLoad]);
 
@@ -64,7 +64,7 @@ export default function useRelease({
       ["releases", "latest"],
       ["releases", id],
       ["artists", release.artist.id],
-      ...release.collections.map((x: HasId) => ["collections", x.id]),
+      ...release.collections.map(({ id }) => ["collections", id]),
     ].forEach((queryKey) => queryClient.invalidateQueries({ queryKey }));
 
     queryClient.invalidateQueries({
