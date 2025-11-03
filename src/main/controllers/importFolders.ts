@@ -1,7 +1,7 @@
 import prisma from "../db/prisma";
 import path from "node:path";
 import { StateManager } from "../stateManager";
-import { normalizeDiacritics } from "@/lib/utils";
+import { mapSeries, normalizeDiacritics } from "@/lib/utils";
 import {
   ReleaseWithArtist,
   ArtistWithReleases,
@@ -93,8 +93,10 @@ export function importFoldersController({
     }
     stateManager.setImporting(true);
     try {
-      await Promise.all(
-        releasesToRefresh.map(({ id }) => refreshReleaseContents(id))
+      await mapSeries(
+        releasesToRefresh,
+        ({ id }) => refreshReleaseContents(id),
+        100
       );
       send("mutate", ["artists", artist.id]);
     } catch (error) {
