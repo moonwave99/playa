@@ -47,10 +47,14 @@
 
 .folderView {
   flex: 1;
+  --tracklist-wrapper-height: 27rem;
+  &.isImportingMultipleFolders {
+    --tracklist-wrapper-height: 22rem;
+  }
 }
 
 .trackListWrapper {
-  height: 27rem;
+  height: var(--tracklist-wrapper-height);
   overflow-y: auto;
 }
 

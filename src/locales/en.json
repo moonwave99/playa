@@ -368,6 +368,9 @@
           "label": "Artist",
           "placeholder": "Select Artist"
         },
+        "path": {
+          "label": "Complete path"
+        },
         "title": {
           "label": "Release Title",
           "placeholder": "Enter Release Title"
@@ -387,7 +390,7 @@
           "placeholder": "Enter title for Track no. {{ index }}"
         },
         "trackArtist": {
-          "label": "Artist",
+          "label": "Track Artist",
           "placeholder": "Enter track Artist for Track no. {{ index }}"
         },
         "position": {

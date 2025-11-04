@@ -60,7 +60,7 @@ export default function InteractiveImportView({
         <FolderView
           key={index}
           data={data[index]}
-          shouldImportMultipleFolders={data.length > 1}
+          isImportingMultipleFolders={data.length > 1}
           isLast={index === data.length - 1}
           onImport={onImport}
           onSkip={gotoNextFolder}
@@ -73,7 +73,7 @@ export default function InteractiveImportView({
 
 type FolderViewProps = {
   data: ImportData;
-  shouldImportMultipleFolders: boolean;
+  isImportingMultipleFolders: boolean;
   isLast: boolean;
   onImport: () => void;
   onCancel: () => void;
@@ -82,7 +82,7 @@ type FolderViewProps = {
 
 function FolderView({
   data,
-  shouldImportMultipleFolders,
+  isImportingMultipleFolders,
   isLast,
   onImport,
   onCancel,
@@ -124,10 +124,25 @@ function FolderView({
 
   return (
     <form
-      className={cx(formStyles.form, styles.folderView)}
+      className={cx(formStyles.form, styles.folderView, {
+        [styles.isImportingMultipleFolders]: isImportingMultipleFolders,
+      })}
       onSubmit={onSubmit}
     >
       <h3>{t("modals.InteractiveImport.folderView.title")}</h3>
+      {isImportingMultipleFolders && (
+        <div className={styles.panel}>
+          <label className={cx(formStyles.label, formStyles.vertical)}>
+            {t("modals.InteractiveImport.release.path.label")}
+            <input
+              className={formStyles.input}
+              defaultValue={data.path}
+              readOnly
+              tabIndex={-1}
+            />
+          </label>
+        </div>
+      )}
       <div className={styles.panel}>
         <label className={cx(formStyles.label, formStyles.vertical)}>
           {t("modals.InteractiveImport.release.artist.label")}
@@ -245,7 +260,7 @@ function FolderView({
             t("modals.InteractiveImport.actions.import")
           )}
         </button>
-        {shouldImportMultipleFolders && !isLast && (
+        {isImportingMultipleFolders && !isLast && (
           <button
             type="button"
             className={formStyles.button}
@@ -281,16 +296,8 @@ function TrackView({ track, index, onTrackEdit }: TrackViewProps) {
       <td>
         <input
           className={cx(formStyles.input, styles.trackInput)}
-          value={track.position}
-          onInput={(event) =>
-            onTrackEdit(
-              {
-                ...track,
-                position: +(event.target as HTMLInputElement).value,
-              },
-              index
-            )
-          }
+          defaultValue={track.position}
+          readOnly
           required
           type="number"
           placeholder={t(
