@@ -6,7 +6,6 @@ import {
   ReleaseWithArtist,
   ArtistWithReleases,
   CollectionWithReleases,
-  Artist,
   ImportData,
   ArtistWithReleasesFull,
   Send,
@@ -14,7 +13,6 @@ import {
   OpenModal,
   ShowErrorBox,
 } from "@/types/types";
-import { globby } from "globby";
 import { searchCover } from "../covers";
 import { addTracksToRelease } from "../db/release";
 import { searchArtistByName } from "../db/artist";
@@ -23,9 +21,8 @@ import { log } from "../logger";
 import {
   getFolderContents,
   getFolderContentsFromAbsolutePath,
-  crawlFolder,
-  parsePath,
   stripPath,
+  findKeyInTrackMeta,
 } from "../utils";
 import type { GetSetting } from "./settings";
 import { MAX_IMPORT_FOLDERS } from "@/constants";
@@ -39,8 +36,6 @@ type ImportFoldersControllerParams = {
   openFolderDialog: OpenFolderDialog;
   showErrorBox: ShowErrorBox;
 };
-
-type ProgressCallback = (folder: string, completed?: boolean) => void;
 
 export function importFoldersController({
   getSetting,
@@ -130,13 +125,16 @@ export function importFoldersController({
       .map(({ tracks, artist }, index) => ({
         artist: artist || {
           id: null as number,
-          name: tracks[0].trackArtist,
+          name: findKeyInTrackMeta(tracks, "artist"),
         },
-        title: tracks[0].meta.album || path.basename(folders[index]),
+        title:
+          (findKeyInTrackMeta(tracks, "album") as string) ||
+          path.basename(folders[index]),
         normalizedTitle: normalizeDiacritics(
-          tracks[0].meta.album || path.basename(folders[index])
+          (findKeyInTrackMeta(tracks, "album") as string) ||
+            path.basename(folders[index])
         ),
-        year: tracks[0].meta.year || 1999,
+        year: +findKeyInTrackMeta(tracks, "year") || 1999,
         folder: path.basename(folders[index]),
         path: stripPath(folders[index], LIBRARY_PATH),
         type: "Album",
@@ -144,7 +142,7 @@ export function importFoldersController({
       }));
 
     const groupedByDisc = Object.values(
-      Object.groupBy(foldersToImport, (x) => x.title)
+      Object.groupBy(foldersToImport, ({ title }) => title)
     ).flatMap((items) =>
       items.length === 1
         ? items
@@ -308,130 +306,7 @@ export function importFoldersController({
     await startInteractiveImport(foldersToImport);
   }
 
-  async function importFolder(folder: string, onProgress: ProgressCallback) {
-    const folders = await globby("**", {
-      onlyDirectories: true,
-      cwd: folder,
-    });
-
-    if (!folders.length) {
-      const release = await importSingleFolder(folder, onProgress);
-      return release ? [release] : [];
-    }
-
-    const releases = await Promise.all(
-      folders
-        .filter((x) => !x.endsWith("]"))
-        .map((f) => importSingleFolder(path.join(folder, f), onProgress))
-    );
-
-    onProgress("done");
-    return releases.filter((x: unknown) => !!x);
-  }
-
-  async function importSingleFolder(
-    folder: string,
-    onProgress: ProgressCallback
-  ) {
-    log("importFolders:importSingleFolder", "Crawling:", folder);
-    const contents = await crawlFolder(folder);
-
-    if (!contents.length) {
-      return null;
-    }
-
-    const LIBRARY_PATH = getSetting("LIBRARY_PATH") as string;
-    const releaseData = parsePath(folder.split(LIBRARY_PATH).at(1));
-
-    if (!releaseData) {
-      return null;
-    }
-
-    onProgress(folder);
-
-    const artistHash = hashArtistName(releaseData.artist.name);
-    const normalizedName = normalizeDiacritics(releaseData.artist.name);
-
-    const artist = await prisma.artist.upsert({
-      where: {
-        hash: artistHash,
-      },
-      update: {
-        hash: artistHash,
-        name: releaseData.artist.name,
-        normalizedName,
-      },
-      create: {
-        hash: artistHash,
-        name: releaseData.artist.name,
-        normalizedName,
-      },
-    });
-
-    log("importFolders:importSingleFolder", "upserted artist", artist);
-
-    const releaseHash = hashRelease({ ...releaseData, artist_id: artist.id });
-    /* eslint-disable @typescript-eslint/no-unused-vars */
-    const { artist: artistData, title, ...releaseWithoutArtist } = releaseData;
-    /* eslint-enable @typescript-eslint/no-unused-vars */
-    const normalizedTitle = normalizeDiacritics(title);
-
-    const path = stripPath(releaseData.fullPath, LIBRARY_PATH);
-
-    const release = await prisma.release.upsert({
-      where: {
-        hash: releaseHash,
-      },
-      update: {
-        hash: releaseHash,
-        title,
-        normalizedTitle,
-        ...releaseWithoutArtist,
-        artist_id: artist.id,
-        path,
-      },
-      create: {
-        hash: releaseHash,
-        title,
-        normalizedTitle,
-        ...releaseWithoutArtist,
-        artist_id: artist.id,
-        path,
-      },
-    });
-
-    const trackInfo = await getFolderContents(
-      { ...release, artist: artist as Artist },
-      LIBRARY_PATH
-    );
-
-    const fullRelease = await addTracksToRelease(release.id, trackInfo);
-
-    log("importFolders:importSingleFolder", "upserted release:", fullRelease);
-
-    const COVERS_PATH = getSetting("COVERS_PATH") as string;
-    const DISCOGS_KEY = getSetting("DISCOGS_KEY") as string;
-    const DISCOGS_SECRET = getSetting("DISCOGS_SECRET") as string;
-
-    await searchCover(
-      {
-        release,
-        artist,
-        track: fullRelease.tracks[0],
-        outputPath: COVERS_PATH,
-      },
-      {
-        DISCOGS_KEY,
-        DISCOGS_SECRET,
-      }
-    );
-
-    onProgress(folder, true);
-    return fullRelease;
-  }
-
   return {
-    importFolder,
     importFolderFromDialog,
     importFromInteractiveData,
     refreshReleaseContents,
@@ -441,7 +316,6 @@ export function importFoldersController({
 }
 
 export const actions: (keyof ReturnType<typeof importFoldersController>)[] = [
-  "importFolder",
   "importFolderFromDialog",
   "importFromInteractiveData",
   "refreshReleaseContents",

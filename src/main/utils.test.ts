@@ -1,6 +1,11 @@
 import prisma from "./db/prisma";
 import { clearPrisma } from "@/test/prisma-utils";
-import { getFolderContents, parsePath, getEntityPath } from "./utils";
+import {
+  getFolderContents,
+  parsePath,
+  getEntityPath,
+  getReleaseDataFromTrackInfo,
+} from "./utils";
 import {
   getFakeArtist,
   getFakeReleasesForArtist,
@@ -8,8 +13,38 @@ import {
 } from "../test/seed";
 import path from "path";
 import { testFs } from "@moonwave99/test-fs";
+import { TrackInfo } from "@/types/types";
 
 afterEach(clearPrisma);
+
+describe("getReleaseDataFromTrackInfo", () => {
+  it("gets release data from track info", () => {
+    const tracks = Array.from({ length: 3 }, (_, i) => ({
+      path: `0${i} - Track 0${i}.mp3`,
+      duration: 123,
+      position: i + 1,
+      title: `Track ${i + 1}`,
+      trackArtist: "Artist 1",
+      meta: {
+        album: "Album 1",
+        year: 1999,
+        artist: "Artist 1",
+      },
+    })) as TrackInfo[];
+
+    const folder = "";
+
+    const output = getReleaseDataFromTrackInfo({ tracks, folder });
+
+    expect(output).toEqual({
+      artist: { name: "Artist 1" },
+      type: "Album",
+      year: 1999,
+      title: "Album 1",
+      fullPath: folder,
+    });
+  });
+});
 
 describe("parsePath function", () => {
   it("parses input correctly", () => {

@@ -77,6 +77,40 @@ async function getMetadata(
   };
 }
 
+type GetReleaseDataFromTrackInfoParams = {
+  folder: string;
+  tracks: TrackInfo[];
+};
+
+type ReleaseInfo =
+  | (Pick<Release, "type" | "year" | "title"> & {
+      artist: Pick<Artist, "name">;
+      fullPath: string;
+    })
+  | null;
+
+export function findKeyInTrackMeta(
+  tracks: TrackInfo[],
+  key: keyof TrackInfo["meta"]
+) {
+  return tracks.find((x) => !!x.meta[key])?.meta[key];
+}
+
+export function getReleaseDataFromTrackInfo({
+  folder,
+  tracks,
+}: GetReleaseDataFromTrackInfoParams): ReleaseInfo {
+  return {
+    artist: {
+      name: findKeyInTrackMeta(tracks, "artist") as string,
+    },
+    type: "Album",
+    title: findKeyInTrackMeta(tracks, "album") as string,
+    fullPath: folder,
+    year: +findKeyInTrackMeta(tracks, "year") as number,
+  };
+}
+
 type ParsePath =
   | (Pick<Release, "type" | "year" | "title"> & {
       artist: Pick<Artist, "name">;

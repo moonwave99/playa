@@ -16,7 +16,6 @@ import EditGroupView from "./components/EditGroupView";
 import SearchView from "./components/SearchView";
 import ImportDataView from "./components/ImportDataView";
 import ExportDataView from "./components/ExportDataView";
-import ImportFoldersView from "./components/ImportFoldersView";
 import AddReleasesToCollectionView from "./components/AddReleasesToCollectionView";
 import AddArtistsToGroupView from "./components/AddArtistsToGroupView";
 import InteractiveImportView from "./components/InteractiveImportView";
@@ -139,12 +138,6 @@ const modalMap: ModalMap<{ closeModal: () => void }> = {
   },
   exportData: {
     component: ExportDataView,
-  },
-  importFolders: {
-    component: ImportFoldersView,
-    styles: {
-      width: "min(80vw, 1000px)",
-    },
   },
   groupReleases: {
     component: GroupReleasesView,

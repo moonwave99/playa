@@ -232,15 +232,6 @@
         "cancel": "Cancel"
       }
     },
-    "ImportFoldersView": {
-      "title": "Importing Folders",
-      "status": {
-        "done": "Done"
-      },
-      "actions": {
-        "close": "Close"
-      }
-    },
     "EditReleaseView": {
       "title": "Edit Release",
       "moveInfo": "This will move the Release folder in your Library.",
