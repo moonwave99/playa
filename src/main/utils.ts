@@ -14,8 +14,8 @@ import { globby } from "globby";
 import { VARIOUS_ARTISTS_NAME, VARIOUS_ARTISTS_FOLDER } from "@/lib/utils";
 import { QueryKey } from "@tanstack/react-query";
 
-export function stripPath(completePath: string, startPath: string) {
-  const stripped = completePath.replace(new RegExp(`^${startPath}`), "");
+export function stripPath(fullPath: string, startPath: string) {
+  const stripped = fullPath.replace(new RegExp(`^${startPath}`), "");
   if (path.isAbsolute(stripped)) {
     return stripped.slice(1);
   }
@@ -23,43 +23,16 @@ export function stripPath(completePath: string, startPath: string) {
 }
 
 type GetEntityPathParam = { entityType: EntityType } & (
-  | Pick<Artist, "path">
-  | Pick<ReleaseWithArtist, "artist" | "path" | "type" | "year">
+  | Pick<Release, "path">
   | Pick<TrackWithRelease, "release" | "path">
 );
 
 export function getEntityPath(entity: GetEntityPathParam) {
-  if (entity.entityType === "artist") {
+  if (entity.entityType === "release") {
     return entity.path;
   }
-  if (entity.entityType === "release") {
-    const release = entity as ReleaseWithArtist;
-    if (release.completePath) {
-      return release.completePath;
-    }
-    return path.join(
-      release.artist.path,
-      `[${release.type}]`,
-      `${release.year} - ${release.path}`
-    );
-  }
   const track = entity as TrackWithRelease;
-  if (track.release.completePath) {
-    return path.join(track.release.completePath, track.path);
-  }
-  return path.join(
-    track.release.artist.path,
-    `[${track.release.type}]`,
-    `${track.release.year} - ${track.release.path}`,
-    track.path
-  );
-}
-
-export function getArtistPathFromReleaseData(data: ParsePath) {
-  if (data.completePath.startsWith(VARIOUS_ARTISTS_FOLDER)) {
-    return VARIOUS_ARTISTS_FOLDER;
-  }
-  return data.completePath.split("/").slice(0, 2).join("/");
+  return path.join(track.release.path, track.path);
 }
 
 export async function crawlFolder(folder: string) {
@@ -105,9 +78,9 @@ async function getMetadata(
 }
 
 type ParsePath =
-  | (Pick<Release, "type" | "path" | "year" | "title"> & {
+  | (Pick<Release, "type" | "year" | "title"> & {
       artist: Pick<Artist, "name">;
-      completePath: string;
+      fullPath: string;
     })
   | null;
 
@@ -147,8 +120,7 @@ export function parsePath(path: string): ParsePath {
     type: type as ReleaseType,
     year,
     title,
-    path: title,
-    completePath: path.replace(
+    fullPath: path.replace(
       `[V-A]/${VARIOUS_ARTISTS_NAME}`,
       VARIOUS_ARTISTS_FOLDER
     ),

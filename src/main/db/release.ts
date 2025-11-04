@@ -294,7 +294,7 @@ export async function getLatestAdditions(
   );
 }
 
-type RenameReleaseParam = (Pick<
+type UpdateReleasesParams = Pick<
   Release,
   | "id"
   | "title"
@@ -304,36 +304,24 @@ type RenameReleaseParam = (Pick<
   | "discNumber"
   | "type"
   | "year"
-> & { completePath?: string })[];
+>[];
 
-export async function updateReleases(infos: RenameReleaseParam) {
+export async function updateReleases(infos: UpdateReleasesParams) {
   return prisma.$transaction(
-    infos.map(
-      ({
-        id,
-        title,
-        path,
-        completePath,
-        hash,
-        discTitle,
-        discNumber,
-        type,
-        year,
-      }) =>
-        prisma.release.update({
-          where: { id },
-          data: {
-            title,
-            normalizedTitle: normalizeDiacritics(title),
-            path,
-            hash,
-            discTitle,
-            discNumber,
-            type,
-            year,
-            ...(completePath ? { completePath } : {}),
-          },
-        })
+    infos.map(({ id, title, path, hash, discTitle, discNumber, type, year }) =>
+      prisma.release.update({
+        where: { id },
+        data: {
+          title,
+          normalizedTitle: normalizeDiacritics(title),
+          path,
+          hash,
+          discTitle,
+          discNumber,
+          type,
+          year,
+        },
+      })
     )
   );
 }

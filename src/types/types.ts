@@ -66,7 +66,7 @@ export type CollectionCreate = { title: string; releases?: number[] };
 export type CollectionUpdate = { title: string; releases: number[] };
 export type GroupCreate = { title: string; artists?: number[] };
 export type GroupUpdate = { title: string; artists: number[] };
-export type ArtistUpdate = Pick<Artist, "name" | "path">;
+export type ArtistUpdate = Pick<Artist, "name">;
 export type TrackInfo = Pick<
   Track,
   "path" | "duration" | "position" | "title" | "trackArtist"
@@ -223,7 +223,6 @@ export const listViewModesMap = {
 export type ListViews = keyof typeof listViewModesMap;
 
 export type NewReleaseInfo = {
-  newPath: string;
   newDiscTitle: string;
   newTitle: string;
   newType: ReleaseType;
@@ -234,7 +233,6 @@ export type EditReleaseParam = Pick<
   Release,
   | "id"
   | "path"
-  | "completePath"
   | "hash"
   | "title"
   | "artist_id"
@@ -266,8 +264,8 @@ export type ImportData = {
   artist: Pick<Artist, "id" | "name">;
   title: string;
   year: number;
-  completePath: string;
   path: string;
+  folder: string;
   type: ReleaseType;
   discNumber?: number;
   tracks: TrackInfo[];

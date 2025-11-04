@@ -11,7 +11,7 @@ import {
   OpenConfirmDialog,
   Send,
 } from "@/types/types";
-import { didReleaseInfoChange, mapSeries } from "@/lib/utils";
+import { mapSeries } from "@/lib/utils";
 import {
   getReleaseTitleInfo,
   getRelease,
@@ -29,8 +29,8 @@ import {
   groupReleases as _groupReleases,
   type GroupReleaseParams,
 } from "../db/release";
-import { getArtist } from "../db/artist";
-import { getEntityPath, withConfirmDialog } from "../utils";
+
+import { withConfirmDialog } from "../utils";
 import { hashRelease } from "../hash";
 import { searchCover, getImageFromURL, updateCoverInfo } from "../covers";
 import { log } from "../logger";
@@ -44,7 +44,6 @@ type ReleaseControllerParams = {
   showErrorBox: ShowErrorBox;
   openConfirmDialog: OpenConfirmDialog;
   stateManager: StateManager;
-  skipMove?: boolean;
 };
 
 export function releaseController({
@@ -54,63 +53,13 @@ export function releaseController({
   stateManager,
   showErrorBox,
   openConfirmDialog,
-  skipMove = false,
 }: ReleaseControllerParams) {
   async function editRelease(infos: EditReleaseParam[]) {
     if (!infos.length) {
       return [];
     }
 
-    const shouldJustRenameDiscs =
-      infos.every(
-        (x) =>
-          x.path === x.newPath && x.year === x.newYear && x.type === x.newType
-      ) && didReleaseInfoChange(infos);
-
-    if (shouldJustRenameDiscs) {
-      return await updateReleases(
-        infos.map((x) => ({
-          ...x,
-          discTitle: infos.length === 1 ? null : x.newDiscTitle,
-          title: x.newTitle,
-          type: x.newType,
-          year: x.newYear,
-        }))
-      );
-    }
-
-    const artist = await getArtist(infos[0].artist_id);
-
-    for (const info of infos) {
-      if (info.newPath.includes("../")) {
-        showErrorBox(
-          "Error while renaming",
-          "Path cannot contain any '../' sequence"
-        );
-        return false;
-      }
-      const targetPath = withPath(
-        "LIBRARY_PATH",
-        getEntityPath({
-          entityType: "release",
-          year: info.newYear,
-          type: info.newType,
-          path: info.newPath,
-          artist,
-        })
-      );
-
-      if (existsSync(targetPath)) {
-        showErrorBox(
-          "Error while renaming",
-          `Path ${info.newPath} already exists`
-        );
-        return false;
-      }
-    }
-
     try {
-      const USE_SMART_IMPORT = getSetting("USE_SMART_IMPORT");
       const newInfos = infos.map((x) => ({
         ...x,
         hash: hashRelease({
@@ -119,69 +68,28 @@ export function releaseController({
           year: x.newYear,
         }),
         discTitle: infos.length === 1 ? null : x.newDiscTitle,
-        path: x.newPath,
-        completePath: USE_SMART_IMPORT
-          ? getEntityPath({
-              entityType: "release",
-              year: x.newYear,
-              type: x.newType,
-              path: x.newPath,
-              artist,
-            })
-          : x.completePath,
         title: x.newTitle,
         type: x.newType,
         year: x.newYear,
       }));
 
-      if (!skipMove) {
-        await Promise.all(
-          infos.map(async (x, index) => {
-            const oldPath = withPath(
-              "LIBRARY_PATH",
-              getEntityPath({
-                ...x,
-                artist,
-                entityType: "release",
-              })
-            );
-            const newPath = withPath(
-              "LIBRARY_PATH",
-              getEntityPath({
-                artist,
-                entityType: "release",
-                type: x.newType,
-                year: x.newYear,
-                path: x.newPath,
-              })
-            );
+      await Promise.all(
+        infos.map(async (x, index) => {
+          const oldCoverPath = withPath("COVERS_PATH", `${x.hash}-cover.jpg`);
+          const newCoverPath = withPath(
+            "COVERS_PATH",
+            `${newInfos[index].hash}-cover.jpg`
+          );
 
-            if (!existsSync(oldPath)) {
-              throw new Error(`Release ${x.id} not found at: ${oldPath}`);
-            }
-
-            if (oldPath === newPath) {
-              return true;
-            }
-
-            await move(oldPath, newPath);
-
-            const oldCoverPath = withPath("COVERS_PATH", `${x.hash}-cover.jpg`);
-            const newCoverPath = withPath(
-              "COVERS_PATH",
-              `${newInfos[index].hash}-cover.jpg`
-            );
-
-            if (!existsSync(oldCoverPath) || oldCoverPath === newCoverPath) {
-              return true;
-            }
-
-            await move(oldCoverPath, newCoverPath);
-
+          if (!existsSync(oldCoverPath) || oldCoverPath === newCoverPath) {
             return true;
-          })
-        );
-      }
+          }
+
+          await move(oldCoverPath, newCoverPath);
+
+          return true;
+        })
+      );
 
       return await updateReleases(newInfos);
     } catch (error) {

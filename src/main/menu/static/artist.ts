@@ -34,16 +34,6 @@ export function getArtistMenu({ controllers, stateManager }: GetMenuParams) {
         ),
     },
     {
-      id: "revealArtistInFinder",
-      label: "Reveal Artist in Finder",
-      accelerator: "Cmd+Shift+F",
-      click: async () =>
-        controllers.system.revealEntityInFinder({
-          entityType: "artist",
-          id: stateManager.getSelection("artist").at(0),
-        }),
-    },
-    {
       id: "refreshArtistReleases",
       disableOnImport: true,
       label: "Refresh all Releases content",

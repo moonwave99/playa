@@ -182,7 +182,6 @@ export async function getArtistAlphabeticalList() {
       name: true,
       normalizedName: true,
       hash: true,
-      path: true,
     },
   });
   return groupItemsByLetter(artists as Artist[]);
@@ -192,10 +191,10 @@ function withReleaseCount(artist: ArtistWithReleases) {
   return { ...artist, releaseCount: countReleasesByType(artist.releases) };
 }
 
-export async function updateArtist(id: number, { name, path }: ArtistUpdate) {
+export async function updateArtist(id: number, { name }: ArtistUpdate) {
   return prisma.artist.update({
     where: { id },
-    data: { name, normalizedName: normalizeDiacritics(name), path },
+    data: { name, normalizedName: normalizeDiacritics(name) },
   });
 }
 

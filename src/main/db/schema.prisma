@@ -16,7 +16,6 @@ model Artist {
   name                    String
   normalizedName          String     @default("")
   hash                    String     @unique
-  path                    String     @default("")
   coverReleaseId          Int?       @unique
   coverRelease            Release?   @relation("ArtistCover", fields: [coverReleaseId], references: [id])
   coverGroups             Group[]    @relation("GroupCover")
@@ -37,8 +36,7 @@ model Release {
   title             String
   normalizedTitle   String       @default("")
   hash              String       @unique
-  path              String       @default("")
-  completePath      String       @default("")
+  path              String       @unique @default("")
   colorInfo         Json?
   type              ReleaseType  @default(Album)
   year              Int?
@@ -104,7 +102,6 @@ model Group {
 model Settings {
   id                         Int     @id @default(autoincrement())
   SHOW_ONBOARDING_ON_STARTUP Boolean @default(true)
-  USE_SMART_IMPORT           Boolean @default(false)
   PLAYER_PATH                String  @default("")
   TAGGER_PATH                String  @default("")
   LIBRARY_PATH               String  @default("")

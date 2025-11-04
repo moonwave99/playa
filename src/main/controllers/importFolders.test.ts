@@ -174,7 +174,7 @@ describe("importFolder function", () => {
       importedReleases.sort((a, b) => (a.title > b.title ? 1 : -1))
     ).toMatchObject([
       {
-        path: "Release 1",
+        path: "A/Artist 1/[Album]/2000 - Release 1",
         title: "Release 1",
         hash: "ee1478c38c24f36e",
         year: 2000,
@@ -182,7 +182,7 @@ describe("importFolder function", () => {
         artist_id: 1,
       },
       {
-        path: "Release 2",
+        path: "A/Artist 1/[Album]/2000 - Release 2",
         title: "Release 2",
         hash: "4af3d5d9da84e183",
         year: 2000,
@@ -405,7 +405,7 @@ describe("importFolderFromDialog function", () => {
     expect(send).not.toHaveBeenCalled();
   });
 
-  it("imports the contents of the folder picked in the dialog", async (context) => {
+  it("opens the interactive import dialog", async (context) => {
     const directory = await testFs(
       {
         "/LIBRARY_PATH/A/Artist 1": {
@@ -413,9 +413,141 @@ describe("importFolderFromDialog function", () => {
             "2000 - Release 1": {
               "01 - Track 1.mp3": "",
               "02 - Track 2.mp3": "",
-              "03 - Track 3.mp3": "",
-              "04 - Track 4.mp3": "",
-              "05 - Track 5.mp3": "",
+            },
+          },
+        },
+      },
+      context.task.id
+    );
+    const LIBRARY_PATH = path.join(directory, "LIBRARY_PATH");
+    const artist = getFakeArtist(1);
+    await prisma.artist.create({ data: artist });
+
+    const showErrorBox = vi.fn();
+    const send = vi.fn();
+    const openModal = vi.fn();
+
+    const { importFolderFromDialog } = importFoldersController({
+      ...defaultParams,
+      getSetting: (key: string) =>
+        key === "LIBRARY_PATH" ? LIBRARY_PATH : false,
+      openFolderDialog: ({ defaultPath }) => [
+        path.join(defaultPath, "A/Artist 1", "[Album]", "2000 - Release 1"),
+      ],
+      showErrorBox,
+      send,
+      openModal,
+      stateManager: {
+        getSelection: () => [1],
+      } as unknown as StateManager,
+    });
+
+    await importFolderFromDialog();
+
+    expect(openModal).toHaveBeenCalledWith("interactiveImport", {
+      data: [
+        {
+          artist: {
+            ...artist,
+            coverReleaseId: null,
+            updatedAt: null,
+          },
+          path: "A/Artist 1/[Album]/2000 - Release 1",
+          folder: "2000 - Release 1",
+          title: "Release 1",
+          normalizedTitle: "Release 1",
+          year: 2000,
+          type: "Album",
+          tracks: [
+            {
+              duration: 123,
+              meta: {
+                album: "Release 1",
+                artist: "Artist 1",
+                title: "Track 1",
+                year: 2000,
+                track: {
+                  no: 1,
+                },
+              },
+              path: "01 - Track 1.mp3",
+              position: 1,
+              title: "Track 1",
+              trackArtist: "Artist 1",
+            },
+            {
+              duration: 123,
+              meta: {
+                album: "Release 1",
+                artist: "Artist 1",
+                title: "Track 2",
+                year: 2000,
+                track: {
+                  no: 2,
+                },
+              },
+              path: "02 - Track 2.mp3",
+              position: 2,
+              title: "Track 2",
+              trackArtist: "Artist 1",
+            },
+          ],
+        },
+      ],
+    });
+  });
+
+  it("shows an error box if all selected folders are empty", async (context) => {
+    const directory = await testFs(
+      {
+        "/LIBRARY_PATH/A/Artist 1": {
+          "[Album]": {
+            "2000 - Release 1": {},
+            "2000 - Release 2": {},
+          },
+        },
+      },
+      context.task.id
+    );
+    const LIBRARY_PATH = path.join(directory, "LIBRARY_PATH");
+    const artist = getFakeArtist(1);
+    await prisma.artist.create({ data: artist });
+
+    const showErrorBox = vi.fn();
+    const send = vi.fn();
+
+    const { importFolderFromDialog } = importFoldersController({
+      ...defaultParams,
+      getSetting: (key: string) =>
+        key === "LIBRARY_PATH" ? LIBRARY_PATH : false,
+      openFolderDialog: ({ defaultPath }) => [
+        path.join(defaultPath, "A/Artist 1", "[Album]", "2000 - Release 1"),
+        path.join(defaultPath, "A/Artist 1", "[Album]", "2000 - Release 2"),
+      ],
+      showErrorBox,
+      send,
+      stateManager: {
+        getSelection: () => [1],
+      } as unknown as StateManager,
+    });
+
+    await importFolderFromDialog();
+
+    expect(showErrorBox).toHaveBeenCalledWith(
+      "Error importing Folders",
+      "All selected folders are empty."
+    );
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("shows an error box when importing a single, already imported folder", async (context) => {
+    const directory = await testFs(
+      {
+        "/LIBRARY_PATH/A/Artist 1": {
+          "[Album]": {
+            "2000 - Release 1": {
+              "01 - Track 1.mp3": "",
+              "02 - Track 2.mp3": "",
             },
           },
         },
@@ -424,223 +556,38 @@ describe("importFolderFromDialog function", () => {
     );
     const LIBRARY_PATH = path.join(directory, "LIBRARY_PATH");
 
-    const artist = getFakeArtist(1);
-    await prisma.artist.create({ data: artist });
+    await prisma.artist.create({ data: getFakeArtist(1) });
+    await prisma.release.create({
+      data: {
+        ...getFakeReleasesForArtist(1).at(0),
+        path: "A/Artist 1/[Album]/2000 - Release 1",
+      },
+    });
+
+    const showErrorBox = vi.fn();
     const send = vi.fn();
-    const openModal = vi.fn();
 
     const { importFolderFromDialog } = importFoldersController({
       ...defaultParams,
-      openFolderDialog: ({ defaultPath }) => [
-        path.join(directory, defaultPath),
-      ],
-      send,
-      openModal,
       getSetting: (key: string) =>
-        key === "LIBRARY_PATH" ? LIBRARY_PATH : key,
+        key === "LIBRARY_PATH" ? LIBRARY_PATH : false,
+      openFolderDialog: ({ defaultPath }) => [
+        path.join(defaultPath, "A/Artist 1", "[Album]", "2000 - Release 1"),
+      ],
+      showErrorBox,
+      send,
       stateManager: {
         getSelection: () => [1],
       } as unknown as StateManager,
     });
 
     await importFolderFromDialog();
-    expect(send).toHaveBeenCalledWith("mutate", [
-      ["artists", "latest"],
-      ["releases", "latest"],
-      ["artists", 1],
-    ]);
-    expect(send).toHaveBeenCalledWith("notify", {
-      type: "success",
-      message: `1 releases imported`,
-    });
-  });
 
-  describe("USE_SMART_IMPORT: FALSE", () => {
-    it("opens the interactive import dialog", async (context) => {
-      const directory = await testFs(
-        {
-          "/LIBRARY_PATH/A/Artist 1": {
-            "[Album]": {
-              "2000 - Release 1": {
-                "01 - Track 1.mp3": "",
-                "02 - Track 2.mp3": "",
-              },
-            },
-          },
-        },
-        context.task.id
-      );
-      const LIBRARY_PATH = path.join(directory, "LIBRARY_PATH");
-      const artist = getFakeArtist(1);
-      await prisma.artist.create({ data: artist });
-
-      const showErrorBox = vi.fn();
-      const send = vi.fn();
-      const openModal = vi.fn();
-
-      const { importFolderFromDialog } = importFoldersController({
-        ...defaultParams,
-        getSetting: (key: string) =>
-          key === "LIBRARY_PATH" ? LIBRARY_PATH : false,
-        openFolderDialog: ({ defaultPath }) => [
-          path.join(directory, defaultPath, "[Album]", "2000 - Release 1"),
-        ],
-        showErrorBox,
-        send,
-        openModal,
-        stateManager: {
-          getSelection: () => [1],
-        } as unknown as StateManager,
-      });
-
-      await importFolderFromDialog();
-
-      expect(openModal).toHaveBeenCalledWith("interactiveImport", {
-        data: [
-          {
-            artist: {
-              ...artist,
-              coverReleaseId: null,
-              updatedAt: null,
-            },
-            path: "2000 - Release 1",
-            completePath: path.join(artist.path, "[Album]", "2000 - Release 1"),
-            title: "Release 1",
-            normalizedTitle: "Release 1",
-            year: 2000,
-            type: "Album",
-            tracks: [
-              {
-                duration: 123,
-                meta: {
-                  album: "Release 1",
-                  artist: "Artist 1",
-                  title: "Track 1",
-                  year: 2000,
-                  track: {
-                    no: 1,
-                  },
-                },
-                path: "01 - Track 1.mp3",
-                position: 1,
-                title: "Track 1",
-                trackArtist: "Artist 1",
-              },
-              {
-                duration: 123,
-                meta: {
-                  album: "Release 1",
-                  artist: "Artist 1",
-                  title: "Track 2",
-                  year: 2000,
-                  track: {
-                    no: 2,
-                  },
-                },
-                path: "02 - Track 2.mp3",
-                position: 2,
-                title: "Track 2",
-                trackArtist: "Artist 1",
-              },
-            ],
-          },
-        ],
-      });
-    });
-
-    it("shows an error box if all selected folders are empty", async (context) => {
-      const directory = await testFs(
-        {
-          "/LIBRARY_PATH/A/Artist 1": {
-            "[Album]": {
-              "2000 - Release 1": {},
-              "2000 - Release 2": {},
-            },
-          },
-        },
-        context.task.id
-      );
-      const LIBRARY_PATH = path.join(directory, "LIBRARY_PATH");
-      const artist = getFakeArtist(1);
-      await prisma.artist.create({ data: artist });
-
-      const showErrorBox = vi.fn();
-      const send = vi.fn();
-
-      const { importFolderFromDialog } = importFoldersController({
-        ...defaultParams,
-        getSetting: (key: string) =>
-          key === "LIBRARY_PATH" ? LIBRARY_PATH : false,
-        openFolderDialog: ({ defaultPath }) => [
-          path.join(directory, defaultPath, "[Album]", "2000 - Release 1"),
-          path.join(directory, defaultPath, "[Album]", "2000 - Release 2"),
-        ],
-        showErrorBox,
-        send,
-        stateManager: {
-          getSelection: () => [1],
-        } as unknown as StateManager,
-      });
-
-      await importFolderFromDialog();
-
-      expect(showErrorBox).toHaveBeenCalledWith(
-        "Error importing Folders",
-        "All selected folders are empty."
-      );
-      expect(send).not.toHaveBeenCalled();
-    });
-
-    it("shows an error box when importing a single, already imported folder", async (context) => {
-      const directory = await testFs(
-        {
-          "/LIBRARY_PATH/A/Artist 1": {
-            "[Album]": {
-              "2000 - Release 1": {
-                "01 - Track 1.mp3": "",
-                "02 - Track 2.mp3": "",
-              },
-            },
-          },
-        },
-        context.task.id
-      );
-      const LIBRARY_PATH = path.join(directory, "LIBRARY_PATH");
-
-      await prisma.artist.create({ data: getFakeArtist(1) });
-      await prisma.release.create({
-        data: {
-          ...getFakeReleasesForArtist(1).at(0),
-          path: "2000 - Release 1",
-          completePath: "A/Artist 1/[Album]/2000 - Release 1",
-        },
-      });
-
-      const showErrorBox = vi.fn();
-      const send = vi.fn();
-
-      const { importFolderFromDialog } = importFoldersController({
-        ...defaultParams,
-        getSetting: (key: string) =>
-          key === "LIBRARY_PATH" ? LIBRARY_PATH : false,
-        openFolderDialog: ({ defaultPath }) => [
-          path.join(directory, defaultPath, "[Album]", "2000 - Release 1"),
-        ],
-        showErrorBox,
-        send,
-        stateManager: {
-          getSelection: () => [1],
-        } as unknown as StateManager,
-      });
-
-      await importFolderFromDialog();
-
-      expect(showErrorBox).toHaveBeenCalledWith(
-        "Error importing Folders",
-        "Folder already imported"
-      );
-      expect(send).not.toHaveBeenCalled();
-    });
+    expect(showErrorBox).toHaveBeenCalledWith(
+      "Error importing Folders",
+      "Folder already imported"
+    );
+    expect(send).not.toHaveBeenCalled();
   });
 });
 
@@ -666,8 +613,7 @@ describe("importFromInteractiveData function", () => {
       title: "New Release",
       year: 2000,
       type: "Album",
-      path: "New Release",
-      completePath: "LIBRARY_PATH/New Release",
+      path: "LIBRARY_PATH/New Release",
       tracks,
     });
 
@@ -693,8 +639,7 @@ describe("importFromInteractiveData function", () => {
       year: 2000,
       hash: "6ecba3dc88bfe067",
       type: "Album",
-      path: "New Release",
-      completePath: "LIBRARY_PATH/New Release",
+      path: "LIBRARY_PATH/New Release",
       tracks: [
         {
           id: 1,
@@ -745,8 +690,7 @@ describe("importFromInteractiveData function", () => {
       title: "New Release",
       year: 2000,
       type: "Album",
-      path: "New Release",
-      completePath: "LIBRARY_PATH/New Release",
+      path: "LIBRARY_PATH/New Release",
       tracks,
     });
 
@@ -776,8 +720,7 @@ describe("importFromInteractiveData function", () => {
       year: 2000,
       hash: "6ecba3dc88bfe067",
       type: "Album",
-      path: "New Release",
-      completePath: "LIBRARY_PATH/New Release",
+      path: "LIBRARY_PATH/New Release",
       tracks: [
         {
           id: 1,

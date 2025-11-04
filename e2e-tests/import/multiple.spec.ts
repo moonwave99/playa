@@ -13,7 +13,7 @@ test.beforeAll(async ({}, { testId }) => {
   await cleanup({ id: testId, preserveSettings: true });
 
   await Promise.all(
-    Array.from({ length: 3 }, (_, i) =>
+    Array.from({ length: 2 }, (_, i) =>
       createAlbum({
         libraryPath: path.join(getE2ETmpPath(testId), "LIBRARY_PATH"),
         artist: "Artist 1",
@@ -25,7 +25,7 @@ test.beforeAll(async ({}, { testId }) => {
 
 test.afterAll(async ({}, { testId }) => remove(getE2ETmpPath(testId)));
 
-test.describe("Import", () => {
+test.describe("Import Multiple", () => {
   test("import multiple folders into library", async () => {
     const { page, clickMenuItemById } = await getElectronApp();
     await clickMenuItemById("gotoHomePage");
@@ -34,6 +34,16 @@ test.describe("Import", () => {
     ).toBeVisible();
 
     await clickMenuItemById("importFolder");
+    await expect(
+      page.getByRole("heading").filter({ hasText: "Import Folders" })
+    ).toBeVisible();
+
+    const modal = page.locator(".ReactModalPortal");
+    await expect(modal.getByLabel("Release title")).toHaveValue("Album 1");
+    await page.getByRole("button").filter({ hasText: "Import Folder" }).click();
+
+    await expect(modal.getByLabel("Release title")).toHaveValue("Album 2");
+    await page.getByRole("button").filter({ hasText: "Import Folder" }).click();
 
     await page.getByRole("button", { name: "Close Modal" }).click();
 
@@ -54,11 +64,11 @@ test.describe("Import", () => {
 
     const artistHeader = page.locator('[data-testid="ArtistPageHeader"]');
     await expect(artistHeader).toContainText("Artist 1");
-    await expect(artistHeader).toContainText("3 Releases");
+    await expect(artistHeader).toContainText("2 Releases");
 
     const releaseList = page.locator('[data-testid="ReleaseList"]');
     await Promise.all(
-      Array.from({ length: 3 }, (_, i) =>
+      Array.from({ length: 2 }, (_, i) =>
         expect(releaseList).toContainText(`Album ${i + 1}`)
       )
     );

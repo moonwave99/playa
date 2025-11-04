@@ -33,10 +33,6 @@ export const artistMenu =
 
     buildMenu([
       {
-        label: `Reveal '${name}' in Finder`,
-        click: () => controllers.system.revealEntityInFinder(artist),
-      },
-      {
         label: `Import '${name}' Covers`,
         click: async () => controllers.release.importCovers(releases),
       },

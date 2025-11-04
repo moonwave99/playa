@@ -17,14 +17,13 @@ import {
 import { globby } from "globby";
 import { searchCover } from "../covers";
 import { addTracksToRelease } from "../db/release";
-import { getArtist, searchArtistByName } from "../db/artist";
+import { searchArtistByName } from "../db/artist";
 import { hashArtistName, hashRelease } from "../hash";
 import { log } from "../logger";
 import {
   getFolderContents,
   getFolderContentsFromAbsolutePath,
   crawlFolder,
-  getArtistPathFromReleaseData,
   parsePath,
   stripPath,
 } from "../utils";
@@ -44,7 +43,6 @@ type ImportFoldersControllerParams = {
 type ProgressCallback = (folder: string, completed?: boolean) => void;
 
 export function importFoldersController({
-  withPath,
   getSetting,
   send,
   openModal,
@@ -139,8 +137,8 @@ export function importFoldersController({
           tracks[0].meta.album || path.basename(folders[index])
         ),
         year: tracks[0].meta.year || 1999,
-        path: path.basename(folders[index]),
-        completePath: stripPath(folders[index], LIBRARY_PATH),
+        folder: path.basename(folders[index]),
+        path: stripPath(folders[index], LIBRARY_PATH),
         type: "Album",
         tracks,
       }));
@@ -151,7 +149,7 @@ export function importFoldersController({
       items.length === 1
         ? items
         : items
-            .sort((a, b) => (a.completePath > b.completePath ? 1 : -1))
+            .sort((a, b) => (a.path > b.path ? 1 : -1))
             .map((item, index) => ({
               ...item,
               discNumber: index + 1,
@@ -166,18 +164,30 @@ export function importFoldersController({
       );
       return;
     }
+
     openModal("interactiveImport", { data: groupedByDisc });
   }
 
-  async function importFromInteractiveData(data: ImportData) {
+  async function importFromInteractiveData(data: Omit<ImportData, "folder">) {
     try {
       let artist = data.artist;
       if (!data.artist.id) {
-        artist = await prisma.artist.create({
-          data: {
+        const artistHash = hashArtistName(data.artist.name);
+        const normalizedName = normalizeDiacritics(data.artist.name);
+
+        artist = await prisma.artist.upsert({
+          where: {
+            hash: artistHash,
+          },
+          update: {
+            hash: artistHash,
             name: data.artist.name,
-            normalizedName: normalizeDiacritics(data.artist.name),
-            hash: hashArtistName(data.artist.name),
+            normalizedName,
+          },
+          create: {
+            hash: artistHash,
+            name: data.artist.name,
+            normalizedName,
           },
         });
 
@@ -191,7 +201,6 @@ export function importFoldersController({
         data: {
           artist_id: artist.id,
           hash: hashRelease({ artist_id: artist.id, ...data }),
-          completePath: data.completePath,
           path: data.path,
           title: data.title,
           normalizedTitle: normalizeDiacritics(data.title),
@@ -254,16 +263,9 @@ export function importFoldersController({
       return;
     }
 
-    let path = "";
-    const artistSelection = stateManager.getSelection("artist");
-    if (artistSelection.length === 1) {
-      const artist = (await getArtist(artistSelection.at(0))) as Artist;
-      path = artist?.path || "";
-    }
-
     const folders = openFolderDialog({
       key: "importFolderPath",
-      defaultPath: withPath("LIBRARY_PATH", path),
+      defaultPath: LIBRARY_PATH,
       properties: ["openDirectory", "multiSelections"],
     });
 
@@ -279,8 +281,6 @@ export function importFoldersController({
       return;
     }
 
-    const USE_SMART_IMPORT = getSetting("USE_SMART_IMPORT");
-
     if (folders.some((folder) => !folder.startsWith(LIBRARY_PATH))) {
       showErrorBox(
         "Error importing folders",
@@ -293,7 +293,7 @@ export function importFoldersController({
       folders.map((folder) =>
         prisma.release.findFirst({
           where: {
-            completePath: stripPath(folder, LIBRARY_PATH),
+            path: stripPath(folder, LIBRARY_PATH),
           },
         })
       )
@@ -305,35 +305,7 @@ export function importFoldersController({
     }
 
     const foldersToImport = folders.filter((_, index) => !existingMap[index]);
-
-    if (!USE_SMART_IMPORT) {
-      await startInteractiveImport(foldersToImport);
-      return;
-    }
-
-    openModal("importFolders");
-
-    function onProgress(folder: string, completed = false) {
-      send("importProgress", folder, completed);
-    }
-
-    const output = await Promise.all(
-      foldersToImport.map((folder) => importFolder(folder, onProgress))
-    );
-    const importedReleases = output.flat();
-
-    send("importProgress", "done");
-
-    send("mutate", [
-      ["artists", "latest"],
-      ["releases", "latest"],
-      ...importedReleases.map((x) => ["artists", x.artist_id]),
-    ]);
-
-    send("notify", {
-      type: "success",
-      message: `${importedReleases.length} releases imported`,
-    });
+    await startInteractiveImport(foldersToImport);
   }
 
   async function importFolder(folder: string, onProgress: ProgressCallback) {
@@ -377,7 +349,6 @@ export function importFoldersController({
 
     onProgress(folder);
 
-    const artistPath = getArtistPathFromReleaseData(releaseData);
     const artistHash = hashArtistName(releaseData.artist.name);
     const normalizedName = normalizeDiacritics(releaseData.artist.name);
 
@@ -389,13 +360,11 @@ export function importFoldersController({
         hash: artistHash,
         name: releaseData.artist.name,
         normalizedName,
-        path: artistPath,
       },
       create: {
         hash: artistHash,
         name: releaseData.artist.name,
         normalizedName,
-        path: artistPath,
       },
     });
 
@@ -407,7 +376,7 @@ export function importFoldersController({
     /* eslint-enable @typescript-eslint/no-unused-vars */
     const normalizedTitle = normalizeDiacritics(title);
 
-    const completePath = stripPath(releaseData.completePath, LIBRARY_PATH);
+    const path = stripPath(releaseData.fullPath, LIBRARY_PATH);
 
     const release = await prisma.release.upsert({
       where: {
@@ -419,7 +388,7 @@ export function importFoldersController({
         normalizedTitle,
         ...releaseWithoutArtist,
         artist_id: artist.id,
-        completePath,
+        path,
       },
       create: {
         hash: releaseHash,
@@ -427,7 +396,7 @@ export function importFoldersController({
         normalizedTitle,
         ...releaseWithoutArtist,
         artist_id: artist.id,
-        completePath,
+        path,
       },
     });
 

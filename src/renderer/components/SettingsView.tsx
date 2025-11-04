@@ -31,10 +31,6 @@ type Field = {
 
 const fieldsMap: Field[] = [
   {
-    key: "USE_SMART_IMPORT",
-    type: "checkbox",
-  },
-  {
     key: "LIBRARY_PATH",
     type: "path",
     options: {

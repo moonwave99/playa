@@ -1,4 +1,3 @@
-import { existsSync, move } from "fs-extra";
 import { Artist, Send, OpenConfirmDialog, ShowErrorBox } from "@/types/types";
 import {
   getArtist,
@@ -14,76 +13,30 @@ import {
   deleteArtist as _deleteArtist,
   deleteArtists as _deleteArtists,
 } from "../db/artist";
-import prisma from "../db/prisma";
-import { getEntityPath, withConfirmDialog } from "../utils";
+import { withConfirmDialog } from "../utils";
 import { StateManager } from "../stateManager";
 import { difference } from "lodash";
 
 type ArtistControllerParams = {
-  withPath: (key: string, folderPath: string) => string;
   send: Send;
   showErrorBox: ShowErrorBox;
   openConfirmDialog: OpenConfirmDialog;
   stateManager: StateManager;
-  skipMove?: boolean;
 };
 
-type EditArtistParams = Pick<Artist, "path" | "id"> & {
-  newPath: string;
+type EditArtistParams = Pick<Artist, "id"> & {
   newName: string;
 };
 
 export function artistController({
-  withPath,
   send,
-  showErrorBox,
   openConfirmDialog,
   stateManager,
-  skipMove = false,
 }: ArtistControllerParams) {
   async function editArtist(infos: EditArtistParams) {
-    const shouldMoveArtist = !skipMove && infos.newPath !== infos.path;
-
-    if (
-      shouldMoveArtist &&
-      existsSync(withPath("LIBRARY_PATH", infos.newPath))
-    ) {
-      showErrorBox(
-        "Error while renaming",
-        `Path ${infos.newPath} already exists`
-      );
-      return false;
-    }
-
-    if (shouldMoveArtist) {
-      const targetPath = withPath("LIBRARY_PATH", infos.newPath);
-      await move(withPath("LIBRARY_PATH", infos.path), targetPath);
-      send("notify", {
-        type: "info",
-        message: `Artist folder moved to ${targetPath}`,
-      });
-    }
-
     const updatedArtist = await updateArtist(infos.id, {
       name: infos.newName,
-      path: infos.newPath,
     });
-
-    const artist = await getArtist(infos.id);
-
-    await Promise.all(
-      artist.releases // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        .map(({ completePath, ...release }) =>
-          prisma.release.update({
-            where: {
-              id: release.id,
-            },
-            data: {
-              completePath: getEntityPath(release),
-            },
-          })
-        )
-    );
 
     send("mutate", [
       ["artists", "latest"],

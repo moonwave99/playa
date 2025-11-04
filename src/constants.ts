@@ -11,7 +11,6 @@ export const DEFAULT_SETTINGS: Settings = {
   DISCOGS_SECRET: "",
   LIBRARY_PATH: "",
   COVERS_PATH: "",
-  USE_SMART_IMPORT: false,
   SHOW_ONBOARDING_ON_STARTUP: true,
 };
 

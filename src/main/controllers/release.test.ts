@@ -2,7 +2,7 @@ import prisma from "../db/prisma";
 import { clearPrisma } from "@/test/prisma-utils";
 import { withPath, getSetting } from "@/test/utils";
 import path from "path";
-import fsExtra, { pathExists } from "fs-extra";
+import { pathExists } from "fs-extra";
 import { releaseController } from "./release";
 import { testFs } from "@moonwave99/test-fs";
 import { ReleaseType, ReleaseWithArtist } from "@/types/types";
@@ -184,228 +184,7 @@ describe("editRelease function", () => {
     expect(result).toEqual([]);
   });
 
-  it("just renames the discs if no other info is changed", async () => {
-    const { editRelease } = releaseController(defaultParams);
-    const spy = vi.spyOn(fsExtra, "move");
-    const releases = getFakeReleasesForArtist(1, 2);
-    await prisma.artist.create({ data: getFakeArtist(1) });
-    await prisma.release.createMany({ data: releases });
-
-    const result = (await editRelease([
-      {
-        ...releases[0],
-        newPath: "Release 1",
-        newDiscTitle: "New Disc 1",
-        newTitle: "Release 1",
-        newYear: 2000,
-        newType: "Album" as ReleaseType,
-      },
-      {
-        ...releases[1],
-        newPath: "Release 2",
-        newDiscTitle: "New Disc 2",
-        newTitle: "Release 2",
-        newYear: 2000,
-        newType: "Album" as ReleaseType,
-      },
-    ])) as ReleaseWithArtist[];
-
-    expect(result).toMatchObject([
-      { discTitle: "New Disc 1" },
-      { discTitle: "New Disc 2" },
-    ]);
-
-    expect(spy).not.toHaveBeenCalled();
-  });
-
-  it("updates the release info without moving the folder if the passed path is the old one", async (context) => {
-    const directory = await testFs(
-      {
-        "/LIBRARY_PATH/A/Artist 1": {
-          "[Album]": {
-            "2000 - Release 1": {
-              "01 - Track 1.mp3": "",
-              "02 - Track 2.mp3": "",
-              "03 - Track 3.mp3": "",
-              "04 - Track 4.mp3": "",
-              "05 - Track 5.mp3": "",
-            },
-            "2000 - Release 2": {
-              "01 - Track 1.mp3": "",
-              "02 - Track 2.mp3": "",
-              "03 - Track 3.mp3": "",
-              "04 - Track 4.mp3": "",
-              "05 - Track 5.mp3": "",
-            },
-          },
-        },
-      },
-      context.task.id
-    );
-
-    const { editRelease } = releaseController({
-      ...defaultParams,
-      withPath: (key, folderPath) => path.join(directory, key, folderPath),
-      getSetting: (key: string) => (key === "USE_SMART_IMPORT" ? true : key),
-    });
-    const spy = vi.spyOn(fsExtra, "move");
-    const release = getFakeReleasesForArtist(1).at(0);
-    await prisma.artist.create({ data: getFakeArtist(1) });
-    await prisma.release.create({ data: release });
-
-    const newInfo = {
-      completePath: "A/Artist 1/[Album]/2000 - Release 1",
-      newPath: "Release 1",
-      newDiscTitle: "Album Edited",
-      newTitle: "Album Edited",
-      newYear: 2000,
-      newType: "Album" as ReleaseType,
-    };
-
-    const result = (await editRelease([
-      { ...release, ...newInfo },
-    ])) as ReleaseWithArtist[];
-
-    expect(result[0]).toMatchObject({
-      completePath: "A/Artist 1/[Album]/2000 - Release 1",
-      path: "Release 1",
-      discTitle: null,
-      title: "Album Edited",
-      year: 2000,
-      type: "Album" as ReleaseType,
-    });
-
-    expect(spy).not.toHaveBeenCalled();
-  });
-
-  it("shows a warning if the new path contains any ../ sequence", async () => {
-    const showErrorBox = vi.fn();
-    const { editRelease } = releaseController({
-      ...defaultParams,
-      showErrorBox,
-    });
-    const moveSpy = vi.spyOn(fsExtra, "move");
-
-    const newInfo = {
-      newPath: "../Album One",
-      newDiscTitle: "Album Edited",
-      newTitle: "Album Edited",
-      newType: "EP" as ReleaseType,
-      newYear: 2000,
-    };
-
-    const release = getFakeReleasesForArtist(1).at(0);
-    await prisma.artist.create({ data: getFakeArtist(1) });
-    await prisma.release.create({ data: release });
-
-    const result = await editRelease([
-      {
-        ...release,
-        ...newInfo,
-      },
-    ]);
-
-    expect(showErrorBox).toHaveBeenCalledWith(
-      "Error while renaming",
-      "Path cannot contain any '../' sequence"
-    );
-
-    expect(result).toBe(false);
-    expect(moveSpy).not.toHaveBeenCalled();
-  });
-
-  it("shows a warning if the new path exists", async (context) => {
-    const directory = await testFs(
-      {
-        "/LIBRARY_PATH/A/Artist 1/[Album]/": {
-          "2000 - Release 1": {},
-          "2000 - New Album Path": {},
-        },
-      },
-      context.task.id
-    );
-
-    const release = getFakeReleasesForArtist(1).at(0);
-    await prisma.artist.create({ data: getFakeArtist(1) });
-    await prisma.release.create({ data: release });
-
-    const showErrorBox = vi.fn();
-    const { editRelease } = releaseController({
-      ...defaultParams,
-      showErrorBox,
-      withPath: (key, folderPath) => path.join(directory, key, folderPath),
-    });
-
-    const moveSpy = vi.spyOn(fsExtra, "move");
-
-    const newInfo = {
-      newPath: "New Album Path",
-      newDiscTitle: "Album Edited",
-      newTitle: "Album Edited",
-      newType: "Album" as ReleaseType,
-      newYear: 2000,
-    };
-
-    const result = await editRelease([
-      {
-        ...release,
-        ...newInfo,
-      },
-    ]);
-
-    expect(showErrorBox).toHaveBeenCalledWith(
-      "Error while renaming",
-      `Path ${newInfo.newPath} already exists`
-    );
-
-    expect(result).toBe(false);
-    expect(moveSpy).not.toHaveBeenCalled();
-  });
-
-  it("shows a warning if the old path does not exist", async (context) => {
-    const directory = await testFs(
-      {
-        "/LIBRARY_PATH": {},
-      },
-      context.task.id
-    );
-
-    const release = getFakeReleasesForArtist(1).at(0);
-    await prisma.artist.create({ data: getFakeArtist(1) });
-    await prisma.release.create({ data: release });
-
-    const showErrorBox = vi.fn();
-
-    const { editRelease } = releaseController({
-      ...defaultParams,
-      showErrorBox,
-      withPath: (key, folderPath) => path.join(directory, key, folderPath),
-    });
-
-    const newInfo = {
-      newPath: "New Album Path",
-      newDiscTitle: "Album Edited",
-      newTitle: "Album Edited",
-      newType: "EP" as ReleaseType,
-      newYear: 2000,
-    };
-
-    const result = await editRelease([
-      {
-        ...release,
-        ...newInfo,
-      },
-    ]);
-
-    expect(showErrorBox).toHaveBeenCalledWith(
-      "Error while renaming",
-      `Release 1 not found at: ${path.join(directory, "LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1")}`
-    );
-
-    expect(result).toBe(false);
-  });
-
-  it("should move the release files and update it accordingly", async (context) => {
+  it("should update the release with the given information", async (context) => {
     const directory = await testFs(
       {
         "/LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1": {
@@ -430,8 +209,6 @@ describe("editRelease function", () => {
     });
 
     const newInfo = {
-      completePath: "A/Artist 1/[Album]/2000 - Release 1",
-      newPath: "New Release Path",
       newDiscTitle: "Release Edited",
       newTitle: "Release Edited",
       newType: "EP" as ReleaseType,
@@ -443,26 +220,13 @@ describe("editRelease function", () => {
     ])) as ReleaseWithArtist[];
 
     expect(result[0]).toMatchObject({
-      path: "New Release Path",
+      path: "A/Artist 1/[Album]/2000 - Release 1",
       discTitle: null,
       title: "Release Edited",
       type: "EP" as ReleaseType,
       year: 2001,
     });
 
-    expect(
-      await pathExists(
-        path.join(directory, "LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1")
-      )
-    ).toBe(false);
-    expect(
-      await pathExists(
-        path.join(
-          directory,
-          "LIBRARY_PATH/A/Artist 1/[EP]/2001 - New Release Path"
-        )
-      )
-    ).toBe(true);
     expect(
       await pathExists(
         path.join(directory, "COVERS_PATH/ee1478c38c24f36e-cover.jpg")
@@ -496,7 +260,6 @@ describe("editRelease function", () => {
     });
 
     const newInfo = {
-      newPath: "New Release Path",
       newDiscTitle: "Release Edited",
       newTitle: "Release Edited",
       newType: "EP" as ReleaseType,
@@ -508,7 +271,7 @@ describe("editRelease function", () => {
     ])) as ReleaseWithArtist[];
 
     expect(result[0]).toMatchObject({
-      path: "New Release Path",
+      path: "A/Artist 1/[Album]/2000 - Release 1",
       discTitle: null,
       title: "Release Edited",
       type: "EP" as ReleaseType,

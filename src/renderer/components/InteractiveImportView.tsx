@@ -33,7 +33,7 @@ export default function InteractiveImportView({
   const { t } = useTranslation();
   const [index, setIndex] = useState(0);
   const [importStatus, setImportStatus] = useState(
-    data.map(({ path }) => ({ folder: path, isDone: false }))
+    data.map(({ folder }) => ({ folder, isDone: false }))
   );
 
   async function onImport() {
@@ -293,7 +293,10 @@ function TrackView({ track, index, onTrackEdit }: TrackViewProps) {
           }
           required
           type="number"
-          placeholder={t("modals.InteractiveImport.track.position.placeholder")}
+          placeholder={t(
+            "modals.InteractiveImport.track.position.placeholder",
+            { index: index + 1 }
+          )}
           aria-labelledby="track-position"
         />
       </td>
@@ -311,7 +314,9 @@ function TrackView({ track, index, onTrackEdit }: TrackViewProps) {
             )
           }
           required
-          placeholder={t("modals.InteractiveImport.track.title.placeholder")}
+          placeholder={t("modals.InteractiveImport.track.title.placeholder", {
+            index: index + 1,
+          })}
           aria-labelledby="track-title"
         />
       </td>
@@ -330,7 +335,10 @@ function TrackView({ track, index, onTrackEdit }: TrackViewProps) {
           }
           required
           placeholder={t(
-            "modals.InteractiveImport.track.trackArtist.placeholder"
+            "modals.InteractiveImport.track.trackArtist.placeholder",
+            {
+              index: index + 1,
+            }
           )}
           aria-labelledby="track-trackArtist"
         />
