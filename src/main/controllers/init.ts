@@ -147,12 +147,10 @@ export async function init({ mainWindow, settings }: InitParams) {
   const controllers = {
     system: systemController({ withPath, getSetting, showErrorBox }),
     artist: artistController({
-      withPath,
       send,
       showErrorBox,
       openConfirmDialog,
       stateManager,
-      skipMove: IS_E2E_TEST,
     }),
     release: releaseController({
       withPath,
@@ -161,7 +159,6 @@ export async function init({ mainWindow, settings }: InitParams) {
       stateManager,
       showErrorBox,
       openConfirmDialog,
-      skipMove: IS_E2E_TEST,
     }),
     collection: collectionController({ send, openConfirmDialog, stateManager }),
     group: groupController({ send, openConfirmDialog, stateManager }),
@@ -177,7 +174,6 @@ export async function init({ mainWindow, settings }: InitParams) {
     settings,
     importFolders: importFoldersController({
       openFolderDialog,
-      withPath,
       getSetting,
       send,
       openModal,

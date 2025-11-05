@@ -8,9 +8,7 @@ import {
   ReleaseWithArtist,
   releaseTypes,
 } from "@/types/types";
-import useStore from "@/renderer/store";
 
-import { Icon } from "@/renderer/icons";
 import cx from "clsx";
 import styles from "./EditReleaseView.module.css";
 import formStyles from "@/renderer/forms.module.css";
@@ -27,7 +25,6 @@ export default function EditReleaseFormView({
   onCancel,
 }: EditReleaseFormViewProps) {
   const { t } = useTranslation();
-  const { settings } = useStore();
   const [folderInfo, setFolderInfo] = useState(
     [release, ...release.subReleases].map((x, index) => ({
       ...x,
@@ -77,8 +74,6 @@ export default function EditReleaseFormView({
     return didReleaseInfoChange(folderInfo, folderInfo.length === 1);
   }
 
-  const { USE_SMART_IMPORT } = settings;
-
   return (
     <form onSubmit={_onSubmit} className={formStyles.form}>
       <div className={cx(formStyles.container, formStyles.separator)}>
@@ -96,12 +91,6 @@ export default function EditReleaseFormView({
           ))}
         </ul>
         <div className={formStyles.actions}>
-          {USE_SMART_IMPORT && (
-            <div className={formStyles.info}>
-              <Icon isFor="modal.info" />
-              {t(`modals.EditReleaseView.moveInfo`)}
-            </div>
-          )}
           <button
             type="submit"
             className={formStyles.button}
@@ -134,19 +123,14 @@ function FolderView({
   release,
   isMainRelease,
   hasMultipleDiscs,
-  hasFocus,
   onInput,
 }: FolderViewProps) {
-  const { settings } = useStore();
-
   function getTitle() {
     if (isMainRelease || !hasMultipleDiscs || !release.discTitle) {
       return release.title;
     }
     return `${release.title} - ${release.discTitle}`;
   }
-
-  const { USE_SMART_IMPORT } = settings;
 
   return (
     <article className={styles.release}>
@@ -174,15 +158,6 @@ function FolderView({
         </>
       ) : null}
       <div className={formStyles.horizontalGroup}>
-        {USE_SMART_IMPORT && (
-          <Field
-            hasFocus={hasFocus && !isMainRelease}
-            name="newPath"
-            release={release}
-            onInput={onInput}
-            isVertical
-          />
-        )}
         {hasMultipleDiscs ? (
           <Field
             name="newDiscTitle"

@@ -6,33 +6,35 @@ import {
   ReleaseWithArtist,
   ArtistWithReleases,
   CollectionWithReleases,
-  Artist,
   ImportData,
   ArtistWithReleasesFull,
   Send,
   OpenFolderDialog,
   OpenModal,
   ShowErrorBox,
+  TrackInfo,
 } from "@/types/types";
-import { globby } from "globby";
 import { searchCover } from "../covers";
 import { addTracksToRelease } from "../db/release";
-import { getArtist, searchArtistByName } from "../db/artist";
+import { searchArtistByName } from "../db/artist";
 import { hashArtistName, hashRelease } from "../hash";
 import { log } from "../logger";
 import {
   getFolderContents,
   getFolderContentsFromAbsolutePath,
-  crawlFolder,
-  getArtistPathFromReleaseData,
-  parsePath,
   stripPath,
+  findKeyInTrackMeta,
 } from "../utils";
 import type { GetSetting } from "./settings";
-import { MAX_IMPORT_FOLDERS } from "@/constants";
+import {
+  DEFAULT_RELEASE_TYPE,
+  DEFAULT_RELEASE_YEAR,
+  MAX_IMPORT_FOLDERS,
+  VARIOUS_ARTIST_POSSIBLE_FOLDERS,
+  VARIOUS_ARTISTS_NAME,
+} from "@/constants";
 
 type ImportFoldersControllerParams = {
-  withPath: (key: string, folderPath: string) => string;
   getSetting: GetSetting;
   send: Send;
   openModal: OpenModal;
@@ -41,10 +43,7 @@ type ImportFoldersControllerParams = {
   showErrorBox: ShowErrorBox;
 };
 
-type ProgressCallback = (folder: string, completed?: boolean) => void;
-
 export function importFoldersController({
-  withPath,
   getSetting,
   send,
   openModal,
@@ -116,82 +115,84 @@ export function importFoldersController({
     send("mutate", [`${entity.entityType}s`, entity.id]);
   }
 
-  async function startInteractiveImport(folders: string[]) {
-    const data = await Promise.all(
-      folders.map(async (folder) => {
-        const tracks = await getFolderContentsFromAbsolutePath(folder);
-        const artist = await searchArtistByName(tracks.at(0)?.trackArtist);
-        return { tracks, artist };
-      })
-    );
+  async function getArtistMatch(
+    folder: string,
+    trackInfo: TrackInfo[]
+  ): Promise<{ id: number; name: string }> {
+    const name = VARIOUS_ARTIST_POSSIBLE_FOLDERS.some((x) =>
+      folder.toLowerCase().includes(x.toLowerCase())
+    )
+      ? VARIOUS_ARTISTS_NAME
+      : (findKeyInTrackMeta(trackInfo, "artist") as string);
+
+    const artist = await searchArtistByName(name);
+
+    if (!artist) {
+      return {
+        id: null,
+        name,
+      };
+    }
+
+    return {
+      id: artist.id,
+      name: artist.name,
+    };
+  }
+
+  async function getTracksInfo(folder: string): Promise<ImportData> {
+    const tracks = await getFolderContentsFromAbsolutePath(folder);
+    if (!tracks.length) {
+      return null;
+    }
 
     const LIBRARY_PATH = getSetting("LIBRARY_PATH") as string;
 
-    const foldersToImport = data
-      .filter(({ tracks }) => !!tracks.length)
-      .map(({ tracks, artist }, index) => ({
-        artist: artist || {
-          id: null as number,
-          name: tracks[0].trackArtist,
-        },
-        title: tracks[0].meta.album || path.basename(folders[index]),
-        normalizedTitle: normalizeDiacritics(
-          tracks[0].meta.album || path.basename(folders[index])
-        ),
-        year: tracks[0].meta.year || 1999,
-        path: path.basename(folders[index]),
-        completePath: stripPath(folders[index], LIBRARY_PATH),
-        type: "Album",
-        tracks,
-      }));
-
-    const groupedByDisc = Object.values(
-      Object.groupBy(foldersToImport, (x) => x.title)
-    ).flatMap((items) =>
-      items.length === 1
-        ? items
-        : items
-            .sort((a, b) => (a.completePath > b.completePath ? 1 : -1))
-            .map((item, index) => ({
-              ...item,
-              discNumber: index + 1,
-              title: `${item.title} (Disc ${index + 1})`,
-            }))
-    );
-
-    if (!groupedByDisc.length) {
-      showErrorBox(
-        "Error importing Folders",
-        "All selected folders are empty."
-      );
-      return;
-    }
-    openModal("interactiveImport", { data: groupedByDisc });
+    return {
+      artist: await getArtistMatch(folder, tracks),
+      title:
+        (findKeyInTrackMeta(tracks, "album") as string) ||
+        path.basename(folder),
+      year: +findKeyInTrackMeta(tracks, "year") || DEFAULT_RELEASE_YEAR,
+      folder: path.basename(folder),
+      path: stripPath(folder, LIBRARY_PATH),
+      absolutePath: folder,
+      type: DEFAULT_RELEASE_TYPE,
+      tracks,
+    };
   }
 
-  async function importFromInteractiveData(data: ImportData) {
+  async function importFromData(
+    data: Omit<ImportData, "folder" | "absolutePath">
+  ) {
     try {
       let artist = data.artist;
       if (!data.artist.id) {
-        artist = await prisma.artist.create({
-          data: {
+        const artistHash = hashArtistName(data.artist.name);
+        const normalizedName = normalizeDiacritics(data.artist.name);
+
+        artist = await prisma.artist.upsert({
+          where: {
+            hash: artistHash,
+          },
+          update: {
+            hash: artistHash,
             name: data.artist.name,
-            normalizedName: normalizeDiacritics(data.artist.name),
-            hash: hashArtistName(data.artist.name),
+            normalizedName,
+          },
+          create: {
+            hash: artistHash,
+            name: data.artist.name,
+            normalizedName,
           },
         });
 
-        log(
-          "importFolders:importFromInteractiveData",
-          "created artist:",
-          artist
-        );
+        log("importFolders:importFromData", "created artist:", artist);
       }
       const release = await prisma.release.create({
         data: {
           artist_id: artist.id,
           hash: hashRelease({ artist_id: artist.id, ...data }),
-          completePath: data.completePath,
           path: data.path,
           title: data.title,
           normalizedTitle: normalizeDiacritics(data.title),
@@ -202,11 +203,7 @@ export function importFoldersController({
 
       const fullRelease = await addTracksToRelease(release.id, data.tracks);
 
-      log(
-        "importFolders:importFromInteractiveData",
-        "upserted release:",
-        fullRelease
-      );
+      log("importFolders:importFromData", "upserted release:", fullRelease);
 
       const COVERS_PATH = getSetting("COVERS_PATH") as string;
       const DISCOGS_KEY = getSetting("DISCOGS_KEY") as string;
@@ -238,12 +235,12 @@ export function importFoldersController({
 
       return fullRelease;
     } catch (error) {
-      log("importFolders:importFromInteractiveData", data, error);
+      log("importFolders:importFromData", data, error);
       return false;
     }
   }
 
-  async function importFolderFromDialog() {
+  async function openImportDialog() {
     const LIBRARY_PATH = getSetting("LIBRARY_PATH") as string;
 
     if (!LIBRARY_PATH) {
@@ -254,16 +251,9 @@ export function importFoldersController({
       return;
     }
 
-    let path = "";
-    const artistSelection = stateManager.getSelection("artist");
-    if (artistSelection.length === 1) {
-      const artist = (await getArtist(artistSelection.at(0))) as Artist;
-      path = artist?.path || "";
-    }
-
     const folders = openFolderDialog({
       key: "importFolderPath",
-      defaultPath: withPath("LIBRARY_PATH", path),
+      defaultPath: LIBRARY_PATH,
       properties: ["openDirectory", "multiSelections"],
     });
 
@@ -279,8 +269,6 @@ export function importFoldersController({
       return;
     }
 
-    const USE_SMART_IMPORT = getSetting("USE_SMART_IMPORT");
-
     if (folders.some((folder) => !folder.startsWith(LIBRARY_PATH))) {
       showErrorBox(
         "Error importing folders",
@@ -293,7 +281,7 @@ export function importFoldersController({
       folders.map((folder) =>
         prisma.release.findFirst({
           where: {
-            completePath: stripPath(folder, LIBRARY_PATH),
+            path: stripPath(folder, LIBRARY_PATH),
           },
         })
       )
@@ -304,167 +292,42 @@ export function importFoldersController({
       return;
     }
 
-    const foldersToImport = folders.filter((_, index) => !existingMap[index]);
+    const foldersToImport = await Promise.all(
+      folders.filter((_, index) => !existingMap[index]).map(getTracksInfo)
+    );
 
-    if (!USE_SMART_IMPORT) {
-      await startInteractiveImport(foldersToImport);
+    const groupedByDisc = Object.values(
+      Object.groupBy(
+        foldersToImport.filter((x) => !!x),
+        ({ title }) => title
+      )
+    ).flatMap((items) =>
+      items.length === 1
+        ? items
+        : items
+            .sort((a, b) => (a.path > b.path ? 1 : -1))
+            .map((item, index) => ({
+              ...item,
+              discNumber: index + 1,
+              title: `${item.title} (Disc ${index + 1})`,
+            }))
+    );
+
+    if (!groupedByDisc.length) {
+      showErrorBox(
+        "Error importing Folders",
+        "All selected folders are empty."
+      );
       return;
     }
 
-    openModal("importFolders");
-
-    function onProgress(folder: string, completed = false) {
-      send("importProgress", folder, completed);
-    }
-
-    const output = await Promise.all(
-      foldersToImport.map((folder) => importFolder(folder, onProgress))
-    );
-    const importedReleases = output.flat();
-
-    send("importProgress", "done");
-
-    send("mutate", [
-      ["artists", "latest"],
-      ["releases", "latest"],
-      ...importedReleases.map((x) => ["artists", x.artist_id]),
-    ]);
-
-    send("notify", {
-      type: "success",
-      message: `${importedReleases.length} releases imported`,
-    });
-  }
-
-  async function importFolder(folder: string, onProgress: ProgressCallback) {
-    const folders = await globby("**", {
-      onlyDirectories: true,
-      cwd: folder,
-    });
-
-    if (!folders.length) {
-      const release = await importSingleFolder(folder, onProgress);
-      return release ? [release] : [];
-    }
-
-    const releases = await Promise.all(
-      folders
-        .filter((x) => !x.endsWith("]"))
-        .map((f) => importSingleFolder(path.join(folder, f), onProgress))
-    );
-
-    onProgress("done");
-    return releases.filter((x: unknown) => !!x);
-  }
-
-  async function importSingleFolder(
-    folder: string,
-    onProgress: ProgressCallback
-  ) {
-    log("importFolders:importSingleFolder", "Crawling:", folder);
-    const contents = await crawlFolder(folder);
-
-    if (!contents.length) {
-      return null;
-    }
-
-    const LIBRARY_PATH = getSetting("LIBRARY_PATH") as string;
-    const releaseData = parsePath(folder.split(LIBRARY_PATH).at(1));
-
-    if (!releaseData) {
-      return null;
-    }
-
-    onProgress(folder);
-
-    const artistPath = getArtistPathFromReleaseData(releaseData);
-    const artistHash = hashArtistName(releaseData.artist.name);
-    const normalizedName = normalizeDiacritics(releaseData.artist.name);
-
-    const artist = await prisma.artist.upsert({
-      where: {
-        hash: artistHash,
-      },
-      update: {
-        hash: artistHash,
-        name: releaseData.artist.name,
-        normalizedName,
-        path: artistPath,
-      },
-      create: {
-        hash: artistHash,
-        name: releaseData.artist.name,
-        normalizedName,
-        path: artistPath,
-      },
-    });
-
-    log("importFolders:importSingleFolder", "upserted artist", artist);
-
-    const releaseHash = hashRelease({ ...releaseData, artist_id: artist.id });
-    /* eslint-disable @typescript-eslint/no-unused-vars */
-    const { artist: artistData, title, ...releaseWithoutArtist } = releaseData;
-    /* eslint-enable @typescript-eslint/no-unused-vars */
-    const normalizedTitle = normalizeDiacritics(title);
-
-    const completePath = stripPath(releaseData.completePath, LIBRARY_PATH);
-
-    const release = await prisma.release.upsert({
-      where: {
-        hash: releaseHash,
-      },
-      update: {
-        hash: releaseHash,
-        title,
-        normalizedTitle,
-        ...releaseWithoutArtist,
-        artist_id: artist.id,
-        completePath,
-      },
-      create: {
-        hash: releaseHash,
-        title,
-        normalizedTitle,
-        ...releaseWithoutArtist,
-        artist_id: artist.id,
-        completePath,
-      },
-    });
-
-    const trackInfo = await getFolderContents(
-      { ...release, artist: artist as Artist },
-      LIBRARY_PATH
-    );
-
-    const fullRelease = await addTracksToRelease(release.id, trackInfo);
-
-    log("importFolders:importSingleFolder", "upserted release:", fullRelease);
-
-    const COVERS_PATH = getSetting("COVERS_PATH") as string;
-    const DISCOGS_KEY = getSetting("DISCOGS_KEY") as string;
-    const DISCOGS_SECRET = getSetting("DISCOGS_SECRET") as string;
-
-    await searchCover(
-      {
-        release,
-        artist,
-        track: fullRelease.tracks[0],
-        outputPath: COVERS_PATH,
-      },
-      {
-        DISCOGS_KEY,
-        DISCOGS_SECRET,
-      }
-    );
-
-    onProgress(folder, true);
-    return fullRelease;
+    openModal("importFolders", { data: groupedByDisc });
   }
 
   return {
-    importFolder,
-    importFolderFromDialog,
-    importFromInteractiveData,
+    openImportDialog,
+    importFromData,
+    getTracksInfo,
     refreshReleaseContents,
     refreshEntityRelease,
     refreshArtistReleases,
@@ -472,9 +335,9 @@ export function importFoldersController({
 }
 
 export const actions: (keyof ReturnType<typeof importFoldersController>)[] = [
-  "importFolder",
-  "importFolderFromDialog",
-  "importFromInteractiveData",
+  "openImportDialog",
+  "importFromData",
+  "getTracksInfo",
   "refreshReleaseContents",
   "refreshEntityRelease",
   "refreshArtistReleases",

@@ -29,7 +29,6 @@ const settings = {
   TAGGER_PATH: "TAGGER_PATH",
   DISCOGS_KEY: "DISCOGS_KEY",
   DISCOGS_SECRET: "DISCOGS_SECRET",
-  USE_SMART_IMPORT: false,
   SHOW_ONBOARDING_ON_STARTUP: true,
 } as const;
 
@@ -67,18 +66,43 @@ export function getE2EFolderPath({
   if (key !== "importFolderPath") {
     return [path.join(getE2ETmpPath(testId), key)];
   }
-  return testTitle !== "Onboarding Complete"
-    ? [path.join(getE2ETmpPath(testId), "LIBRARY_PATH")]
-    : [
-        path.join(
-          getE2ETmpPath(testId),
-          "LIBRARY_PATH",
-          "A",
-          "Artist 1",
-          "[Album]",
-          "1999 - Album 1"
-        ),
-      ];
+  if (["Import Single", "Onboarding Complete"].includes(testTitle)) {
+    return [
+      path.join(
+        getE2ETmpPath(testId),
+        "LIBRARY_PATH",
+        "A",
+        "Artist 1",
+        "[Album]",
+        "1999 - Album 1"
+      ),
+    ];
+  }
+  if (testTitle === "Import Multiple") {
+    return Array.from({ length: 2 }, (_, i) =>
+      path.join(
+        getE2ETmpPath(testId),
+        "LIBRARY_PATH",
+        "A",
+        "Artist 1",
+        "[Album]",
+        `1999 - Album ${i + 1}`
+      )
+    );
+  }
+  if (testTitle === "Import Group") {
+    return Array.from({ length: 2 }, (_, i) =>
+      path.join(
+        getE2ETmpPath(testId),
+        "LIBRARY_PATH",
+        "A",
+        "Artist 1",
+        "[Album]",
+        `1999 - Album 1 CD${i + 1}`
+      )
+    );
+  }
+  return [path.join(getE2ETmpPath(testId), "LIBRARY_PATH")];
 }
 
 export const IS_E2E_TEST = process.env.npm_lifecycle_event === "test:e2e";

@@ -22,7 +22,6 @@ export function getFakeArtists({ length = 10 }) {
     id: i + 1,
     name: `Artist ${i + 1}`,
     normalizedName: `Artist ${i + 1}`,
-    path: `A/Artist ${i + 1}`,
     hash: hashArtistName(`Artist ${i + 1}`),
     createdAt: getDate(i),
   }));
@@ -36,8 +35,7 @@ export function getFakeRelease(id = 1, override: Partial<Release> = {}) {
     normalizedTitle: `Release ${id}`,
     type: "Album" as ReleaseType,
     year: 2000,
-    path: `Release ${id}`,
-    completePath: `[Album]/2000 - Release ${id}`,
+    path: `A/Artist 1/[Album]/2000 - Release ${id}`,
     hash: hashRelease({
       title: `Release ${id}`,
       type: "Album",
@@ -63,8 +61,7 @@ export function getFakeReleasesForArtist(artist_id: number, length = 5) {
     normalizedTitle: `Release ${artist_id}-${i + 1}`,
     type: "Album" as ReleaseType,
     year: 2000,
-    path: `Release ${i + 1}`,
-    completePath: `A/Artist ${artist_id}/[Album]/2000 - Release ${i + 1}`,
+    path: `A/Artist ${artist_id}/[Album]/2000 - Release ${i + 1}`,
     hash: hashRelease({
       title: `Release ${i + 1}`,
       type: "Album",
@@ -151,12 +148,11 @@ export function getFakeGroups({
 export function getFakeSettings() {
   return {
     PLAYER_PATH: "PLAYER_PATH",
-    TAGGER_PATH: "PLAYER_PATH",
+    TAGGER_PATH: "TAGGER_PATH",
     DISCOGS_KEY: "DISCOGS_KEY",
     DISCOGS_SECRET: "DISCOGS_SECRET",
     LIBRARY_PATH: "LIBRARY_PATH",
     COVERS_PATH: "COVERS_PATH",
-    USE_SMART_IMPORT: false,
     SHOW_ONBOARDING_ON_STARTUP: false,
   };
 }
@@ -248,7 +244,6 @@ export async function seed(id?: string) {
       ...getFakeSettings(),
       ...(id && id !== "test"
         ? {
-            USE_SMART_IMPORT: true,
             LIBRARY_PATH: path.join(getE2ETmpPath(id), "LIBRARY_PATH"),
             COVERS_PATH: path.join(getE2ETmpPath(id), "COVERS_PATH"),
           }

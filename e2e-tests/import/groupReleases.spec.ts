@@ -28,7 +28,7 @@ test.beforeAll(async ({}, { testId }) => {
 
 test.afterAll(async ({}, { testId }) => remove(getE2ETmpPath(testId)));
 
-test.describe("Import", () => {
+test.describe("Import Group", () => {
   test("import multiple folders into library and group them", async () => {
     const { page, clickMenuItemById } = await getElectronApp();
     await clickMenuItemById("gotoHomePage");
@@ -37,6 +37,17 @@ test.describe("Import", () => {
     const breadcrumbs = page.locator('[data-testid="breadcrumbs"]');
 
     await clickMenuItemById("importFolder");
+
+    await expect(
+      page.getByRole("heading").filter({ hasText: "Import Folders" })
+    ).toBeVisible();
+
+    const modal = page.locator(".ReactModalPortal");
+    await expect(modal.getByLabel("Release title")).toHaveValue("Album 1 CD1");
+    await page.getByRole("button").filter({ hasText: "Import Folder" }).click();
+
+    await expect(modal.getByLabel("Release title")).toHaveValue("Album 1 CD2");
+    await page.getByRole("button").filter({ hasText: "Import Folder" }).click();
 
     await page.getByRole("button", { name: "Close Modal" }).click();
 

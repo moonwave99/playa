@@ -7,6 +7,7 @@ import { zip } from "zip-a-folder";
 import { Open } from "unzipper";
 import prisma from "./prisma";
 import { log } from "../logger";
+import { existsSync } from "fs";
 
 type ExportDataParams = {
   outputPath: string;
@@ -99,7 +100,6 @@ export async function importData({
   });
 
   if (
-    files.map((x) => path.basename(x, ".json")).join("-") !==
     [
       "_info",
       "artists",
@@ -108,7 +108,7 @@ export async function importData({
       "releases",
       "settings",
       "tracks",
-    ].join("-")
+    ].some((name) => !existsSync(path.join(tempPath, `${name}.json`)))
   ) {
     throw new Error("Wrong import format");
   }

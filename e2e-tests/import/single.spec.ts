@@ -21,7 +21,7 @@ test.beforeAll(async ({}, { testId }) => {
 
 test.afterAll(async ({}, { testId }) => remove(getE2ETmpPath(testId)));
 
-test.describe("Import", () => {
+test.describe("Import Single", () => {
   test("import a folder into library", async () => {
     const { page, clickMenuItemById } = await getElectronApp();
     await clickMenuItemById("gotoHomePage");
@@ -33,7 +33,10 @@ test.describe("Import", () => {
     await expect(page.getByRole("heading").first()).toHaveText("Playa");
 
     await clickMenuItemById("importFolder");
-
+    await expect(
+      page.getByRole("heading").filter({ hasText: "Import Folders" })
+    ).toBeVisible();
+    await page.getByRole("button").filter({ hasText: "Import Folder" }).click();
     await page.getByRole("button", { name: "Close Modal" }).click();
 
     await expect(

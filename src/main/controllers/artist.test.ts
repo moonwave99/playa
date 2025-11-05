@@ -1,21 +1,16 @@
 import prisma from "../db/prisma";
-import path from "path";
-import fsExtra, { pathExists } from "fs-extra";
 import { artistController } from "./artist";
-import { testFs } from "@moonwave99/test-fs";
 import { clearPrisma } from "@/test/prisma-utils";
 import {
   getFakeArtist,
   getFakeArtists,
   getFakeReleasesForArtist,
 } from "@/test/seed";
-import { withPath } from "@/test/utils";
 import { type StateManager } from "../stateManager";
 
 afterEach(clearPrisma);
 
 const defaultParams = {
-  withPath,
   send: vi.fn(),
   showErrorBox: vi.fn(),
   openConfirmDialog: vi.fn(),
@@ -38,6 +33,34 @@ describe("artist - getArtist function", () => {
     await addRelatedArtist(1, 2);
     const result = await getArtist(1);
     expect(result).toMatchObject(artists.at(0));
+  });
+});
+
+describe("artist - getSelectedArtist function", () => {
+  it("returns null if the selection is empty", async () => {
+    const artists = getFakeArtists({ length: 2 });
+    await prisma.artist.createMany({ data: artists });
+    const { getSelectedArtist } = artistController(defaultParams);
+    const result = await getSelectedArtist([]);
+    expect(result).toBe(null);
+  });
+
+  it("returns the selected artist", async () => {
+    const artists = getFakeArtists({ length: 2 });
+    await prisma.artist.createMany({ data: artists });
+    const { getSelectedArtist } = artistController(defaultParams);
+    const result = await getSelectedArtist([1]);
+    expect(result).toMatchObject(artists.at(0));
+  });
+});
+
+describe("artist - getSelectedArtists function", () => {
+  it("returns the selected artists", async () => {
+    const artists = getFakeArtists({ length: 2 });
+    await prisma.artist.createMany({ data: artists });
+    const { getSelectedArtists } = artistController(defaultParams);
+    const result = await getSelectedArtists([1, 2]);
+    expect(result).toMatchObject(artists);
   });
 });
 
@@ -93,45 +116,7 @@ describe("artist - getLatestArtists function", () => {
 });
 
 describe("artist - editArtist function", () => {
-  it("shows a warning if the new path already exists", async (context) => {
-    const directory = await testFs(
-      { "/LIBRARY_PATH/A/Artist New": {} },
-      context.task.id
-    );
-
-    const showErrorBox = vi.fn();
-
-    const { editArtist } = artistController({
-      ...defaultParams,
-      withPath: (key, folderPath) => path.join(directory, key, folderPath),
-      showErrorBox,
-    });
-
-    const moveSpy = vi.spyOn(fsExtra, "move");
-    const artist = getFakeArtist();
-    await prisma.artist.create({ data: artist });
-
-    const result = await editArtist({
-      ...artist,
-      newName: "Artist New",
-      newPath: "A/Artist New",
-    });
-
-    expect(showErrorBox).toHaveBeenCalledWith(
-      "Error while renaming",
-      `Path A/Artist New already exists`
-    );
-
-    expect(result).toBe(false);
-    expect(moveSpy).not.toHaveBeenCalled();
-  });
-
-  it("updates the artist with the given information", async (context) => {
-    const directory = await testFs(
-      { "/LIBRARY_PATH/A/Artist 1": {} },
-      context.task.id
-    );
-
+  it("updates the artist with the given information", async () => {
     const artist = getFakeArtist();
     const releases = getFakeReleasesForArtist(1, 2);
 
@@ -139,7 +124,6 @@ describe("artist - editArtist function", () => {
 
     const { editArtist } = artistController({
       ...defaultParams,
-      withPath: (key, folderPath) => path.join(directory, key, folderPath),
       send,
     });
 
@@ -149,54 +133,9 @@ describe("artist - editArtist function", () => {
     const result = await editArtist({
       ...artist,
       newName: "Artist New",
-      newPath: "A/Artist New",
     });
-
-    const previousPath = path.join(directory, "LIBRARY_PATH/A/Artist");
-    const newPath = path.join(directory, "LIBRARY_PATH/A/Artist New");
 
     expect(result).toBeTruthy();
-
-    expect(await pathExists(previousPath)).toBe(false);
-    expect(await pathExists(newPath)).toBe(true);
-
-    expect(send).toHaveBeenCalledWith("notify", {
-      message: `Artist folder moved to ${newPath}`,
-      type: "info",
-    });
-
-    expect(send).toHaveBeenCalledWith("notify", {
-      message: "Artist renamed",
-      type: "success",
-    });
-  });
-
-  it("just changes the name if the path stays the same", async (context) => {
-    const artist = getFakeArtist();
-    const directory = await testFs(
-      { "/LIBRARY_PATH/A/Artist 1": {} },
-      context.task.id
-    );
-
-    const send = vi.fn();
-    const { editArtist } = artistController({
-      ...defaultParams,
-      withPath: (key, folderPath) => path.join(directory, key, folderPath),
-      send,
-    });
-
-    await prisma.artist.create({ data: artist });
-
-    const result = await editArtist({
-      ...artist,
-      newName: "Artist New",
-      newPath: "A/Artist 1",
-    });
-
-    const previousPath = path.join(directory, "LIBRARY_PATH/A/Artist 1");
-
-    expect(result).toBeTruthy();
-    expect(await pathExists(previousPath)).toBe(true);
 
     expect(send).toHaveBeenCalledWith("notify", {
       message: "Artist renamed",

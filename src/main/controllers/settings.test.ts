@@ -22,7 +22,6 @@ describe("settingsController - init function", () => {
       DISCOGS_SECRET: "",
       LIBRARY_PATH: "",
       COVERS_PATH: "assets/covers",
-      USE_SMART_IMPORT: false,
     });
   });
 });
@@ -73,27 +72,27 @@ describe("settingsController - updateSettings function", () => {
     await init();
 
     expect(getSetting("PLAYER_PATH")).toBe("PLAYER_PATH");
-    expect(getSetting("USE_SMART_IMPORT")).toBe(false);
+    expect(getSetting("SHOW_ONBOARDING_ON_STARTUP")).toBe(false);
 
     await updateSettings({
       ...data,
       PLAYER_PATH: "/new/path",
-      USE_SMART_IMPORT: true,
+      SHOW_ONBOARDING_ON_STARTUP: true,
     });
 
     expect(getSetting("PLAYER_PATH")).toBe("/new/path");
-    expect(getSetting("USE_SMART_IMPORT")).toBe(true);
+    expect(getSetting("SHOW_ONBOARDING_ON_STARTUP")).toBe(true);
 
     expect(await getSettings()).toMatchObject({
       ...data,
       PLAYER_PATH: "/new/path",
-      USE_SMART_IMPORT: true,
+      SHOW_ONBOARDING_ON_STARTUP: true,
     });
 
     expect(send).toHaveBeenCalledWith("settingsUpdate", {
       ...data,
       PLAYER_PATH: "/new/path",
-      USE_SMART_IMPORT: true,
+      SHOW_ONBOARDING_ON_STARTUP: true,
     });
   });
 });

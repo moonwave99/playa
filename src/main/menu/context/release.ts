@@ -62,7 +62,7 @@ export const releaseMenu =
         },
         {
           label: `Open Release in Tagger`,
-          click: () => controllers.system.openTagger(release.id),
+          click: () => controllers.system.openReleaseInTagger(release.id),
         },
         {
           label: `Reveal Release in Finder`,

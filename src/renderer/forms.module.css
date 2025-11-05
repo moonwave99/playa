@@ -85,6 +85,7 @@
 .button {
   font-size: 0.75rem;
   line-height: 2rem;
+  height: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;

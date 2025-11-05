@@ -161,7 +161,7 @@
             "placeholder": "Enter your Discogs API Secret"
           }
         },
-        "importMusic": {
+        "importFolders": {
           "title": "Import some Music",
           "subtitle": "Playa is waiting for your first Albums."
         },
@@ -230,15 +230,6 @@
       "actions": {
         "selectFile": "Select a File",
         "cancel": "Cancel"
-      }
-    },
-    "ImportFoldersView": {
-      "title": "Importing Folders",
-      "status": {
-        "done": "Done"
-      },
-      "actions": {
-        "close": "Close"
       }
     },
     "EditReleaseView": {
@@ -347,12 +338,14 @@
         "placeholder": "There are no Artists in this Group yet"
       }
     },
-    "InteractiveImport": {
+    "ImportFoldersView": {
       "title": "Import Folders",
       "actions": {
         "import": "Import Folder",
         "skip": "Skip Folder",
-        "cancel": "Cancel"
+        "cancel": "Cancel",
+        "openTagger": "Open Folder in Tagger",
+        "refreshTracksInfo": "Refresh Tracks Info"
       },
       "folderView": {
         "title": "Release Info"
@@ -368,8 +361,11 @@
           "label": "Artist",
           "placeholder": "Select Artist"
         },
+        "path": {
+          "label": "Complete path"
+        },
         "title": {
-          "label": "Title",
+          "label": "Release Title",
           "placeholder": "Enter Release Title"
         },
         "year": {
@@ -384,15 +380,15 @@
       "track": {
         "title": {
           "label": "Title",
-          "placeholder": "Enter Track Title"
+          "placeholder": "Enter title for Track no. {{ index }}"
         },
         "trackArtist": {
-          "label": "Artist",
-          "placeholder": "Enter Track Artist"
+          "label": "Track Artist",
+          "placeholder": "Enter track Artist for Track no. {{ index }}"
         },
         "position": {
           "label": "Position",
-          "placeholder": "Enter Track Position"
+          "placeholder": "Enter Track position for Track no. {{ index }}"
         }
       }
     },
@@ -422,9 +418,6 @@
         "info": "You can set up your Discogs Credentials here"
       },
       "fields": {
-        "USE_SMART_IMPORT": {
-          "label": "Use Smart Import"
-        },
         "LIBRARY_PATH": {
           "label": "Library Path",
           "placeholder": "Insert the folder where your music is located"

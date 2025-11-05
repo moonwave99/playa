@@ -11,11 +11,10 @@ import type {
   Notification,
 } from "@/types/types";
 import { globby } from "globby";
-import { VARIOUS_ARTISTS_NAME, VARIOUS_ARTISTS_FOLDER } from "@/lib/utils";
 import { QueryKey } from "@tanstack/react-query";
 
-export function stripPath(completePath: string, startPath: string) {
-  const stripped = completePath.replace(new RegExp(`^${startPath}`), "");
+export function stripPath(fullPath: string, startPath: string) {
+  const stripped = fullPath.replace(new RegExp(`^${startPath}`), "");
   if (path.isAbsolute(stripped)) {
     return stripped.slice(1);
   }
@@ -23,43 +22,16 @@ export function stripPath(completePath: string, startPath: string) {
 }
 
 type GetEntityPathParam = { entityType: EntityType } & (
-  | Pick<Artist, "path">
-  | Pick<ReleaseWithArtist, "artist" | "path" | "type" | "year">
+  | Pick<Release, "path">
   | Pick<TrackWithRelease, "release" | "path">
 );
 
 export function getEntityPath(entity: GetEntityPathParam) {
-  if (entity.entityType === "artist") {
+  if (entity.entityType === "release") {
     return entity.path;
   }
-  if (entity.entityType === "release") {
-    const release = entity as ReleaseWithArtist;
-    if (release.completePath) {
-      return release.completePath;
-    }
-    return path.join(
-      release.artist.path,
-      `[${release.type}]`,
-      `${release.year} - ${release.path}`
-    );
-  }
   const track = entity as TrackWithRelease;
-  if (track.release.completePath) {
-    return path.join(track.release.completePath, track.path);
-  }
-  return path.join(
-    track.release.artist.path,
-    `[${track.release.type}]`,
-    `${track.release.year} - ${track.release.path}`,
-    track.path
-  );
-}
-
-export function getArtistPathFromReleaseData(data: ParsePath) {
-  if (data.completePath.startsWith(VARIOUS_ARTISTS_FOLDER)) {
-    return VARIOUS_ARTISTS_FOLDER;
-  }
-  return data.completePath.split("/").slice(0, 2).join("/");
+  return path.join(track.release.path, track.path);
 }
 
 export async function crawlFolder(folder: string) {
@@ -104,10 +76,44 @@ async function getMetadata(
   };
 }
 
-type ParsePath =
-  | (Pick<Release, "type" | "path" | "year" | "title"> & {
+type GetReleaseDataFromTrackInfoParams = {
+  folder: string;
+  tracks: TrackInfo[];
+};
+
+type ReleaseInfo =
+  | (Pick<Release, "type" | "year" | "title"> & {
       artist: Pick<Artist, "name">;
-      completePath: string;
+      fullPath: string;
+    })
+  | null;
+
+export function findKeyInTrackMeta(
+  tracks: TrackInfo[],
+  key: keyof TrackInfo["meta"]
+) {
+  return tracks.find((x) => !!x.meta[key])?.meta[key];
+}
+
+export function getReleaseDataFromTrackInfo({
+  folder,
+  tracks,
+}: GetReleaseDataFromTrackInfoParams): ReleaseInfo {
+  return {
+    artist: {
+      name: findKeyInTrackMeta(tracks, "artist") as string,
+    },
+    type: "Album",
+    title: findKeyInTrackMeta(tracks, "album") as string,
+    fullPath: folder,
+    year: +findKeyInTrackMeta(tracks, "year") as number,
+  };
+}
+
+type ParsePath =
+  | (Pick<Release, "type" | "year" | "title"> & {
+      artist: Pick<Artist, "name">;
+      fullPath: string;
     })
   | null;
 
@@ -117,12 +123,6 @@ export function parsePath(path: string): ParsePath {
   }
   if (path.startsWith("/")) {
     path = path.slice(1);
-  }
-  if (path.startsWith(VARIOUS_ARTISTS_FOLDER)) {
-    path = path.replace(
-      VARIOUS_ARTISTS_FOLDER,
-      `[V-A]/${VARIOUS_ARTISTS_NAME}`
-    );
   }
 
   const tokens = path.split("/");
@@ -147,11 +147,7 @@ export function parsePath(path: string): ParsePath {
     type: type as ReleaseType,
     year,
     title,
-    path: title,
-    completePath: path.replace(
-      `[V-A]/${VARIOUS_ARTISTS_NAME}`,
-      VARIOUS_ARTISTS_FOLDER
-    ),
+    fullPath: path,
   };
 }
 

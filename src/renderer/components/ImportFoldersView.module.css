@@ -1,39 +1,98 @@
 .view {
   display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  background-color: black;
+}
 
-  h2 {
-    user-select: none;
+.panel {
+  display: flex;
+  gap: 1rem;
+  > * {
+    flex: 1;
   }
 }
 
-.description {
-  font-size: 0.9rem;
-  line-height: 1.5rem;
+.main {
+  padding: 1.5rem;
+  flex: 1;
   display: flex;
   flex-direction: column;
+  gap: 1rem;
 }
 
-.progress {
-  margin: 0;
-  padding: 0 0 0 0.5rem;
+.artist {
+  width: 100%;
+}
+
+.FolderViewHeader {
   display: flex;
-  gap: 0.75rem;
+  align-items: center;
+  gap: 0.5rem;
+  h3 {
+    flex: 1;
+  }
+}
+
+.folderList {
+  padding: 1rem;
+  background-color: var(--background-color-light);
+  flex: 0.5;
+  list-style: none;
+  display: flex;
   flex-direction: column;
-  font-size: 0.9rem;
-  line-height: 1.5rem;
+  align-items: center;
+  gap: 0.5rem;
+
   li {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    width: 100%;
   }
-  .completed {
-    font-size: 0.75rem;
-    background-color: var(--accent-color);
-    padding: 0 0.5rem;
-    border-radius: 0.25rem;
-    font-weight: bold;
+
+  .folder {
+    width: 100%;
+    justify-content: start;
+    .check {
+      margin-left: auto;
+    }
   }
+}
+
+.folderView {
+  flex: 1;
+  --tracklist-wrapper-height: 27rem;
+  &.isImportingMultipleFolders {
+    --tracklist-wrapper-height: 22rem;
+  }
+}
+
+.trackListWrapper {
+  height: var(--tracklist-wrapper-height);
+  overflow-y: auto;
+}
+
+.trackList {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+
+  thead {
+    th {
+      text-align: left;
+      font-size: 0.9rem;
+      line-height: 1.5rem;
+    }
+  }
+  th,
+  td {
+    width: 45%;
+    padding-right: 0.5rem;
+    &:first-child {
+      width: 10%;
+    }
+    &:last-child {
+      padding-right: 0;
+    }
+  }
+}
+
+.trackInput {
+  width: 100%;
+  margin: 0.25rem 0;
 }

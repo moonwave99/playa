@@ -117,17 +117,51 @@ describe("system - playback function", () => {
   });
 });
 
-describe("system - openTagger function", () => {
-  it("shows an error box if no player path is set", async () => {
+describe("system - openFolderInTagger function", () => {
+  it("shows an error box if no tagger path is set", async () => {
     const showErrorBox = vi.fn();
 
-    const { openTagger } = systemController({
+    const { openFolderInTagger } = systemController({
       ...defaultParams,
       showErrorBox,
       getSetting: () => false,
     });
     const spy = vi.spyOn(run, "run");
-    const result = await openTagger(1);
+    const result = await openFolderInTagger("some/path");
+
+    expect(showErrorBox).toHaveBeenCalledWith(
+      "Application Error",
+      "You should set the Tagger path in settings"
+    );
+    expect(result).toBeFalsy();
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  it("calls run with the right path", async () => {
+    const { openFolderInTagger } = systemController(defaultParams);
+    const spy = vi.spyOn(run, "run");
+    const result = await openFolderInTagger("some/path");
+    expect(result).toBeTruthy();
+    expect(spy).toHaveBeenCalledWith("open", [
+      "-a",
+      "TAGGER_PATH",
+      "LIBRARY_PATH/some/path",
+    ]);
+  });
+});
+
+describe("system - openReleaseInTagger function", () => {
+  it("shows an error box if no tagger path is set", async () => {
+    const showErrorBox = vi.fn();
+    await prisma.release.create({ data: getFakeReleasesForArtist(1).at(0) });
+
+    const { openReleaseInTagger } = systemController({
+      ...defaultParams,
+      showErrorBox,
+      getSetting: () => false,
+    });
+    const spy = vi.spyOn(run, "run");
+    const result = await openReleaseInTagger(1);
 
     expect(showErrorBox).toHaveBeenCalledWith(
       "Application Error",
@@ -138,8 +172,8 @@ describe("system - openTagger function", () => {
   });
 
   it("does nothing is no release if found", async () => {
-    const { openTagger } = systemController(defaultParams);
-    const result = await openTagger(1);
+    const { openReleaseInTagger } = systemController(defaultParams);
+    const result = await openReleaseInTagger(1);
     expect(result).toBeFalsy();
   });
 
@@ -148,9 +182,9 @@ describe("system - openTagger function", () => {
     await prisma.artist.create({ data: getFakeArtist(1) });
     await prisma.release.create({ data: release });
 
-    const { openTagger } = systemController(defaultParams);
+    const { openReleaseInTagger } = systemController(defaultParams);
     const spy = vi.spyOn(run, "run");
-    const result = await openTagger(1);
+    const result = await openReleaseInTagger(1);
     expect(result).toBeTruthy();
     expect(spy).toHaveBeenCalledWith("open", [
       "-a",
@@ -180,19 +214,6 @@ describe("system revealEntityInFinder function", () => {
     expect(spy).toHaveBeenCalledWith(
       "LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1"
     );
-  });
-
-  it("opens the folder in finder if an artist is found", async () => {
-    const release = getFakeReleasesForArtist(1).at(0);
-    await prisma.artist.create({ data: getFakeArtist(1) });
-    await prisma.release.create({ data: release });
-
-    const { revealEntityInFinder } = systemController(defaultParams);
-    const spy = vi.spyOn(shell, "openPath");
-
-    const result = await revealEntityInFinder({ entityType: "artist", id: 1 });
-    expect(result).toBeTruthy();
-    expect(spy).toHaveBeenCalledWith("LIBRARY_PATH/A/Artist 1");
   });
 
   it("opens the folder in finder if a track is found", async () => {

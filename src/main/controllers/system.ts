@@ -97,7 +97,7 @@ export function systemController({
     return true;
   }
 
-  async function openTagger(release_id: number) {
+  async function openFolderInTagger(folder: string) {
     const TAGGER_PATH = getSetting("TAGGER_PATH") as string;
 
     if (!TAGGER_PATH) {
@@ -108,6 +108,11 @@ export function systemController({
       return;
     }
 
+    await run("open", ["-a", TAGGER_PATH, withPath("LIBRARY_PATH", folder)]);
+    return true;
+  }
+
+  async function openReleaseInTagger(release_id: number) {
     const release = await prisma.release.findFirst({
       where: { id: release_id },
       include: {
@@ -117,16 +122,7 @@ export function systemController({
     if (!release) {
       return;
     }
-
-    await run("open", [
-      "-a",
-      TAGGER_PATH,
-      withPath(
-        "LIBRARY_PATH",
-        getEntityPath({ ...release, entityType: "release" })
-      ),
-    ]);
-    return true;
+    return openFolderInTagger(release.path);
   }
 
   async function revealEntityInFinder({ entityType, id }: HasEntityTypeAndId) {
@@ -136,8 +132,6 @@ export function systemController({
         where: { id },
         include: { artist: true },
       });
-    } else if (entityType === "artist") {
-      result = await prisma.artist.findFirst({ where: { id } });
     } else {
       result = await prisma.track.findFirst({
         where: { id },
@@ -176,7 +170,8 @@ export function systemController({
 
   return {
     playback,
-    openTagger,
+    openReleaseInTagger,
+    openFolderInTagger,
     revealEntityInFinder,
     startDrag,
   };
@@ -184,7 +179,8 @@ export function systemController({
 
 export const actions: (keyof ReturnType<typeof systemController>)[] = [
   "playback",
-  "openTagger",
+  "openReleaseInTagger",
+  "openFolderInTagger",
   "revealEntityInFinder",
   "startDrag",
 ];

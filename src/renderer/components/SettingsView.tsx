@@ -31,10 +31,6 @@ type Field = {
 
 const fieldsMap: Field[] = [
   {
-    key: "USE_SMART_IMPORT",
-    type: "checkbox",
-  },
-  {
     key: "LIBRARY_PATH",
     type: "path",
     options: {
@@ -86,20 +82,23 @@ export default function SettingsView({ closeModal }: SettingsViewProps) {
     return <Loading />;
   }
 
-  async function openFile(
+  async function openPath(
     key: string,
     options: Omit<OpenFolderDialogParams, "key">
   ) {
-    const folder = await api.dialog.openFolderDialog({
+    const isFolder = options.properties?.includes("openDirectory");
+    const path = await api.dialog[
+      isFolder ? "openFolderDialog" : "openFileDialog"
+    ]({
       ...options,
       key,
     });
-    if (!folder.length) {
+    if (!path.length) {
       return;
     }
     setCopy((prev) => ({
       ...prev,
-      [key]: folder.at(0),
+      [key]: Array.isArray(path) ? path.at(0) : path,
     }));
   }
 
@@ -112,7 +111,7 @@ export default function SettingsView({ closeModal }: SettingsViewProps) {
           type={type === "checkbox" ? "checkbox" : "input"}
           tabIndex={type === "path" ? -1 : 0}
           readOnly={type === "path"}
-          onClick={type === "path" ? () => openFile(key, options) : null}
+          onClick={type === "path" ? () => openPath(key, options) : null}
           name={key}
           className={className}
           required={required}
@@ -133,7 +132,7 @@ export default function SettingsView({ closeModal }: SettingsViewProps) {
           <button
             className={cx(buttonStyles.button, formStyles.fileButton)}
             type="button"
-            onClick={() => openFile(key, options)}
+            onClick={() => openPath(key, options)}
             aria-label={t(`modals.SettingsView.fields.${key}.label`)}
           >
             <Icon isFor="actions.pickFolder" />

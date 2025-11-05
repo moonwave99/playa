@@ -8,7 +8,7 @@ import SplashStep from "./Steps/SplashStep";
 import SetupAppsStep from "./Steps/SetupAppsStep";
 import DiscogsStep from "./Steps/DiscogsStep";
 import SetupLibraryStep from "./Steps/SetupLibraryStep";
-import ImportMusicStep from "./Steps/ImportMusicStep";
+import ImportFoldersStep from "./Steps/ImportFoldersStep";
 import FinalStep from "./Steps/FinalStep";
 
 import cx from "clsx";
@@ -27,7 +27,7 @@ const stepsMap = {
   setupLibrary: SetupLibraryStep,
   setupApps: SetupAppsStep,
   discogs: DiscogsStep,
-  importMusic: ImportMusicStep,
+  importFolders: ImportFoldersStep,
   final: FinalStep,
 };
 

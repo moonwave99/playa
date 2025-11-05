@@ -3,8 +3,8 @@ import { clearPrisma } from "@/test/prisma-utils";
 import {
   getFolderContents,
   parsePath,
-  getArtistPathFromReleaseData,
   getEntityPath,
+  getReleaseDataFromTrackInfo,
 } from "./utils";
 import {
   getFakeArtist,
@@ -13,8 +13,38 @@ import {
 } from "../test/seed";
 import path from "path";
 import { testFs } from "@moonwave99/test-fs";
+import { TrackInfo } from "@/types/types";
 
 afterEach(clearPrisma);
+
+describe("getReleaseDataFromTrackInfo", () => {
+  it("gets release data from track info", () => {
+    const tracks = Array.from({ length: 3 }, (_, i) => ({
+      path: `0${i} - Track 0${i}.mp3`,
+      duration: 123,
+      position: i + 1,
+      title: `Track ${i + 1}`,
+      trackArtist: "Artist 1",
+      meta: {
+        album: "Album 1",
+        year: 1999,
+        artist: "Artist 1",
+      },
+    })) as TrackInfo[];
+
+    const folder = "";
+
+    const output = getReleaseDataFromTrackInfo({ tracks, folder });
+
+    expect(output).toEqual({
+      artist: { name: "Artist 1" },
+      type: "Album",
+      year: 1999,
+      title: "Album 1",
+      fullPath: folder,
+    });
+  });
+});
 
 describe("parsePath function", () => {
   it("parses input correctly", () => {
@@ -29,26 +59,11 @@ describe("parsePath function", () => {
         title: "My Title",
         type: "Album",
         year: 1999,
-        path: "My Title",
-        completePath: "A/Artist/[Album]/1999 - My Title",
+        fullPath: "A/Artist/[Album]/1999 - My Title",
         artist: {
           name: "Artist",
         },
       });
-    });
-  });
-
-  it("parses the V/A folder correctly", () => {
-    const output = parsePath("/[V:A]/[Compilation]/1999 - My Title");
-    expect(output).toEqual({
-      title: "My Title",
-      type: "Compilation",
-      year: 1999,
-      path: "My Title",
-      completePath: "[V:A]/[Compilation]/1999 - My Title",
-      artist: {
-        name: "_VV_AA_",
-      },
     });
   });
 
@@ -63,8 +78,7 @@ describe("parsePath function", () => {
       title: "title",
       type: "Album",
       year: 0,
-      path: "title",
-      completePath: "A/Artist/[Album]/title",
+      fullPath: "A/Artist/[Album]/title",
       artist: {
         name: "Artist",
       },
@@ -110,67 +124,21 @@ describe("getFolderContents function", () => {
   });
 });
 
-describe("getArtistPathFromReleaseData function", () => {
-  it("returns the artist path from the given release data", () => {
-    {
-      const releaseData = parsePath("A/Artist/[Album]/1999 - My Title");
-      const artistPath = getArtistPathFromReleaseData(releaseData);
-      expect(artistPath).toBe("A/Artist");
-    }
-    {
-      const releaseData = parsePath("[V:A]/[Album]/1999 - My Title");
-      const artistPath = getArtistPathFromReleaseData(releaseData);
-      expect(artistPath).toBe("[V:A]");
-    }
-  });
-});
-
 describe("getEntityPath function", () => {
-  it("returns the path for an Artist", () => {
-    const artist = getFakeArtist();
-    const path = getEntityPath(artist);
-    expect(path).toBe("A/Artist 1");
-  });
-
   it("returns the path for a Release", () => {
     const release = getFakeReleasesForArtist(1).at(0);
     const path = getEntityPath(release);
     expect(path).toBe("A/Artist 1/[Album]/2000 - Release 1");
   });
 
-  it("returns the path for a Release with a completePath", () => {
-    const release = {
-      ...getFakeReleasesForArtist(1).at(0),
-      completePath: "complete/path/to/release",
-    };
-    const path = getEntityPath(release);
-    expect(path).toBe("complete/path/to/release");
-  });
-
   it("returns the path for a Track", () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { completePath, ...release } = getFakeReleasesForArtist(1).at(0);
-    const artist = getFakeArtist();
+    const release = getFakeReleasesForArtist(1).at(0);
     const track = {
       ...getFakeTracksForRelease(1).at(0),
-      release: {
-        ...release,
-        artist,
-      },
+      release,
     };
     const path = getEntityPath(track);
     expect(path).toBe("A/Artist 1/[Album]/2000 - Release 1/01 - Track 1.mp3");
-  });
-
-  it("returns the path for a Track from a Release with a completePath", () => {
-    const track = {
-      ...getFakeTracksForRelease(1).at(0),
-      release: {
-        ...getFakeReleasesForArtist(1).at(0),
-        completePath: "complete/path/to/release",
-      },
-    };
-    const path = getEntityPath(track);
-    expect(path).toBe("complete/path/to/release/01 - Track 1.mp3");
   });
 });

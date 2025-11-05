@@ -1,7 +1,7 @@
 import ReactModal from "react-modal";
 import { useTranslation } from "react-i18next";
 import useStore from "./store";
-import { useEffect, useState, type JSX } from "react";
+import { useEffect, useState, type JSX, CSSProperties } from "react";
 
 import api from "./api";
 import { MODAL_CLOSE_TIMEOUT } from "@/constants";
@@ -16,10 +16,9 @@ import EditGroupView from "./components/EditGroupView";
 import SearchView from "./components/SearchView";
 import ImportDataView from "./components/ImportDataView";
 import ExportDataView from "./components/ExportDataView";
-import ImportFoldersView from "./components/ImportFoldersView";
 import AddReleasesToCollectionView from "./components/AddReleasesToCollectionView";
 import AddArtistsToGroupView from "./components/AddArtistsToGroupView";
-import InteractiveImportView from "./components/InteractiveImportView";
+import ImportFoldersView from "./components/ImportFoldersView";
 import StatsView from "./components/StatsView";
 import { Icon } from "./icons";
 
@@ -53,7 +52,11 @@ export default function Modal({ setContext }: ModalProps) {
       return null;
     }
     const { name, params } = modalContents;
-    const Component = modalMap[name].component;
+    const Component = modalMap[name].component as ({
+      closeModal,
+    }: {
+      closeModal: () => void;
+    }) => JSX.Element;
     return <Component {...{ closeModal, ...params }} />;
   }
 
@@ -105,7 +108,6 @@ function getModalStyle(name: Modals) {
       background: "black",
       width: "max(40vw, 600px)",
       height: "min-content",
-      maxHeight: "95vh",
       margin: "auto",
       borderColor: "var(--modal-border-color)",
       borderRadius: ".5rem",
@@ -114,20 +116,12 @@ function getModalStyle(name: Modals) {
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      ...(modalMap[name]?.styles || {}),
+      ...((modalMap[name] as { styles?: CSSProperties })?.styles || {}),
     },
   };
 }
 
-type ModalMap<T extends { closeModal: () => void }> = Record<
-  string,
-  {
-    component: (props: T) => JSX.Element;
-    styles?: React.CSSProperties;
-  }
->;
-
-const modalMap: ModalMap<{ closeModal: () => void }> = {
+const modalMap = {
   settings: {
     component: SettingsView,
   },
@@ -139,12 +133,6 @@ const modalMap: ModalMap<{ closeModal: () => void }> = {
   },
   exportData: {
     component: ExportDataView,
-  },
-  importFolders: {
-    component: ImportFoldersView,
-    styles: {
-      width: "min(80vw, 1000px)",
-    },
   },
   groupReleases: {
     component: GroupReleasesView,
@@ -173,8 +161,8 @@ const modalMap: ModalMap<{ closeModal: () => void }> = {
   addArtistsToGroup: {
     component: AddArtistsToGroupView,
   },
-  interactiveImport: {
-    component: InteractiveImportView,
+  importFolders: {
+    component: ImportFoldersView,
     styles: {
       width: "min(90vw, 1000px)",
       padding: 0,
