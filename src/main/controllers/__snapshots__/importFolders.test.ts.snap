@@ -1,0 +1,196 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`getTracksInfo function > returns the info for the folder tracks 1`] = `
+{
+  "absolutePath": "/Users/mwlabs/dev/mwlabs/playa/node_modules/@moonwave99/test-fs/dist/__test-fs__/1843099594_4_1/LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1",
+  "artist": {
+    "id": null,
+    "name": "Artist 1",
+  },
+  "folder": "2000 - Release 1",
+  "path": "A/Artist 1/[Album]/2000 - Release 1",
+  "title": "Release 1",
+  "tracks": [
+    {
+      "duration": 123,
+      "meta": {
+        "album": "Release 1",
+        "artist": "Artist 1",
+        "title": "Track 1",
+        "track": {
+          "no": 1,
+        },
+        "year": 2000,
+      },
+      "path": "01 - Track 1.mp3",
+      "position": 1,
+      "title": "Track 1",
+      "trackArtist": "Artist 1",
+    },
+    {
+      "duration": 123,
+      "meta": {
+        "album": "Release 1",
+        "artist": "Artist 1",
+        "title": "Track 2",
+        "track": {
+          "no": 2,
+        },
+        "year": 2000,
+      },
+      "path": "02 - Track 2.mp3",
+      "position": 2,
+      "title": "Track 2",
+      "trackArtist": "Artist 1",
+    },
+    {
+      "duration": 123,
+      "meta": {
+        "album": "Release 1",
+        "artist": "Artist 1",
+        "title": "Track 3",
+        "track": {
+          "no": 3,
+        },
+        "year": 2000,
+      },
+      "path": "03 - Track 3.mp3",
+      "position": 3,
+      "title": "Track 3",
+      "trackArtist": "Artist 1",
+    },
+  ],
+  "type": "Album",
+  "year": 2000,
+}
+`;
+
+exports[`getTracksInfo function > returns the info for the tracks of a possible V/A folder (V/A artist already existing) 1`] = `
+{
+  "absolutePath": "/Users/mwlabs/dev/mwlabs/playa/node_modules/@moonwave99/test-fs/dist/__test-fs__/1843099594_4_2/LIBRARY_PATH/X/Various Artists/[Album]/2000 - Release 1",
+  "artist": {
+    "id": 1,
+    "name": "__VV_AA__",
+  },
+  "folder": "2000 - Release 1",
+  "path": "X/Various Artists/[Album]/2000 - Release 1",
+  "title": "Release 1",
+  "tracks": [
+    {
+      "duration": 123,
+      "meta": {
+        "album": "Release 1",
+        "artist": "Track Artist",
+        "title": "Track 1",
+        "track": {
+          "no": 1,
+        },
+        "year": 2000,
+      },
+      "path": "01 - Track 1.mp3",
+      "position": 1,
+      "title": "Track 1",
+      "trackArtist": "Track Artist",
+    },
+    {
+      "duration": 123,
+      "meta": {
+        "album": "Release 1",
+        "artist": "Track Artist",
+        "title": "Track 2",
+        "track": {
+          "no": 2,
+        },
+        "year": 2000,
+      },
+      "path": "02 - Track 2.mp3",
+      "position": 2,
+      "title": "Track 2",
+      "trackArtist": "Track Artist",
+    },
+    {
+      "duration": 123,
+      "meta": {
+        "album": "Release 1",
+        "artist": "Track Artist",
+        "title": "Track 3",
+        "track": {
+          "no": 3,
+        },
+        "year": 2000,
+      },
+      "path": "03 - Track 3.mp3",
+      "position": 3,
+      "title": "Track 3",
+      "trackArtist": "Track Artist",
+    },
+  ],
+  "type": "Album",
+  "year": 2000,
+}
+`;
+
+exports[`getTracksInfo function > returns the info for the tracks of a possible V/A folder (V/A artist not existing) 1`] = `
+{
+  "absolutePath": "/Users/mwlabs/dev/mwlabs/playa/node_modules/@moonwave99/test-fs/dist/__test-fs__/1843099594_4_3/LIBRARY_PATH/X/Various Artists/[Album]/2000 - Release 1",
+  "artist": {
+    "id": null,
+    "name": "__VV_AA__",
+  },
+  "folder": "2000 - Release 1",
+  "path": "X/Various Artists/[Album]/2000 - Release 1",
+  "title": "Release 1",
+  "tracks": [
+    {
+      "duration": 123,
+      "meta": {
+        "album": "Release 1",
+        "artist": "Track Artist",
+        "title": "Track 1",
+        "track": {
+          "no": 1,
+        },
+        "year": 2000,
+      },
+      "path": "01 - Track 1.mp3",
+      "position": 1,
+      "title": "Track 1",
+      "trackArtist": "Track Artist",
+    },
+    {
+      "duration": 123,
+      "meta": {
+        "album": "Release 1",
+        "artist": "Track Artist",
+        "title": "Track 2",
+        "track": {
+          "no": 2,
+        },
+        "year": 2000,
+      },
+      "path": "02 - Track 2.mp3",
+      "position": 2,
+      "title": "Track 2",
+      "trackArtist": "Track Artist",
+    },
+    {
+      "duration": 123,
+      "meta": {
+        "album": "Release 1",
+        "artist": "Track Artist",
+        "title": "Track 3",
+        "track": {
+          "no": 3,
+        },
+        "year": 2000,
+      },
+      "path": "03 - Track 3.mp3",
+      "position": 3,
+      "title": "Track 3",
+      "trackArtist": "Track Artist",
+    },
+  ],
+  "type": "Album",
+  "year": 2000,
+}
+`;

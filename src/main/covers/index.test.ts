@@ -1,5 +1,6 @@
 import prisma from "../db/prisma";
 import { getFakeArtist, getFakeReleasesForArtist } from "@/test/seed";
+import { VARIOUS_ARTISTS_NAME } from "@/constants";
 import path from "node:path";
 import {
   searchCover,
@@ -112,7 +113,7 @@ describe("normalizeArtist function", () => {
     expect(normalizeArtist("Malaria!")).toBe("Malaria");
   });
   it("replaces the various artist name", () => {
-    expect(normalizeArtist("_VV_AA_")).toBe("Various");
+    expect(normalizeArtist(VARIOUS_ARTISTS_NAME)).toBe("Various");
   });
 });
 

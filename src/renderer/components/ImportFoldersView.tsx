@@ -13,10 +13,11 @@ import ErrorView from "./ErrorView";
 import Loading from "./Loading";
 import { Icon } from "../icons";
 import cx from "clsx";
-import styles from "./InteractiveImportView.module.css";
+import styles from "./ImportFoldersView.module.css";
 import formStyles from "../forms.module.css";
+import { normalizeArtistDisplayName } from "@/lib/utils";
 
-type InteractiveImportViewProps = {
+type ImportFoldersViewProps = {
   data: ImportData[];
   closeModal: () => void;
 };
@@ -26,10 +27,10 @@ type ImportStatus = {
   isDone: boolean;
 };
 
-export default function InteractiveImportView({
+export default function ImportFoldersView({
   data,
   closeModal,
-}: InteractiveImportViewProps) {
+}: ImportFoldersViewProps) {
   const { t } = useTranslation();
   const [index, setIndex] = useState(0);
   const [importStatus, setImportStatus] = useState(
@@ -56,7 +57,7 @@ export default function InteractiveImportView({
         <FolderList importStatus={importStatus} index={index} />
       )}
       <div className={styles.main}>
-        <h2>{t("modals.InteractiveImport.title")}</h2>
+        <h2>{t("modals.ImportFoldersView.title")}</h2>
         <FolderView
           key={index}
           data={data[index]}
@@ -101,7 +102,7 @@ function FolderView({
     const response = await api.importFolders.importFromData(tempData);
     setImporting(false);
     if (!response) {
-      window.alert(t("modals.InteractiveImport.errors.import"));
+      window.alert(t("modals.ImportFoldersView.errors.import"));
       return;
     }
     onImport();
@@ -140,7 +141,7 @@ function FolderView({
       onSubmit={onSubmit}
     >
       <header className={styles.FolderViewHeader}>
-        <h3>{t("modals.InteractiveImport.folderView.title")}</h3>
+        <h3>{t("modals.ImportFoldersView.folderView.title")}</h3>
         <button
           type="button"
           onClick={refreshTracksInfo}
@@ -150,7 +151,7 @@ function FolderView({
           {isRefreshing ? (
             <Loading size="small" />
           ) : (
-            t("modals.InteractiveImport.actions.refreshTracksInfo")
+            t("modals.ImportFoldersView.actions.refreshTracksInfo")
           )}
         </button>
         <button
@@ -159,13 +160,13 @@ function FolderView({
           className={formStyles.button}
           disabled={isImporting}
         >
-          {t("modals.InteractiveImport.actions.openTagger")}
+          {t("modals.ImportFoldersView.actions.openTagger")}
         </button>
       </header>
       {isImportingMultipleFolders && (
         <div className={styles.panel}>
           <label className={cx(formStyles.label, formStyles.vertical)}>
-            {t("modals.InteractiveImport.release.path.label")}
+            {t("modals.ImportFoldersView.release.path.label")}
             <input
               className={formStyles.input}
               defaultValue={data.path}
@@ -177,7 +178,7 @@ function FolderView({
       )}
       <div className={styles.panel}>
         <label className={cx(formStyles.label, formStyles.vertical)}>
-          {t("modals.InteractiveImport.release.artist.label")}
+          {t("modals.ImportFoldersView.release.artist.label")}
           <LookupView
             allowCustomValue
             className={styles.artist}
@@ -191,12 +192,12 @@ function FolderView({
                 artist,
               }))
             }
-            getText={(artist) => artist?.name}
+            getText={(artist) => normalizeArtistDisplayName(artist?.name)}
             getCustomValue={(name) => ({ id: null as number, name })}
           />
         </label>
         <label className={cx(formStyles.label, formStyles.vertical)}>
-          {t("modals.InteractiveImport.release.title.label")}
+          {t("modals.ImportFoldersView.release.title.label")}
           <input
             className={formStyles.input}
             value={tempData.title}
@@ -208,14 +209,14 @@ function FolderView({
             }}
             required
             placeholder={t(
-              "modals.InteractiveImport.release.title.placeholder"
+              "modals.ImportFoldersView.release.title.placeholder"
             )}
           />
         </label>
       </div>
       <div className={styles.panel}>
         <label className={cx(formStyles.label, formStyles.vertical)}>
-          {t("modals.InteractiveImport.release.year.label")}
+          {t("modals.ImportFoldersView.release.year.label")}
           <input
             className={formStyles.input}
             value={tempData.year}
@@ -227,11 +228,11 @@ function FolderView({
             }}
             required
             type="number"
-            placeholder={t("modals.InteractiveImport.release.year.placeholder")}
+            placeholder={t("modals.ImportFoldersView.release.year.placeholder")}
           />
         </label>
         <label className={cx(formStyles.label, formStyles.vertical)}>
-          {t("modals.InteractiveImport.release.type.label")}
+          {t("modals.ImportFoldersView.release.type.label")}
           <select
             value={tempData.type}
             className={formStyles.select}
@@ -249,7 +250,7 @@ function FolderView({
         </label>
       </div>
       <h3>
-        {t("modals.InteractiveImport.tracklistView.title", {
+        {t("modals.ImportFoldersView.tracklistView.title", {
           total: data.tracks.length,
         })}
       </h3>
@@ -258,13 +259,13 @@ function FolderView({
           <thead>
             <tr>
               <th id="track-position">
-                {t("modals.InteractiveImport.track.position.label")}
+                {t("modals.ImportFoldersView.track.position.label")}
               </th>
               <th id="track-title">
-                {t("modals.InteractiveImport.track.title.label")}
+                {t("modals.ImportFoldersView.track.title.label")}
               </th>
               <th id="track-trackArtist">
-                {t("modals.InteractiveImport.track.trackArtist.label")}
+                {t("modals.ImportFoldersView.track.trackArtist.label")}
               </th>
             </tr>
           </thead>
@@ -290,7 +291,7 @@ function FolderView({
           {isImporting ? (
             <Loading size="small" />
           ) : (
-            t("modals.InteractiveImport.actions.import")
+            t("modals.ImportFoldersView.actions.import")
           )}
         </button>
         {isImportingMultipleFolders && !isLast && (
@@ -300,7 +301,7 @@ function FolderView({
             onClick={onSkip}
             disabled={isImporting}
           >
-            {t("modals.InteractiveImport.actions.skip")}
+            {t("modals.ImportFoldersView.actions.skip")}
           </button>
         )}
         <button
@@ -309,7 +310,7 @@ function FolderView({
           onClick={onCancel}
           disabled={isImporting}
         >
-          {t("modals.InteractiveImport.actions.cancel")}
+          {t("modals.ImportFoldersView.actions.cancel")}
         </button>
       </div>
     </form>
@@ -334,7 +335,7 @@ function TrackView({ track, index, onTrackEdit }: TrackViewProps) {
           required
           type="number"
           placeholder={t(
-            "modals.InteractiveImport.track.position.placeholder",
+            "modals.ImportFoldersView.track.position.placeholder",
             { index: index + 1 }
           )}
           aria-labelledby="track-position"
@@ -354,7 +355,7 @@ function TrackView({ track, index, onTrackEdit }: TrackViewProps) {
             )
           }
           required
-          placeholder={t("modals.InteractiveImport.track.title.placeholder", {
+          placeholder={t("modals.ImportFoldersView.track.title.placeholder", {
             index: index + 1,
           })}
           aria-labelledby="track-title"
@@ -375,7 +376,7 @@ function TrackView({ track, index, onTrackEdit }: TrackViewProps) {
           }
           required
           placeholder={t(
-            "modals.InteractiveImport.track.trackArtist.placeholder",
+            "modals.ImportFoldersView.track.trackArtist.placeholder",
             {
               index: index + 1,
             }

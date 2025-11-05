@@ -338,7 +338,7 @@
         "placeholder": "There are no Artists in this Group yet"
       }
     },
-    "InteractiveImport": {
+    "ImportFoldersView": {
       "title": "Import Folders",
       "actions": {
         "import": "Import Folder",

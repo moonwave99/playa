@@ -38,3 +38,12 @@ export const DEFAULT_RELEASE_YEAR = 1999;
 export const DEFAULT_RELEASE_TYPE = "Album" as ReleaseType;
 
 export const MAX_ONBOARDING_IMPORT_RELEASE_COUNT = 3;
+
+export const VARIOUS_ARTISTS_NAME = "__VV_AA__";
+
+export const VARIOUS_ARTIST_POSSIBLE_FOLDERS = [
+  "V:A",
+  "Various Artists",
+  "AA. VV.",
+  "VV. AA.",
+];

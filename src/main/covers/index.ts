@@ -5,9 +5,10 @@ import { log } from "../logger";
 import type { Release, Artist, Track } from "@/types/types";
 import { searchCover as deezerSearch } from "./deezer";
 import { searchCover as discogsSearch, type DiscogsSecrets } from "./discogs";
-import { VARIOUS_ARTISTS_NAME } from "@/lib/utils";
+
 import { Vibrant } from "node-vibrant/node";
 import { IS_E2E_TEST } from "@/test/utils";
+import { VARIOUS_ARTISTS_NAME } from "@/constants";
 
 export type GetImageFromURLParams = {
   outputPath: string;
@@ -34,11 +35,11 @@ export function normalizeTitle(title: string) {
     .trim();
 }
 
-export function normalizeArtist(artist: string) {
-  if (artist === VARIOUS_ARTISTS_NAME) {
+export function normalizeArtist(artistName: string) {
+  if (artistName === VARIOUS_ARTISTS_NAME) {
     return "Various";
   }
-  return artist.replaceAll("!", "");
+  return artistName.replaceAll("!", "");
 }
 
 type SearchCoverParams = {

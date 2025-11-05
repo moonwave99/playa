@@ -15,6 +15,8 @@ import {
   getFakeTracksForRelease,
 } from "../../test/seed";
 import { ICommonTagsResult } from "music-metadata/lib/type";
+import { VARIOUS_ARTISTS_NAME } from "@/constants";
+import { hashArtistName } from "../hash";
 
 afterEach(clearPrisma);
 
@@ -245,7 +247,7 @@ describe("openImportDialog function", () => {
     expect(send).not.toHaveBeenCalled();
   });
 
-  it("opens the interactive import dialog", async (context) => {
+  it("opens the import folders dialog", async (context) => {
     const directory = await testFs(
       {
         "/LIBRARY_PATH/A/Artist 1": {
@@ -284,7 +286,7 @@ describe("openImportDialog function", () => {
 
     await openImportDialog();
 
-    expect(openModal).toHaveBeenCalledWith("interactiveImport", {
+    expect(openModal).toHaveBeenCalledWith("importFolders", {
       data: [
         {
           artist: {
@@ -430,6 +432,146 @@ describe("openImportDialog function", () => {
       "Folder already imported"
     );
     expect(send).not.toHaveBeenCalled();
+  });
+});
+
+describe("getTracksInfo function", () => {
+  it("returns null if the folder contains no tracks", async (context) => {
+    const directory = await testFs(
+      {
+        "/LIBRARY_PATH/A/Artist 1": {
+          "[Album]": {
+            "2000 - Release 1": {},
+          },
+        },
+      },
+      context.task.id
+    );
+
+    const LIBRARY_PATH = path.join(directory, "LIBRARY_PATH");
+
+    const { getTracksInfo } = importFoldersController({
+      ...defaultParams,
+      getSetting: (key: string) =>
+        key === "LIBRARY_PATH" ? LIBRARY_PATH : false,
+    });
+
+    expect(
+      await getTracksInfo(
+        path.join(LIBRARY_PATH, "A", "Artist 1", "[Album]", "2000 - Release 1")
+      )
+    ).toBe(null);
+  });
+
+  it("returns the info for the folder tracks", async (context) => {
+    const directory = await testFs(
+      {
+        "/LIBRARY_PATH/A/Artist 1": {
+          "[Album]": {
+            "2000 - Release 1": {
+              "01 - Track 1.mp3": "",
+              "02 - Track 2.mp3": "",
+              "03 - Track 3.mp3": "",
+            },
+          },
+        },
+      },
+      context.task.id
+    );
+
+    const LIBRARY_PATH = path.join(directory, "LIBRARY_PATH");
+
+    const { getTracksInfo } = importFoldersController({
+      ...defaultParams,
+      getSetting: (key: string) =>
+        key === "LIBRARY_PATH" ? LIBRARY_PATH : false,
+    });
+
+    expect(
+      await getTracksInfo(
+        path.join(LIBRARY_PATH, "A", "Artist 1", "[Album]", "2000 - Release 1")
+      )
+    ).toMatchSnapshot();
+  });
+
+  it("returns the info for the tracks of a possible V/A folder (V/A artist already existing)", async (context) => {
+    await prisma.artist.create({
+      data: {
+        name: VARIOUS_ARTISTS_NAME,
+        hash: hashArtistName(VARIOUS_ARTISTS_NAME),
+      },
+    });
+    const directory = await testFs(
+      {
+        "/LIBRARY_PATH/X/Various Artists/": {
+          "[Album]": {
+            "2000 - Release 1": {
+              "01 - Track 1.mp3": "",
+              "02 - Track 2.mp3": "",
+              "03 - Track 3.mp3": "",
+            },
+          },
+        },
+      },
+      context.task.id
+    );
+
+    const LIBRARY_PATH = path.join(directory, "LIBRARY_PATH");
+
+    const { getTracksInfo } = importFoldersController({
+      ...defaultParams,
+      getSetting: (key: string) =>
+        key === "LIBRARY_PATH" ? LIBRARY_PATH : false,
+    });
+
+    expect(
+      await getTracksInfo(
+        path.join(
+          LIBRARY_PATH,
+          "X",
+          "Various Artists",
+          "[Album]",
+          "2000 - Release 1"
+        )
+      )
+    ).toMatchSnapshot();
+  });
+
+  it("returns the info for the tracks of a possible V/A folder (V/A artist not existing)", async (context) => {
+    const directory = await testFs(
+      {
+        "/LIBRARY_PATH/X/Various Artists/": {
+          "[Album]": {
+            "2000 - Release 1": {
+              "01 - Track 1.mp3": "",
+              "02 - Track 2.mp3": "",
+              "03 - Track 3.mp3": "",
+            },
+          },
+        },
+      },
+      context.task.id
+    );
+
+    const LIBRARY_PATH = path.join(directory, "LIBRARY_PATH");
+
+    const { getTracksInfo } = importFoldersController({
+      ...defaultParams,
+      getSetting: (key: string) =>
+        key === "LIBRARY_PATH" ? LIBRARY_PATH : false,
+    });
+
+    expect(
+      await getTracksInfo(
+        path.join(
+          LIBRARY_PATH,
+          "X",
+          "Various Artists",
+          "[Album]",
+          "2000 - Release 1"
+        )
+      )
+    ).toMatchSnapshot();
   });
 });
 

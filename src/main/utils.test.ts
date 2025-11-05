@@ -67,19 +67,6 @@ describe("parsePath function", () => {
     });
   });
 
-  it("parses the V/A folder correctly", () => {
-    const output = parsePath("/[V:A]/[Compilation]/1999 - My Title");
-    expect(output).toEqual({
-      title: "My Title",
-      type: "Compilation",
-      year: 1999,
-      fullPath: "[V:A]/[Compilation]/1999 - My Title",
-      artist: {
-        name: "_VV_AA_",
-      },
-    });
-  });
-
   it("returns null if path is malformed", () => {
     const output = parsePath("/A/Artist/[Album]/1999 - My Title/More/Stuff");
     expect(output).toEqual(null);

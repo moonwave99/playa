@@ -16,6 +16,7 @@ import type {
   Artist,
   ArtistWithReleasesAndAppearances,
 } from "@/types/types";
+import { hashArtistName } from "../hash";
 
 export async function getArtist(id: number) {
   const result = await prisma.artist.findFirst({
@@ -194,7 +195,11 @@ function withReleaseCount(artist: ArtistWithReleases) {
 export async function updateArtist(id: number, { name }: ArtistUpdate) {
   return prisma.artist.update({
     where: { id },
-    data: { name, normalizedName: normalizeDiacritics(name) },
+    data: {
+      name,
+      normalizedName: normalizeDiacritics(name),
+      hash: hashArtistName(name),
+    },
   });
 }
 

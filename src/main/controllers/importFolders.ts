@@ -12,6 +12,7 @@ import {
   OpenFolderDialog,
   OpenModal,
   ShowErrorBox,
+  TrackInfo,
 } from "@/types/types";
 import { searchCover } from "../covers";
 import { addTracksToRelease } from "../db/release";
@@ -29,6 +30,8 @@ import {
   DEFAULT_RELEASE_TYPE,
   DEFAULT_RELEASE_YEAR,
   MAX_IMPORT_FOLDERS,
+  VARIOUS_ARTIST_POSSIBLE_FOLDERS,
+  VARIOUS_ARTISTS_NAME,
 } from "@/constants";
 
 type ImportFoldersControllerParams = {
@@ -112,20 +115,41 @@ export function importFoldersController({
     send("mutate", [`${entity.entityType}s`, entity.id]);
   }
 
+  async function getArtistMatch(
+    folder: string,
+    trackInfo: TrackInfo[]
+  ): Promise<{ id: number; name: string }> {
+    const name = VARIOUS_ARTIST_POSSIBLE_FOLDERS.some((x) =>
+      folder.toLowerCase().includes(x.toLowerCase())
+    )
+      ? VARIOUS_ARTISTS_NAME
+      : (findKeyInTrackMeta(trackInfo, "artist") as string);
+
+    const artist = await searchArtistByName(name);
+
+    if (!artist) {
+      return {
+        id: null,
+        name,
+      };
+    }
+
+    return {
+      id: artist.id,
+      name: artist.name,
+    };
+  }
+
   async function getTracksInfo(folder: string): Promise<ImportData> {
     const tracks = await getFolderContentsFromAbsolutePath(folder);
     if (!tracks.length) {
       return null;
     }
 
-    const artist = await searchArtistByName(tracks.at(0)?.trackArtist);
     const LIBRARY_PATH = getSetting("LIBRARY_PATH") as string;
 
     return {
-      artist: {
-        id: artist?.id || null,
-        name: artist?.name || (findKeyInTrackMeta(tracks, "artist") as string),
-      },
+      artist: await getArtistMatch(folder, tracks),
       title:
         (findKeyInTrackMeta(tracks, "album") as string) ||
         path.basename(folder),
@@ -297,7 +321,7 @@ export function importFoldersController({
       return;
     }
 
-    openModal("interactiveImport", { data: groupedByDisc });
+    openModal("importFolders", { data: groupedByDisc });
   }
 
   return {

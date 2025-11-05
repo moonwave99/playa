@@ -11,7 +11,6 @@ import type {
   Notification,
 } from "@/types/types";
 import { globby } from "globby";
-import { VARIOUS_ARTISTS_NAME, VARIOUS_ARTISTS_FOLDER } from "@/lib/utils";
 import { QueryKey } from "@tanstack/react-query";
 
 export function stripPath(fullPath: string, startPath: string) {
@@ -125,12 +124,6 @@ export function parsePath(path: string): ParsePath {
   if (path.startsWith("/")) {
     path = path.slice(1);
   }
-  if (path.startsWith(VARIOUS_ARTISTS_FOLDER)) {
-    path = path.replace(
-      VARIOUS_ARTISTS_FOLDER,
-      `[V-A]/${VARIOUS_ARTISTS_NAME}`
-    );
-  }
 
   const tokens = path.split("/");
   if (tokens.length < 4) {
@@ -154,10 +147,7 @@ export function parsePath(path: string): ParsePath {
     type: type as ReleaseType,
     year,
     title,
-    fullPath: path.replace(
-      `[V-A]/${VARIOUS_ARTISTS_NAME}`,
-      VARIOUS_ARTISTS_FOLDER
-    ),
+    fullPath: path,
   };
 }
 

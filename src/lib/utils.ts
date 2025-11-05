@@ -23,9 +23,7 @@ import {
   EntityType,
   HasId,
 } from "@/types/types";
-
-export const VARIOUS_ARTISTS_FOLDER = "[V:A]";
-export const VARIOUS_ARTISTS_NAME = "_VV_AA_";
+import { VARIOUS_ARTISTS_NAME } from "@/constants";
 
 export function getReleaseTitle({
   title,
