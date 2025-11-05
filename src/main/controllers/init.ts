@@ -174,7 +174,6 @@ export async function init({ mainWindow, settings }: InitParams) {
     settings,
     importFolders: importFoldersController({
       openFolderDialog,
-      withPath,
       getSetting,
       send,
       openModal,

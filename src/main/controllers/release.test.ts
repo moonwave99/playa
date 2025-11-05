@@ -27,6 +27,23 @@ const defaultParams = {
   openConfirmDialog: () => true,
 };
 
+describe("getReleaseTitleInfo function", () => {
+  it("returns the release title info", async () => {
+    const releases = getFakeReleasesForArtist(1, 1);
+    const artist = getFakeArtist(1);
+    await prisma.artist.create({ data: artist });
+    await prisma.release.createMany({ data: releases });
+
+    const { getReleaseTitleInfo } = releaseController(defaultParams);
+    expect(await getReleaseTitleInfo(1)).toMatchObject({
+      title: "Release 1-1",
+      artist: {
+        name: "Artist 1",
+      },
+    });
+  });
+});
+
 describe("hideRelease function", () => {
   it("hides the release from the homepage", async () => {
     const releases = getFakeReleasesForArtist(1, 20);

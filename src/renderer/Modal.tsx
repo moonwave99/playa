@@ -104,7 +104,6 @@ function getModalStyle(name: Modals) {
       background: "black",
       width: "max(40vw, 600px)",
       height: "min-content",
-      maxHeight: "95vh",
       margin: "auto",
       borderColor: "var(--modal-border-color)",
       borderRadius: ".5rem",

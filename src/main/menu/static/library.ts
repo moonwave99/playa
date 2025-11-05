@@ -46,7 +46,7 @@ export function getLibraryMenu({ controllers, stateManager }: GetMenuParams) {
       id: "importFolder",
       label: "Import Folder",
       accelerator: "Shift+I",
-      click: controllers.importFolders.importFolderFromDialog,
+      click: controllers.importFolders.openImportDialog,
     },
     { type: "separator" as const },
     ...randomMenu.map(({ entity, ...rest }) => ({

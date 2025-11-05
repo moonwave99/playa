@@ -25,6 +25,16 @@ TBD
 - display multiple covers for multiple discs releases;
 - make group and collection titles editable again;
 
+### Simplify import
+
+- fix Various Artists behavior;
+- precompile release type guessing from path;
+- add possibility to tag before importing && to refresh import view;
+- add "Artist will be created" on import info;
+- show warning when refreshing empty folder instead of removing tracks;
+- add relocate release folder command;
+- add relocate all artists folder command (not appearances).
+
 ## License
 
 The contents of the Playa software are covered under the MIT license.

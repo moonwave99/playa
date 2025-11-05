@@ -1,4 +1,4 @@
-import type { Settings } from "./types/types";
+import type { ReleaseType, Settings } from "./types/types";
 
 export const MIN_WINDOW_WIDTH = 450;
 export const MIN_WINDOW_HEIGHT = 640;
@@ -33,3 +33,8 @@ export const HOVER_DELAY = 750;
 export const HOVER_TIMEOUT = 200;
 
 export const DOWNLOAD_COVERS_THROTTLE_INTERVAL = 500;
+
+export const DEFAULT_RELEASE_YEAR = 1999;
+export const DEFAULT_RELEASE_TYPE = "Album" as ReleaseType;
+
+export const MAX_ONBOARDING_IMPORT_RELEASE_COUNT = 3;

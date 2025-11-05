@@ -1,5 +1,7 @@
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+
+import { MAX_ONBOARDING_IMPORT_RELEASE_COUNT } from "@/constants";
 import useReleases from "@/renderer/query/useReleases";
 import { useFocus } from "@/renderer/hooks/useFocus";
 import { AnimatedLayout } from "../AnimatedLayout";
@@ -14,23 +16,17 @@ import cx from "clsx";
 import styles from "../Onboarding.module.css";
 import formStyles from "../../../forms.module.css";
 
-const MAX_RELEASES_COUNT = 3;
-
-export default function ImportMusicStep({ onNextStep }: StepProps) {
+export default function ImportFoldersStep({ onNextStep }: StepProps) {
   const { t } = useTranslation();
   const { releases, isPending, error } = useReleases();
   const { ref, focus } = useFocus();
 
   useEffect(() => {
-    if (releases.length < MAX_RELEASES_COUNT) {
+    if (releases.length < MAX_ONBOARDING_IMPORT_RELEASE_COUNT) {
       return;
     }
     focus();
   }, [releases.length]);
-
-  async function selectFolder() {
-    api.importFolders.importFolderFromDialog();
-  }
 
   if (isPending) {
     return <Loading />;
@@ -43,8 +39,8 @@ export default function ImportMusicStep({ onNextStep }: StepProps) {
   return (
     <AnimatedLayout>
       <header className={styles.header}>
-        <h1>{t("pages.Onboarding.steps.importMusic.title")}</h1>
-        <p>{t("pages.Onboarding.steps.importMusic.subtitle")}</p>
+        <h1>{t("pages.Onboarding.steps.importFolders.title")}</h1>
+        <p>{t("pages.Onboarding.steps.importFolders.subtitle")}</p>
       </header>
 
       {!!releases.length && (
@@ -57,12 +53,12 @@ export default function ImportMusicStep({ onNextStep }: StepProps) {
         </ul>
       )}
 
-      {releases.length < MAX_RELEASES_COUNT && (
+      {releases.length < MAX_ONBOARDING_IMPORT_RELEASE_COUNT && (
         <div className={styles.group}>
           <button
             className={cx(formStyles.button, formStyles.primary, styles.button)}
             type="button"
-            onClick={selectFolder}
+            onClick={() => api.importFolders.openImportDialog()}
             autoFocus
           >
             <Icon isFor="actions.upload" />

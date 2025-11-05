@@ -22,6 +22,15 @@
   width: 100%;
 }
 
+.FolderViewHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  h3 {
+    flex: 1;
+  }
+}
+
 .folderList {
   padding: 1rem;
   background-color: var(--background-color-light);

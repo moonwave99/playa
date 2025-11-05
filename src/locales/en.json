@@ -161,7 +161,7 @@
             "placeholder": "Enter your Discogs API Secret"
           }
         },
-        "importMusic": {
+        "importFolders": {
           "title": "Import some Music",
           "subtitle": "Playa is waiting for your first Albums."
         },
@@ -343,7 +343,9 @@
       "actions": {
         "import": "Import Folder",
         "skip": "Skip Folder",
-        "cancel": "Cancel"
+        "cancel": "Cancel",
+        "openTagger": "Open Folder in Tagger",
+        "refreshTracksInfo": "Refresh Tracks Info"
       },
       "folderView": {
         "title": "Release Info"

@@ -1,6 +1,6 @@
 import prisma from "../db/prisma";
 import { clearPrisma } from "@/test/prisma-utils";
-import { withPath, getSetting } from "@/test/utils";
+import { getSetting } from "@/test/utils";
 import path from "path";
 import { importFoldersController } from "./importFolders";
 import { testFs } from "@moonwave99/test-fs";
@@ -21,7 +21,6 @@ afterEach(clearPrisma);
 vi.mock("../covers");
 
 const defaultParams = {
-  withPath,
   getSetting,
   send: vi.fn(),
   stateManager: {
@@ -154,11 +153,11 @@ describe("refreshEntityRelease function", () => {
   });
 });
 
-describe("importFolderFromDialog function", () => {
+describe("openImportDialog function", () => {
   it("shows an error box is no Library path is set", async () => {
     const send = vi.fn();
     const showErrorBox = vi.fn();
-    const { importFolderFromDialog } = importFoldersController({
+    const { openImportDialog } = importFoldersController({
       ...defaultParams,
       showErrorBox,
       openFolderDialog: vi.fn(),
@@ -169,7 +168,7 @@ describe("importFolderFromDialog function", () => {
       } as unknown as StateManager,
     });
 
-    await importFolderFromDialog();
+    await openImportDialog();
     expect(send).not.toHaveBeenCalled();
     expect(showErrorBox).toHaveBeenCalledWith(
       "Error importing folders",
@@ -179,7 +178,7 @@ describe("importFolderFromDialog function", () => {
 
   it("does nothing if no folder is picked", async () => {
     const send = vi.fn();
-    const { importFolderFromDialog } = importFoldersController({
+    const { openImportDialog } = importFoldersController({
       ...defaultParams,
       openFolderDialog: vi.fn(),
       send,
@@ -188,7 +187,7 @@ describe("importFolderFromDialog function", () => {
       } as unknown as StateManager,
     });
 
-    await importFolderFromDialog();
+    await openImportDialog();
     expect(send).not.toHaveBeenCalled();
   });
 
@@ -196,7 +195,7 @@ describe("importFolderFromDialog function", () => {
     const showErrorBox = vi.fn();
     const send = vi.fn();
 
-    const { importFolderFromDialog } = importFoldersController({
+    const { openImportDialog } = importFoldersController({
       ...defaultParams,
       openFolderDialog: () =>
         Array.from({ length: 20 }, (_, i) => `folder-${i}`),
@@ -207,7 +206,7 @@ describe("importFolderFromDialog function", () => {
       send,
     });
 
-    await importFolderFromDialog();
+    await openImportDialog();
 
     expect(showErrorBox).toHaveBeenCalledWith(
       "Error importing folders",
@@ -224,7 +223,7 @@ describe("importFolderFromDialog function", () => {
     const showErrorBox = vi.fn();
     const send = vi.fn();
 
-    const { importFolderFromDialog } = importFoldersController({
+    const { openImportDialog } = importFoldersController({
       ...defaultParams,
       getSetting: (key: string) =>
         key === "LIBRARY_PATH" ? LIBRARY_PATH : key,
@@ -236,7 +235,7 @@ describe("importFolderFromDialog function", () => {
       } as unknown as StateManager,
     });
 
-    await importFolderFromDialog();
+    await openImportDialog();
 
     expect(showErrorBox).toHaveBeenCalledWith(
       "Error importing folders",
@@ -268,7 +267,7 @@ describe("importFolderFromDialog function", () => {
     const send = vi.fn();
     const openModal = vi.fn();
 
-    const { importFolderFromDialog } = importFoldersController({
+    const { openImportDialog } = importFoldersController({
       ...defaultParams,
       getSetting: (key: string) =>
         key === "LIBRARY_PATH" ? LIBRARY_PATH : false,
@@ -283,20 +282,22 @@ describe("importFolderFromDialog function", () => {
       } as unknown as StateManager,
     });
 
-    await importFolderFromDialog();
+    await openImportDialog();
 
     expect(openModal).toHaveBeenCalledWith("interactiveImport", {
       data: [
         {
           artist: {
-            ...artist,
-            coverReleaseId: null,
-            updatedAt: null,
+            id: 1,
+            name: "Artist 1",
           },
           path: "A/Artist 1/[Album]/2000 - Release 1",
+          absolutePath: path.join(
+            LIBRARY_PATH,
+            "A/Artist 1/[Album]/2000 - Release 1"
+          ),
           folder: "2000 - Release 1",
           title: "Release 1",
-          normalizedTitle: "Release 1",
           year: 2000,
           type: "Album",
           tracks: [
@@ -357,7 +358,7 @@ describe("importFolderFromDialog function", () => {
     const showErrorBox = vi.fn();
     const send = vi.fn();
 
-    const { importFolderFromDialog } = importFoldersController({
+    const { openImportDialog } = importFoldersController({
       ...defaultParams,
       getSetting: (key: string) =>
         key === "LIBRARY_PATH" ? LIBRARY_PATH : false,
@@ -372,7 +373,7 @@ describe("importFolderFromDialog function", () => {
       } as unknown as StateManager,
     });
 
-    await importFolderFromDialog();
+    await openImportDialog();
 
     expect(showErrorBox).toHaveBeenCalledWith(
       "Error importing Folders",
@@ -408,7 +409,7 @@ describe("importFolderFromDialog function", () => {
     const showErrorBox = vi.fn();
     const send = vi.fn();
 
-    const { importFolderFromDialog } = importFoldersController({
+    const { openImportDialog } = importFoldersController({
       ...defaultParams,
       getSetting: (key: string) =>
         key === "LIBRARY_PATH" ? LIBRARY_PATH : false,
@@ -422,7 +423,7 @@ describe("importFolderFromDialog function", () => {
       } as unknown as StateManager,
     });
 
-    await importFolderFromDialog();
+    await openImportDialog();
 
     expect(showErrorBox).toHaveBeenCalledWith(
       "Error importing Folders",
@@ -432,12 +433,12 @@ describe("importFolderFromDialog function", () => {
   });
 });
 
-describe("importFromInteractiveData function", () => {
+describe("importFromData function", () => {
   it("creates a new release from the passed data", async () => {
     const showErrorBox = vi.fn();
     const send = vi.fn();
 
-    const { importFromInteractiveData } = importFoldersController({
+    const { importFromData } = importFoldersController({
       ...defaultParams,
       showErrorBox,
       send,
@@ -449,7 +450,7 @@ describe("importFromInteractiveData function", () => {
       meta: {} as ICommonTagsResult,
     }));
 
-    await importFromInteractiveData({
+    await importFromData({
       artist,
       title: "New Release",
       year: 2000,
@@ -512,7 +513,7 @@ describe("importFromInteractiveData function", () => {
     const showErrorBox = vi.fn();
     const send = vi.fn();
 
-    const { importFromInteractiveData } = importFoldersController({
+    const { importFromData } = importFoldersController({
       ...defaultParams,
       showErrorBox,
       send,
@@ -523,7 +524,7 @@ describe("importFromInteractiveData function", () => {
       meta: {} as ICommonTagsResult,
     }));
 
-    await importFromInteractiveData({
+    await importFromData({
       artist: {
         id: null as number,
         name: "New Artist",

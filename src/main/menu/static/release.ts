@@ -96,7 +96,7 @@ export function getReleaseMenu({ controllers, stateManager }: GetMenuParams) {
       label: "Open Release in Tagger",
       accelerator: "Shift+T",
       click: () =>
-        controllers.system.openTagger(
+        controllers.system.openReleaseInTagger(
           stateManager.getSelection("release").at(0)
         ),
     },

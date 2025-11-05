@@ -36,6 +36,34 @@ describe("artist - getArtist function", () => {
   });
 });
 
+describe("artist - getSelectedArtist function", () => {
+  it("returns null if the selection is empty", async () => {
+    const artists = getFakeArtists({ length: 2 });
+    await prisma.artist.createMany({ data: artists });
+    const { getSelectedArtist } = artistController(defaultParams);
+    const result = await getSelectedArtist([]);
+    expect(result).toBe(null);
+  });
+
+  it("returns the selected artist", async () => {
+    const artists = getFakeArtists({ length: 2 });
+    await prisma.artist.createMany({ data: artists });
+    const { getSelectedArtist } = artistController(defaultParams);
+    const result = await getSelectedArtist([1]);
+    expect(result).toMatchObject(artists.at(0));
+  });
+});
+
+describe("artist - getSelectedArtists function", () => {
+  it("returns the selected artists", async () => {
+    const artists = getFakeArtists({ length: 2 });
+    await prisma.artist.createMany({ data: artists });
+    const { getSelectedArtists } = artistController(defaultParams);
+    const result = await getSelectedArtists([1, 2]);
+    expect(result).toMatchObject(artists);
+  });
+});
+
 describe("artist - getArtistAlphabeticalList function", () => {
   it("returns all the artists grouped by letter", async () => {
     const artists = getFakeArtists({ length: 5 });

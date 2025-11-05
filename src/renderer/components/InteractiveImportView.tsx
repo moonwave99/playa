@@ -92,13 +92,13 @@ function FolderView({
   const [artistQuery, setArtistQuery] = useState("");
   const [tempData, setTempData] = useState({ ...data });
   const [isImporting, setImporting] = useState(false);
+  const [isRefreshing, setRefreshing] = useState(false);
   const { artists, isPending, error } = useArtists();
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
     setImporting(true);
-    const response =
-      await api.importFolders.importFromInteractiveData(tempData);
+    const response = await api.importFolders.importFromData(tempData);
     setImporting(false);
     if (!response) {
       window.alert(t("modals.InteractiveImport.errors.import"));
@@ -112,6 +112,16 @@ function FolderView({
       ...prev,
       tracks: prev.tracks.map((t, i) => (i === index ? info : t)),
     }));
+  }
+
+  function openTagger() {
+    api.system.openFolderInTagger(data.path);
+  }
+
+  async function refreshTracksInfo() {
+    setRefreshing(true);
+    setTempData(await api.importFolders.getTracksInfo(data.path));
+    setRefreshing(false);
   }
 
   if (isPending) {
@@ -129,7 +139,29 @@ function FolderView({
       })}
       onSubmit={onSubmit}
     >
-      <h3>{t("modals.InteractiveImport.folderView.title")}</h3>
+      <header className={styles.FolderViewHeader}>
+        <h3>{t("modals.InteractiveImport.folderView.title")}</h3>
+        <button
+          type="button"
+          onClick={refreshTracksInfo}
+          className={formStyles.button}
+          disabled={isImporting || isRefreshing}
+        >
+          {isRefreshing ? (
+            <Loading size="small" />
+          ) : (
+            t("modals.InteractiveImport.actions.refreshTracksInfo")
+          )}
+        </button>
+        <button
+          type="button"
+          onClick={openTagger}
+          className={formStyles.button}
+          disabled={isImporting}
+        >
+          {t("modals.InteractiveImport.actions.openTagger")}
+        </button>
+      </header>
       {isImportingMultipleFolders && (
         <div className={styles.panel}>
           <label className={cx(formStyles.label, formStyles.vertical)}>
@@ -201,6 +233,7 @@ function FolderView({
         <label className={cx(formStyles.label, formStyles.vertical)}>
           {t("modals.InteractiveImport.release.type.label")}
           <select
+            value={tempData.type}
             className={formStyles.select}
             onChange={(event) =>
               setTempData((prev) => ({

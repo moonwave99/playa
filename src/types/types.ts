@@ -265,6 +265,7 @@ export type ImportData = {
   title: string;
   year: number;
   path: string;
+  absolutePath: string;
   folder: string;
   type: ReleaseType;
   discNumber?: number;

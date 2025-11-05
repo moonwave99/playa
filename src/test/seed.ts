@@ -148,7 +148,7 @@ export function getFakeGroups({
 export function getFakeSettings() {
   return {
     PLAYER_PATH: "PLAYER_PATH",
-    TAGGER_PATH: "PLAYER_PATH",
+    TAGGER_PATH: "TAGGER_PATH",
     DISCOGS_KEY: "DISCOGS_KEY",
     DISCOGS_SECRET: "DISCOGS_SECRET",
     LIBRARY_PATH: "LIBRARY_PATH",
