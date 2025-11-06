@@ -5,6 +5,7 @@ import type { PrismaClient } from "@prisma/client";
 import { createPrismock } from "prismock";
 import { clearPrisma } from "./prisma-utils";
 import { parsePath } from "@/main/utils";
+import { pad } from "@/lib/utils";
 
 vi.mock("@prisma/client-generated", async () => {
   const actual = await vi.importActual<PrismaClient>(
@@ -62,7 +63,7 @@ vi.mock("music-metadata", () => ({
     return Promise.resolve({
       common: {
         artist: filePath.includes("Various") ? "Track Artist" : artist.name,
-        title: `Track ${index}`,
+        title: `Track ${pad(index)}`,
         year: year || 1999,
         album: title,
         track: {

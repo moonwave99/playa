@@ -28,10 +28,9 @@ export default function EditArtistView({
     removeRelatedArtist,
   } = useArtist(id);
 
-  function onSubmit({ newPath, newName }: NewInfo) {
+  function onSubmit({ newName }: NewInfo) {
     editArtist({
       ...artist,
-      newPath,
       newName,
     });
     closeModal();

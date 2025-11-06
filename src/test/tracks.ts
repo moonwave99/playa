@@ -55,7 +55,7 @@ export async function createAlbum({
   artist,
   type = "Album",
   album,
-  year = 1999,
+  year = 2000,
   inVariousArtistsFolder = false,
 }: CreateAlbumParams) {
   const albumFolder = inVariousArtistsFolder

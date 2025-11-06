@@ -92,10 +92,10 @@ describe("getFolderContents function", () => {
       {
         "/LIBRARY_PATH/A/Artist 1": {
           "[Album]": {
-            "2000 - Release 1": {
-              "01 - Track 1.mp3": "",
-              "02 - Track 2.mp3": "",
-              "03 - Track 3.mp3": "",
+            "2000 - Release 1-1": {
+              "01 - Track 01.mp3": "",
+              "02 - Track 02.mp3": "",
+              "03 - Track 03.mp3": "",
             },
           },
         },
@@ -128,7 +128,7 @@ describe("getEntityPath function", () => {
   it("returns the path for a Release", () => {
     const release = getFakeReleasesForArtist(1).at(0);
     const path = getEntityPath(release);
-    expect(path).toBe("A/Artist 1/[Album]/2000 - Release 1");
+    expect(path).toBe("A/Artist 1/[Album]/2000 - Release 1-1");
   });
 
   it("returns the path for a Track", () => {
@@ -139,6 +139,8 @@ describe("getEntityPath function", () => {
       release,
     };
     const path = getEntityPath(track);
-    expect(path).toBe("A/Artist 1/[Album]/2000 - Release 1/01 - Track 1.mp3");
+    expect(path).toBe(
+      "A/Artist 1/[Album]/2000 - Release 1-1/01 - Track 01.mp3"
+    );
   });
 });

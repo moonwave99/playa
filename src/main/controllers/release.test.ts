@@ -11,6 +11,7 @@ import {
   getFakeArtist,
   getFakeArtists,
   getFakeReleasesForArtist,
+  getFakeTracksForRelease,
 } from "../../test/seed";
 import { sortBy } from "@/lib/utils";
 
@@ -25,6 +26,7 @@ const defaultParams = {
   stateManager: {} as StateManager,
   showErrorBox: vi.fn(),
   openConfirmDialog: () => true,
+  openFolderDialog: vi.fn(),
 };
 
 describe("getReleaseTitleInfo function", () => {
@@ -204,12 +206,12 @@ describe("editRelease function", () => {
   it("should update the release with the given information", async (context) => {
     const directory = await testFs(
       {
-        "/LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1": {
-          "01 - Track 1.mp3": "",
+        "/LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1-1": {
+          "01 - Track 01.mp3": "",
         },
         "/LIBRARY_PATH/A/Artist 1/[EP]": {},
         "/COVERS_PATH": {
-          "ee1478c38c24f36e-cover.jpg": "",
+          "7bc1dbae1f10a59c-cover.jpg": "",
         },
       },
       context.task.id
@@ -221,7 +223,6 @@ describe("editRelease function", () => {
 
     const { editRelease } = releaseController({
       ...defaultParams,
-      getSetting: (key: string) => (key === "USE_SMART_IMPORT" ? true : key),
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
     });
 
@@ -237,7 +238,7 @@ describe("editRelease function", () => {
     ])) as ReleaseWithArtist[];
 
     expect(result[0]).toMatchObject({
-      path: "A/Artist 1/[Album]/2000 - Release 1",
+      path: "A/Artist 1/[Album]/2000 - Release 1-1",
       discTitle: null,
       title: "Release Edited",
       type: "EP" as ReleaseType,
@@ -246,7 +247,7 @@ describe("editRelease function", () => {
 
     expect(
       await pathExists(
-        path.join(directory, "COVERS_PATH/ee1478c38c24f36e-cover.jpg")
+        path.join(directory, "COVERS_PATH/7bc1dbae1f10a59c-cover.jpg")
       )
     ).toBe(false);
     expect(
@@ -259,8 +260,8 @@ describe("editRelease function", () => {
   it("should skip moving the current cover if it does not exist", async (context) => {
     const directory = await testFs(
       {
-        "/LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1": {
-          "01 - Track 1.mp3": "",
+        "/LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1-1": {
+          "01 - Track 01.mp3": "",
         },
         "/LIBRARY_PATH/A/Artist 1/[EP]": {},
       },
@@ -288,7 +289,7 @@ describe("editRelease function", () => {
     ])) as ReleaseWithArtist[];
 
     expect(result[0]).toMatchObject({
-      path: "A/Artist 1/[Album]/2000 - Release 1",
+      path: "A/Artist 1/[Album]/2000 - Release 1-1",
       discTitle: null,
       title: "Release Edited",
       type: "EP" as ReleaseType,
@@ -297,7 +298,7 @@ describe("editRelease function", () => {
 
     expect(
       await pathExists(
-        path.join(directory, "COVERS_PATH/e1d0657d4ba3bd51-cover.jpg")
+        path.join(directory, "COVERS_PATH/7bc1dbae1f10a59c-cover.jpg")
       )
     ).toBe(false);
   });
@@ -332,7 +333,7 @@ describe("importMissingCovers function", () => {
   it("imports the covers of the releases without an existing cover file", async (context) => {
     const directory = await testFs(
       {
-        "COVERS_PATH/ee1478c38c24f36e-cover.jpg": "",
+        "COVERS_PATH/7bc1dbae1f10a59c-cover.jpg": "",
       },
       context.task.id
     );
@@ -361,7 +362,7 @@ describe("deleteCover function", () => {
   it("deletes the coves of the given release", async (context) => {
     const directory = await testFs(
       {
-        "COVERS_PATH/ee1478c38c24f36e-cover.jpg": "",
+        "COVERS_PATH/7bc1dbae1f10a59c-cover.jpg": "",
       },
       context.task.id
     );
@@ -715,5 +716,126 @@ describe("groupReleases function", () => {
       normalizedTitle: "main release title",
       discTitle: "disc 1",
     });
+  });
+});
+
+describe("relocateRelease function", () => {
+  it("shows an error box if the selected folder has no tracks", async (context) => {
+    const directory = await testFs(
+      {
+        "/LIBRARY_PATH/New Folder": {},
+      },
+      context.task.id
+    );
+
+    const showErrorBox = vi.fn();
+
+    const { relocateRelease } = releaseController({
+      ...defaultParams,
+      showErrorBox,
+      getSetting: (key: string) =>
+        key === "LIBRARY_PATH" ? path.join(directory, "LIBRARY_PATH") : key,
+      openFolderDialog: () => [path.join(directory, "LIBRARY_PATH/New Folder")],
+    });
+
+    await relocateRelease(1);
+
+    expect(showErrorBox).toHaveBeenCalledWith(
+      "Error relocating Release folder",
+      "No tracks were found in the selected folder"
+    );
+  });
+
+  it("shows an error box if the folders mismatch", async (context) => {
+    const release = getFakeReleasesForArtist(1, 1).at(0);
+    const tracks = getFakeTracksForRelease(1, 3);
+    await prisma.release.create({ data: release });
+    await prisma.track.createMany({ data: tracks });
+
+    const directory = await testFs(
+      {
+        "/LIBRARY_PATH/A/Artist 1/[Album]/2000 - New Folder": {
+          "01 - New Track 01.mp3": "",
+          "02 - New Track 02.mp3": "",
+        },
+      },
+      context.task.id
+    );
+
+    const showErrorBox = vi.fn();
+
+    const { relocateRelease } = releaseController({
+      ...defaultParams,
+      showErrorBox,
+      getSetting: (key: string) =>
+        key === "LIBRARY_PATH" ? path.join(directory, "LIBRARY_PATH") : key,
+      openFolderDialog: () => [
+        path.join(
+          directory,
+          "/LIBRARY_PATH/A/Artist 1/[Album]/2000 - New Folder"
+        ),
+      ],
+    });
+
+    await relocateRelease(1, { warnOnContentDifference: true });
+
+    expect(showErrorBox).toHaveBeenCalledWith(
+      "Error relocating Release folder",
+      "The contents of the selected folder do not match current Release contents."
+    );
+  });
+
+  it("updates the release with the contents of the passed folder", async (context) => {
+    const release = getFakeReleasesForArtist(1, 1).at(0);
+    const tracks = getFakeTracksForRelease(1, 3);
+    await prisma.release.create({ data: release });
+    await prisma.track.createMany({ data: tracks });
+
+    const directory = await testFs(
+      {
+        "/LIBRARY_PATH/A/Artist 1/[Album]/2000 - New Folder": {
+          "01 - New Track 01.mp3": "",
+          "02 - New Track 02.mp3": "",
+          "03 - New Track 03.mp3": "",
+        },
+      },
+      context.task.id
+    );
+
+    const showErrorBox = vi.fn();
+
+    const { relocateRelease } = releaseController({
+      ...defaultParams,
+      showErrorBox,
+      getSetting: (key: string) =>
+        key === "LIBRARY_PATH" ? path.join(directory, "LIBRARY_PATH") : key,
+      openFolderDialog: () => [
+        path.join(
+          directory,
+          "/LIBRARY_PATH/A/Artist 1/[Album]/2000 - New Folder"
+        ),
+      ],
+    });
+
+    await relocateRelease(1, { warnOnContentDifference: true });
+
+    expect(showErrorBox).not.toHaveBeenCalled();
+
+    const updatedRelease = await prisma.release.findFirst({ where: { id: 1 } });
+    expect(updatedRelease.path).toBe("A/Artist 1/[Album]/2000 - New Folder");
+    const updatedTracks = await prisma.track.findMany({
+      where: { releaseId: 1 },
+    });
+    expect(updatedTracks).toMatchObject([
+      {
+        path: "01 - New Track 01.mp3",
+      },
+      {
+        path: "02 - New Track 02.mp3",
+      },
+      {
+        path: "03 - New Track 03.mp3",
+      },
+    ]);
   });
 });

@@ -44,7 +44,7 @@ describe("searchResult - search function", () => {
     });
 
     const { getSearchResults } = searchResultController();
-    const results = await getSearchResults({ query: "Track 1" });
+    const results = await getSearchResults({ query: "Track 01" });
 
     expect(results).toMatchObject([
       {
@@ -52,12 +52,6 @@ describe("searchResult - search function", () => {
         type: "track",
         artist: "Artist 1",
         links: { artist: "/artists/1", track: "/releases/1?track_id=1" },
-      },
-      {
-        id: 10,
-        type: "track",
-        artist: "Artist 1",
-        links: { artist: "/artists/1", track: "/releases/1?track_id=10" },
       },
     ]);
   });
@@ -73,7 +67,7 @@ describe("searchResult - search function", () => {
     });
 
     const { getSearchResults } = searchResultController();
-    const results = await getSearchResults({ query: "Track 1" });
+    const results = await getSearchResults({ query: "Track 01" });
 
     expect(results).toMatchObject([
       {
@@ -81,12 +75,6 @@ describe("searchResult - search function", () => {
         type: "track",
         artist: "Track Artist",
         links: { artist: null, track: "/releases/1?track_id=1" },
-      },
-      {
-        id: 10,
-        type: "track",
-        artist: "Track Artist",
-        links: { artist: null, track: "/releases/1?track_id=10" },
       },
     ]);
   });

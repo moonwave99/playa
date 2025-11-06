@@ -10,6 +10,7 @@ import {
   ShowErrorBox,
   OpenConfirmDialog,
   Send,
+  OpenFolderDialog,
 } from "@/types/types";
 import { mapSeries } from "@/lib/utils";
 import {
@@ -30,7 +31,11 @@ import {
   type GroupReleaseParams,
 } from "../db/release";
 
-import { withConfirmDialog } from "../utils";
+import {
+  getFolderContentsFromAbsolutePath,
+  stripPath,
+  withConfirmDialog,
+} from "../utils";
 import { hashRelease } from "../hash";
 import { searchCover, getImageFromURL, updateCoverInfo } from "../covers";
 import { log } from "../logger";
@@ -43,6 +48,7 @@ type ReleaseControllerParams = {
   send: Send;
   showErrorBox: ShowErrorBox;
   openConfirmDialog: OpenConfirmDialog;
+  openFolderDialog: OpenFolderDialog;
   stateManager: StateManager;
 };
 
@@ -53,6 +59,7 @@ export function releaseController({
   stateManager,
   showErrorBox,
   openConfirmDialog,
+  openFolderDialog,
 }: ReleaseControllerParams) {
   async function editRelease(infos: EditReleaseParam[]) {
     if (!infos.length) {
@@ -294,6 +301,67 @@ export function releaseController({
     send("mutate", [["releases", "latest"]]);
   }
 
+  type RelocateReleaseParams = { warnOnContentDifference?: boolean };
+
+  async function relocateRelease(
+    id: number,
+    { warnOnContentDifference }: RelocateReleaseParams = {
+      warnOnContentDifference: true,
+    }
+  ) {
+    const LIBRARY_PATH = getSetting("LIBRARY_PATH") as string;
+    const [newFolder] = openFolderDialog({
+      key: "openRelocateReleaseFolder",
+      defaultPath: LIBRARY_PATH,
+      properties: ["openDirectory"],
+    });
+
+    const newContents = await getFolderContentsFromAbsolutePath(newFolder);
+
+    if (!newContents.length) {
+      showErrorBox(
+        "Error relocating Release folder",
+        "No tracks were found in the selected folder"
+      );
+      return false;
+    }
+
+    const release = await getRelease(id);
+
+    if (
+      warnOnContentDifference &&
+      release.tracks.some((x, index) => x.title !== newContents[index]?.title)
+    ) {
+      showErrorBox(
+        "Error relocating Release folder",
+        "The contents of the selected folder do not match current Release contents."
+      );
+      return false;
+    }
+    try {
+      await prisma.release.update({
+        where: { id },
+        data: {
+          path: stripPath(newFolder, LIBRARY_PATH),
+        },
+      });
+      await addTracksToRelease(id, newContents);
+
+      send("mutate", [["releases", id]]);
+      send("clearSelection");
+      send("notify", {
+        type: "success",
+        message: "Release relocated",
+      });
+      return true;
+    } catch (error) {
+      log("release:relocateRelease", error);
+      log("release:relocateRelease", newFolder);
+      showErrorBox("Error relocating Release folder", error.message);
+      return false;
+    }
+  }
+
   return {
     getReleaseTitleInfo,
     getRelease,
@@ -315,6 +383,7 @@ export function releaseController({
     addAdditionalArtist,
     removeAdditionalArtist,
     addNewAdditionalArtist,
+    relocateRelease,
   };
 }
 
@@ -337,4 +406,5 @@ export const actions: (keyof ReturnType<typeof releaseController>)[] = [
   "addAdditionalArtist",
   "removeAdditionalArtist",
   "addNewAdditionalArtist",
+  "relocateRelease",
 ];

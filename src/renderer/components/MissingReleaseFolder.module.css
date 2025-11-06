@@ -1,0 +1,18 @@
+.view {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.description {
+  font-size: 0.9rem;
+  line-height: 1.5rem;
+  display: flex;
+  color: var(--secondary-color);
+}
+
+.actions {
+  @media screen and (max-width: 720px) {
+    flex-direction: column;
+  }
+}

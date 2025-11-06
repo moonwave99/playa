@@ -71,7 +71,7 @@ describe("system - playback function", () => {
     expect(spy).toHaveBeenCalledWith("open", [
       "-a",
       "PLAYER_PATH",
-      "LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1",
+      "LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1-1",
     ]);
   });
 
@@ -94,8 +94,8 @@ describe("system - playback function", () => {
     expect(spy).toHaveBeenCalledWith("open", [
       "-a",
       "PLAYER_PATH",
-      "LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1",
-      "LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 2",
+      "LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1-1",
+      "LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1-2",
     ]);
   });
 
@@ -112,7 +112,7 @@ describe("system - playback function", () => {
     expect(spy).toHaveBeenCalledWith("open", [
       "-a",
       "PLAYER_PATH",
-      "LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1/01 - Track 1.mp3",
+      "LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1-1/01 - Track 01.mp3",
     ]);
   });
 });
@@ -189,7 +189,7 @@ describe("system - openReleaseInTagger function", () => {
     expect(spy).toHaveBeenCalledWith("open", [
       "-a",
       "TAGGER_PATH",
-      "LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1",
+      "LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1-1",
     ]);
   });
 });
@@ -212,7 +212,7 @@ describe("system revealEntityInFinder function", () => {
     const result = await revealEntityInFinder({ entityType: "release", id: 1 });
     expect(result).toBeTruthy();
     expect(spy).toHaveBeenCalledWith(
-      "LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1"
+      "LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1-1"
     );
   });
 
@@ -229,7 +229,7 @@ describe("system revealEntityInFinder function", () => {
     const result = await revealEntityInFinder({ entityType: "track", id: 1 });
     expect(result).toBeTruthy();
     expect(spy).toHaveBeenCalledWith(
-      "LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1/01 - Track 1.mp3"
+      "LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1-1/01 - Track 01.mp3"
     );
   });
 });
@@ -252,7 +252,7 @@ describe("system - startDrag, function", () => {
       {
         "/LIBRARY_PATH/A/Artist 1": {
           "[Album]": {
-            "2000 - Release 1": {},
+            "2000 - Release 1-1": {},
           },
         },
       },
@@ -277,9 +277,27 @@ describe("system - startDrag, function", () => {
       expect.objectContaining({
         file: path.join(
           directory,
-          "LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1"
+          "LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1-1"
         ),
       })
     );
+  });
+
+  describe("system - pathExists, function", () => {
+    it("checks if the passed path exists in the Library", async (context) => {
+      const directory = await testFs(
+        {
+          "/LIBRARY_PATH/A/Artist 1/[Album]/2000 - Album 1": {},
+        },
+        context.task.id
+      );
+      const { pathExists } = systemController({
+        ...defaultParams,
+        withPath: (key, filePath) => path.join(directory, key, filePath),
+      });
+
+      expect(await pathExists("A/Artist 1/[Album]/2000 - Album 1")).toBe(true);
+      expect(await pathExists("A/Artist 1/[Album]/2000 - Album 2")).toBe(false);
+    });
   });
 });

@@ -1,7 +1,8 @@
 .button {
-  width: 2rem;
-  height: 2rem;
-  font-size: 1.5rem;
+  --button-size: 2rem;
+  width: var(--button-size);
+  height: var(--button-size);
+  font-size: calc(var(--button-size) * 0.75);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -31,6 +32,12 @@
 
   &[disabled] {
     cursor: not-allowed;
+  }
+  &.mini {
+    --button-size: 1.2rem;
+  }
+  &.warning {
+    color: red;
   }
 }
 

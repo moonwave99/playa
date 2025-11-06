@@ -38,6 +38,8 @@ import {
   MdOutlineSearch,
 } from "react-icons/md";
 
+import { RiErrorWarningFill } from "react-icons/ri";
+
 const iconMap = toDotNotation({
   pages: {
     home: GoHomeFill,
@@ -91,6 +93,7 @@ const iconMap = toDotNotation({
   },
   common: {
     checked: IoMdCheckmark,
+    warning: RiErrorWarningFill,
   },
 });
 

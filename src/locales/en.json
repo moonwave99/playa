@@ -105,6 +105,11 @@
     "HomePage": {
       "latest": "Latest {{entity}}"
     },
+    "ReleasePage": {
+      "actions": {
+        "openMissingFolderDialog": "Take actions for missing Release folder: {{title}}"
+      }
+    },
     "Onboarding": {
       "actions": {
         "cancel": "Skip onboarding",
@@ -194,6 +199,20 @@
       "title": "Your Library Stats",
       "actions": {
         "close": "Close"
+      }
+    },
+    "MissingReleaseFolder": {
+      "title": "Missing Release Folder",
+      "description": "This Release could not be found at the current location.",
+      "fields": {
+        "warnOnContentDifference": {
+          "label": "Warn me on content mismatch"
+        }
+      },
+      "actions": {
+        "relocate": "Relocate Release",
+        "delete": "Delete Release",
+        "cancel": "Cancel"
       }
     },
     "ReleaseLightbox": {

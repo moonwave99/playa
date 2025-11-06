@@ -22,7 +22,7 @@ afterAll(() => {
 vi.mock("image-downloader", () => ({
   default: {
     image: ({ dest }: { dest: string }) => {
-      if (dest.includes("ee1478c38c24f36e")) {
+      if (dest.includes("7bc1dbae1f10a59c")) {
         return dest;
       }
       throw new Error();

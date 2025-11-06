@@ -61,9 +61,9 @@ export function getFakeReleasesForArtist(artist_id: number, length = 5) {
     normalizedTitle: `Release ${artist_id}-${i + 1}`,
     type: "Album" as ReleaseType,
     year: 2000,
-    path: `A/Artist ${artist_id}/[Album]/2000 - Release ${i + 1}`,
+    path: `A/Artist ${artist_id}/[Album]/2000 - Release ${artist_id}-${i + 1}`,
     hash: hashRelease({
-      title: `Release ${i + 1}`,
+      title: `Release ${artist_id}-${i + 1}`,
       type: "Album",
       year: 2000,
       artist_id,
@@ -82,13 +82,13 @@ export function getFakeTracksForRelease(releaseId: number, length = 5) {
   return Array.from({ length }, (_, i) => ({
     entityType: "track" as EntityType,
     id: (releaseId - 1) * length + i + 1,
-    title: `Track ${i + 1}`,
-    normalizedTitle: `Track ${i + 1}`,
+    title: `Track ${pad(i + 1)}`,
+    normalizedTitle: `Track ${pad(i + 1)}`,
     trackArtist: "Track Artist",
     normalizedTrackArtist: "Track Artist",
-    path: `0${i + 1} - Track ${i + 1}.mp3`,
+    path: `${pad(i + 1)} - Track ${pad(i + 1)}.mp3`,
     hash: sha1(
-      `${releaseId * length + i + 1}-0${i + 1} - Track ${i + 1}.mp3`
+      `${releaseId * length + i + 1}-0${pad(i + 1)} - Track ${pad(i + 1)}.mp3`
     ).slice(0, 16),
     duration: 180,
     releaseId,

@@ -159,6 +159,7 @@ export async function init({ mainWindow, settings }: InitParams) {
       stateManager,
       showErrorBox,
       openConfirmDialog,
+      openFolderDialog,
     }),
     collection: collectionController({ send, openConfirmDialog, stateManager }),
     group: groupController({ send, openConfirmDialog, stateManager }),

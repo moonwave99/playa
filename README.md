@@ -22,12 +22,11 @@ TBD
 
 - display multiple covers for multiple discs releases;
 - make group and collection titles editable again;
+- fix cover refresh in lightbox;
 
 ### Simplify import
 
-- add "Artist will be created" on import info;
 - show warning when refreshing empty folder instead of removing tracks;
-- add relocate release folder command;
 - add relocate all artists folder command (not appearances).
 
 ## License

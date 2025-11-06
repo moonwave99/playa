@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { ReleaseWithArtistAndTracksAndSubreleasesAndCollections } from "@/types/types";
 import {
   getColorInfo,
@@ -6,15 +7,18 @@ import {
   getReleaseTitle,
 } from "@/lib/utils";
 import useStore from "@/renderer/store";
+import usePathExists from "@/renderer/hooks/usePathExists";
 import api from "@/renderer/api";
 
 import Cover from "@/renderer/components/Cover";
 import EntityList from "@/renderer/components/EntityList";
 import ReleaseInfo from "@/renderer/components/ReleaseInfo";
 import ContainingCollectionsList from "@/renderer/components/ContainingCollectionsList";
+import { Icon } from "@/renderer/icons";
 
 import cx from "clsx";
 import styles from "@/renderer/pageHeader.module.css";
+import buttonStyles from "@/renderer/buttons.module.css";
 
 type ReleasePageHeaderProps = {
   release: ReleaseWithArtistAndTracksAndSubreleasesAndCollections;
@@ -22,9 +26,10 @@ type ReleasePageHeaderProps = {
 };
 
 export default function ReleasePageHeader({ release }: ReleasePageHeaderProps) {
+  const { t } = useTranslation();
   const { setModalContents, setUseDarkText } = useStore();
-
   const { darkText, color } = getColorInfo(release);
+  const { exists, onMissingPathClick } = usePathExists(release);
 
   useEffect(() => {
     setUseDarkText(darkText);
@@ -66,7 +71,26 @@ export default function ReleasePageHeader({ release }: ReleasePageHeaderProps) {
             })
           }
         />
-        <h1 className={styles.title}>{getReleaseTitle(release)}</h1>
+
+        <div className={styles.titleWrapper}>
+          <h1 className={styles.title}>{getReleaseTitle(release)}</h1>
+          {!exists && (
+            <button
+              onClick={onMissingPathClick}
+              className={cx(
+                buttonStyles.button,
+                buttonStyles.mini,
+                buttonStyles.warning
+              )}
+              aria-label={t(
+                "pages.ReleasePage.actions.openMissingFolderDialog",
+                release
+              )}
+            >
+              <Icon isFor="common.warning" />
+            </button>
+          )}
+        </div>
         <div className={styles.infoWrapper}>
           <ReleaseInfo release={release} isSingle useDarkText={darkText} />
           <ContainingCollectionsList

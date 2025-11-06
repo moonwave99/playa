@@ -1,5 +1,6 @@
 import prisma from "../db/prisma";
 import path from "path";
+import { pathExists as exists } from "fs-extra";
 import { shell, type IpcMainEvent } from "electron";
 import { run } from "../run";
 import { getEntityPath } from "../utils";
@@ -12,7 +13,6 @@ import {
 } from "@/types/types";
 import { log } from "../logger";
 import type { GetSetting } from "./settings";
-import { existsSync } from "fs";
 
 type SystemControllerParams = {
   getSetting: GetSetting;
@@ -151,7 +151,7 @@ export function systemController({
       return;
     }
     const file = withPath("LIBRARY_PATH", getEntityPath(release));
-    if (!existsSync(file)) {
+    if (!(await exists(file))) {
       return;
     }
     try {
@@ -168,11 +168,16 @@ export function systemController({
     }
   }
 
+  async function pathExists(folderPath: string) {
+    return exists(withPath("LIBRARY_PATH", folderPath));
+  }
+
   return {
     playback,
     openReleaseInTagger,
     openFolderInTagger,
     revealEntityInFinder,
+    pathExists,
     startDrag,
   };
 }
@@ -182,5 +187,6 @@ export const actions: (keyof ReturnType<typeof systemController>)[] = [
   "openReleaseInTagger",
   "openFolderInTagger",
   "revealEntityInFinder",
+  "pathExists",
   "startDrag",
 ];

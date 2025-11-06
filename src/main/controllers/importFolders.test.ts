@@ -56,12 +56,12 @@ describe("refreshReleaseContents function", () => {
       {
         "/LIBRARY_PATH/A/Artist 1": {
           "[Album]": {
-            "2000 - Release 1": {
-              "01 - Track 1.mp3": "",
-              "02 - Track 2.mp3": "",
-              "03 - Track 3.mp3": "",
-              "04 - Track 4.mp3": "",
-              "05 - Track 5.mp3": "",
+            "2000 - Release 1-1": {
+              "01 - Track 01.mp3": "",
+              "02 - Track 02.mp3": "",
+              "03 - Track 03.mp3": "",
+              "04 - Track 04.mp3": "",
+              "05 - Track 05.mp3": "",
             },
           },
         },
@@ -253,8 +253,8 @@ describe("openImportDialog function", () => {
         "/LIBRARY_PATH/A/Artist 1": {
           "[Album]": {
             "2000 - Release 1": {
-              "01 - Track 1.mp3": "",
-              "02 - Track 2.mp3": "",
+              "01 - Track 01.mp3": "",
+              "02 - Track 02.mp3": "",
             },
           },
         },
@@ -308,15 +308,15 @@ describe("openImportDialog function", () => {
               meta: {
                 album: "Release 1",
                 artist: "Artist 1",
-                title: "Track 1",
+                title: "Track 01",
                 year: 2000,
                 track: {
                   no: 1,
                 },
               },
-              path: "01 - Track 1.mp3",
+              path: "01 - Track 01.mp3",
               position: 1,
-              title: "Track 1",
+              title: "Track 01",
               trackArtist: "Artist 1",
             },
             {
@@ -324,15 +324,15 @@ describe("openImportDialog function", () => {
               meta: {
                 album: "Release 1",
                 artist: "Artist 1",
-                title: "Track 2",
+                title: "Track 02",
                 year: 2000,
                 track: {
                   no: 2,
                 },
               },
-              path: "02 - Track 2.mp3",
+              path: "02 - Track 02.mp3",
               position: 2,
-              title: "Track 2",
+              title: "Track 02",
               trackArtist: "Artist 1",
             },
           ],
@@ -390,8 +390,8 @@ describe("openImportDialog function", () => {
         "/LIBRARY_PATH/A/Artist 1": {
           "[Album]": {
             "2000 - Release 1": {
-              "01 - Track 1.mp3": "",
-              "02 - Track 2.mp3": "",
+              "01 - Track 01.mp3": "",
+              "02 - Track 02.mp3": "",
             },
           },
         },
@@ -469,9 +469,9 @@ describe("getTracksInfo function", () => {
         "/LIBRARY_PATH/A/Artist 1": {
           "[Album]": {
             "2000 - Release 1": {
-              "01 - Track 1.mp3": "",
-              "02 - Track 2.mp3": "",
-              "03 - Track 3.mp3": "",
+              "01 - Track 01.mp3": "",
+              "02 - Track 02.mp3": "",
+              "03 - Track 03.mp3": "",
             },
           },
         },
@@ -506,9 +506,9 @@ describe("getTracksInfo function", () => {
         "/LIBRARY_PATH/X/Various Artists/": {
           "[Album]": {
             "2000 - Release 1": {
-              "01 - Track 1.mp3": "",
-              "02 - Track 2.mp3": "",
-              "03 - Track 3.mp3": "",
+              "01 - Track 01.mp3": "",
+              "02 - Track 02.mp3": "",
+              "03 - Track 03.mp3": "",
             },
           },
         },
@@ -543,9 +543,9 @@ describe("getTracksInfo function", () => {
         "/LIBRARY_PATH/X/Various Artists/": {
           "[Album]": {
             "2000 - Release 1": {
-              "01 - Track 1.mp3": "",
-              "02 - Track 2.mp3": "",
-              "03 - Track 3.mp3": "",
+              "01 - Track 01.mp3": "",
+              "02 - Track 02.mp3": "",
+              "03 - Track 03.mp3": "",
             },
           },
         },
@@ -627,22 +627,22 @@ describe("importFromData function", () => {
       tracks: [
         {
           id: 1,
-          title: "Track 1",
-          normalizedTitle: "Track 1",
+          title: "Track 01",
+          normalizedTitle: "Track 01",
           trackArtist: "Track Artist",
-          hash: "f4cbf14d6983211f",
-          path: "01 - Track 1.mp3",
+          hash: "449b40bc0f6cf6c6",
+          path: "01 - Track 01.mp3",
           duration: 180,
           releaseId: 1,
           position: 1,
         },
         {
           id: 2,
-          title: "Track 2",
-          normalizedTitle: "Track 2",
+          title: "Track 02",
+          normalizedTitle: "Track 02",
           trackArtist: "Track Artist",
-          hash: "c5e4fb5e136df33c",
-          path: "02 - Track 2.mp3",
+          hash: "a5d7bd740592e67b",
+          path: "02 - Track 02.mp3",
           duration: 180,
           releaseId: 1,
           position: 2,
@@ -708,22 +708,22 @@ describe("importFromData function", () => {
       tracks: [
         {
           id: 1,
-          title: "Track 1",
-          normalizedTitle: "Track 1",
+          title: "Track 01",
+          normalizedTitle: "Track 01",
           trackArtist: "Track Artist",
-          hash: "f4cbf14d6983211f",
-          path: "01 - Track 1.mp3",
+          hash: "449b40bc0f6cf6c6",
+          path: "01 - Track 01.mp3",
           duration: 180,
           releaseId: 1,
           position: 1,
         },
         {
           id: 2,
-          title: "Track 2",
-          normalizedTitle: "Track 2",
+          title: "Track 02",
+          normalizedTitle: "Track 02",
           trackArtist: "Track Artist",
-          hash: "c5e4fb5e136df33c",
-          path: "02 - Track 2.mp3",
+          hash: "a5d7bd740592e67b",
+          path: "02 - Track 02.mp3",
           duration: 180,
           releaseId: 1,
           position: 2,

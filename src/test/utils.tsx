@@ -6,6 +6,8 @@ import { I18nextProvider } from "react-i18next";
 import i18n from "@/renderer/i18n";
 import type { Settings } from "@/types/types";
 
+export { IS_E2E_TEST, getE2EFolderPath, getE2ETmpPath } from "./e2e";
+
 export function withI18n(children: ReactNode) {
   return <I18nextProvider i18n={i18n}>{children}</I18nextProvider>;
 }
@@ -48,75 +50,6 @@ export function withoutDates<
   return rest;
 }
 
-export function getE2ETmpPath(id: string) {
-  return path.join(process.cwd(), "e2e-tests", "_tmp", id);
-}
-
-type getE2EFolderPathParams = {
-  key: string;
-  testId: string;
-  testTitle: string;
-};
-
-export function getE2EFolderPath({
-  key,
-  testId,
-  testTitle,
-}: getE2EFolderPathParams) {
-  if (key !== "importFolderPath") {
-    return [path.join(getE2ETmpPath(testId), key)];
-  }
-  if (["Import Single", "Onboarding Complete"].includes(testTitle)) {
-    return [
-      path.join(
-        getE2ETmpPath(testId),
-        "LIBRARY_PATH",
-        "A",
-        "Artist 1",
-        "[Album]",
-        "1999 - Album 1"
-      ),
-    ];
-  }
-  if (testTitle === "Import Various") {
-    return Array.from({ length: 2 }, (_, i) =>
-      path.join(
-        getE2ETmpPath(testId),
-        "LIBRARY_PATH",
-        "Various Artists",
-        "[Album]",
-        `1999 - Album ${i + 1}`
-      )
-    );
-  }
-  if (testTitle === "Import Multiple") {
-    return Array.from({ length: 2 }, (_, i) =>
-      path.join(
-        getE2ETmpPath(testId),
-        "LIBRARY_PATH",
-        "A",
-        "Artist 1",
-        "[Album]",
-        `1999 - Album ${i + 1}`
-      )
-    );
-  }
-  if (testTitle === "Import Group") {
-    return Array.from({ length: 2 }, (_, i) =>
-      path.join(
-        getE2ETmpPath(testId),
-        "LIBRARY_PATH",
-        "A",
-        "Artist 1",
-        "[Album]",
-        `1999 - Album 1 CD${i + 1}`
-      )
-    );
-  }
-  return [path.join(getE2ETmpPath(testId), "LIBRARY_PATH")];
-}
-
-export const IS_E2E_TEST = process.env.npm_lifecycle_event === "test:e2e";
 export const BUILD_PATH = path.join(
   process.cwd(),
   "out/Playa-darwin-arm64/Playa.app/Contents/Resources"
