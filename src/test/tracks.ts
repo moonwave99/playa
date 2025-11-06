@@ -47,6 +47,7 @@ type CreateAlbumParams = {
   album: string;
   type?: string;
   year?: number;
+  inVariousArtistsFolder?: boolean;
 };
 
 export async function createAlbum({
@@ -55,14 +56,22 @@ export async function createAlbum({
   type = "Album",
   album,
   year = 1999,
+  inVariousArtistsFolder = false,
 }: CreateAlbumParams) {
-  const albumFolder = path.join(
-    libraryPath,
-    artist.at(0).toUpperCase(),
-    artist,
-    `[${type}]`,
-    `${year} - ${album}`
-  );
+  const albumFolder = inVariousArtistsFolder
+    ? path.join(
+        libraryPath,
+        "Various Artists",
+        `[${type}]`,
+        `${year} - ${album}`
+      )
+    : path.join(
+        libraryPath,
+        artist.at(0).toUpperCase(),
+        artist,
+        `[${type}]`,
+        `${year} - ${album}`
+      );
   await ensureDir(albumFolder);
 
   await Promise.all(

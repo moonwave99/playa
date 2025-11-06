@@ -78,6 +78,17 @@ export function getE2EFolderPath({
       ),
     ];
   }
+  if (testTitle === "Import Various") {
+    return Array.from({ length: 2 }, (_, i) =>
+      path.join(
+        getE2ETmpPath(testId),
+        "LIBRARY_PATH",
+        "Various Artists",
+        "[Album]",
+        `1999 - Album ${i + 1}`
+      )
+    );
+  }
   if (testTitle === "Import Multiple") {
     return Array.from({ length: 2 }, (_, i) =>
       path.join(
