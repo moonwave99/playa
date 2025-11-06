@@ -6,6 +6,9 @@
     flex-direction: row;
     gap: 1rem;
   }
+  &.compact {
+    gap: 1rem;
+  }
 }
 
 .label {
@@ -15,11 +18,17 @@
   font-size: 0.8rem;
   user-select: none;
 
+  &:not(.vertical) {
+    .input,
+    .select {
+      flex: 1;
+    }
+  }
+
   &.vertical {
     flex-direction: column;
     gap: 0.5rem;
     align-items: start;
-
     .input,
     .select {
       width: 100%;
@@ -34,7 +43,6 @@
 
 .input,
 .select {
-  flex: 1;
   border-radius: 0.25rem;
   border: 1px solid var(--tertiary-color);
   background-color: var(--background-color);

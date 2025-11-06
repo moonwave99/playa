@@ -31,6 +31,15 @@
   }
 }
 
+.artistInfo {
+  height: 2rem;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--secondary-color);
+}
+
 .folderList {
   padding: 1rem;
   background-color: var(--background-color-light);
@@ -56,9 +65,9 @@
 
 .folderView {
   flex: 1;
-  --tracklist-wrapper-height: 27rem;
+  --tracklist-wrapper-height: 24rem;
   &.isImportingMultipleFolders {
-    --tracklist-wrapper-height: 22rem;
+    --tracklist-wrapper-height: 20rem;
   }
 }
 

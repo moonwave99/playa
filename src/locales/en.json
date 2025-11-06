@@ -359,7 +359,11 @@
       "release": {
         "artist": {
           "label": "Artist",
-          "placeholder": "Select Artist"
+          "placeholder": "Select Artist",
+          "info": {
+            "alreadyPresent": "Already in your library",
+            "notPresent": "Not yet in your Library - will now be created"
+          }
         },
         "path": {
           "label": "Complete path"

@@ -9,7 +9,7 @@ import formStyles from "../forms.module.css";
 
 type LookupEntityFormProps = Pick<
   LookupEntityViewProps,
-  "allowCustomValue" | "className" | "placeholderText" | "type"
+  "allowCustomValue" | "className" | "placeholderText" | "type" | "renderInfo"
 > & {
   existingIds?: number[];
   onSubmit: (selectedItem: SearchResult) => void;

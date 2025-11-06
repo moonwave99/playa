@@ -135,7 +135,7 @@ function FolderView({
 
   return (
     <form
-      className={cx(formStyles.form, styles.folderView, {
+      className={cx(formStyles.form, formStyles.compact, styles.folderView, {
         [styles.isImportingMultipleFolders]: isImportingMultipleFolders,
       })}
       onSubmit={onSubmit}
@@ -194,6 +194,16 @@ function FolderView({
             }
             getText={(artist) => normalizeArtistDisplayName(artist?.name)}
             getCustomValue={(name) => ({ id: null as number, name })}
+            renderInfo={({ id }) => (
+              <p className={styles.artistInfo}>
+                <Icon isFor="modal.info" />
+                {t(
+                  id
+                    ? "modals.ImportFoldersView.release.artist.info.alreadyPresent"
+                    : "modals.ImportFoldersView.release.artist.info.notPresent"
+                )}
+              </p>
+            )}
           />
         </label>
         <label className={cx(formStyles.label, formStyles.vertical)}>

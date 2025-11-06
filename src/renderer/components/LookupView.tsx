@@ -1,3 +1,4 @@
+import { type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Combobox,
@@ -27,6 +28,7 @@ export type LookupViewProps<T extends HasId> = {
   onQueryChange?: (query: string) => void;
   getText: (item: T) => string;
   getCustomValue?: (query: string) => T;
+  renderInfo?: (item: T) => ReactNode;
 };
 
 const MIN_QUERY_LENGTH = 3;
@@ -46,6 +48,7 @@ export default function LookupView<T extends HasId>({
   onQueryChange,
   getText,
   getCustomValue,
+  renderInfo,
 }: LookupViewProps<T>) {
   const { t } = useTranslation();
 
@@ -125,6 +128,7 @@ export default function LookupView<T extends HasId>({
           </ComboboxOptions>
         )}
       </Combobox>
+      {renderInfo && renderInfo(value)}
     </div>
   );
 }

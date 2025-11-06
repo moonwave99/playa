@@ -9,7 +9,11 @@ import ErrorView from "./ErrorView";
 
 export type LookupEntityViewProps = Pick<
   LookupViewProps<SearchResult>,
-  "allowCustomValue" | "placeholderText" | "className" | "isEntityIncluded"
+  | "allowCustomValue"
+  | "placeholderText"
+  | "className"
+  | "isEntityIncluded"
+  | "renderInfo"
 > & {
   type: SearchableEntities;
   take?: number;
