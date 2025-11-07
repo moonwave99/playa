@@ -16,7 +16,6 @@ TBD
 - design linear list modes;
 - display artist release selection in search results;
 - add recent searches;
-- add rainbow mode;
 
 ## Tasks
 

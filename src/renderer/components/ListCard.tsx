@@ -22,6 +22,7 @@ import type {
   GroupWithArtists,
 } from "@/types/types";
 
+import useStore from "../store";
 import api from "../api";
 
 import SlidingCardsView from "./SlidingCardsView";
@@ -29,10 +30,10 @@ import ReleaseInfo from "./ReleaseInfo";
 import EntityList from "./EntityList";
 import Cover from "./Cover";
 import Link from "./Link";
+import ContextMenuButton from "./Buttons/ContextMenuButton";
 
 import cx from "clsx";
 import styles from "./ListCard.module.css";
-import ContextMenuButton from "./Buttons/ContextMenuButton";
 
 export type Item =
   | CollectionWithReleases
@@ -72,8 +73,11 @@ export default function ListCard({
 }: ListCardProps) {
   const { t } = useTranslation();
   const { otherReleases, coverRelease } = getCovers(item, maxCoversCount);
-
-  const { darkText, color } = getColorInfo(coverRelease);
+  const { settings } = useStore();
+  const { darkText, color } = getColorInfo(
+    coverRelease,
+    settings.USE_RAINBOW_MODE
+  );
 
   function getContent() {
     if (item.entityType === "release") {

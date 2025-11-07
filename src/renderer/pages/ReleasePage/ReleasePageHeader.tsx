@@ -27,8 +27,8 @@ type ReleasePageHeaderProps = {
 
 export default function ReleasePageHeader({ release }: ReleasePageHeaderProps) {
   const { t } = useTranslation();
-  const { setModalContents, setUseDarkText } = useStore();
-  const { darkText, color } = getColorInfo(release);
+  const { settings, setModalContents, setUseDarkText } = useStore();
+  const { darkText, color } = getColorInfo(release, settings.USE_RAINBOW_MODE);
   const { exists, onMissingPathClick } = usePathExists(release);
 
   useEffect(() => {

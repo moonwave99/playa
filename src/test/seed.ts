@@ -154,6 +154,7 @@ export function getFakeSettings() {
     LIBRARY_PATH: "LIBRARY_PATH",
     COVERS_PATH: "COVERS_PATH",
     SHOW_ONBOARDING_ON_STARTUP: false,
+    USE_RAINBOW_MODE: true,
   };
 }
 

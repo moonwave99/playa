@@ -102,6 +102,7 @@ model Group {
 model Settings {
   id                         Int     @id @default(autoincrement())
   SHOW_ONBOARDING_ON_STARTUP Boolean @default(true)
+  USE_RAINBOW_MODE           Boolean @default(true)
   PLAYER_PATH                String  @default("")
   TAGGER_PATH                String  @default("")
   LIBRARY_PATH               String  @default("")

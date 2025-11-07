@@ -64,6 +64,10 @@ const fieldsMap: Field[] = [
     key: "DISCOGS_SECRET",
     type: "string",
   },
+  {
+    key: "USE_RAINBOW_MODE",
+    type: "checkbox",
+  },
 ];
 
 export default function SettingsView({ closeModal }: SettingsViewProps) {

@@ -12,6 +12,7 @@ export const DEFAULT_SETTINGS: Settings = {
   LIBRARY_PATH: "",
   COVERS_PATH: "",
   SHOW_ONBOARDING_ON_STARTUP: true,
+  USE_RAINBOW_MODE: true,
 };
 
 export const MAX_IMPORT_FOLDERS = 10;

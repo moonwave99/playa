@@ -464,6 +464,10 @@
         "DISCOGS_SECRET": {
           "label": "Discogs Secret",
           "placeholder": "Insert your Discogs API Secret"
+        },
+        "USE_RAINBOW_MODE": {
+          "label": "Use Rainbow Mode",
+          "placeholder": ""
         }
       },
       "actions": {

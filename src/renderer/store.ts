@@ -37,6 +37,7 @@ type Store = {
   isModalFixed: boolean;
   settings: Settings;
   setSettings: (settings: Settings) => void;
+  getSetting: <K extends keyof Settings>(key: K) => Settings[K];
   setLightBoxEntityId: (lightboxEntityId: number) => void;
   toggleListViewMode: (list: ListViews) => void;
   setListViewMode: (list: ListViews, listViewMode: ListViewModes) => void;
@@ -67,6 +68,7 @@ const useStore = create<Store>()(
       modalContents: null as ModalContents,
       isModalFixed: false,
       settings: null as Settings,
+      getSetting: (key) => get().settings[key],
       setLightBoxEntityId: (lightBoxEntityId) => set({ lightBoxEntityId }),
       setSettings: (settings) => set({ settings }),
       setUseDarkText: (useDarkText) => set({ useDarkText }),

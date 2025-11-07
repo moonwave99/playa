@@ -356,8 +356,11 @@ export function groupItemsByLetter(items: (Artist | Collection | Group)[]) {
 
 export const pad = (n = 1) => (n < 10 ? `0${n}` : `${n}`);
 
-export function getColorInfo(release: Release): ColorInfo {
-  if (!release?.colorInfo) {
+export function getColorInfo(
+  release: Release,
+  useRainbowMode = true
+): ColorInfo {
+  if (!release?.colorInfo || !useRainbowMode) {
     return {
       color: null,
       darkText: false,
