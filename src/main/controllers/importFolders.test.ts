@@ -51,6 +51,28 @@ describe("refreshReleaseContents function", () => {
     expect(send).not.toHaveBeenCalled();
   });
 
+  it("shows an error box if the Release folder contains no tracks", async () => {
+    const release = getFakeReleasesForArtist(1).at(0);
+    await prisma.artist.create({ data: getFakeArtist(1) });
+    await prisma.release.create({ data: release });
+
+    const send = vi.fn();
+    const showErrorBox = vi.fn();
+    const { refreshReleaseContents } = importFoldersController({
+      ...defaultParams,
+      send,
+      showErrorBox,
+    });
+
+    const result = await refreshReleaseContents(1);
+    expect(result).toBeFalsy();
+    expect(send).not.toHaveBeenCalled();
+    expect(showErrorBox).toHaveBeenCalledWith(
+      "Error refreshing Release contents",
+      "The current Release folder contains no tracks."
+    );
+  });
+
   it("updates the track information for the given release and returns it", async (context) => {
     const directory = await testFs(
       {

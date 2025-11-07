@@ -62,15 +62,29 @@ export function importFoldersController({
     }
 
     log("importFolders:refreshReleaseContents", release);
-    const updatedRelease = await Promise.all(
-      [release, ...release.subReleases].map(async (release) => {
-        const tracks = await getFolderContents(
+
+    const folderContents = await Promise.all(
+      [release, ...release.subReleases].map(async (release) => ({
+        id: release.id,
+        contents: await getFolderContents(
           release as ReleaseWithArtist,
           getSetting("LIBRARY_PATH") as string
-        );
-        log("importFolders:refreshReleaseContents", "tracks", tracks);
-        return addTracksToRelease(release.id, tracks);
-      })
+        ),
+      }))
+    );
+
+    if (folderContents.some(({ contents }) => !contents.length)) {
+      showErrorBox(
+        "Error refreshing Release contents",
+        folderContents.length > 1
+          ? "Some folders of the current Release contain no tracks"
+          : "The current Release folder contains no tracks."
+      );
+      return false;
+    }
+
+    const updatedReleases = await Promise.all(
+      folderContents.map(({ id, contents }) => addTracksToRelease(id, contents))
     );
 
     send("mutate", [["releases", release.id]]);
@@ -79,7 +93,7 @@ export function importFoldersController({
       message: `${release.title} contents refreshed`,
     });
 
-    return updatedRelease;
+    return updatedReleases;
   }
 
   async function refreshArtistReleases(artist: ArtistWithReleasesFull) {

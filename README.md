@@ -25,7 +25,6 @@ TBD
 
 ### Simplify import
 
-- show warning when refreshing empty folder instead of removing tracks;
 - add relocate all artists folder command (not appearances).
 
 ## License
