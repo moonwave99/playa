@@ -23,12 +23,15 @@ type ArtistPageHeaderProps = {
 
 export default function ArtistPageHeader({ artist }: ArtistPageHeaderProps) {
   const { t } = useTranslation();
-  const { setModalContents, setUseDarkText } = useStore();
+  const { settings, setModalContents, setUseDarkText } = useStore();
   const { coverRelease } = getCovers(artist);
   const { id, name, releases, appearsIn } = artist;
   const releaseCount = releases.length + appearsIn.length;
 
-  const { darkText, color } = getColorInfo(coverRelease);
+  const { darkText, color } = getColorInfo(
+    coverRelease,
+    settings.USE_RAINBOW_MODE
+  );
 
   useEffect(() => {
     setUseDarkText(darkText);
