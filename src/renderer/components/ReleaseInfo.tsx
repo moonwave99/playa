@@ -29,7 +29,7 @@ export default function ReleaseInfo({
     >
       <span>
         {type}, {year} {getDiscInfo(release)}
-        {isSingle && (
+        {isSingle && trackCount ? (
           <>
             <span className={styles.trackCount}>
               {t("components.ListCard.trackCount", { count: trackCount })}
@@ -42,7 +42,7 @@ export default function ReleaseInfo({
               {duration}
             </span>
           </>
-        )}
+        ) : null}
       </span>
     </div>
   );

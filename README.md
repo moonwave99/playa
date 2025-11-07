@@ -22,7 +22,6 @@ TBD
 
 - display multiple covers for multiple discs releases;
 - make group and collection titles editable again;
-- fix cover refresh in lightbox;
 
 ### Simplify import
 

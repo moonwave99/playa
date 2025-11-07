@@ -22,6 +22,7 @@ type CoverProps = Pick<Release, "id" | "title" | "hash"> & {
   onLoad?: () => void;
   onError?: () => void;
   onPlaybackClick?: () => void;
+  avoidCache?: boolean;
 };
 
 async function getDropURL(event: DragEvent): Promise<string | null> {
@@ -52,6 +53,7 @@ export default function Cover({
   onPlaybackClick,
   droppable = true,
   dragOutside = true,
+  avoidCache = false,
 }: CoverProps) {
   const { t } = useTranslation();
   const [loaded, setLoaded] = useState(false);
@@ -70,7 +72,7 @@ export default function Cover({
     setError(false);
   }
 
-  const src = !error ? getCover(hash) : EMPTY_IMG;
+  const src = !error ? getCover(hash, avoidCache) : EMPTY_IMG;
 
   return (
     <div

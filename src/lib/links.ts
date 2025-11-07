@@ -39,8 +39,8 @@ export function getRYMURL(
   });
 }
 
-export function getCover(hash: string): string {
-  return `playa-cover://${hash}-cover.jpg`;
+export function getCover(hash: string, avoidCache = false): string {
+  return `playa-cover://${hash}-cover.jpg${avoidCache ? `?${Math.random() * 100000}`.slice(0, 5) : ""}`;
 }
 
 export function getEntityLink({ id, entityType }: HasEntityTypeAndId) {

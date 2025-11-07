@@ -90,7 +90,7 @@ export default function ReleaseLightbox({
           <div className={styles.placeholder}></div>
         ) : (
           <>
-            <Cover {...release} className={styles.cover} />
+            <Cover {...release} className={styles.cover} avoidCache />
             {!hideSidebar && (
               <div className={styles.sidebar}>
                 <header className={styles.header}>
