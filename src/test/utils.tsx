@@ -32,6 +32,7 @@ const settings = {
   DISCOGS_KEY: "DISCOGS_KEY",
   DISCOGS_SECRET: "DISCOGS_SECRET",
   SHOW_ONBOARDING_ON_STARTUP: true,
+  USE_RAINBOW_MODE: true,
 } as const;
 
 export function getSetting(key: keyof Omit<Settings, "id">) {
