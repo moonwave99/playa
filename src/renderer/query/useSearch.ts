@@ -2,6 +2,7 @@ import {
   useQuery,
   keepPreviousData,
   type QueryKey,
+  UseQueryResult,
 } from "@tanstack/react-query";
 import { DEBOUNCE_INTERVAL } from "@/constants";
 
@@ -13,10 +14,7 @@ type UseSearchParams<T> = {
   queryFn: (query: string, take?: number) => Promise<T[]>;
 };
 
-type UseSearch<T> = {
-  isPending: boolean;
-  isFetching: boolean;
-  error: Error;
+type UseSearch<T> = Omit<UseQueryResult, "data"> & {
   results: T[];
 };
 
@@ -27,12 +25,7 @@ export default function useSearch<T>({
   queryKey,
   queryFn,
 }: UseSearchParams<T>): UseSearch<T> {
-  const {
-    isPending,
-    isFetching,
-    error,
-    data: results,
-  } = useQuery({
+  const { data: results, ...rest } = useQuery({
     queryKey,
     queryFn: async () => {
       if (query?.length < minLength) {
@@ -46,8 +39,6 @@ export default function useSearch<T>({
 
   return {
     results: results || [],
-    isPending,
-    isFetching,
-    error,
+    ...rest,
   };
 }

@@ -1,6 +1,11 @@
 import { useEffect } from "react";
 import { useSearchParams } from "react-router";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  UseQueryResult,
+} from "@tanstack/react-query";
 import api from "../api";
 import type {
   ReleaseWithArtistAndTracksAndSubreleases,
@@ -14,9 +19,7 @@ type UseReleaseParams = {
   refreshOnLoad?: boolean;
 };
 
-type UseRelease = {
-  isPending: boolean;
-  error: Error;
+type UseRelease = Omit<UseQueryResult, "data"> & {
   release: ReleaseWithArtistAndTracksAndSubreleasesAndCollections;
   selectedTrackId: number;
   removeFromCollection: (collection_id: number) => void;
@@ -34,10 +37,9 @@ export default function useRelease({
   const [params] = useSearchParams();
 
   const {
-    isPending,
-    error,
     refetch,
     data: release,
+    ...rest
   } = useQuery({
     queryKey: ["releases", id],
     queryFn: () =>
@@ -104,14 +106,14 @@ export default function useRelease({
 
   return {
     release,
-    isPending,
-    error,
+    refetch,
     selectedTrackId: +params.get("track_id"),
     removeFromCollection: removeFromCollection.mutate,
     addNewAdditionalArtist: addNewAdditionalArtist.mutate,
     addAdditionalArtist: addAdditionalArtist.mutate,
     removeAdditionalArtist: removeAdditionalArtist.mutate,
     editRelease: editRelease.mutate,
+    ...rest,
   };
 }
 

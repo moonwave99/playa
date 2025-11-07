@@ -8,7 +8,7 @@ import {
 } from "@/types/types";
 import useArtists from "../query/useArtists";
 import api from "../api";
-import LookupView from "./LookupView";
+import LookupView from "./Lookup/LookupView";
 import ErrorView from "./ErrorView";
 import Loading from "./Loading";
 import { Icon } from "../icons";

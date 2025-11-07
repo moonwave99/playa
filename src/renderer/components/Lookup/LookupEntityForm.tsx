@@ -1,11 +1,11 @@
 import { useTranslation } from "react-i18next";
-import { SearchResult } from "@/types/types";
+import { HasId, SearchResult } from "@/types/types";
 import { useState, FormEvent } from "react";
 import LookupEntityView, {
   type LookupEntityViewProps,
 } from "./LookupEntityView";
 import cx from "clsx";
-import formStyles from "../forms.module.css";
+import formStyles from "@/renderer/forms.module.css";
 
 type LookupEntityFormProps = Pick<
   LookupEntityViewProps,
@@ -27,6 +27,7 @@ export default function LookupEntityForm({
   function _onSubmit(event: FormEvent) {
     event.preventDefault();
     onSubmit(selectedResult);
+    (event.target as HTMLFormElement).reset();
   }
 
   function onSelect(item: SearchResult) {
@@ -41,7 +42,7 @@ export default function LookupEntityForm({
       <LookupEntityView
         type={type}
         onSelect={onSelect}
-        isEntityIncluded={({ id }) => existingIds.includes(id)}
+        isEntityIncluded={({ id }: HasId) => existingIds.includes(id)}
         {...rest}
       />
       <button

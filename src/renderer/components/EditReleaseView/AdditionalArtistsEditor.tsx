@@ -6,7 +6,7 @@ import {
 import styles from "./EditReleaseView.module.css";
 import formStyles from "@/renderer/forms.module.css";
 import EntityCardList from "../EntityCardList";
-import LookupEntityForm from "../LookupEntityForm";
+import LookupEntityForm from "../Lookup/LookupEntityForm";
 
 type AdditionalArtistsEditorProps = {
   release: ReleaseWithArtistAndTracksAndSubreleasesAndCollections;

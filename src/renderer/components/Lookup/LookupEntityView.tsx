@@ -1,11 +1,11 @@
 import { SearchableEntities, SearchResult } from "@/types/types";
-import { DEBOUNCE_INTERVAL } from "@/constants";
+import { DEBOUNCE_INTERVAL, DEFAULT_LOOKUP_PAGE_SIZE } from "@/constants";
 import LookupView, { type LookupViewProps } from "./LookupView";
-import useSearch from "../query/useSearch";
+import useSearch from "../../query/useSearch";
 import { useState } from "react";
 import { useDebounce } from "use-debounce";
-import api from "../api";
-import ErrorView from "./ErrorView";
+import api from "../../api";
+import ErrorView from "@/renderer/components/ErrorView";
 
 export type LookupEntityViewProps = Pick<
   LookupViewProps<SearchResult>,
@@ -22,7 +22,7 @@ export type LookupEntityViewProps = Pick<
 
 export default function LookupEntityView({
   onSelect,
-  take = 10,
+  take = DEFAULT_LOOKUP_PAGE_SIZE,
   type,
   ...rest
 }: LookupEntityViewProps) {
@@ -31,7 +31,7 @@ export default function LookupEntityView({
     leading: false,
   });
 
-  const { isFetching, error, results } = useSearch({
+  const { error, results } = useSearch({
     take,
     query: debouncedQuery,
     queryKey: ["search", debouncedQuery],
@@ -68,7 +68,6 @@ export default function LookupEntityView({
   return (
     <LookupView
       getCustomValue={getCustomValue}
-      isFetching={isFetching}
       items={results}
       onChange={onSelect}
       query={query}

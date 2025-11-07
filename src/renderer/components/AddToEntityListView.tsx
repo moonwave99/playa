@@ -9,7 +9,7 @@ import type {
 } from "@/types/types";
 
 import EntityCard from "./EntityCard";
-import LookupView from "./LookupView";
+import LookupView from "./Lookup/LookupView";
 
 import styles from "./AddToEntityListView.module.css";
 import formStyles from "../forms.module.css";

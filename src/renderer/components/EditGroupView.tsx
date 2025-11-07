@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { SearchResult } from "@/types/types";
 import useGroup from "../query/useGroup";
 import EntityCardList from "./EntityCardList";
-import LookupEntityForm from "./LookupEntityForm";
+import LookupEntityForm from "./Lookup/LookupEntityForm";
 import ErrorView from "./ErrorView";
 import Loading from "./Loading";
 import cx from "clsx";

@@ -9,17 +9,16 @@ import {
 } from "@headlessui/react";
 import type { HasId } from "@/types/types";
 import { lowerCaseCompare } from "@/lib/utils";
-import { Icon } from "../icons";
+import { Icon } from "@/renderer/icons";
 import cx from "clsx";
 import styles from "./LookupView.module.css";
 
 export type LookupViewProps<T extends HasId> = {
   value?: T;
   query?: string;
-  items?: T[];
+  items: T[];
   allowCustomValue?: boolean;
   className?: string;
-  isFetching?: boolean;
   autoFocus?: boolean;
   fixedList?: boolean;
   placeholderText?: string;
@@ -39,7 +38,6 @@ export default function LookupView<T extends HasId>({
   items,
   allowCustomValue,
   className,
-  isFetching,
   autoFocus,
   fixedList,
   placeholderText,
@@ -97,7 +95,7 @@ export default function LookupView<T extends HasId>({
                 </span>
               </ComboboxOption>
             )}
-            {!allowCustomValue && !results?.length && query && !isFetching ? (
+            {!allowCustomValue && !results?.length && query ? (
               <span className={styles.LookupViewOption}>
                 {t("lookup.noResults", { value: query })}
               </span>

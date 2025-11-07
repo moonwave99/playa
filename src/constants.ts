@@ -21,7 +21,7 @@ export const ON_IMPORT_DONE_DELAY = 5000;
 export const ON_EXPORT_DONE_DELAY = 3000;
 
 export const MODAL_CLOSE_TIMEOUT = 300;
-export const DEBOUNCE_INTERVAL = 300;
+export const DEBOUNCE_INTERVAL = 200;
 export const NOTIFICATION_AUTOCLOSE_INTERVAL = 1500;
 
 export const HOMEPAGE_RELEASES_PAGESIZE = 10;
@@ -48,3 +48,5 @@ export const VARIOUS_ARTIST_POSSIBLE_FOLDERS = [
   "AA. VV.",
   "VV. AA.",
 ];
+
+export const DEFAULT_LOOKUP_PAGE_SIZE = 10;

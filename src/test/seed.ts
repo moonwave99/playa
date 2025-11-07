@@ -2,8 +2,15 @@ import path from "node:path";
 import { copy, remove } from "fs-extra";
 import { PrismaClient } from "@prisma/client-generated";
 import sha1 from "sha1";
+import { capitalize } from "lodash";
 import { hashArtistName, hashRelease } from "../main/hash";
-import type { Release, HasId, EntityType, ReleaseType } from "@/types/types";
+import type {
+  Release,
+  HasId,
+  EntityType,
+  ReleaseType,
+  SearchableEntities,
+} from "@/types/types";
 import { pad } from "@/lib/utils";
 import { getE2ETmpPath, BUILD_PATH } from "./utils";
 import { DEFAULT_SETTINGS } from "@/constants";
@@ -142,6 +149,19 @@ export function getFakeGroups({
     title: `Group ${i + 1}`,
     coverArtistId: artists?.at(0)?.id || null,
     ...connect,
+  }));
+}
+
+export function getFakeSearchResults(
+  length = 3,
+  type = "release" as SearchableEntities
+) {
+  return Array.from({ length }, (_, i) => ({
+    entityType: type,
+    id: i + 1,
+    type,
+    title: `Artist 1 - ${capitalize(type)} ${i + 1}`,
+    description: type === "release" ? "Album, 2000" : type,
   }));
 }
 

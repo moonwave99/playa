@@ -190,9 +190,9 @@ export type SearchResult = {
   id: number;
   type: SearchableEntities;
   title: string;
+  description: string;
   hash?: string;
   artist?: string;
-  description: string;
   links: Partial<Record<Entities, string>>;
   coverRelease?: ReleaseWithArtist;
   releases?: ReleaseWithArtistAndSubReleases[];
