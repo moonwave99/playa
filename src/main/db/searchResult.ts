@@ -27,17 +27,19 @@ type GetSearchResultParams = {
   query: string;
   take?: number;
   type?: SearchableEntities;
+  options?: Record<string, unknown>;
 };
 
 export async function getSearchResults({
   query,
   take = 20,
   type,
+  options = {},
 }: GetSearchResultParams): Promise<SearchResult[]> {
   const types = (type ? [type] : Object.keys(getters)) as SearchableEntities[];
   const data = await Promise.all(
     types.map(async (type) => {
-      const results = await getters[type](query, take);
+      const results = await getters[type](query, take, options);
       const transformer = transformers[type] as (
         x: Unpacked<typeof results>
       ) => SearchResult;
@@ -52,7 +54,11 @@ export async function getSearchResults({
   return data.flat();
 }
 
-type Getter<T> = (query: string, take: number) => Promise<T[]>;
+type Getter<T> = (
+  query: string,
+  take: number,
+  option?: Record<string, unknown>
+) => Promise<T[]>;
 
 type Getters = {
   artist: Getter<ArtistWithReleasesAndAppearances>;
@@ -124,15 +130,34 @@ const getters: Getters = {
         },
       },
     }) as Promise<ArtistWithReleasesAndAppearances[]>,
-  release: (query: string, take: number) =>
+  release: (query: string, take: number, options = {}) =>
     prisma.release.findMany({
       take,
-      where: {
-        mainRelease: null,
-        normalizedTitle: {
-          contains: query,
-        },
-      },
+      where: options.searchInArtists
+        ? {
+            OR: [
+              {
+                mainRelease: null,
+                normalizedTitle: {
+                  contains: query,
+                },
+              },
+              {
+                mainRelease: null,
+                artist: {
+                  normalizedName: {
+                    contains: query,
+                  },
+                },
+              },
+            ],
+          }
+        : {
+            mainRelease: null,
+            normalizedTitle: {
+              contains: query,
+            },
+          },
       orderBy: {
         title: "asc",
       },

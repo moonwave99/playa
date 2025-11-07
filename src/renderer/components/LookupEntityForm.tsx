@@ -44,7 +44,10 @@ export default function LookupEntityForm({
         isEntityIncluded={({ id }) => existingIds.includes(id)}
         {...rest}
       />
-      <button className={formStyles.button} disabled={!selectedResult}>
+      <button
+        className={cx(formStyles.button, formStyles.primary)}
+        disabled={!selectedResult}
+      >
         {t("lookup.actions.add")}
       </button>
     </form>

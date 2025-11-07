@@ -40,6 +40,7 @@ export default function LookupEntityView({
         query,
         take,
         type,
+        options: type === "release" ? { searchInArtists: true } : {},
       }),
   });
 
@@ -54,6 +55,16 @@ export default function LookupEntityView({
     };
   }
 
+  function getText(item: SearchResult) {
+    if (!item) {
+      return null;
+    }
+    if (item.type === "release") {
+      return `${item.artist} - ${item.title}`;
+    }
+    return item.title;
+  }
+
   return (
     <LookupView
       getCustomValue={getCustomValue}
@@ -62,7 +73,7 @@ export default function LookupEntityView({
       onChange={onSelect}
       query={query}
       onQueryChange={setQuery}
-      getText={(item) => (item as SearchResult)?.title}
+      getText={getText}
       {...rest}
     />
   );
