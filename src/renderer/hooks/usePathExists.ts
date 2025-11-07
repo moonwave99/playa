@@ -6,7 +6,7 @@ import useStore from "../store";
 const pathCache: Record<string, boolean> = {};
 
 type UsePathExists = {
-  exists: boolean;
+  exists: boolean | null;
   onMissingPathClick: () => void;
 };
 
@@ -22,6 +22,9 @@ export default function usePathExists(release: Release): UsePathExists {
       pathCache[release.path] = value;
       setExists(value);
     });
+    return () => {
+      pathCache[release.path] = null;
+    };
   }, [release]);
 
   function onMissingPathClick() {

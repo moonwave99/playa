@@ -74,7 +74,7 @@ export default function ReleasePageHeader({ release }: ReleasePageHeaderProps) {
 
         <div className={styles.titleWrapper}>
           <h1 className={styles.title}>{getReleaseTitle(release)}</h1>
-          {!exists && (
+          {typeof exists === "boolean" && !exists && (
             <button
               onClick={onMissingPathClick}
               className={cx(
