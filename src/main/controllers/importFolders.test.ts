@@ -1,6 +1,6 @@
 import prisma from "../db/prisma";
 import { clearPrisma } from "@/test/prisma-utils";
-import { getSetting } from "@/test/utils";
+import { withPath, getSetting } from "@/test/utils";
 import path from "path";
 import { importFoldersController } from "./importFolders";
 import { testFs } from "@moonwave99/test-fs";
@@ -23,6 +23,7 @@ afterEach(clearPrisma);
 vi.mock("../covers");
 
 const defaultParams = {
+  withPath,
   getSetting,
   send: vi.fn(),
   stateManager: {
@@ -435,10 +436,11 @@ describe("openImportDialog function", () => {
 
     const { openImportDialog } = importFoldersController({
       ...defaultParams,
+      withPath: (key, folderPath) => path.join(directory, key, folderPath),
       getSetting: (key: string) =>
         key === "LIBRARY_PATH" ? LIBRARY_PATH : false,
       openFolderDialog: ({ defaultPath }) => [
-        path.join(defaultPath, "A/Artist 1", "[Album]", "2000 - Release 1"),
+        path.join(defaultPath, "[Album]", "2000 - Release 1"),
       ],
       showErrorBox,
       send,

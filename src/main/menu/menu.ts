@@ -17,6 +17,7 @@ import { getGroupMenu } from "./static/group";
 import { getCollectionMenu } from "./static/collection";
 import { getReleaseMenu } from "./static/release";
 import { getArtistMenu } from "./static/artist";
+import { getSearchMenu } from "./static/search";
 import { capitalize } from "lodash";
 
 import pkg from "../../../package.json";
@@ -46,6 +47,7 @@ export function initMenu({
     getArtistMenu,
     getCollectionMenu,
     getGroupMenu,
+    getSearchMenu,
     getLibraryMenu,
   ].reduce(
     ({ template, refreshHandlers }, getter) => {

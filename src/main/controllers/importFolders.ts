@@ -1,7 +1,7 @@
 import prisma from "../db/prisma";
 import path from "node:path";
 import { StateManager } from "../stateManager";
-import { mapSeries, normalizeDiacritics } from "@/lib/utils";
+import { lowerCaseCompare, mapSeries, normalizeDiacritics } from "@/lib/utils";
 import {
   ReleaseWithArtist,
   ArtistWithReleases,
@@ -16,7 +16,7 @@ import {
 } from "@/types/types";
 import { searchCover } from "../covers";
 import { addTracksToRelease } from "../db/release";
-import { searchArtistByName } from "../db/artist";
+import { getSelectedArtist, searchArtistByName } from "../db/artist";
 import { hashArtistName, hashRelease } from "../hash";
 import { log } from "../logger";
 import {
@@ -35,6 +35,7 @@ import {
 } from "@/constants";
 
 type ImportFoldersControllerParams = {
+  withPath: (key: string, folderPath: string) => string;
   getSetting: GetSetting;
   send: Send;
   openModal: OpenModal;
@@ -44,6 +45,7 @@ type ImportFoldersControllerParams = {
 };
 
 export function importFoldersController({
+  withPath,
   getSetting,
   send,
   openModal,
@@ -254,6 +256,26 @@ export function importFoldersController({
     }
   }
 
+  async function getDefaultImportPath(artist: ArtistWithReleases) {
+    const LIBRARY_PATH = getSetting("LIBRARY_PATH") as string;
+    if (!artist) {
+      return LIBRARY_PATH;
+    }
+    for (const release of artist.releases) {
+      const tokens = path.dirname(release.path).split(path.sep);
+      const artistIndex = tokens.findIndex((y) =>
+        lowerCaseCompare(y, artist.name)
+      );
+      if (artistIndex > -1) {
+        return withPath(
+          "LIBRARY_PATH",
+          tokens.slice(0, artistIndex + 1).join(path.sep)
+        );
+      }
+    }
+    return LIBRARY_PATH;
+  }
+
   async function openImportDialog() {
     const LIBRARY_PATH = getSetting("LIBRARY_PATH") as string;
 
@@ -265,9 +287,13 @@ export function importFoldersController({
       return;
     }
 
+    const defaultPath = await getDefaultImportPath(
+      await getSelectedArtist(stateManager.getSelection("artist"))
+    );
+
     const folders = openFolderDialog({
       key: "importFolderPath",
-      defaultPath: LIBRARY_PATH,
+      defaultPath,
       properties: ["openDirectory", "multiSelections"],
     });
 

@@ -174,9 +174,10 @@ export async function init({ mainWindow, settings }: InitParams) {
     state: stateController({ send, stateManager, history }),
     settings,
     importFolders: importFoldersController({
-      openFolderDialog,
+      withPath,
       getSetting,
       send,
+      openFolderDialog,
       openModal,
       stateManager,
       showErrorBox,

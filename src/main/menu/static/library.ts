@@ -65,12 +65,6 @@ export function getLibraryMenu({ controllers, stateManager }: GetMenuParams) {
       click: () => send("toggleListViewMode"),
     },
     {
-      id: "searchLibrary",
-      label: "Search Library",
-      accelerator: "Cmd+F",
-      click: () => send("toggleSearch"),
-    },
-    {
       id: "showLibraryStats",
       label: "Show Library Stats",
       click: () => openModal("stats"),
