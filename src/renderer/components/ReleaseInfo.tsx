@@ -6,6 +6,7 @@ import styles from "./ReleaseInfo.module.css";
 
 type ReleaseInfoProps = {
   release: ReleaseWithArtistAndTracksAndSubreleases;
+  className?: string;
   isSingle?: boolean;
   isInline?: boolean;
   useDarkText?: boolean;
@@ -13,6 +14,7 @@ type ReleaseInfoProps = {
 
 export default function ReleaseInfo({
   release,
+  className,
   isSingle = false,
   isInline = true,
   useDarkText = false,
@@ -22,7 +24,7 @@ export default function ReleaseInfo({
   const { duration, trackCount } = getReleaseDuration(release);
   return (
     <div
-      className={cx(styles.view, {
+      className={cx(styles.view, className, {
         [styles.isInline]: isInline,
         [styles.useDarkText]: useDarkText,
       })}

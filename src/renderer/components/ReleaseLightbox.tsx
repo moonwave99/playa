@@ -102,7 +102,11 @@ export default function ReleaseLightbox({
                     items={[release.artist, ...release.additionalArtists]}
                   />
                   <h2 className={styles.title}>{getReleaseTitle(release)}</h2>
-                  <ReleaseInfo release={release} isSingle />
+                  <ReleaseInfo
+                    className={styles.info}
+                    release={release}
+                    isSingle
+                  />
                 </header>
                 <Tracklist
                   className={styles.tracklist}

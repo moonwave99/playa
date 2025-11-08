@@ -113,6 +113,10 @@
   height: var(--full-cover-size);
 }
 
+.info {
+  color: var(--secondary-color);
+}
+
 .tracklist {
   height: calc(var(--full-cover-size) - 7.5rem);
   overflow: auto;
@@ -131,6 +135,7 @@
   }
 
   .artist {
+    color: var(--secondary-color);
     font-size: 1.2rem;
     font-weight: 400;
     letter-spacing: -0.035rem;
