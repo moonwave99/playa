@@ -8,23 +8,13 @@ TBD
 
 ## Roadmap
 
-- entity tags;
-- advanced search;
-- virtualize all lists;
 - generalize lightbox;
+- advanced search;
+- entity tags;
+- virtualize all lists;
 - filter list views;
 - design linear list modes;
-- display artist release selection in search results;
 - add recent searches;
-
-## Tasks
-
-- display multiple covers for multiple discs releases;
-- make group and collection titles editable again;
-
-### Simplify import
-
-- add relocate all artists folder command (not appearances).
 
 ## License
 
