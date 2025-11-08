@@ -141,9 +141,15 @@ const modalMap = {
   },
   editRelease: {
     component: EditReleaseView,
+    styles: {
+      width: "min(90vw, 1000px)",
+    },
   },
   editArtist: {
     component: EditArtistView,
+    styles: {
+      width: "min(90vw, 1000px)",
+    },
   },
   editCollection: {
     component: EditCollectionView,
