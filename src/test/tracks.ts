@@ -41,6 +41,35 @@ function getBuffer(duration: number) {
   return buffer;
 }
 
+function getAlbumPath({
+  libraryPath,
+  artist,
+  type = "Album",
+  album,
+  year = 2000,
+  inVariousArtistsFolder = false,
+  customPath,
+}: CreateAlbumParams) {
+  if (customPath) {
+    return path.join(libraryPath, customPath);
+  }
+  if (inVariousArtistsFolder) {
+    return path.join(
+      libraryPath,
+      "Various Artists",
+      `[${type}]`,
+      `${year} - ${album}`
+    );
+  }
+  return path.join(
+    libraryPath,
+    artist.at(0).toUpperCase(),
+    artist,
+    `[${type}]`,
+    `${year} - ${album}`
+  );
+}
+
 type CreateAlbumParams = {
   libraryPath: string;
   artist: string;
@@ -48,34 +77,17 @@ type CreateAlbumParams = {
   type?: string;
   year?: number;
   inVariousArtistsFolder?: boolean;
+  customPath?: string;
+  trackLength?: number;
 };
 
-export async function createAlbum({
-  libraryPath,
-  artist,
-  type = "Album",
-  album,
-  year = 2000,
-  inVariousArtistsFolder = false,
-}: CreateAlbumParams) {
-  const albumFolder = inVariousArtistsFolder
-    ? path.join(
-        libraryPath,
-        "Various Artists",
-        `[${type}]`,
-        `${year} - ${album}`
-      )
-    : path.join(
-        libraryPath,
-        artist.at(0).toUpperCase(),
-        artist,
-        `[${type}]`,
-        `${year} - ${album}`
-      );
+export async function createAlbum(params: CreateAlbumParams) {
+  const albumFolder = getAlbumPath(params);
   await ensureDir(albumFolder);
+  const { artist, album, year, trackLength } = params;
 
   await Promise.all(
-    Array.from({ length: 5 }, (_, i) =>
+    Array.from({ length: trackLength || 5 }, (_, i) =>
       createTrack({
         outputPath: path.join(albumFolder, `${pad(i + 1)}.mp3`),
         meta: {

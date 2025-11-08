@@ -17,7 +17,12 @@ export function getE2EFolderPath({
   testId,
   testTitle,
 }: getE2EFolderPathParams) {
-  if (testTitle === "Relocate Release Folder") {
+  if (testTitle.includes("Relocate Artist Folder")) {
+    return [
+      path.join(getE2ETmpPath(testId), "LIBRARY_PATH", "New Artist Folder"),
+    ];
+  }
+  if (testTitle.includes("Relocate Release Folder")) {
     return [
       path.join(
         getE2ETmpPath(testId),

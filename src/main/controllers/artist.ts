@@ -1,4 +1,3 @@
-import path from "node:path";
 import prisma from "../db/prisma";
 import { pathExists } from "fs-extra";
 import { difference } from "lodash";
@@ -22,6 +21,7 @@ import {
   removeRelatedArtist as _removeRelatedArtist,
   deleteArtist as _deleteArtist,
   deleteArtists as _deleteArtists,
+  getArtistReleases,
 } from "../db/artist";
 import { addTracksToRelease } from "../db/release";
 import {
@@ -162,20 +162,19 @@ export function artistController({
   }
 
   async function checkArtistFolderContents(id: number) {
-    const LIBRARY_PATH = getSetting("LIBRARY_PATH") as string;
-    const artist = await getArtist(id);
-    if (!artist.releases.length) {
+    const releases = await getArtistReleases(id);
+    if (!releases.length) {
       return false;
     }
 
     const existsMap = await Promise.all(
-      artist.releases.map(async (x) => ({
-        id: x.id,
-        exists: await pathExists(withPath("LIBRARY_PATH", x.path)),
-        absolutePath: path,
-        path: stripPath(x.path, LIBRARY_PATH),
+      releases.map(async ({ id, path }) => ({
+        id,
+        path,
+        exists: await pathExists(withPath("LIBRARY_PATH", path)),
       }))
     );
+
     if (existsMap.some(({ exists }) => exists)) {
       return false;
     }
@@ -211,17 +210,19 @@ export function artistController({
     const newCommonPath = stripPath(dialogResult.at(0), LIBRARY_PATH);
 
     const results = await Promise.all(
-      artist.releases.map(async (release) => ({
-        ...(await checkReleaseContentsMatch({
+      artist.releases
+        .filter((x) => x.artist_id === id)
+        .map(async (release) => ({
+          ...(await checkReleaseContentsMatch({
+            release,
+            newFolder: withPath(
+              "LIBRARY_PATH",
+              release.path.replace(commonMissingPath, newCommonPath)
+            ),
+            warnOnContentDifference,
+          })),
           release,
-          newFolder: withPath(
-            "LIBRARY_PATH",
-            release.path.replace(commonMissingPath, newCommonPath)
-          ),
-          warnOnContentDifference,
-        })),
-        release,
-      }))
+        }))
     );
 
     if (results.some(({ status }) => status !== "CONTENT_MATCH")) {
@@ -253,6 +254,7 @@ export function artistController({
         type: "success",
         message: "Artist folder relocated",
       });
+
       return true;
     } catch (error) {
       log("artist:relocateArtistFolder", error);

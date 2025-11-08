@@ -18,6 +18,18 @@ import type {
 } from "@/types/types";
 import { hashArtistName } from "../hash";
 
+export async function getArtistReleases(id: number) {
+  return prisma.release.findMany({
+    where: {
+      artist_id: id,
+    },
+    select: {
+      id: true,
+      path: true,
+    },
+  });
+}
+
 export async function getArtist(id: number) {
   const result = await prisma.artist.findFirst({
     where: { id },
