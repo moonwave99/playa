@@ -1,7 +1,7 @@
 import prisma from "../db/prisma";
 import path from "node:path";
 import { StateManager } from "../stateManager";
-import { lowerCaseCompare, mapSeries, normalizeDiacritics } from "@/lib/utils";
+import { mapSeries, normalizeDiacritics } from "@/lib/utils";
 import {
   ReleaseWithArtist,
   ArtistWithReleases,
@@ -24,6 +24,7 @@ import {
   getFolderContentsFromAbsolutePath,
   stripPath,
   findKeyInTrackMeta,
+  getDefaultImportPath,
 } from "../utils";
 import type { GetSetting } from "./settings";
 import {
@@ -45,7 +46,6 @@ type ImportFoldersControllerParams = {
 };
 
 export function importFoldersController({
-  withPath,
   getSetting,
   send,
   openModal,
@@ -256,26 +256,6 @@ export function importFoldersController({
     }
   }
 
-  async function getDefaultImportPath(artist: ArtistWithReleases) {
-    const LIBRARY_PATH = getSetting("LIBRARY_PATH") as string;
-    if (!artist) {
-      return LIBRARY_PATH;
-    }
-    for (const release of artist.releases) {
-      const tokens = path.dirname(release.path).split(path.sep);
-      const artistIndex = tokens.findIndex((y) =>
-        lowerCaseCompare(y, artist.name)
-      );
-      if (artistIndex > -1) {
-        return withPath(
-          "LIBRARY_PATH",
-          tokens.slice(0, artistIndex + 1).join(path.sep)
-        );
-      }
-    }
-    return LIBRARY_PATH;
-  }
-
   async function openImportDialog() {
     const LIBRARY_PATH = getSetting("LIBRARY_PATH") as string;
 
@@ -288,7 +268,8 @@ export function importFoldersController({
     }
 
     const defaultPath = await getDefaultImportPath(
-      await getSelectedArtist(stateManager.getSelection("artist"))
+      await getSelectedArtist(stateManager.getSelection("artist")),
+      LIBRARY_PATH
     );
 
     const folders = openFolderDialog({

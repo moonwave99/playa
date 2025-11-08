@@ -436,7 +436,6 @@ describe("openImportDialog function", () => {
 
     const { openImportDialog } = importFoldersController({
       ...defaultParams,
-      withPath: (key, folderPath) => path.join(directory, key, folderPath),
       getSetting: (key: string) =>
         key === "LIBRARY_PATH" ? LIBRARY_PATH : false,
       openFolderDialog: ({ defaultPath }) => [

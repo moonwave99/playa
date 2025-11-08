@@ -492,6 +492,9 @@ describe("artist - relocateArtistFolder function", () => {
       ...defaultParams,
       send,
       showErrorBox,
+      stateManager: {
+        getSelection: () => [1],
+      } as unknown as StateManager,
       withPath: (key, folderPath) => path.join(directory, key, folderPath),
       openFolderDialog: () => [path.join(directory, "LIBRARY_PATH/New Folder")],
     });
@@ -544,6 +547,9 @@ describe("artist - relocateArtistFolder function", () => {
       ...defaultParams,
       send,
       showErrorBox,
+      stateManager: {
+        getSelection: () => [1],
+      } as unknown as StateManager,
       getSetting: (key: string) =>
         key === "LIBRARY_PATH" ? path.join(directory, "LIBRARY_PATH") : key,
       withPath: (key, folderPath) => path.join(directory, key, folderPath),

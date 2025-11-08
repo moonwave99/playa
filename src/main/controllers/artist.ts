@@ -29,6 +29,7 @@ import {
   withConfirmDialog,
   getCommonPathPrefix,
   checkReleaseContentsMatch,
+  getDefaultImportPath,
 } from "../utils";
 import { StateManager } from "../stateManager";
 import { GetSetting } from "./settings";
@@ -196,9 +197,15 @@ export function artistController({
     }: RelocateArtistFolderParams
   ) {
     const LIBRARY_PATH = getSetting("LIBRARY_PATH") as string;
+
+    const defaultPath = await getDefaultImportPath(
+      await getSelectedArtist(stateManager.getSelection("artist")),
+      LIBRARY_PATH
+    );
+
     const dialogResult = openFolderDialog({
       key: "openRelocateArtistFolder",
-      defaultPath: LIBRARY_PATH,
+      defaultPath,
       properties: ["openDirectory"],
     });
 

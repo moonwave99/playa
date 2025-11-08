@@ -1,5 +1,7 @@
 import path from "path";
 import * as mm from "music-metadata";
+import { globby } from "globby";
+import { lowerCaseCompare } from "@/lib/utils";
 import type {
   Artist,
   ReleaseType,
@@ -10,8 +12,8 @@ import type {
   TrackWithRelease,
   Notification,
   WithTracks,
+  ArtistWithReleases,
 } from "@/types/types";
-import { globby } from "globby";
 
 export function stripPath(fullPath: string, startPath: string) {
   const stripped = fullPath.replace(new RegExp(`^${startPath}`), "");
@@ -281,4 +283,26 @@ export async function checkReleaseContentsMatch({
     newFolder,
     newContents: newContents,
   };
+}
+
+export async function getDefaultImportPath(
+  artist: ArtistWithReleases,
+  LIBRARY_PATH: string
+) {
+  if (!artist) {
+    return LIBRARY_PATH;
+  }
+  for (const release of artist.releases) {
+    const tokens = path.dirname(release.path).split(path.sep);
+    const artistIndex = tokens.findIndex((y) =>
+      lowerCaseCompare(y, artist.name)
+    );
+    if (artistIndex > -1) {
+      return path.join(
+        LIBRARY_PATH,
+        tokens.slice(0, artistIndex + 1).join(path.sep)
+      );
+    }
+  }
+  return LIBRARY_PATH;
 }
