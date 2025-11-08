@@ -1,13 +1,9 @@
-import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { ReleaseWithArtistAndTracksAndSubreleasesAndCollections } from "@/types/types";
-import {
-  getColorInfo,
-  getReleaseFullTitle,
-  getReleaseTitle,
-} from "@/lib/utils";
+import { getReleaseFullTitle, getReleaseTitle } from "@/lib/utils";
 import useStore from "@/renderer/store";
 import usePathExists from "@/renderer/hooks/usePathExists";
+import useColorInfo from "@/renderer/hooks/useColorInfo";
 import api from "@/renderer/api";
 
 import Cover from "@/renderer/components/Cover";
@@ -27,14 +23,9 @@ type ReleasePageHeaderProps = {
 
 export default function ReleasePageHeader({ release }: ReleasePageHeaderProps) {
   const { t } = useTranslation();
-  const { settings, setModalContents, setUseDarkText } = useStore();
-  const { darkText, color } = getColorInfo(release, settings.USE_RAINBOW_MODE);
-  const { exists, onMissingPathClick } = usePathExists(release);
-
-  useEffect(() => {
-    setUseDarkText(darkText);
-    return () => setUseDarkText(false);
-  }, [darkText]);
+  const { setModalContents } = useStore();
+  const { darkText, color } = useColorInfo(release);
+  const { exists, openRelocateFolderModal } = usePathExists(release);
 
   return (
     <header
@@ -76,7 +67,7 @@ export default function ReleasePageHeader({ release }: ReleasePageHeaderProps) {
           <h1 className={styles.title}>{getReleaseTitle(release)}</h1>
           {typeof exists === "boolean" && !exists && (
             <button
-              onClick={onMissingPathClick}
+              onClick={openRelocateFolderModal}
               className={cx(
                 buttonStyles.button,
                 buttonStyles.mini,

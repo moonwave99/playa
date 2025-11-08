@@ -147,9 +147,12 @@ export async function init({ mainWindow, settings }: InitParams) {
   const controllers = {
     system: systemController({ withPath, getSetting, showErrorBox }),
     artist: artistController({
+      withPath,
+      getSetting,
       send,
       showErrorBox,
       openConfirmDialog,
+      openFolderDialog,
       stateManager,
     }),
     release: releaseController({

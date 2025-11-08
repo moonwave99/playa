@@ -20,3 +20,9 @@
     flex-direction: column;
   }
 }
+
+.commonPath {
+  color: var(--primary-color);
+  font-weight: bold;
+  font-family: "Courier New", Courier, monospace;
+}

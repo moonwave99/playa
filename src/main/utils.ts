@@ -9,9 +9,9 @@ import type {
   TrackInfo,
   TrackWithRelease,
   Notification,
+  WithTracks,
 } from "@/types/types";
 import { globby } from "globby";
-import { QueryKey } from "@tanstack/react-query";
 
 export function stripPath(fullPath: string, startPath: string) {
   const stripped = fullPath.replace(new RegExp(`^${startPath}`), "");
@@ -218,27 +218,61 @@ export function withConfirmDialog(
   };
 }
 
-export function withMutate(
-  send: (channel: string, ...args: unknown[]) => void
-) {
-  return (
-    fn: (...args: unknown[]) => unknown,
-    getQueryKey: ({
-      params,
-      result,
-    }: {
-      params: Parameters<typeof fn>;
-      result: ReturnType<typeof fn>;
-    }) => QueryKey
-  ) => {
-    return async (
-      ...params: Parameters<typeof fn>
-    ): Promise<ReturnType<typeof fn>> => {
-      const result = (await fn(...params)) as ReturnType<typeof fn>;
-      if (result) {
-        send("mutate", getQueryKey({ params, result }));
-      }
-      return result;
+// see: https://stackoverflow.com/a/47884580/1073758
+export function getCommonPathPrefix(paths: string[]) {
+  const sortedArray = paths.toSorted().map((x) => x.split(path.sep));
+  const first = sortedArray.at(0);
+  const last = sortedArray.at(-1);
+  const length = first.length;
+  let index = 0;
+
+  while (index < length && first[index] === last[index]) {
+    index++;
+  }
+  return first.slice(0, index).join(path.sep);
+}
+
+type CheckReleaseContentsMatchParams = {
+  release: Release & WithTracks;
+  newFolder: string;
+  warnOnContentDifference?: boolean;
+};
+
+export type CheckReleaseContentsMatch = {
+  status: "EMPTY_FOLDER" | "CONTENT_MISMATCH" | "CONTENT_MATCH";
+  newFolder: string;
+  newContents: TrackInfo[];
+};
+
+export async function checkReleaseContentsMatch({
+  release,
+  newFolder,
+  warnOnContentDifference = true,
+}: CheckReleaseContentsMatchParams): Promise<CheckReleaseContentsMatch> {
+  const newContents = await getFolderContentsFromAbsolutePath(newFolder);
+
+  if (!newContents.length) {
+    return {
+      status: "EMPTY_FOLDER",
+      newFolder,
+      newContents: [],
     };
+  }
+
+  if (
+    warnOnContentDifference &&
+    release.tracks.some((x, index) => x.title !== newContents[index]?.title)
+  ) {
+    return {
+      status: "CONTENT_MISMATCH",
+      newFolder,
+      newContents: [],
+    };
+  }
+
+  return {
+    status: "CONTENT_MATCH",
+    newFolder,
+    newContents: newContents,
   };
 }

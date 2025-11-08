@@ -21,6 +21,7 @@ import AddArtistsToGroupView from "./components/AddArtistsToGroupView";
 import ImportFoldersView from "./components/ImportFoldersView";
 import StatsView from "./components/StatsView";
 import MissingReleaseFolder from "./components/MissingReleaseFolder";
+import MissingArtistFolder from "./components/MissingArtistFolder";
 import { Icon } from "./icons";
 
 import buttonStyles from "./buttons.module.css";
@@ -196,6 +197,9 @@ const modalMap = {
     styles: {
       width: "min(90vw, 700px)",
     },
+  },
+  missingArtistFolder: {
+    component: MissingArtistFolder,
   },
 };
 

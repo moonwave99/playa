@@ -7,7 +7,7 @@ const pathCache: Record<string, boolean> = {};
 
 type UsePathExists = {
   exists: boolean | null;
-  onMissingPathClick: () => void;
+  openRelocateFolderModal: () => void;
 };
 
 export default function usePathExists(release: Release): UsePathExists {
@@ -27,7 +27,7 @@ export default function usePathExists(release: Release): UsePathExists {
     };
   }, [release]);
 
-  function onMissingPathClick() {
+  function openRelocateFolderModal() {
     setModalContents({
       name: "missingReleaseFolder",
       params: { release },
@@ -36,6 +36,6 @@ export default function usePathExists(release: Release): UsePathExists {
 
   return {
     exists,
-    onMissingPathClick,
+    openRelocateFolderModal,
   };
 }

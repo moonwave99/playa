@@ -1,3 +1,6 @@
+import path from "node:path";
+import { testFs } from "@moonwave99/test-fs";
+import { Release, TrackInfo, WithTracks } from "@/types/types";
 import prisma from "./db/prisma";
 import { clearPrisma } from "@/test/prisma-utils";
 import {
@@ -5,15 +8,15 @@ import {
   parsePath,
   getEntityPath,
   getReleaseDataFromTrackInfo,
+  getCommonPathPrefix,
+  checkReleaseContentsMatch,
 } from "./utils";
 import {
   getFakeArtist,
+  getFakeRelease,
   getFakeReleasesForArtist,
   getFakeTracksForRelease,
 } from "../test/seed";
-import path from "path";
-import { testFs } from "@moonwave99/test-fs";
-import { TrackInfo } from "@/types/types";
 
 afterEach(clearPrisma);
 
@@ -67,7 +70,12 @@ describe("parsePath function", () => {
     });
   });
 
-  it("returns null if path is malformed", () => {
+  it("returns null if path has too few tokens", () => {
+    const output = parsePath("/A/Artist");
+    expect(output).toEqual(null);
+  });
+
+  it("returns null if path has too many tokens", () => {
     const output = parsePath("/A/Artist/[Album]/1999 - My Title/More/Stuff");
     expect(output).toEqual(null);
   });
@@ -142,5 +150,109 @@ describe("getEntityPath function", () => {
     expect(path).toBe(
       "A/Artist 1/[Album]/2000 - Release 1-1/01 - Track 01.mp3"
     );
+  });
+});
+
+describe("getCommonPathPrefix function", () => {
+  it("returns the longest common prefix among passed paths", () => {
+    expect(
+      getCommonPathPrefix([
+        "A/Artist 1/Release 1",
+        "A/Artist 1/Release 2",
+        "A/Artist 1/Release 3",
+      ])
+    ).toBe("A/Artist 1");
+  });
+});
+
+describe("checkReleaseContentsMatch function", () => {
+  it("returns EMPTY_FOLDER status if the new path is empty", async () => {
+    const release = getFakeRelease(1) as Release & WithTracks;
+
+    const result = await checkReleaseContentsMatch({
+      release,
+      newFolder: "path/to/nowhere",
+    });
+
+    expect(result).toEqual({
+      status: "EMPTY_FOLDER",
+      newFolder: "path/to/nowhere",
+      newContents: [],
+    });
+  });
+
+  it("returns CONTENT_MISMATCH status if the new path contents do not match the old ones", async (context) => {
+    const directory = await testFs(
+      {
+        "LIBRARY_PATH/A/Artist 1/New Folder/2000 - Release 1-1": {
+          "01 - Track 01.mp3": "",
+          "02 - Track 02.mp3": "",
+          "03 - Track 03.mp3": "",
+          "04 - Track 04.mp3": "",
+        },
+      },
+      context.task.id
+    );
+
+    await prisma.release.create({ data: getFakeReleasesForArtist(1, 1).at(0) });
+    await prisma.track.createMany({ data: getFakeTracksForRelease(1) });
+
+    const release = (await prisma.release.findFirst({
+      where: { id: 1 },
+      include: { tracks: true },
+    })) as Release & WithTracks;
+
+    const newFolder = path.join(
+      directory,
+      "LIBRARY_PATH/A/Artist 1/New Folder/2000 - Release 1-1"
+    );
+
+    const result = await checkReleaseContentsMatch({
+      release,
+      newFolder,
+    });
+
+    expect(result).toMatchObject({
+      status: "CONTENT_MISMATCH",
+      newFolder: newFolder,
+    });
+  });
+
+  it("returns CONTENT_MATCH status if the new path contents match the old ones", async (context) => {
+    const directory = await testFs(
+      {
+        "LIBRARY_PATH/A/Artist 1/New Folder/2000 - Release 1-1": {
+          "01 - Track 01.mp3": "",
+          "02 - Track 02.mp3": "",
+          "03 - Track 03.mp3": "",
+          "04 - Track 04.mp3": "",
+          "05 - Track 05.mp3": "",
+        },
+      },
+      context.task.id
+    );
+
+    await prisma.release.create({ data: getFakeReleasesForArtist(1, 1).at(0) });
+    await prisma.track.createMany({ data: getFakeTracksForRelease(1) });
+
+    const release = (await prisma.release.findFirst({
+      where: { id: 1 },
+      include: { tracks: true },
+    })) as Release & WithTracks;
+
+    const newFolder = path.join(
+      directory,
+      "LIBRARY_PATH/A/Artist 1/New Folder/2000 - Release 1-1"
+    );
+
+    const result = await checkReleaseContentsMatch({
+      release,
+      newFolder,
+    });
+
+    expect(result).toMatchObject({
+      status: "CONTENT_MATCH",
+      newFolder: newFolder,
+    });
   });
 });

@@ -11,6 +11,7 @@ import {
   OpenConfirmDialog,
   Send,
   OpenFolderDialog,
+  WithTracks,
 } from "@/types/types";
 import { mapSeries } from "@/lib/utils";
 import {
@@ -32,7 +33,7 @@ import {
 } from "../db/release";
 
 import {
-  getFolderContentsFromAbsolutePath,
+  checkReleaseContentsMatch,
   stripPath,
   withConfirmDialog,
 } from "../utils";
@@ -310,15 +311,26 @@ export function releaseController({
     }
   ) {
     const LIBRARY_PATH = getSetting("LIBRARY_PATH") as string;
-    const [newFolder] = openFolderDialog({
+    const dialogResult = openFolderDialog({
       key: "openRelocateReleaseFolder",
       defaultPath: LIBRARY_PATH,
       properties: ["openDirectory"],
     });
 
-    const newContents = await getFolderContentsFromAbsolutePath(newFolder);
+    if (!dialogResult) {
+      return false;
+    }
 
-    if (!newContents.length) {
+    const newFolder = dialogResult.at(0);
+    const release = (await getRelease(id)) as Release & WithTracks;
+
+    const { newContents, status } = await checkReleaseContentsMatch({
+      release,
+      newFolder,
+      warnOnContentDifference,
+    });
+
+    if (status === "EMPTY_FOLDER") {
       showErrorBox(
         "Error relocating Release folder",
         "No tracks were found in the selected folder"
@@ -326,12 +338,7 @@ export function releaseController({
       return false;
     }
 
-    const release = await getRelease(id);
-
-    if (
-      warnOnContentDifference &&
-      release.tracks.some((x, index) => x.title !== newContents[index]?.title)
-    ) {
+    if (status === "CONTENT_MISMATCH") {
       showErrorBox(
         "Error relocating Release folder",
         "The contents of the selected folder do not match current Release contents."

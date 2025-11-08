@@ -96,7 +96,7 @@ type WithArtistsAndReleases = {
   artists: ArtistWithReleasesAndAppearances[];
 };
 
-type WithTracks = {
+export type WithTracks = {
   tracks: Track[];
 };
 

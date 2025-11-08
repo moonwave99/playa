@@ -1,29 +1,32 @@
 import { FormEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { Release } from "@/types/types";
-import api from "../api";
+import { Artist } from "@/types/types";
 import cx from "clsx";
-import styles from "./MissingReleaseFolder.module.css";
+import styles from "./MissingArtistFolder.module.css";
 import formStyles from "../forms.module.css";
+import api from "../api";
 
-type MissingReleaseFolderProps = {
-  release: Release;
+type MissingArtistFolderProps = {
+  artist: Artist;
+  commonMissingPath: string;
   closeModal: () => void;
 };
 
-export default function MissingReleaseFolder({
-  release,
+export default function MissingArtistFolder({
+  artist,
+  commonMissingPath,
   closeModal,
-}: MissingReleaseFolderProps) {
+}: MissingArtistFolderProps) {
   const { t } = useTranslation();
-  const { deleteRelease, relocateRelease } = useMissingReleaseFolder({
-    release,
+  const { relocateArtist } = useMissingArtistFolder({
+    artist,
+    commonMissingPath,
     onDone: closeModal,
   });
 
   function onSubmit(event: FormEvent) {
     event.preventDefault();
-    relocateRelease(
+    relocateArtist(
       !!(event.target as HTMLFormElement).warnOnContentDifference.checked
     );
   }
@@ -31,9 +34,13 @@ export default function MissingReleaseFolder({
   return (
     <div className={styles.view}>
       <form onSubmit={onSubmit} className={formStyles.form}>
-        <h2>{t(`modals.MissingReleaseFolder.title`)}</h2>
+        <h2>{t(`modals.MissingArtistFolder.title`)}</h2>
         <p className={styles.description}>
-          {t(`modals.MissingReleaseFolder.description`)}
+          {t(`modals.MissingArtistFolder.description.0`)}
+        </p>
+        <p className={styles.commonPath}>{commonMissingPath}</p>
+        <p className={styles.description}>
+          {t(`modals.MissingArtistFolder.description.1`)}
         </p>
         <div className={cx(formStyles.actions, styles.actions)}>
           <label
@@ -52,22 +59,16 @@ export default function MissingReleaseFolder({
           <button
             type="submit"
             className={cx(formStyles.button, formStyles.primary)}
+            autoFocus
           >
-            {t("modals.MissingReleaseFolder.actions.relocate")}
-          </button>
-          <button
-            type="button"
-            className={formStyles.button}
-            onClick={deleteRelease}
-          >
-            {t("modals.MissingReleaseFolder.actions.delete")}
+            {t("modals.MissingArtistFolder.actions.relocate")}
           </button>
           <button
             type="button"
             className={formStyles.button}
             onClick={closeModal}
           >
-            {t("modals.MissingReleaseFolder.actions.cancel")}
+            {t("modals.MissingArtistFolder.actions.cancel")}
           </button>
         </div>
       </form>
@@ -75,17 +76,24 @@ export default function MissingReleaseFolder({
   );
 }
 
-type UseMissingReleaseFolderParams = {
-  release: Release;
+type UseMissingArtistFolderParams = {
+  artist: Artist;
+  commonMissingPath: string;
   onDone: () => void;
 };
 
-function useMissingReleaseFolder({
-  release,
+type UseMissingArtistFolder = {
+  relocateArtist: (warnOnContentDifference: ConstrainBoolean) => void;
+};
+
+function useMissingArtistFolder({
+  artist,
+  commonMissingPath,
   onDone,
-}: UseMissingReleaseFolderParams) {
-  async function relocateRelease(warnOnContentDifference: boolean) {
-    const result = await api.release.relocateRelease(release.id, {
+}: UseMissingArtistFolderParams): UseMissingArtistFolder {
+  async function relocateArtist(warnOnContentDifference: boolean) {
+    const result = await api.artist.relocateArtistFolder(artist.id, {
+      commonMissingPath,
       warnOnContentDifference,
     });
     if (!result) {
@@ -94,10 +102,5 @@ function useMissingReleaseFolder({
     onDone();
   }
 
-  async function deleteRelease() {
-    await api.release.deleteReleases([release.id]);
-    onDone();
-  }
-
-  return { relocateRelease, deleteRelease };
+  return { relocateArtist };
 }

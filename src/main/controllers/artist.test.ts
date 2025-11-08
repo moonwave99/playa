@@ -1,5 +1,7 @@
+import path from "node:path";
 import prisma from "../db/prisma";
 import { artistController } from "./artist";
+import { getSetting, withPath } from "@/test/utils";
 import { clearPrisma } from "@/test/prisma-utils";
 import {
   getFakeArtist,
@@ -7,13 +9,17 @@ import {
   getFakeReleasesForArtist,
 } from "@/test/seed";
 import { type StateManager } from "../stateManager";
+import { testFs } from "@moonwave99/test-fs";
 
 afterEach(clearPrisma);
 
 const defaultParams = {
+  getSetting,
+  withPath,
   send: vi.fn(),
   showErrorBox: vi.fn(),
   openConfirmDialog: vi.fn(),
+  openFolderDialog: vi.fn(),
   stateManager: {
     setSelection: vi.fn(),
   } as unknown as StateManager,
@@ -419,5 +425,164 @@ describe("artist - deleteArtists function", () => {
     ]);
 
     expect(stateManager.setSelection).toHaveBeenCalled();
+  });
+});
+
+describe("artist - checkArtistFolderContents function", () => {
+  it("returns false if Artist has no releases", async () => {
+    const artist = getFakeArtist(1);
+    await prisma.artist.create({ data: artist });
+
+    const { checkArtistFolderContents } = artistController(defaultParams);
+    expect(await checkArtistFolderContents(1)).toBe(false);
+  });
+
+  it("returns false if any release is still in place", async (context) => {
+    const directory = await testFs(
+      {
+        "LIBRARY_PATH/A/Artist 1/[Album]/2000 - Release 1-1": {},
+      },
+      context.task.id
+    );
+
+    const artist = getFakeArtist(1);
+    await prisma.artist.create({ data: artist });
+    await prisma.release.createMany({ data: getFakeReleasesForArtist(1) });
+
+    const { checkArtistFolderContents } = artistController({
+      ...defaultParams,
+      withPath: (key, folderPath) => path.join(directory, key, folderPath),
+    });
+
+    expect(await checkArtistFolderContents(1)).toBe(false);
+  });
+
+  it("returns the longest common path if all the Artist releases have been moved", async (context) => {
+    const directory = await testFs({}, context.task.id);
+
+    const artist = getFakeArtist(1);
+    await prisma.artist.create({ data: artist });
+    await prisma.release.createMany({ data: getFakeReleasesForArtist(1) });
+
+    const { checkArtistFolderContents } = artistController({
+      ...defaultParams,
+      withPath: (key, folderPath) => path.join(directory, key, folderPath),
+    });
+
+    expect(await checkArtistFolderContents(1)).toBe("A/Artist 1/[Album]");
+  });
+});
+
+describe("artist - relocateArtistFolder function", () => {
+  it("shows an error box if the folders mismatch", async (context) => {
+    const directory = await testFs(
+      {
+        "LIBRARY_PATH/New Folder": {},
+      },
+      context.task.id
+    );
+
+    await prisma.artist.create({ data: getFakeArtist(1) });
+    await prisma.release.createMany({ data: getFakeReleasesForArtist(1) });
+
+    const send = vi.fn();
+    const showErrorBox = vi.fn();
+
+    const { relocateArtistFolder } = artistController({
+      ...defaultParams,
+      send,
+      showErrorBox,
+      withPath: (key, folderPath) => path.join(directory, key, folderPath),
+      openFolderDialog: () => [path.join(directory, "LIBRARY_PATH/New Folder")],
+    });
+
+    const commonMissingPath = path.join(
+      directory,
+      "LIBRARY_PATH/A/Artist 1/[Album]"
+    );
+
+    await relocateArtistFolder(1, { commonMissingPath });
+
+    expect(send).not.toHaveBeenCalled();
+
+    expect(showErrorBox).toHaveBeenCalledWith(
+      "Error relocating Artist folder",
+      "The selected folder contents do not match the missing Releases."
+    );
+  });
+
+  it("updates the releases with the new path if the content matches", async (context) => {
+    const directory = await testFs(
+      {
+        "LIBRARY_PATH/A/Artist 1/New Folder": {
+          "2000 - Release 1-1": {
+            "01 - Track 01.mp3": "",
+            "02 - Track 02.mp3": "",
+            "03 - Track 03.mp3": "",
+            "04 - Track 04.mp3": "",
+            "05 - Track 05.mp3": "",
+          },
+          "2000 - Release 1-2": {
+            "01 - Track 01.mp3": "",
+            "02 - Track 02.mp3": "",
+            "03 - Track 03.mp3": "",
+            "04 - Track 04.mp3": "",
+            "05 - Track 05.mp3": "",
+          },
+        },
+      },
+      context.task.id
+    );
+
+    await prisma.artist.create({ data: getFakeArtist(1) });
+    await prisma.release.createMany({ data: getFakeReleasesForArtist(1, 2) });
+
+    const send = vi.fn();
+    const showErrorBox = vi.fn();
+
+    const { relocateArtistFolder } = artistController({
+      ...defaultParams,
+      send,
+      showErrorBox,
+      getSetting: (key: string) =>
+        key === "LIBRARY_PATH" ? path.join(directory, "LIBRARY_PATH") : key,
+      withPath: (key, folderPath) => path.join(directory, key, folderPath),
+      openFolderDialog: () => [
+        path.join(directory, "LIBRARY_PATH/A/Artist 1/New Folder"),
+      ],
+    });
+
+    const commonMissingPath = "A/Artist 1/[Album]";
+
+    await relocateArtistFolder(1, {
+      commonMissingPath,
+    });
+
+    const updatedArtist = await prisma.artist.findFirst({
+      where: { id: 1 },
+      include: { releases: true },
+    });
+
+    expect(updatedArtist).toMatchObject({
+      releases: [
+        {
+          path: "A/Artist 1/New Folder/2000 - Release 1-1",
+        },
+        {
+          path: "A/Artist 1/New Folder/2000 - Release 1-2",
+        },
+      ],
+    });
+
+    expect(showErrorBox).not.toHaveBeenCalled();
+    expect(send).toHaveBeenCalledWith("mutate", [
+      ["artists", 1],
+      ["releases", 1],
+      ["releases", 2],
+    ]);
+    expect(send).toHaveBeenCalledWith("notify", {
+      type: "success",
+      message: "Artist folder relocated",
+    });
   });
 });

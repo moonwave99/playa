@@ -1,10 +1,10 @@
-import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { ArtistWithReleasesFull } from "@/types/types";
 import useStore from "@/renderer/store";
+import useColorInfo from "@/renderer/hooks/useColorInfo";
+import useCheckArtistFolderContent from "@/renderer/hooks/useCheckArtistFolderContent";
 import api from "@/renderer/api";
 import {
-  getColorInfo,
   getCovers,
   getReleaseFullTitle,
   normalizeArtistDisplayName,
@@ -13,9 +13,11 @@ import {
 import Cover from "@/renderer/components/Cover";
 import ContainingGroupsList from "@/renderer/components/ContainingGroupsList";
 import RelatedArtistsList from "@/renderer/components/RelatedArtistsList";
+import { Icon } from "@/renderer/icons";
 
 import cx from "clsx";
 import styles from "@/renderer/pageHeader.module.css";
+import buttonStyles from "@/renderer/buttons.module.css";
 
 type ArtistPageHeaderProps = {
   artist: ArtistWithReleasesFull;
@@ -23,20 +25,15 @@ type ArtistPageHeaderProps = {
 
 export default function ArtistPageHeader({ artist }: ArtistPageHeaderProps) {
   const { t } = useTranslation();
-  const { settings, setModalContents, setUseDarkText } = useStore();
+  const { setModalContents } = useStore();
+  const { openRelocateFolderModal, commonMissingPath } =
+    useCheckArtistFolderContent(artist);
+
   const { coverRelease } = getCovers(artist);
   const { id, name, releases, appearsIn } = artist;
   const releaseCount = releases.length + appearsIn.length;
 
-  const { darkText, color } = getColorInfo(
-    coverRelease,
-    settings.USE_RAINBOW_MODE
-  );
-
-  useEffect(() => {
-    setUseDarkText(darkText);
-    return () => setUseDarkText(false);
-  }, [darkText]);
+  const { darkText, color } = useColorInfo(coverRelease);
 
   return (
     <header
@@ -59,7 +56,25 @@ export default function ArtistPageHeader({ artist }: ArtistPageHeaderProps) {
         title={getReleaseFullTitle(coverRelease)}
       />
       <div className={styles.content}>
-        <h1 className={styles.title}>{normalizeArtistDisplayName(name)}</h1>
+        <div className={styles.titleWrapper}>
+          <h1 className={styles.title}>{normalizeArtistDisplayName(name)}</h1>
+          {commonMissingPath && (
+            <button
+              onClick={openRelocateFolderModal}
+              className={cx(
+                buttonStyles.button,
+                buttonStyles.mini,
+                buttonStyles.warning
+              )}
+              aria-label={t(
+                "pages.ArtistPage.actions.openRelocateFolderModal",
+                artist
+              )}
+            >
+              <Icon isFor="common.warning" />
+            </button>
+          )}
+        </div>
         <p className={styles.releaseCount}>
           {t("common.count.release", { count: releaseCount })}
         </p>

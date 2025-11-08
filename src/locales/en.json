@@ -110,6 +110,11 @@
         "openMissingFolderDialog": "Take actions for missing Release folder: {{title}}"
       }
     },
+    "ArtistPage": {
+      "actions": {
+        "openRelocateFolderModal": "Take actions for missing Artist folder: {{name}}"
+      }
+    },
     "Onboarding": {
       "actions": {
         "cancel": "Skip onboarding",
@@ -199,6 +204,22 @@
       "title": "Your Library Stats",
       "actions": {
         "close": "Close"
+      }
+    },
+    "MissingArtistFolder": {
+      "title": "Missing Artist Folder",
+      "description": [
+        "Releases of this Artist were all contained inside the following folder:",
+        "If you renamed the folder, please relocate it."
+      ],
+      "fields": {
+        "warnOnContentDifference": {
+          "label": "Warn me on content mismatch"
+        }
+      },
+      "actions": {
+        "relocate": "Relocate Artist Folder",
+        "cancel": "Cancel"
       }
     },
     "MissingReleaseFolder": {
