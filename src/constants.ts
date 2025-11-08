@@ -49,4 +49,4 @@ export const VARIOUS_ARTIST_POSSIBLE_FOLDERS = [
   "VV. AA.",
 ];
 
-export const DEFAULT_LOOKUP_PAGE_SIZE = 10;
+export const DEFAULT_LOOKUP_PAGE_SIZE = 25;
