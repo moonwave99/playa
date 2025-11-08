@@ -16,6 +16,11 @@ TBD
 - design linear list modes;
 - add recent searches;
 
+## Tasks
+
+- open relocate folder dialog from Artist folder
+- fix trailing spaces in library
+
 ## License
 
 The contents of the Playa software are covered under the MIT license.

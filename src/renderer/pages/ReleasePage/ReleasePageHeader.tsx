@@ -71,7 +71,6 @@ export default function ReleasePageHeader({ release }: ReleasePageHeaderProps) {
               className={cx(
                 buttonStyles.button,
                 buttonStyles.mini,
-                buttonStyles.warning,
                 styles.warning
               )}
               aria-label={t(

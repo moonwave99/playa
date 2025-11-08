@@ -4,6 +4,10 @@
   gap: 1rem;
   border-bottom: 0.5px solid var(--neutral-border-color);
 
+  .warning {
+    color: white;
+  }
+
   &.useDarkText {
     .artist,
     .title,

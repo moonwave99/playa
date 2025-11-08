@@ -63,7 +63,6 @@ export default function ArtistPageHeader({ artist }: ArtistPageHeaderProps) {
               className={cx(
                 buttonStyles.button,
                 buttonStyles.mini,
-                buttonStyles.warning,
                 styles.warning
               )}
               aria-label={t(

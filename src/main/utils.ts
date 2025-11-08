@@ -259,9 +259,15 @@ export async function checkReleaseContentsMatch({
     };
   }
 
+  const sortedNewContents = newContents.toSorted((a, b) =>
+    a.path > b.path ? 1 : -1
+  );
+
   if (
     warnOnContentDifference &&
-    release.tracks.some((x, index) => x.title !== newContents[index]?.title)
+    release.tracks
+      .toSorted((a, b) => (a.path > b.path ? 1 : -1))
+      .some((x, index) => x.title !== sortedNewContents[index]?.title)
   ) {
     return {
       status: "CONTENT_MISMATCH",

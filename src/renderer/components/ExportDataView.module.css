@@ -12,6 +12,7 @@
 .description {
   font-size: 0.9rem;
   line-height: 1.5rem;
+  color: var(--secondary-color);
   display: flex;
   flex-direction: column;
 }

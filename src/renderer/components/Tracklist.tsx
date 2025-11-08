@@ -4,7 +4,11 @@ import type {
   Track,
   ReleaseWithArtistAndTracksAndSubreleases,
 } from "@/types/types";
-import { formatDuration, withStopPropagation } from "@/lib/utils";
+import {
+  formatDuration,
+  lowerCaseCompare,
+  withStopPropagation,
+} from "@/lib/utils";
 import List from "./List";
 
 import cx from "clsx";
@@ -43,7 +47,11 @@ export default function Tracklist({
   const shouldDisplayTrackArtist =
     allTracks.every((x) => x.trackArtist) &&
     allTracks.some(
-      (x) => x.trackArtist.toLowerCase() !== release.artist.name.toLowerCase()
+      (x) =>
+        !lowerCaseCompare(
+          x.normalizedTrackArtist,
+          release.artist.normalizedName
+        )
     );
 
   if (!isNavigable) {

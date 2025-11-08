@@ -36,9 +36,6 @@
   &.mini {
     --button-size: 1.2rem;
   }
-  &.warning {
-    color: red;
-  }
 }
 
 .CornerActionButton {
