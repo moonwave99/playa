@@ -31,7 +31,6 @@ export default function ArtistPageHeader({ artist }: ArtistPageHeaderProps) {
 
   const { coverRelease } = getCovers(artist);
   const { id, name, releases } = artist;
-  const releaseCount = releases.length;
 
   const { darkText, color } = useColorInfo(coverRelease);
 
@@ -77,7 +76,7 @@ export default function ArtistPageHeader({ artist }: ArtistPageHeaderProps) {
           )}
         </div>
         <p className={styles.releaseCount}>
-          {t("common.count.release", { count: releaseCount })}
+          {t("common.count.release", { count: releases.length })}
         </p>
         <div className={styles.infoWrapper}>
           <RelatedArtistsList
