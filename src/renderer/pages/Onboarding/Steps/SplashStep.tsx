@@ -4,9 +4,9 @@ import { AnimatedLayout } from "../AnimatedLayout";
 import { type StepProps } from "../Onboarding";
 
 import cx from "clsx";
-import logo from "../../../../assets/logo.png";
+import logo from "@/assets/logo.png";
 import styles from "../Onboarding.module.css";
-import formStyles from "../../../forms.module.css";
+import formStyles from "@/renderer/forms.module.css";
 
 export default function SplashStep({ onCancel, onNextStep }: StepProps) {
   const { t } = useTranslation();

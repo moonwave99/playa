@@ -14,7 +14,7 @@ import ReleaseView from "@/renderer/components/ReleaseView";
 import { Icon } from "@/renderer/icons";
 import cx from "clsx";
 import styles from "../Onboarding.module.css";
-import formStyles from "../../../forms.module.css";
+import formStyles from "@/renderer/forms.module.css";
 
 export default function ImportFoldersStep({ onNextStep }: StepProps) {
   const { t } = useTranslation();

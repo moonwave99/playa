@@ -3,7 +3,7 @@ import { useFocus } from "@/renderer/hooks/useFocus";
 import cx from "clsx";
 import { Icon } from "@/renderer/icons";
 import styles from "./Onboarding.module.css";
-import formStyles from "../../forms.module.css";
+import formStyles from "@/renderer/forms.module.css";
 
 type FolderPickerProps = {
   folder: string;

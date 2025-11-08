@@ -1,10 +1,10 @@
 import { SearchableEntities, SearchResult } from "@/types/types";
 import { DEBOUNCE_INTERVAL, DEFAULT_LOOKUP_PAGE_SIZE } from "@/constants";
 import LookupView, { type LookupViewProps } from "./LookupView";
-import useSearch from "../../query/useSearch";
+import useSearch from "@/renderer/query/useSearch";
 import { useState } from "react";
 import { useDebounce } from "use-debounce";
-import api from "../../api";
+import api from "@/renderer/api";
 import ErrorView from "@/renderer/components/ErrorView";
 
 export type LookupEntityViewProps = Pick<

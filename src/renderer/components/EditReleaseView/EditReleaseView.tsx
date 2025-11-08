@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
-import api from "../../api";
-import useRelease from "../../query/useRelease";
+import api from "@/renderer/api";
+import useRelease from "@/renderer/query/useRelease";
 import type { EditReleaseParam, SearchResult } from "@/types/types";
 
 import EditReleaseForm from "./EditReleaseForm";

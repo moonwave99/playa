@@ -4,7 +4,7 @@ import { type StepProps } from "../Onboarding";
 
 import cx from "clsx";
 import styles from "../Onboarding.module.css";
-import formStyles from "../../../forms.module.css";
+import formStyles from "@/renderer/forms.module.css";
 
 export default function FinalStep({ onNextStep }: StepProps) {
   const { t } = useTranslation();

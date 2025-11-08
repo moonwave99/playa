@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import cx from "clsx";
 import styles from "./Loading.module.css";
-import LoadingIcon from "../../assets/loading.svg?react";
+import LoadingIcon from "@/assets/loading.svg?react";
 
 type LoadingProps = {
   className?: string;

@@ -8,7 +8,7 @@ import useStore from "@/renderer/store";
 
 import cx from "clsx";
 import styles from "../Onboarding.module.css";
-import formStyles from "../../../forms.module.css";
+import formStyles from "@/renderer/forms.module.css";
 
 const chooseFolderOptions = {
   defaultPath: "~/Documents",
