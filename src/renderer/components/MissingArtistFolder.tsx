@@ -1,4 +1,4 @@
-import { FormEvent } from "react";
+import { FormEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Artist } from "@/types/types";
 import cx from "clsx";
@@ -18,7 +18,7 @@ export default function MissingArtistFolder({
   closeModal,
 }: MissingArtistFolderProps) {
   const { t } = useTranslation();
-  const { relocateArtist } = useMissingArtistFolder({
+  const { isPending, relocateArtist } = useMissingArtistFolder({
     artist,
     commonMissingPath,
     onDone: closeModal,
@@ -60,6 +60,7 @@ export default function MissingArtistFolder({
             type="submit"
             className={cx(formStyles.button, formStyles.primary)}
             autoFocus
+            disabled={isPending}
           >
             {t("modals.MissingArtistFolder.actions.relocate")}
           </button>
@@ -83,6 +84,7 @@ type UseMissingArtistFolderParams = {
 };
 
 type UseMissingArtistFolder = {
+  isPending: boolean;
   relocateArtist: (warnOnContentDifference: ConstrainBoolean) => void;
 };
 
@@ -91,16 +93,19 @@ function useMissingArtistFolder({
   commonMissingPath,
   onDone,
 }: UseMissingArtistFolderParams): UseMissingArtistFolder {
+  const [isPending, setPending] = useState(false);
   async function relocateArtist(warnOnContentDifference: boolean) {
+    setPending(true);
     const result = await api.artist.relocateArtistFolder(artist.id, {
       commonMissingPath,
       warnOnContentDifference,
     });
+    setPending(false);
     if (!result) {
       return;
     }
     onDone();
   }
 
-  return { relocateArtist };
+  return { isPending, relocateArtist };
 }

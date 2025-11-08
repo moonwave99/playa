@@ -29,7 +29,7 @@ export function setupElectron(): SetupElectron {
   let electronApp: ElectronApplication;
 
   test.beforeAll(async ({}, { testId, titlePath }) => {
-    await seed(testId);
+    await seed({ testId });
 
     electronApp = await electron.launch({
       args: [appInfo.main],

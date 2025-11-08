@@ -10,6 +10,7 @@ import type {
   EntityType,
   ReleaseType,
   SearchableEntities,
+  Settings,
 } from "@/types/types";
 import { pad } from "@/lib/utils";
 import { getE2ETmpPath, BUILD_PATH } from "./utils";
@@ -165,7 +166,7 @@ export function getFakeSearchResults(
   }));
 }
 
-export function getFakeSettings() {
+export function getFakeSettings(override?: Partial<Settings>) {
   return {
     PLAYER_PATH: "PLAYER_PATH",
     TAGGER_PATH: "TAGGER_PATH",
@@ -175,10 +176,11 @@ export function getFakeSettings() {
     COVERS_PATH: "COVERS_PATH",
     SHOW_ONBOARDING_ON_STARTUP: false,
     USE_RAINBOW_MODE: true,
+    ...override,
   };
 }
 
-function getUrl(id?: string) {
+function getUrl(testId?: string) {
   const { NODE_ENV, npm_lifecycle_event } = process.env;
   if (NODE_ENV === "test") {
     return "";
@@ -187,7 +189,7 @@ function getUrl(id?: string) {
     return "file:data.db";
   }
   if (npm_lifecycle_event === "test:e2e") {
-    const dbName = id ? `data-${id}.db` : "data.db";
+    const dbName = testId ? `data-${testId}.db` : "data.db";
     return `file:${path.join(BUILD_PATH, dbName)}`;
   }
   return `file:${path.join(process.resourcesPath, "data.db")}`;
@@ -208,14 +210,14 @@ export async function removeDb(id: string) {
 }
 
 type CleanupParams = {
-  id: string;
+  testId: string;
   prisma?: PrismaClient;
   preserveSettings?: boolean;
   enableOnboarding?: boolean;
 };
 
 export async function cleanup({
-  id,
+  testId,
   prisma,
   preserveSettings = false,
   enableOnboarding = false,
@@ -224,7 +226,7 @@ export async function cleanup({
     prisma = new PrismaClient({
       datasources: {
         db: {
-          url: getUrl(id),
+          url: getUrl(testId),
         },
       },
     });
@@ -247,26 +249,31 @@ export async function cleanup({
   }
 }
 
-export async function seed(id?: string) {
-  if (id) {
-    await cloneDb(id);
+type SeedParams = {
+  testId?: string;
+  libraryPath?: string;
+};
+
+export async function seed({ testId, libraryPath }: SeedParams = {}) {
+  if (testId) {
+    await cloneDb(testId);
   }
   const prisma = new PrismaClient({
     datasources: {
       db: {
-        url: getUrl(id),
+        url: getUrl(testId),
       },
     },
   });
-  await cleanup({ id, prisma });
+  await cleanup({ testId, prisma });
 
   await prisma.settings.create({
     data: {
-      ...getFakeSettings(),
-      ...(id && id !== "test"
+      ...getFakeSettings(libraryPath ? { LIBRARY_PATH: libraryPath } : {}),
+      ...(testId && testId !== "test"
         ? {
-            LIBRARY_PATH: path.join(getE2ETmpPath(id), "LIBRARY_PATH"),
-            COVERS_PATH: path.join(getE2ETmpPath(id), "COVERS_PATH"),
+            LIBRARY_PATH: path.join(getE2ETmpPath(testId), "LIBRARY_PATH"),
+            COVERS_PATH: path.join(getE2ETmpPath(testId), "COVERS_PATH"),
           }
         : {}),
     },

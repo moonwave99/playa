@@ -11,7 +11,7 @@ import { getE2ETmpPath } from "../../src/test/utils";
 const getElectronApp = setupElectron();
 
 test.beforeAll(async ({}, { testId }) => {
-  await cleanup({ id: testId, preserveSettings: true });
+  await cleanup({ testId, preserveSettings: true });
 
   await createAlbum({
     libraryPath: path.join(getE2ETmpPath(testId), "LIBRARY_PATH"),

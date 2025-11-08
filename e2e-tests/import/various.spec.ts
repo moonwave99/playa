@@ -10,7 +10,7 @@ import { getE2ETmpPath } from "../../src/test/utils";
 const getElectronApp = setupElectron();
 
 test.beforeAll(async ({}, { testId }) => {
-  await cleanup({ id: testId, preserveSettings: true });
+  await cleanup({ testId, preserveSettings: true });
 
   await Promise.all(
     Array.from({ length: 2 }, (_, i) =>

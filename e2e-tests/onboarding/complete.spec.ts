@@ -10,7 +10,7 @@ const getElectronApp = setupElectron();
 
 test.beforeAll(async ({}, { testId }) => {
   await cleanup({
-    id: testId,
+    testId,
     preserveSettings: true,
     enableOnboarding: true,
   });

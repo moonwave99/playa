@@ -1,3 +1,5 @@
 import { seed } from "@/test/seed";
 
-seed();
+seed({
+  libraryPath: process.env.LIBRARY_PATH,
+});

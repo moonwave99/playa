@@ -55,8 +55,12 @@ export default function LookupView<T extends HasId>({
       ? items
       : items.filter((x) => lowerCaseCompare(getText(x), query));
 
+  const customValue = getCustomValue(query);
+
   const displayCustomInput =
-    allowCustomValue && query.length > 0 && !results.length;
+    allowCustomValue &&
+    query.length > 0 &&
+    !results.find((x) => lowerCaseCompare(getText(customValue), getText(x)));
 
   return (
     <div className={cx(styles.LookupView, className)}>
