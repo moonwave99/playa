@@ -30,8 +30,8 @@ export default function ArtistPageHeader({ artist }: ArtistPageHeaderProps) {
     useCheckArtistFolderContent(artist);
 
   const { coverRelease } = getCovers(artist);
-  const { id, name, releases, appearsIn } = artist;
-  const releaseCount = releases.length + appearsIn.length;
+  const { id, name, releases } = artist;
+  const releaseCount = releases.length;
 
   const { darkText, color } = useColorInfo(coverRelease);
 
