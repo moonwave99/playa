@@ -109,7 +109,6 @@ function useLayout({ initialSettings }: UseLayoutParams): UseLayout {
     settings,
     setSettings,
     setModalContents,
-    modalContents,
     setHistoryState,
   } = useStore();
 
@@ -130,10 +129,6 @@ function useLayout({ initialSettings }: UseLayoutParams): UseLayout {
       });
     },
     onOpenModal: setModalContents,
-    onToggleSearch: () =>
-      setModalContents(
-        modalContents?.name === "search" ? null : { name: "search" }
-      ),
     onNavigate: (path: string) => {
       if (path === window.location.hash.slice(1)) {
         return;

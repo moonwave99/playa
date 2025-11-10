@@ -79,7 +79,7 @@ export default function NavActions({
           type="button"
           aria-label={t("nav.common.actions.openSearch")}
           title={t("nav.common.actions.openSearch")}
-          onClick={() => openModal("search")}
+          onClick={() => openModal("quickSearch")}
           className={cx(buttonStyles.button, styles.button, {
             [buttonStyles.useDarkText]: useDarkText,
           })}

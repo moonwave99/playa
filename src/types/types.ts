@@ -311,3 +311,10 @@ export type MenuParams = {
 };
 
 export type ColorInfo = { color: string; darkText: boolean };
+
+export type SearchFilters = {
+  artistName?: string;
+  releaseTitle?: string;
+  decade?: 1960 | 1970 | 1980 | 1990 | 2000 | 2010 | 2020;
+  releaseTypes?: ReleaseType[];
+};

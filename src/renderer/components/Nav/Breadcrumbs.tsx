@@ -11,18 +11,11 @@ import cx from "clsx";
 import styles from "./Breadcrumbs.module.css";
 import responsiveStyles from "@/renderer/responsive.module.css";
 
-type RouteWithParams = Route & { params: Params };
+type RouteWithParams = Route & { params?: Params };
 
 const breadcrumbsMap = {
-  home: BaseBreadcrumb,
-  releases: BaseBreadcrumb,
   release: ReleaseBreadcrumb,
-  artists: BaseBreadcrumb,
   artist: ArtistBreadcrumb,
-  collections: BaseBreadcrumb,
-  groups: BaseBreadcrumb,
-  collection: BaseBreadcrumb,
-  group: BaseBreadcrumb,
 };
 
 function getBreadCrumbs(location: ReturnType<typeof useLocation>) {
@@ -60,7 +53,7 @@ export default function BreadCrumbs({
   const { t } = useTranslation();
   const location = useLocation();
   const breadcrumbs = getBreadCrumbs(location);
-  const isDetailPage = !!breadcrumbs.at(-1).params.id;
+  const isDetailPage = !!breadcrumbs.at(-1)?.params.id;
   const breadCrumbElements = breadcrumbs.map(renderEntry).filter((x) => !!x);
 
   function renderEntry(
@@ -73,7 +66,8 @@ export default function BreadCrumbs({
       return null;
     }
 
-    const Breadcrumb = breadcrumbsMap[id as keyof typeof breadcrumbsMap];
+    const Breadcrumb =
+      breadcrumbsMap[id as keyof typeof breadcrumbsMap] || BaseBreadcrumb;
 
     const output = Breadcrumb ? (
       <Breadcrumb
@@ -81,7 +75,7 @@ export default function BreadCrumbs({
         id={+params.id}
         iconKey={`pages.${id}`}
         className={styles.content}
-        i18nKey={`breadcrumbs.${id}`}
+        i18nKey={`common.pages.${id}`}
       />
     ) : (
       t(`breadcrumbs.${id}`)

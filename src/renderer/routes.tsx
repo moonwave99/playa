@@ -42,6 +42,10 @@ export const routes: Route[] = [
     path: "/groups/:id",
     id: "group",
   },
+  {
+    path: "/search",
+    id: "search",
+  },
 ];
 
 export function isPage(page: string, path: string) {

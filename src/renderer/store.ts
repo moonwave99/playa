@@ -68,6 +68,7 @@ const useStore = create<Store>()(
       modalContents: null as ModalContents,
       isModalFixed: false,
       settings: null as Settings,
+      isAdvancedSearchOpen: false,
       getSetting: (key) => get().settings[key],
       setLightBoxEntityId: (lightBoxEntityId) => set({ lightBoxEntityId }),
       setSettings: (settings) => set({ settings }),

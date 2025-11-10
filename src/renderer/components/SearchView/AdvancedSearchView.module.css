@@ -1,0 +1,15 @@
+.AdvancedSearch {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 1rem;
+  border-radius: 0.5rem;
+  background-color: var(--background-color);
+  .label {
+    color: var(--secondary-color);
+  }
+  .applyFiltersButton {
+    align-self: end;
+    margin-bottom: 1rem;
+  }
+}

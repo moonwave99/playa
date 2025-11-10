@@ -43,11 +43,12 @@
 
 .input,
 .select {
+  --height: 2rem;
   border-radius: 0.25rem;
   border: 1px solid var(--tertiary-color);
   background-color: var(--background-color);
-  line-height: 2rem;
-  height: 2rem;
+  line-height: var(--height);
+  height: var(--height);
   display: flex;
   align-items: center;
   padding: 0 0.5rem;
@@ -63,6 +64,11 @@
     &:focus {
       outline: none;
     }
+  }
+
+  &.mini {
+    --height: 1.5rem;
+    font-size: 0.8rem;
   }
 }
 

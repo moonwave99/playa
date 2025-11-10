@@ -17,10 +17,10 @@ export default defineConfig({
   test: {
     globals: true,
     setupFiles: "./src/test/vitest.setup.main.ts",
-    include: ["src/main/**/*.test.ts"],
+    include: ["src/main/**/*.test.ts", "src/lib/**/*.test.ts"],
     coverage: {
       provider: "istanbul",
-      include: ["src/main"],
+      include: ["src/main", "src/lib"],
       exclude: [
         "**/__mocks__/*",
         "**/seed.ts",

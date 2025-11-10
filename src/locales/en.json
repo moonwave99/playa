@@ -1,29 +1,35 @@
 {
-  "entities": {
-    "release": "Releases",
-    "artist": "Artists",
-    "group": "Groups",
-    "collection": "Collections",
-    "track": "Tracks"
-  },
   "common": {
+    "entities": {
+      "release": "Releases",
+      "artist": "Artists",
+      "group": "Groups",
+      "collection": "Collections",
+      "track": "Tracks"
+    },
+    "pages": {
+      "home": "Home",
+      "search": "Search",
+      "settings": "Settings",
+      "releases": "Releases",
+      "release": "Release",
+      "artists": "Artists",
+      "artist": "Artist",
+      "collections": "Collections",
+      "collection": "Collection",
+      "groups": "Groups",
+      "group": "Group"
+    },
     "count": {
       "artist": "{{count}} Artists",
       "release": "{{count}} Releases",
       "track": "{{count}} Tracks"
     }
   },
-  "breadcrumbs": {
-    "home": "Home",
-    "releases": "Releases",
-    "release": "Releases",
-    "artists": "Artists",
-    "groups": "Groups",
-    "collections": "Collections"
-  },
   "nav": {
     "titles": {
       "home": "Playa",
+      "search": "Search",
       "releases": "Releases",
       "release": "Releases | {{title}}",
       "artists": "Artists",
@@ -511,6 +517,9 @@
           "placeholder": "Enter search term"
         }
       },
+      "actions": {
+        "toggleAdvancedSearch": "Advanced Search"
+      },
       "results": {
         "trackBy": "Track by"
       }
@@ -559,6 +568,25 @@
     },
     "ContainingGroupsList": {
       "label": "Appears in"
+    },
+    "AdvancedSearch": {
+      "fields": {
+        "releaseTitle": {
+          "label": "Release title contains",
+          "placeholder": "Enter keyword"
+        },
+        "artistName": {
+          "label": "Artist title contains",
+          "placeholder": "Enter keyword"
+        },
+        "decade": {
+          "label": "Decade of release",
+          "placeholder": "Select a decade"
+        }
+      },
+      "actions": {
+        "apply": "Apply filters"
+      }
     }
   },
   "entityList": {

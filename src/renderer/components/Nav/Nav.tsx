@@ -52,17 +52,17 @@ export default function Nav({ isFullHeaderPage }: NavProps) {
         openModal={openModal}
       />
       <ul className={styles.entries} ref={ref}>
-        {navMap.map(({ link, label, type, accelerator, section }, index) => (
+        {navMap.map(({ link, type, accelerator, page }, index) => (
           <li
             key={link}
             className={cx(styles.entry, {
               [styles.hasFocus]: index === currentIndex,
             })}
           >
-            <Icon isFor={`pages.${section}`} />
+            <Icon isFor={`pages.${page}`} />
             {type === "link" ? (
               <NavLink
-                aria-label={t("nav.common.actions.gotoPage", { page: label })}
+                aria-label={t("nav.common.actions.gotoPage", { page })}
                 to={link}
                 onDragStart={(event) => event.preventDefault()}
                 onClick={(event: MouseEvent) => {
@@ -73,14 +73,14 @@ export default function Nav({ isFullHeaderPage }: NavProps) {
                 }}
                 onFocus={() => setCurrentIndex(index)}
               >
-                {label}
+                {t(`common.pages.${page}`)}
               </NavLink>
             ) : (
               <button
                 onClick={() => openModal(link as Modals)}
                 onFocus={() => setCurrentIndex(index)}
               >
-                {label}
+                {t(`common.pages.${page}`)}
               </button>
             )}
             <span className={styles.accelerator}>{accelerator}</span>

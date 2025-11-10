@@ -13,7 +13,7 @@ import EditCollectionView from "./components/EditCollectionView";
 import GroupReleasesView from "./components/GroupReleasesView";
 import SettingsView from "./components/SettingsView";
 import EditGroupView from "./components/EditGroupView";
-import SearchView from "./components/SearchView";
+import QuickSearchView from "./components/QuickSearchView/QuickSearchView";
 import ImportDataView from "./components/ImportDataView";
 import ExportDataView from "./components/ExportDataView";
 import AddReleasesToCollectionView from "./components/AddReleasesToCollectionView";
@@ -80,20 +80,22 @@ export default function Modal({ setContext }: ModalProps) {
         clearModalContents();
       }}
     >
-      <button
-        disabled={isModalFixed}
-        onClick={closeModal}
-        className={buttonStyles.button}
-        aria-label={t("modals.common.actions.close")}
-        style={{
-          position: "absolute",
-          top: "0.5rem",
-          right: "0.5rem",
-          zIndex: 1,
-        }}
-      >
-        <Icon isFor="modal.close" />
-      </button>
+      {modalContents?.name !== "quickSearch" && (
+        <button
+          disabled={isModalFixed}
+          onClick={closeModal}
+          className={buttonStyles.button}
+          aria-label={t("modals.common.actions.close")}
+          style={{
+            position: "absolute",
+            top: "0.5rem",
+            right: "0.5rem",
+            zIndex: 1,
+          }}
+        >
+          <Icon isFor="modal.close" />
+        </button>
+      )}
       {getModalContents()}
     </ReactModal>
   );
@@ -176,8 +178,8 @@ const modalMap = {
       padding: 0,
     },
   },
-  search: {
-    component: SearchView,
+  quickSearch: {
+    component: QuickSearchView,
     styles: {
       width: "min(90vw, 1400px)",
       marginTop: "0",

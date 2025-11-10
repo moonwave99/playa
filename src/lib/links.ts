@@ -1,10 +1,5 @@
 import { formatEntityType, normalizeTitle } from "./utils";
-import type {
-  HasId,
-  Entities,
-  HasEntityTypeAndId,
-  EntityType,
-} from "@/types/types";
+import type { HasId, Entities, EntityType, HasEntityType } from "@/types/types";
 import { deburr, mapValues } from "lodash";
 
 export function getURL(url: string, params: Record<string, string>) {
@@ -43,8 +38,17 @@ export function getCover(hash: string, avoidCache = false): string {
   return `playa-cover://${hash}-cover.jpg${avoidCache ? `?${Math.random() * 100000}`.slice(0, 5) : ""}`;
 }
 
-export function getEntityLink({ id, entityType }: HasEntityTypeAndId) {
-  return `/${formatEntityType(entityType, { capital: false, plural: true })}/${id}`;
+export function getEntityLink({
+  entityType,
+  id,
+}: HasEntityType & { id?: number }) {
+  return [
+    "",
+    formatEntityType(entityType, { capital: false, plural: true }),
+    id,
+  ]
+    .filter((x) => typeof x !== "undefined")
+    .join("/");
 }
 
 export function getCollectionLink({ id }: HasId) {

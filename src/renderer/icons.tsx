@@ -52,6 +52,7 @@ const iconMap = toDotNotation({
     group: PiUsersBold,
     groups: PiUsersBold,
     settings: IoSettingsOutline,
+    search: MdOutlineSearch,
   },
   listViewModes: {
     grid: BsGrid,

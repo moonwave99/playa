@@ -11,6 +11,7 @@ import type {
   ReleaseWithArtist,
   Unpacked,
   ArtistWithReleasesAndAppearances,
+  SearchFilters,
 } from "@/types/types";
 import {
   getCoverRelease,
@@ -28,6 +29,7 @@ type GetSearchResultParams = {
   take?: number;
   type?: SearchableEntities;
   options?: Record<string, unknown>;
+  searchFilters?: SearchFilters;
 };
 
 export async function getSearchResults({

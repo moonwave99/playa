@@ -1,14 +1,20 @@
 import { MenuItem } from "electron";
-import { send } from "@/main/controllers/init";
+import { send, openModal } from "@/main/controllers/init";
 import { type GetMenuParams } from "../menu";
 
 export function getSearchMenu({ stateManager }: GetMenuParams) {
   const menuTemplate = [
     {
-      id: "searchLibrary",
+      id: "openQuickSearch",
+      label: "Quick Search",
+      accelerator: "Cmd+K",
+      click: () => openModal("quickSearch"),
+    },
+    {
+      id: "goToSearchPage",
       label: "Search Library",
       accelerator: "Cmd+F",
-      click: () => send("toggleSearch"),
+      click: () => send("navigate", "search"),
     },
   ];
 
@@ -22,9 +28,9 @@ export function getSearchMenu({ stateManager }: GetMenuParams) {
     const { isInputFocused, isImporting, isModalOpen } =
       stateManager.getState();
 
-    menu.submenu.items.forEach(
-      (x) => (x.enabled = !(isInputFocused || isImporting || isModalOpen))
-    );
+    menu.submenu.items.forEach((item) => {
+      item.enabled = !(isInputFocused || isImporting || isModalOpen);
+    });
   }
 
   return { menu, refresh };

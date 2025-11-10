@@ -5,13 +5,12 @@ test.describe.configure({ mode: "serial" });
 
 const getElectronApp = setupElectron();
 
-test.describe("Search", () => {
-  test("search by given query", async () => {
-    const { page } = await getElectronApp();
-    await page.getByRole("button", { name: "Open Search" }).click();
+test.describe("QuickSearch", () => {
+  test("quick search by given query", async () => {
+    const { page, clickMenuItemById } = await getElectronApp();
+    await clickMenuItemById("openQuickSearch");
     const input = page.getByPlaceholder("Enter search term");
-    expect(input).toBeFocused();
-
+    await expect(input).toBeFocused();
     await input.fill("Artist");
 
     const searchResults = page.locator('[data-testid="SearchResultsView"]');

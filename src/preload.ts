@@ -155,6 +155,7 @@ function getEvents() {
     onClearSelection: () => {},
     onToggleListViewMode: () => {},
     onToggleSearch: () => {},
+    onToggleAdvancedSearch: () => {},
     onOpenSettings: () => {},
     onOpenImportData: () => {},
     onOpenExportData: () => {},

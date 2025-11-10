@@ -6,35 +6,40 @@ import useClickOutside from "@/renderer/hooks/useClickOutside";
 import { useKeyManager } from "@/renderer/hooks/useKeyboardManager";
 import useOnLocationChange from "@/renderer/hooks/useOnLocationChange";
 import { type Modals } from "@/renderer/Modal";
-import { capitalize } from "lodash";
+import { getEntityLink } from "@/lib/links";
+import { formatEntityType } from "@/lib/utils";
 
 const navMap: {
   type: "link" | "modal";
-  label: string;
   link: string;
   accelerator: string;
-  section: string;
+  page: string;
 }[] = [
   {
     type: "link",
-    label: "Home",
     accelerator: "Cmd+1",
     link: "/",
-    section: "home",
+    page: "home",
   },
-  ...["release", "artist", "collection", "group"].map((section, index) => ({
-    type: "link" as const,
-    accelerator: `Cmd+${index + 2}`,
-    link: `/${section}s`,
-    section,
-    label: `${capitalize(section)}s`,
-  })),
+  ...(["release", "artist", "collection", "group"] as const).map(
+    (page, index) => ({
+      type: "link" as const,
+      accelerator: `Cmd+${index + 2}`,
+      link: getEntityLink({ entityType: page }),
+      page: formatEntityType(page, { plural: true, capital: false }),
+    })
+  ),
+  {
+    type: "link",
+    link: "search",
+    accelerator: "Cmd+F",
+    page: "search",
+  },
   {
     type: "modal",
     link: "settings",
-    label: "Settings",
     accelerator: "Cmd+,",
-    section: "settings",
+    page: "settings",
   },
 ];
 

@@ -12,13 +12,15 @@ export default function NavTitle() {
   return (
     <Routes>
       <Route path="/" element={<DefaultTitle title={t("nav.titles.home")} />} />
-      {["releases", "artists", "collections", "groups"].map((entity) => (
-        <Route
-          key={entity}
-          path={`/${entity}`}
-          element={<DefaultTitle title={t(`nav.titles.${entity}`)} />}
-        />
-      ))}
+      {["releases", "artists", "collections", "groups", "search"].map(
+        (entity) => (
+          <Route
+            key={entity}
+            path={`/${entity}`}
+            element={<DefaultTitle title={t(`nav.titles.${entity}`)} />}
+          />
+        )
+      )}
       <Route path="/collections/:id" element={<CollectionTitle />} />
       <Route path="/groups/:id" element={<GroupTitle />} />
       <Route path="*" element={null} />
