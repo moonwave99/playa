@@ -1,6 +1,6 @@
 import { ArtistWithReleases, GroupWithArtists } from "@/types/types";
-import AddToEntityListView from "./AddToEntityListView";
 import useGroups from "../query/useGroups";
+import AddToEntityListView from "../components/AddToEntityListView";
 
 type AddArtistsToGroupViewProps = {
   artists: ArtistWithReleases[];

@@ -3,10 +3,10 @@ import { useTranslation } from "react-i18next";
 import { SearchResult, ArtistWithReleasesAndAppearances } from "@/types/types";
 import api from "@/renderer/api";
 import { getCovers } from "@/lib/utils";
-import ContextMenuButton from "../Buttons/ContextMenuButton";
-import Link from "../Link";
-import Cover from "../Cover";
-import SlidingCardsView from "../SlidingCardsView";
+import ContextMenuButton from "@/renderer/components/Buttons/ContextMenuButton";
+import Link from "@/renderer/components/Link";
+import Cover from "@/renderer/components/Cover";
+import SlidingCardsView from "@/renderer/components/SlidingCardsView";
 
 import cx from "clsx";
 import styles from "./QuickSearchView.module.css";

@@ -3,10 +3,10 @@ import {
   ReleaseWithArtistAndTracksAndSubreleasesAndCollections,
   SearchResult,
 } from "@/types/types";
+import EntityCardList from "@/renderer/components/EntityCardList";
+import LookupEntityForm from "@/renderer/components/Lookup/LookupEntityForm";
 import styles from "./EditReleaseView.module.css";
 import formStyles from "@/renderer/forms.module.css";
-import EntityCardList from "../EntityCardList";
-import LookupEntityForm from "../Lookup/LookupEntityForm";
 
 type AdditionalArtistsEditorProps = {
   release: ReleaseWithArtistAndTracksAndSubreleasesAndCollections;

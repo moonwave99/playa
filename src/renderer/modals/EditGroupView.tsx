@@ -1,33 +1,30 @@
 import { type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { type SearchResult } from "@/types/types";
-import useCollection from "../query/useCollection";
-import EntityCardList from "./EntityCardList";
-import LookupEntityForm from "./Lookup/LookupEntityForm";
-import ErrorView from "./ErrorView";
-import Loading from "./Loading";
+import { SearchResult } from "@/types/types";
+import useGroup from "../query/useGroup";
+import EntityCardList from "../components/EntityCardList";
+import LookupEntityForm from "../components/Lookup/LookupEntityForm";
+import ErrorView from "../components/ErrorView";
+import Loading from "../components/Loading";
 import cx from "clsx";
-import styles from "./EditCollectionView.module.css";
+import styles from "./EditGroupView.module.css";
 import formStyles from "../forms.module.css";
 
-type EditCollectionViewProps = {
+type EditGroupViewProps = {
   id: number;
   closeModal: () => void;
 };
 
-export default function EditCollectionView({
-  id,
-  closeModal,
-}: EditCollectionViewProps) {
+export default function EditGroupView({ id, closeModal }: EditGroupViewProps) {
   const { t } = useTranslation();
   const {
-    collection,
+    group,
     isPending,
     error,
     updateTitle,
-    removeReleasesFromCollection,
-    addReleasesToCollection,
-  } = useCollection(id);
+    addArtistsToGroup,
+    removeArtistsFromGroup,
+  } = useGroup(id);
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
@@ -47,52 +44,48 @@ export default function EditCollectionView({
   return (
     <div className={styles.view}>
       <div className={cx(formStyles.container, formStyles.separator)}>
-        <h2>{t("modals.EditCollectionView.title")}</h2>
+        <h2>{t("modals.EditGroupView.title")}</h2>
         <form onSubmit={onSubmit} className={formStyles.form}>
           <div className={formStyles.actions}>
             <label className={cx(formStyles.label, styles.label)}>
-              {t("modals.EditCollectionView.fields.title.label")}
+              {t("modals.EditGroupView.fields.title.label")}
               <input
                 autoFocus
                 className={cx(formStyles.input, styles.input)}
                 required
                 name="title"
-                placeholder={t(
-                  "modals.EditCollectionView.fields.title.placeholder"
-                )}
-                defaultValue={collection.title}
+                placeholder={t("modals.EditGroupView.fields.title.placeholder")}
+                defaultValue={group.title}
               />
             </label>
             <button type="submit" className={formStyles.button}>
-              {t("modals.EditCollectionView.actions.save")}
+              {t("modals.EditGroupView.actions.save")}
             </button>
             <button
               type="button"
               className={formStyles.button}
               onClick={closeModal}
             >
-              {t("modals.EditCollectionView.actions.cancel")}
+              {t("modals.EditGroupView.actions.cancel")}
             </button>
           </div>
         </form>
       </div>
       <div className={formStyles.container}>
-        <h3>{t("modals.EditCollectionView.releases.title")}</h3>
-        {collection.releases.length ? (
+        <h3>{t("modals.EditGroupView.artists.title")}</h3>
+        {group.artists.length ? (
           <EntityCardList
-            items={collection.releases}
-            onRemoveEntityClick={(release) =>
-              removeReleasesFromCollection([release])
-            }
+            items={group.artists}
+            onRemoveEntityClick={(artist) => removeArtistsFromGroup([artist])}
           />
         ) : (
-          <p>{t("modals.EditCollectionView.releases.placeholder")}</p>
+          <p>{t("modals.EditGroupView.artists.placeholder")}</p>
         )}
         <LookupEntityForm
           className={styles.lookupView}
-          existingIds={collection.releases.map(({ id }) => id)}
-          type="release"
-          onSubmit={(result: SearchResult) => addReleasesToCollection([result])}
+          existingIds={group.artists.map(({ id }) => id)}
+          type="artist"
+          onSubmit={(result: SearchResult) => addArtistsToGroup([result])}
         />
       </div>
     </div>

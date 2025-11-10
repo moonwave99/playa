@@ -20,7 +20,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { ReleaseWithArtist } from "@/types/types";
-import Cover from "./Cover";
+import Cover from "../components/Cover";
 import { lowerCaseCompare } from "@/lib/utils";
 
 import { Icon } from "@/renderer/icons";

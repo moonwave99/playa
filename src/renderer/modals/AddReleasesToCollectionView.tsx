@@ -1,6 +1,6 @@
 import { Collection, ReleaseWithArtist } from "@/types/types";
-import AddToEntityListView from "./AddToEntityListView";
 import useCollections from "../query/useCollections";
+import AddToEntityListView from "../components/AddToEntityListView";
 
 type AddReleasesToCollectionViewProps = {
   releases: ReleaseWithArtist[];

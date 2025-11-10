@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import useLatesAdditions from "../query/useLatestAdditions";
-import ErrorView from "./ErrorView";
+import useLatesAdditions from "../../query/useLatestAdditions";
+import ErrorView from "@/renderer/components/ErrorView";
 import * as Plot from "@observablehq/plot";
 import styles from "./ImportActivityView.module.css";
 import type { Release } from "@/types/types";

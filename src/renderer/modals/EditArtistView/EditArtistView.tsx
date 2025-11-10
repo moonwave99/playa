@@ -4,7 +4,7 @@ import useArtist from "@/renderer/query/useArtist";
 
 import EditArtistForm, { type NewInfo } from "./EditArtistForm";
 import RelatedArtistsEditor from "./RelatedArtistsEditor";
-import Loading from "../Loading";
+import Loading from "@/renderer/components/Loading";
 
 import cx from "clsx";
 import styles from "./EditArtistView.module.css";

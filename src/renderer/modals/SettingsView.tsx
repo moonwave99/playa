@@ -5,7 +5,7 @@ import type { OpenFolderDialogParams, Settings } from "@/types/types";
 import api from "../api";
 import useStore from "../store";
 import { isEmpty } from "@/lib/utils";
-import Loading from "./Loading";
+import Loading from "../components/Loading";
 
 import { Icon } from "@/renderer/icons";
 import cx from "clsx";

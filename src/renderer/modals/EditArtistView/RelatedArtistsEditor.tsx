@@ -1,7 +1,7 @@
 import { t } from "i18next";
 import { ArtistWithReleasesFull, SearchResult } from "@/types/types";
-import EntityCardList from "../EntityCardList";
-import LookupEntityForm from "../Lookup/LookupEntityForm";
+import EntityCardList from "@/renderer/components/EntityCardList";
+import LookupEntityForm from "@/renderer/components/Lookup/LookupEntityForm";
 import styles from "./EditArtistView.module.css";
 import formStyles from "@/renderer/forms.module.css";
 

@@ -7,10 +7,10 @@ import useRelease from "../query/useRelease";
 import { getReleaseTitle } from "@/lib/utils";
 import api from "../api";
 
-import Cover from "./Cover";
-import Tracklist from "./Tracklist";
-import ReleaseInfo from "./ReleaseInfo";
-import EntityList from "./EntityList";
+import Cover from "@/renderer/components/Cover";
+import Tracklist from "@/renderer/components/Tracklist";
+import ReleaseInfo from "@/renderer/components/ReleaseInfo";
+import EntityList from "@/renderer/components/EntityList";
 
 import { Icon } from "../icons";
 import cx from "clsx";

@@ -5,7 +5,7 @@ import type { EditReleaseParam, SearchResult } from "@/types/types";
 
 import EditReleaseForm from "./EditReleaseForm";
 import AdditionalArtistsEditor from "./AdditionalArtistsEditor";
-import Loading from "../Loading";
+import Loading from "@/renderer/components/Loading";
 
 import styles from "./EditReleaseView.module.css";
 

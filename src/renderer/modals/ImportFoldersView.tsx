@@ -6,16 +6,16 @@ import {
   TrackInfo,
   ReleaseType,
 } from "@/types/types";
+import { normalizeArtistDisplayName } from "@/lib/utils";
 import useArtists from "../query/useArtists";
 import api from "../api";
-import LookupView from "./Lookup/LookupView";
-import ErrorView from "./ErrorView";
-import Loading from "./Loading";
+import LookupView from "../components/Lookup/LookupView";
+import ErrorView from "../components/ErrorView";
+import Loading from "../components/Loading";
 import { Icon } from "../icons";
 import cx from "clsx";
 import styles from "./ImportFoldersView.module.css";
 import formStyles from "../forms.module.css";
-import { normalizeArtistDisplayName } from "@/lib/utils";
 
 type ImportFoldersViewProps = {
   data: ImportData[];

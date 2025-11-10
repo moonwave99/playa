@@ -4,9 +4,9 @@ import { useTranslation } from "react-i18next";
 import { SearchableEntities, SearchResult } from "@/types/types";
 import api from "@/renderer/api";
 import useSearch from "@/renderer/query/useSearch";
-import ErrorView from "../ErrorView";
-import List from "../List";
-import Loading from "../Loading";
+import ErrorView from "@/renderer/components/ErrorView";
+import List from "@/renderer/components/List";
+import Loading from "@/renderer/components/Loading";
 import SearchResultView from "./SearchResultView";
 import styles from "./QuickSearchView.module.css";
 

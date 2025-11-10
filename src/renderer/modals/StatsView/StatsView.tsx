@@ -1,13 +1,13 @@
 import { useTranslation } from "react-i18next";
-import useStats from "../query/useStats";
-import Loading from "./Loading";
-import ErrorView from "./ErrorView";
+import useStats from "../../query/useStats";
+import Loading from "../../components/Loading";
+import ErrorView from "../../components/ErrorView";
 import ImportActivityView from "./ImportActivityView";
 import type { Stats } from "@/types/types";
 
 import cx from "clsx";
 import styles from "./StatsView.module.css";
-import formStyles from "../forms.module.css";
+import formStyles from "@/renderer/forms.module.css";
 
 const sortedStats: (keyof Stats)[] = [
   "release",
