@@ -56,6 +56,10 @@ import {
   searchResultController,
 } from "./main/controllers/searchResult";
 import {
+  actions as quickSearchActions,
+  quickSearchController,
+} from "./main/controllers/quickSearch";
+import {
   actions as importFoldersActions,
   importFoldersController,
 } from "./main/controllers/importFolders";
@@ -95,6 +99,10 @@ const api = {
   searchResult:
     getHandlersFromActions<ReturnType<typeof searchResultController>>(
       searchResultActions
+    ),
+  quickSearch:
+    getHandlersFromActions<ReturnType<typeof quickSearchController>>(
+      quickSearchActions
     ),
   system:
     getHandlersFromActions<ReturnType<typeof systemController>>(systemActions),

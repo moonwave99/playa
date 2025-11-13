@@ -11,15 +11,19 @@ import type {
   ReleaseType,
   SearchableEntities,
   Settings,
+  Artist,
+  Collection,
+  Group,
 } from "@/types/types";
-import { pad } from "@/lib/utils";
+import { normalizeDiacritics, pad } from "@/lib/utils";
 import { getE2ETmpPath, BUILD_PATH } from "./utils";
 import { DEFAULT_SETTINGS } from "@/constants";
 
-export function getFakeArtist(id = 1) {
+export function getFakeArtist(id = 1, override: Partial<Artist> = {}) {
   const artist = getFakeArtists({ length: 1 }).at(0);
   return {
     ...artist,
+    ...override,
     id,
   };
 }
@@ -36,21 +40,24 @@ export function getFakeArtists({ length = 10 }) {
 }
 
 export function getFakeRelease(id = 1, override: Partial<Release> = {}) {
+  const title = override.title || `Release ${id}`;
+  const year = override.year || 2000;
+  const type = (override.type || "Album") as ReleaseType;
   return {
     entityType: "release" as EntityType,
     id,
-    title: `Release ${id}`,
-    normalizedTitle: `Release ${id}`,
-    type: "Album" as ReleaseType,
-    year: 2000,
-    path: `A/Artist 1/[Album]/2000 - Release ${id}`,
+    title,
+    normalizedTitle: normalizeDiacritics(title),
+    type,
+    year,
+    path: `A/Artist ${override.artist_id || 1}/[${type}]/${year} - ${title}`,
     hash: hashRelease({
-      title: `Release ${id}`,
-      type: "Album",
-      year: 2000,
-      artist_id: override.artist_id,
+      title: title,
+      type,
+      year,
+      artist_id: override.artist_id || 1,
     }),
-    artist_id: override.artist_id,
+    artist_id: override.artist_id || 1,
     discTitle: "",
     discNumber: 1,
     createdAt: getDate(id),
@@ -104,10 +111,11 @@ export function getFakeTracksForRelease(releaseId: number, length = 5) {
   }));
 }
 
-export function getFakeCollection(id = 1) {
+export function getFakeCollection(id = 1, override: Partial<Collection> = {}) {
   const collection = getFakeCollections({ length: 1 }).at(0);
   return {
     ...collection,
+    ...override,
     id,
   };
 }
@@ -128,10 +136,11 @@ export function getFakeCollections({
   }));
 }
 
-export function getFakeGroup(id = 1) {
+export function getFakeGroup(id = 1, override: Partial<Group> = {}) {
   const group = getFakeGroups({ length: 1 }).at(0);
   return {
     ...group,
+    ...override,
     id,
   };
 }

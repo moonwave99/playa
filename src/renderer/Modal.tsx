@@ -182,8 +182,9 @@ const modalMap = {
   quickSearch: {
     component: QuickSearchView,
     styles: {
-      width: "min(90vw, 1400px)",
+      width: "min(90vw, 600px)",
       marginTop: "0",
+      padding: "1rem",
     },
   },
   stats: {

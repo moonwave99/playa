@@ -1,4 +1,4 @@
-import { Routes, Route, useParams } from "react-router";
+import { Routes, Route, useParams, useSearchParams } from "react-router";
 import { useTranslation } from "react-i18next";
 import styles from "./Nav.module.css";
 import api from "@/renderer/api";
@@ -12,15 +12,14 @@ export default function NavTitle() {
   return (
     <Routes>
       <Route path="/" element={<DefaultTitle title={t("nav.titles.home")} />} />
-      {["releases", "artists", "collections", "groups", "search"].map(
-        (entity) => (
-          <Route
-            key={entity}
-            path={`/${entity}`}
-            element={<DefaultTitle title={t(`nav.titles.${entity}`)} />}
-          />
-        )
-      )}
+      {["releases", "artists", "collections", "groups"].map((entity) => (
+        <Route
+          key={entity}
+          path={`/${entity}`}
+          element={<DefaultTitle title={t(`nav.titles.${entity}`)} />}
+        />
+      ))}
+      <Route path="/search" element={<SearchTitle />} />
       <Route path="/collections/:id" element={<CollectionTitle />} />
       <Route path="/groups/:id" element={<GroupTitle />} />
       <Route path="*" element={null} />
@@ -33,6 +32,18 @@ type DefaultTitleProps = {
 };
 
 function DefaultTitle({ title }: DefaultTitleProps) {
+  useTitle(title);
+  return (
+    <h1 className={styles.title}>
+      <span>{title}</span>
+    </h1>
+  );
+}
+
+function SearchTitle() {
+  const { t } = useTranslation();
+  const [searchParams] = useSearchParams();
+  const title = t("nav.titles.search", { query: searchParams.get("query") });
   useTitle(title);
   return (
     <h1 className={styles.title}>

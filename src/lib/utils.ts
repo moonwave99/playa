@@ -13,7 +13,6 @@ import {
   CollectionWithReleases,
   ArtistWithReleases,
   GroupWithArtists,
-  WithAdditionalArtists,
   ColorInfo,
   Group,
   Collection,
@@ -28,7 +27,10 @@ import { VARIOUS_ARTISTS_NAME } from "@/constants";
 export function getReleaseTitle({
   title,
   subReleases = [],
-}: Pick<ReleaseWithArtistAndSubReleases, "title" | "subReleases">): string {
+}: {
+  title: string;
+  subReleases: unknown[];
+}): string {
   if (!subReleases.length) {
     return title;
   }
@@ -43,10 +45,10 @@ export function getReleaseFullTitle(release: ReleaseWithArtistAndSubReleases) {
 export function getReleaseArtist({
   artist,
   additionalArtists,
-}: Pick<
-  ReleaseWithArtist & WithAdditionalArtists,
-  "artist" | "additionalArtists"
->) {
+}: {
+  artist: Pick<Artist, "name">;
+  additionalArtists: Pick<Artist, "name">[];
+}) {
   return [artist, ...additionalArtists]
     .map((x) => normalizeArtistName(x.name))
     .join(", ");

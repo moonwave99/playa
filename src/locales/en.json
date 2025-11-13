@@ -29,7 +29,7 @@
   "nav": {
     "titles": {
       "home": "Playa",
-      "search": "Search",
+      "search": "Search: {{query}}",
       "releases": "Releases",
       "release": "Releases | {{title}}",
       "artists": "Artists",
@@ -43,7 +43,7 @@
       "actions": {
         "gotoPage": "Go to the {{page}} page",
         "toggleMenu": "Toggle Menu",
-        "openSearch": "Open Search"
+        "gotoSearch": "Goto Search"
       }
     },
     "history": {
@@ -510,7 +510,7 @@
         "cancel": "Cancel"
       }
     },
-    "SearchView": {
+    "QuickSearchView": {
       "fields": {
         "search": {
           "label": "Search",
@@ -518,7 +518,15 @@
         }
       },
       "actions": {
-        "toggleAdvancedSearch": "Advanced Search"
+        "submit": "See all"
+      }
+    },
+    "SearchView": {
+      "fields": {
+        "search": {
+          "label": "Search",
+          "placeholder": "Enter search term"
+        }
       },
       "results": {
         "trackBy": "Track by"

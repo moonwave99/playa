@@ -37,9 +37,21 @@ export class History {
     };
   }
   push(entry: HistoryEntry) {
+    if (this.getCurrentEntry()?.href === entry.href) {
+      return;
+    }
     this.history = [...this.history.slice(0, this.index + 1), entry];
     this.index = this.history.length - 1;
     this.direction = 0;
+    this.onUpdate();
+  }
+  replace(entry: HistoryEntry) {
+    if (!this.history.length) {
+      this.history = [entry];
+      this.index = 0;
+      return;
+    }
+    this.history[this.index] = entry;
     this.onUpdate();
   }
   goBack() {

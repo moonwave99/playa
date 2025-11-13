@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import api from "@/renderer/api";
 import useStore from "@/renderer/store";
 import useClickOutside from "@/renderer/hooks/useClickOutside";
@@ -47,6 +47,7 @@ export type UseNav = ReturnType<typeof useNav>;
 
 export default function useNav() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isNavOpen, setNavOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(-1);
   const ref = useClickOutside(() => setNavOpen(false));
@@ -89,6 +90,7 @@ export default function useNav() {
     openModal,
     currentIndex,
     setCurrentIndex,
+    isSearchPage: location.pathname.startsWith("/search"),
     toggleNav: (toggle?: boolean) =>
       setNavOpen((prev) => (typeof toggle !== "undefined" ? toggle : !prev)),
   };

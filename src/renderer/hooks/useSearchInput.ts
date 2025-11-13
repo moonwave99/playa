@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import type { FormEvent, Ref } from "react";
 import api from "../api";
 import { useKeyManager, withMeta } from "@/renderer/hooks/useKeyboardManager";
@@ -6,6 +6,10 @@ import { useKeyManager, withMeta } from "@/renderer/hooks/useKeyboardManager";
 type UseSearchInputParams = {
   setQuery: (query: string) => void;
   resultTypes: string[];
+  onUp?: () => void;
+  onInputChange?: (query: string) => void;
+  baseContext?: string;
+  shouldFocusInput?: boolean;
 };
 
 type UseSearchInput = Pick<
@@ -26,40 +30,55 @@ type UseSearchInput = Pick<
 export default function useSearchInput({
   setQuery,
   resultTypes,
+  onUp,
+  onInputChange,
+  baseContext = "modal",
+  shouldFocusInput = true,
 }: UseSearchInputParams): UseSearchInput {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { setContext, currentContext } = useKeyManager({
-    context: "modal",
+    context: baseContext,
     handlers: {
       f: withMeta(() => inputRef.current?.focus()),
       ArrowDown: () => {
         if (
-          currentContext.startsWith("modal:search:results") &&
+          currentContext.startsWith(`${baseContext}:search:results`) &&
           resultTypes.length > 1
         ) {
           return;
         }
-        setContext("modal:search:results(0)");
+        setContext(`${baseContext}:search:results(0)`);
       },
     },
   });
 
+  useEffect(() => {
+    return () => api.state.setInputFocused(false);
+  }, []);
+
   function onInput(event: FormEvent) {
-    setQuery((event.target as HTMLInputElement).value);
+    const value = (event.target as HTMLInputElement).value;
+    setQuery(value);
+    if (!onInputChange) {
+      return;
+    }
+    onInputChange(value);
   }
 
   function onBlur() {
+    if (!shouldFocusInput) {
+      return;
+    }
     api.state.setInputFocused(false);
   }
 
   function onFocus() {
-    setContext("modal:search:input");
+    setContext(`${baseContext}:search:input`);
+    if (!shouldFocusInput) {
+      return;
+    }
     api.state.setInputFocused(true);
-  }
-
-  function onUp() {
-    inputRef.current?.focus();
   }
 
   return {
@@ -72,7 +91,13 @@ export default function useSearchInput({
       onFocus,
     },
     listHandlers: {
-      onUp,
+      onUp: () => {
+        inputRef.current?.focus();
+        if (!onUp) {
+          return;
+        }
+        onUp();
+      },
     },
   };
 }

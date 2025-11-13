@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { SearchFilters } from "@/types/types";
 
 import cx from "clsx";
-import styles from "./SearchView.module.css";
+import styles from "./AdvancedSearchView.module.css";
 import formStyles from "@/renderer/forms.module.css";
 
 type AdvancedSearchProps = {

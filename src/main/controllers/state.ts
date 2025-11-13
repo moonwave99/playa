@@ -24,7 +24,16 @@ export function stateController({
     setSelection: (...params: Parameters<typeof stateManager.setSelection>) =>
       stateManager.setSelection(...params),
     clearSelection: () => send("clearSelection"),
-    navigate: (historyEntry: HistoryEntry) => history.push(historyEntry),
+    navigate: (historyEntry: HistoryEntry) => {
+      if (
+        history.getState().currentEntry?.href.startsWith("/search") &&
+        historyEntry.href.startsWith("/search")
+      ) {
+        history.replace(historyEntry);
+        return;
+      }
+      history.push(historyEntry);
+    },
     goBack: () => history.goBack(),
     goForward: () => history.goForward(),
   };

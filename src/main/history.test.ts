@@ -46,6 +46,33 @@ describe("History - onChange", () => {
 });
 
 describe("History - push", () => {
+  it("does nothing when trying to push the current entry", () => {
+    const onChange = vi.fn();
+    const history = new History();
+    history.onChange(onChange);
+
+    const page = {
+      title: "New Page",
+      href: "/path/to/page",
+    };
+
+    history.push(page);
+
+    expect(history.getState()).toMatchObject({
+      currentEntry: page,
+      backEntries: [],
+      forwardEntries: [],
+    });
+
+    history.push(page);
+
+    expect(history.getState()).toMatchObject({
+      currentEntry: page,
+      backEntries: [],
+      forwardEntries: [],
+    });
+  });
+
   it("adds a new entry to the history", () => {
     const onChange = vi.fn();
     const history = new History();

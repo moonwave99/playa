@@ -23,6 +23,7 @@ import ToastView from "./components/ToastView";
 
 import Onboarding from "./pages/Onboarding/Onboarding";
 import HomePage from "./pages/HomePage/HomePage";
+import SearchPage from "./pages/SearchPage/SearchPage";
 import ReleasesPage from "./pages/ReleasesPage";
 import ReleasePage from "./pages/ReleasePage/ReleasePage";
 import ArtistsPage from "./pages/ArtistsPage";
@@ -37,6 +38,7 @@ import styles from "./Layout.module.css";
 
 const routesMap = {
   home: <HomePage />,
+  search: <SearchPage />,
   releases: <ReleasesPage />,
   release: <ReleasePage />,
   artists: <ArtistsPage />,
@@ -125,12 +127,15 @@ function useLayout({ initialSettings }: UseLayoutParams): UseLayout {
     onHistoryChange: (historyState) => {
       setHistoryState(historyState);
       navigate(historyState.currentEntry.href, {
-        state: { historyChange: true, direction: historyState.direction },
+        state: {
+          historyChange: true,
+          direction: historyState.direction,
+        },
       });
     },
     onOpenModal: setModalContents,
     onNavigate: (path: string) => {
-      if (path === window.location.hash.slice(1)) {
+      if (path === location.hash.slice(1)) {
         return;
       }
       navigate(path);
@@ -157,6 +162,7 @@ function useLayout({ initialSettings }: UseLayoutParams): UseLayout {
       location.state?.isRedirect ||
       location.state?.historyChange ||
       location.state?.firstRender
+      // location.pathname.startsWith("/search")
     ) {
       return;
     }

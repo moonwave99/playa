@@ -27,6 +27,7 @@ export default function Nav({ isFullHeaderPage }: NavProps) {
     currentIndex,
     setCurrentIndex,
     toggleNav,
+    isSearchPage,
   } = useNav();
 
   return (
@@ -50,6 +51,7 @@ export default function Nav({ isFullHeaderPage }: NavProps) {
         useDarkText={useDarkText}
         toggleNav={toggleNav}
         openModal={openModal}
+        isSearchPage={isSearchPage}
       />
       <ul className={styles.entries} ref={ref}>
         {navMap.map(({ link, type, accelerator, page }, index) => (

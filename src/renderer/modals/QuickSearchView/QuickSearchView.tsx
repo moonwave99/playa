@@ -1,15 +1,17 @@
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
+import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useDebounce } from "use-debounce";
 import { DEBOUNCE_INTERVAL } from "@/constants";
 import api from "@/renderer/api";
 import useSearchInput from "@/renderer/hooks/useSearchInput";
 import useSearch from "@/renderer/query/useSearch";
-import SearchResultsView from "./SearchResultsView";
+import QuickSearchResults from "./QuickSearchResultsView";
 import { Icon } from "@/renderer/icons";
 
 import cx from "clsx";
 import styles from "./QuickSearchView.module.css";
+import formStyles from "@/renderer/forms.module.css";
 
 type QuickSearchViewProps = {
   closeModal: () => void;
@@ -17,54 +19,88 @@ type QuickSearchViewProps = {
 
 export default function QuickSearchView({ closeModal }: QuickSearchViewProps) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const [isFormEnabled, setFormEnabled] = useState(false);
   const [query, setQuery] = useState("");
   const [debouncedQuery] = useDebounce(query, DEBOUNCE_INTERVAL, {
     leading: false,
   });
 
-  const { isPending, error, results } = useSearch({
-    take: 100,
+  const searchResults = useSearch({
+    take: 5,
     query: debouncedQuery,
     queryKey: ["search", debouncedQuery],
     queryFn: (query, take) =>
-      api.searchResult.getSearchResults({
+      api.quickSearch.getResults({
         query,
         take,
       }),
   });
 
-  const groupedResults = Object.groupBy(results, ({ type }) => type);
+  const { inputRef, inputHandlers, ...useSearchInputRest } = useSearchInput({
+    setQuery,
+    resultTypes: ["searchResult"],
+    onUp: () => {
+      setFormEnabled(true);
+    },
+  });
 
-  const { inputRef, inputHandlers, listHandlers, currentContext, setContext } =
-    useSearchInput({ setQuery, resultTypes: Object.keys(groupedResults) });
+  const searchUrl = `/search?${new URLSearchParams({ query })}`;
+
+  function onSubmit(event: FormEvent) {
+    event.preventDefault();
+    closeModal();
+    if (!searchResults.results.length) {
+      return;
+    }
+    navigate(searchUrl);
+  }
+
+  function onSelectionChange(selection: number[]) {
+    setFormEnabled(!selection.length);
+  }
 
   return (
-    <div className={cx(styles.view)}>
-      <div className={styles.searchBar}>
+    <div
+      className={cx(styles.view, {
+        [styles.showResults]: searchResults.results.length,
+      })}
+    >
+      <form className={styles.searchBar} onSubmit={onSubmit}>
         <label className={styles.searchInputLabel}>
           <Icon
             isFor="actions.search"
-            aria-label={t("modals.SearchView.fields.search.label")}
+            aria-label={t("modals.QuickSearchView.fields.search.label")}
           />
+        </label>
+        <div className={styles.inputWrapper}>
           <input
             autoFocus
             ref={inputRef}
             className={styles.searchInput}
             type="search"
-            placeholder={t("modals.SearchView.fields.search.placeholder")}
+            placeholder={t("modals.QuickSearchView.fields.search.placeholder")}
             {...inputHandlers}
           />
-        </label>
-      </div>
-
-      <SearchResultsView
-        currentContext={currentContext}
-        setContext={setContext}
+          {searchResults.results.length ? (
+            <button
+              className={cx(
+                formStyles.button,
+                formStyles.primary,
+                styles.submitButton
+              )}
+              disabled={!isFormEnabled}
+            >
+              {t("modals.QuickSearchView.actions.submit")}
+            </button>
+          ) : null}
+        </div>
+      </form>
+      <QuickSearchResults
         onLinkClick={closeModal}
-        isPending={isPending}
-        groupedResults={groupedResults}
-        error={error}
-        listHandlers={listHandlers}
+        onSelectionChange={onSelectionChange}
+        {...searchResults}
+        {...useSearchInputRest}
       />
     </div>
   );

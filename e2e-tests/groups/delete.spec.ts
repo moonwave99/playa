@@ -21,7 +21,7 @@ test.describe("Delete Group", () => {
 
     await expect(groupsList).not.toContainText("Group 1");
 
-    await page.getByRole("button", { name: "Open Search" }).click();
+    await page.getByRole("link", { name: "Goto Search" }).click();
     await page.getByPlaceholder("Enter search term").fill("Artist 1");
     await page
       .locator('[data-testid="SearchResultsView"]')

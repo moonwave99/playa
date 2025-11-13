@@ -24,7 +24,7 @@ test.describe("Delete Collection", () => {
 
     await expect(collectionsList).not.toContainText("Collection 1");
 
-    await page.getByRole("button", { name: "Open Search" }).click();
+    await page.getByRole("link", { name: "Goto Search" }).click();
     await page.getByPlaceholder("Enter search term").fill("Release 1-1");
     await page
       .locator('[data-testid="SearchResultsView"]')

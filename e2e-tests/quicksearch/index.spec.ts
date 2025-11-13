@@ -13,16 +13,20 @@ test.describe("QuickSearch", () => {
     await expect(input).toBeFocused();
     await input.fill("Artist");
 
-    const searchResults = page.locator('[data-testid="SearchResultsView"]');
-    await expect(searchResults).toContainText("Artists (10)");
+    const searchResults = page.locator(
+      '[data-testid="QuickSearchResultsView"]'
+    );
 
-    Array.from({ length: 5 }, (_, i) =>
-      expect(searchResults).toContainText(`Artist ${i + 1}`)
+    await Promise.all(
+      Array.from(
+        { length: 5 },
+        async (_, i) =>
+          await expect(searchResults).toContainText(`Artist ${i + 1}`)
+      )
     );
 
     await input.fill("Artist 1");
 
-    await expect(searchResults).toContainText("Artists (2)");
     await expect(
       searchResults.getByRole("link").filter({ hasText: /Artist 1$/ })
     ).toHaveCount(1);
@@ -35,14 +39,15 @@ test.describe("QuickSearch", () => {
   });
 
   test("navigate the search results", async () => {
-    const { page } = await getElectronApp();
-    await page.getByRole("button", { name: "Open Search" }).click();
+    const { page, clickMenuItemById } = await getElectronApp();
+    await clickMenuItemById("openQuickSearch");
     const input = page.getByPlaceholder("Enter search term");
     expect(input).toBeFocused();
 
     await input.fill("Artist");
-    const searchResults = page.locator('[data-testid="SearchResultsView"]');
-    await expect(searchResults).toContainText("Artists (10)");
+    const searchResults = page.locator(
+      '[data-testid="QuickSearchResultsView"]'
+    );
     await expect(searchResults).toContainText("Artist 1");
 
     await page.keyboard.press("ArrowDown");

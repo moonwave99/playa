@@ -63,8 +63,12 @@ export function getArtistLink({ id }: HasId) {
   return getEntityLink({ id, entityType: "artist" });
 }
 
-export function getReleaseLink({ id }: HasId) {
-  return getEntityLink({ id, entityType: "release" });
+export function getReleaseLink({
+  id,
+  track_id,
+}: HasId & { track_id?: number }) {
+  const link = getEntityLink({ id, entityType: "release" });
+  return track_id ? `${link}?track_id=${track_id}` : link;
 }
 
 export function getRandomLink(

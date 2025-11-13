@@ -4,11 +4,11 @@ import { useTranslation } from "react-i18next";
 import { SearchableEntities, SearchResult } from "@/types/types";
 import api from "@/renderer/api";
 import useSearch from "@/renderer/query/useSearch";
-import ErrorView from "../ErrorView";
-import List from "../List";
-import Loading from "../Loading";
+import ErrorView from "../../components/ErrorView";
+import List from "../../components/List";
+import Loading from "../../components/Loading";
 import SearchResultView from "./SearchResultView";
-import styles from "./SearchView.module.css";
+import styles from "./SearchPage.module.css";
 
 type SearchResultsViewProps = Pick<
   ReturnType<typeof useSearch>,
@@ -17,10 +17,10 @@ type SearchResultsViewProps = Pick<
   groupedResults: Partial<Record<SearchableEntities, SearchResult[]>>;
   currentContext: string;
   setContext: (context: string) => void;
-  onLinkClick: () => void;
   listHandlers: {
     onUp: () => void;
   };
+  baseContext?: string;
 };
 
 export default function SearchResultsView({
@@ -29,8 +29,8 @@ export default function SearchResultsView({
   groupedResults,
   isPending,
   error,
-  onLinkClick,
   listHandlers,
+  baseContext = "modal",
 }: SearchResultsViewProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -60,7 +60,6 @@ export default function SearchResultsView({
       return;
     }
     navigate(item.links[item.type]);
-    onLinkClick();
   }
 
   function playbackItem(item: SearchResult) {
@@ -93,7 +92,7 @@ export default function SearchResultsView({
           </h3>
           <List
             disableMultipleSelection
-            context={`modal:search:results(${index})`}
+            context={`${baseContext}:search:results(${index})`}
             className={styles.listWrapper}
             items={entries}
             estimateSize={() => ({
@@ -102,11 +101,13 @@ export default function SearchResultsView({
             })}
             onLeft={() =>
               setContext(
-                `modal:search:results(${index === 0 ? groups.length - 1 : index - 1})`
+                `${baseContext}:search:results(${index === 0 ? groups.length - 1 : index - 1})`
               )
             }
             onRight={() =>
-              setContext(`modal:search:results(${(index + 1) % groups.length})`)
+              setContext(
+                `${baseContext}:search:results(${(index + 1) % groups.length})`
+              )
             }
             paddingRight={0}
             gap={12}
@@ -114,18 +115,18 @@ export default function SearchResultsView({
             testId={`SearchResultsView-${type}`}
             render={({ item, selected, onClick }) => (
               <SearchResultView
+                baseContext={baseContext}
                 index={index}
                 currentContext={currentContext}
                 item={item}
                 selected={selected}
                 onClick={(event: MouseEvent) => {
-                  setContext(`modal:search:results(${index})`);
+                  setContext(`${baseContext}:search:results(${index})`);
                   onClick(event);
                 }}
                 onDoubleClick={() => playbackItem(item)}
                 onPlaybackClick={getOnPlaybackClick(item)}
                 onContextMenu={() => api.menu.searchResult(item)}
-                onLinkClick={onLinkClick}
               />
             )}
             {...listHandlers}

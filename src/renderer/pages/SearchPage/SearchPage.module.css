@@ -1,9 +1,11 @@
 .view {
   --gap: 2rem;
-  --search-results-height: 75vh;
+  --search-results-height: 80vh;
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  flex: 1;
+  padding: 1rem;
 
   .searchResultsView {
     display: flex;
@@ -17,6 +19,9 @@
       gap: 1rem;
       h3 {
         text-transform: capitalize;
+      }
+      ::-webkit-scrollbar {
+        display: none;
       }
     }
   }
@@ -35,7 +40,7 @@
   }
   .searchInput {
     flex: 1;
-    border-radius: 0.25rem;
+    border-radius: 0.35rem;
     border: 1px solid var(--tertiary-color);
     background-color: var(--background-color);
     height: 3rem;
@@ -76,7 +81,7 @@
 }
 
 .listWrapper {
-  height: calc(100vh - 10.5rem - var(--header-height));
+  height: calc(100vh - 9.5rem - var(--header-height));
   overflow: auto;
   ::-webkit-scrollbar {
     display: none;

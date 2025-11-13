@@ -12,13 +12,17 @@ import cx from "clsx";
 import styles from "./Nav.module.css";
 import buttonStyles from "@/renderer/buttons.module.css";
 import responsiveStyles from "@/renderer/responsive.module.css";
+import Link from "../Link";
 
-type NavActionsProps = Pick<UseNav, "toggleNav" | "openModal" | "useDarkText">;
+type NavActionsProps = Pick<
+  UseNav,
+  "toggleNav" | "openModal" | "useDarkText" | "isSearchPage"
+>;
 
 export default function NavActions({
   toggleNav,
-  openModal,
   useDarkText,
+  isSearchPage,
 }: NavActionsProps) {
   const { t } = useTranslation();
   return (
@@ -75,17 +79,22 @@ export default function NavActions({
         >
           <Icon isFor="actions.toggleMenu" />
         </button>
-        <button
-          type="button"
-          aria-label={t("nav.common.actions.openSearch")}
-          title={t("nav.common.actions.openSearch")}
-          onClick={() => openModal("quickSearch")}
+        <Link
+          aria-label={t("nav.common.actions.gotoSearch")}
+          title={t("nav.common.actions.gotoSearch")}
+          to="/search"
           className={cx(buttonStyles.button, styles.button, {
             [buttonStyles.useDarkText]: useDarkText,
           })}
+          onClick={(event) => {
+            if (!isSearchPage) {
+              return;
+            }
+            event.preventDefault();
+          }}
         >
           <Icon isFor="actions.search" />
-        </button>
+        </Link>
       </ActionsGroup>
     </div>
   );

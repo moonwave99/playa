@@ -15,6 +15,7 @@ import { releaseController } from "./release";
 import { collectionController } from "./collection";
 import { groupController } from "./group";
 import { searchResultController } from "./searchResult";
+import { quickSearchController } from "./quickSearch";
 import { statsController } from "./stats";
 import { dialogController } from "./dialog";
 import { importFoldersController } from "./importFolders";
@@ -51,6 +52,7 @@ export type Controllers = {
   group: ReturnType<typeof groupController>;
   track: ReturnType<typeof trackController>;
   searchResult: ReturnType<typeof searchResultController>;
+  quickSearch: ReturnType<typeof quickSearchController>;
   stats: ReturnType<typeof statsController>;
   state: ReturnType<typeof stateController>;
   settings: ReturnType<typeof settingsController>;
@@ -168,6 +170,7 @@ export async function init({ mainWindow, settings }: InitParams) {
     group: groupController({ send, openConfirmDialog, stateManager }),
     track: trackController(),
     searchResult: searchResultController(),
+    quickSearch: quickSearchController(),
     dialog: dialogController({
       openConfirmDialog,
       openFolderDialog,

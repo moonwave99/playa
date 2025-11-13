@@ -29,7 +29,12 @@ export function getSearchMenu({ stateManager }: GetMenuParams) {
       stateManager.getState();
 
     menu.submenu.items.forEach((item) => {
-      item.enabled = !(isInputFocused || isImporting || isModalOpen);
+      item.enabled = !(
+        isInputFocused ||
+        isImporting ||
+        isModalOpen ||
+        stateManager.get("path").startsWith("/search")
+      );
     });
   }
 

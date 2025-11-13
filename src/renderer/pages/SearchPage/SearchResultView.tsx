@@ -3,13 +3,13 @@ import { useTranslation } from "react-i18next";
 import { SearchResult, ArtistWithReleasesAndAppearances } from "@/types/types";
 import api from "@/renderer/api";
 import { getCovers } from "@/lib/utils";
-import ContextMenuButton from "../Buttons/ContextMenuButton";
-import Link from "../Link";
-import Cover from "../Cover";
-import SlidingCardsView from "../SlidingCardsView";
+import ContextMenuButton from "../../components/Buttons/ContextMenuButton";
+import Link from "../../components/Link";
+import Cover from "../../components/Cover";
+import SlidingCardsView from "../../components/SlidingCardsView";
 
 import cx from "clsx";
-import styles from "./SearchView.module.css";
+import styles from "./SearchPage.module.css";
 
 type SearchResultViewProps = {
   index: number;
@@ -19,8 +19,8 @@ type SearchResultViewProps = {
   onClick: (event: MouseEvent) => void;
   onDoubleClick: () => void;
   onPlaybackClick?: () => void;
-  onLinkClick: () => void;
   onContextMenu?: () => void;
+  baseContext?: string;
 };
 
 export default function SearchResultView({
@@ -32,7 +32,7 @@ export default function SearchResultView({
   onClick,
   onDoubleClick,
   onPlaybackClick,
-  onLinkClick,
+  baseContext = "modal",
 }: SearchResultViewProps) {
   const { t } = useTranslation();
   const { title, type, artist, links, description, coverRelease } = item;
@@ -69,17 +69,13 @@ export default function SearchResultView({
     if (type === "track") {
       return (
         <>
-          <Link to={getLink()} className={styles.title} onClick={onLinkClick}>
+          <Link to={getLink()} className={styles.title}>
             {getTitle()}
           </Link>
           <span className={styles.type}>
             {t("modals.SearchView.results.trackBy")}{" "}
             {item.links.artist ? (
-              <Link
-                to={item.links.artist}
-                className={styles.trackArtist}
-                onClick={onLinkClick}
-              >
+              <Link to={item.links.artist} className={styles.trackArtist}>
                 {artist}
               </Link>
             ) : (
@@ -91,7 +87,7 @@ export default function SearchResultView({
     }
     return (
       <>
-        <Link to={getLink()} className={styles.title} onClick={onLinkClick}>
+        <Link to={getLink()} className={styles.title}>
           {getTitle()}
         </Link>
         <span className={styles.type}>{description}</span>
@@ -105,7 +101,8 @@ export default function SearchResultView({
       className={cx(styles.listItem, {
         [styles.selected]: selected,
         [styles.hasFocus]:
-          selected && currentContext === `modal:search:results(${index})`,
+          selected &&
+          currentContext === `${baseContext}:search:results(${index})`,
       })}
       onContextMenu={onContextMenu}
     >

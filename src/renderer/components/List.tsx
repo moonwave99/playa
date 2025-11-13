@@ -41,6 +41,7 @@ type ListProps<T> = {
   onUp?: () => void;
   onLeft?: (event: KeyboardEvent) => boolean | void;
   onRight?: (event: KeyboardEvent) => boolean | void;
+  disableSelectionOnUp?: boolean;
   shouldCallOnLeft?: () => boolean;
   shouldCallOnRight?: () => boolean;
   onUnmount?: (scrollInfo: ScrollInfo) => void;
@@ -91,6 +92,7 @@ export default function List<T>({
   onLeft,
   onRight,
   onUnmount,
+  disableSelectionOnUp,
   shouldCallOnLeft = () => true,
   shouldCallOnRight = () => true,
   items,
@@ -229,7 +231,12 @@ export default function List<T>({
     handlers: {
       ArrowUp: withPrevent((event: KeyboardEvent) => {
         if (currentIndex === 0 && onUp) {
+          if (disableSelectionOnUp) {
+            setSelection([]);
+            setCurrentIndex(-1);
+          }
           onUp();
+
           return;
         }
         if (event.metaKey) {
