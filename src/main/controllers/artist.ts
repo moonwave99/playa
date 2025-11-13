@@ -17,6 +17,7 @@ import {
   updateArtist,
   setArtistCoverRelease as _setArtistCoverRelease,
   searchArtists,
+  searchArtistsByName,
   addRelatedArtist as _addRelatedArtist,
   removeRelatedArtist as _removeRelatedArtist,
   deleteArtist as _deleteArtist,
@@ -90,6 +91,7 @@ export function artistController({
     send("mutate", [
       ["releases", "latest"],
       ["artists", "latest"],
+      ["artists", "search"],
       ["artists", id],
     ]);
 
@@ -116,6 +118,7 @@ export function artistController({
     send("mutate", [
       ["releases", "latest"],
       ["artists", "latest"],
+      ["artists", "search"],
       ...artist_ids.map((id) => ["artists", id]),
     ]);
 
@@ -274,6 +277,7 @@ export function artistController({
   return {
     getArtist,
     getArtistAlphabeticalList,
+    searchArtistsByName,
     getSelectedArtist,
     getSelectedArtists,
     getLatestArtists,
@@ -292,6 +296,7 @@ export function artistController({
 
 export const actions: (keyof ReturnType<typeof artistController>)[] = [
   "getArtist",
+  "searchArtistsByName",
   "getArtistAlphabeticalList",
   "getLatestArtists",
   "updateArtist",

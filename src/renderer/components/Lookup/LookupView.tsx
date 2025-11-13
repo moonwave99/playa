@@ -28,6 +28,7 @@ export type LookupViewProps<T extends HasId> = {
   getText: (item: T) => string;
   getCustomValue?: (query: string) => T;
   renderInfo?: (item: T) => ReactNode;
+  filterFn?: (item: T, query: string) => boolean;
 };
 
 const MIN_QUERY_LENGTH = 3;
@@ -47,13 +48,16 @@ export default function LookupView<T extends HasId>({
   getText,
   getCustomValue,
   renderInfo,
+  filterFn,
 }: LookupViewProps<T>) {
   const { t } = useTranslation();
 
   const results =
     query === ""
       ? items
-      : items.filter((x) => lowerCaseCompare(getText(x), query));
+      : items.filter((x) =>
+          filterFn ? filterFn(x, query) : lowerCaseCompare(getText(x), query)
+        );
 
   const displayCustomInput =
     allowCustomValue &&

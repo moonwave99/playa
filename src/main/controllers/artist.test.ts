@@ -346,6 +346,7 @@ describe("artist - deleteArtist function", () => {
     expect(send).toHaveBeenCalledWith("mutate", [
       ["releases", "latest"],
       ["artists", "latest"],
+      ["artists", "search"],
       ["artists", 1],
     ]);
     expect(stateManager.setSelection).toHaveBeenCalled();
@@ -420,6 +421,7 @@ describe("artist - deleteArtists function", () => {
     expect(send).toHaveBeenCalledWith("mutate", [
       ["releases", "latest"],
       ["artists", "latest"],
+      ["artists", "search"],
       ["artists", 1],
       ["artists", 2],
     ]);

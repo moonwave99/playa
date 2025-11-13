@@ -263,8 +263,18 @@ function getExcludeFilter(exclude: SearchArtistsParams["exclude"]) {
 export async function searchArtistByName(name: string) {
   return prisma.artist.findFirst({
     where: {
-      name: {
-        startsWith: name,
+      normalizedName: {
+        startsWith: normalizeDiacritics(name),
+      },
+    },
+  });
+}
+
+export async function searchArtistsByName(query: string) {
+  return prisma.artist.findMany({
+    where: {
+      normalizedName: {
+        contains: normalizeDiacritics(query),
       },
     },
   });
@@ -278,7 +288,7 @@ export async function searchArtists({
   const result = await prisma.artist.findMany({
     take,
     where: {
-      name: {
+      normalizedName: {
         contains: query,
       },
       ...getExcludeFilter(exclude),

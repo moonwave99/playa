@@ -7,10 +7,9 @@ import {
   ReleaseType,
 } from "@/types/types";
 import { normalizeArtistDisplayName } from "@/lib/utils";
-import useArtists from "../query/useArtists";
+import useSearchArtists from "../query/useSearchArtists";
 import api from "../api";
 import LookupView from "../components/Lookup/LookupView";
-import ErrorView from "../components/ErrorView";
 import Loading from "../components/Loading";
 import { Icon } from "../icons";
 import cx from "clsx";
@@ -90,11 +89,11 @@ function FolderView({
   onSkip,
 }: FolderViewProps) {
   const { t } = useTranslation();
-  const [artistQuery, setArtistQuery] = useState("");
-  const [tempData, setTempData] = useState({ ...data });
+  const [artistQuery, setArtistQuery] = useState(data.artist.name);
   const [isImporting, setImporting] = useState(false);
   const [isRefreshing, setRefreshing] = useState(false);
-  const { artists, isPending, error } = useArtists();
+  const [tempData, setTempData] = useState({ ...data });
+  const { results } = useSearchArtists({ query: artistQuery.toLowerCase() });
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
@@ -123,14 +122,6 @@ function FolderView({
     setRefreshing(true);
     setTempData(await api.importFolders.getTracksInfo(data.path));
     setRefreshing(false);
-  }
-
-  if (isPending) {
-    return <Loading />;
-  }
-
-  if (error) {
-    return <ErrorView error={error} />;
   }
 
   return (
@@ -183,7 +174,7 @@ function FolderView({
             allowCustomValue
             className={styles.artist}
             value={tempData.artist}
-            items={artists}
+            items={results}
             query={artistQuery}
             onQueryChange={setArtistQuery}
             onChange={(artist) =>
