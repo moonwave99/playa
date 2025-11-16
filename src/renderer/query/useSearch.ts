@@ -27,18 +27,13 @@ export default function useSearch<T>({
 }: UseSearchParams<T>): UseSearch<T> {
   const { data: results, ...rest } = useQuery({
     queryKey,
-    queryFn: async () => {
-      if (query?.length < minLength) {
-        return [];
-      }
-      return queryFn(query, take);
-    },
+    queryFn: () => (query?.length < minLength ? null : queryFn(query, take)),
     staleTime: DEBOUNCE_INTERVAL,
     placeholderData: keepPreviousData,
   });
 
   return {
-    results: results || [],
+    results,
     ...rest,
   };
 }

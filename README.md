@@ -26,11 +26,6 @@ TBD
 
 - fine tune ranking a lil bit;
 - pad with releases / tracks if results are less than a certain threshold;
-- restyle search box;
-- prepare Search Page;
-- for now, port existing SearchView;
-- replace search query in last history entry;
-- fix search focus on Search page;
 
 ## License
 

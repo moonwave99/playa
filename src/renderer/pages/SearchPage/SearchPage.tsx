@@ -28,13 +28,13 @@ export default function ArtistPage() {
     queryFn: (query, take) =>
       query
         ? api.quickSearch.getResults({
-            query,
+            query: query.trim(),
             take,
           })
         : null,
   });
 
-  const groupedResults = Object.groupBy(results, ({ type }) => type);
+  const groupedResults = Object.groupBy(results || [], ({ type }) => type);
 
   const { inputRef, inputHandlers, ...useSearchInputRest } = useSearchInput({
     setQuery,

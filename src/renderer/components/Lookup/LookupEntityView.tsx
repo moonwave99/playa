@@ -68,7 +68,7 @@ export default function LookupEntityView({
   return (
     <LookupView
       getCustomValue={getCustomValue}
-      items={results}
+      items={results || []}
       onChange={onSelect}
       query={query}
       onQueryChange={setQuery}

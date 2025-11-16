@@ -26,6 +26,6 @@ export default function useSearchArtists({
   });
 
   return {
-    results,
+    results: results || [],
   };
 }

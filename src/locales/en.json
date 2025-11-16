@@ -517,6 +517,7 @@
           "placeholder": "Enter search term"
         }
       },
+      "noResults": "No results for \"{{query}}\"",
       "actions": {
         "submit": "See all"
       }

@@ -38,6 +38,22 @@ test.describe("QuickSearch", () => {
     await expect(searchResults).not.toBeVisible();
   });
 
+  test("no results for given query", async () => {
+    const { page, clickMenuItemById } = await getElectronApp();
+    await clickMenuItemById("openQuickSearch");
+    const input = page.getByPlaceholder("Enter search term");
+    await expect(input).toBeFocused();
+    await input.fill("Nonsense Query");
+
+    const searchResults = page.locator(
+      '[data-testid="QuickSearchResultsView"]'
+    );
+
+    await expect(searchResults).toContainText(
+      'No results for "Nonsense Query"'
+    );
+  });
+
   test("navigate the search results", async () => {
     const { page, clickMenuItemById } = await getElectronApp();
     await clickMenuItemById("openQuickSearch");

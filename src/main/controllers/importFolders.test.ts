@@ -517,10 +517,11 @@ describe("getTracksInfo function", () => {
     ).toMatchSnapshot();
   });
 
-  it("returns the info for the tracks of a possible V/A folder (V/A artist already existing)", async (context) => {
+  it.only("returns the info for the tracks of a possible V/A folder (V/A artist already existing)", async (context) => {
     await prisma.artist.create({
       data: {
         name: VARIOUS_ARTISTS_NAME,
+        normalizedName: VARIOUS_ARTISTS_NAME,
         hash: hashArtistName(VARIOUS_ARTISTS_NAME),
       },
     });

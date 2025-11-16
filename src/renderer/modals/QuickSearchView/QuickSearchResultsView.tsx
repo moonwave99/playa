@@ -1,13 +1,14 @@
 import type { MouseEvent } from "react";
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 import { SearchResult } from "@/types/types";
+import useSearch from "@/renderer/query/useSearch";
 import api from "@/renderer/api";
 import ErrorView from "@/renderer/components/ErrorView";
 import Loading from "@/renderer/components/Loading";
-import useSearch from "@/renderer/query/useSearch";
-import styles from "./QuickSearchView.module.css";
 import List from "@/renderer/components/List";
 import SearchResultView from "./SearchResultView";
+import styles from "./QuickSearchView.module.css";
 
 type QuickSearchResultsProps = Pick<
   ReturnType<typeof useSearch>,
@@ -21,6 +22,7 @@ type QuickSearchResultsProps = Pick<
     onUp: () => void;
   };
   onSelectionChange: (selection: number[]) => void;
+  query: string;
 };
 
 export default function QuickSearchResults({
@@ -32,7 +34,9 @@ export default function QuickSearchResults({
   currentContext,
   listHandlers,
   onSelectionChange,
+  query,
 }: QuickSearchResultsProps) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   if (isPending) {
@@ -43,7 +47,7 @@ export default function QuickSearchResults({
     return <ErrorView error={error} />;
   }
 
-  if (!results.length) {
+  if (query.length < 3 || !results) {
     return null;
   }
 
@@ -82,43 +86,50 @@ export default function QuickSearchResults({
     }
     return () => playbackItem(item);
   }
+
   return (
     <div
       className={styles.searchResultsView}
       data-testid="QuickSearchResultsView"
     >
-      <List
-        onSelectionChange={onSelectionChange}
-        disableMultipleSelection
-        disableSelectionOnUp
-        context={`modal:search:results(0)`}
-        className={styles.listWrapper}
-        items={results}
-        estimateSize={() => ({
-          width: 300,
-          height: 64,
-        })}
-        paddingRight={0}
-        gap={12}
-        onEnter={onEnter}
-        render={({ item, selected, onClick }) => (
-          <SearchResultView
-            index={0}
-            currentContext={currentContext}
-            item={item}
-            selected={selected}
-            onClick={(event: MouseEvent) => {
-              setContext(`modal:search:results(0)`);
-              onClick(event);
-            }}
-            onDoubleClick={() => playbackItem(item)}
-            onPlaybackClick={getOnPlaybackClick(item)}
-            onContextMenu={() => api.menu.searchResult(item)}
-            onLinkClick={onLinkClick}
-          />
-        )}
-        {...listHandlers}
-      />
+      {!results.length ? (
+        <p className={styles.noResults}>
+          {t("modals.QuickSearchView.noResults", { query })}
+        </p>
+      ) : (
+        <List
+          onSelectionChange={onSelectionChange}
+          disableMultipleSelection
+          disableSelectionOnUp
+          context={`modal:search:results(0)`}
+          className={styles.listWrapper}
+          items={results}
+          estimateSize={() => ({
+            width: 300,
+            height: 64,
+          })}
+          paddingRight={0}
+          gap={12}
+          onEnter={onEnter}
+          render={({ item, selected, onClick }) => (
+            <SearchResultView
+              index={0}
+              currentContext={currentContext}
+              item={item}
+              selected={selected}
+              onClick={(event: MouseEvent) => {
+                setContext(`modal:search:results(0)`);
+                onClick(event);
+              }}
+              onDoubleClick={() => playbackItem(item)}
+              onPlaybackClick={getOnPlaybackClick(item)}
+              onContextMenu={() => api.menu.searchResult(item)}
+              onLinkClick={onLinkClick}
+            />
+          )}
+          {...listHandlers}
+        />
+      )}
     </div>
   );
 }

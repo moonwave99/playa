@@ -31,18 +31,18 @@ export default function QuickSearchView({ closeModal }: QuickSearchViewProps) {
     query: debouncedQuery,
     queryKey: ["search", debouncedQuery],
     queryFn: (query, take) =>
-      api.quickSearch.getResults({
-        query,
-        take,
-      }),
+      query
+        ? api.quickSearch.getResults({
+            query: query.trim(),
+            take,
+          })
+        : null,
   });
 
   const { inputRef, inputHandlers, ...useSearchInputRest } = useSearchInput({
     setQuery,
     resultTypes: ["searchResult"],
-    onUp: () => {
-      setFormEnabled(true);
-    },
+    onUp: () => setFormEnabled(true),
   });
 
   const searchUrl = `/search?${new URLSearchParams({ query })}`;
@@ -63,7 +63,7 @@ export default function QuickSearchView({ closeModal }: QuickSearchViewProps) {
   return (
     <div
       className={cx(styles.view, {
-        [styles.showResults]: searchResults.results.length,
+        [styles.showResults]: searchResults.results?.length,
       })}
     >
       <form className={styles.searchBar} onSubmit={onSubmit}>
@@ -82,7 +82,7 @@ export default function QuickSearchView({ closeModal }: QuickSearchViewProps) {
             placeholder={t("modals.QuickSearchView.fields.search.placeholder")}
             {...inputHandlers}
           />
-          {searchResults.results.length ? (
+          {searchResults.results?.length ? (
             <button
               className={cx(
                 formStyles.button,
@@ -99,6 +99,7 @@ export default function QuickSearchView({ closeModal }: QuickSearchViewProps) {
       <QuickSearchResults
         onLinkClick={closeModal}
         onSelectionChange={onSelectionChange}
+        query={query}
         {...searchResults}
         {...useSearchInputRest}
       />
