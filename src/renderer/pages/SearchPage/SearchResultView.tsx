@@ -73,7 +73,7 @@ export default function SearchResultView({
             {getTitle()}
           </Link>
           <span className={styles.type}>
-            {t("modals.SearchView.results.trackBy")}{" "}
+            {t("pages.SearchPage.results.trackBy")}{" "}
             {item.links.artist ? (
               <Link to={item.links.artist} className={styles.trackArtist}>
                 {artist}

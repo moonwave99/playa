@@ -68,6 +68,7 @@ import {
   importExportController,
 } from "./main/controllers/importExport";
 import { HistoryState } from "./main/history";
+import { SearchType } from "./renderer/pages/SearchPage/SearchTypeView";
 
 const eventNames = Object.keys(getEvents()) as (keyof ReturnType<
   typeof getEvents
@@ -153,6 +154,7 @@ function getEvents() {
       noOp(step, completed),
     onExportError: (message: string) => noOp(message),
     onSettingsUpdate: (settings: Settings) => noOp(settings),
+    onSetSearchType: (searchType: SearchType) => noOp(searchType),
     onOpenModal: ({
       name,
       params,

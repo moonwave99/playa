@@ -198,6 +198,20 @@
         "text": "Playa - © 2025 Diego Caponera",
         "link": "https://moonwave99.github.io/playa"
       }
+    },
+    "SearchPage": {
+      "fields": {
+        "search": {
+          "label": "Search",
+          "placeholder": "Enter search term"
+        }
+      },
+      "results": {
+        "trackBy": "Track by"
+      },
+      "types": {
+        "all": "All"
+      }
     }
   },
   "modals": {
@@ -517,20 +531,12 @@
           "placeholder": "Enter search term"
         }
       },
+      "results": {
+        "trackBy": "Track by"
+      },
       "noResults": "No results for \"{{query}}\"",
       "actions": {
         "submit": "See all"
-      }
-    },
-    "SearchView": {
-      "fields": {
-        "search": {
-          "label": "Search",
-          "placeholder": "Enter search term"
-        }
-      },
-      "results": {
-        "trackBy": "Track by"
       }
     }
   },

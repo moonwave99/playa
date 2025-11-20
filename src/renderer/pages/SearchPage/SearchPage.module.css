@@ -3,7 +3,7 @@
   --search-results-height: 80vh;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1rem;
   flex: 1;
   padding: 1rem;
 
@@ -19,6 +19,7 @@
       gap: 1rem;
       h3 {
         text-transform: capitalize;
+        user-select: none;
       }
       ::-webkit-scrollbar {
         display: none;
@@ -234,4 +235,30 @@
   right: var(--padding);
   width: calc(var(--search-results-size) - 2 * var(--padding));
   height: calc(var(--search-results-size) - 2 * var(--padding));
+}
+
+.SearchTypeView {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  li {
+    display: flex;
+    align-items: center;
+    line-height: 1.5rem;
+    font-size: 0.7rem;
+    padding: 0 0.75rem;
+    border-radius: 0.5rem;
+    background-color: var(--background-color-light);
+    transition: opacity 0.2s ease-in-out;
+    user-select: none;
+    &:hover {
+      opacity: 0.8;
+    }
+    &.selected {
+      background-color: var(--accent-color);
+      color: var(--primary-color);
+      opacity: 1;
+    }
+  }
 }

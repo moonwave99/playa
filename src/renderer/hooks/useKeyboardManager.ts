@@ -94,11 +94,10 @@ export function KeyManagerProvider(props: PropsWithChildren) {
 
 type KeyHandler = (event: KeyboardEvent, ...params: unknown[]) => void;
 type KeyHandlers = Record<string, KeyHandler>;
-type ModifierKeys = "metaKey" | "shiftKey" | "altKey";
+type ModifierKeys = "metaKey" | "shiftKey" | "altKey" | "ctrlKey";
 
-const withModifier =
-  (key: ModifierKeys, without = false) =>
-  (handler: KeyHandler) => {
+function withModifier(key: ModifierKeys, without = false) {
+  return (handler: KeyHandler) => {
     return (event: KeyboardEvent, ...params: unknown[]) => {
       if (without ? event[key] : !event[key]) {
         return;
@@ -106,14 +105,17 @@ const withModifier =
       handler(event, ...params);
     };
   };
+}
 
 export const withMeta = withModifier("metaKey");
-export const withShift = withModifier("metaKey");
-export const withAlt = withModifier("metaKey");
+export const withShift = withModifier("shiftKey");
+export const withAlt = withModifier("altKey");
+export const withCtrl = withModifier("ctrlKey");
 
 export const withoutMeta = withModifier("metaKey", true);
-export const withoutShift = withModifier("metaKey", true);
-export const withoutAlt = withModifier("metaKey", true);
+export const withoutShift = withModifier("shiftKey", true);
+export const withoutAlt = withModifier("altKey", true);
+export const withoutCtrl = withModifier("ctrlKey", true);
 
 export function withPrevent(handler: KeyHandler): KeyHandler {
   return (event: KeyboardEvent, ...params: unknown[]) => {

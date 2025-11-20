@@ -54,7 +54,10 @@ export default function useSearchInput({
   });
 
   useEffect(() => {
-    return () => api.state.setInputFocused(false);
+    return () => {
+      api.state.setInputFocused(false);
+      setContext("list");
+    };
   }, []);
 
   function onInput(event: FormEvent) {

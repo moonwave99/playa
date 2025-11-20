@@ -318,3 +318,11 @@ export type SearchFilters = {
   decade?: 1960 | 1970 | 1980 | 1990 | 2000 | 2010 | 2020;
   releaseTypes?: ReleaseType[];
 };
+
+export const searchableEntities: SearchableEntities[] = [
+  "release",
+  "artist",
+  "track",
+  "collection",
+  "group",
+] as const;
