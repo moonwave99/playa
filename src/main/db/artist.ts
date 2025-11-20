@@ -318,6 +318,31 @@ export async function searchArtists({
   return result.map((x) => withCoverRelease(x as ArtistWithReleases));
 }
 
+type NewRelatedArtistParams = {
+  artist_id: number;
+  name: string;
+};
+
+export async function addNewRelatedArtist({
+  artist_id,
+  name,
+}: NewRelatedArtistParams) {
+  let artist;
+  try {
+    artist = await prisma.artist.create({
+      data: {
+        name,
+        normalizedName: normalizeDiacritics(name),
+        hash: hashArtistName(name),
+      },
+    });
+  } catch {
+    return false;
+  }
+  await addRelatedArtist(artist_id, artist.id);
+  return artist;
+}
+
 export async function addRelatedArtist(first_id: number, second_id: number) {
   await prisma.artist.update({
     where: { id: first_id },

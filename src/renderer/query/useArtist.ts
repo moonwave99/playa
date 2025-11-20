@@ -8,6 +8,7 @@ type UseArtist = {
   artist: ArtistWithReleasesFull;
   deleteReleases: (release_ids: number[]) => void;
   setArtistCover: (release_id: number) => void;
+  addNewRelatedArtist: (name: string) => void;
   addRelatedArtist: (artist_id: number) => void;
   removeRelatedArtist: (artist_id: number) => void;
   removeFromGroup: (group_id: number) => void;
@@ -58,6 +59,12 @@ export default function useArtist(id: number): UseArtist {
     onSuccess,
   });
 
+  const addNewRelatedArtist = useMutation({
+    mutationFn: (name: string) =>
+      api.artist.addNewRelatedArtist({ artist_id: id, name }),
+    onSuccess,
+  });
+
   const removeFromGroup = useMutation({
     mutationFn: (group_id: number) =>
       api.group.removeArtistsFromGroup(group_id, [id]),
@@ -76,6 +83,7 @@ export default function useArtist(id: number): UseArtist {
     deleteReleases: deleteReleases.mutate,
     setArtistCover: setArtistCover.mutate,
     addRelatedArtist: addRelatedArtist.mutate,
+    addNewRelatedArtist: addNewRelatedArtist.mutate,
     removeRelatedArtist: removeRelatedArtist.mutate,
     removeFromGroup: removeFromGroup.mutate,
     editArtist: editArtist.mutate,

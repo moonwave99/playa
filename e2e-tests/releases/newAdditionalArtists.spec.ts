@@ -22,12 +22,12 @@ test.describe("Releases", () => {
     const modal = page.locator(".ReactModalPortal");
     await expect(modal).toContainText("Edit Release");
 
+    await modal
+      .getByPlaceholder("Lookup Artists")
+      .fill("New Additional Artist");
+    await modal.getByText('Create "New Additional Artist"').click();
     await modal.getByPlaceholder("Lookup Artists").fill("Artist 2");
     await modal.getByText("Artist 2", { exact: true }).click();
-    await page.keyboard.press("Enter");
-
-    await modal.getByPlaceholder("Lookup Artists").fill("Artist 3");
-    await modal.getByText("Artist 3", { exact: true }).click();
     await page.keyboard.press("Escape");
 
     await expect(modal).not.toBeVisible();
@@ -36,18 +36,19 @@ test.describe("Releases", () => {
 
     await expect(header).toContainText("Artist 1");
     await expect(header).toContainText("Artist 2");
-    await expect(header).toContainText("Artist 3");
+    await expect(header).toContainText("New Additional Artist");
 
     await clickMenuItemById("editCurrentRelease");
     await expect(modal).toContainText("Edit Release");
 
-    await modal.getByLabel("Remove Artist 2 from related Artists").click();
+    await modal
+      .getByLabel("Remove New Additional Artist from related Artists")
+      .click();
 
     await page.keyboard.press("Escape");
     await expect(modal).not.toBeVisible();
 
     await expect(header).toContainText("Artist 1");
-    await expect(header).not.toContainText("Artist 2");
-    await expect(header).toContainText("Artist 3");
+    await expect(header).not.toContainText("New Additional Artist");
   });
 });

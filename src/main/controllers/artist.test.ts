@@ -218,6 +218,40 @@ describe("artist - addRelatedArtist function", () => {
   });
 });
 
+describe("artist - addNewRelatedArtist function", () => {
+  it("adds a new related artist", async () => {
+    const artist = getFakeArtist(1);
+    await prisma.artist.create({ data: artist });
+
+    const send = vi.fn();
+
+    const { addNewRelatedArtist } = artistController({
+      ...defaultParams,
+      send,
+    });
+
+    await addNewRelatedArtist({
+      artist_id: 1,
+      name: "New Related Artist",
+    });
+
+    const updatedArtist = await prisma.artist.findFirst({
+      where: { id: 1 },
+      include: { relatedArtists: true, symmetricRelatedArtists: true },
+    });
+
+    const createdArtist = await prisma.artist.findFirst({
+      where: { name: "New Related Artist" },
+      include: { relatedArtists: true, symmetricRelatedArtists: true },
+    });
+
+    expect(updatedArtist.relatedArtists).toMatchObject([{ id: 2 }]);
+    expect(createdArtist.relatedArtists).toMatchObject([{ id: 1 }]);
+
+    expect(send).toHaveBeenCalledWith("mutate", [["artists", 1]]);
+  });
+});
+
 describe("artist - removeRelatedArtist function", () => {
   it("removes a related artist", async () => {
     const artists = getFakeArtists({ length: 3 });

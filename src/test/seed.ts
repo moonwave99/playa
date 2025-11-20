@@ -19,10 +19,7 @@ import { normalizeDiacritics, pad } from "@/lib/utils";
 import { getE2ETmpPath, BUILD_PATH } from "./utils";
 import { DEFAULT_SETTINGS } from "@/constants";
 
-export function getFakeArtist(
-  id = 1,
-  override: Partial<Artist> = {}
-): Omit<Artist, "id" | "coverReleaseId" | "coverRelease"> {
+export function getFakeArtist(id = 1, override: Partial<Artist> = {}) {
   const artist = getFakeArtists({ length: 1 }).at(0);
   return {
     ...artist,

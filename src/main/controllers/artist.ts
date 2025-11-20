@@ -19,6 +19,7 @@ import {
   searchArtists,
   searchArtistsByName,
   addRelatedArtist as _addRelatedArtist,
+  addNewRelatedArtist as _addNewRelatedArtist,
   removeRelatedArtist as _removeRelatedArtist,
   deleteArtist as _deleteArtist,
   deleteArtists as _deleteArtists,
@@ -154,6 +155,14 @@ export function artistController({
     return result;
   }
 
+  async function addNewRelatedArtist(
+    ...params: Parameters<typeof _addNewRelatedArtist>
+  ) {
+    const result = await _addNewRelatedArtist(...params);
+    send("mutate", [["artists", params[0].artist_id]]);
+    return result;
+  }
+
   async function removeRelatedArtist(
     ...params: Parameters<typeof _removeRelatedArtist>
   ) {
@@ -286,6 +295,7 @@ export function artistController({
     setArtistCoverRelease,
     searchArtists,
     addRelatedArtist,
+    addNewRelatedArtist,
     removeRelatedArtist,
     deleteArtist,
     deleteArtists,
@@ -304,6 +314,7 @@ export const actions: (keyof ReturnType<typeof artistController>)[] = [
   "setArtistCoverRelease",
   "searchArtists",
   "addRelatedArtist",
+  "addNewRelatedArtist",
   "removeRelatedArtist",
   "deleteArtist",
   "checkArtistFolderContents",

@@ -2,7 +2,13 @@ import { formatEntityType, normalizeTitle } from "./utils";
 import type { HasId, Entities, EntityType, HasEntityType } from "@/types/types";
 import { deburr, mapValues } from "lodash";
 
-export function getURL(url: string, params: Record<string, string>) {
+export function getURL(
+  url: string,
+  params: Record<string, string | number | boolean>
+) {
+  if (!Object.keys(params).length) {
+    return url;
+  }
   return `${url}?${new URLSearchParams(mapValues(params, deburr))}`;
 }
 
@@ -76,6 +82,6 @@ export function getRandomLink(
   entity: Entities
 ): string {
   const count = stats[entity];
-  const randomId = Math.round(Math.random() * count);
+  const randomId = Math.round(Math.random() * count) + 1;
   return getEntityLink({ id: randomId, entityType: entity as EntityType });
 }

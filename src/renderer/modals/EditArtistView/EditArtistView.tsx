@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { HasId } from "@/types/types";
+import { SearchResult } from "@/types/types";
 import useArtist from "@/renderer/query/useArtist";
 
 import EditArtistForm, { type NewInfo } from "./EditArtistForm";
@@ -25,6 +25,7 @@ export default function EditArtistView({
     isPending,
     editArtist,
     addRelatedArtist,
+    addNewRelatedArtist,
     removeRelatedArtist,
   } = useArtist(id);
 
@@ -36,7 +37,14 @@ export default function EditArtistView({
     closeModal();
   }
 
-  function onRelatedArtistsSelect({ id }: HasId) {
+  function onRelatedArtistsSelect({
+    id,
+    title,
+  }: Pick<SearchResult, "id" | "title">) {
+    if (!id) {
+      addNewRelatedArtist(title);
+      return;
+    }
     addRelatedArtist(id);
   }
 

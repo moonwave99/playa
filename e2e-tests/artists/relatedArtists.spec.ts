@@ -30,7 +30,6 @@ test.describe("Related Artists", () => {
 
     await modal.getByPlaceholder("Lookup Artists").fill("Artist 2");
     await modal.getByText("Artist 2", { exact: true }).click();
-    await page.keyboard.press("Enter");
     await page.keyboard.press("Escape");
 
     const artistHeader = page.locator('[data-testid="ArtistPageHeader"]');
