@@ -43,17 +43,21 @@ export default function ArtistPageHeader({ artist }: ArtistPageHeaderProps) {
       onContextMenu={() => api.menu.artist(artist)}
       style={{ backgroundColor: color || null }}
     >
-      <Cover
-        {...coverRelease}
-        onClick={() =>
-          setModalContents({
-            name: "lightbox",
-            params: { id: coverRelease.id, hideSidebar: true },
-          })
-        }
-        className={styles.cover}
-        title={getReleaseFullTitle(coverRelease)}
-      />
+      {coverRelease ? (
+        <Cover
+          {...coverRelease}
+          onClick={() =>
+            setModalContents({
+              name: "lightbox",
+              params: { id: coverRelease.id, hideSidebar: true },
+            })
+          }
+          className={styles.cover}
+          title={getReleaseFullTitle(coverRelease)}
+        />
+      ) : (
+        <div className={styles.ghost}></div>
+      )}
       <div className={styles.content}>
         <div className={styles.titleWrapper}>
           <h1 className={styles.title}>{normalizeArtistDisplayName(name)}</h1>

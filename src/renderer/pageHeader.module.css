@@ -27,7 +27,8 @@
   gap: 0.25rem;
 }
 
-.cover {
+.cover,
+.ghost {
   width: var(--release-tracklist-single-cover-size);
   height: var(--release-tracklist-single-cover-size);
   border-right: 1px solid var(--neutral-border-color);
