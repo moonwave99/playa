@@ -36,7 +36,7 @@ export default function EditArtistView({
     closeModal();
   }
 
-  function onRelatedArtistsSubmit({ id }: HasId) {
+  function onRelatedArtistsSelect({ id }: HasId) {
     addRelatedArtist(id);
   }
 
@@ -56,7 +56,7 @@ export default function EditArtistView({
       </div>
       <RelatedArtistsEditor
         artist={artist}
-        onSubmit={onRelatedArtistsSubmit}
+        onSelect={onRelatedArtistsSelect}
         onRemoveArtist={removeRelatedArtist}
       />
     </div>

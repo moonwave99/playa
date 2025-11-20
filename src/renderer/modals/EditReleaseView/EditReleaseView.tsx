@@ -36,7 +36,7 @@ export default function EditReleaseView({
     closeModal();
   }
 
-  function onAdditionalArtistSubmit({
+  function onAdditionalArtistSelect({
     id,
     title,
   }: Pick<SearchResult, "id" | "title">) {
@@ -62,7 +62,7 @@ export default function EditReleaseView({
       <AdditionalArtistsEditor
         release={release}
         onRemoveArtist={removeAdditionalArtist}
-        onSubmit={onAdditionalArtistSubmit}
+        onSelect={onAdditionalArtistSelect}
       />
     </div>
   );

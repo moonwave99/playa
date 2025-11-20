@@ -4,21 +4,25 @@ import {
   SearchResult,
 } from "@/types/types";
 import EntityCardList from "@/renderer/components/EntityCardList";
-import LookupEntityForm from "@/renderer/components/Lookup/LookupEntityForm";
+import LookupEntityView from "@/renderer/components/Lookup/LookupEntityView";
 import styles from "./EditReleaseView.module.css";
 import formStyles from "@/renderer/forms.module.css";
 
 type AdditionalArtistsEditorProps = {
   release: ReleaseWithArtistAndTracksAndSubreleasesAndCollections;
   onRemoveArtist: (id: number) => void;
-  onSubmit: (artist: Pick<SearchResult, "id" | "title">) => void;
+  onSelect: (artist: Pick<SearchResult, "id" | "title">) => void;
 };
 
 export default function AdditionalArtistsEditor({
   release,
   onRemoveArtist,
-  onSubmit,
+  onSelect,
 }: AdditionalArtistsEditorProps) {
+  const existingIds = [
+    release.artist.id,
+    ...release.additionalArtists.map(({ id }) => id),
+  ];
   return (
     <div className={formStyles.container}>
       <h3>{t("modals.EditReleaseView.additionalArtists.title")}</h3>
@@ -37,15 +41,12 @@ export default function AdditionalArtistsEditor({
           {t("modals.EditReleaseView.additionalArtists.placeholder")}
         </p>
       )}
-      <LookupEntityForm
+      <LookupEntityView
         allowCustomValue
         className={styles.lookupView}
-        existingIds={[
-          release.artist.id,
-          ...release.additionalArtists.map(({ id }) => id),
-        ]}
+        isEntityIncluded={({ id }) => existingIds.includes(id)}
         type="artist"
-        onSubmit={onSubmit}
+        onSelect={onSelect}
         placeholderText={t(
           "modals.EditReleaseView.additionalArtists.fields.lookup.placeholder"
         )}

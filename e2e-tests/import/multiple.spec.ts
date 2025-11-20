@@ -40,9 +40,14 @@ test.describe("Import Multiple", () => {
 
     const modal = page.locator(".ReactModalPortal");
     await expect(modal.getByLabel("Release title")).toHaveValue("Album 1");
+    await expect(modal).toContainText(
+      "Not yet in your Library - will now be created"
+    );
     await page.getByRole("button").filter({ hasText: "Import Folder" }).click();
 
     await expect(modal.getByLabel("Release title")).toHaveValue("Album 2");
+    await expect(modal).toContainText("Already in your library");
+
     await page.getByRole("button").filter({ hasText: "Import Folder" }).click();
 
     await page.getByRole("button", { name: "Close Modal" }).click();

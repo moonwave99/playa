@@ -241,6 +241,7 @@ export function importFoldersController({
       send("mutate", [
         ["releases", "latest"],
         ["artists", "latest"],
+        ["artists", "search"],
         ["artists", artist.id],
       ]);
 
@@ -352,6 +353,7 @@ export function importFoldersController({
     refreshReleaseContents,
     refreshEntityRelease,
     refreshArtistReleases,
+    searchArtistByName,
   };
 }
 
@@ -362,4 +364,5 @@ export const actions: (keyof ReturnType<typeof importFoldersController>)[] = [
   "refreshReleaseContents",
   "refreshEntityRelease",
   "refreshArtistReleases",
+  "searchArtistByName",
 ];

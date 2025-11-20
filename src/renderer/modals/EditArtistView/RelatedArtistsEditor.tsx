@@ -1,21 +1,22 @@
 import { t } from "i18next";
 import { ArtistWithReleasesFull, SearchResult } from "@/types/types";
 import EntityCardList from "@/renderer/components/EntityCardList";
-import LookupEntityForm from "@/renderer/components/Lookup/LookupEntityForm";
+import LookupEntityView from "@/renderer/components/Lookup/LookupEntityView";
 import styles from "./EditArtistView.module.css";
 import formStyles from "@/renderer/forms.module.css";
 
 type RelatedArtistsEditorProps = {
   artist: ArtistWithReleasesFull;
   onRemoveArtist: (id: number) => void;
-  onSubmit: (artist: Pick<SearchResult, "id" | "title">) => void;
+  onSelect: (artist: Pick<SearchResult, "id" | "title">) => void;
 };
 
 export default function RelatedArtistsEditor({
   artist,
   onRemoveArtist,
-  onSubmit,
+  onSelect,
 }: RelatedArtistsEditorProps) {
+  const existingIds = [artist.id, ...artist.relatedArtists.map(({ id }) => id)];
   return (
     <div className={formStyles.container}>
       <h3>{t("modals.EditArtistView.relatedArtists.title")}</h3>
@@ -34,11 +35,12 @@ export default function RelatedArtistsEditor({
           {t("modals.EditArtistView.relatedArtists.placeholder")}
         </p>
       )}
-      <LookupEntityForm
+      <LookupEntityView
+        allowCustomValue
         className={styles.lookupView}
-        existingIds={[artist.id, ...artist.relatedArtists.map(({ id }) => id)]}
+        isEntityIncluded={({ id }) => existingIds.includes(id)}
         type="artist"
-        onSubmit={onSubmit}
+        onSelect={onSelect}
         placeholderText={t(
           "modals.EditArtistView.relatedArtists.fields.lookup.placeholder"
         )}

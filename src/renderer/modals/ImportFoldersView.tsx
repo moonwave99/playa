@@ -5,8 +5,9 @@ import {
   ImportData,
   TrackInfo,
   ReleaseType,
+  Artist,
 } from "@/types/types";
-import { normalizeArtistDisplayName } from "@/lib/utils";
+import { lowerCaseCompare, normalizeArtistDisplayName } from "@/lib/utils";
 import useSearchArtists from "../query/useSearchArtists";
 import api from "../api";
 import LookupView from "../components/Lookup/LookupView";
@@ -31,21 +32,37 @@ export default function ImportFoldersView({
   closeModal,
 }: ImportFoldersViewProps) {
   const { t } = useTranslation();
+  const [tempData, setTempData] = useState([...data]);
   const [index, setIndex] = useState(0);
   const [importStatus, setImportStatus] = useState(
     data.map(({ folder }) => ({ folder, isDone: false }))
   );
 
-  async function onImport() {
+  async function onImport({ artist }: { artist: Pick<Artist, "id" | "name"> }) {
     setImportStatus((prev) =>
-      prev.map((x, i) => (i === index ? { ...x, isDone: true } : x))
+      prev.map((x, i) =>
+        i === index
+          ? {
+              ...x,
+              isDone: true,
+            }
+          : x
+      )
+    );
+    setTempData((prev) =>
+      prev.map((x) => ({
+        ...x,
+        artist: lowerCaseCompare(x.artist.name, artist.name)
+          ? artist
+          : x.artist,
+      }))
     );
     gotoNextFolder();
   }
 
   function gotoNextFolder() {
-    setIndex((prev) => Math.min(prev + 1, data.length - 1));
-    if (index === data.length - 1) {
+    setIndex((prev) => Math.min(prev + 1, tempData.length - 1));
+    if (index === tempData.length - 1) {
       closeModal();
     }
   }
@@ -59,9 +76,9 @@ export default function ImportFoldersView({
         <h2>{t("modals.ImportFoldersView.title")}</h2>
         <FolderView
           key={index}
-          data={data[index]}
-          isImportingMultipleFolders={data.length > 1}
-          isLast={index === data.length - 1}
+          data={tempData[index]}
+          isImportingMultipleFolders={tempData.length > 1}
+          isLast={index === tempData.length - 1}
           onImport={onImport}
           onSkip={gotoNextFolder}
           onCancel={closeModal}
@@ -75,7 +92,7 @@ type FolderViewProps = {
   data: ImportData;
   isImportingMultipleFolders: boolean;
   isLast: boolean;
-  onImport: () => void;
+  onImport: (release: { artist: Pick<Artist, "id" | "name"> }) => void;
   onCancel: () => void;
   onSkip: () => void;
 };
@@ -104,7 +121,7 @@ function FolderView({
       window.alert(t("modals.ImportFoldersView.errors.import"));
       return;
     }
-    onImport();
+    onImport(response);
   }
 
   function onTrackEdit(info: TrackInfo, index: number) {

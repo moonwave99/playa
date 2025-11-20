@@ -5,6 +5,7 @@ import path from "path";
 import { importFoldersController } from "./importFolders";
 import { testFs } from "@moonwave99/test-fs";
 import {
+  Artist,
   ArtistWithReleasesFull,
   ReleaseWithArtistAndTracks,
 } from "@/types/types";
@@ -378,7 +379,9 @@ describe("openImportDialog function", () => {
     );
     const LIBRARY_PATH = path.join(directory, "LIBRARY_PATH");
     const artist = getFakeArtist(1);
-    await prisma.artist.create({ data: artist });
+    await prisma.artist.create({
+      data: artist,
+    });
 
     const showErrorBox = vi.fn();
     const send = vi.fn();
@@ -633,6 +636,7 @@ describe("importFromData function", () => {
     expect(send).toHaveBeenCalledWith("mutate", [
       ["releases", "latest"],
       ["artists", "latest"],
+      ["artists", "search"],
       ["artists", 1],
     ]);
 
@@ -710,6 +714,7 @@ describe("importFromData function", () => {
     expect(send).toHaveBeenCalledWith("mutate", [
       ["releases", "latest"],
       ["artists", "latest"],
+      ["artists", "search"],
       ["artists", 1],
     ]);
 

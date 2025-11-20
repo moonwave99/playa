@@ -71,7 +71,12 @@ export default function LookupView<T extends HasId>({
       <Combobox
         value={value}
         by="id"
-        onChange={onChange}
+        onChange={(item) => {
+          if (!item) {
+            return;
+          }
+          onChange(item);
+        }}
         onClose={() => onQueryChange("")}
       >
         <div className={styles.LookupViewInputWrapper}>
