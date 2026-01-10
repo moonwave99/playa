@@ -14,7 +14,7 @@
     "@cloudraker/sass-brunch": "^3.0.1",
     "assetsmanager-brunch": "^1.8.1",
     "autoprefixer": "^9.7.4",
-    "brunch": "^2.10.17",
+    "brunch": "^4.0.2",
     "coffee-script-brunch": "^2.1.0",
     "css-brunch": "^2.6.1",
     "cssnano-brunch": "^1.2.1",
