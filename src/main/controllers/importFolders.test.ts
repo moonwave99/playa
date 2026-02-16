@@ -5,7 +5,6 @@ import path from "path";
 import { importFoldersController } from "./importFolders";
 import { testFs } from "@moonwave99/test-fs";
 import {
-  Artist,
   ArtistWithReleasesFull,
   ReleaseWithArtistAndTracks,
 } from "@/types/types";
@@ -71,7 +70,7 @@ describe("refreshReleaseContents function", () => {
     expect(send).not.toHaveBeenCalled();
     expect(showErrorBox).toHaveBeenCalledWith(
       "Error refreshing Release contents",
-      "The current Release folder contains no tracks."
+      "The current Release folder contains no tracks.",
     );
   });
 
@@ -90,7 +89,7 @@ describe("refreshReleaseContents function", () => {
           },
         },
       },
-      context.task.id
+      context.task.id,
     );
 
     const LIBRARY_PATH = path.join(directory, "LIBRARY_PATH");
@@ -108,7 +107,7 @@ describe("refreshReleaseContents function", () => {
         key === "LIBRARY_PATH" ? LIBRARY_PATH : key,
     });
     const result = (await refreshReleaseContents(
-      1
+      1,
     )) as ReleaseWithArtistAndTracks[];
 
     expect(result[0]).toMatchObject(release);
@@ -198,7 +197,7 @@ describe("openImportDialog function", () => {
     expect(send).not.toHaveBeenCalled();
     expect(showErrorBox).toHaveBeenCalledWith(
       "Error importing folders",
-      "You have to set your Library path in the Settings"
+      "You have to set your Library path in the Settings",
     );
   });
 
@@ -236,7 +235,7 @@ describe("openImportDialog function", () => {
 
     expect(showErrorBox).toHaveBeenCalledWith(
       "Error importing folders",
-      "You can import at max 10 folders at once"
+      "You can import at max 10 folders at once",
     );
 
     expect(send).not.toHaveBeenCalled();
@@ -265,7 +264,7 @@ describe("openImportDialog function", () => {
 
     expect(showErrorBox).toHaveBeenCalledWith(
       "Error importing folders",
-      "The folders should be contained in your Library."
+      "The folders should be contained in your Library.",
     );
 
     expect(send).not.toHaveBeenCalled();
@@ -283,7 +282,7 @@ describe("openImportDialog function", () => {
           },
         },
       },
-      context.task.id
+      context.task.id,
     );
     const LIBRARY_PATH = path.join(directory, "LIBRARY_PATH");
     const artist = getFakeArtist(1);
@@ -320,7 +319,7 @@ describe("openImportDialog function", () => {
           path: "A/Artist 1/[Album]/2000 - Release 1",
           absolutePath: path.join(
             LIBRARY_PATH,
-            "A/Artist 1/[Album]/2000 - Release 1"
+            "A/Artist 1/[Album]/2000 - Release 1",
           ),
           folder: "2000 - Release 1",
           title: "Release 1",
@@ -375,7 +374,7 @@ describe("openImportDialog function", () => {
           },
         },
       },
-      context.task.id
+      context.task.id,
     );
     const LIBRARY_PATH = path.join(directory, "LIBRARY_PATH");
     const artist = getFakeArtist(1);
@@ -405,7 +404,7 @@ describe("openImportDialog function", () => {
 
     expect(showErrorBox).toHaveBeenCalledWith(
       "Error importing Folders",
-      "All selected folders are empty."
+      "All selected folders are empty.",
     );
     expect(send).not.toHaveBeenCalled();
   });
@@ -422,7 +421,7 @@ describe("openImportDialog function", () => {
           },
         },
       },
-      context.task.id
+      context.task.id,
     );
     const LIBRARY_PATH = path.join(directory, "LIBRARY_PATH");
 
@@ -455,7 +454,7 @@ describe("openImportDialog function", () => {
 
     expect(showErrorBox).toHaveBeenCalledWith(
       "Error importing Folders",
-      "Folder already imported"
+      "Folder already imported",
     );
     expect(send).not.toHaveBeenCalled();
   });
@@ -471,7 +470,7 @@ describe("getTracksInfo function", () => {
           },
         },
       },
-      context.task.id
+      context.task.id,
     );
 
     const LIBRARY_PATH = path.join(directory, "LIBRARY_PATH");
@@ -484,8 +483,8 @@ describe("getTracksInfo function", () => {
 
     expect(
       await getTracksInfo(
-        path.join(LIBRARY_PATH, "A", "Artist 1", "[Album]", "2000 - Release 1")
-      )
+        path.join(LIBRARY_PATH, "A", "Artist 1", "[Album]", "2000 - Release 1"),
+      ),
     ).toBe(null);
   });
 
@@ -502,7 +501,7 @@ describe("getTracksInfo function", () => {
           },
         },
       },
-      context.task.id
+      context.task.id,
     );
 
     const LIBRARY_PATH = path.join(directory, "LIBRARY_PATH");
@@ -515,8 +514,8 @@ describe("getTracksInfo function", () => {
 
     expect(
       await getTracksInfo(
-        path.join(LIBRARY_PATH, "A", "Artist 1", "[Album]", "2000 - Release 1")
-      )
+        path.join(LIBRARY_PATH, "A", "Artist 1", "[Album]", "2000 - Release 1"),
+      ),
     ).toMatchSnapshot();
   });
 
@@ -540,7 +539,7 @@ describe("getTracksInfo function", () => {
           },
         },
       },
-      context.task.id
+      context.task.id,
     );
 
     const LIBRARY_PATH = path.join(directory, "LIBRARY_PATH");
@@ -558,9 +557,9 @@ describe("getTracksInfo function", () => {
           "X",
           "Various Artists",
           "[Album]",
-          "2000 - Release 1"
-        )
-      )
+          "2000 - Release 1",
+        ),
+      ),
     ).toMatchSnapshot();
   });
 
@@ -577,7 +576,7 @@ describe("getTracksInfo function", () => {
           },
         },
       },
-      context.task.id
+      context.task.id,
     );
 
     const LIBRARY_PATH = path.join(directory, "LIBRARY_PATH");
@@ -595,9 +594,9 @@ describe("getTracksInfo function", () => {
           "X",
           "Various Artists",
           "[Album]",
-          "2000 - Release 1"
-        )
-      )
+          "2000 - Release 1",
+        ),
+      ),
     ).toMatchSnapshot();
   });
 });

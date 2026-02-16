@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { I18nextProvider } from "react-i18next";
 import i18n from "@/renderer/i18n";
 import type { Settings } from "@/types/types";
+import { KeyManagerProvider } from "@/renderer/hooks/useKeyboardManager";
 
 export { IS_E2E_TEST, getE2EFolderPath, getE2ETmpPath } from "./e2e";
 
@@ -22,6 +23,10 @@ export function withQueryClientProvider(children: ReactNode) {
 
 export function withRouter(children: ReactNode) {
   return <MemoryRouter>{children}</MemoryRouter>;
+}
+
+export function withKeyManager(children: ReactNode) {
+  return <KeyManagerProvider>{children}</KeyManagerProvider>;
 }
 
 const settings = {

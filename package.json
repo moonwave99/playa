@@ -15,24 +15,24 @@
   },
   "main": ".vite/build/main.js",
   "scripts": {
-    "postinstall": "npm run db:generate",
-    "start": "electron-forge start",
-    "package": "npm run db:reset && electron-forge package",
+    "postinstall": "pnpm run db:generate",
+    "start": "pnpm electron-forge start",
+    "package": "pnpm run db:reset && electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx .",
     "clean": "rm -rf out",
-    "db:reset": "rm -f ./src/main/db/data.db && npx prisma db push",
-    "db:seed": "rm -f ./src/main/db/data.db && npm run db:migrate && npx tsx ./src/main/db/seed.ts",
-    "db:generate": "npx prisma generate",
-    "db:migrate": "npx prisma migrate dev --name init",
-    "db:studio": "npx prisma studio",
+    "db:reset": "rm -f ./src/main/db/data.db && pnpm prisma db push",
+    "db:seed": "rm -f ./src/main/db/data.db && pnpm run db:migrate && pnpm tsx ./src/main/db/seed.ts",
+    "db:generate": "pnpm prisma generate",
+    "db:migrate": "pnpm prisma migrate dev --name init",
+    "db:studio": "pnpm prisma studio",
     "db:backup": "cp /Applications/Playa.app/Contents/Resources/data.db ./dump/data-$(date +'%Y-%m-%d_%H-%M-%S').db",
-    "test:renderer": "npx vitest --config vite.renderer.config.ts",
-    "test:main": "npx vitest --config vite.main.config.ts",
+    "test:renderer": "vitest --config vite.renderer.config.ts",
+    "test:main": "vitest --config vite.main.config.ts",
     "test:e2e": "playwright test",
-    "coverage:renderer": "npx vitest run --coverage --config vite.renderer.config.ts",
-    "coverage:main": "npx vitest run --coverage --config vite.main.config.ts"
+    "coverage:renderer": "vitest run --coverage --config vite.renderer.config.ts",
+    "coverage:main": "vitest run --coverage --config vite.main.config.ts"
   },
   "license": "MIT",
   "devDependencies": {
@@ -46,6 +46,7 @@
     "@electron-forge/plugin-fuses": "^7.7.0",
     "@electron-forge/plugin-vite": "^7.7.0",
     "@electron/fuses": "^1.8.0",
+    "@moonwave99/prismock": "^1.0.0",
     "@moonwave99/test-fs": "^0.0.5",
     "@playwright/test": "^1.55.1",
     "@react-router/dev": "^7.3.0",
@@ -74,8 +75,8 @@
     "node-lame": "^1.5.0",
     "playwright": "^1.55.1",
     "playwright-core": "^1.55.1",
-    "prismock": "github:moonwave99/prismock",
     "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
     "typescript": "^5.8.2",
     "vite": "^6.2.5",
     "vite-plugin-svgr": "^4.5.0",
@@ -123,5 +124,11 @@
     "use-debounce": "^10.0.4",
     "zip-a-folder": "^3.1.9",
     "zustand": "^5.0.3"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "prismock",
+      "@prisma/client"
+    ]
   }
 }
